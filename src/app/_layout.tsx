@@ -1,40 +1,51 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
 import './global.css';
-import { Stack } from 'expo-router';
+import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { GluestackUIProvider, SafeAreaView } from '../components/ui';
 import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/useColorScheme';
+import * as Linking from 'expo-linking';
+import { ErrorBoundaryProps, Slot, Stack } from 'expo-router';
+import AppCrashScreen from '@/components/shared/AppCrashScreen';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
+	const [loaded, error] = useFonts({
+		'Railway-Black': require('../assets/fonts/Raleway-Black.ttf'),
+		'Raleway-Bold': require('../assets/fonts/Raleway-Bold.ttf'),
+		'Raleway-ExtraBold': require('../assets/fonts/Raleway-ExtraBold.ttf'),
+		'Raleway-Light': require('../assets/fonts/Raleway-Light.ttf'),
+		'Raleway-Medium': require('../assets/fonts/Raleway-Medium.ttf'),
+		'Raleway-Regular': require('../assets/fonts/Raleway-Regular.ttf'),
+		'Raleway-SemiBold': require('../assets/fonts/Raleway-SemiBold.ttf'),
+		'Raleway-Thin': require('../assets/fonts/Raleway-Thin.ttf'),
+	});
 
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
+	useEffect(() => {
+		if (loaded || error) {
+			SplashScreen.hideAsync();
+		}
+	}, [loaded, error]);
 
-  if (!loaded) {
-    return null;
-  }
+	if (!loaded && !error) {
+		return null;
+	}
 
-  return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
-  );
+	return (
+		<>
+			{/* <ThemeContext.Provider value={{ colorMode, toggleColorMode }}> */}
+			<GluestackUIProvider mode={'light'} style={{ flex: 1 }}>
+				<Slot />
+				<StatusBar style="auto" />
+			</GluestackUIProvider>
+			{/* </ThemeContext.Provider> */}
+		</>
+	);
+}
+
+export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
+	return <AppCrashScreen />;
 }
