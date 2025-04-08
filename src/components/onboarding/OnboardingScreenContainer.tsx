@@ -4,7 +4,6 @@ import Platforms from '@/constants/Plaforms';
 import { router } from 'expo-router';
 import { Pressable, ScrollView, View } from 'react-native';
 import { Text } from '../ui';
-import { useColorScheme } from '@/hooks/useColorScheme';
 
 type Props = {
 	children: React.ReactNode;
