@@ -8,6 +8,7 @@ import 'react-native-reanimated';
 import * as Linking from 'expo-linking';
 import { ErrorBoundaryProps, Slot, Stack } from 'expo-router';
 import AppCrashScreen from '@/components/shared/AppCrashScreen';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -37,10 +38,12 @@ export default function RootLayout() {
 	return (
 		<>
 			{/* <ThemeContext.Provider value={{ colorMode, toggleColorMode }}> */}
-			<GluestackUIProvider mode={'light'} style={{ flex: 1 }}>
-				<Slot />
-				<StatusBar style="auto" />
-			</GluestackUIProvider>
+			<GestureHandlerRootView style={{ flex: 1 }}>
+				<GluestackUIProvider mode={'light'} style={{ flex: 1 }}>
+					<Slot />
+					<StatusBar style="auto" />
+				</GluestackUIProvider>
+			</GestureHandlerRootView>
 			{/* </ThemeContext.Provider> */}
 		</>
 	);

@@ -3,7 +3,9 @@ import ReplyIcon from '@/components/icons/ReplyIcon';
 import Platforms from '@/constants/Plaforms';
 import { router } from 'expo-router';
 import { Pressable, ScrollView, View } from 'react-native';
-import { Text } from '../ui';
+import { Image, ImageBackground, Text } from '../ui';
+import { StatusBar } from 'expo-status-bar';
+import { ChevronLeft } from 'lucide-react-native';
 
 type Props = {
 	children: React.ReactNode;
@@ -11,6 +13,7 @@ type Props = {
 	withScroll?: boolean;
 	edges?: Array<'top' | 'bottom' | 'left' | 'right'>;
 	onBack?: () => void;
+	showHeader?: boolean;
 };
 
 export default function OnboardingScreenContainer(props: Props) {
@@ -18,7 +21,8 @@ export default function OnboardingScreenContainer(props: Props) {
 		children,
 		allowBack = true,
 		withScroll = true,
-		edges = ['top'],
+		showHeader = true,
+		edges = ['top', 'bottom'],
 	} = props;
 
 	function _onBack() {
@@ -34,30 +38,43 @@ export default function OnboardingScreenContainer(props: Props) {
 	}
 
 	return (
-		<ScreenContianer
-			edges={edges}
-			keyboardVerticalOffset={Platforms.isIOS() ? 0 : undefined}>
-			<View className="py-6  flex-1">
-				<View className="flex-row  items-center pb-4 px-6">
-					{allowBack && (
-						<Pressable
-							onPress={_onBack}
-							className="h-12 flex-row items-center justify-center rounded-full gap-2">
-							<ReplyIcon color={'#fff'} />
-							<Text className="text-base font-medium">Back</Text>
-						</Pressable>
+		<ImageBackground
+			source={require('@/assets/images/landing/auth-banner.png')}
+			className="flex-1 bg-cover">
+			<StatusBar style="light" />
+			<ScreenContianer
+				edges={edges}
+				keyboardVerticalOffset={Platforms.isIOS() ? 0 : undefined}>
+				<View className="py-6  flex-1 bg-black/20">
+					<View className="flex-row mt-6 items-center pb-4 px-6">
+						{allowBack && (
+							<Pressable
+								onPress={_onBack}
+								className=" bg-gray-400 p-2 rounded-full">
+								<ChevronLeft strokeWidth={3} color={'#fff'} />
+							</Pressable>
+						)}
+						{showHeader && (
+							<View className=" flex-1 items-center ">
+								<Image
+									source={require('@/assets/images/landing/logo-white.png')}
+									alt="Logo"
+									className=" w-[135px] h-[48px] object-cover"
+								/>
+							</View>
+						)}
+					</View>
+					{withScroll ? (
+						<ScrollView
+							keyboardShouldPersistTaps="handled"
+							contentContainerClassName="pt-2 px-6">
+							{children}
+						</ScrollView>
+					) : (
+						<View className="pt-2 px-6 flex-1">{children}</View>
 					)}
 				</View>
-				{withScroll ? (
-					<ScrollView
-						keyboardShouldPersistTaps="handled"
-						contentContainerClassName="pt-2 px-6">
-						{children}
-					</ScrollView>
-				) : (
-					<View className="pt-2 px-6 flex-1">{children}</View>
-				)}
-			</View>
-		</ScreenContianer>
+			</ScreenContianer>
+		</ImageBackground>
 	);
 }

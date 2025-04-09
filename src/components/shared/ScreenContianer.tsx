@@ -18,14 +18,14 @@ export default function ScreenContianer(props: Props) {
 		...others
 	} = props;
 	return (
-		<View className="flex-1 bg-background h-full relative">
-			<SafeAreaView {...others} edges={edges} style={{ flex: 1 }}>
+		<View className="flex-1 bg-transparent h-full relative">
+			<SafeAreaView {...others} edges={edges} className="flex-1">
 				<KeyboardDismissPressable>
 					<KeyboardAvoidingView
 						style={{
 							flex: 1,
 						}}
-						behavior="padding"
+						// behavior="padding"
 						keyboardVerticalOffset={keyboardVerticalOffset}>
 						{children}
 					</KeyboardAvoidingView>

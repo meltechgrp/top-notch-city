@@ -165,14 +165,16 @@ function PageOne({
 									setActiveIndex(1);
 								}}
 								className="bg-white w-12 h-12 rounded-full justify-center items-center m-1">
-								<ChevronRight />
+								<ChevronRight color={'#000'} />
 							</Pressable>
 						</View>
 					</View>
 					<View className="flex-row justify-between items-center gap-16">
-						<Text className=" text-white text-sm text-center">
-							Explore thousands of properties for sale and rent
-						</Text>
+						<View className=" w-[60%]">
+							<Text className=" text-white text-sm">
+								Explore thousands of properties for sale and rent
+							</Text>
+						</View>
 						<PageDots length={3} activeIndex={activeIndex} />
 					</View>
 				</View>
@@ -217,18 +219,18 @@ function PageTwo({
 									setActiveIndex(2);
 								}}
 								className="bg-white w-12 h-12 rounded-full justify-center items-center m-1">
-								<ChevronRight />
+								<ChevronRight color={'#000'} />
 							</Pressable>
 						</View>
 					</View>
 					<View className="flex-row justify-between items-center gap-16">
-						<Text className=" text-white text-sm text-center">
-							Filter by location, price, or property type to find exactly what
-							you’re looking for.1
-						</Text>
-						<View className="w-[20%] items-end">
-							<PageDots length={3} activeIndex={activeIndex} />
+						<View className=" w-[70%]">
+							<Text className=" text-white text-sm">
+								Filter by location, price, or property type to find exactly what
+								you’re looking for.
+							</Text>
 						</View>
+						<PageDots length={3} activeIndex={activeIndex} />
 					</View>
 				</View>
 			</SafeAreaView>
@@ -252,10 +254,12 @@ function PageThree() {
 						</Text>
 					</View>
 					<View className="flex-row justify-between">
-						<Text className=" text-white text-base">
-							Get personalized assistance from verified and experienced real
-							estate professionals.
-						</Text>
+						<View className=" w-[80%]">
+							<Text className=" text-white text-base">
+								Get personalized assistance from verified and experienced real
+								estate professionals.
+							</Text>
+						</View>
 					</View>
 				</View>
 				<Button variant="outline" className="rounded-xl border-white h-12">
