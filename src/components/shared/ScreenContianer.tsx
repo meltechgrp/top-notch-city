@@ -25,7 +25,7 @@ export default function ScreenContianer(props: Props) {
 						style={{
 							flex: 1,
 						}}
-						// behavior="padding"
+						behavior="padding"
 						keyboardVerticalOffset={keyboardVerticalOffset}>
 						{children}
 					</KeyboardAvoidingView>

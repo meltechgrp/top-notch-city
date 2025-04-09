@@ -65,7 +65,7 @@ export default function SignIn() {
 		<OnboardingScreenContainer onBack={onBack}>
 			<VStack className="w-[98%] max-w-[26rem] gap-6 mt-4 mx-auto rounded-xl bg-background-200/90 p-6">
 				<View>
-					<Text className=" text-3xl text-[#FF1500] font-semibold font-heading text-center">
+					<Text className=" text-2xl text-[#FF1500] font-semibold font-heading text-center">
 						Welcome Back
 					</Text>
 					<Text className=" text-center">

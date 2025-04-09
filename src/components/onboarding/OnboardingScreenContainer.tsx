@@ -44,9 +44,9 @@ export default function OnboardingScreenContainer(props: Props) {
 			<StatusBar style="light" />
 			<ScreenContianer
 				edges={edges}
-				keyboardVerticalOffset={Platforms.isIOS() ? 0 : undefined}>
-				<View className="py-6  flex-1 bg-black/20">
-					<View className="flex-row mt-6 items-center pb-4 px-6">
+				keyboardVerticalOffset={Platforms.isIOS() ? 20 : undefined}>
+				<View className="py-6  flex-1 ">
+					<View className="flex-row mt-2 items-center pb-4 px-6">
 						{allowBack && (
 							<Pressable
 								onPress={_onBack}

@@ -1,14 +1,44 @@
 import * as React from 'react';
 import { router } from 'expo-router';
 import { View, Text, Image, ImageBackground } from '@/components/ui';
+import Animated, {
+	useSharedValue,
+	useAnimatedStyle,
+	withRepeat,
+	withTiming,
+	Easing,
+} from 'react-native-reanimated';
 
 export default function SplashScreen() {
+	const rotation = useSharedValue(0);
+
 	React.useEffect(() => {
+		// Start the infinite rotation
+		rotation.value = withRepeat(
+			withTiming(360, {
+				duration: 2000,
+				easing: Easing.linear,
+			}),
+			-1, // infinite
+			false
+		);
+
 		const timer = setTimeout(() => {
 			router.replace('/onboarding');
 		}, 5000);
+
 		return () => clearTimeout(timer);
 	}, []);
+
+	const spinStyle = useAnimatedStyle(() => {
+		return {
+			transform: [
+				{
+					rotate: `${rotation.value}deg`,
+				},
+			],
+		};
+	});
 
 	return (
 		<ImageBackground
@@ -27,10 +57,10 @@ export default function SplashScreen() {
 				</Text>
 			</View>
 			<View className="items-center mb-12">
-				<Image
+				<Animated.Image
 					source={require('@/assets/images/landing/splash-spin.png')}
-					alt="Spinner"
 					className="w-10 h-10"
+					style={spinStyle}
 				/>
 			</View>
 		</ImageBackground>

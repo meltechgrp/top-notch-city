@@ -140,42 +140,46 @@ function PageOne({
 			source={require('@/assets/images/landing/home.png')}
 			className="flex-1"
 			imageStyle={{ resizeMode: 'cover' }}>
-			<SafeAreaView edges={['bottom', 'top']} className="flex-1 px-4 mb-16">
-				<View className="flex-1 items-end ">
-					<Pressable onPress={() => router.push('/signin')}>
-						<Text size="lg" className="text-white">
-							Skip
-						</Text>
-					</Pressable>
-				</View>
-				<View className=" gap-4">
-					<View className="flex-row justify-between items-center">
-						<Text
-							size="4xl"
-							className="font-bold font-heading w-[60%] text-white">
-							Find Your Dream Home
-						</Text>
-						<View className="relative justify-center items-center">
-							{/* Animated Half Circle */}
-							<CircleCurve step={activeIndex} />
-
-							{/* Pressable Button */}
-							<Pressable
-								onPress={() => {
-									setActiveIndex(1);
-								}}
-								className="bg-white w-12 h-12 rounded-full justify-center items-center m-1">
-								<ChevronRight color={'#000'} />
-							</Pressable>
-						</View>
-					</View>
-					<View className="flex-row justify-between items-center gap-16">
-						<View className=" w-[60%]">
-							<Text className=" text-white text-sm">
-								Explore thousands of properties for sale and rent
+			<SafeAreaView
+				edges={['bottom', 'top']}
+				className="flex-1 px-4 bg-black/20">
+				<View className=" flex-1 mb-16">
+					<View className="flex-1 items-end mt-4 ">
+						<Pressable onPress={() => router.push('/signin')}>
+							<Text size="lg" className="text-white font-medium">
+								Skip
 							</Text>
+						</Pressable>
+					</View>
+					<View className=" gap-4">
+						<View className="flex-row justify-between items-center">
+							<Text
+								size="4xl"
+								className="font-bold font-heading w-[60%] text-white">
+								Find Your Dream Home
+							</Text>
+							<View className="relative justify-center items-center">
+								{/* Animated Half Circle */}
+								<CircleCurve step={activeIndex} />
+
+								{/* Pressable Button */}
+								<Pressable
+									onPress={() => {
+										setActiveIndex(1);
+									}}
+									className="bg-white w-12 h-12 rounded-full justify-center items-center m-1">
+									<ChevronRight color={'#000'} />
+								</Pressable>
+							</View>
 						</View>
-						<PageDots length={3} activeIndex={activeIndex} />
+						<View className="flex-row justify-between items-center gap-16">
+							<View className=" w-[60%]">
+								<Text className=" text-white text-sm">
+									Explore thousands of properties for sale and rent
+								</Text>
+							</View>
+							<PageDots length={3} activeIndex={activeIndex} />
+						</View>
 					</View>
 				</View>
 			</SafeAreaView>
@@ -194,43 +198,47 @@ function PageTwo({
 			source={require('@/assets/images/landing/direction.png')}
 			className="flex-1"
 			imageStyle={{ resizeMode: 'cover' }}>
-			<SafeAreaView edges={['bottom', 'top']} className="flex-1 px-4 mb-16">
-				<View className="flex-1 items-end ">
-					<Pressable onPress={() => router.push('/signin')}>
-						<Text size="lg" className="text-white">
-							Skip
-						</Text>
-					</Pressable>
-				</View>
-				<View className=" gap-4">
-					<View className="flex-row justify-between items-center">
-						<Text
-							size="4xl"
-							className="font-bold font-heading w-[60%] text-white">
-							Where are you looking?
-						</Text>
-						<View className="relative justify-center items-center">
-							{/* Animated Half Circle */}
-							<CircleCurve step={activeIndex} />
-
-							{/* Pressable Button */}
-							<Pressable
-								onPress={() => {
-									setActiveIndex(2);
-								}}
-								className="bg-white w-12 h-12 rounded-full justify-center items-center m-1">
-								<ChevronRight color={'#000'} />
-							</Pressable>
-						</View>
-					</View>
-					<View className="flex-row justify-between items-center gap-16">
-						<View className=" w-[70%]">
-							<Text className=" text-white text-sm">
-								Filter by location, price, or property type to find exactly what
-								you’re looking for.
+			<SafeAreaView
+				edges={['bottom', 'top']}
+				className="flex-1 px-4 bg-black/20">
+				<View className=" flex-1 mb-16">
+					<View className="flex-1 items-end mt-4 ">
+						<Pressable onPress={() => router.push('/signin')}>
+							<Text size="lg" className="text-white font-medium">
+								Skip
 							</Text>
+						</Pressable>
+					</View>
+					<View className=" gap-4">
+						<View className="flex-row justify-between items-center">
+							<Text
+								size="4xl"
+								className="font-bold font-heading w-[60%] text-white">
+								Where are you looking?
+							</Text>
+							<View className="relative justify-center items-center">
+								{/* Animated Half Circle */}
+								<CircleCurve step={activeIndex} />
+
+								{/* Pressable Button */}
+								<Pressable
+									onPress={() => {
+										setActiveIndex(2);
+									}}
+									className="bg-white w-12 h-12 rounded-full justify-center items-center m-1">
+									<ChevronRight color={'#000'} />
+								</Pressable>
+							</View>
 						</View>
-						<PageDots length={3} activeIndex={activeIndex} />
+						<View className="flex-row justify-between items-center gap-16">
+							<View className=" w-[70%]">
+								<Text className=" text-white text-sm">
+									Filter by location, price, or property type to find exactly
+									what you’re looking for.
+								</Text>
+							</View>
+							<PageDots length={3} activeIndex={activeIndex} />
+						</View>
 					</View>
 				</View>
 			</SafeAreaView>
@@ -243,32 +251,38 @@ function PageThree() {
 			source={require('@/assets/images/landing/agent.png')}
 			className="flex-1"
 			imageStyle={{ resizeMode: 'cover' }}>
-			<SafeAreaView edges={['bottom', 'top']} className="flex-1 px-4 mb-16">
-				<View className="flex-1 items-end "></View>
-				<View className=" gap-4 mb-6">
-					<View className="flex-row justify-between items-center">
-						<Text
-							size="4xl"
-							className="font-bold font-heading w-[70%] text-white">
-							Connect with Trusted Agents
-						</Text>
-					</View>
-					<View className="flex-row justify-between">
-						<View className=" w-[80%]">
-							<Text className=" text-white text-base">
-								Get personalized assistance from verified and experienced real
-								estate professionals.
+			<SafeAreaView
+				edges={['bottom', 'top']}
+				className="flex-1 px-4 bg-black/20">
+				<View className="flex-1 mb-16">
+					<View className="flex-1 items-end "></View>
+					<View className=" gap-4 mb-6">
+						<View className="flex-row justify-between items-center">
+							<Text
+								size="4xl"
+								className="font-bold font-heading w-[70%] text-white">
+								Connect with Trusted Agents
 							</Text>
 						</View>
+						<View className="flex-row justify-between">
+							<View className=" w-[80%]">
+								<Text className=" text-white text-base">
+									Get personalized assistance from verified and experienced real
+									estate professionals.
+								</Text>
+							</View>
+						</View>
 					</View>
-				</View>
-				<Button variant="outline" className="rounded-xl border-white h-12">
-					<ButtonText
+					<Button
 						onPress={() => router.push('/signin')}
-						className=" text-white text-sm font-semibold">
-						Sign In
-					</ButtonText>
-				</Button>
+						variant="outline"
+						size="xl"
+						className="rounded-xl border-white">
+						<ButtonText size="lg" className=" text-white font-semibold">
+							Sign In
+						</ButtonText>
+					</Button>
+				</View>
 			</SafeAreaView>
 		</ImageBackground>
 	);
