@@ -64,8 +64,8 @@ export default function SignIn() {
 	return (
 		<OnboardingScreenContainer onBack={onBack}>
 			<VStack className="w-[98%] max-w-[26rem] gap-6 mt-4 mx-auto rounded-xl bg-background-200/90 p-6">
-				<View>
-					<Text className=" text-3xl text-[#FF1500] font-semibold font-heading text-center">
+				<View className=" gap-2">
+					<Text className=" text-3xl text-tertiary-500 font-semibold font-heading text-center">
 						Welcome Back
 					</Text>
 					<Text className=" text-center">
@@ -79,7 +79,7 @@ export default function SignIn() {
 								Email
 							</FormControlLabelText>
 						</FormControlLabel>
-						<Input className="my-1 bg-white rounded-xl px-4 h-14" size={'xl'}>
+						<Input className="my-1 bg-white rounded-xl px-4" size={'xl'}>
 							<User size={20} color={'#6b7280'} />
 							<InputField
 								type="text"
@@ -104,7 +104,7 @@ export default function SignIn() {
 								Password
 							</FormControlLabelText>
 						</FormControlLabel>
-						<Input className="my-1 bg-white rounded-xl px-4 h-16" size={'xl'}>
+						<Input className="my-1 bg-white rounded-xl px-4" size={'xl'}>
 							<User size={20} color={'#6b7280'} />
 							<InputField
 								type="password"
@@ -121,7 +121,7 @@ export default function SignIn() {
 						</FormControlError>
 					</FormControl>
 					<View className="items-end mt-2">
-						<Pressable>
+						<Pressable onPress={() => router.push('/(auth)/reset-password')}>
 							<Text className=" text-tertiary-500 font-medium">
 								Forgot Password ?
 							</Text>
@@ -138,7 +138,7 @@ export default function SignIn() {
 				</Button>
 				<View className=" flex-row justify-center gap-2 mt-4">
 					<Text>Don’t have an account?</Text>
-					<Pressable>
+					<Pressable onPress={() => router.push('/(auth)/signup')}>
 						<Text className=" text-tertiary-500 font-medium">Sign Up</Text>
 					</Pressable>
 				</View>

@@ -30,7 +30,7 @@ const formSchema = z.object({
 	}),
 });
 
-export default function SignIn() {
+export default function VerifyOtp() {
 	const [isInvalid, setIsInvalid] = React.useState({
 		email: false,
 		password: false,

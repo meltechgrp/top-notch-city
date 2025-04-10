@@ -16,10 +16,14 @@ import {
 	VStack,
 	AlertCircleIcon,
 	Pressable,
+	Checkbox,
+	CheckboxLabel,
+	CheckboxIcon,
+	CheckboxIndicator,
 } from '@/components/ui';
 import * as z from 'zod';
 import React from 'react';
-import { User } from 'lucide-react-native';
+import { CheckIcon, User } from 'lucide-react-native';
 
 const formSchema = z.object({
 	email: z.string().email({
@@ -30,22 +34,25 @@ const formSchema = z.object({
 	}),
 });
 
-export default function SignIn() {
+export default function SignUp() {
 	const [isInvalid, setIsInvalid] = React.useState({
 		email: false,
 		password: false,
+		username: false,
 	});
 	const [form, setForm] = React.useState({
 		email: '',
 		password: '',
+		username: '',
+		isChecked: false,
 	});
 	const handleSubmit = () => {
 		if (form.password.length < 8) {
 			setIsInvalid({ ...isInvalid, password: true });
-		} else if (form.email.length < 5) {
+		} else if (form.email.length < 5 || form.username.length < 5) {
 			setIsInvalid({ ...isInvalid, email: true });
 		} else {
-			setIsInvalid({ email: false, password: false });
+			setIsInvalid({ email: false, password: false, username: false });
 		}
 	};
 	function onBack() {
@@ -66,10 +73,10 @@ export default function SignIn() {
 			<VStack className="w-[98%] max-w-[26rem] gap-6 mt-4 mx-auto rounded-xl bg-background-200/90 p-6">
 				<View>
 					<Text className=" text-2xl text-[#FF1500] font-semibold font-heading text-center">
-						Welcome Back
+						Create an Account
 					</Text>
 					<Text className=" text-center">
-						Create an account or log in to explore our app
+						Create an account to explore our app
 					</Text>
 				</View>
 				<View>
@@ -92,6 +99,31 @@ export default function SignIn() {
 							<FormControlErrorIcon as={AlertCircleIcon} />
 							<FormControlErrorText>
 								enter a valid email address.
+							</FormControlErrorText>
+						</FormControlError>
+					</FormControl>
+					<FormControl
+						isInvalid={isInvalid.username}
+						size="lg"
+						isRequired={false}>
+						<FormControlLabel>
+							<FormControlLabelText className="font-light">
+								Username
+							</FormControlLabelText>
+						</FormControlLabel>
+						<Input className="my-1 bg-white rounded-xl px-4 h-14" size={'xl'}>
+							<User size={20} color={'#6b7280'} />
+							<InputField
+								type="text"
+								placeholder="Username"
+								value={form.username}
+								onChangeText={(text) => setForm({ ...form, username: text })}
+							/>
+						</Input>
+						<FormControlError>
+							<FormControlErrorIcon as={AlertCircleIcon} />
+							<FormControlErrorText>
+								enter a unique username.
 							</FormControlErrorText>
 						</FormControlError>
 					</FormControl>
@@ -120,26 +152,35 @@ export default function SignIn() {
 							</FormControlErrorText>
 						</FormControlError>
 					</FormControl>
-					<View className="items-end mt-2">
-						<Pressable>
-							<Text className=" text-tertiary-500 font-medium">
-								Forgot Password ?
-							</Text>
-						</Pressable>
-					</View>
+					<Checkbox
+						value="terms"
+						size="md"
+						className="mt-2"
+						isChecked={form.isChecked}
+						onChange={(state) => setForm({ ...form, isChecked: state })}
+						isInvalid={false}
+						isDisabled={false}>
+						<CheckboxIndicator>
+							<CheckboxIcon as={CheckIcon} />
+						</CheckboxIndicator>
+						<CheckboxLabel>
+							I have read and accept the terms and condition.
+						</CheckboxLabel>
+					</Checkbox>
 				</View>
 
 				<Button
 					variant="solid"
 					className="w-full mt-4"
+					isDisabled={!form.isChecked}
 					size="xl"
 					onPress={handleSubmit}>
-					<ButtonText>Submit</ButtonText>
+					<ButtonText>Sign Up</ButtonText>
 				</Button>
 				<View className=" flex-row justify-center gap-2 mt-4">
-					<Text>Don’t have an account?</Text>
-					<Pressable>
-						<Text className=" text-tertiary-500 font-medium">Sign Up</Text>
+					<Text>Already have an account?</Text>
+					<Pressable onPress={() => router.push('/(auth)/signin')}>
+						<Text className=" text-tertiary-500 font-medium">Sign In</Text>
 					</Pressable>
 				</View>
 			</VStack>

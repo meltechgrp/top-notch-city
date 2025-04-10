@@ -8,6 +8,7 @@ import Animated, {
 	withTiming,
 	Easing,
 } from 'react-native-reanimated';
+import Platforms from '@/constants/Plaforms';
 
 export default function SplashScreen() {
 	const rotation = useSharedValue(0);
@@ -24,7 +25,11 @@ export default function SplashScreen() {
 		);
 
 		const timer = setTimeout(() => {
-			router.replace('/onboarding');
+			if (Platforms.isWeb()) {
+				router.replace('/signin');
+			} else {
+				router.replace('/onboarding');
+			}
 		}, 5000);
 
 		return () => clearTimeout(timer);
