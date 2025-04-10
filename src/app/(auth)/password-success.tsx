@@ -8,14 +8,14 @@ import React, { useEffect, useRef } from 'react';
 export default function VerifySuccess() {
 	const successRef = useRef<LottieView>(null);
 	function handleSubmit() {
-		router.push('/');
+		router.dismissAll();
 	}
 
 	useEffect(() => {
 		successRef.current?.play();
 	}, []);
 	return (
-		<OnboardingScreenContainer>
+		<OnboardingScreenContainer allowBack={false}>
 			<VStack className="w-[98%] max-w-[26rem] mt-4 mx-auto rounded-xl bg-background-200/90 p-6">
 				<View className="px-2 justify-between items-center">
 					<LottieView
@@ -27,8 +27,8 @@ export default function VerifySuccess() {
 				</View>
 				<View className=" mb-6">
 					<Text className=" text-center">
-						Congratulations! Your account has been created Proceed to complete
-						your profile
+						Congratulations! Your password has been changed. Click continue to
+						Sign In
 					</Text>
 				</View>
 
@@ -37,7 +37,7 @@ export default function VerifySuccess() {
 					className="w-full mt-4"
 					size="xl"
 					onPress={handleSubmit}>
-					<ButtonText>Continue</ButtonText>
+					<ButtonText>Sign In</ButtonText>
 				</Button>
 			</VStack>
 		</OnboardingScreenContainer>

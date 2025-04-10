@@ -19,7 +19,7 @@ import {
 } from '@/components/ui';
 import * as z from 'zod';
 import React from 'react';
-import { User } from 'lucide-react-native';
+import { Lock, User } from 'lucide-react-native';
 
 const formSchema = z.object({
 	email: z.string().email({
@@ -32,37 +32,25 @@ const formSchema = z.object({
 
 export default function NewPassword() {
 	const [isInvalid, setIsInvalid] = React.useState({
-		email: false,
+		password2: false,
 		password: false,
 	});
 	const [form, setForm] = React.useState({
-		email: '',
+		password2: '',
 		password: '',
 	});
 	const handleSubmit = () => {
-		if (form.password.length < 8) {
-			setIsInvalid({ ...isInvalid, password: true });
-		} else if (form.email.length < 5) {
-			setIsInvalid({ ...isInvalid, email: true });
-		} else {
-			setIsInvalid({ email: false, password: false });
-		}
+		router.dismissTo('/password-success');
+		// if (form.password.length < 8) {
+		// 	setIsInvalid({ ...isInvalid, password: true });
+		// } else if (form.password2.length < 5) {
+		// 	setIsInvalid({ ...isInvalid, password2: true });
+		// } else {
+		// 	setIsInvalid({ password2: false, password: false });
+		// }
 	};
-	function onBack() {
-		if (router.canGoBack()) {
-			router.back();
-		} else {
-			/*
-			 * Make it so we can go back to onboarding screen if app starts from here.
-			 */
-			// removeAuthToken();
-			// useStore.getState().resetStore();
-			// useTempStore.getState().resetStore();
-			router.replace('/onboarding');
-		}
-	}
 	return (
-		<OnboardingScreenContainer onBack={onBack}>
+		<OnboardingScreenContainer allowBack={false}>
 			<VStack className="w-[98%] max-w-[26rem] gap-6 mt-4 mx-auto rounded-xl bg-background-200/90 p-6">
 				<View>
 					<Text className=" text-2xl text-[#FF1500] font-semibold font-heading text-center">
@@ -84,10 +72,10 @@ export default function NewPassword() {
 							</FormControlLabelText>
 						</FormControlLabel>
 						<Input className="my-1 bg-white rounded-xl px-4 h-16" size={'xl'}>
-							<User size={20} color={'#6b7280'} />
+							<Lock size={20} color={'#6b7280'} />
 							<InputField
 								type="password"
-								placeholder="New password"
+								placeholder="********"
 								value={form.password}
 								onChangeText={(text) => setForm({ ...form, password: text })}
 							/>
@@ -100,7 +88,7 @@ export default function NewPassword() {
 						</FormControlError>
 					</FormControl>
 					<FormControl
-						isInvalid={isInvalid.password}
+						isInvalid={isInvalid.password2}
 						size="md"
 						isRequired={false}>
 						<FormControlLabel>
@@ -109,12 +97,12 @@ export default function NewPassword() {
 							</FormControlLabelText>
 						</FormControlLabel>
 						<Input className="my-1 bg-white rounded-xl px-4 h-16" size={'xl'}>
-							<User size={20} color={'#6b7280'} />
+							<Lock size={20} color={'#6b7280'} />
 							<InputField
 								type="password"
-								placeholder="Comfirm password"
-								value={form.password}
-								onChangeText={(text) => setForm({ ...form, password: text })}
+								placeholder="********"
+								value={form.password2}
+								onChangeText={(text) => setForm({ ...form, password2: text })}
 							/>
 						</Input>
 						<FormControlError>

@@ -40,13 +40,14 @@ export default function SignIn() {
 		password: '',
 	});
 	const handleSubmit = () => {
-		if (form.password.length < 8) {
-			setIsInvalid({ ...isInvalid, password: true });
-		} else if (form.email.length < 5) {
-			setIsInvalid({ ...isInvalid, email: true });
-		} else {
-			setIsInvalid({ email: false, password: false });
-		}
+		router.dismissTo('/verify-otp');
+		// if (form.password.length < 8) {
+		// 	setIsInvalid({ ...isInvalid, password: true });
+		// } else if (form.email.length < 5) {
+		// 	setIsInvalid({ ...isInvalid, email: true });
+		// } else {
+		// 	setIsInvalid({ email: false, password: false });
+		// }
 	};
 	function onBack() {
 		if (router.canGoBack()) {

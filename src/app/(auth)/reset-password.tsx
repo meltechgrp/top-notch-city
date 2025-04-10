@@ -38,7 +38,7 @@ export default function ResetPassword() {
 		email: '',
 	});
 	const handleSubmit = () => {
-		router.push('/(auth)/new-password');
+		router.dismissTo('/(auth)/new-password');
 		// if (form.email.length < 5) {
 		// 	setIsInvalid({ ...isInvalid, email: true });
 		// } else {
