@@ -8,7 +8,7 @@ import React, { useEffect, useRef } from 'react';
 export default function VerifySuccess() {
 	const successRef = useRef<LottieView>(null);
 	function handleSubmit() {
-		router.push('/');
+		router.push('/home');
 	}
 
 	useEffect(() => {
@@ -22,6 +22,7 @@ export default function VerifySuccess() {
 						ref={successRef}
 						style={{ width: 250, height: 250 }}
 						speed={0.9}
+						autoPlay
 						source={success}
 					/>
 				</View>

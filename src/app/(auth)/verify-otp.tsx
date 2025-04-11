@@ -14,7 +14,7 @@ import OTPInput from '@/components/shared/OTPInput';
 export default function VerifyOtp() {
 	const [otp, setOtp] = React.useState('');
 	const handleSubmit = () => {
-		router.dismissTo('/');
+		router.dismissTo('/(auth)/verify-success');
 	};
 	return (
 		<OnboardingScreenContainer allowBack={false}>

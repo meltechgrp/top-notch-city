@@ -3,18 +3,14 @@ import React from 'react';
 import { Platform } from 'react-native';
 
 import { HapticTab } from '../../components/HapticTab';
-import { IconSymbol } from '../../components/IconSymbol';
 import TabBarBackground from '../../components/TabBarBackground';
-import { Colors } from '../../constants/Colors';
-import { useColorScheme } from '../../hooks/useColorScheme';
+import { Bookmark, Home, Search, Tag, User } from 'lucide-react-native';
 
 export default function TabLayout() {
-	const colorScheme = useColorScheme();
-
 	return (
 		<Tabs
 			screenOptions={{
-				tabBarActiveTintColor: Colors[colorScheme ?? 'dark'].tint,
+				tabBarActiveTintColor: '#FF1500',
 				headerShown: false,
 				tabBarButton: HapticTab,
 				tabBarBackground: TabBarBackground,
@@ -27,21 +23,38 @@ export default function TabLayout() {
 				}),
 			}}>
 			<Tabs.Screen
-				name="index"
+				name="home"
 				options={{
 					title: 'Home',
-					tabBarIcon: ({ color }) => (
-						<IconSymbol size={28} name="house.fill" color={color} />
-					),
+					tabBarIcon: ({ color }) => <Home size={24} color={color} />,
 				}}
 			/>
 			<Tabs.Screen
-				name="explore"
+				name="search"
 				options={{
-					title: 'Explore',
-					tabBarIcon: ({ color }) => (
-						<IconSymbol size={28} name="paperplane.fill" color={color} />
-					),
+					title: 'Search',
+					tabBarIcon: ({ color }) => <Search size={24} color={color} />,
+				}}
+			/>
+			<Tabs.Screen
+				name="sell"
+				options={{
+					title: 'Sell',
+					tabBarIcon: ({ color }) => <Tag size={24} color={color} />,
+				}}
+			/>
+			<Tabs.Screen
+				name="saved"
+				options={{
+					title: 'Saved',
+					tabBarIcon: ({ color }) => <Bookmark size={24} color={color} />,
+				}}
+			/>
+			<Tabs.Screen
+				name="profile"
+				options={{
+					title: 'Profile',
+					tabBarIcon: ({ color }) => <User size={24} color={color} />,
 				}}
 			/>
 		</Tabs>
