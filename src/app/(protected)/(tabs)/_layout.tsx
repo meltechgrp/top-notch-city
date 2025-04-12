@@ -2,8 +2,8 @@ import { Tabs } from 'expo-router';
 import React from 'react';
 import { Platform } from 'react-native';
 
-import { HapticTab } from '../../components/HapticTab';
-import TabBarBackground from '../../components/TabBarBackground';
+import { HapticTab } from '../../../components/HapticTab';
+import TabBarBackground from '../../../components/TabBarBackground';
 import { Bookmark, Home, Search, Tag, User } from 'lucide-react-native';
 
 export default function TabLayout() {

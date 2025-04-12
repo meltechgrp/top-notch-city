@@ -7,49 +7,49 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		02234D62968447D3AA7CA1CC /* Raleway-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 64994C611D414C5BA897A713 /* Raleway-SemiBold.ttf */; };
-		0469F9BCF2764D0D991A6F23 /* Raleway-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C5950BD911944CF6A29D1937 /* Raleway-ExtraBold.ttf */; };
-		128EF32A99854C19AC0DA7B4 /* Raleway-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 851A5FD91B0F473299F43A53 /* Raleway-Thin.ttf */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		2FC1AE65FEDD496F83E33F78 /* Raleway-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F05BD3C56FDB4346867381AE /* Raleway-Bold.ttf */; };
+		365A6FAA3A4E4BFC87906E86 /* Raleway-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C410036202244EE68A13684B /* Raleway-Black.ttf */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		474C68010975457080D1A950 /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED43B86D9CE94854A6CCDA6E /* noop-file.swift */; };
-		51242773DA831ACC61B07FB4 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C74534C69C363E5BDDE8F00F /* PrivacyInfo.xcprivacy */; };
-		57FD4166E4794BECBD35C587 /* Raleway-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 922FE787DFA541E28A77802B /* Raleway-Bold.ttf */; };
-		67B1E4897F4D48E691944A6C /* Raleway-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9354F4C53E8C4B65910D9FB4 /* Raleway-Medium.ttf */; };
-		9673D46594A446A3AB8034B2 /* Raleway-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 08BD1BA684804D6CA785A446 /* Raleway-Black.ttf */; };
+		4D3272C03C024938A320B8B4 /* Raleway-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BCD1E41F31DF4506B4133230 /* Raleway-Medium.ttf */; };
+		545B83E5469542218594FCFA /* Raleway-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 62FA1F2AF92942129D1B6703 /* Raleway-Light.ttf */; };
+		5A35CC17E12448CD91BE4AA9 /* Raleway-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D3D667BAE1424BD39E3707BB /* Raleway-Thin.ttf */; };
+		67FEF29E7EE63A250AA1EBC3 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 2027A42596A30E7CB6ED6F75 /* PrivacyInfo.xcprivacy */; };
+		8532052C6C0E4A69A9297D78 /* Raleway-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7FE0DB7EB0274AD69245A47D /* Raleway-SemiBold.ttf */; };
 		96905EF65AED1B983A6B3ABC /* libPods-topnotchcity.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-topnotchcity.a */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		C506983020EC457EB51A5C2D /* Raleway-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 77E843420B5F4F72A43255B6 /* Raleway-Regular.ttf */; };
-		EB7E5E884143438F8D74CD9C /* Raleway-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5725D77315A94475B819E06F /* Raleway-Light.ttf */; };
+		C47269F829184065A47BF9D9 /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE9BF080C8074CE69C7E424C /* noop-file.swift */; };
+		C9A21BF6EFDA417E8D95F5F2 /* Raleway-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2F22420D3475419DA6B16FAB /* Raleway-Regular.ttf */; };
+		CA3C49C79EB24613ABE042DE /* Raleway-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E9B4D33B0BA94181B3790B87 /* Raleway-ExtraBold.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		08BD1BA684804D6CA785A446 /* Raleway-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Raleway-Black.ttf"; path = "../src/assets/fonts/Raleway-Black.ttf"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* topnotchcity.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = topnotchcity.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = topnotchcity/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = topnotchcity/AppDelegate.mm; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = topnotchcity/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = topnotchcity/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = topnotchcity/main.m; sourceTree = "<group>"; };
-		5725D77315A94475B819E06F /* Raleway-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Raleway-Light.ttf"; path = "../src/assets/fonts/Raleway-Light.ttf"; sourceTree = "<group>"; };
+		2027A42596A30E7CB6ED6F75 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = topnotchcity/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		2F22420D3475419DA6B16FAB /* Raleway-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Raleway-Regular.ttf"; path = "../src/assets/fonts/Raleway-Regular.ttf"; sourceTree = "<group>"; };
 		58EEBF8E8E6FB1BC6CAF49B5 /* libPods-topnotchcity.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-topnotchcity.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		64994C611D414C5BA897A713 /* Raleway-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Raleway-SemiBold.ttf"; path = "../src/assets/fonts/Raleway-SemiBold.ttf"; sourceTree = "<group>"; };
+		62FA1F2AF92942129D1B6703 /* Raleway-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Raleway-Light.ttf"; path = "../src/assets/fonts/Raleway-Light.ttf"; sourceTree = "<group>"; };
 		6C2E3173556A471DD304B334 /* Pods-topnotchcity.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-topnotchcity.debug.xcconfig"; path = "Target Support Files/Pods-topnotchcity/Pods-topnotchcity.debug.xcconfig"; sourceTree = "<group>"; };
-		77E843420B5F4F72A43255B6 /* Raleway-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Raleway-Regular.ttf"; path = "../src/assets/fonts/Raleway-Regular.ttf"; sourceTree = "<group>"; };
 		7A4D352CD337FB3A3BF06240 /* Pods-topnotchcity.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-topnotchcity.release.xcconfig"; path = "Target Support Files/Pods-topnotchcity/Pods-topnotchcity.release.xcconfig"; sourceTree = "<group>"; };
-		851A5FD91B0F473299F43A53 /* Raleway-Thin.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Raleway-Thin.ttf"; path = "../src/assets/fonts/Raleway-Thin.ttf"; sourceTree = "<group>"; };
-		922FE787DFA541E28A77802B /* Raleway-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Raleway-Bold.ttf"; path = "../src/assets/fonts/Raleway-Bold.ttf"; sourceTree = "<group>"; };
-		9354F4C53E8C4B65910D9FB4 /* Raleway-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Raleway-Medium.ttf"; path = "../src/assets/fonts/Raleway-Medium.ttf"; sourceTree = "<group>"; };
-		9F5DEA08E79C49BB8CA960E9 /* topnotchcity-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "topnotchcity-Bridging-Header.h"; path = "topnotchcity/topnotchcity-Bridging-Header.h"; sourceTree = "<group>"; };
+		7FE0DB7EB0274AD69245A47D /* Raleway-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Raleway-SemiBold.ttf"; path = "../src/assets/fonts/Raleway-SemiBold.ttf"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = topnotchcity/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		C5950BD911944CF6A29D1937 /* Raleway-ExtraBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Raleway-ExtraBold.ttf"; path = "../src/assets/fonts/Raleway-ExtraBold.ttf"; sourceTree = "<group>"; };
-		C74534C69C363E5BDDE8F00F /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = topnotchcity/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		BCD1E41F31DF4506B4133230 /* Raleway-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Raleway-Medium.ttf"; path = "../src/assets/fonts/Raleway-Medium.ttf"; sourceTree = "<group>"; };
+		C410036202244EE68A13684B /* Raleway-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Raleway-Black.ttf"; path = "../src/assets/fonts/Raleway-Black.ttf"; sourceTree = "<group>"; };
+		D3D667BAE1424BD39E3707BB /* Raleway-Thin.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Raleway-Thin.ttf"; path = "../src/assets/fonts/Raleway-Thin.ttf"; sourceTree = "<group>"; };
+		D770194838D74D6BAB1B2E05 /* topnotchcity-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "topnotchcity-Bridging-Header.h"; path = "topnotchcity/topnotchcity-Bridging-Header.h"; sourceTree = "<group>"; };
+		DE9BF080C8074CE69C7E424C /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "topnotchcity/noop-file.swift"; sourceTree = "<group>"; };
+		E9B4D33B0BA94181B3790B87 /* Raleway-ExtraBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Raleway-ExtraBold.ttf"; path = "../src/assets/fonts/Raleway-ExtraBold.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		ED43B86D9CE94854A6CCDA6E /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "topnotchcity/noop-file.swift"; sourceTree = "<group>"; };
+		F05BD3C56FDB4346867381AE /* Raleway-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Raleway-Bold.ttf"; path = "../src/assets/fonts/Raleway-Bold.ttf"; sourceTree = "<group>"; };
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-topnotchcity/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -75,9 +75,9 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				ED43B86D9CE94854A6CCDA6E /* noop-file.swift */,
-				9F5DEA08E79C49BB8CA960E9 /* topnotchcity-Bridging-Header.h */,
-				C74534C69C363E5BDDE8F00F /* PrivacyInfo.xcprivacy */,
+				DE9BF080C8074CE69C7E424C /* noop-file.swift */,
+				D770194838D74D6BAB1B2E05 /* topnotchcity-Bridging-Header.h */,
+				2027A42596A30E7CB6ED6F75 /* PrivacyInfo.xcprivacy */,
 			);
 			name = topnotchcity;
 			sourceTree = "<group>";
@@ -89,21 +89,6 @@
 				58EEBF8E8E6FB1BC6CAF49B5 /* libPods-topnotchcity.a */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		712CE05EF4F04101906C23F1 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				08BD1BA684804D6CA785A446 /* Raleway-Black.ttf */,
-				922FE787DFA541E28A77802B /* Raleway-Bold.ttf */,
-				C5950BD911944CF6A29D1937 /* Raleway-ExtraBold.ttf */,
-				5725D77315A94475B819E06F /* Raleway-Light.ttf */,
-				9354F4C53E8C4B65910D9FB4 /* Raleway-Medium.ttf */,
-				77E843420B5F4F72A43255B6 /* Raleway-Regular.ttf */,
-				64994C611D414C5BA897A713 /* Raleway-SemiBold.ttf */,
-				851A5FD91B0F473299F43A53 /* Raleway-Thin.ttf */,
-			);
-			name = Resources;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -122,7 +107,7 @@
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				D65327D7A22EEC0BE12398D9 /* Pods */,
 				D7E4C46ADA2E9064B798F356 /* ExpoModulesProviders */,
-				712CE05EF4F04101906C23F1 /* Resources */,
+				D4BDE27938C04A8E89290716 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -154,6 +139,21 @@
 			path = topnotchcity/Supporting;
 			sourceTree = "<group>";
 		};
+		D4BDE27938C04A8E89290716 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				C410036202244EE68A13684B /* Raleway-Black.ttf */,
+				F05BD3C56FDB4346867381AE /* Raleway-Bold.ttf */,
+				E9B4D33B0BA94181B3790B87 /* Raleway-ExtraBold.ttf */,
+				62FA1F2AF92942129D1B6703 /* Raleway-Light.ttf */,
+				BCD1E41F31DF4506B4133230 /* Raleway-Medium.ttf */,
+				2F22420D3475419DA6B16FAB /* Raleway-Regular.ttf */,
+				7FE0DB7EB0274AD69245A47D /* Raleway-SemiBold.ttf */,
+				D3D667BAE1424BD39E3707BB /* Raleway-Thin.ttf */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		D65327D7A22EEC0BE12398D9 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -179,13 +179,13 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "topnotchcity" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				E6A8792DBCDCFEBC357D60B6 /* [Expo] Configure project */,
+				1C50C8E260A395E12DEFF14D /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				32F783E987B7588FB630AB5F /* [CP] Embed Pods Frameworks */,
+				9E4C36657BD855FA9399EACA /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -235,15 +235,15 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				9673D46594A446A3AB8034B2 /* Raleway-Black.ttf in Resources */,
-				57FD4166E4794BECBD35C587 /* Raleway-Bold.ttf in Resources */,
-				0469F9BCF2764D0D991A6F23 /* Raleway-ExtraBold.ttf in Resources */,
-				EB7E5E884143438F8D74CD9C /* Raleway-Light.ttf in Resources */,
-				67B1E4897F4D48E691944A6C /* Raleway-Medium.ttf in Resources */,
-				C506983020EC457EB51A5C2D /* Raleway-Regular.ttf in Resources */,
-				02234D62968447D3AA7CA1CC /* Raleway-SemiBold.ttf in Resources */,
-				128EF32A99854C19AC0DA7B4 /* Raleway-Thin.ttf in Resources */,
-				51242773DA831ACC61B07FB4 /* PrivacyInfo.xcprivacy in Resources */,
+				365A6FAA3A4E4BFC87906E86 /* Raleway-Black.ttf in Resources */,
+				2FC1AE65FEDD496F83E33F78 /* Raleway-Bold.ttf in Resources */,
+				CA3C49C79EB24613ABE042DE /* Raleway-ExtraBold.ttf in Resources */,
+				545B83E5469542218594FCFA /* Raleway-Light.ttf in Resources */,
+				4D3272C03C024938A320B8B4 /* Raleway-Medium.ttf in Resources */,
+				C9A21BF6EFDA417E8D95F5F2 /* Raleway-Regular.ttf in Resources */,
+				8532052C6C0E4A69A9297D78 /* Raleway-SemiBold.ttf in Resources */,
+				5A35CC17E12448CD91BE4AA9 /* Raleway-Thin.ttf in Resources */,
+				67FEF29E7EE63A250AA1EBC3 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -287,61 +287,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		32F783E987B7588FB630AB5F /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-topnotchcity/Pods-topnotchcity-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-topnotchcity/Pods-topnotchcity-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-topnotchcity/Pods-topnotchcity-resources.sh",
-				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/EXConstants.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/ExpoConstants_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoFileSystem/ExpoFileSystem_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoSystemUI/ExpoSystemUI_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/RCT-Folly/RCT-Folly_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/React-Core_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/React-cxxreact/React-cxxreact_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/SDWebImage/SDWebImage.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/boost/boost_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/glog/glog_privacy.bundle",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EXConstants.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoConstants_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoFileSystem_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoSystemUI_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RCT-Folly_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-Core_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-cxxreact_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SDWebImage.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/boost_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/glog_privacy.bundle",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-topnotchcity/Pods-topnotchcity-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		E6A8792DBCDCFEBC357D60B6 /* [Expo] Configure project */ = {
+		1C50C8E260A395E12DEFF14D /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -360,6 +306,66 @@
 			shellPath = /bin/sh;
 			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-topnotchcity/expo-configure-project.sh\"\n";
 		};
+		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-topnotchcity/Pods-topnotchcity-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/EXConstants.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/ExpoConstants_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoFileSystem/ExpoFileSystem_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoSystemUI/ExpoSystemUI_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/RCT-Folly/RCT-Folly_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/React-Core_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/React-cxxreact/React-cxxreact_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/SDWebImage/SDWebImage.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/boost/boost_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/glog/glog_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/lottie-ios/LottiePrivacyInfo.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/lottie-react-native/Lottie_React_Native_Privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/react-native-maps/ReactNativeMapsPrivacy.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EXConstants.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoConstants_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoFileSystem_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoSystemUI_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RCT-Folly_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-Core_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-cxxreact_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SDWebImage.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/boost_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/glog_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/LottiePrivacyInfo.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Lottie_React_Native_Privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ReactNativeMapsPrivacy.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-topnotchcity/Pods-topnotchcity-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9E4C36657BD855FA9399EACA /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-topnotchcity/Pods-topnotchcity-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-topnotchcity/Pods-topnotchcity-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -370,7 +376,7 @@
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */,
-				474C68010975457080D1A950 /* noop-file.swift in Sources */,
+				C47269F829184065A47BF9D9 /* noop-file.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

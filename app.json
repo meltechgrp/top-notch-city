@@ -1,55 +1,72 @@
 {
-  "expo": {
-    "name": "top-notch-city",
-    "slug": "top-notch-city",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./src/assets/images/icon.png",
-    "scheme": "top-notch-city",
-    "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.joshhumphrey02.topnotchcity"
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./src/assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "package": "com.joshhumphrey02.topnotchcity"
-    },
-    "splash": {
-      "image": "./src/assets/images/splash-icon.png",
-      "imageWidth": 200,
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./src/assets/images/favicon.png"
-    },
-    "plugins": [
-      "expo-router",
-      [
-        "expo-font",
-        {
-          "fonts": [
-            "./src/assets/fonts/Raleway-Black.ttf",
-            "./src/assets/fonts/Raleway-Bold.ttf",
-            "./src/assets/fonts/Raleway-ExtraBold.ttf",
-            "./src/assets/fonts/Raleway-Light.ttf",
-            "./src/assets/fonts/Raleway-Medium.ttf",
-            "./src/assets/fonts/Raleway-Regular.ttf",
-            "./src/assets/fonts/Raleway-SemiBold.ttf",
-            "./src/assets/fonts/Raleway-Thin.ttf"
-          ]
-        }
-      ]
-    ],
-    "experiments": {
-      "typedRoutes": true
-    }
-  }
+	"expo": {
+		"name": "top-notch-city",
+		"slug": "top-notch-city",
+		"version": "1.0.0",
+		"orientation": "portrait",
+		"icon": "./src/assets/images/icon.png",
+		"scheme": "top-notch-city",
+		"userInterfaceStyle": "automatic",
+		"newArchEnabled": true,
+		"ios": {
+			"supportsTablet": true,
+			"bundleIdentifier": "com.joshhumphrey02.topnotchcity",
+			"infoPlist": {
+				"UIViewControllerBasedStatusBarAppearance": false,
+				"NSLocationWhenInUseUsageDescription": "Allow $(PRODUCT_NAME) to access to your location to track your current position."
+			}
+		},
+		"android": {
+			"adaptiveIcon": {
+				"foregroundImage": "./src/assets/images/adaptive-icon.png",
+				"backgroundColor": "#ffffff"
+			},
+			"package": "com.joshhumphrey02.topnotchcity",
+			"permissions": ["android.permission.ACCESS_FINE_LOCATION"],
+			"softwareKeyboardLayoutMode": "resize",
+			"config": {
+				"googleMaps": {
+					"apiKey": "process.env.EXPO_PUBLIC_ANDROID_MAPS_API_KEY"
+				}
+			}
+		},
+		"splash": {
+			"image": "./src/assets/images/splash-icon.png",
+			"imageWidth": 200,
+			"resizeMode": "contain",
+			"backgroundColor": "#ffffff"
+		},
+		"web": {
+			"bundler": "metro",
+			"output": "static",
+			"favicon": "./src/assets/images/favicon.png"
+		},
+		"plugins": [
+			"expo-router",
+			[
+				"expo-font",
+				{
+					"fonts": [
+						"./src/assets/fonts/Raleway-Black.ttf",
+						"./src/assets/fonts/Raleway-Bold.ttf",
+						"./src/assets/fonts/Raleway-ExtraBold.ttf",
+						"./src/assets/fonts/Raleway-Light.ttf",
+						"./src/assets/fonts/Raleway-Medium.ttf",
+						"./src/assets/fonts/Raleway-Regular.ttf",
+						"./src/assets/fonts/Raleway-SemiBold.ttf",
+						"./src/assets/fonts/Raleway-Thin.ttf"
+					]
+				}
+			],
+			[
+				"expo-location",
+				{
+					"locationAlwaysAndWhenInUsePermission": "For sos live location, allow $(PRODUCT_NAME) to access your location."
+				}
+			]
+		],
+		"experiments": {
+			"typedRoutes": true
+		}
+	}
 }

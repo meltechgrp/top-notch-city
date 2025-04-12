@@ -15,7 +15,7 @@ export default function VerifySuccess() {
 		successRef.current?.play();
 	}, []);
 	return (
-		<OnboardingScreenContainer>
+		<OnboardingScreenContainer allowBack={false}>
 			<VStack className="w-[98%] max-w-[26rem] mt-4 mx-auto rounded-xl bg-background-200/90 p-6">
 				<View className="px-2 justify-between items-center">
 					<LottieView
