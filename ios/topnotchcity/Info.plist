@@ -7,7 +7,7 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>
-    <string>top-notch-city</string>
+    <string>Top Notch City</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
@@ -46,7 +46,7 @@
       <true/>
     </dict>
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>For sos live location, allow $(PRODUCT_NAME) to access your location.</string>
+    <string>For current location, allow $(PRODUCT_NAME) to access your location.</string>
     <key>NSLocationAlwaysUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to access your location</string>
     <key>NSLocationWhenInUseUsageDescription</key>

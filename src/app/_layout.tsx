@@ -1,9 +1,11 @@
 import './global.css';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import { ClerkProvider } from '@clerk/clerk-expo';
+import { tokenCache } from '@clerk/clerk-expo/token-cache';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react';
-import { GluestackUIProvider, SafeAreaView } from '../components/ui';
+import { GluestackUIProvider } from '../components/ui';
 import 'react-native-reanimated';
 import * as Linking from 'expo-linking';
 import { ErrorBoundaryProps, Slot, Stack } from 'expo-router';
@@ -40,7 +42,9 @@ export default function RootLayout() {
 			{/* <ThemeContext.Provider value={{ colorMode, toggleColorMode }}> */}
 			<GestureHandlerRootView style={{ flex: 1 }}>
 				<GluestackUIProvider mode={'light'} style={{ flex: 1 }}>
-					<Slot />
+					<ClerkProvider tokenCache={tokenCache}>
+						<Slot />
+					</ClerkProvider>
 					<StatusBar style="auto" />
 				</GluestackUIProvider>
 			</GestureHandlerRootView>

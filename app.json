@@ -1,6 +1,6 @@
 {
 	"expo": {
-		"name": "top-notch-city",
+		"name": "Top Notch City",
 		"slug": "top-notch-city",
 		"version": "1.0.0",
 		"orientation": "portrait",
@@ -61,7 +61,7 @@
 			[
 				"expo-location",
 				{
-					"locationAlwaysAndWhenInUsePermission": "For sos live location, allow $(PRODUCT_NAME) to access your location."
+					"locationAlwaysAndWhenInUsePermission": "For current location, allow $(PRODUCT_NAME) to access your location."
 				}
 			]
 		],
