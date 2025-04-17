@@ -17,8 +17,38 @@ export default function AuthLayout() {
 			screenOptions={{
 				headerShown: false,
 				headerBackVisible: true,
-			}}
-		/>
+			}}>
+			<Stack.Screen
+				name="signup"
+				options={{
+					headerShown: false,
+				}}
+			/>
+			<Stack.Screen
+				name="signin"
+				options={{
+					headerShown: false,
+				}}
+			/>
+			<Stack.Screen
+				name="reset-password"
+				options={{
+					headerShown: false,
+				}}
+			/>
+			<Stack.Screen
+				name="verify-otp"
+				options={{
+					headerShown: false,
+				}}
+			/>
+			<Stack.Screen
+				name="verify-success"
+				options={{
+					headerShown: false,
+				}}
+			/>
+		</Stack>
 	);
 }
 

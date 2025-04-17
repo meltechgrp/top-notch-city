@@ -1,5 +1,6 @@
 import OnboardingScreenContainer from '@/components/onboarding/OnboardingScreenContainer';
-import { router } from 'expo-router';
+import { useRouter } from 'expo-router';
+import * as Haptics from 'expo-haptics';
 import {
 	FormControl,
 	FormControlError,
@@ -17,30 +18,25 @@ import {
 	AlertCircleIcon,
 	Pressable,
 } from '@/components/ui';
-import * as z from 'zod';
 import React from 'react';
 import { User } from 'lucide-react-native';
-
-const formSchema = z.object({
-	email: z.string().email({
-		message: 'Please enter a valid email address',
-	}),
-	password: z.string().min(8, {
-		message: 'Password must be at least 8 characters long',
-	}),
-});
+import { isClerkAPIResponseError, useSignIn } from '@clerk/clerk-expo';
+import { ClerkAPIError } from '@clerk/types';
 
 export default function SignIn() {
-	const [isInvalid, setIsInvalid] = React.useState({
-		email: false,
-		password: false,
-	});
+	// const { signIn, setActive, isLoaded } = useSignIn();
+	// const [isSigningIn, setIsSigningIn] = React.useState(false);
+	// const [errors, setErrors] = React.useState<ClerkAPIError[]>([]);
+	const router = useRouter();
 	const [form, setForm] = React.useState({
 		email: '',
 		password: '',
 	});
-	const handleSubmit = () => {
-		router.dismissTo('/verify-otp');
+	const handleSubmit = async () => {
+		if (process.env.EXPO_OS === 'ios') {
+			await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+		}
+		router.push('/verify-otp');
 		// if (form.password.length < 8) {
 		// 	setIsInvalid({ ...isInvalid, password: true });
 		// } else if (form.email.length < 5) {
@@ -49,16 +45,12 @@ export default function SignIn() {
 		// 	setIsInvalid({ email: false, password: false });
 		// }
 	};
+	// Handle the submission of the sign-in form
+
 	function onBack() {
 		if (router.canGoBack()) {
 			router.back();
 		} else {
-			/*
-			 * Make it so we can go back to onboarding screen if app starts from here.
-			 */
-			// removeAuthToken();
-			// useStore.getState().resetStore();
-			// useTempStore.getState().resetStore();
 			router.replace('/onboarding');
 		}
 	}
@@ -74,7 +66,7 @@ export default function SignIn() {
 					</Text>
 				</View>
 				<View>
-					<FormControl isInvalid={isInvalid.email} size="lg" isRequired={false}>
+					<FormControl size="lg" isRequired={false}>
 						<FormControlLabel>
 							<FormControlLabelText className="font-light">
 								Email
@@ -96,10 +88,7 @@ export default function SignIn() {
 							</FormControlErrorText>
 						</FormControlError>
 					</FormControl>
-					<FormControl
-						isInvalid={isInvalid.password}
-						size="md"
-						isRequired={false}>
+					<FormControl size="md" isRequired={false}>
 						<FormControlLabel>
 							<FormControlLabelText className="font-light">
 								Password

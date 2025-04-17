@@ -16,7 +16,7 @@ type Props = {
 };
 export default function PropertyListItem(props: Props) {
 	const { data, className, isMine } = props;
-	const { banner, name, price, location } = data;
+	const { banner, name, price, location, id } = data;
 
 	const { width, onLayout } = useLayout();
 	// prettier-ignore
@@ -26,51 +26,55 @@ export default function PropertyListItem(props: Props) {
 			onLayout={onLayout}
 			key={data.id}
 			className={cn(
-				'relative rounded-[8px] h-[220px] active:scale-[0.95]',
+				'relative w-[240px] overflow-hidden min-h-[190px] active:scale-[0.95]',
 				className
 			)}
 			style={{ borderRadius: 8, height }}
 			onPress={() => {
-				if (isMine) {
-					router.push({
-						pathname: `/(protected)/(tabs)/home`,
-						params: {
-							propertyId: '',
-						},
-					});
-				} else {
-					router.push({
-						pathname: `/(protected)/(tabs)/home`,
-						params: {
-							propertyId: '',
-						},
-					});
-				}
+				// if (isMine) {
+				// 	router.push({
+				// 		pathname: `/(protected)/(tabs)/home`,
+				// 		params: {
+				// 			propertyId: '',
+				// 		},
+				// 	});
+				// } else {
+				router.push({
+					pathname: `/property/[propertyId]`,
+					params: {
+						propertyId: id,
+					},
+				});
+				// }
 			}}>
 			<ImageBackground
 				source={banner}
 				alt="banner"
-				className="rounded-md overflow-hidden flex-1 relative">
-				<View className="flex-1 items-end">
-					<View className=" flex-row items-center justify-center gap-1 py-1 px-2.5 rounded-full bg-primary-600 ">
-						<Map size={12} color={'#fff'} />
-						<Text className="text-xl text-white">{2.3}</Text>
-						<Text className=" text-white">km</Text>
-					</View>
-				</View>
-				<View className="pt-3 w-full">
-					<Text className="text-sm text-black-900" numberOfLines={1}>
-						{capitalize(name)}
-					</Text>
-					<View className="flex-row justify-between border-t border-gray-200 mt-2 pt-2 items-center">
-						<View className="flex-row justify-center items-center gap-1">
-							<MapPin size={12} color={'red'} />
-							<Text className="text-gray-600 text-xs">{location}</Text>
+				className=" flex-1 relative overflow-hidden rounded-xl">
+				<View className="flex-1 bg-black/10 p-4">
+					<View className="flex-1 items-end">
+						<View className=" flex-row items-center justify-center gap-1 py-1 px-2.5 rounded-full bg-primary-600 ">
+							<Map size={12} color={'#fff'} />
+							<Text className="text-xl text-white">{2.3}</Text>
+							<Text className=" text-white">km</Text>
 						</View>
-
-						<Text className="text-primary-900 mt-1">
-							{formatMoney(price, 'NGN', 0)}
+					</View>
+					<View className="pt-3 w-full">
+						<Text
+							className="text-base text-white font-semibold"
+							numberOfLines={1}>
+							{capitalize(name)}
 						</Text>
+						<View className="flex-row justify-between pt-2 items-center">
+							<View className="flex-row justify-center items-center gap-1">
+								<MapPin size={14} color={'red'} />
+								<Text className="text-white text-[8px]">{location}</Text>
+							</View>
+
+							<Text className="text-white mt-1">
+								{formatMoney(price, 'NGN', 0)}
+							</Text>
+						</View>
 					</View>
 				</View>
 			</ImageBackground>
