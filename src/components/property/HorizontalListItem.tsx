@@ -6,6 +6,7 @@ import { Pressable, View } from 'react-native';
 import { Property } from './PropertyHorizontalList';
 import { Image, Text } from '../ui';
 import { Bath, Bed } from 'lucide-react-native';
+import { hapticFeed } from '../HapticTab';
 
 type Props = {
 	data: Property;
@@ -14,7 +15,7 @@ type Props = {
 };
 export default function HorizontalListItem(props: Props) {
 	const { data, className, isMine } = props;
-	const { banner, name, price, location } = data;
+	const { banner, name, price, id } = data;
 
 	return (
 		<Pressable
@@ -25,21 +26,22 @@ export default function HorizontalListItem(props: Props) {
 			)}
 			style={{ borderRadius: 8 }}
 			onPress={() => {
-				if (isMine) {
-					router.push({
-						pathname: `/(protected)/(tabs)/home`,
-						params: {
-							propertyId: '',
-						},
-					});
-				} else {
-					router.push({
-						pathname: `/(protected)/(tabs)/home`,
-						params: {
-							propertyId: '',
-						},
-					});
-				}
+				hapticFeed();
+				// if (isMine) {
+				// 	router.push({
+				// 		pathname: `/(protected)/(tabs)/home`,
+				// 		params: {
+				// 			propertyId: '',
+				// 		},
+				// 	});
+				// } else {
+				router.push({
+					pathname: `/property/[propertyId]`,
+					params: {
+						propertyId: id,
+					},
+				});
+				// }
 			}}>
 			<Image source={banner} className="h-full w-40 rounded-xl" alt={name} />
 			<View className="pt-3 w-[160px]">

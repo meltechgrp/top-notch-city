@@ -15,11 +15,10 @@ import {
 	Text,
 	View,
 	VStack,
-	AlertCircleIcon,
 	Pressable,
 } from '@/components/ui';
 import React from 'react';
-import { User } from 'lucide-react-native';
+import { AlertCircleIcon, User } from 'lucide-react-native';
 import { isClerkAPIResponseError, useSignIn } from '@clerk/clerk-expo';
 import { ClerkAPIError } from '@clerk/types';
 

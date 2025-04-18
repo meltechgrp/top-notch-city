@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "topnotchcity.app"
-               BlueprintName = "topnotchcity"
-               ReferencedContainer = "container:topnotchcity.xcodeproj">
+               BuildableName = "TopNotchCity.app"
+               BlueprintName = "TopNotchCity"
+               ReferencedContainer = "container:TopNotchCity.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "topnotchcityTests.xctest"
-               BlueprintName = "topnotchcityTests"
-               ReferencedContainer = "container:topnotchcity.xcodeproj">
+               BuildableName = "TopNotchCityTests.xctest"
+               BlueprintName = "TopNotchCityTests"
+               ReferencedContainer = "container:TopNotchCity.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "topnotchcity.app"
-            BlueprintName = "topnotchcity"
-            ReferencedContainer = "container:topnotchcity.xcodeproj">
+            BuildableName = "TopNotchCity.app"
+            BlueprintName = "TopNotchCity"
+            ReferencedContainer = "container:TopNotchCity.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "topnotchcity.app"
-            BlueprintName = "topnotchcity"
-            ReferencedContainer = "container:topnotchcity.xcodeproj">
+            BuildableName = "TopNotchCity.app"
+            BlueprintName = "TopNotchCity"
+            ReferencedContainer = "container:TopNotchCity.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

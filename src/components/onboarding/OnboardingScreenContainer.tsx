@@ -1,9 +1,8 @@
 import ScreenContianer from '@/components/shared/ScreenContianer';
-import ReplyIcon from '@/components/icons/ReplyIcon';
 import Platforms from '@/constants/Plaforms';
 import { router } from 'expo-router';
 import { Pressable, ScrollView, View } from 'react-native';
-import { Box, Image, ImageBackground, Text } from '../ui';
+import { Box, Image, ImageBackground } from '../ui';
 import { StatusBar } from 'expo-status-bar';
 import { ChevronLeft } from 'lucide-react-native';
 

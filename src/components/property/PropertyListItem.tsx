@@ -8,6 +8,7 @@ import { Pressable, View } from 'react-native';
 import { Property } from './PropertyHorizontalList';
 import { ImageBackground, Text } from '../ui';
 import { Map, MapPin } from 'lucide-react-native';
+import { hapticFeed } from '../HapticTab';
 
 type Props = {
 	data: Property;
@@ -31,6 +32,7 @@ export default function PropertyListItem(props: Props) {
 			)}
 			style={{ borderRadius: 8, height }}
 			onPress={() => {
+				hapticFeed();
 				// if (isMine) {
 				// 	router.push({
 				// 		pathname: `/(protected)/(tabs)/home`,

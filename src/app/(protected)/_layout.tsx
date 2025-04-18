@@ -10,7 +10,7 @@ export default function ProtectedRoutesLayout() {
 			screenOptions={{
 				headerShown: false,
 				headerBackVisible: true,
-				statusBarStyle: 'dark',
+				statusBarStyle: 'auto',
 			}}
 		/>
 	);
