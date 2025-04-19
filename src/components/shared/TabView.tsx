@@ -8,10 +8,18 @@ interface Props {
 	scrollEnabled?: boolean;
 	onTabSelected?: (tab: number) => void;
 	style?: any;
+	scrollAnimationDuration?: number;
+	mode?: 'parallax' | 'horizontal-stack' | 'vertical-stack';
 	children: React.ReactNode;
 }
 export default function TabView(props: Props) {
-	const { activeTab, onTabSelected, children } = props;
+	const {
+		activeTab,
+		onTabSelected,
+		children,
+		mode,
+		scrollAnimationDuration = 400,
+	} = props;
 
 	const carouselRef = useRef<ICarouselInstance>(null);
 
@@ -40,9 +48,10 @@ export default function TabView(props: Props) {
 			width={Layout.window.width}
 			height={Layout.window.height}
 			data={filteredChildren}
+			mode={mode as any}
 			onProgressChange={progress}
 			defaultIndex={activeTab}
-			scrollAnimationDuration={400}
+			scrollAnimationDuration={scrollAnimationDuration}
 			pagingEnabled={true}
 			snapEnabled={true}
 			onSnapToItem={(index) => runOnJS(handleSnapToItem)(index)}

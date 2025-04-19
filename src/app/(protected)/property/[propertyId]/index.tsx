@@ -1,38 +1,27 @@
 import { Property } from '@/components/home/FoundProperties';
-import {
-	Button,
-	ButtonText,
-	Heading,
-	ImageBackground,
-	Pressable,
-	Text,
-	View,
-} from '@/components/ui';
+import { Heading, Pressable, Text, View } from '@/components/ui';
 import { ScrollView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import {
-	Bath,
-	Bed,
 	ChevronLeftIcon,
 	ChevronRight,
-	CircleParking,
 	Edit,
-	Flower2,
-	Home,
 	Map,
-	MapPin,
-	Share,
-	WashingMachine,
+	Plus,
+	Share2,
 } from 'lucide-react-native';
-import { formatMoney } from '@/lib/utils';
+import { TabView, SceneMap } from 'react-native-tab-view';
 import PropertyHeader from '@/components/property/PropertyHeader';
 import FacilityItem from '@/components/property/FacilityItem';
 import { hapticFeed } from '@/components/HapticTab';
 import PropertyImages from '@/components/property/PropertyImages';
 import BookPropertyIcon from '@/components/icons/BookPropertyIcon';
 import WhatsappIcon from '@/components/icons/WhatsappIcon';
+import Layout from '@/constants/Layout';
+import CustomTabBar2 from '@/components/layouts/CustomTopBar2';
+import Property3DView from '@/components/property/Property3dView';
 
 const data: Property[] = [
 	{
@@ -63,6 +52,7 @@ const data: Property[] = [
 
 export default function PropertyItem() {
 	const router = useRouter();
+	const [index, setIndex] = React.useState(0);
 	const { propertyId } = useLocalSearchParams() as { propertyId: string };
 	const property = useMemo(() => {
 		return data.find((item) => item.id === propertyId);
@@ -115,14 +105,42 @@ export default function PropertyItem() {
 			path: require('@/assets/images/property/img6.png'),
 		},
 	];
+	const renderScene = {
+		images: () => <PropertyImages images={images} />,
+		video: () => (
+			<View className="flex-1 items-center h-[20rem] justify-center">
+				<Text size="xl">Video Coming Soon</Text>
+			</View>
+		),
+		view: () => <Property3DView id={propertyId} image={images[0]} />,
+	};
+	const routes = [
+		{ key: 'images', title: 'Pictures' },
+		{ key: 'video', title: 'Videos' },
+		{ key: 'view', title: '3D View' },
+	];
 	return (
 		<>
 			<Stack.Screen
 				options={{
 					headerShown: true,
+					...(process.env.EXPO_OS !== 'ios'
+						? {}
+						: {
+								headerLargeTitle: true,
+								headerTransparent: true,
+								headerBlurEffect: 'systemChromeMaterial',
+								headerLargeTitleShadowVisible: false,
+								headerShadowVisible: true,
+								headerLargeStyle: {
+									// NEW: Make the large title transparent to match the background.
+									backgroundColor: 'transparent',
+								},
+							}),
 					headerTransparent: true,
 					headerBackVisible: false,
-					headerTitle: '',
+					headerTitle: property.name,
+					headerTitleStyle: { color: 'white' },
 					headerLeft: () => (
 						<Pressable
 							onPress={() => {
@@ -135,20 +153,53 @@ export default function PropertyItem() {
 						</Pressable>
 					),
 					headerRight: () => (
-						<View className=" flex-row items-center justify-center gap-1 py-1 px-2.5 rounded-full bg-primary-600 ">
-							<Map size={18} color={'#fff'} />
-							<Text className="text-2xl text-white">{1.8}</Text>
-							<Text className=" text-white text-xl">km</Text>
+						<View
+							style={{
+								flexDirection: 'row',
+								alignItems: 'center',
+							}}>
+							<Pressable
+								onPress={() => {
+									hapticFeed();
+									router.push({
+										pathname: '/property/[propertyId]/share',
+										params: { propertyId, name: property.name },
+									});
+								}}
+								style={{ padding: 8 }}>
+								<Share2 color={'orange'} />
+							</Pressable>
+							<Pressable
+								onPress={() => {
+									hapticFeed();
+									router.push({
+										pathname: '/property/[propertyId]/share',
+										params: { propertyId },
+									});
+								}}
+								style={{ padding: 8 }}>
+								<Edit color={'orange'} />
+							</Pressable>
+							<Pressable
+								onPress={() => {
+									hapticFeed();
+									router.push({
+										pathname: '/property/[propertyId]/share',
+										params: { propertyId },
+									});
+								}}
+								style={{ paddingLeft: 8 }}>
+								<Plus color={'orange'} />
+							</Pressable>
 						</View>
 					),
 				}}
 			/>
-			<StatusBar style={'light'} />
 			<ScrollView
 				keyboardShouldPersistTaps="handled"
-				className=" relative pt-0">
+				className=" relative pt-0 flex-1">
 				<PropertyHeader {...property} />
-				<View className=" px-4 pt-4 gap-6 pb-20">
+				<View className=" px-4 pt-4 flex-1 gap-6 pb-20">
 					<View className="gap-2">
 						<Heading size="lg">Description</Heading>
 						<Text className="text-sm">
@@ -168,7 +219,14 @@ export default function PropertyItem() {
 							))}
 						</View>
 					</View>
-					<PropertyImages images={images} />
+					<TabView
+						style={{ height: 340 }}
+						renderTabBar={(props) => <CustomTabBar2 {...props} />}
+						navigationState={{ index, routes }}
+						renderScene={SceneMap(renderScene)}
+						onIndexChange={setIndex}
+						initialLayout={{ width: Layout.window.width }}
+					/>
 					<View className=" gap-4">
 						<Pressable className="flex-row gap-4 bg-white p-4 rounded-xl items-center justify-between">
 							<BookPropertyIcon />

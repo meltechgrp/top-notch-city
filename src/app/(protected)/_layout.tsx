@@ -1,10 +1,7 @@
 import AppCrashScreen from '@/components/shared/AppCrashScreen';
-import { ErrorBoundaryProps, router, Stack, usePathname } from 'expo-router';
-import { useEffect } from 'react';
+import { ErrorBoundaryProps, Stack } from 'expo-router';
 
 export default function ProtectedRoutesLayout() {
-	const pathname = usePathname();
-
 	return (
 		<Stack
 			screenOptions={{
