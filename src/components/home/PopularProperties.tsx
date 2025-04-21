@@ -7,7 +7,7 @@ export default function PopulerProperties() {
 		<SectionHeaderWithRef
 			title="Featured Properties"
 			onSeeAllPress={() => {
-				router.push('/(protected)/(tabs)/home');
+				router.push('/(protected)/featured/(tabs)/home');
 			}}>
 			<PropertyHorizontalList />
 		</SectionHeaderWithRef>

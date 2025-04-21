@@ -1,8 +1,6 @@
 import './global.css';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import { ClerkProvider } from '@clerk/clerk-expo';
-import { tokenCache } from '@clerk/clerk-expo/token-cache';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react';
 import { GluestackUIProvider } from '../components/ui';
@@ -42,9 +40,7 @@ export default function RootLayout() {
 			{/* <ThemeContext.Provider value={{ colorMode, toggleColorMode }}> */}
 			<GestureHandlerRootView style={{ flex: 1 }}>
 				<GluestackUIProvider mode={'light'} style={{ flex: 1 }}>
-					<ClerkProvider tokenCache={tokenCache}>
-						<Slot />
-					</ClerkProvider>
+					<Slot />
 					<StatusBar style="auto" />
 				</GluestackUIProvider>
 			</GestureHandlerRootView>

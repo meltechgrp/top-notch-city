@@ -1,10 +1,10 @@
+import useLayout from '@/hooks/useLayout';
 import { cn } from '@/lib/utils';
 import { MaterialTopTabBarProps } from '@react-navigation/material-top-tabs';
 import { NavigationState } from '@react-navigation/native';
 import { useMemo } from 'react';
-import { Pressable, Animated } from 'react-native';
-import { Text, View } from '../ui';
-import useLayout from '@/hooks/useLayout';
+import { View, Pressable, Animated } from 'react-native';
+import { Text } from '../ui';
 
 type Props = {
 	containerClassName?: string;
@@ -28,11 +28,11 @@ export default function CustomTopBar(props: Props) {
 		[w, activeRoutes]
 	);
 	return (
-		<View className={cn('px-4 py-4 w-full bg-background', containerClassName)}>
+		<View className={cn('px-4 py-4 w-full bg-white', containerClassName)}>
 			<View
 				onLayout={onLayout2}
-				className="flex-row h-12 gap-1 bg-secondary rounded-xl p-1">
-				<View className="relative flex-row gap-1 p-1 rounded-md w-full">
+				className="flex-row h-10 bg-gray-200 rounded-xl p-1">
+				<View className="relative flex-row w-full">
 					<Animated.View
 						style={[
 							{
@@ -52,7 +52,7 @@ export default function CustomTopBar(props: Props) {
 								],
 							},
 						]}
-						className="items-center justify-center absolute bg-primary top-1 left-1.5 rounded-xl h-full -z-10"
+						className="items-center justify-center absolute bg-white rounded-lg h-full -z-10"
 					/>
 					{activeRoutes.map((route, index) => {
 						const { options } = descriptors[route.key];
@@ -86,18 +86,11 @@ export default function CustomTopBar(props: Props) {
 								onPress={onPress}
 								onLongPress={onLongPress}
 								key={route.key}
-								style={[{ width: tabWidth - 2 }]}
-								className={cn(
-									'items-center justify-center bg-secondary/80 rounded-lg flex-1 z-10 flex flex-row gap-1',
-									isFocused && 'bg-primary rounded-lg'
-								)}>
+								style={[{ width: tabWidth }]}
+								className="items-center justify-center z-10 flex flex-row gap-1">
 								{typeof options.tabBarLabel === 'undefined' ||
 								typeof options.tabBarLabel === 'string' ? (
-									<Text
-										className={cn(
-											' text-sm font-bold',
-											isFocused && 'text-white font-medium font-manrope'
-										)}>
+									<Text className="text-black font-heading font-medium text-sm">
 										{(options as any).staticTitle ||
 											options.title ||
 											route.name}

@@ -169,28 +169,6 @@ export default function PropertyItem() {
 								style={{ padding: 8 }}>
 								<Share2 color={'orange'} />
 							</Pressable>
-							<Pressable
-								onPress={() => {
-									hapticFeed();
-									router.push({
-										pathname: '/property/[propertyId]/share',
-										params: { propertyId },
-									});
-								}}
-								style={{ padding: 8 }}>
-								<Edit color={'orange'} />
-							</Pressable>
-							<Pressable
-								onPress={() => {
-									hapticFeed();
-									router.push({
-										pathname: '/property/[propertyId]/share',
-										params: { propertyId },
-									});
-								}}
-								style={{ paddingLeft: 8 }}>
-								<Plus color={'orange'} />
-							</Pressable>
 						</View>
 					),
 				}}

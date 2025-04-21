@@ -1,6 +1,5 @@
 import OnboardingScreenContainer from '@/components/onboarding/OnboardingScreenContainer';
 import { useRouter } from 'expo-router';
-import * as Haptics from 'expo-haptics';
 import {
 	FormControl,
 	FormControlError,
@@ -19,22 +18,16 @@ import {
 } from '@/components/ui';
 import React from 'react';
 import { AlertCircleIcon, User } from 'lucide-react-native';
-import { isClerkAPIResponseError, useSignIn } from '@clerk/clerk-expo';
-import { ClerkAPIError } from '@clerk/types';
+import { hapticFeed } from '@/components/HapticTab';
 
 export default function SignIn() {
-	// const { signIn, setActive, isLoaded } = useSignIn();
-	// const [isSigningIn, setIsSigningIn] = React.useState(false);
-	// const [errors, setErrors] = React.useState<ClerkAPIError[]>([]);
 	const router = useRouter();
 	const [form, setForm] = React.useState({
 		email: '',
 		password: '',
 	});
 	const handleSubmit = async () => {
-		if (process.env.EXPO_OS === 'ios') {
-			await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-		}
+		hapticFeed();
 		router.push('/verify-otp');
 		// if (form.password.length < 8) {
 		// 	setIsInvalid({ ...isInvalid, password: true });

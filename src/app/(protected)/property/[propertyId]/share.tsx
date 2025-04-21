@@ -1,4 +1,4 @@
-import { useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
 import { Share } from 'react-native';
 import * as Linking from 'expo-linking';
 import { Button, View, Text, ButtonText } from '@/components/ui';
@@ -64,39 +64,50 @@ export default function ShareListScreen() {
 	];
 
 	return (
-		<BodyScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
-			<View className="items-center mb-6 gap-1">
-				<Text size="2xl" className="text-center">
-					Share {name}
-				</Text>
-				<Text className="text-center text-gray-500 px-6">
-					Send this property to friends or family and collaborate with them
-					easily.
-				</Text>
-			</View>
+		<>
+			<Stack.Screen
+				options={{
+					headerTitle: 'Share',
+				}}
+			/>
+			<BodyScrollView
+				contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
+				<View className="items-center mb-6 gap-1">
+					<Text size="2xl" className="text-center">
+						Share {name}
+					</Text>
+					<Text className="text-center text-gray-500 px-6">
+						Send this property to friends or family and collaborate with them
+						easily.
+					</Text>
+				</View>
 
-			<View className="flex-row justify-around mt-6">
-				{sharePlatforms.map((platform) => (
-					<TouchableOpacity
-						key={platform.name}
-						onPress={platform.onPress}
-						className="items-center">
-						{platform.icon}
-						<Text className="text-xs text-gray-600 mt-1">{platform.name}</Text>
-					</TouchableOpacity>
-				))}
-			</View>
-			<View className="flex-row items-center gap-4 mb-6">
-				<View className="flex-1 h-px bg-gray-300" />
-				<Text className="text-gray-500 text-sm">or share with</Text>
-				<View className="flex-1 h-px bg-gray-300" />
-			</View>
+				<View className="flex-row justify-around mt-6">
+					{sharePlatforms.map((platform) => (
+						<TouchableOpacity
+							key={platform.name}
+							onPress={platform.onPress}
+							className="items-center">
+							{platform.icon}
+							<Text className="text-xs text-gray-600 mt-1">
+								{platform.name}
+							</Text>
+						</TouchableOpacity>
+					))}
+				</View>
+				<View className="flex-row items-center gap-4 my-6">
+					<View className="flex-1 h-px bg-gray-300" />
+					<Text className="text-gray-500 text-sm">or share with</Text>
+					<View className="flex-1 h-px bg-gray-300" />
+				</View>
 
-			<Button onPress={handleShareProperty} className="mt-6">
-				<ButtonText>
-					<Feather name="share-2" size={18} className="mr-2" /> Share via system
-				</ButtonText>
-			</Button>
-		</BodyScrollView>
+				<Button size="xl" onPress={handleShareProperty} className="mt-6">
+					<ButtonText>
+						<Feather name="share-2" size={18} className="mr-2" /> Share via
+						system
+					</ButtonText>
+				</Button>
+			</BodyScrollView>
+		</>
 	);
 }
