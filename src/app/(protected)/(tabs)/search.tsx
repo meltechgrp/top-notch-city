@@ -7,20 +7,23 @@ export default function SearchScreen() {
 	return (
 		<View className="flex-1">
 			<View className="overflow-hidden flex-1">
-				<View className=" absolute bottom-40 z-10 justify-between h-[75vh]">
-					<View className="flex-row mx-4 gap-2 items-center bg-white rounded-md p-2 px-4">
+				<View className="absolute top-20 w-full  z-10">
+					<View className="flex-row gap-2 items-center bg-white max-w-[90vw] mx-auto rounded-xl  p-2 px-4">
 						<Search color={'black'} size={20} />
 						<Input
 							size="xl"
 							variant="underlined"
+							isFocused={false}
 							className="flex-1 border-b-0 rounded-none">
-							<InputField placeholder="Enter Text here..." />
+							<InputField size="sm" placeholder="Search address or property " />
 						</Input>
 					</View>
+				</View>
+				<View className="absolute bottom-40 z-10">
 					<FoundHorizontalList />
 				</View>
 				<Map
-					scrollEnabled={false}
+					scrollEnabled={true}
 					showUserLocation={true}
 					user={{ fullName: 'Humphrey' }}
 				/>

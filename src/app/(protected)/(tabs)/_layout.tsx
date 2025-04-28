@@ -39,6 +39,7 @@ export default function TabLayout() {
 				name="sell"
 				options={{
 					title: 'Sell',
+					headerShown: true,
 					tabBarIcon: ({ color }) => <Tag size={24} color={color} />,
 				}}
 			/>
@@ -46,6 +47,7 @@ export default function TabLayout() {
 				name="saved"
 				options={{
 					title: 'Saved',
+					headerShown: true,
 					tabBarIcon: ({ color }) => <Bookmark size={24} color={color} />,
 				}}
 			/>
@@ -53,6 +55,7 @@ export default function TabLayout() {
 				name="profile"
 				options={{
 					title: 'Profile',
+					headerShown: true,
 					tabBarIcon: ({ color }) => <User size={24} color={color} />,
 				}}
 			/>
