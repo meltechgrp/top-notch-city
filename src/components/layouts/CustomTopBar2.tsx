@@ -15,15 +15,14 @@ export default function CustomTabBar2(props: TabBarProps<RouteType>) {
 	const tabWidth = useMemo(() => {
 		return width / navigationState.routes.length;
 	}, [width, navigationState.routes.length]);
-
 	return (
 		<View className="w-full py-3 ">
-			<View className="flex-row border-b border-gray-300 h-12 overflow-hidden relative">
+			<View className="flex-row bg-gray-300 rounded-[50px] px-1 h-12 overflow-hidden relative">
 				{/* Animated tab indicator */}
 				<Animated.View
-					className="absolute h-full border-b border-orange-500 rounded z-0 top-0"
+					className="absolute h-full bg-gray-50 rounded-[50px] z-0 top-0"
 					style={{
-						width: tabWidth - 8,
+						width: tabWidth - 28,
 						transform: [
 							{
 								translateX: position.interpolate({
@@ -50,16 +49,15 @@ export default function CustomTabBar2(props: TabBarProps<RouteType>) {
 						<Pressable
 							key={route.key}
 							className={cn(
-								'flex-1 items-center justify-center z-10 rounded-xl',
-								isFocused ? 'bg-primary' : 'bg-secondary'
+								'flex-1 items-center justify-center z-10 rounded-[50px]',
+								isFocused && 'bg-white'
 							)}
 							style={{ width: tabWidth - 8 }}
 							onPress={() => jumpTo(route.key)}>
 							<Text
-								size="lg"
 								className={cn(
-									'font-semibold',
-									isFocused ? 'text-orange-500 font-bold' : 'text-gray-500'
+									'font-normal text-base',
+									isFocused ? 'text-orange-500 font-bold' : 'text-black'
 								)}>
 								{route.title}
 							</Text>

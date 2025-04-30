@@ -140,9 +140,7 @@ function PageOne({
 			source={require('@/assets/images/landing/home.png')}
 			className="flex-1"
 			imageStyle={{ resizeMode: 'cover' }}>
-			<SafeAreaView
-				edges={['bottom', 'top']}
-				className="flex-1 px-4 bg-black/20">
+			<SafeAreaView edges={['top']} className="flex-1 px-4 bg-black/20">
 				<View className=" flex-1 mb-16">
 					<View className="flex-1 items-end mt-4 ">
 						<Pressable onPress={() => router.push('/signin')}>
@@ -198,9 +196,7 @@ function PageTwo({
 			source={require('@/assets/images/landing/direction.png')}
 			className="flex-1"
 			imageStyle={{ resizeMode: 'cover' }}>
-			<SafeAreaView
-				edges={['bottom', 'top']}
-				className="flex-1 px-4 bg-black/20">
+			<SafeAreaView edges={['top']} className="flex-1 px-4 bg-black/20">
 				<View className=" flex-1 mb-16">
 					<View className="flex-1 items-end mt-4 ">
 						<Pressable onPress={() => router.push('/signin')}>
@@ -251,9 +247,7 @@ function PageThree() {
 			source={require('@/assets/images/landing/agent.png')}
 			className="flex-1"
 			imageStyle={{ resizeMode: 'cover' }}>
-			<SafeAreaView
-				edges={['bottom', 'top']}
-				className="flex-1 px-4 bg-black/20">
+			<SafeAreaView edges={['top']} className="flex-1 px-4 bg-black/20">
 				<View className="flex-1 mb-16">
 					<View className="flex-1 items-end "></View>
 					<View className=" gap-4 mb-6">

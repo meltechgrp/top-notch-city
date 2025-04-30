@@ -1,5 +1,7 @@
 import DiscoverProperties from '@/components/home/DiscoverProperties';
 import PopulerProperties from '@/components/home/PopularProperties';
+import TopProperties from '@/components/home/properties';
+import TopLocations from '@/components/home/topLocations';
 import BeachPersonWaterParasolIcon from '@/components/icons/BeachPersonWaterParasolIcon';
 import { TrackingFlashlist } from '@/components/TrackingFlatlist';
 import { RefreshControl, Text, View } from '@/components/ui';
@@ -18,20 +20,34 @@ export default function HomeScreen() {
 
 	const { isRefreshing, onRefresh } = useRefresh(fetch);
 	const feedList = React.useMemo(() => {
+		const topLocations = {
+			id: 'locations',
+			_typename: 'Locations',
+		} as any;
 		const populerCommunities = {
 			id: 'featured',
 			__typename: 'Featured',
+		} as any;
+		const properties = {
+			id: 'properties',
+			_typename: 'Properties',
 		} as any;
 		const bottomPlaceHolder = {
 			id: 'bottomPlaceHolder',
 			__typename: 'bottomPlaceHolder',
 		} as any;
-		return [populerCommunities, bottomPlaceHolder];
+		return [topLocations, populerCommunities, properties, bottomPlaceHolder];
 	}, []);
 	type FeedList = any;
 	const renderItem: ListRenderItem<FeedList> = ({ item }) => {
+		if (item.id === 'locations') {
+			return <TopLocations />;
+		}
 		if (item.id === 'featured') {
 			return <PopulerProperties />;
+		}
+		if (item.id === 'properties') {
+			return <TopProperties />;
 		}
 		if (item.id === 'bottomPlaceHolder') {
 			return <View className="h-24" />;

@@ -1,17 +1,9 @@
 import { Property } from '@/components/home/FoundProperties';
 import { Heading, Pressable, Text, View } from '@/components/ui';
 import { ScrollView } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useMemo } from 'react';
-import {
-	ChevronLeftIcon,
-	ChevronRight,
-	Edit,
-	Map,
-	Plus,
-	Share2,
-} from 'lucide-react-native';
+import { ChevronLeftIcon, ChevronRight, Share2 } from 'lucide-react-native';
 import { TabView, SceneMap } from 'react-native-tab-view';
 import PropertyHeader from '@/components/property/PropertyHeader';
 import FacilityItem from '@/components/property/FacilityItem';

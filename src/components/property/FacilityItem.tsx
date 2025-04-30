@@ -9,13 +9,23 @@ import {
 	ParkingCircle,
 	WashingMachine,
 } from 'lucide-react-native';
+import { cn } from '@/lib/utils';
 
 type Props = {
 	name: string;
 	icon: string;
+	textClassname?: string;
+	className?: string;
+	iconSize?: number;
 };
 
-export default function FacilityItem({ name, icon }: Props) {
+export default function FacilityItem({
+	name,
+	icon,
+	className,
+	textClassname,
+	iconSize,
+}: Props) {
 	const Icon: LucideIcon = useMemo(() => {
 		if (icon == 'bathroom') {
 			return Bath;
@@ -32,9 +42,15 @@ export default function FacilityItem({ name, icon }: Props) {
 		}
 	}, [icon]);
 	return (
-		<View className="flex-row gap-2 shrink-0 basis-[30%] items-center">
-			<Icon size={18} color={'orange'} />
-			<Text>{name}</Text>
+		<View
+			className={cn(
+				'flex-row gap-2 shrink-0 basis-[30%] items-center',
+				className
+			)}>
+			<Icon size={iconSize ?? 18} color={'#F8AA00'} />
+			<Text numberOfLines={1} className={textClassname}>
+				{name}
+			</Text>
 		</View>
 	);
 }
