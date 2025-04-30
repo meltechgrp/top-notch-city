@@ -14,6 +14,18 @@ import WhatsappIcon from '@/components/icons/WhatsappIcon';
 import Layout from '@/constants/Layout';
 import CustomTabBar2 from '@/components/layouts/CustomTopBar2';
 import Property3DView from '@/components/property/Property3dView';
+import {
+	Accordion,
+	AccordionItem,
+	AccordionHeader,
+	AccordionTrigger,
+	AccordionTitleText,
+	AccordionContentText,
+	AccordionIcon,
+	AccordionContent,
+} from '@/components/ui/accordion';
+import { Divider } from '@/components/ui/divider';
+import { ChevronUpIcon, ChevronDownIcon } from '@/components/ui/icon';
 
 const data: Property[] = [
 	{
@@ -172,7 +184,7 @@ export default function PropertyItem() {
 				<View className=" px-4 pt-4 flex-1 gap-6 pb-20">
 					<View className="gap-2">
 						<Heading size="lg">Description</Heading>
-						<Text className="text-sm">
+						<Text size="md">
 							Lorem ipsum dolor sit amet consectetur. Eget metus nibh mattis
 							elementum volutpat tortor. Felis molestie morbi purus risus. Etiam
 							congue arcu est adipiscing lacinia tellus eu aliquam... Lorem
@@ -181,14 +193,66 @@ export default function PropertyItem() {
 							arcu est adipiscing lacinia tellus eu aliquam...
 						</Text>
 					</View>
-					<View className="gap-4">
-						<Heading size="lg">Facilities</Heading>
-						<View className="flex-row justify-between flex-wrap gap-4">
-							{facilites.map((item) => (
-								<FacilityItem {...item} key={item.name} />
-							))}
-						</View>
-					</View>
+					<Accordion size="md" variant="unfilled" type="single" className=" ">
+						<AccordionItem value="a">
+							<AccordionHeader>
+								<AccordionTrigger>
+									{({ isExpanded }) => {
+										return (
+											<>
+												<AccordionTitleText>Facilities</AccordionTitleText>
+												{isExpanded ? (
+													<AccordionIcon as={ChevronUpIcon} className="ml-3" />
+												) : (
+													<AccordionIcon
+														as={ChevronDownIcon}
+														className="ml-3"
+													/>
+												)}
+											</>
+										);
+									}}
+								</AccordionTrigger>
+							</AccordionHeader>
+							<AccordionContent>
+								<View className="flex-row justify-between flex-wrap gap-4">
+									{facilites.map((item) => (
+										<FacilityItem {...item} key={item.name} />
+									))}
+								</View>
+							</AccordionContent>
+						</AccordionItem>
+						<Divider />
+						<AccordionItem value="b">
+							<AccordionHeader>
+								<AccordionTrigger>
+									{({ isExpanded }) => {
+										return (
+											<>
+												<AccordionTitleText>
+													What payment methods do you accept?
+												</AccordionTitleText>
+												{isExpanded ? (
+													<AccordionIcon as={ChevronUpIcon} className="ml-3" />
+												) : (
+													<AccordionIcon
+														as={ChevronDownIcon}
+														className="ml-3"
+													/>
+												)}
+											</>
+										);
+									}}
+								</AccordionTrigger>
+							</AccordionHeader>
+							<AccordionContent>
+								<AccordionContentText>
+									We accept all major credit cards, including Visa, Mastercard,
+									and American Express. We also support payments through PayPal.
+								</AccordionContentText>
+							</AccordionContent>
+						</AccordionItem>
+					</Accordion>
 					<TabView
 						style={{ height: 340 }}
 						renderTabBar={(props) => <CustomTabBar2 {...props} />}
