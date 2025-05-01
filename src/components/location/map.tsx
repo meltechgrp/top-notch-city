@@ -1,15 +1,7 @@
-import { memo, useMemo } from 'react';
-import { Platform, View } from 'react-native';
-import MapView, { MapMarker, PROVIDER_GOOGLE } from 'react-native-maps';
-import { MotiView } from 'moti';
-import { Easing } from 'react-native-reanimated';
-import {
-	Avatar,
-	AvatarBadge,
-	AvatarFallbackText,
-	AvatarImage,
-} from '@/components/ui';
+import { useMemo } from 'react';
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import Layout from '@/constants/Layout';
+import { CustomPropertyMarker } from './CustomPropertyMarker';
 
 interface MapProps {
 	latitude?: number;
@@ -42,77 +34,108 @@ export default function Map(props: MapProps) {
 		}),
 		[latitude, longitude]
 	);
+	const portHarcourtPlaces = [
+		{
+			name: 'Pleasure Park',
+			latitude: 4.8156,
+			longitude: 7.0316,
+			description:
+				'A beautiful recreational park with a lake, walking trails, and family activities.',
+			image: require('@/assets/images/property/property1.png'),
+		},
+		{
+			name: 'Port Harcourt Zoo',
+			latitude: 4.8592,
+			longitude: 7.0609,
+			description:
+				'A wildlife reserve and zoo showcasing native and exotic animals.',
+			image: require('@/assets/images/property/property2.png'),
+		},
+		{
+			name: 'Isaac Boro Park',
+			latitude: 4.8103,
+			longitude: 7.019,
+			description:
+				'A historical park named after a national hero, often used for public events and relaxation.',
+			image: require('@/assets/images/property/property1.png'),
+		},
+		{
+			name: 'Port Harcourt Mall',
+			latitude: 4.812,
+			longitude: 7.0339,
+			description:
+				'A large shopping mall with restaurants, cinemas, and fashion outlets.',
+			image: require('@/assets/images/property/property2.png'),
+		},
+		{
+			name: 'Rivers State Museum',
+			latitude: 4.7824,
+			longitude: 7.0132,
+			description:
+				'A museum that preserves the cultural heritage of the Rivers people.',
+			image: require('@/assets/images/property/property1.png'),
+		},
+		{
+			name: 'Air Assault Golf Course',
+			latitude: 4.8424,
+			longitude: 7.0349,
+			description:
+				'A scenic 18-hole golf course with a clubhouse and restaurant.',
+			image: require('@/assets/images/property/property2.png'),
+		},
+		{
+			name: 'Rumuokoro Market',
+			latitude: 4.8665,
+			longitude: 6.9919,
+			description:
+				'A bustling local market where you can find fresh produce and goods.',
+			image: require('@/assets/images/property/property1.png'),
+		},
+		{
+			name: 'Genesis Deluxe Cinemas',
+			latitude: 4.8106,
+			longitude: 7.0337,
+			description:
+				'A modern cinema complex in the heart of Port Harcourt Mall.',
+			image: require('@/assets/images/property/property2.png'),
+		},
+		{
+			name: 'The Dome Church',
+			latitude: 4.861,
+			longitude: 7.034,
+			description:
+				'A large Christian worship center known for its architecture and congregation.',
+			image: require('@/assets/images/property/property1.png'),
+		},
+		{
+			name: 'GRA Phase 2 Nightlife Area',
+			latitude: 4.8356,
+			longitude: 7.0134,
+			description:
+				'Popular district with lounges, bars, and restaurants for nightlife.',
+			image: require('@/assets/images/property/property2.png'),
+		},
+	];
 
 	return (
 		<MapView
 			style={{ width: '100%', height: height || Layout.window.height }}
-			provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
-			onMapLoaded={() => console.log('Map loaded')}
+			provider={PROVIDER_GOOGLE}
+			// onMapLoaded={() => console.log('Map loaded')}
 			zoomEnabled
 			loadingEnabled
-			showsUserLocation={showUserLocation}
+			showsScale={true}
+			showsCompass={true}
+			zoomControlEnabled={true}
+			followsUserLocation={true}
+			showsUserLocation={true}
+			showsMyLocationButton={true}
+			compassOffset={{ x: 10, y: 50 }}
 			scrollEnabled={scrollEnabled}
 			region={initialRegion}>
-			{latitude !== undefined && longitude !== undefined && (
-				<MapMarker
-					coordinate={{
-						latitude,
-						longitude,
-					}}
-					icon={undefined}>
-					<LiveWaveMoti
-						fullName={props.user.fullName}
-						photoPath={props.user.photoPath}
-					/>
-				</MapMarker>
-			)}
+			{portHarcourtPlaces.map((place) => (
+				<CustomPropertyMarker key={place.name} property={place} />
+			))}
 		</MapView>
 	);
 }
-
-type LiveWaveMotiProps = {
-	fullName: string;
-	photoPath?: string;
-};
-
-const WaveComp = ({ index }: { index: number }) => {
-	return (
-		<MotiView
-			className="w-10 h-10 rounded-full bg-primary-900 inset-0 absolute"
-			key={index}
-			from={{ opacity: 0.7, scale: 1 }}
-			animate={{ opacity: 0, scale: 2 }}
-			transition={{
-				type: 'timing',
-				easing: Easing.out(Easing.ease),
-				delay: index * 400,
-				loop: true,
-				repeatReverse: false,
-				duration: 2000,
-			}}
-		/>
-	);
-};
-
-const Waves = memo(() => {
-	return Array.from({ length: 3 }, (_, i) => <WaveComp index={i} key={i} />);
-});
-
-const LiveWaveMoti: React.FC<LiveWaveMotiProps> = (props) => {
-	return (
-		<View className="items-center justify-center relative">
-			<View className="w-10 h-10 rounded-full bg-primary-900 absolute inset-0 items-center justify-center z-10">
-				<Avatar size="md">
-					<AvatarFallbackText>{props.fullName}</AvatarFallbackText>
-					<AvatarImage
-						source={{
-							uri: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80',
-						}}
-					/>
-					<AvatarBadge />
-				</Avatar>
-			</View>
-			<Waves />
-		</View>
-	);
-};

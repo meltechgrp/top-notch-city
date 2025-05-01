@@ -229,9 +229,7 @@ export default function PropertyItem() {
 									{({ isExpanded }) => {
 										return (
 											<>
-												<AccordionTitleText>
-													What payment methods do you accept?
-												</AccordionTitleText>
+												<AccordionTitleText>Environment</AccordionTitleText>
 												{isExpanded ? (
 													<AccordionIcon as={ChevronUpIcon} className="ml-3" />
 												) : (
@@ -246,10 +244,7 @@ export default function PropertyItem() {
 								</AccordionTrigger>
 							</AccordionHeader>
 							<AccordionContent>
-								<AccordionContentText>
-									We accept all major credit cards, including Visa, Mastercard,
-									and American Express. We also support payments through PayPal.
-								</AccordionContentText>
+								<AccordionContentText>Coming soon</AccordionContentText>
 							</AccordionContent>
 						</AccordionItem>
 					</Accordion>
