@@ -7,8 +7,6 @@
 import type { PropsWithChildren } from 'react';
 import { useRef } from 'react';
 import { Keyboard, StyleSheet, View } from 'react-native';
-// @ts-ignore
-import * as TextInputState from 'react-native/Libraries/Components/TextInput/TextInputState';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
 export const KeyboardDismissPressable = ({ children }: PropsWithChildren) => {
@@ -28,9 +26,6 @@ export const KeyboardDismissPressable = ({ children }: PropsWithChildren) => {
 			<View
 				style={styles.container}
 				onStartShouldSetResponderCapture={(e) => {
-					// Allow to avoid keyboard flickering when clicking on a TextInput
-					isTargetTextInput.current = TextInputState.isTextInput(e.target);
-
 					return false;
 				}}
 				accessible={false}>

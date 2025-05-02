@@ -1,5 +1,5 @@
 import { Property } from '@/components/home/FoundProperties';
-import { Heading, Pressable, Text, View } from '@/components/ui';
+// import { Heading, Pressable, Text, View } from '@/components/ui';
 import { ScrollView } from 'react-native';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useMemo } from 'react';
@@ -109,15 +109,15 @@ export default function PropertyItem() {
 			path: require('@/assets/images/property/img6.png'),
 		},
 	];
-	const renderScene = {
-		images: () => <PropertyImages images={images} />,
-		video: () => (
-			<View className="flex-1 items-center h-[20rem] justify-center">
-				<Text size="xl">Video Coming Soon</Text>
-			</View>
-		),
-		view: () => <Property3DView id={propertyId} image={images[0]} />,
-	};
+	// const renderScene = {
+	// 	images: () => <PropertyImages images={images} />,
+	// 	video: () => (
+	// 		<View className="flex-1 items-center h-[20rem] justify-center">
+	// 			<Text size="xl">Video Coming Soon</Text>
+	// 		</View>
+	// 	),
+	// 	view: () => <Property3DView id={propertyId} image={images[0]} />,
+	// };
 	const routes = [
 		{ key: 'images', title: 'Pictures' },
 		{ key: 'video', title: 'Videos' },
@@ -145,43 +145,43 @@ export default function PropertyItem() {
 					headerBackVisible: false,
 					headerTitle: property.name,
 					headerTitleStyle: { color: 'white' },
-					headerLeft: () => (
-						<Pressable
-							onPress={() => {
-								hapticFeed();
-								if (router.canGoBack()) router.back();
-								else router.push('/home');
-							}}
-							className="p-2 bg-black/20 rounded-full flex-row items-center ">
-							<ChevronLeftIcon size={26} strokeWidth={3} color={'white'} />
-						</Pressable>
-					),
-					headerRight: () => (
-						<View
-							style={{
-								flexDirection: 'row',
-								alignItems: 'center',
-							}}>
-							<Pressable
-								onPress={() => {
-									hapticFeed();
-									router.push({
-										pathname: '/property/[propertyId]/share',
-										params: { propertyId, name: property.name },
-									});
-								}}
-								style={{ padding: 8 }}>
-								<Share2 color={'orange'} />
-							</Pressable>
-						</View>
-					),
+					// headerLeft: () => (
+					// 	<Pressable
+					// 		onPress={() => {
+					// 			hapticFeed();
+					// 			if (router.canGoBack()) router.back();
+					// 			else router.push('/home');
+					// 		}}
+					// 		className="p-2 bg-black/20 rounded-full flex-row items-center ">
+					// 		<ChevronLeftIcon size={26} strokeWidth={3} color={'white'} />
+					// 	</Pressable>
+					// ),
+					// headerRight: () => (
+					// 	<View
+					// 		style={{
+					// 			flexDirection: 'row',
+					// 			alignItems: 'center',
+					// 		}}>
+					// 		<Pressable
+					// 			onPress={() => {
+					// 				hapticFeed();
+					// 				router.push({
+					// 					pathname: '/property/[propertyId]/share',
+					// 					params: { propertyId, name: property.name },
+					// 				});
+					// 			}}
+					// 			style={{ padding: 8 }}>
+					// 			<Share2 color={'orange'} />
+					// 		</Pressable>
+					// 	</View>
+					// ),
 				}}
 			/>
 			<ScrollView
 				keyboardShouldPersistTaps="handled"
 				className=" relative pt-0 flex-1">
 				<PropertyHeader {...property} />
-				<View className=" px-4 pt-4 flex-1 gap-6 pb-20">
+				{/* <View className=" px-4 pt-4 flex-1 gap-6 pb-20">
 					<View className="gap-2">
 						<Heading size="lg">Description</Heading>
 						<Text size="md">
@@ -197,7 +197,7 @@ export default function PropertyItem() {
 						<AccordionItem value="a">
 							<AccordionHeader>
 								<AccordionTrigger>
-									{({ isExpanded }) => {
+									{({ isExpanded }: { isExpanded: boolean }) => {
 										return (
 											<>
 												<AccordionTitleText>Facilities</AccordionTitleText>
@@ -226,7 +226,7 @@ export default function PropertyItem() {
 						<AccordionItem value="b">
 							<AccordionHeader>
 								<AccordionTrigger>
-									{({ isExpanded }) => {
+									{({ isExpanded }: { isExpanded: boolean }) => {
 										return (
 											<>
 												<AccordionTitleText>Environment</AccordionTitleText>
@@ -272,7 +272,7 @@ export default function PropertyItem() {
 							<ChevronRight color={'black'} />
 						</Pressable>
 					</View>
-				</View>
+				</View> */}
 			</ScrollView>
 		</>
 	);

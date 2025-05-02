@@ -1,17 +1,12 @@
 import './global.css';
 import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react';
-import { GluestackUIProvider } from '../components/ui';
+import { GluestackUIProvider } from '@/components/ui';
 import 'react-native-reanimated';
-import * as Linking from 'expo-linking';
 import { ErrorBoundaryProps, Slot, Stack } from 'expo-router';
 import AppCrashScreen from '@/components/shared/AppCrashScreen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
 	const [loaded, error] = useFonts({
@@ -24,13 +19,6 @@ export default function RootLayout() {
 		'Raleway-SemiBold': require('../assets/fonts/Raleway-SemiBold.ttf'),
 		'Raleway-Thin': require('../assets/fonts/Raleway-Thin.ttf'),
 	});
-
-	useEffect(() => {
-		if (loaded || error) {
-			SplashScreen.hideAsync();
-		}
-	}, [loaded, error]);
-
 	if (!loaded && !error) {
 		return null;
 	}

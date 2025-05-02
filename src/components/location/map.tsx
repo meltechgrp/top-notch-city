@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import Layout from '@/constants/Layout';
 import { CustomPropertyMarker } from './CustomPropertyMarker';
+import Platforms from '@/constants/Plaforms';
 
 interface MapProps {
 	latitude?: number;
@@ -120,7 +121,7 @@ export default function Map(props: MapProps) {
 	return (
 		<MapView
 			style={{ width: '100%', height: height || Layout.window.height }}
-			provider={PROVIDER_GOOGLE}
+			provider={Platforms.isAndroid() ? PROVIDER_GOOGLE : undefined}
 			// onMapLoaded={() => console.log('Map loaded')}
 			zoomEnabled
 			loadingEnabled

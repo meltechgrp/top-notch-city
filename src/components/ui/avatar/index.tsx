@@ -77,10 +77,10 @@ type IAvatarProps = Omit<
 > &
   VariantProps<typeof avatarStyle>;
 
-export const Avatar = React.forwardRef<
-  React.ElementRef<typeof UIAvatar>,
+const Avatar = React.forwardRef<
+  React.ComponentRef<typeof UIAvatar>,
   IAvatarProps
->(({ className, size = 'md', ...props }, ref) => {
+>(function Avatar({ className, size = 'md', ...props }, ref) {
   return (
     <UIAvatar
       ref={ref}
@@ -94,10 +94,10 @@ export const Avatar = React.forwardRef<
 type IAvatarBadgeProps = React.ComponentPropsWithoutRef<typeof UIAvatar.Badge> &
   VariantProps<typeof avatarBadgeStyle>;
 
-export const AvatarBadge = React.forwardRef<
-  React.ElementRef<typeof UIAvatar.Badge>,
+const AvatarBadge = React.forwardRef<
+  React.ComponentRef<typeof UIAvatar.Badge>,
   IAvatarBadgeProps
->(({ className, size, ...props }, ref) => {
+>(function AvatarBadge({ className, size, ...props }, ref) {
   const { size: parentSize } = useStyleContext(SCOPE);
 
   return (
@@ -119,10 +119,10 @@ type IAvatarFallbackTextProps = React.ComponentPropsWithoutRef<
   typeof UIAvatar.FallbackText
 > &
   VariantProps<typeof avatarFallbackTextStyle>;
-export const AvatarFallbackText = React.forwardRef<
-  React.ElementRef<typeof UIAvatar.FallbackText>,
+const AvatarFallbackText = React.forwardRef<
+  React.ComponentRef<typeof UIAvatar.FallbackText>,
   IAvatarFallbackTextProps
->(({ className, size, ...props }, ref) => {
+>(function AvatarFallbackText({ className, size, ...props }, ref) {
   const { size: parentSize } = useStyleContext(SCOPE);
 
   return (
@@ -143,10 +143,10 @@ export const AvatarFallbackText = React.forwardRef<
 type IAvatarImageProps = React.ComponentPropsWithoutRef<typeof UIAvatar.Image> &
   VariantProps<typeof avatarImageStyle>;
 
-export const AvatarImage = React.forwardRef<
-  React.ElementRef<typeof UIAvatar.Image>,
+const AvatarImage = React.forwardRef<
+  React.ComponentRef<typeof UIAvatar.Image>,
   IAvatarImageProps
->(({ className, ...props }, ref) => {
+>(function AvatarImage({ className, ...props }, ref) {
   return (
     <UIAvatar.Image
       ref={ref}
@@ -154,11 +154,10 @@ export const AvatarImage = React.forwardRef<
       className={avatarImageStyle({
         class: className,
       })}
-      // @ts-expect-error
+      // @ts-expect-error : This is a workaround to fix the issue with the image style on web.
       style={
         Platform.OS === 'web'
-          ? // eslint-disable-next-line react-native/no-inline-styles
-            { height: 'revert-layer', width: 'revert-layer' }
+          ? { height: 'revert-layer', width: 'revert-layer' }
           : undefined
       }
     />
@@ -168,10 +167,10 @@ export const AvatarImage = React.forwardRef<
 type IAvatarGroupProps = React.ComponentPropsWithoutRef<typeof UIAvatar.Group> &
   VariantProps<typeof avatarGroupStyle>;
 
-export const AvatarGroup = React.forwardRef<
-  React.ElementRef<typeof UIAvatar.Group>,
+const AvatarGroup = React.forwardRef<
+  React.ComponentRef<typeof UIAvatar.Group>,
   IAvatarGroupProps
->(({ className, ...props }, ref) => {
+>(function AvatarGroup({ className, ...props }, ref) {
   return (
     <UIAvatar.Group
       ref={ref}
@@ -182,3 +181,5 @@ export const AvatarGroup = React.forwardRef<
     />
   );
 });
+
+export { Avatar, AvatarBadge, AvatarFallbackText, AvatarImage, AvatarGroup };
