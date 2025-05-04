@@ -17,7 +17,7 @@ export default function CustomTabBar2(props: TabBarProps<RouteType>) {
 	}, [width, navigationState.routes.length]);
 	return (
 		<View className="w-full py-3 ">
-			<View className="flex-row bg-gray-300 rounded-[50px] px-1 h-12 overflow-hidden relative">
+			<View className="flex-row bg-gray-200 rounded-[50px] px-1 py-py h-12 overflow-hidden relative">
 				{/* Animated tab indicator */}
 				<Animated.View
 					className="absolute h-full bg-gray-50 rounded-[50px] z-0 top-0"
@@ -57,7 +57,9 @@ export default function CustomTabBar2(props: TabBarProps<RouteType>) {
 							<Text
 								className={cn(
 									'font-normal text-base',
-									isFocused ? 'text-orange-500 font-bold' : 'text-black'
+									isFocused
+										? 'text-orange-500 font-semibold font-heading'
+										: 'text-black'
 								)}>
 								{route.title}
 							</Text>

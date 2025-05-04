@@ -17,7 +17,7 @@ import {
 	Button,
 	ButtonText,
 } from '@/components/ui';
-import { ChevronRight } from 'lucide-react-native';
+import { Check, ChevronRight } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 
@@ -34,7 +34,10 @@ export default function OnboardingScreen() {
 	// 	);
 	return (
 		<View className="flex-1">
-			<TabView activeTab={activeIndex} onTabSelected={setActiveIndex}>
+			<TabView
+				activeTab={activeIndex}
+				scrollEnabled={false}
+				onTabSelected={setActiveIndex}>
 				<PageOne
 					key={1}
 					setActiveIndex={setActiveIndex}
@@ -45,9 +48,12 @@ export default function OnboardingScreen() {
 					setActiveIndex={setActiveIndex}
 					activeIndex={activeIndex}
 				/>
-				<PageThree key={3} />
+				<PageThree
+					key={3}
+					setActiveIndex={setActiveIndex}
+					activeIndex={activeIndex}
+				/>
 			</TabView>
-			<StatusBar style="light" />
 		</View>
 	);
 }
@@ -154,7 +160,12 @@ function PageOne({
 							<Text
 								size="4xl"
 								className="font-bold font-heading w-[60%] text-white">
-								Find Your Dream Home
+								Find Your Dream{' '}
+								<Text
+									size="4xl"
+									className="text-[#FF4C00] font-bold font-heading">
+									Home
+								</Text>
 							</Text>
 							<View className="relative justify-center items-center">
 								{/* Animated Half Circle */}
@@ -166,7 +177,7 @@ function PageOne({
 										setActiveIndex(1);
 									}}
 									className="bg-white w-12 h-12 rounded-full justify-center items-center m-1">
-									<ChevronRight color={'#000'} />
+									<ChevronRight color={'#FF4C00'} />
 								</Pressable>
 							</View>
 						</View>
@@ -207,11 +218,20 @@ function PageTwo({
 					</View>
 					<View className=" gap-4">
 						<View className="flex-row justify-between items-center">
-							<Text
-								size="4xl"
-								className="font-bold font-heading w-[60%] text-white">
-								Where are you looking?
-							</Text>
+							<View className="w-[65%]">
+								<View className=" flex-row gap-1">
+									<Text size="4xl" className="font-bold text-white">
+										Which{' '}
+									</Text>
+
+									<Text size="4xl" className="font-bold text-white">
+										are
+									</Text>
+								</View>
+								<Text size="4xl" className="font-bold text-white">
+									you interested in
+								</Text>
+							</View>
 							<View className="relative justify-center items-center">
 								{/* Animated Half Circle */}
 								<CircleCurve step={activeIndex} />
@@ -222,7 +242,7 @@ function PageTwo({
 										setActiveIndex(2);
 									}}
 									className="bg-white w-12 h-12 rounded-full justify-center items-center m-1">
-									<ChevronRight color={'#000'} />
+									<ChevronRight color={'#FF4C00'} />
 								</Pressable>
 							</View>
 						</View>
@@ -241,31 +261,49 @@ function PageTwo({
 		</ImageBackground>
 	);
 }
-function PageThree() {
+function PageThree({
+	setActiveIndex,
+	activeIndex,
+}: {
+	setActiveIndex: (index: number) => void;
+	activeIndex: number;
+}) {
 	return (
 		<ImageBackground
 			source={require('@/assets/images/landing/agent.png')}
 			className="flex-1"
 			imageStyle={{ resizeMode: 'cover' }}>
-			<SafeAreaView edges={['top']} className="flex-1 px-4 bg-black/20">
+			<SafeAreaView edges={['top']} className="flex-1 px-4 bg-black/40">
 				<View className="flex-1 mb-16">
 					<View className="flex-1 items-end "></View>
-					<View className=" gap-4 mb-6">
-						<View className="flex-row justify-between items-center">
-							<Text
-								size="4xl"
-								className="font-bold font-heading w-[70%] text-white">
-								Connect with Trusted Agents
+					<View className=" gap-4 flex-row mb-2">
+						<View className="flex-1">
+							<Text size="4xl" className="font-bold w-[80%] text-white">
+								Connect with Trusted{' '}
+								<Text size="4xl" className="text-[#FF4C00] font-bold">
+									Agents
+								</Text>
 							</Text>
 						</View>
-						<View className="flex-row justify-between">
-							<View className=" w-[80%]">
-								<Text className=" text-white text-base">
-									Get personalized assistance from verified and experienced real
-									estate professionals.
-								</Text>
-							</View>
+						<View className="relative justify-center items-center">
+							{/* Animated Half Circle */}
+							<CircleCurve step={activeIndex} />
+
+							{/* Pressable Button */}
+							<Pressable
+								onPress={() => {
+									setActiveIndex(1);
+								}}
+								className="bg-white w-12 h-12 rounded-full justify-center items-center m-1">
+								<Check color={'#FF4C00'} />
+							</Pressable>
 						</View>
+					</View>
+					<View className="mb-6">
+						<Text className=" text-white text-base">
+							Get personalized assistance from verified and experienced real
+							estate professionals.
+						</Text>
 					</View>
 					<Button
 						onPress={() => router.push('/signin')}
@@ -273,7 +311,7 @@ function PageThree() {
 						size="xl"
 						className="rounded-xl border-white">
 						<ButtonText size="lg" className=" text-white font-semibold">
-							Sign In
+							Get Started
 						</ButtonText>
 					</Button>
 				</View>

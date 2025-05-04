@@ -14,7 +14,7 @@ import { getUniqueIdSync } from 'react-native-device-info';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { onError } from '@apollo/client/link/error';
 import { persistCache } from 'apollo3-cache-persist';
-import { persistStorage } from '@/store/persistStorage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 class TimeoutError extends Error {
 	super(message: string) {
 		this.message = message;
@@ -165,7 +165,7 @@ export function createApolloClient() {
 	const cache = new InMemoryCache({});
 	persistCache({
 		cache,
-		storage: persistStorage,
+		storage: AsyncStorage,
 	});
 	client = new ApolloClient({
 		link: authFlowLink.concat(splitLink),

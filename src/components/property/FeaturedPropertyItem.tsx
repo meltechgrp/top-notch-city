@@ -4,31 +4,34 @@ import { useLayout } from '@react-native-community/hooks';
 import { router } from 'expo-router';
 import { useMemo } from 'react';
 import capitalize from 'lodash-es/capitalize';
-import { Pressable, View } from 'react-native';
+import { TouchableHighlight, View } from 'react-native';
 import { Property } from './PropertyHorizontalList';
 import { ImageBackground, Text } from '../ui';
 import { Map, MapPin } from 'lucide-react-native';
 import { hapticFeed } from '../HapticTab';
+import { useStore } from '@/store';
 
 type Props = {
 	data: Property;
 	className?: string;
 	isMine?: boolean;
+	disableDisplay?: boolean;
 };
 export default function FeaturedPropertyItem(props: Props) {
-	const { data, className, isMine } = props;
+	const { data, className, isMine, disableDisplay } = props;
+	const { displayStyle } = useStore();
 	const { banner, name, price, location, id } = data;
 
 	const { width, onLayout } = useLayout();
 	// prettier-ignore
 	const height = useMemo(() => Math.round((width - 16)), [width])
 	return (
-		<Pressable
+		<TouchableHighlight
 			onLayout={onLayout}
-			key={data.id}
 			className={cn(
-				'relative w-full overflow-hidden min-h-[190px] active:scale-[0.95]',
-				className
+				'relative flex-1 overflow-hidden rounded-xl ',
+				className,
+				!disableDisplay && displayStyle == 'flex' ? 'h-44' : 'h-32'
 			)}
 			style={{ height }}
 			onPress={() => {
@@ -41,12 +44,12 @@ export default function FeaturedPropertyItem(props: Props) {
 				// 		},
 				// 	});
 				// } else {
-				router.push({
-					pathname: `/property/[propertyId]`,
-					params: {
-						propertyId: id,
-					},
-				});
+				// router.push({
+				// 	pathname: `/property/[propertyId]`,
+				// 	params: {
+				// 		propertyId: id,
+				// 	},
+				// });
 				// }
 			}}>
 			<ImageBackground
@@ -78,6 +81,6 @@ export default function FeaturedPropertyItem(props: Props) {
 					</View>
 				</View>
 			</ImageBackground>
-		</Pressable>
+		</TouchableHighlight>
 	);
 }

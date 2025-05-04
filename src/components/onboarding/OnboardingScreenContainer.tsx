@@ -61,7 +61,7 @@ export default function OnboardingScreenContainer(props: Props) {
 				<ImageBackground
 					source={require('@/assets/images/landing/auth-banner.png')}
 					className="flex-1 bg-cover w-full md:max-w-[1400px]">
-					<StatusBar style="light" />
+					{/* <StatusBar style="light" /> */}
 					<ScreenContianer
 						edges={edges}
 						keyboardVerticalOffset={Platforms.isIOS() ? 20 : undefined}>

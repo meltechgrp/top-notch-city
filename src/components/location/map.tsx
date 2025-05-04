@@ -10,10 +10,13 @@ interface MapProps {
 	height?: number;
 	showUserLocation?: boolean;
 	scrollEnabled?: boolean;
-	user: {
-		fullName: string;
-		photoPath?: string;
-	};
+	markers?: Array<{
+		name: string;
+		latitude: number;
+		longitude: number;
+		description: string;
+		image: any;
+	}>;
 }
 const DEFAULT_LAT_DELTA = 0.0922;
 const DEFAULT_LONG_DELTA = 0.0421;
@@ -22,6 +25,7 @@ export default function Map(props: MapProps) {
 		latitude,
 		longitude,
 		height,
+		markers,
 		scrollEnabled = true,
 		showUserLocation = false,
 	} = props;
@@ -128,15 +132,16 @@ export default function Map(props: MapProps) {
 			showsScale={true}
 			showsCompass={true}
 			zoomControlEnabled={true}
-			followsUserLocation={true}
-			showsUserLocation={true}
-			showsMyLocationButton={true}
+			followsUserLocation={showUserLocation}
+			showsUserLocation={showUserLocation}
+			showsMyLocationButton={showUserLocation}
 			compassOffset={{ x: 10, y: 50 }}
 			scrollEnabled={scrollEnabled}
 			region={initialRegion}>
-			{portHarcourtPlaces.map((place) => (
-				<CustomPropertyMarker key={place.name} property={place} />
-			))}
+			{markers &&
+				markers.map((place) => (
+					<CustomPropertyMarker key={place.name} property={place} />
+				))}
 		</MapView>
 	);
 }

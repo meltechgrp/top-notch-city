@@ -1,19 +1,16 @@
 import DiscoverProperties from '@/components/home/DiscoverProperties';
-import PopulerProperties from '@/components/home/PopularProperties';
+import FeaturedProperties from '@/components/home/featured';
 import TopProperties from '@/components/home/properties';
 import TopLocations from '@/components/home/topLocations';
 import BeachPersonWaterParasolIcon from '@/components/icons/BeachPersonWaterParasolIcon';
-import { TrackingFlashlist } from '@/components/TrackingFlatlist';
-import { RefreshControl, Text, View } from '@/components/ui';
+import { Text, View } from '@/components/ui';
 import eventBus from '@/lib/eventBus';
 import { useRefresh } from '@react-native-community/hooks';
 import { ListRenderItem } from '@shopify/flash-list';
-import { usePathname } from 'expo-router';
 import React from 'react';
+import { FlatList, RefreshControl } from 'react-native';
 
 export default function HomeScreen() {
-	const pathname = usePathname();
-
 	const fetch = () => {
 		return new Promise((resolve) => setTimeout(resolve, 2000));
 	};
@@ -44,7 +41,7 @@ export default function HomeScreen() {
 			return <TopLocations />;
 		}
 		if (item.id === 'featured') {
-			return <PopulerProperties />;
+			return <FeaturedProperties />;
 		}
 		if (item.id === 'properties') {
 			return <TopProperties />;
@@ -56,9 +53,9 @@ export default function HomeScreen() {
 	};
 	return (
 		<View className="flex-1">
-			<TrackingFlashlist
-				listSource={pathname}
-				onEngagementUpdate={() => {}}
+			<FlatList
+				// listSource={pathname}
+				// onEngagementUpdate={() => {}}
 				refreshControl={
 					<RefreshControl
 						refreshing={isRefreshing}
@@ -72,7 +69,7 @@ export default function HomeScreen() {
 				data={feedList}
 				keyExtractor={(item) => item.id}
 				renderItem={renderItem as any}
-				estimatedItemSize={350}
+				// estimatedItemSize={350}
 				ItemSeparatorComponent={() => (
 					<View style={[{ height: 1 }]} className="bg-gray-200" />
 				)}

@@ -10,9 +10,9 @@
 		"newArchEnabled": true,
 		"ios": {
 			"supportsTablet": false,
+			"UIViewControllerBasedStatusBarAppearance": true,
 			"bundleIdentifier": "com.joshhumphrey02.topnotchcity",
 			"infoPlist": {
-				"UIViewControllerBasedStatusBarAppearance": true,
 				"NSLocationWhenInUseUsageDescription": "Allow $(PRODUCT_NAME) to access to your location to track your current position."
 			}
 		},

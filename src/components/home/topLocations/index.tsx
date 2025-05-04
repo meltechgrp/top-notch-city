@@ -8,7 +8,7 @@ export default function TopLocations() {
 			title="Top Locations"
 			subTitle="Explore"
 			onSeeAllPress={() => {
-				router.push('/(protected)/featured/(tabs)/home');
+				router.push('/(protected)/property/locations');
 			}}>
 			<TopLocationsHorizontalList />
 		</SectionHeaderWithRef>

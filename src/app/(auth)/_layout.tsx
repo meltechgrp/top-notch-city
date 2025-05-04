@@ -11,6 +11,7 @@ export default function AuthLayout() {
 			screenOptions={{
 				headerShown: false,
 				headerBackVisible: true,
+				statusBarStyle: 'light',
 			}}>
 			<Stack.Screen
 				name="signup"

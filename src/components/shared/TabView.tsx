@@ -16,6 +16,7 @@ export default function TabView(props: Props) {
 	const {
 		activeTab,
 		onTabSelected,
+		scrollEnabled = true,
 		children,
 		mode,
 		scrollAnimationDuration = 400,
@@ -53,7 +54,7 @@ export default function TabView(props: Props) {
 			defaultIndex={activeTab}
 			scrollAnimationDuration={scrollAnimationDuration}
 			pagingEnabled={true}
-			snapEnabled={true}
+			snapEnabled={scrollEnabled}
 			onSnapToItem={(index) => runOnJS(handleSnapToItem)(index)}
 			renderItem={({ item }) => <>{item}</>}
 		/>

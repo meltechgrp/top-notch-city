@@ -9,9 +9,23 @@ import { BodyScrollView } from '@/components/layouts/BodyScrollView';
 import { hapticFeed } from '@/components/HapticTab';
 import { RefreshControl } from 'react-native-gesture-handler';
 import { Property } from '@/components/home/FoundProperties';
+import DisplayStyle from '../layouts/DisplayStyle';
+import { Animated } from 'react-native';
+import { useState } from 'react';
+import PropertyListItem from './PropertyListItem';
 
-export default function FeaturedShops() {
+interface Props {
+	category: string;
+	className?: string;
+	scrollY?: any;
+}
+const GAP = 16;
+const SIDE_PADDING = 16;
+
+export default function VerticalProperties({ category, scrollY }: Props) {
 	const router = useRouter();
+	const [numColumns, setNumColumns] = useState(2);
+	const layoutAnim = new Animated.Value(0);
 	const fetch = () => {
 		return new Promise((resolve) => setTimeout(resolve, 5000));
 	};
@@ -42,19 +56,31 @@ export default function FeaturedShops() {
 			banner: require('@/assets/images/property/property1.png'),
 			images: [],
 		},
+		{
+			id: 'dhghg66mdm89kndnc',
+			name: 'Babylon House',
+			location: 'Emma Estate, Slaughter',
+			price: 2500000,
+			banner: require('@/assets/images/property/property1.png'),
+			images: [],
+		},
+		{
+			id: 'dhejdkd66skndnc',
+			name: 'Topaz Villa',
+			location: 'Emma Estate, Slaughter',
+			price: 1500000,
+			banner: require('@/assets/images/property/property2.png'),
+			images: [],
+		},
+		{
+			id: 'dhgdscxskk89kndnc',
+			name: 'Great House',
+			location: 'Green Estate, Rumuomasi',
+			price: 2000000,
+			banner: require('@/assets/images/property/property1.png'),
+			images: [],
+		},
 	];
-
-	// useEffect(() => {
-	// 	onRefresh();
-	// 	eventBus.addEventListener('PROPERTY_HORIZONTAL_LIST_REFRESH', onRefresh);
-
-	// 	return () => {
-	// 		eventBus.removeEventListener(
-	// 			'PROPERTY_HORIZONTAL_LIST_REFRESH',
-	// 			onRefresh
-	// 		);
-	// 	};
-	// }, []);
 
 	if (isRefreshing) {
 		return (
@@ -65,23 +91,51 @@ export default function FeaturedShops() {
 			</View>
 		);
 	}
+
+	const toggleView = () => {
+		Animated.timing(layoutAnim, {
+			toValue: numColumns === 1 ? 1 : 0,
+			duration: 300,
+			useNativeDriver: false,
+		}).start(() => {
+			setNumColumns(numColumns === 1 ? 2 : 1);
+		});
+	};
 	return (
-		<FlashList
+		<Animated.FlatList
+			style={{ flex: 1 }}
+			refreshing={isRefreshing}
 			data={data}
-			className={'gap-4'}
+			key={`flatlist-${numColumns}`}
+			columnWrapperStyle={numColumns > 1 ? { gap: GAP } : undefined}
 			renderItem={({ item }) => (
-				<FeaturedPropertyItem key={item.id} data={item} />
+				<PropertyListItem className="mb-4" columns={numColumns} data={item} />
 			)}
+			numColumns={numColumns}
+			horizontal={false}
+			showsVerticalScrollIndicator={false}
 			contentContainerStyle={{
-				paddingTop: 12,
-				paddingHorizontal: 16,
+				alignItems: 'center',
+				paddingHorizontal: SIDE_PADDING,
 			}}
+			onScroll={
+				scrollY &&
+				Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
+					useNativeDriver: false,
+				})
+			}
+			scrollEventThrottle={16}
 			refreshControl={
 				<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
 			}
+			ListHeaderComponent={() => (
+				<DisplayStyle
+					toggleView={toggleView}
+					numColumns={numColumns}
+					total={data.length}
+				/>
+			)}
 			keyExtractor={(item) => item.id}
-			estimatedItemSize={200}
-			ItemSeparatorComponent={() => <View className="h-2" />}
 			contentInsetAdjustmentBehavior="automatic"
 			ListEmptyComponent={() => (
 				<BodyScrollView

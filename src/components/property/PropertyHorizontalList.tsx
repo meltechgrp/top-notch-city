@@ -96,7 +96,8 @@ export default function PropertyHorizontalList(props: Props) {
 				<PropertyListItem
 					key={property.id}
 					data={property}
-					className={cn(fullWidth ? '' : 'w-[238px]')}
+					isHorizantal={true}
+					className={'w-[238px]'}
 				/>
 			))}
 		</ScrollView>

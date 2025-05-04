@@ -10,6 +10,7 @@ export default function OnBoardingLayout() {
 		<Stack
 			screenOptions={{
 				headerShown: false,
+				statusBarHidden: true,
 				headerBackVisible: true,
 			}}
 		/>

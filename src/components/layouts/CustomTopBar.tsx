@@ -5,6 +5,7 @@ import { NavigationState } from '@react-navigation/native';
 import { useMemo } from 'react';
 import { View, Pressable, Animated } from 'react-native';
 import { Text } from '../ui';
+import DisplayStyle from './DisplayStyle';
 
 type Props = {
 	containerClassName?: string;
@@ -28,10 +29,10 @@ export default function CustomTopBar(props: Props) {
 		[w, activeRoutes]
 	);
 	return (
-		<View className={cn('px-4 py-4 w-full bg-white', containerClassName)}>
+		<View className={cn('px-4 py-4 gap-4 w-full bg-white', containerClassName)}>
 			<View
 				onLayout={onLayout2}
-				className="flex-row h-10 bg-gray-200 rounded-xl p-1">
+				className="flex-row h-12 bg-gray-200 rounded-[50px] p-1">
 				<View className="relative flex-row w-full">
 					<Animated.View
 						style={[
@@ -52,7 +53,7 @@ export default function CustomTopBar(props: Props) {
 								],
 							},
 						]}
-						className="items-center justify-center absolute bg-white rounded-lg h-full -z-10"
+						className="items-center justify-center absolute bg-gray-50 rounded-[50px] h-full -z-10"
 					/>
 					{activeRoutes.map((route, index) => {
 						const { options } = descriptors[route.key];
@@ -87,10 +88,17 @@ export default function CustomTopBar(props: Props) {
 								onLongPress={onLongPress}
 								key={route.key}
 								style={[{ width: tabWidth }]}
-								className="items-center justify-center z-10 flex flex-row gap-1">
+								className={cn(
+									'items-center justify-center rounded-[50px] z-10 flex flex-row gap-1',
+									isFocused && 'bg-white'
+								)}>
 								{typeof options.tabBarLabel === 'undefined' ||
 								typeof options.tabBarLabel === 'string' ? (
-									<Text className="text-black font-heading font-medium text-sm">
+									<Text
+										className={cn(
+											'font-normal text-base',
+											isFocused ? 'text-orange-500 font-bold' : 'text-black'
+										)}>
 										{(options as any).staticTitle ||
 											options.title ||
 											route.name}
@@ -109,6 +117,7 @@ export default function CustomTopBar(props: Props) {
 					})}
 				</View>
 			</View>
+			<DisplayStyle total={70} />
 		</View>
 	);
 }

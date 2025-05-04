@@ -2,13 +2,9 @@ import PropertyHorizontalList from '@/components/property/PropertyHorizontalList
 import SectionHeaderWithRef from '@/components/home/SectionHeaderWithRef';
 import { router } from 'expo-router';
 
-export default function PopulerProperties() {
+export default function SimilarProperties() {
 	return (
-		<SectionHeaderWithRef
-			title="Featured Properties"
-			onSeeAllPress={() => {
-				router.push('/(protected)/featured/(tabs)/home');
-			}}>
+		<SectionHeaderWithRef title="Similar Properties">
 			<PropertyHorizontalList />
 		</SectionHeaderWithRef>
 	);

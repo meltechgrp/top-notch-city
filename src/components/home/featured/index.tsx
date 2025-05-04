@@ -1,22 +1,20 @@
+import PropertyHorizontalList from '@/components/property/PropertyHorizontalList';
 import SectionHeaderWithRef from '@/components/home/SectionHeaderWithRef';
 import { router } from 'expo-router';
-import React from 'react';
-import TopPropertiesVerticalList from './PropertiesVerticalList';
 
-export default function TopProperties() {
-	const [index, setIndex] = React.useState(0);
+export default function FeaturedProperties() {
 	return (
 		<SectionHeaderWithRef
-			title="Properties"
+			title="Featured Properties"
 			onSeeAllPress={() => {
 				router.push({
 					pathname: '/(protected)/property/section',
 					params: {
-						title: 'Top Properties',
+						title: 'Featured Properties',
 					},
 				});
 			}}>
-			<TopPropertiesVerticalList />
+			<PropertyHorizontalList />
 		</SectionHeaderWithRef>
 	);
 }

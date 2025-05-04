@@ -22,8 +22,8 @@ export function CustomPropertyMarker({ property }: Props) {
 			title={name}
 			description={description}
 			anchor={{ x: 0.5, y: 0.5 }}>
-			<CustomMarkerPointer image={image} />
-			<Callout tooltip>
+			{/* <CustomMarkerPointer image={image} /> */}
+			{/* <Callout tooltip>
 				<View
 					style={styles.calloutContainer}
 					className="w-56 rounded-xl bg-white p-2">
@@ -41,7 +41,7 @@ export function CustomPropertyMarker({ property }: Props) {
 						<Text size="lg">₦150,000</Text>
 					</View>
 				</View>
-			</Callout>
+			</Callout> */}
 		</Marker>
 	);
 }

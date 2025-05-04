@@ -1,9 +1,14 @@
 import { Property } from '@/components/home/FoundProperties';
-// import { Heading, Pressable, Text, View } from '@/components/ui';
+import { Heading, Pressable, Text, View } from '@/components/ui';
 import { ScrollView } from 'react-native';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useMemo } from 'react';
-import { ChevronLeftIcon, ChevronRight, Share2 } from 'lucide-react-native';
+import {
+	ChevronLeftIcon,
+	ChevronRight,
+	MapPin,
+	Share2,
+} from 'lucide-react-native';
 import { TabView, SceneMap } from 'react-native-tab-view';
 import PropertyHeader from '@/components/property/PropertyHeader';
 import FacilityItem from '@/components/property/FacilityItem';
@@ -26,6 +31,8 @@ import {
 } from '@/components/ui/accordion';
 import { Divider } from '@/components/ui/divider';
 import { ChevronUpIcon, ChevronDownIcon } from '@/components/ui/icon';
+import Map from '@/components/location/map';
+import SimilarProperties from '@/components/property/SimilarProperties';
 
 const data: Property[] = [
 	{
@@ -109,15 +116,15 @@ export default function PropertyItem() {
 			path: require('@/assets/images/property/img6.png'),
 		},
 	];
-	// const renderScene = {
-	// 	images: () => <PropertyImages images={images} />,
-	// 	video: () => (
-	// 		<View className="flex-1 items-center h-[20rem] justify-center">
-	// 			<Text size="xl">Video Coming Soon</Text>
-	// 		</View>
-	// 	),
-	// 	view: () => <Property3DView id={propertyId} image={images[0]} />,
-	// };
+	const renderScene = {
+		images: () => <PropertyImages images={images} />,
+		video: () => (
+			<View className="flex-1 items-center h-[20rem] justify-center">
+				<Text size="xl">Video Coming Soon</Text>
+			</View>
+		),
+		view: () => <Property3DView id={propertyId} image={images[0]} />,
+	};
 	const routes = [
 		{ key: 'images', title: 'Pictures' },
 		{ key: 'video', title: 'Videos' },
@@ -128,60 +135,47 @@ export default function PropertyItem() {
 			<Stack.Screen
 				options={{
 					headerShown: true,
-					...(process.env.EXPO_OS !== 'ios'
-						? {}
-						: {
-								headerLargeTitle: true,
-								headerTransparent: true,
-								headerBlurEffect: 'systemChromeMaterial',
-								headerLargeTitleShadowVisible: false,
-								headerShadowVisible: true,
-								headerLargeStyle: {
-									// NEW: Make the large title transparent to match the background.
-									backgroundColor: 'transparent',
-								},
-							}),
 					headerTransparent: true,
 					headerBackVisible: false,
 					headerTitle: property.name,
 					headerTitleStyle: { color: 'white' },
-					// headerLeft: () => (
-					// 	<Pressable
-					// 		onPress={() => {
-					// 			hapticFeed();
-					// 			if (router.canGoBack()) router.back();
-					// 			else router.push('/home');
-					// 		}}
-					// 		className="p-2 bg-black/20 rounded-full flex-row items-center ">
-					// 		<ChevronLeftIcon size={26} strokeWidth={3} color={'white'} />
-					// 	</Pressable>
-					// ),
-					// headerRight: () => (
-					// 	<View
-					// 		style={{
-					// 			flexDirection: 'row',
-					// 			alignItems: 'center',
-					// 		}}>
-					// 		<Pressable
-					// 			onPress={() => {
-					// 				hapticFeed();
-					// 				router.push({
-					// 					pathname: '/property/[propertyId]/share',
-					// 					params: { propertyId, name: property.name },
-					// 				});
-					// 			}}
-					// 			style={{ padding: 8 }}>
-					// 			<Share2 color={'orange'} />
-					// 		</Pressable>
-					// 	</View>
-					// ),
+					headerLeft: () => (
+						<Pressable
+							onPress={() => {
+								hapticFeed();
+								if (router.canGoBack()) router.back();
+								else router.push('/home');
+							}}
+							className="p-2 bg-black/20 rounded-full flex-row items-center ">
+							<ChevronLeftIcon size={26} strokeWidth={3} color={'white'} />
+						</Pressable>
+					),
+					headerRight: () => (
+						<View
+							style={{
+								flexDirection: 'row',
+								alignItems: 'center',
+							}}>
+							<Pressable
+								onPress={() => {
+									hapticFeed();
+									router.push({
+										pathname: '/property/[propertyId]/share',
+										params: { propertyId, name: property.name },
+									});
+								}}
+								style={{ padding: 8 }}>
+								<Share2 color={'orange'} />
+							</Pressable>
+						</View>
+					),
 				}}
 			/>
 			<ScrollView
 				keyboardShouldPersistTaps="handled"
 				className=" relative pt-0 flex-1">
 				<PropertyHeader {...property} />
-				{/* <View className=" px-4 pt-4 flex-1 gap-6 pb-20">
+				<View className=" px-4 pt-4 flex-1 gap-6 pb-20">
 					<View className="gap-2">
 						<Heading size="lg">Description</Heading>
 						<Text size="md">
@@ -193,7 +187,12 @@ export default function PropertyItem() {
 							arcu est adipiscing lacinia tellus eu aliquam...
 						</Text>
 					</View>
-					<Accordion size="md" variant="unfilled" type="single" className=" ">
+					<Accordion
+						size="md"
+						variant="unfilled"
+						defaultValue={['a']}
+						type="single"
+						className=" ">
 						<AccordionItem value="a">
 							<AccordionHeader>
 								<AccordionTrigger>
@@ -244,7 +243,42 @@ export default function PropertyItem() {
 								</AccordionTrigger>
 							</AccordionHeader>
 							<AccordionContent>
-								<AccordionContentText>Coming soon</AccordionContentText>
+								<View className="flex-row justify-between flex-wrap gap-4">
+									{facilites.map((item) => (
+										<FacilityItem {...item} key={item.name} />
+									))}
+								</View>
+							</AccordionContent>
+						</AccordionItem>
+						<Divider />
+						<AccordionItem value="c">
+							<AccordionHeader>
+								<AccordionTrigger>
+									{({ isExpanded }: { isExpanded: boolean }) => {
+										return (
+											<>
+												<AccordionTitleText>
+													Essential Amenities
+												</AccordionTitleText>
+												{isExpanded ? (
+													<AccordionIcon as={ChevronUpIcon} className="ml-3" />
+												) : (
+													<AccordionIcon
+														as={ChevronDownIcon}
+														className="ml-3"
+													/>
+												)}
+											</>
+										);
+									}}
+								</AccordionTrigger>
+							</AccordionHeader>
+							<AccordionContent>
+								<View className="flex-row justify-between flex-wrap gap-4">
+									{facilites.map((item) => (
+										<FacilityItem {...item} key={item.name} />
+									))}
+								</View>
 							</AccordionContent>
 						</AccordionItem>
 					</Accordion>
@@ -272,7 +306,22 @@ export default function PropertyItem() {
 							<ChevronRight color={'black'} />
 						</Pressable>
 					</View>
-				</View> */}
+					<View className="gap-1.5">
+						<Heading>Properties Address</Heading>
+						<View className="flex-row items-center gap-2">
+							<MapPin size={18} color={'#F8AA00'} />
+							<Text>
+								3 Unity St Abuloma, Port Harcourt 500101,Rivers 4.794181,
+								7.038484
+							</Text>
+						</View>
+						<Text>PID: 2678</Text>
+						<View className="rounded-xl overflow-hidden">
+							<Map height={Layout.window.height / 3} />
+						</View>
+					</View>
+					<SimilarProperties />
+				</View>
 			</ScrollView>
 		</>
 	);

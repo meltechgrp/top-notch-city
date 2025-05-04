@@ -1,40 +1,19 @@
-import { MMKV } from 'react-native-mmkv';
-
-export const storage = new MMKV({ id: 'hYID2vXzDQBdh2EqJEpT' });
-export function saveToStorage(key: string, data: any) {
-	data = JSON.stringify(data);
-	storage.set(key, data);
-}
-
-export function getFromStorage(key: string) {
-	let d = storage.getString(key);
-	try {
-		// @ts-ignore
-		return JSON.parse(d);
-	} catch (error) {
-		return d;
-	}
-}
-
-export function delFromStorage(key: string) {
-	storage.delete(key);
-}
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 class CacheStorage {
 	set(key: string, data: any, ttl: number) {
 		data = JSON.stringify({ data, ttl: Date.now() + ttl });
-		storage.set(key, data);
+		AsyncStorage.setItem(key, data);
 	}
 
-	get(key: string) {
-		let str = storage.getString(key);
+	async get(key: string) {
+		let str = await AsyncStorage.getItem(key);
 		if (!str) {
 			return null;
 		}
 		try {
 			const d = JSON.parse(str) as { data: any; ttl: number };
 			if (d.ttl && d.ttl < Date.now()) {
-				storage.delete(key);
+				AsyncStorage.removeItem(key);
 				return null;
 			}
 			return d.data;

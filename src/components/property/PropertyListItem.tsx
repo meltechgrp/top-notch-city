@@ -1,28 +1,33 @@
 import { cn } from '@/lib/utils';
 import { formatMoney, toNaira } from '@/lib/utils';
-import { useLayout } from '@react-native-community/hooks';
 import { router } from 'expo-router';
-import { useMemo } from 'react';
-import { Pressable, View } from 'react-native';
+import { Pressable, useWindowDimensions, View } from 'react-native';
 import { Property } from './PropertyHorizontalList';
 import { ImageBackground, Text } from '../ui';
-import { Map, MapPin } from 'lucide-react-native';
+import { MapPin } from 'lucide-react-native';
 import { hapticFeed } from '../HapticTab';
 import FacilityItem from './FacilityItem';
+import { useMemo } from 'react';
 
 type Props = {
 	data: Property;
 	className?: string;
 	showFacilites?: boolean;
 	isMine?: boolean;
+	columns?: number;
+	isHorizantal?: boolean;
 };
 export default function PropertyListItem(props: Props) {
-	const { data, className, showFacilites = false, isMine } = props;
+	const { width } = useWindowDimensions();
+	const {
+		data,
+		className,
+		showFacilites = false,
+		isMine,
+		columns,
+		isHorizantal = false,
+	} = props;
 	const { banner, name, price, location, id } = data;
-
-	const { width, onLayout } = useLayout();
-	// prettier-ignore
-	const height = useMemo(() => Math.round((width - 16) * (3 / 4)), [width])
 
 	const facilites = [
 		{
@@ -38,15 +43,29 @@ export default function PropertyListItem(props: Props) {
 			icon: 'garden',
 		},
 	];
+	const newWidth = useMemo(
+		() =>
+			columns
+				? columns == 2
+					? width / 2 - 30
+					: width - 30
+				: isHorizantal
+					? width / 1.4
+					: width - 30,
+		[columns, width, isHorizantal]
+	);
+	const newHeight = useMemo(
+		() => (columns ? (columns == 2 ? 240 : 300) : isHorizantal ? 200 : 300),
+		[columns, isHorizantal]
+	);
 	return (
 		<Pressable
-			onLayout={onLayout}
 			key={data.id}
-			className={cn(
-				'relative w-[240px] overflow-hidden min-h-[190px] active:scale-[0.95]',
-				className
-			)}
-			style={{ borderRadius: 8, height }}
+			style={{
+				width: newWidth,
+				height: newHeight,
+			}}
+			className={cn('relative rounded-xl active:scale-[0.95]', className)}
 			onPress={() => {
 				hapticFeed();
 				// if (isMine) {
@@ -68,7 +87,7 @@ export default function PropertyListItem(props: Props) {
 			<ImageBackground
 				source={banner}
 				alt="banner"
-				className=" flex-1 relative overflow-hidden rounded-xl">
+				className="flex-1 relative overflow-hidden rounded-xl">
 				<View className="flex-1 bg-black/10 p-4">
 					<View className="flex-1 items-end">
 						<View className=" flex-row items-center justify-center gap-1 py-1 px-2.5 rounded-full bg-primary-600/60">

@@ -29,7 +29,7 @@ export default function RootLayout() {
 			<GestureHandlerRootView style={{ flex: 1 }}>
 				<GluestackUIProvider mode={'light'} style={{ flex: 1 }}>
 					<Slot />
-					<StatusBar style="auto" />
+					{/* <StatusBar style="light" /> */}
 				</GluestackUIProvider>
 			</GestureHandlerRootView>
 			{/* </ThemeContext.Provider> */}

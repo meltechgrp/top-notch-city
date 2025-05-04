@@ -14,12 +14,12 @@ import {
 	Text,
 	View,
 	VStack,
-	AlertCircleIcon,
 	Pressable,
 } from '@/components/ui';
 import * as z from 'zod';
 import React from 'react';
 import { Lock, User } from 'lucide-react-native';
+import { AlertCircleIcon } from '@/components/ui/icon';
 
 const formSchema = z.object({
 	email: z.string().email({
