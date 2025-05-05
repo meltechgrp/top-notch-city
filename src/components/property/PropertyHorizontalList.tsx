@@ -32,27 +32,35 @@ export default function PropertyHorizontalList(props: Props) {
 	const { isRefreshing, onRefresh } = useRefresh(fetch);
 	const data: Property[] = [
 		{
-			id: 'dhghg662389kndnc',
+			id: 'dhghsnknkl89kndnc',
 			name: 'Karty Mansion',
 			location: 'Warri, Delta State',
 			price: 2500000,
-			banner: require('@/assets/images/property/property1.png'),
+			banner: require('@/assets/images/property/property7.png'),
 			images: [],
 		},
 		{
-			id: 'dhghg6623ds66skndnc',
+			id: 'dhghgdwjndws66skndnc',
 			name: 'Fortune Caste',
 			location: 'Benin City, Edo State',
 			price: 1500000,
-			banner: require('@/assets/images/property/property2.png'),
+			banner: require('@/assets/images/property/property4.png'),
 			images: [],
 		},
 		{
-			id: 'dhgdsbj332389kndnc',
+			id: 'dhgasdkjfndjkfnekndnc',
 			name: 'Great House',
 			location: 'Green Estate, Rumuomasi',
 			price: 2000000,
-			banner: require('@/assets/images/property/property1.png'),
+			banner: require('@/assets/images/property/property3.png'),
+			images: [],
+		},
+		{
+			id: 'dhjnsdjewkjfnekndnc',
+			name: 'Comfort Home',
+			location: 'Green Estate, Rumuomasi',
+			price: 2000000,
+			banner: require('@/assets/images/property/property6.png'),
 			images: [],
 		},
 	];
@@ -69,15 +77,15 @@ export default function PropertyHorizontalList(props: Props) {
 		};
 	}, []);
 
-	if (isRefreshing) {
-		return (
-			<View className="flex-row gap-x-4 ml-4">
-				{[1, 2].map((key) => (
-					<PropertyOverviewSkeleton key={key} />
-				))}
-			</View>
-		);
-	}
+	// if (isRefreshing) {
+	// 	return (
+	// 		<View className="flex-row gap-x-4 ml-4">
+	// 			{[1, 2].map((key) => (
+	// 				<PropertyOverviewSkeleton key={key} />
+	// 			))}
+	// 		</View>
+	// 	);
+	// }
 
 	if (!data.length && emptyState) {
 		return <View>{emptyState}</View>;

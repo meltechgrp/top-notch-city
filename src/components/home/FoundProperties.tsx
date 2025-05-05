@@ -1,8 +1,7 @@
 import { cn } from '@/lib/utils';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { ImageSourcePropType, ScrollView } from 'react-native';
-import PropertyOverviewSkeleton from '../skeleton/PropertyOverviewSkeleton';
-import { Text, View } from '@/components/ui';
+import { View } from '@/components/ui';
 import { useRefresh } from '@react-native-community/hooks';
 import eventBus from '@/lib/eventBus';
 import HorizontalListItem from '../property/HorizontalListItem';
@@ -31,27 +30,35 @@ export default function FoundHorizontalList(props: Props) {
 	const { isRefreshing, onRefresh } = useRefresh(fetch);
 	const data: Property[] = [
 		{
-			id: 'dhghg662389kndnc',
-			name: 'Babylon House',
-			location: 'Emma Estate, Slaughter',
+			id: 'dhghdwkmkcdndnc',
+			name: 'Wings Tower',
+			location: 'Emma Estate, Trans Amadi',
 			price: 2500000,
-			banner: require('@/assets/images/property/property1.png'),
+			banner: require('@/assets/images/property/property6.png'),
 			images: [],
 		},
 		{
-			id: 'dhghg6623ds66skndnc',
+			id: 'dhgxscndddds66skndnc',
 			name: 'Topaz Villa',
 			location: 'Emma Estate, Slaughter',
 			price: 1500000,
-			banner: require('@/assets/images/property/property2.png'),
+			banner: require('@/assets/images/property/property5.png'),
 			images: [],
 		},
 		{
-			id: 'dhgdsbj332389kndnc',
+			id: 'ddmkldemklefndnc',
 			name: 'Great House',
 			location: 'Green Estate, Rumuomasi',
 			price: 2000000,
-			banner: require('@/assets/images/property/property1.png'),
+			banner: require('@/assets/images/property/property4.png'),
+			images: [],
+		},
+		{
+			id: 'dhgdekklmeddnc',
+			name: 'Gracie Home',
+			location: 'Emma Estate, Ada George',
+			price: 2500000,
+			banner: require('@/assets/images/property/property2.png'),
 			images: [],
 		},
 	];
@@ -68,18 +75,8 @@ export default function FoundHorizontalList(props: Props) {
 		};
 	}, []);
 
-	if (isRefreshing) {
-		return (
-			<View className="flex-row gap-x-4 ml-4">
-				{[1, 2].map((key) => (
-					<PropertyOverviewSkeleton key={key} />
-				))}
-			</View>
-		);
-	}
-
 	if (!data.length && emptyState) {
-		return <View>{emptyState}</View>;
+		return null;
 	}
 
 	return (

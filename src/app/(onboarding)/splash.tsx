@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { router } from 'expo-router';
-import { View, Text, Image, ImageBackground } from '@/components/ui';
+import { View, Text, Image } from '@/components/ui';
 import Animated, {
 	useSharedValue,
 	useAnimatedStyle,
@@ -46,10 +46,7 @@ export default function SplashScreen() {
 	});
 
 	return (
-		<ImageBackground
-			source={require('@/assets/images/landing/splash-group.png')}
-			className="flex-1"
-			imageStyle={{ resizeMode: 'cover' }}>
+		<View className="flex-1">
 			<View className="flex-1 justify-center items-center px-4">
 				<Image
 					source={require('@/assets/images/landing/splash-big.png')}
@@ -68,6 +65,6 @@ export default function SplashScreen() {
 					style={spinStyle}
 				/>
 			</View>
-		</ImageBackground>
+		</View>
 	);
 }

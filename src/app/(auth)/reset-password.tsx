@@ -14,12 +14,12 @@ import {
 	Text,
 	View,
 	VStack,
-	AlertCircleIcon,
-	Pressable,
+	Box,
+	InputIcon,
 } from '@/components/ui';
 import * as z from 'zod';
 import React from 'react';
-import { User } from 'lucide-react-native';
+import { AlertCircleIcon, Mail, User } from 'lucide-react-native';
 
 const formSchema = z.object({
 	email: z.string().email({
@@ -60,9 +60,9 @@ export default function ResetPassword() {
 	}
 	return (
 		<OnboardingScreenContainer onBack={onBack}>
-			<VStack className="w-[98%] max-w-[26rem] gap-6 mt-4 mx-auto rounded-xl bg-background-200/90 p-6 pb-16">
+			<Box className="w-[98%] max-w-[26rem] gap-6 mt-4 mx-auto rounded-xl p-6 pb-16">
 				<View className=" gap-2">
-					<Text className=" text-2xl text-[#FF1500] font-semibold font-heading text-center">
+					<Text className=" text-2xl text-primary font-semibold font-heading text-center">
 						Forgot password
 					</Text>
 					<Text className=" text-center">
@@ -76,8 +76,8 @@ export default function ResetPassword() {
 								Email
 							</FormControlLabelText>
 						</FormControlLabel>
-						<Input className="my-1 bg-white rounded-xl px-4 h-14" size={'xl'}>
-							<User size={20} color={'#6b7280'} />
+						<Input className="my-1 rounded-xl px-4 h-14" size={'xl'}>
+							<InputIcon as={Mail} />
 							<InputField
 								type="text"
 								placeholder="Email"
@@ -101,7 +101,7 @@ export default function ResetPassword() {
 					onPress={handleSubmit}>
 					<ButtonText>Reset Password</ButtonText>
 				</Button>
-			</VStack>
+			</Box>
 		</OnboardingScreenContainer>
 	);
 }

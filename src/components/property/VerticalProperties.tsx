@@ -1,9 +1,7 @@
-import FeaturedPropertyItem from '@/components/property/FeaturedPropertyItem';
 import { Button, View } from '@/components/ui';
 import { useRefresh } from '@react-native-community/hooks';
 import { Skeleton } from 'moti/skeleton';
 import { MotiView } from 'moti';
-import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import { BodyScrollView } from '@/components/layouts/BodyScrollView';
 import { hapticFeed } from '@/components/HapticTab';
@@ -15,14 +13,19 @@ import { useState } from 'react';
 import PropertyListItem from './PropertyListItem';
 
 interface Props {
-	category: string;
+	category?: string;
 	className?: string;
 	scrollY?: any;
+	disableCount?: boolean;
 }
 const GAP = 16;
 const SIDE_PADDING = 16;
 
-export default function VerticalProperties({ category, scrollY }: Props) {
+export default function VerticalProperties({
+	category,
+	scrollY,
+	disableCount = false,
+}: Props) {
 	const router = useRouter();
 	const [numColumns, setNumColumns] = useState(2);
 	const layoutAnim = new Animated.Value(0);
@@ -34,10 +37,10 @@ export default function VerticalProperties({ category, scrollY }: Props) {
 	const data: Property[] = [
 		{
 			id: 'dhghg662389kndnc',
-			name: 'Babylon House',
-			location: 'Emma Estate, Slaughter',
+			name: 'Wings Tower',
+			location: 'Emma Estate, Trans Amadi',
 			price: 2500000,
-			banner: require('@/assets/images/property/property1.png'),
+			banner: require('@/assets/images/property/property6.png'),
 			images: [],
 		},
 		{
@@ -45,7 +48,7 @@ export default function VerticalProperties({ category, scrollY }: Props) {
 			name: 'Topaz Villa',
 			location: 'Emma Estate, Slaughter',
 			price: 1500000,
-			banner: require('@/assets/images/property/property2.png'),
+			banner: require('@/assets/images/property/property5.png'),
 			images: [],
 		},
 		{
@@ -53,23 +56,23 @@ export default function VerticalProperties({ category, scrollY }: Props) {
 			name: 'Great House',
 			location: 'Green Estate, Rumuomasi',
 			price: 2000000,
-			banner: require('@/assets/images/property/property1.png'),
+			banner: require('@/assets/images/property/property4.png'),
 			images: [],
 		},
 		{
 			id: 'dhghg66mdm89kndnc',
-			name: 'Babylon House',
-			location: 'Emma Estate, Slaughter',
+			name: 'Gracie Home',
+			location: 'Emma Estate, Ada George',
 			price: 2500000,
-			banner: require('@/assets/images/property/property1.png'),
+			banner: require('@/assets/images/property/property2.png'),
 			images: [],
 		},
 		{
 			id: 'dhejdkd66skndnc',
-			name: 'Topaz Villa',
-			location: 'Emma Estate, Slaughter',
+			name: 'Topaz Estate',
+			location: 'Topaz Estate, Abuja',
 			price: 1500000,
-			banner: require('@/assets/images/property/property2.png'),
+			banner: require('@/assets/images/property/property7.png'),
 			images: [],
 		},
 		{
@@ -78,6 +81,14 @@ export default function VerticalProperties({ category, scrollY }: Props) {
 			location: 'Green Estate, Rumuomasi',
 			price: 2000000,
 			banner: require('@/assets/images/property/property1.png'),
+			images: [],
+		},
+		{
+			id: 'jdnckkdsklcdednk',
+			name: 'Humphrey House',
+			location: 'Green Estate, Rumuomasi',
+			price: 2000000,
+			banner: require('@/assets/images/property/property3.png'),
 			images: [],
 		},
 	];
@@ -115,8 +126,8 @@ export default function VerticalProperties({ category, scrollY }: Props) {
 			horizontal={false}
 			showsVerticalScrollIndicator={false}
 			contentContainerStyle={{
-				alignItems: 'center',
-				paddingHorizontal: SIDE_PADDING,
+				alignItems: 'flex-start',
+				// paddingHorizontal: SIDE_PADDING,
 			}}
 			onScroll={
 				scrollY &&
@@ -133,6 +144,7 @@ export default function VerticalProperties({ category, scrollY }: Props) {
 					toggleView={toggleView}
 					numColumns={numColumns}
 					total={data.length}
+					disableCount={disableCount}
 				/>
 			)}
 			keyExtractor={(item) => item.id}

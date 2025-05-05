@@ -1,13 +1,13 @@
 import SectionHeaderWithRef from '@/components/home/SectionHeaderWithRef';
 import { router } from 'expo-router';
 import React from 'react';
-import TopPropertiesVerticalList from './PropertiesVerticalList';
+import VerticalProperties from '@/components/property/VerticalProperties';
+import { View } from '@/components/ui';
 
 export default function TopProperties() {
-	const [index, setIndex] = React.useState(0);
 	return (
 		<SectionHeaderWithRef
-			title="Properties"
+			title="Top Properties"
 			onSeeAllPress={() => {
 				router.push({
 					pathname: '/(protected)/property/section',
@@ -16,7 +16,9 @@ export default function TopProperties() {
 					},
 				});
 			}}>
-			<TopPropertiesVerticalList />
+			<View className="flex-1 px-4">
+				<VerticalProperties disableCount={true} category="top" scrollY={0} />
+			</View>
 		</SectionHeaderWithRef>
 	);
 }

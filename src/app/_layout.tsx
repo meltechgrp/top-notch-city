@@ -1,13 +1,15 @@
 import './global.css';
 import { useFonts } from 'expo-font';
-import { StatusBar } from 'expo-status-bar';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { GluestackUIProvider } from '@/components/ui';
 import 'react-native-reanimated';
-import { ErrorBoundaryProps, Slot, Stack } from 'expo-router';
+import { ErrorBoundaryProps, Slot, SplashScreen } from 'expo-router';
 import AppCrashScreen from '@/components/shared/AppCrashScreen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { ThemeProvider } from '@/components/layouts/ThemeProvider';
 
+// Prevent the splash screen from auto-hiding before asset loading is complete.
+SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
 	const [loaded, error] = useFonts({
 		'Railway-Black': require('../assets/fonts/Raleway-Black.ttf'),
@@ -19,20 +21,21 @@ export default function RootLayout() {
 		'Raleway-SemiBold': require('../assets/fonts/Raleway-SemiBold.ttf'),
 		'Raleway-Thin': require('../assets/fonts/Raleway-Thin.ttf'),
 	});
+	React.useEffect(() => {
+		SplashScreen.hideAsync();
+	}, []);
 	if (!loaded && !error) {
 		return null;
 	}
-
 	return (
 		<>
-			{/* <ThemeContext.Provider value={{ colorMode, toggleColorMode }}> */}
-			<GestureHandlerRootView style={{ flex: 1 }}>
-				<GluestackUIProvider mode={'light'} style={{ flex: 1 }}>
-					<Slot />
-					{/* <StatusBar style="light" /> */}
-				</GluestackUIProvider>
-			</GestureHandlerRootView>
-			{/* </ThemeContext.Provider> */}
+			<ThemeProvider>
+				<GestureHandlerRootView style={{ flex: 1 }}>
+					<GluestackUIProvider>
+						<Slot />
+					</GluestackUIProvider>
+				</GestureHandlerRootView>
+			</ThemeProvider>
 		</>
 	);
 }

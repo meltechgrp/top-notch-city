@@ -1,5 +1,5 @@
 import { Property } from '@/components/home/FoundProperties';
-import { Heading, Pressable, Text, View } from '@/components/ui';
+import { Box, Heading, Pressable, Text, View } from '@/components/ui';
 import { ScrollView } from 'react-native';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useMemo } from 'react';
@@ -25,22 +25,21 @@ import {
 	AccordionHeader,
 	AccordionTrigger,
 	AccordionTitleText,
-	AccordionContentText,
 	AccordionIcon,
 	AccordionContent,
 } from '@/components/ui/accordion';
 import { Divider } from '@/components/ui/divider';
-import { ChevronUpIcon, ChevronDownIcon } from '@/components/ui/icon';
+import { ChevronUpIcon, ChevronDownIcon, Icon } from '@/components/ui/icon';
 import Map from '@/components/location/map';
 import SimilarProperties from '@/components/property/SimilarProperties';
 
 const data: Property[] = [
 	{
 		id: 'dhghg662389kndnc',
-		name: 'Babylon House',
-		location: 'Emma Estate, Slaughter',
+		name: 'Wings Tower',
+		location: 'Emma Estate, Trans Amadi',
 		price: 2500000,
-		banner: require('@/assets/images/property/property1.png'),
+		banner: require('@/assets/images/property/property6.png'),
 		images: [],
 	},
 	{
@@ -66,7 +65,7 @@ export default function PropertyItem() {
 	const [index, setIndex] = React.useState(0);
 	const { propertyId } = useLocalSearchParams() as { propertyId: string };
 	const property = useMemo(() => {
-		return data.find((item) => item.id === propertyId);
+		return data.find((item) => item.id === 'dhghg662389kndnc');
 	}, [propertyId]);
 
 	if (!property) return null;
@@ -137,8 +136,9 @@ export default function PropertyItem() {
 					headerShown: true,
 					headerTransparent: true,
 					headerBackVisible: false,
+					statusBarStyle: 'light',
 					headerTitle: property.name,
-					headerTitleStyle: { color: 'white' },
+					headerTitleStyle: { color: 'white', fontSize: 20 },
 					headerLeft: () => (
 						<Pressable
 							onPress={() => {
@@ -171,158 +171,170 @@ export default function PropertyItem() {
 					),
 				}}
 			/>
-			<ScrollView
-				keyboardShouldPersistTaps="handled"
-				className=" relative pt-0 flex-1">
-				<PropertyHeader {...property} />
-				<View className=" px-4 pt-4 flex-1 gap-6 pb-20">
-					<View className="gap-2">
-						<Heading size="lg">Description</Heading>
-						<Text size="md">
-							Lorem ipsum dolor sit amet consectetur. Eget metus nibh mattis
-							elementum volutpat tortor. Felis molestie morbi purus risus. Etiam
-							congue arcu est adipiscing lacinia tellus eu aliquam... Lorem
-							ipsum dolor sit amet consectetur. Eget metus nibh mattis elementum
-							volutpat tortor. Felis molestie morbi purus risus. Etiam congue
-							arcu est adipiscing lacinia tellus eu aliquam...
-						</Text>
-					</View>
-					<Accordion
-						size="md"
-						variant="unfilled"
-						defaultValue={['a']}
-						type="single"
-						className=" ">
-						<AccordionItem value="a">
-							<AccordionHeader>
-								<AccordionTrigger>
-									{({ isExpanded }: { isExpanded: boolean }) => {
-										return (
-											<>
-												<AccordionTitleText>Facilities</AccordionTitleText>
-												{isExpanded ? (
-													<AccordionIcon as={ChevronUpIcon} className="ml-3" />
-												) : (
-													<AccordionIcon
-														as={ChevronDownIcon}
-														className="ml-3"
-													/>
-												)}
-											</>
-										);
-									}}
-								</AccordionTrigger>
-							</AccordionHeader>
-							<AccordionContent>
-								<View className="flex-row justify-between flex-wrap gap-4">
-									{facilites.map((item) => (
-										<FacilityItem {...item} key={item.name} />
-									))}
-								</View>
-							</AccordionContent>
-						</AccordionItem>
-						<Divider />
-						<AccordionItem value="b">
-							<AccordionHeader>
-								<AccordionTrigger>
-									{({ isExpanded }: { isExpanded: boolean }) => {
-										return (
-											<>
-												<AccordionTitleText>Environment</AccordionTitleText>
-												{isExpanded ? (
-													<AccordionIcon as={ChevronUpIcon} className="ml-3" />
-												) : (
-													<AccordionIcon
-														as={ChevronDownIcon}
-														className="ml-3"
-													/>
-												)}
-											</>
-										);
-									}}
-								</AccordionTrigger>
-							</AccordionHeader>
-							<AccordionContent>
-								<View className="flex-row justify-between flex-wrap gap-4">
-									{facilites.map((item) => (
-										<FacilityItem {...item} key={item.name} />
-									))}
-								</View>
-							</AccordionContent>
-						</AccordionItem>
-						<Divider />
-						<AccordionItem value="c">
-							<AccordionHeader>
-								<AccordionTrigger>
-									{({ isExpanded }: { isExpanded: boolean }) => {
-										return (
-											<>
-												<AccordionTitleText>
-													Essential Amenities
-												</AccordionTitleText>
-												{isExpanded ? (
-													<AccordionIcon as={ChevronUpIcon} className="ml-3" />
-												) : (
-													<AccordionIcon
-														as={ChevronDownIcon}
-														className="ml-3"
-													/>
-												)}
-											</>
-										);
-									}}
-								</AccordionTrigger>
-							</AccordionHeader>
-							<AccordionContent>
-								<View className="flex-row justify-between flex-wrap gap-4">
-									{facilites.map((item) => (
-										<FacilityItem {...item} key={item.name} />
-									))}
-								</View>
-							</AccordionContent>
-						</AccordionItem>
-					</Accordion>
-					<TabView
-						style={{ height: 340 }}
-						renderTabBar={(props) => <CustomTabBar2 {...props} />}
-						navigationState={{ index, routes }}
-						renderScene={SceneMap(renderScene)}
-						onIndexChange={setIndex}
-						initialLayout={{ width: Layout.window.width }}
-					/>
-					<View className=" gap-4">
-						<Pressable className="flex-row gap-4 bg-white p-4 rounded-xl items-center justify-between">
-							<BookPropertyIcon />
-							<Text size="lg" className=" mr-auto">
-								Book a visit
-							</Text>
-							<ChevronRight color={'black'} />
-						</Pressable>
-						<Pressable className="flex-row gap-4 bg-white p-4 rounded-xl items-center justify-between">
-							<WhatsappIcon />
-							<Text size="lg" className=" mr-auto">
-								Chat with Realtor
-							</Text>
-							<ChevronRight color={'black'} />
-						</Pressable>
-					</View>
-					<View className="gap-1.5">
-						<Heading>Properties Address</Heading>
-						<View className="flex-row items-center gap-2">
-							<MapPin size={18} color={'#F8AA00'} />
-							<Text>
-								3 Unity St Abuloma, Port Harcourt 500101,Rivers 4.794181,
-								7.038484
+			<Box className="flex-1">
+				<ScrollView
+					keyboardShouldPersistTaps="handled"
+					className=" relative pt-0 flex-1">
+					<PropertyHeader {...property} />
+					<View className=" pt-4 flex-1 gap-6 pb-20">
+						<View className="gap-2 px-4">
+							<Heading size="lg">Description</Heading>
+							<Text size="md">
+								Lorem ipsum dolor sit amet consectetur. Eget metus nibh mattis
+								elementum volutpat tortor. Felis molestie morbi purus risus.
+								Etiam congue arcu est adipiscing lacinia tellus eu aliquam...
+								Lorem ipsum dolor sit amet consectetur. Eget metus nibh mattis
+								elementum volutpat tortor. Felis molestie morbi purus risus.
+								Etiam congue arcu est adipiscing lacinia tellus eu aliquam...
 							</Text>
 						</View>
-						<Text>PID: 2678</Text>
-						<View className="rounded-xl overflow-hidden">
-							<Map height={Layout.window.height / 3} />
+						<Accordion
+							size="md"
+							variant="unfilled"
+							defaultValue={['a']}
+							type="single"
+							className=" ">
+							<AccordionItem value="a">
+								<AccordionHeader>
+									<AccordionTrigger>
+										{({ isExpanded }: { isExpanded: boolean }) => {
+											return (
+												<>
+													<AccordionTitleText>Facilities</AccordionTitleText>
+													{isExpanded ? (
+														<AccordionIcon
+															as={ChevronUpIcon}
+															className="ml-3"
+														/>
+													) : (
+														<AccordionIcon
+															as={ChevronDownIcon}
+															className="ml-3"
+														/>
+													)}
+												</>
+											);
+										}}
+									</AccordionTrigger>
+								</AccordionHeader>
+								<AccordionContent>
+									<View className="flex-row flex-wrap gap-4">
+										{facilites.map((item) => (
+											<FacilityItem {...item} key={item.name} />
+										))}
+									</View>
+								</AccordionContent>
+							</AccordionItem>
+							<Divider />
+							<AccordionItem value="b">
+								<AccordionHeader>
+									<AccordionTrigger>
+										{({ isExpanded }: { isExpanded: boolean }) => {
+											return (
+												<>
+													<AccordionTitleText>Environment</AccordionTitleText>
+													{isExpanded ? (
+														<AccordionIcon
+															as={ChevronUpIcon}
+															className="ml-3"
+														/>
+													) : (
+														<AccordionIcon
+															as={ChevronDownIcon}
+															className="ml-3"
+														/>
+													)}
+												</>
+											);
+										}}
+									</AccordionTrigger>
+								</AccordionHeader>
+								<AccordionContent>
+									<View className="flex-row flex-wrap gap-4">
+										{facilites.map((item) => (
+											<FacilityItem {...item} key={item.name} />
+										))}
+									</View>
+								</AccordionContent>
+							</AccordionItem>
+							<Divider />
+							<AccordionItem value="c">
+								<AccordionHeader>
+									<AccordionTrigger>
+										{({ isExpanded }: { isExpanded: boolean }) => {
+											return (
+												<>
+													<AccordionTitleText>
+														Essential Amenities
+													</AccordionTitleText>
+													{isExpanded ? (
+														<AccordionIcon
+															as={ChevronUpIcon}
+															className="ml-3"
+														/>
+													) : (
+														<AccordionIcon
+															as={ChevronDownIcon}
+															className="ml-3"
+														/>
+													)}
+												</>
+											);
+										}}
+									</AccordionTrigger>
+								</AccordionHeader>
+								<AccordionContent>
+									<View className="flex-row flex-wrap gap-4">
+										{facilites.map((item) => (
+											<FacilityItem {...item} key={item.name} />
+										))}
+									</View>
+								</AccordionContent>
+							</AccordionItem>
+						</Accordion>
+						<View className="px-4">
+							<TabView
+								style={{ height: 340 }}
+								renderTabBar={(props) => <CustomTabBar2 {...props} />}
+								navigationState={{ index, routes }}
+								renderScene={SceneMap(renderScene)}
+								onIndexChange={setIndex}
+								initialLayout={{ width: Layout.window.width }}
+							/>
 						</View>
+						<View className=" gap-4 px-4">
+							<Pressable className="flex-row gap-4 bg-background-muted p-4 rounded-xl items-center justify-between">
+								<BookPropertyIcon />
+								<Text size="lg" className=" mr-auto">
+									Book a visit
+								</Text>
+								<Icon as={ChevronRight} />
+							</Pressable>
+							<Pressable className="flex-row gap-4 bg-background-muted p-4 rounded-xl items-center justify-between">
+								<WhatsappIcon />
+								<Text size="lg" className=" mr-auto">
+									Chat with Realtor
+								</Text>
+								<Icon as={ChevronRight} />
+							</Pressable>
+						</View>
+						<View className="gap-2 px-4">
+							<Heading>Properties Address</Heading>
+							<View className="flex-row items-center gap-2">
+								<MapPin size={18} color={'#F8AA00'} />
+								<Text>
+									3 Unity St Abuloma, Port Harcourt 500101,Rivers 4.794181,
+									7.038484
+								</Text>
+							</View>
+							<View className="rounded-xl overflow-hidden">
+								<Map height={Layout.window.height / 3} />
+							</View>
+						</View>
+						<SimilarProperties />
 					</View>
-					<SimilarProperties />
-				</View>
-			</ScrollView>
+				</ScrollView>
+			</Box>
 		</>
 	);
 }

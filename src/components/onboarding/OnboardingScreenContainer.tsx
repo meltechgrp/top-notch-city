@@ -3,8 +3,8 @@ import Platforms from '@/constants/Plaforms';
 import { router } from 'expo-router';
 import { Pressable, ScrollView, View } from 'react-native';
 import { Box, Image, ImageBackground } from '../ui';
-import { StatusBar } from 'expo-status-bar';
 import { ChevronLeft } from 'lucide-react-native';
+import { useTheme } from '../layouts/ThemeProvider';
 
 type Props = {
 	children: React.ReactNode;
@@ -23,6 +23,7 @@ export default function OnboardingScreenContainer(props: Props) {
 		showHeader = true,
 		edges = ['top', 'bottom'],
 	} = props;
+	const { theme } = useTheme();
 
 	function _onBack() {
 		if (props.onBack) {
@@ -38,39 +39,21 @@ export default function OnboardingScreenContainer(props: Props) {
 
 	return (
 		<Box className="flex-1 mx-auto w-full">
-			{Platforms.isWeb() ? (
-				<View className="flex-1 bg-black/80 justify-center">
-					<View className="py-6 flex-1  ">
-						<View className="flex-row mt-2 items-center pb-4 px-6">
-							{showHeader && (
-								<Pressable
-									className="flex-1 items-center "
-									onPress={() => router.push('/')}>
-									<Image
-										source={require('@/assets/images/landing/logo-white.png')}
-										alt="Logo"
-										className=" w-[135px] h-[48px] object-cover"
-									/>
-								</Pressable>
-							)}
-						</View>
-						<View className="pt-2 px-6 flex-1">{children}</View>
-					</View>
-				</View>
-			) : (
-				<ImageBackground
-					source={require('@/assets/images/landing/auth-banner.png')}
-					className="flex-1 bg-cover w-full md:max-w-[1400px]">
-					{/* <StatusBar style="light" /> */}
+			<ImageBackground
+				source={require('@/assets/images/landing/auth-banner.png')}
+				className="flex-1 bg-cover w-full md:max-w-[1400px]">
+				<View
+					className={`flex-1 ${theme === 'dark' ? 'bg-black/30' : 'bg-black/15'}`}>
 					<ScreenContianer
 						edges={edges}
+						style={{ flex: 1 }}
 						keyboardVerticalOffset={Platforms.isIOS() ? 20 : undefined}>
-						<View className="py-6  flex-1 ">
+						<View className="py-6 flex-1 ">
 							<View className="flex-row mt-2 items-center pb-4 px-6">
 								{allowBack && (
 									<Pressable
 										onPress={_onBack}
-										className=" bg-gray-400 p-1.5 rounded-full">
+										className=" bg-outline-100/60 p-1.5 rounded-full">
 										<ChevronLeft strokeWidth={2} color={'#fff'} />
 									</Pressable>
 								)}
@@ -95,8 +78,8 @@ export default function OnboardingScreenContainer(props: Props) {
 							)}
 						</View>
 					</ScreenContianer>
-				</ImageBackground>
-			)}
+				</View>
+			</ImageBackground>
 		</Box>
 	);
 }

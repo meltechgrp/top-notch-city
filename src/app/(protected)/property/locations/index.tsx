@@ -1,4 +1,4 @@
-import { Button, Pressable, Text, View } from '@/components/ui';
+import { Box, Button, Pressable, Text, View } from '@/components/ui';
 import { RefreshControl } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import React from 'react';
@@ -8,6 +8,7 @@ import { BodyScrollView } from '@/components/layouts/BodyScrollView';
 import { FlashList } from '@shopify/flash-list';
 import { useRefresh } from '@react-native-community/hooks';
 import TopLocationItem from '@/components/property/TopLocationItem';
+import { useTheme } from '@/components/layouts/ThemeProvider';
 
 export type Locations = {
 	id: string;
@@ -18,6 +19,7 @@ export type Locations = {
 
 export default function PropertySections() {
 	const router = useRouter();
+	const { theme } = useTheme();
 	const fetch = () => {
 		return new Promise((resolve) => setTimeout(resolve, 5000));
 	};
@@ -68,7 +70,10 @@ export default function PropertySections() {
 					headerShown: true,
 					headerBackVisible: false,
 					headerTitle: 'Top Locations',
-					headerTitleStyle: { color: 'black' },
+					headerTitleStyle: { color: theme == 'dark' ? 'white' : 'black' },
+					headerStyle: {
+						backgroundColor: theme == 'dark' ? '#404040' : '#f5f5f5', // 64 64 64
+					},
 					headerLeft: () => (
 						<Pressable
 							onPress={() => {
@@ -82,7 +87,7 @@ export default function PropertySections() {
 					),
 				}}
 			/>
-			<View className="flex-1 px-4 bg-white">
+			<Box className="flex-1 px-4">
 				<FlashList
 					data={data}
 					renderItem={({ item }) => <TopLocationItem data={item} />}
@@ -107,8 +112,7 @@ export default function PropertySections() {
 					ListEmptyComponent={() => (
 						<BodyScrollView
 							contentContainerStyle={{
-								alignItems: 'center',
-								gap: 8,
+								alignItems: 'flex-start',
 								paddingTop: 100,
 							}}>
 							<Button
@@ -121,7 +125,7 @@ export default function PropertySections() {
 						</BodyScrollView>
 					)}
 				/>
-			</View>
+			</Box>
 		</>
 	);
 }

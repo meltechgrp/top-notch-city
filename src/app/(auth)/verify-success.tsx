@@ -1,7 +1,7 @@
 import OnboardingScreenContainer from '@/components/onboarding/OnboardingScreenContainer';
 import { router } from 'expo-router';
 import success from '@/assets/lotties/success.json';
-import { Button, ButtonText, Text, View, VStack } from '@/components/ui';
+import { Box, Button, ButtonText, Text, View } from '@/components/ui';
 import LottieView from 'lottie-react-native';
 import React, { useEffect, useRef } from 'react';
 
@@ -16,7 +16,7 @@ export default function VerifySuccess() {
 	}, []);
 	return (
 		<OnboardingScreenContainer allowBack={false}>
-			<VStack className="w-[98%] max-w-[26rem] mt-4 mx-auto rounded-xl bg-background-200/90 p-6">
+			<Box className="w-[98%] bg-background/80 max-w-[26rem] mt-4 mx-auto rounded-xl p-6">
 				<View className="px-2 justify-between items-center">
 					<LottieView
 						ref={successRef}
@@ -40,7 +40,7 @@ export default function VerifySuccess() {
 					onPress={handleSubmit}>
 					<ButtonText>Continue</ButtonText>
 				</Button>
-			</VStack>
+			</Box>
 		</OnboardingScreenContainer>
 	);
 }

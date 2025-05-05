@@ -5,9 +5,9 @@ import {
 	TextInputKeyPressEventData,
 } from 'react-native';
 import Layout from '@/constants/Layout';
-// import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import { cn } from '@/lib/utils';
 import { View } from '../ui';
+import { useTheme } from '../layouts/ThemeProvider';
 type Props = {
 	inputStyle?: TextInput['props']['style'];
 	onTextChange?: (text: string) => void;
@@ -30,6 +30,7 @@ export default function OTPInput(props: Props) {
 		inModal,
 		className,
 	} = props;
+	const { theme } = useTheme();
 	const [value, setValue] = React.useState<{ [k: number]: string }>({});
 	const [focused, setFocused] = React.useState<number>(-1);
 	const Input = TextInput;
@@ -89,7 +90,7 @@ export default function OTPInput(props: Props) {
 				return (
 					<View
 						className={cn(
-							'text-center rounded-md text-lg border  leading-tight justify-center items-center flex',
+							'text-center text-typography rounded-md text-lg border  leading-tight justify-center items-center flex',
 							{
 								'border-gray-500': id != focused,
 								'border-primary': id == focused,
@@ -98,7 +99,7 @@ export default function OTPInput(props: Props) {
 							className
 						)}
 						style={[
-							inputStyle,
+							// inputStyle,
 							{
 								width: w,
 								height: w,
@@ -111,12 +112,13 @@ export default function OTPInput(props: Props) {
 							{...(id ? {} : { autoFocus: true })}
 							key={id}
 							textAlign="center"
-							className="text-center"
 							keyboardType="phone-pad"
 							onChangeText={(v) => onChange(v, id)}
 							onKeyPress={(v) => onKeyPress(v, id)}
 							onFocus={() => setFocused(id)}
 							{...inputProps}
+							style={{ color: theme == 'dark' ? 'white' : 'black' }}
+							className="text-center"
 						/>
 					</View>
 				);

@@ -5,27 +5,22 @@ import { formatMoney } from '@/lib/utils';
 import Layout from '@/constants/Layout';
 
 export default function PropertyHeader({ banner, price, location }: Property) {
-	const height = Layout.window.height / 2.1;
+	const height = Layout.window.height / 2.3;
 	return (
 		<ImageBackground
 			source={banner}
 			style={{ height }}
-			className=" justify-end p-4 py-8 bg-cover object-cover bg-center overflow-hidden rounded-b-sm">
-			<View className="gap-2 bg-black/30">
-				<View className=" flex-row self-start items-center justify-center gap-1 py-1 px-2.5 rounded-full bg-primary-600 ">
-					<Map size={24} color={'#fff'} />
-					<Text className="text-3xl text-white">{1.8}</Text>
-					<Text className=" text-white text-2xl">km</Text>
-				</View>
-				<View className=" flex-row items-center justify-between">
-					<View className=" flex-row items-center gap-2">
-						<MapPin size={18} color={'orange'} />
-						<Text size="xl" className=" text-white">
-							{location}
-						</Text>
-					</View>
-					<Text size="xl" className="text-white">
+			className="  bg-cover object-cover bg-center overflow-hidden rounded-b-3xl">
+			<View className="gap-2 flex-1 p-4 py-8 justify-end bg-black/30">
+				<View className=" bg-primary w-1/2 rounded-full p-1 px-4">
+					<Text size="2xl" className="text-white">
 						{formatMoney(price, 'NGN', 0)}
+					</Text>
+				</View>
+				<View className=" flex-row items-center gap-2">
+					<MapPin size={18} color={'orange'} />
+					<Text size="xl" className=" text-white">
+						{location}
 					</Text>
 				</View>
 			</View>

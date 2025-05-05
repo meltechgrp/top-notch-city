@@ -3,6 +3,7 @@ import { ImageSourcePropType, ScrollView } from 'react-native';
 import { useRefresh } from '@react-native-community/hooks';
 import eventBus from '@/lib/eventBus';
 import TopLocation from './TopLocation';
+import { useRouter } from 'expo-router';
 
 type Props = {
 	category?: string;
@@ -19,6 +20,7 @@ export type Property = {
 	images: string[];
 };
 export default function TopLocationsHorizontalList(props: Props) {
+	const router = useRouter();
 	const fetch = () => {
 		return new Promise((resolve) => setTimeout(resolve, 5000));
 	};
@@ -28,22 +30,22 @@ export default function TopLocationsHorizontalList(props: Props) {
 		{
 			id: 'dhghg662389kndnc',
 			name: 'Port Harcourt',
-			image: require('@/assets/images/property/property1.png'),
+			image: require('@/assets/images/locations/location6.png'),
 		},
 		{
 			id: 'dhghg6623ds66skndnc',
 			name: 'Lekki',
-			image: require('@/assets/images/property/property2.png'),
+			image: require('@/assets/images/locations/location5.png'),
 		},
 		{
 			id: 'dhgdsbj332389kndnc',
 			name: 'Enugu',
-			image: require('@/assets/images/property/property1.png'),
+			image: require('@/assets/images/locations/location4.png'),
 		},
 		{
 			id: 'dhgdsbj3589389kndnc',
 			name: 'Rivers',
-			image: require('@/assets/images/property/property2.png'),
+			image: require('@/assets/images/locations/location3.png'),
 		},
 	];
 
@@ -69,7 +71,16 @@ export default function TopLocationsHorizontalList(props: Props) {
 			snapToAlignment="center"
 			decelerationRate="fast">
 			{data.map((location) => (
-				<TopLocation {...location} key={location.id} />
+				<TopLocation
+					onPress={() =>
+						router.push({
+							pathname: '/property/locations/[locationId]',
+							params: { locationId: location.id },
+						})
+					}
+					{...location}
+					key={location.id}
+				/>
 			))}
 		</ScrollView>
 	);

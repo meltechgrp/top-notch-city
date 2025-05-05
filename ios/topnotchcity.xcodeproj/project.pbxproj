@@ -22,7 +22,7 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = TopNotchCity/Info.plist; sourceTree = "<group>"; };
 		22EB819F81A67BCB4940209F /* Pods-TopNotchCity.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TopNotchCity.debug.xcconfig"; path = "Target Support Files/Pods-TopNotchCity/Pods-TopNotchCity.debug.xcconfig"; sourceTree = "<group>"; };
 		2DC2066A0CEFE651BD5E4919 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-TopNotchCity/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		65FB34784E5EC526ECBD5C98 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = TopNotchCity/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		65FB34784E5EC526ECBD5C98 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = TopNotchCity/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		80DFED99D565D03E7EC6B804 /* libPods-TopNotchCity.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TopNotchCity.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = TopNotchCity/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
@@ -64,7 +64,6 @@
 				22EB819F81A67BCB4940209F /* Pods-TopNotchCity.debug.xcconfig */,
 				F16C06492ADCB45D0F60451C /* Pods-TopNotchCity.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -356,6 +355,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = TopNotchCity/TopNotchCity.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = UUWL8V39W3;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -392,6 +392,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = TopNotchCity/TopNotchCity.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = UUWL8V39W3;
 				INFOPLIST_FILE = TopNotchCity/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (

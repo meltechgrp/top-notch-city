@@ -3,7 +3,7 @@ import FeaturedProperties from '@/components/home/featured';
 import TopProperties from '@/components/home/properties';
 import TopLocations from '@/components/home/topLocations';
 import BeachPersonWaterParasolIcon from '@/components/icons/BeachPersonWaterParasolIcon';
-import { Text, View } from '@/components/ui';
+import { Box, Text, View } from '@/components/ui';
 import eventBus from '@/lib/eventBus';
 import { useRefresh } from '@react-native-community/hooks';
 import { ListRenderItem } from '@shopify/flash-list';
@@ -52,10 +52,8 @@ export default function HomeScreen() {
 		return <View></View>;
 	};
 	return (
-		<View className="flex-1">
+		<Box className="flex-1 ">
 			<FlatList
-				// listSource={pathname}
-				// onEngagementUpdate={() => {}}
 				refreshControl={
 					<RefreshControl
 						refreshing={isRefreshing}
@@ -66,16 +64,16 @@ export default function HomeScreen() {
 					/>
 				}
 				ListHeaderComponent={<DiscoverProperties />}
+				showsVerticalScrollIndicator={false}
 				data={feedList}
 				keyExtractor={(item) => item.id}
 				renderItem={renderItem as any}
-				// estimatedItemSize={350}
 				ItemSeparatorComponent={() => (
-					<View style={[{ height: 1 }]} className="bg-gray-200" />
+					<View style={[{ height: 1 }]} className="bg-background-500" />
 				)}
 				ListEmptyComponent={isRefreshing ? null : EmptyFeed}
 			/>
-		</View>
+		</Box>
 	);
 }
 

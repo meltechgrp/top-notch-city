@@ -1,5 +1,5 @@
 import * as React from 'react';
-// import { useStore } from '@/store';
+import { useStore } from '@/store';
 import { router, useFocusEffect } from 'expo-router';
 import { cn } from '@/lib/utils';
 import TabView from '@/components/shared/TabView';
@@ -19,21 +19,20 @@ import {
 } from '@/components/ui';
 import { Check, ChevronRight } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar } from 'expo-status-bar';
 
 export default function OnboardingScreen() {
 	const [activeIndex, setActiveIndex] = React.useState(0);
-	// 	const hasAuth = useStore((v) => v.hasAuth);
+	const hasAuth = useStore((v) => v.hasAuth);
 
-	// 	useFocusEffect(
-	// 		React.useCallback(() => {
-	// 			if (hasAuth) {
-	// 				router.replace('/home');
-	// 			}
-	// 		}, [hasAuth])
-	// 	);
+	useFocusEffect(
+		React.useCallback(() => {
+			if (hasAuth) {
+				router.replace('/home');
+			}
+		}, [hasAuth])
+	);
 	return (
-		<View className="flex-1">
+		<View className="flex-1 bg-transparent">
 			<TabView
 				activeTab={activeIndex}
 				scrollEnabled={false}

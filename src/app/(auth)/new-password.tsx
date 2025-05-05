@@ -13,8 +13,8 @@ import {
 	ButtonText,
 	Text,
 	View,
-	VStack,
-	Pressable,
+	Box,
+	InputIcon,
 } from '@/components/ui';
 import * as z from 'zod';
 import React from 'react';
@@ -51,9 +51,9 @@ export default function NewPassword() {
 	};
 	return (
 		<OnboardingScreenContainer allowBack={false}>
-			<VStack className="w-[98%] max-w-[26rem] gap-6 mt-4 mx-auto rounded-xl bg-background-200/90 p-6">
+			<Box className="w-[98%] bg-background/80 max-w-[26rem] gap-6 mt-4 mx-auto rounded-xl p-6">
 				<View>
-					<Text className=" text-2xl text-[#FF1500] font-semibold font-heading text-center">
+					<Text className=" text-2xl text-primary font-semibold font-heading text-center">
 						Set a new password
 					</Text>
 					<Text className=" text-center">
@@ -71,8 +71,8 @@ export default function NewPassword() {
 								New Password
 							</FormControlLabelText>
 						</FormControlLabel>
-						<Input className="my-1 bg-white rounded-xl px-4 h-16" size={'xl'}>
-							<Lock size={20} color={'#6b7280'} />
+						<Input className="my-1 rounded-xl px-4 h-16" size={'xl'}>
+							<InputIcon as={Lock} />
 							<InputField
 								type="password"
 								placeholder="********"
@@ -96,8 +96,8 @@ export default function NewPassword() {
 								Comfirm Password
 							</FormControlLabelText>
 						</FormControlLabel>
-						<Input className="my-1 bg-white rounded-xl px-4 h-16" size={'xl'}>
-							<Lock size={20} color={'#6b7280'} />
+						<Input className="my-1 rounded-xl px-4 h-16" size={'xl'}>
+							<InputIcon as={Lock} />
 							<InputField
 								type="password"
 								placeholder="********"
@@ -121,7 +121,7 @@ export default function NewPassword() {
 					onPress={handleSubmit}>
 					<ButtonText>Update Password</ButtonText>
 				</Button>
-			</VStack>
+			</Box>
 		</OnboardingScreenContainer>
 	);
 }

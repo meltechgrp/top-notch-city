@@ -9,6 +9,8 @@ export * from './button';
 export * from './card';
 export * from './checkbox';
 export * from './form-control';
+export * from './fab';
+export * from './icon';
 export * from './gluestack-ui-provider';
 export * from './heading';
 export * from './hstack';

@@ -42,11 +42,7 @@ export default function FacilityItem({
 		}
 	}, [icon]);
 	return (
-		<View
-			className={cn(
-				'flex-row gap-2 shrink-0 basis-[30%] items-center',
-				className
-			)}>
+		<View className={cn('flex-row gap-2 items-center', className)}>
 			<Icon size={iconSize ?? 18} color={'#F8AA00'} />
 			<Text numberOfLines={1} className={textClassname}>
 				{name}

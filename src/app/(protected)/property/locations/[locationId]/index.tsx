@@ -1,4 +1,4 @@
-import { Heading, Image, Pressable, Text, View } from '@/components/ui';
+import { Box, Heading, Image, Pressable, Text, View } from '@/components/ui';
 import { Animated, useWindowDimensions } from 'react-native';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useMemo, useRef } from 'react';
@@ -8,7 +8,6 @@ import { hapticFeed } from '@/components/HapticTab';
 import CustomTabBar2 from '@/components/layouts/CustomTopBar2';
 import VerticalProperties from '@/components/property/VerticalProperties';
 import { Locations } from '..';
-import { StatusBar } from 'expo-status-bar';
 const data: Locations = [
 	{
 		id: 'dhghg662389kndnc',
@@ -97,7 +96,7 @@ export default function PropertyLocations() {
 	);
 	const bannerHeight = scrollY.interpolate({
 		inputRange: [0, 200],
-		outputRange: [425, 110],
+		outputRange: [340, 110],
 		extrapolate: 'clamp',
 	});
 	if (!location) return null;
@@ -144,7 +143,7 @@ export default function PropertyLocations() {
 					),
 				}}
 			/>
-			<View className="flex-1 bg-white gap-4">
+			<Box className="flex-1 gap-4">
 				<View className="gap-2">
 					<Animated.View
 						style={{ height: bannerHeight }}
@@ -171,7 +170,7 @@ export default function PropertyLocations() {
 						initialLayout={{ width: layout.width }}
 					/>
 				</View>
-			</View>
+			</Box>
 		</>
 	);
 }

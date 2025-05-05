@@ -14,16 +14,23 @@ import {
 	Text,
 	View,
 	VStack,
-	AlertCircleIcon,
 	Pressable,
 	Checkbox,
 	CheckboxLabel,
 	CheckboxIcon,
 	CheckboxIndicator,
+	Box,
+	InputIcon,
 } from '@/components/ui';
 import * as z from 'zod';
 import React from 'react';
-import { CheckIcon, User } from 'lucide-react-native';
+import {
+	AlertCircleIcon,
+	CheckIcon,
+	Lock,
+	Mail,
+	User,
+} from 'lucide-react-native';
 
 const formSchema = z.object({
 	email: z.string().email({
@@ -70,7 +77,7 @@ export default function SignUp() {
 	}
 	return (
 		<OnboardingScreenContainer onBack={onBack}>
-			<VStack className="w-[98%] max-w-[26rem] gap-6 mt-4 mx-auto rounded-xl bg-background-200/90 p-6">
+			<Box className="w-[98%] bg-background/80 max-w-[26rem] gap-6 mt-4 mx-auto rounded-xl p-6">
 				<View>
 					<Text className=" text-2xl text-[#FF1500] font-semibold font-heading text-center">
 						Create an Account
@@ -86,8 +93,8 @@ export default function SignUp() {
 								Email
 							</FormControlLabelText>
 						</FormControlLabel>
-						<Input className="my-1 bg-white rounded-xl px-4 h-14" size={'xl'}>
-							<User size={20} color={'#6b7280'} />
+						<Input className="my-1 rounded-xl px-4 h-14" size={'xl'}>
+							<InputIcon as={Mail} />
 							<InputField
 								type="text"
 								placeholder="Email"
@@ -111,8 +118,8 @@ export default function SignUp() {
 								Username
 							</FormControlLabelText>
 						</FormControlLabel>
-						<Input className="my-1 bg-white rounded-xl px-4 h-14" size={'xl'}>
-							<User size={20} color={'#6b7280'} />
+						<Input className="my-1 rounded-xl px-4 h-14" size={'xl'}>
+							<InputIcon as={User} />
 							<InputField
 								type="text"
 								placeholder="Username"
@@ -136,8 +143,8 @@ export default function SignUp() {
 								Password
 							</FormControlLabelText>
 						</FormControlLabel>
-						<Input className="my-1 bg-white rounded-xl px-4 h-16" size={'xl'}>
-							<User size={20} color={'#6b7280'} />
+						<Input className="my-1 rounded-xl px-4 h-16" size={'xl'}>
+							<InputIcon as={Lock} />
 							<InputField
 								type="password"
 								placeholder="Password"
@@ -155,7 +162,7 @@ export default function SignUp() {
 					<Checkbox
 						value="terms"
 						size="md"
-						className="mt-2"
+						className="mt-2 px-1"
 						isChecked={form.isChecked}
 						onChange={(state) => setForm({ ...form, isChecked: state })}
 						isInvalid={false}
@@ -163,7 +170,7 @@ export default function SignUp() {
 						<CheckboxIndicator>
 							<CheckboxIcon as={CheckIcon} />
 						</CheckboxIndicator>
-						<CheckboxLabel>
+						<CheckboxLabel className=" text-wrap">
 							I have read and accept the terms and condition.
 						</CheckboxLabel>
 					</Checkbox>
@@ -172,7 +179,6 @@ export default function SignUp() {
 				<Button
 					variant="solid"
 					className="w-full mt-4"
-					isDisabled={!form.isChecked}
 					size="xl"
 					onPress={handleSubmit}>
 					<ButtonText>Sign Up</ButtonText>
@@ -180,10 +186,10 @@ export default function SignUp() {
 				<View className=" flex-row justify-center gap-2 mt-4">
 					<Text>Already have an account?</Text>
 					<Pressable onPress={() => router.push('/(auth)/signin')}>
-						<Text className=" text-tertiary-500 font-medium">Sign In</Text>
+						<Text className=" text-primary font-medium">Sign In</Text>
 					</Pressable>
 				</View>
-			</VStack>
+			</Box>
 		</OnboardingScreenContainer>
 	);
 }

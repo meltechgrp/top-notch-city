@@ -47,7 +47,7 @@ export default function PropertyListItem(props: Props) {
 		() =>
 			columns
 				? columns == 2
-					? width / 2 - 30
+					? width / 2 - 22
 					: width - 30
 				: isHorizantal
 					? width / 1.4
@@ -88,27 +88,39 @@ export default function PropertyListItem(props: Props) {
 				source={banner}
 				alt="banner"
 				className="flex-1 relative overflow-hidden rounded-xl">
-				<View className="flex-1 bg-black/10 p-4">
+				<View className="flex-1 bg-black/30 p-4">
 					<View className="flex-1 items-end">
-						<View className=" flex-row items-center justify-center gap-1 py-1 px-2.5 rounded-full bg-primary-600/60">
-							<Text className="text-white">{formatMoney(price, 'NGN', 0)}</Text>
+						<View className=" flex-row items-center justify-center gap-1 py-1 px-2.5 rounded-full bg-primary-500/60">
+							<Text
+								size={columns ? (columns == 2 ? 'md' : 'xl') : 'xl'}
+								className="text-white">
+								{formatMoney(price, 'NGN', 0)}
+							</Text>
 						</View>
 					</View>
 					<View className="pt-3 w-full gap-2">
 						<Text
-							className="text-base text-white font-semibold"
+							size="2xl"
+							className=" text-white font-bold"
 							numberOfLines={1}>
 							{name}
 						</Text>
 						<View className="flex-row items-center gap-1">
-							<MapPin size={14} color={'yellow'} />
-							<Text className="text-white text-xs">{location}</Text>
+							<MapPin size={14} color={'#F8AA00'} />
+							<Text
+								size={columns ? (columns == 2 ? 'sm' : 'md') : 'md'}
+								className="text-white">
+								{location}
+							</Text>
 						</View>
 						{showFacilites && (
-							<View className="flex-row justify-between flex-wrap gap-4">
+							<View className="flex-row flex-wrap gap-2">
 								{facilites.map((item) => (
 									<FacilityItem
-										textClassname="text-xs text-white"
+										textClassname={cn(
+											'text-white text-sm',
+											columns && columns == 2 && 'hidden'
+										)}
 										{...item}
 										key={item.name}
 										iconSize={16}

@@ -1,7 +1,5 @@
-import { Button, ButtonText, View } from '@/components/ui';
+import { Box, Button, ButtonText, View } from '@/components/ui';
 import { useRefresh } from '@react-native-community/hooks';
-import { Skeleton } from 'moti/skeleton';
-import { MotiView } from 'moti';
 import { FlashList } from '@shopify/flash-list';
 import { Stack, useRouter } from 'expo-router';
 import { BodyScrollView } from '@/components/layouts/BodyScrollView';
@@ -10,9 +8,12 @@ import { RefreshControl } from 'react-native-gesture-handler';
 import { Property } from '@/components/home/FoundProperties';
 import ScreenContianer from '@/components/shared/ScreenContianer';
 import SavedListItem from '@/components/saved/SavedListItem';
+import { Colors } from '@/constants/Colors';
+import { useTheme } from '@/components/layouts/ThemeProvider';
 
 export default function SavedScreen() {
 	const router = useRouter();
+	const { theme } = useTheme();
 	const fetch = () => {
 		return new Promise((resolve) => setTimeout(resolve, 5000));
 	};
@@ -21,10 +22,10 @@ export default function SavedScreen() {
 	const data: Property[] = [
 		{
 			id: 'dhghg662389kndnc',
-			name: 'Babylon House',
-			location: 'Emma Estate, Slaughter',
+			name: 'Wings Tower',
+			location: 'Emma Estate, Trans Amadi',
 			price: 2500000,
-			banner: require('@/assets/images/property/property1.png'),
+			banner: require('@/assets/images/property/property6.png'),
 			images: [],
 		},
 		{
@@ -32,7 +33,7 @@ export default function SavedScreen() {
 			name: 'Topaz Villa',
 			location: 'Emma Estate, Slaughter',
 			price: 1500000,
-			banner: require('@/assets/images/property/property2.png'),
+			banner: require('@/assets/images/property/property5.png'),
 			images: [],
 		},
 		{
@@ -40,7 +41,23 @@ export default function SavedScreen() {
 			name: 'Great House',
 			location: 'Green Estate, Rumuomasi',
 			price: 2000000,
-			banner: require('@/assets/images/property/property1.png'),
+			banner: require('@/assets/images/property/property4.png'),
+			images: [],
+		},
+		{
+			id: 'dhghg66mdm89kndnc',
+			name: 'Gracie Home',
+			location: 'Emma Estate, Ada George',
+			price: 2500000,
+			banner: require('@/assets/images/property/property2.png'),
+			images: [],
+		},
+		{
+			id: 'dhejdkd66skndnc',
+			name: 'Topaz Estate',
+			location: 'Topaz Estate, Abuja',
+			price: 1500000,
+			banner: require('@/assets/images/property/property7.png'),
 			images: [],
 		},
 	];
@@ -57,76 +74,67 @@ export default function SavedScreen() {
 	// 	};
 	// }, []);
 
-	if (isRefreshing) {
-		return (
-			<View className=" gap-y-2 pt-4 px-4">
-				{[1, 2, 3, 4].map((key) => (
-					<PropertyOverviewSkeleton key={key} />
-				))}
-			</View>
-		);
-	}
+	// if (isRefreshing) {
+	// 	return (
+	// 		<Box className=" gap-y-2 pt-4 px-4">
+	// 			{[1, 2, 3, 4].map((key) => (
+	// 				<PropertyOverviewSkeleton key={key} />
+	// 			))}
+	// 		</Box>
+	// 	);
+	// }
 	return (
 		<>
 			<Stack.Screen
 				options={{
 					headerTitle: 'Saved Properties',
 					headerLargeTitle: false,
+					headerTitleStyle: { color: theme == 'dark' ? 'white' : 'black' },
+					headerStyle: {
+						backgroundColor:
+							theme == 'dark'
+								? Colors.light.background
+								: Colors.dark.background,
+					},
 				}}
 			/>
-			<ScreenContianer edges={['bottom']} className="flex-1">
-				<FlashList
-					data={data}
-					renderItem={({ item }) => <SavedListItem key={item.id} data={item} />}
-					contentContainerStyle={{
-						paddingTop: 12,
-						paddingHorizontal: 16,
-					}}
-					refreshControl={
-						<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
-					}
-					keyExtractor={(item) => item.id}
-					estimatedItemSize={200}
-					ItemSeparatorComponent={() => <View className="h-2" />}
-					contentInsetAdjustmentBehavior="automatic"
-					ListEmptyComponent={() => (
-						<BodyScrollView
-							contentContainerStyle={{
-								alignItems: 'center',
-								gap: 8,
-								paddingTop: 100,
-							}}>
-							<Button
-								onPress={() => {
-									hapticFeed();
-									// router.push(newProductHref);
+			<Box className="flex-1">
+				<ScreenContianer edges={['bottom']} className="flex-1">
+					<FlashList
+						data={data}
+						renderItem={({ item }) => (
+							<SavedListItem key={item.id} data={item} />
+						)}
+						contentContainerStyle={{
+							paddingTop: 12,
+							paddingHorizontal: 16,
+						}}
+						refreshControl={
+							<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+						}
+						keyExtractor={(item) => item.id}
+						estimatedItemSize={200}
+						ItemSeparatorComponent={() => <View className="h-2" />}
+						contentInsetAdjustmentBehavior="automatic"
+						ListEmptyComponent={() => (
+							<BodyScrollView
+								contentContainerStyle={{
+									alignItems: 'center',
+									gap: 8,
+									paddingTop: 100,
 								}}>
-								<ButtonText>Add the first property</ButtonText>
-							</Button>
-						</BodyScrollView>
-					)}
-				/>
-			</ScreenContianer>
+								<Button
+									onPress={() => {
+										hapticFeed();
+										// router.push(newProductHref);
+									}}>
+									<ButtonText>Add the first property</ButtonText>
+								</Button>
+							</BodyScrollView>
+						)}
+					/>
+				</ScreenContianer>
+			</Box>
 		</>
-	);
-}
-
-function PropertyOverviewSkeleton() {
-	return (
-		<MotiView
-			transition={{
-				type: 'timing',
-			}}
-			className="relative bg-gray-200 p-2 border-2 border-gray-200 rounded-md">
-			<Skeleton colorMode="light" radius="round" height={16} width={100} />
-
-			<View className="flex-row items-center mb-4 mt-5">
-				<Skeleton colorMode="light" radius="round" height={48} width={48} />
-				<View className="flex-1 pl-4">
-					<Skeleton colorMode="light" height={16} width="100%" />
-				</View>
-			</View>
-			<Skeleton colorMode="light" height={32} width="100%" />
-		</MotiView>
 	);
 }

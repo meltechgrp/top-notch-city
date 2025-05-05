@@ -11,9 +11,11 @@ type Props = {
 export default function SectionHeaderWithRef(props: Props) {
 	const { title, onSeeAllPress, children, style, subTitle } = props;
 	return (
-		<View style={[style]} className="my-6">
+		<View style={[style]} className="my-6 bg-transparent">
 			<View className="flex-row justify-between pb-4 px-4 items-center">
-				<Heading className="text- font-medium text-gray-500">{title}</Heading>
+				<Heading className="text- font-medium text-typography/80">
+					{title}
+				</Heading>
 				{onSeeAllPress && (
 					<Pressable
 						style={[
@@ -24,7 +26,7 @@ export default function SectionHeaderWithRef(props: Props) {
 						]}
 						className="flex-row items-center  justify-center rounded-md"
 						onPress={onSeeAllPress}>
-						<Text className="text-sm text-blue-500">
+						<Text className="text-sm font-heading text-blue-500">
 							{subTitle ?? 'See all'}
 						</Text>
 					</Pressable>

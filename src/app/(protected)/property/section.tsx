@@ -1,4 +1,4 @@
-import { Pressable, View } from '@/components/ui';
+import { Box, Pressable, View } from '@/components/ui';
 import { useWindowDimensions } from 'react-native';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
@@ -7,9 +7,12 @@ import { TabView, SceneRendererProps } from 'react-native-tab-view';
 import { hapticFeed } from '@/components/HapticTab';
 import CustomTabBar2 from '@/components/layouts/CustomTopBar2';
 import VerticalProperties from '@/components/property/VerticalProperties';
+import { useTheme } from '@/components/layouts/ThemeProvider';
+import { Colors } from '@/constants/Colors';
 
 export default function PropertySections() {
 	const { title } = useLocalSearchParams() as { title?: string };
+	const { theme } = useTheme();
 	const router = useRouter();
 	const layout = useWindowDimensions();
 	const [index, setIndex] = React.useState(0);
@@ -50,7 +53,13 @@ export default function PropertySections() {
 					headerShown: true,
 					headerBackVisible: false,
 					headerTitle: title ?? 'Properties',
-					headerTitleStyle: { color: 'black' },
+					headerTitleStyle: { color: theme == 'dark' ? 'white' : 'black' },
+					headerStyle: {
+						backgroundColor:
+							theme == 'dark'
+								? Colors.light.background
+								: Colors.dark.background,
+					},
 					headerLeft: () => (
 						<Pressable
 							onPress={() => {
@@ -77,13 +86,13 @@ export default function PropertySections() {
 									// });
 								}}
 								style={{ padding: 8 }}>
-								<ListFilter color={'black'} />
+								<ListFilter color={theme == 'dark' ? 'white' : 'black'} />
 							</Pressable>
 						</View>
 					),
 				}}
 			/>
-			<View className="flex-1 px-4">
+			<Box className="flex-1 px-4">
 				<TabView
 					style={{ flex: 1 }}
 					renderTabBar={(props) => <CustomTabBar2 {...props} />}
@@ -92,7 +101,7 @@ export default function PropertySections() {
 					onIndexChange={setIndex}
 					initialLayout={{ width: layout.width }}
 				/>
-			</View>
+			</Box>
 		</>
 	);
 }

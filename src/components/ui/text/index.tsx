@@ -3,8 +3,6 @@ import React from 'react';
 import type { VariantProps } from '@gluestack-ui/nativewind-utils';
 import { Text as RNText } from 'react-native';
 import { textStyle } from './styles';
-
-import { useThemeColor } from '@/hooks/useThemeColor';
 type ITextProps = React.ComponentProps<typeof RNText> &
 	VariantProps<typeof textStyle>;
 
@@ -24,11 +22,9 @@ const Text = React.forwardRef<React.ElementRef<typeof RNText>, ITextProps>(
 		},
 		ref
 	) => {
-		const color = useThemeColor({ light: 'black', dark: 'white' }, 'text');
 		return (
 			<RNText
-				// style={[{ color }]}
-				className={`${textStyle({
+				className={textStyle({
 					isTruncated,
 					bold,
 					underline,
@@ -38,7 +34,7 @@ const Text = React.forwardRef<React.ElementRef<typeof RNText>, ITextProps>(
 					italic,
 					highlight,
 					class: className,
-				})} font-railway`}
+				})}
 				{...props}
 				ref={ref}
 			/>
