@@ -3,7 +3,7 @@ import React from 'react';
 import { Platform } from 'react-native';
 import { HapticTab } from '@/components/HapticTab';
 import TabBarBackground from '@/components/TabBarBackground';
-import { Bookmark, Home, Search, Tag, User } from 'lucide-react-native';
+import { Bookmark, Home, Map, Search, Tag, User } from 'lucide-react-native';
 
 export default function TabLayout() {
 	return (
@@ -29,10 +29,10 @@ export default function TabLayout() {
 				}}
 			/>
 			<Tabs.Screen
-				name="search"
+				name="map"
 				options={{
-					title: 'Search',
-					tabBarIcon: ({ color }) => <Search size={24} color={color} />,
+					title: 'Map',
+					tabBarIcon: ({ color }) => <Map size={24} color={color} />,
 				}}
 			/>
 			<Tabs.Screen

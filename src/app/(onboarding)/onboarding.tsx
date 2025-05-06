@@ -148,7 +148,7 @@ function PageOne({
 			<SafeAreaView edges={['top']} className="flex-1 px-4 bg-black/20">
 				<View className=" flex-1 mb-16">
 					<View className="flex-1 items-end mt-4 ">
-						<Pressable onPress={() => router.push('/signin')}>
+						<Pressable onPress={() => router.push('/home')}>
 							<Text size="lg" className="text-white font-medium">
 								Skip
 							</Text>

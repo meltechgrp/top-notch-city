@@ -6,7 +6,7 @@ import Layout from '@/constants/Layout';
 import { Search } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function SearchScreen() {
+export default function MapScreen() {
 	return (
 		<Box className="flex-1">
 			<SafeAreaView edges={['bottom']} className="flex-1">

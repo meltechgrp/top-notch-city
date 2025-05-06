@@ -138,10 +138,9 @@ export default function Map(props: MapProps) {
 			compassOffset={{ x: 10, y: 50 }}
 			scrollEnabled={scrollEnabled}
 			region={initialRegion}>
-			{markers &&
-				markers.map((place) => (
-					<CustomPropertyMarker key={place.name} property={place} />
-				))}
+			{portHarcourtPlaces.map((place) => (
+				<CustomPropertyMarker key={place.name} property={place} />
+			))}
 		</MapView>
 	);
 }
