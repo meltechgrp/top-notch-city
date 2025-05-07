@@ -19,11 +19,18 @@ import {
 } from '@/components/ui';
 import { Check, ChevronRight } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Platform } from 'react-native';
+import SystemNavigationBar from 'react-native-system-navigation-bar';
 
 export default function OnboardingScreen() {
 	const [activeIndex, setActiveIndex] = React.useState(0);
 	const hasAuth = useStore((v) => v.hasAuth);
 
+	React.useEffect(() => {
+		if (Platform.OS == 'android') {
+			SystemNavigationBar.setNavigationColor('translucent');
+		}
+	}, []);
 	useFocusEffect(
 		React.useCallback(() => {
 			if (hasAuth) {
@@ -32,10 +39,10 @@ export default function OnboardingScreen() {
 		}, [hasAuth])
 	);
 	return (
-		<View className="flex-1 bg-transparent">
+		<View className="flex-1">
 			<TabView
 				activeTab={activeIndex}
-				scrollEnabled={false}
+				scrollEnabled={true}
 				onTabSelected={setActiveIndex}>
 				<PageOne
 					key={1}
@@ -145,7 +152,9 @@ function PageOne({
 			source={require('@/assets/images/landing/home.png')}
 			className="flex-1"
 			imageStyle={{ resizeMode: 'cover' }}>
-			<SafeAreaView edges={['top']} className="flex-1 px-4 bg-black/20">
+			<SafeAreaView
+				edges={['top', 'bottom']}
+				className="flex-1 px-4 bg-black/20">
 				<View className=" flex-1 mb-16">
 					<View className="flex-1 items-end mt-4 ">
 						<Pressable onPress={() => router.push('/home')}>

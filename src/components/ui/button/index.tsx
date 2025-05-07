@@ -48,14 +48,14 @@ const buttonStyle = tva({
 			positive:
 				'bg-success-500 border-success-300 data-[hover=true]:bg-success data-[hover=true]:border-success-400 data-[active=true]:bg-success-300 data-[active=true]:border-success-500 data-[focus-visible=true]:web:ring-indicator-info',
 			negative:
-				'bg-error-500 border-error-300 data-[hover=true]:bg-error data-[hover=true]:border-error-400 data-[active=true]:bg-error-300 data-[active=true]:border-error-500 data-[focus-visible=true]:web:ring-indicator-info',
+				'bg-error border-error-300 data-[hover=true]:bg-error data-[hover=true]:border-error-400 data-[active=true]:bg-error-300 data-[active=true]:border-error-500 data-[focus-visible=true]:web:ring-indicator-info',
 			default:
-				'bg-transparent data-[hover=true]:bg-background-50 data-[active=true]:bg-transparent',
+				'bg-transparent data-[hover=true]:bg-background data-[active=true]:bg-transparent',
 		},
 		variant: {
 			link: 'px-0',
 			outline:
-				'bg-transparent border data-[hover=true]:bg-background-50 data-[active=true]:bg-transparent',
+				'bg-transparent border border-primary data-[hover=true]:bg-background data-[active=true]:bg-transparent',
 			solid: '',
 		},
 
@@ -130,7 +130,7 @@ const buttonTextStyle = tva({
 			positive:
 				'text-success data-[hover=true]:text-success data-[active=true]:text-success-300',
 			negative:
-				'text-error data-[hover=true]:text-error data-[active=true]:text-error-300',
+				'text-white data-[hover=true]:text-error data-[active=true]:text-error-300',
 		},
 		variant: {
 			link: 'data-[hover=true]:underline data-[active=true]:underline',
@@ -175,7 +175,7 @@ const buttonTextStyle = tva({
 			variant: 'outline',
 			action: 'primary',
 			class:
-				'text-primary-500 data-[hover=true]:text-primary-500 data-[active=true]:text-primary-500',
+				'text-primary data-[hover=true]:text-primary data-[active=true]:text-primary',
 		},
 		{
 			variant: 'outline',
@@ -187,13 +187,13 @@ const buttonTextStyle = tva({
 			variant: 'outline',
 			action: 'positive',
 			class:
-				'text-primary-500 data-[hover=true]:text-primary-500 data-[active=true]:text-primary-500',
+				'text-primary data-[hover=true]:text-primary data-[active=true]:text-primary',
 		},
 		{
 			variant: 'outline',
 			action: 'negative',
 			class:
-				'text-primary-500 data-[hover=true]:text-primary-500 data-[active=true]:text-primary-500',
+				'text-primary data-[hover=true]:text-primary data-[active=true]:text-primary',
 		},
 	],
 });

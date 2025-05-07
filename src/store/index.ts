@@ -7,6 +7,7 @@ type State = {
 	hasAuth: boolean;
 	isAdmin: boolean;
 	displayStyle: 'flex' | 'grid';
+	me?: any;
 };
 
 type Actions = {
@@ -62,4 +63,31 @@ export const useTempStore = create<TempState>((set, get) => ({
 	updateFullScreenLoading: (fullScreenLoading: boolean) =>
 		set((state) => ({ ...state, fullScreenLoading })),
 	resetStore: () => set(initialTempState),
+}));
+
+type ChatState = {
+	getOppositeUser: (currentUserId?: string) => any | undefined;
+	getCurrentUser: (currentUserId?: string) => any | undefined;
+	chat?: any;
+	isProfileOpen: boolean;
+	toggleProfile: (val: boolean) => void;
+	updateChat?: (chat: any) => void;
+};
+export const useChatStore = create<ChatState>((set, get) => ({
+	isProfileOpen: false,
+	toggleProfile: (val: boolean) =>
+		set((state) => ({ ...state, isProfileOpen: val })),
+	getOppositeUser: (currentUserId) => {
+		if (!currentUserId) return;
+		const chat = get().chat;
+		const members = chat?.members || [];
+		return members.find((m: any) => m.user.id !== currentUserId);
+	},
+	getCurrentUser: (currentUserId) => {
+		if (!currentUserId) return;
+		const chat = get().chat;
+		const members = chat?.members || [];
+		return members.find((m: any) => m.user.id === currentUserId);
+	},
+	updateChat: (chat: any) => set((state) => ({ ...state, chat })),
 }));

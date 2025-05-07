@@ -1,37 +1,37 @@
-/*
- * Handle tap(e.g. on a button) and dismiss the keyboard with a single tap
- * Should be used over a Scrollable container (ScrollView, FlatList) with 'keyboardShouldPersistTabps' set to 'handled'.
- * See: https://apps.theodo.com/article/dismissing-keyboard-in-react-native-stop-the-struggle
- */
-
-import type { PropsWithChildren } from 'react';
-import { useRef } from 'react';
-import { Keyboard, StyleSheet, View } from 'react-native';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import React, { PropsWithChildren } from 'react';
+import {
+	Keyboard,
+	TextInput,
+	TouchableWithoutFeedback,
+	View,
+	StyleSheet,
+	Platform,
+} from 'react-native';
 
 export const KeyboardDismissPressable = ({ children }: PropsWithChildren) => {
-	const isTargetTextInput = useRef(false);
+	const dismissKeyboard = (event: any) => {
+		const target = event?.target;
 
-	const tap = Gesture.Tap()
-		// Dismiss on tap end to avoid being triggered when scrolling
-		.onEnd(() => {
-			if (!isTargetTextInput.current) {
-				Keyboard.dismiss();
+		if (target) {
+			// If the platform is Android, the target is a native tag number.
+			// On iOS, it may be an internal node object.
+			const currentlyFocusedInput = TextInput.State.currentlyFocusedInput?.();
+
+			if (currentlyFocusedInput && target === currentlyFocusedInput) {
+				// Tapped inside a TextInput — don’t dismiss
+				return;
 			}
-		})
-		.runOnJS(true);
+		}
+
+		Keyboard.dismiss();
+	};
 
 	return (
-		<GestureDetector gesture={tap}>
-			<View
-				style={styles.container}
-				onStartShouldSetResponderCapture={(e) => {
-					return false;
-				}}
-				accessible={false}>
-				{children}
-			</View>
-		</GestureDetector>
+		<TouchableWithoutFeedback
+			onPress={dismissKeyboard}
+			touchSoundDisabled={true}>
+			<View style={styles.container}>{children}</View>
+		</TouchableWithoutFeedback>
 	);
 };
 

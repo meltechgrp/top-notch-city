@@ -8,10 +8,22 @@ export default function ProtectedRoutesLayout() {
 		<Stack
 			screenOptions={{
 				headerShown: false,
+				gestureEnabled: true,
+				animationDuration: 1000,
+				animationTypeForReplace: 'push',
+				headerTitleAlign: 'center',
+				animation: 'slide_from_right',
 				headerBackVisible: true,
 				statusBarStyle: theme == 'dark' ? 'light' : 'dark',
-			}}
-		/>
+			}}>
+			<Stack.Screen
+				name="search"
+				options={{
+					animation: 'fade',
+					headerShown: false,
+				}}
+			/>
+		</Stack>
 	);
 }
 

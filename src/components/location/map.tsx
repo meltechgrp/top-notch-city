@@ -10,6 +10,8 @@ interface MapProps {
 	height?: number;
 	showUserLocation?: boolean;
 	scrollEnabled?: boolean;
+	showsBuildings?: boolean;
+	zoomControlEnabled?: boolean;
 	markers?: Array<{
 		name: string;
 		latitude: number;
@@ -26,8 +28,10 @@ export default function Map(props: MapProps) {
 		longitude,
 		height,
 		markers,
+		zoomControlEnabled = false,
 		scrollEnabled = true,
 		showUserLocation = false,
+		showsBuildings = true,
 	} = props;
 
 	const initialRegion = useMemo(
@@ -129,9 +133,12 @@ export default function Map(props: MapProps) {
 			// onMapLoaded={() => console.log('Map loaded')}
 			zoomEnabled
 			loadingEnabled
+			// customMapStyle={ }
 			showsScale={true}
 			showsCompass={true}
-			zoomControlEnabled={true}
+			showsBuildings={showsBuildings}
+			showsTraffic={true}
+			zoomControlEnabled={zoomControlEnabled}
 			followsUserLocation={showUserLocation}
 			showsUserLocation={showUserLocation}
 			showsMyLocationButton={showUserLocation}

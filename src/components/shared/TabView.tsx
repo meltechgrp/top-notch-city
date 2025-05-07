@@ -2,6 +2,7 @@ import Layout from '@/constants/Layout';
 import React, { useEffect, useMemo, useRef } from 'react';
 import Carousel, { ICarouselInstance } from 'react-native-reanimated-carousel';
 import Animated, { runOnJS, useSharedValue } from 'react-native-reanimated';
+import { Dimensions, Platform } from 'react-native';
 
 interface Props {
 	activeTab: number;
@@ -22,6 +23,7 @@ export default function TabView(props: Props) {
 		scrollAnimationDuration = 400,
 	} = props;
 
+	const { height: totalHeight } = Dimensions.get('screen');
 	const carouselRef = useRef<ICarouselInstance>(null);
 
 	const filteredChildren = useMemo(
@@ -47,7 +49,7 @@ export default function TabView(props: Props) {
 		<Carousel
 			ref={carouselRef}
 			width={Layout.window.width}
-			height={Layout.window.height}
+			height={totalHeight}
 			data={filteredChildren}
 			mode={mode as any}
 			onProgressChange={progress}

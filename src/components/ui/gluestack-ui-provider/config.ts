@@ -3,7 +3,7 @@ import { vars } from 'nativewind';
 
 export const config = {
 	light: vars({
-		'--color-primary': '225 21 0',
+		'--color-primary': '255 76 0',
 		'--color-primary-100': '255 232 230',
 		'--color-primary-200': '255 220 217',
 		'--color-primary-300': '255 185 176',
@@ -64,7 +64,7 @@ export const config = {
 
 		/* Background Special */
 		'--color-background-error': '254 241 241',
-		'--color-background-warning': '255 243 234',
+		'--color-background-warning': '0 0 0',
 		'--color-background-success': '237 252 242',
 		'--color-background-muted': '229 231 235',
 		'--color-background-info': '243 244 246',
@@ -75,7 +75,7 @@ export const config = {
 		'--color-indicator-error': '185 28 28',
 	}),
 	dark: vars({
-		'--color-primary': '191 16 0',
+		'--color-primary': '255 76 0',
 		'--color-primary-100': '89 7 0',
 		'--color-primary-200': '89 7 0',
 		'--color-primary-300': '115 9 0',

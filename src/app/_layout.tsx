@@ -7,6 +7,7 @@ import { ErrorBoundaryProps, Slot, SplashScreen } from 'expo-router';
 import AppCrashScreen from '@/components/shared/AppCrashScreen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ThemeProvider } from '@/components/layouts/ThemeProvider';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -24,6 +25,7 @@ export default function RootLayout() {
 	React.useEffect(() => {
 		SplashScreen.hideAsync();
 	}, []);
+
 	if (!loaded && !error) {
 		return null;
 	}
@@ -32,7 +34,9 @@ export default function RootLayout() {
 			<ThemeProvider>
 				<GestureHandlerRootView style={{ flex: 1 }}>
 					<GluestackUIProvider>
-						<Slot />
+						<BottomSheetModalProvider>
+							<Slot />
+						</BottomSheetModalProvider>
 					</GluestackUIProvider>
 				</GestureHandlerRootView>
 			</ThemeProvider>

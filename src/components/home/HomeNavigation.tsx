@@ -1,23 +1,25 @@
-import { Bell } from 'lucide-react-native';
-import { Button, View } from '../ui';
-import MobileModeChangeButton from '../shared/MobileModeChangeButton';
-import { Icon } from '../ui/icon/index.web';
-import { useTheme } from '../layouts/ThemeProvider';
+import { Bell, Search } from 'lucide-react-native';
+import { Button, Icon, Pressable, Text, View } from '../ui';
+import { useRouter } from 'expo-router';
 
 export default function HomeNavigation() {
-	const { theme } = useTheme();
+	const router = useRouter();
 	return (
-		<View className="flex-row justify-end items-center px-4">
-			<View className="flex-row gap-4">
-				<Button action="secondary" className="rounded-full p-2">
-					<Icon
-						size={'xl'}
-						as={Bell}
-						className={`${theme === 'light' ? 'text-dark' : 'text-white'} fill-typography`}
-					/>
-				</Button>
-				<MobileModeChangeButton />
-			</View>
+		<View className="flex-row justify-end items-center px-4 gap-4">
+			<Pressable
+				onPress={() => router.push('/search')}
+				className="flex-1 h-14 p-2 pl-4 flex-row bg-background-muted rounded-full items-center gap-1">
+				<Text size="md" numberOfLines={1} className="flex-1 text-typography/70">
+					Search property, city or everything...
+				</Text>
+
+				<View className=" p-2 bg-primary rounded-full">
+					<Icon as={Search} color="white" />
+				</View>
+			</Pressable>
+			<Button action="secondary" className="rounded-full h-14 px-4">
+				<Icon size={'xl'} as={Bell} />
+			</Button>
 		</View>
 	);
 }

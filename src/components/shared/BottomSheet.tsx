@@ -19,6 +19,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import { cn } from '@/lib/utils';
 import { CloseIcon, Heading, Icon, Text } from '../ui';
+import { useTheme } from '../layouts/ThemeProvider';
+import { Colors } from '@/constants/Colors';
 
 type BottomSheetProps = Modal['props'] & {
 	withHeader?: any;
@@ -28,7 +30,10 @@ type BottomSheetProps = Modal['props'] & {
 	bottomPadding?: boolean;
 	snapPoint?: string | string[] | number | number[];
 	HeaderRightComponent?: any;
+	contentClassName?: string;
+	backdropVariant?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 	plain?: boolean;
+	addBackground?: boolean;
 	android_keyboardInputMode?: 'adjustResize' | 'adjustPan';
 };
 export default function BottomSheet(props: BottomSheetProps) {
@@ -37,10 +42,14 @@ export default function BottomSheet(props: BottomSheetProps) {
 		onDismiss,
 		HeaderRightComponent,
 		withCloseButton = true,
+		addBackground = true,
 		plain,
+		backdropVariant,
 		android_keyboardInputMode = 'adjustPan',
+		contentClassName,
 	} = props;
 	const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+	const { theme } = useTheme();
 
 	// variables
 	const snapPoints = useMemo(
@@ -91,7 +100,13 @@ export default function BottomSheet(props: BottomSheetProps) {
 	}, [handleDismiss, props.visible]);
 
 	const renderBackdrop = useCallback(
-		(props: any) => <CustomBackdrop {...props} onPress={handleDismiss} />,
+		(props: any) => (
+			<CustomBackdrop
+				backdropVariant={backdropVariant}
+				{...props}
+				onPress={handleDismiss}
+			/>
+		),
 		[]
 	);
 
@@ -104,11 +119,14 @@ export default function BottomSheet(props: BottomSheetProps) {
 			backdropComponent={renderBackdrop}
 			keyboardBehavior={Platform.OS === 'ios' ? 'extend' : 'interactive'}
 			keyboardBlurBehavior="restore"
-			style={{ backgroundColor: 'transparent', flex: 1 }}
+			backgroundComponent={null}
+			style={{
+				flex: 1,
+			}}
 			handleComponent={() =>
 				plain ? null : (
 					<View
-						className={cn('w-full', {
+						className={cn('w-full bg-background-muted rounded-t-3xl', {
 							'h-8': !props.withHeader,
 							'h-[53px]': props.withHeader,
 						})}>
@@ -142,7 +160,18 @@ export default function BottomSheet(props: BottomSheetProps) {
 					</View>
 				)
 			}>
-			<BottomSheetView style={{ flex: 1 }}>{props.children}</BottomSheetView>
+			<BottomSheetView
+				style={{
+					flex: 1,
+					backgroundColor: addBackground
+						? theme == 'dark'
+							? Colors.light.background
+							: Colors.dark.background
+						: 'transparent',
+				}}
+				className={contentClassName}>
+				{props.children}
+			</BottomSheetView>
 		</BottomSheetModal>
 	);
 }
@@ -150,8 +179,12 @@ export default function BottomSheet(props: BottomSheetProps) {
 const CustomBackdrop = ({
 	animatedIndex,
 	style,
+	backdropVariant = 'xl',
 	onPress,
-}: BottomSheetBackdropProps & { onPress: () => void }) => {
+}: BottomSheetBackdropProps & {
+	onPress: () => void;
+	backdropVariant: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+}) => {
 	// animated variables
 	const containerAnimatedStyle = useAnimatedStyle(() => ({
 		opacity: interpolate(
@@ -168,8 +201,16 @@ const CustomBackdrop = ({
 		[style, containerAnimatedStyle]
 	);
 
+	const backdrop = {
+		xs: 'bg-black/10',
+		sm: 'bg-black/40',
+		md: 'bg-black/50',
+		lg: 'bg-black/60',
+		xl: 'bg-black/70',
+	};
+
 	return (
-		<Animated.View style={containerStyle} className="bg-black/70">
+		<Animated.View style={containerStyle} className={backdrop[backdropVariant]}>
 			<Pressable onPress={onPress} className="flex-1" />
 		</Animated.View>
 	);

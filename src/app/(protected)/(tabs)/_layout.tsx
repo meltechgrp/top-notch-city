@@ -3,15 +3,25 @@ import React from 'react';
 import { Platform } from 'react-native';
 import { HapticTab } from '@/components/HapticTab';
 import TabBarBackground from '@/components/TabBarBackground';
-import { Bookmark, Home, Map, Search, Tag, User } from 'lucide-react-native';
+import {
+	Heart,
+	Home,
+	MessageSquareMore,
+	Tag,
+	UserCircle2,
+} from 'lucide-react-native';
+import { useTheme } from '@/components/layouts/ThemeProvider';
+import { Colors } from '@/constants/Colors';
 
 export default function TabLayout() {
+	const { theme } = useTheme();
 	return (
 		<Tabs
 			screenOptions={{
-				tabBarActiveTintColor: '#FF1500',
+				tabBarActiveTintColor: '#FF4C00',
 				headerShown: false,
 				tabBarButton: HapticTab,
+				tabBarHideOnKeyboard: true,
 				tabBarBackground: TabBarBackground,
 				tabBarStyle: Platform.select({
 					ios: {
@@ -19,6 +29,14 @@ export default function TabLayout() {
 						position: 'absolute',
 					},
 					default: {},
+					android: {
+						backgroundColor:
+							theme == 'dark'
+								? Colors.light.background
+								: Colors.dark.background,
+						// borderTopWidth: 0,
+						// elevation: 8,
+					},
 				}),
 			}}>
 			<Tabs.Screen
@@ -29,10 +47,10 @@ export default function TabLayout() {
 				}}
 			/>
 			<Tabs.Screen
-				name="map"
+				name="wishlist"
 				options={{
-					title: 'Map',
-					tabBarIcon: ({ color }) => <Map size={24} color={color} />,
+					title: 'Wishlist',
+					tabBarIcon: ({ color }) => <Heart size={24} color={color} />,
 				}}
 			/>
 			<Tabs.Screen
@@ -44,19 +62,19 @@ export default function TabLayout() {
 				}}
 			/>
 			<Tabs.Screen
-				name="saved"
+				name="message"
 				options={{
-					title: 'Saved',
-					headerShown: true,
-					tabBarIcon: ({ color }) => <Bookmark size={24} color={color} />,
+					title: 'Message',
+					tabBarIcon: ({ color }) => (
+						<MessageSquareMore size={24} color={color} />
+					),
 				}}
 			/>
 			<Tabs.Screen
 				name="profile"
 				options={{
 					title: 'Profile',
-					headerShown: true,
-					tabBarIcon: ({ color }) => <User size={24} color={color} />,
+					tabBarIcon: ({ color }) => <UserCircle2 size={24} color={color} />,
 				}}
 			/>
 		</Tabs>

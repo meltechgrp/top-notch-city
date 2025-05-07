@@ -53,7 +53,7 @@ export default function PropertyImages({ images }: Props) {
 			<Grid className="gap-4 flex-1" _extra={{ className: 'grid-cols-3' }}>
 				{images.map((image, i) => (
 					<GridItem
-						className="w-full aspect-square"
+						className="flex-1 aspect-square"
 						key={i + 'a'}
 						_extra={{ className: 'col-span-1' }}>
 						<Pressable

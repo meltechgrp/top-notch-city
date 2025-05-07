@@ -1,4 +1,4 @@
-import { Box, Button, ButtonText, View } from '@/components/ui';
+import { Box, Button, ButtonText, Heading, View } from '@/components/ui';
 import { useRefresh } from '@react-native-community/hooks';
 import { FlashList } from '@shopify/flash-list';
 import { Stack, useRouter } from 'expo-router';
@@ -11,7 +11,7 @@ import SavedListItem from '@/components/saved/SavedListItem';
 import { Colors } from '@/constants/Colors';
 import { useTheme } from '@/components/layouts/ThemeProvider';
 
-export default function SavedScreen() {
+export default function WishListScreen() {
 	const router = useRouter();
 	const { theme } = useTheme();
 	const fetch = () => {
@@ -85,21 +85,13 @@ export default function SavedScreen() {
 	// }
 	return (
 		<>
-			<Stack.Screen
-				options={{
-					headerTitle: 'Saved Properties',
-					headerLargeTitle: false,
-					headerTitleStyle: { color: theme == 'dark' ? 'white' : 'black' },
-					headerStyle: {
-						backgroundColor:
-							theme == 'dark'
-								? Colors.light.background
-								: Colors.dark.background,
-					},
-				}}
-			/>
 			<Box className="flex-1">
-				<ScreenContianer edges={['bottom']} className="flex-1">
+				<ScreenContianer edges={['bottom', 'top']} className="flex-1">
+					<View className="px-4 py-4 pb-3">
+						<Heading size="2xl" className="mb-1 text-primary">
+							Saved Properties
+						</Heading>
+					</View>
 					<FlashList
 						data={data}
 						renderItem={({ item }) => (

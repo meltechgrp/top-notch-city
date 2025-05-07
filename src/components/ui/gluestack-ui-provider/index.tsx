@@ -5,6 +5,9 @@ import { ToastProvider } from '@gluestack-ui/toast';
 import { ColorSchemeName, useColorScheme, View, ViewProps } from 'react-native';
 import { useTheme } from '@/components/layouts/ThemeProvider';
 import { colorScheme as colorSchemeNW } from 'nativewind';
+import { Platform } from 'react-native';
+import { Colors } from '@/constants/Colors';
+import SystemNavigationBar from 'react-native-system-navigation-bar';
 
 type ModeType = 'light' | 'dark' | 'system';
 
@@ -30,6 +33,13 @@ export function GluestackUIProvider({
 
 	colorSchemeNW.set(theme);
 
+	React.useEffect(() => {
+		if (Platform.OS == 'android') {
+			SystemNavigationBar.setNavigationColor(
+				theme == 'dark' ? Colors.light.background : Colors.dark.background
+			);
+		}
+	}, []);
 	return (
 		<View
 			style={[

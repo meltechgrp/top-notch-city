@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { router } from 'expo-router';
-import { View, Text, Image } from '@/components/ui';
+import { View, Text, Image, Box } from '@/components/ui';
 import Animated, {
 	useSharedValue,
 	useAnimatedStyle,
@@ -46,7 +46,7 @@ export default function SplashScreen() {
 	});
 
 	return (
-		<View className="flex-1">
+		<Box className="flex-1">
 			<View className="flex-1 justify-center items-center px-4">
 				<Image
 					source={require('@/assets/images/landing/splash-big.png')}
@@ -58,13 +58,13 @@ export default function SplashScreen() {
 					realtors and make smarter real estate decisions – all in one app.
 				</Text>
 			</View>
-			<View className="items-center mb-12">
+			<View className="items-center mb-20">
 				<Animated.Image
 					source={require('@/assets/images/landing/splash-spin.png')}
 					className="w-10 h-10"
 					style={spinStyle}
 				/>
 			</View>
-		</View>
+		</Box>
 	);
 }
