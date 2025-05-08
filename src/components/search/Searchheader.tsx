@@ -85,14 +85,14 @@ export function SearchHeader({
 	return (
 		<View className=" absolute top-0 left-0 w-full z-30">
 			<SafeAreaView edges={['top']}>
-				<View className=" w-full mt-3">
-					<View className="flex-row items-center gap-x-1 pr-4 w-full">
+				<View className=" w-full">
+					<View className="flex-row items-center gap-x-1 px-4 w-full">
 						<Animated.View style={animatedStyle}>
 							<Pressable
 								onPress={() => {
 									router.back();
 								}}
-								className="py-2 flex-row items-center pl-4 pr-3">
+								className="p-2.5 flex-row bg-background-muted rounded-full items-center">
 								<Icon as={ChevronLeftIcon} size="xl" />
 							</Pressable>
 						</Animated.View>
@@ -139,7 +139,7 @@ export function SearchHeader({
 								as={ListFilterIcon}
 								className={cn(
 									'w-6 h-6',
-									filter.state ? 'text-primary' : undefined
+									filter.city.value ? 'text-primary' : undefined
 								)}
 							/>
 						</TouchableOpacity>

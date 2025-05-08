@@ -11,7 +11,7 @@ export default function Trending(props: TrendingProps) {
 
 	return (
 		<View className="px-4">
-			<Text className="text-black-900">Trending keywords </Text>
+			<Text className="text-black">Trending keywords </Text>
 			<View className="mt-4 flex-row gap-2 flex-wrap">
 				{keywords.map((keyword, i) => (
 					<Pressable

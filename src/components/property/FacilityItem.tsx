@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils';
 type Props = {
 	name: string;
 	icon: string;
+	hideText?: boolean;
 	textClassname?: string;
 	className?: string;
 	iconSize?: number;
@@ -24,6 +25,7 @@ export default function FacilityItem({
 	icon,
 	className,
 	textClassname,
+	hideText,
 	iconSize,
 }: Props) {
 	const Icon: LucideIcon = useMemo(() => {
@@ -44,9 +46,11 @@ export default function FacilityItem({
 	return (
 		<View className={cn('flex-row gap-2 items-center', className)}>
 			<Icon size={iconSize ?? 18} color={'#F8AA00'} />
-			<Text numberOfLines={1} className={textClassname}>
-				{name}
-			</Text>
+			{!hideText && (
+				<Text numberOfLines={1} className={textClassname}>
+					{name}
+				</Text>
+			)}
 		</View>
 	);
 }

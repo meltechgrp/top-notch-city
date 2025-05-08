@@ -19,7 +19,7 @@ export const Slider = ({
 	onChange,
 	minValue,
 	maxValue,
-	steps = 5,
+	steps = 8,
 }: Props) => {
 	const progress = useSharedValue(value);
 	const min = useSharedValue(minValue);
@@ -31,10 +31,15 @@ export const Slider = ({
 			minimumValue={min}
 			maximumValue={max}
 			steps={steps}
-			disableTapEvent={true}
 			forceSnapToStep
 			renderMark={({ index }) => (
-				<View className={cn('w-2 h-2 bg-primary rounded-full')}></View>
+				<View
+					className={cn(
+						'w-2 h-2 bg-primary rounded-full',
+						value > index * (maxValue / steps)
+							? 'bg-primary'
+							: 'bg-background-muted'
+					)}></View>
 			)}
 			onHapticFeedback={() => {
 				Haptics.selectionAsync();
@@ -42,9 +47,9 @@ export const Slider = ({
 			hapticMode="step"
 			theme={{
 				// disableMinTrackTintColor: '#fff',
-				// maximumTrackTintColor: Colors.,
+				maximumTrackTintColor: Colors.dark.background,
 				minimumTrackTintColor: Colors.primary,
-				// bubbleBackgroundColor: '#666',
+				bubbleBackgroundColor: Colors.primary,
 				// heartbeatColor: '#999',
 			}}
 			onValueChange={onChange}

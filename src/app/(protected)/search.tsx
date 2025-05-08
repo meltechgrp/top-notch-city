@@ -17,12 +17,16 @@ import SystemNavigationBar from 'react-native-system-navigation-bar';
 
 export type Filter = {
 	type: string;
-	state: string | null;
+	city: {
+		value: string;
+		label: string;
+	};
 	price: {
 		min: number;
 		max: number;
+		range: number;
 	};
-	category: string | null;
+	category: string;
 };
 
 export default function SearchPage() {
@@ -39,12 +43,16 @@ export default function SearchPage() {
 	const [showFilter, setShowFilter] = useState(false);
 	const [filter, setFilter] = useState<Filter>({
 		type: 'all',
-		state: '' as string | null,
+		city: {
+			value: '',
+			label: '',
+		},
 		price: {
 			min: 100000,
-			max: 600000,
+			max: 1000000,
+			range: 100000,
 		},
-		category: 'all' as string | null,
+		category: 'all',
 	});
 	const { addToList: addToSearchHistory } = useSearchHistoryStorage();
 
@@ -57,12 +65,12 @@ export default function SearchPage() {
 	function onChangeText(text: string) {
 		setText(text);
 		setTyping(text.length > 0);
-		setShowResults(false);
-		if (filter.state) {
-			debouncedAutocompleteSearch(text, { ...filter } as any);
-		} else {
-			debouncedAutocompleteSearch(text, {});
-		}
+		// setShowResults(false);
+		// if (filter.state) {
+		// 	debouncedAutocompleteSearch(text, { ...filter } as any);
+		// } else {
+		// 	debouncedAutocompleteSearch(text, {});
+		// }
 	}
 	function onSubmit() {
 		addToSearchHistory(text);
@@ -103,9 +111,7 @@ export default function SearchPage() {
 					visible={showFilter}
 					onDismiss={() => setShowFilter(false)}
 					filter={filter}
-					onApply={(state: string | null, towns: string[]) => {
-						setFilter((prev) => ({ ...prev, state, towns }));
-					}}
+					onApply={setFilter}
 				/>
 
 				{/* {!typing && !showResults && <SearchHistoryScreen service={service} />} */}
