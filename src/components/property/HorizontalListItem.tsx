@@ -1,12 +1,12 @@
 import { cn } from '@/lib/utils';
 import { formatMoney } from '@/lib/utils';
-import { router } from 'expo-router';
 import capitalize from 'lodash-es/capitalize';
 import { Pressable, View } from 'react-native';
 import { Property } from './PropertyHorizontalList';
 import { Card, Heading, Image, Text } from '../ui';
 import { Bath, Bed } from 'lucide-react-native';
 import { hapticFeed } from '../HapticTab';
+import { useRouter } from 'expo-router';
 
 type Props = {
 	data: Property;
@@ -16,6 +16,7 @@ type Props = {
 export default function HorizontalListItem(props: Props) {
 	const { data, className, isMine } = props;
 	const { banner, name, price, id } = data;
+	const router = useRouter();
 
 	return (
 		<Pressable

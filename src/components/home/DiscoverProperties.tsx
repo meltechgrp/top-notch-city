@@ -3,12 +3,15 @@ import Layout from '@/constants/Layout';
 import Map from '../location/map';
 import FoundHorizontalList from './FoundProperties';
 import HomeNavigation from './HomeNavigation';
+import { markersMapData } from '@/constants/DeleteLater';
+import { useRouter } from 'expo-router';
 
 type Props = {
 	className?: string;
 };
 export default function DiscoverProperties(props: Props) {
 	const { className } = props;
+	const router = useRouter();
 	const mapHeight = Layout.window.height / 1.8;
 	return (
 		<View className={className}>
@@ -21,7 +24,20 @@ export default function DiscoverProperties(props: Props) {
 				<View className="absolute bottom-8 z-10">
 					<FoundHorizontalList />
 				</View>
-				<Map scrollEnabled={true} showUserLocation={true} height={mapHeight} />
+				<Map
+					markers={markersMapData}
+					scrollEnabled={true}
+					showUserLocation={true}
+					height={mapHeight}
+					onMarkerPress={(data) =>
+						router.push({
+							pathname: '/(protected)/search',
+							params: {
+								propertyId: data.id,
+							},
+						})
+					}
+				/>
 			</View>
 		</View>
 	);

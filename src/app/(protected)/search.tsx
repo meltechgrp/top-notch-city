@@ -1,6 +1,6 @@
 // import SearchAutoCompleteView from '@/components/search/SearchAutoCompleteView';
 import SearchFilterBottomSheet from '@/components/search/SearchFilterBottomSheet';
-import Map from '@/components/location/map';
+import Map, { MarkerData } from '@/components/location/map';
 import { SearchHeader } from '@/components/search/Searchheader';
 import { useSearchHistoryStorage } from '@/components/search/SearchHistory';
 import { KeyboardDismissPressable } from '@/components/shared/KeyboardDismissPressable';
@@ -14,6 +14,8 @@ import debounce from 'lodash-es/debounce';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Dimensions, Platform, TextInput } from 'react-native';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
+import { markersMapData } from '@/constants/DeleteLater';
+import PropertyBottomSheet from '@/components/location/PropertyBottomSheet';
 
 export type Filter = {
 	type: string;
@@ -30,8 +32,9 @@ export type Filter = {
 };
 
 export default function SearchPage() {
-	const { q } = useLocalSearchParams<{
+	const { q, propertyId } = useLocalSearchParams<{
 		q?: string;
+		propertyId?: string;
 	}>();
 	const [autocompleteSearch, { data, loading }] =
 		useLazyApiQuery(searchTypeAhead);
@@ -41,6 +44,7 @@ export default function SearchPage() {
 	const [typing, setTyping] = useState(false);
 	const [showResults, setShowResults] = useState(!!q);
 	const [showFilter, setShowFilter] = useState(false);
+	const [selectedMarker, setSelectedMarker] = useState<MarkerData | null>(null);
 	const [filter, setFilter] = useState<Filter>({
 		type: 'all',
 		city: {
@@ -93,6 +97,14 @@ export default function SearchPage() {
 			}
 		}, [q])
 	);
+	useEffect(() => {
+		if (propertyId) {
+			const property = markersMapData.find((p) => p.id === propertyId);
+			if (property) {
+				setSelectedMarker(property);
+			}
+		}
+	}, [propertyId]);
 
 	return (
 		<Box className="flex-1 relative">
@@ -124,7 +136,24 @@ export default function SearchPage() {
 					scrollEnabled={true}
 					height={totalHeight}
 					showUserLocation={true}
+					markers={markersMapData}
+					onMarkerPress={(marker) => setSelectedMarker(marker)}
 				/>
+
+				{selectedMarker && (
+					<PropertyBottomSheet
+						visible={!!selectedMarker}
+						data={selectedMarker}
+						onContinue={() => {
+							setSelectedMarker(null);
+							router.push({
+								pathname: '/(protected)/property/[propertyId]',
+								params: { propertyId: selectedMarker.id },
+							});
+						}}
+						onDismiss={() => setSelectedMarker(null)}
+					/>
+				)}
 			</KeyboardDismissPressable>
 		</Box>
 	);

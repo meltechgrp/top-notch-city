@@ -1,38 +1,21 @@
 import BottomSheet from '@/components/shared/BottomSheet';
 import * as React from 'react';
 import { ScrollView, View } from 'react-native';
-import { useRouter } from 'expo-router';
-import {
-	Button,
-	ButtonText,
-	Card,
-	Heading,
-	Icon,
-	Image,
-	ImageBackground,
-	Text,
-} from '../ui';
+import { Button, ButtonText, Card, Heading, Icon, Image, Text } from '../ui';
 import { formatMoney } from '@/lib/utils';
-import { ChevronRight, Map, MapPin } from 'lucide-react-native';
+import { MapPin } from 'lucide-react-native';
 import FacilityItem from '../property/FacilityItem';
 import { Colors } from '@/constants/Colors';
+import { MarkerData } from './map';
 
 type Props = {
 	onDismiss: () => void;
 	visible: boolean;
-	data: any;
+	data: MarkerData;
+	onContinue: () => void;
 };
 export default function PropertyBottomSheet(props: Props) {
-	const { visible, onDismiss, data } = props;
-
-	const router = useRouter();
-	function onContinue() {
-		onDismiss();
-		router.push({
-			pathname: '/(protected)/property/[propertyId]/share',
-			params: { propertyId: data.id },
-		});
-	}
+	const { visible, onDismiss, data, onContinue } = props;
 
 	const facilites = [
 		{

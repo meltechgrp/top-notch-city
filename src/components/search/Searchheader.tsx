@@ -86,7 +86,7 @@ export function SearchHeader({
 		<View className=" absolute top-0 left-0 w-full z-30">
 			<SafeAreaView edges={['top']}>
 				<View className=" w-full">
-					<View className="flex-row items-center gap-x-1 px-4 w-full">
+					<View className="flex-row items-center gap-x-4 px-4 w-full">
 						<Animated.View style={animatedStyle}>
 							<Pressable
 								onPress={() => {
