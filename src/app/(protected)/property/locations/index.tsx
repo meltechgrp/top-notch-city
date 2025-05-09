@@ -103,7 +103,7 @@ export default function PropertySections() {
 					estimatedItemSize={200}
 					ListHeaderComponent={() => (
 						<View className=" my-4 items-center">
-							<Text>Find the best recommendations place to live</Text>
+							<Text>Find the best recommended places to live</Text>
 						</View>
 					)}
 					keyExtractor={(item) => item.id}

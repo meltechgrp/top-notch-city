@@ -76,10 +76,7 @@ export default function ConnectionsListSelectBottomSheet(props: Props) {
 						className="px-4 h-6 justify-center"
 						disabled={selected.length === 0}>
 						<Text
-							className={cn(
-								'text-base',
-								selected.length ? 'text-primary-900' : 'text-black-300'
-							)}>
+							className={cn('text-base', selected.length && 'text-primary')}>
 							Add
 						</Text>
 					</Pressable>
@@ -87,18 +84,6 @@ export default function ConnectionsListSelectBottomSheet(props: Props) {
 			}>
 			<View className="pt-6 flex-1">
 				{HeaderComponent}
-				<View className="px-4">
-					<Input>
-						<InputField
-							type="text"
-							autoFocus
-							// placeholder="Email"
-							value={search}
-							onChangeText={setSearch}
-						/>
-						<InputField placeholder="Search..." />
-					</Input>
-				</View>
 
 				<View className="flex-1 pt-4">
 					<BottomSheetFlatList

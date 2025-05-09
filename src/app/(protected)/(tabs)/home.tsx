@@ -69,7 +69,7 @@ export default function HomeScreen() {
 				keyExtractor={(item) => item.id}
 				renderItem={renderItem as any}
 				ItemSeparatorComponent={() => (
-					<View style={[{ height: 1 }]} className="bg-background-500" />
+					<View style={[{ height: 1 }]} className="bg-background" />
 				)}
 				ListEmptyComponent={isRefreshing ? null : EmptyFeed}
 			/>

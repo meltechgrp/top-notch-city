@@ -1,8 +1,14 @@
 import {
+	Avatar,
+	AvatarBadge,
+	AvatarFallbackText,
+	AvatarImage,
 	Box,
 	Button,
 	ButtonText,
+	Icon,
 	ImageBackground,
+	Pressable,
 	Text,
 	View,
 } from '@/components/ui';
@@ -12,6 +18,7 @@ import React from 'react';
 import { useTheme } from '@/components/layouts/ThemeProvider';
 import LogoutAlertDialog from '@/components/shared/LogoutAlertDialog';
 import {
+	ChevronRight,
 	Mail,
 	NotebookText,
 	ReceiptText,
@@ -81,157 +88,150 @@ export default function More() {
 					),
 				}}
 			/>
-			{/* <ImageBackground
+			<ImageBackground
 				source={require('@/assets/images/landing/home.png')}
-				className="flex-1"> */}
-			<Box
-				className={cn(
-					'flex-1 '
-					// theme == 'dark' ? 'bg-background-dark/90' : 'bg-background-light/90'
-				)}>
-				<ScrollView
-					style={{ display: 'flex' }}
-					showsVerticalScrollIndicator={false}
-					contentContainerClassName="pb-40">
-					<View className="px-4 py-4 relative mt-2 bg-background-info/90">
-						<View className=" items-center">
-							{/* {walletLoading ? (
-										<WalletLoadingSkeleton />
-									) : ( */}
-							<Text size="3xl" className=" font-heading">
-								{formatToNaira(500000, 2)}
+				className="flex-1">
+				<Box className={cn('flex-1 bg-background/95')}>
+					<ScrollView
+						style={{ display: 'flex' }}
+						showsVerticalScrollIndicator={false}
+						contentContainerClassName="pb-40">
+						<View
+							className={cn(
+								'px-4 py-2 mt-2',
+								theme == 'dark'
+									? 'bg-background-muted/95'
+									: 'bg-background-muted/60'
+							)}>
+							<Pressable
+								onPress={() => {
+									router.push({
+										pathname: '/(protected)/profile/[user]',
+										params: {
+											user: 'hghjhgjhj',
+											ref: pathname,
+										},
+									});
+								}}
+								className={'flex-row items-center'}>
+								<Avatar className=" w-20 h-20">
+									<AvatarFallbackText>Humphrey Joshua</AvatarFallbackText>
+									<AvatarBadge size="md" />
+									<AvatarImage
+										source={{
+											uri: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=800&q=60',
+										}}
+									/>
+								</Avatar>
+								<View className="flex-1 pl-3">
+									<Text className="text-base font-medium">Humphrey Joshua</Text>
+									<Text className="text-sm text-typography/80">
+										View profile record and engagements
+									</Text>
+								</View>
+								<Icon as={ChevronRight} />
+							</Pressable>
+						</View>
+						<View className="pt-8 flex-1">
+							<Text className="text-sm text-typography/80 uppercase px-4 mb-2">
+								Profile Menu
 							</Text>
-							{/* )} */}
-							<Text className="text-sm text-typography/80 text-center">
-								Wallet balance
-							</Text>
+							<View className="flex-1">
+								<ScrollView
+									contentContainerClassName="px-4"
+									showsVerticalScrollIndicator={false}>
+									<Divider className=" h-[0.3px] mb-4 opacity-50" />
+									<MenuListItem
+										title="Account"
+										description="View and edit your account details"
+										onPress={() => {
+											// me &&
+											router.push({
+												pathname: '/(protected)/profile/[user]',
+												params: {
+													user: 'hghjhgjhj',
+													ref: pathname,
+												},
+											});
+										}}
+										icon={User2}
+										iconColor="primary"
+										className=" py-2"
+									/>
+									<Divider className=" h-[0.3px] mb-4 opacity-50" />
+									<MenuListItem
+										title="Push Notifications"
+										description="Configure app notifications"
+										onPress={() => {}}
+										icon={Mail}
+										iconColor="success"
+										className=" py-2"
+									/>
+									<Divider className=" h-[0.3px] mb-4 opacity-50" />
+									<MenuListItem
+										title="Security"
+										description="protect yourself from intruders"
+										onPress={() => {
+											// router.push('/settings/');
+										}}
+										icon={Settings}
+										iconColor="gray-500"
+										className=" py-2"
+									/>
+									<Divider className=" h-[0.3px] mb-4 opacity-50" />
+									<MenuListItem
+										title="Write a review"
+										description="Let's improve the app"
+										onPress={() => {}}
+										icon={NotebookText}
+										className="py-2"
+										iconColor="primary"
+									/>
+									<Divider className=" h-[0.3px] mb-4 opacity-50" />
+									<MenuListItem
+										title="Invite friends"
+										description={`Invite your friends to join ${config.appName} app`}
+										icon={Share2}
+										className=" py-2"
+										iconColor="tertiary-300"
+										onPress={() => {
+											// router.push('/account/invite-friends');
+										}}
+									/>
+									<Divider className=" h-[0.3px] mb-4 opacity-50" />
+									<MenuListItem
+										title="Become an Agent"
+										description={`Join us as an agent to earn more`}
+										icon={Sparkle}
+										className="py-2"
+										iconColor="primary"
+										onPress={() => {
+											// router.push('/account/invite-friends');
+										}}
+									/>
+									<Divider className=" h-[0.3px] mb-4 opacity-50" />
+									<MenuListItem
+										title="Help and Support"
+										description="Get help and support"
+										onPress={() => {
+											// router.push('/help-and-support');
+										}}
+										icon={Sparkle}
+										className="py-2"
+										iconColor="primary"
+									/>
+									<Divider className=" h-[0.3px] mb-4 opacity-50" />
+									<LogoutButton />
+								</ScrollView>
+							</View>
 						</View>
-						<View className="mt-4 px-8 flex-row gap-8 justify-between">
-							<Button
-								action="primary"
-								className="flex-1"
-								style={{ height: 43 }}>
-								<ButtonText>Deposit</ButtonText>
-							</Button>
-							<Button
-								variant="outline"
-								className="flex-1"
-								style={{ height: 43 }}>
-								<ButtonText>Cashout</ButtonText>
-							</Button>
-						</View>
-					</View>
-					<View className="pt-8 flex-1">
-						<Text className="text-sm text-typography/80 uppercase px-4 mb-2">
-							Profile Menu
-						</Text>
-						<View className="flex-1">
-							<ScrollView
-								contentContainerClassName="px-4"
-								showsVerticalScrollIndicator={false}>
-								<Divider className=" h-[0.3px] mb-4 opacity-50" />
-								<MenuListItem
-									title="Profile"
-									description="View and edit your account details"
-									onPress={() => {
-										// me &&
-										router.push({
-											pathname: '/(protected)/profile/[user]',
-											params: {
-												user: 'hghjhgjhj',
-												ref: pathname,
-											},
-										});
-									}}
-									icon={User2}
-									iconColor="primary"
-									className=" py-2"
-								/>
-								<Divider className=" h-[0.3px] mb-4 opacity-50" />
-								<MenuListItem
-									title="Push Notifications"
-									description="Configure app notifications"
-									onPress={() => {}}
-									icon={Mail}
-									iconColor="success"
-									className=" py-2"
-								/>
-								<Divider className=" h-[0.3px] mb-4 opacity-50" />
-								<MenuListItem
-									title="Wishlist"
-									description="View all your saved properties"
-									onPress={() => {
-										// me && router.push('/account/transactions');
-									}}
-									icon={ReceiptText}
-									iconColor="blue-500"
-									className=" py-2"
-								/>
-								<Divider className=" h-[0.3px] mb-4 opacity-50" />
-								<MenuListItem
-									title="Security"
-									description="protect yourself from intruders"
-									onPress={() => {
-										// router.push('/settings/');
-									}}
-									icon={Settings}
-									iconColor="gray-500"
-									className=" py-2"
-								/>
-								<Divider className=" h-[0.3px] mb-4 opacity-50" />
-								<MenuListItem
-									title="Write a review"
-									description="Let's improve the app"
-									onPress={() => {}}
-									icon={NotebookText}
-									className="py-2"
-									iconColor="primary"
-								/>
-								<Divider className=" h-[0.3px] mb-4 opacity-50" />
-								<MenuListItem
-									title="Invite friends"
-									description={`Invite your friends to join ${config.appName} app`}
-									icon={Share2}
-									className=" py-2"
-									iconColor="tertiary-300"
-									onPress={() => {
-										// router.push('/account/invite-friends');
-									}}
-								/>
-								<Divider className=" h-[0.3px] mb-4 opacity-50" />
-								<MenuListItem
-									title="Become an Agent"
-									description={`Join us as an agent to earn more`}
-									icon={Sparkle}
-									className="py-2"
-									iconColor="primary"
-									onPress={() => {
-										// router.push('/account/invite-friends');
-									}}
-								/>
-								<Divider className=" h-[0.3px] mb-4 opacity-50" />
-								<MenuListItem
-									title="Help and Support"
-									description="Get help and support"
-									onPress={() => {
-										// router.push('/help-and-support');
-									}}
-									icon={Sparkle}
-									className="py-2"
-									iconColor="primary"
-								/>
-								<Divider className=" h-[0.3px] mb-4 opacity-50" />
-								<LogoutButton />
-							</ScrollView>
-						</View>
-					</View>
-					<LogoutAlertDialog
-						setOpenLogoutAlertDialog={setOpenLogoutAlertDialog}
-						openLogoutAlertDialog={openLogoutAlertDialog}
-					/>
-				</ScrollView>
-			</Box>
-			{/* </ImageBackground> */}
+						<LogoutAlertDialog
+							setOpenLogoutAlertDialog={setOpenLogoutAlertDialog}
+							openLogoutAlertDialog={openLogoutAlertDialog}
+						/>
+					</ScrollView>
+				</Box>
+			</ImageBackground>
 		</>
 	);
 }

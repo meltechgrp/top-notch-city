@@ -38,7 +38,7 @@ export default function DisplayStyle({
 					onPress={handleToggleView}
 					className={cn(
 						'rounded-[50px] p-2 px-4',
-						numColumns == 2 && 'bg-outline'
+						numColumns == 2 && 'bg-primary'
 					)}>
 					<LayoutGrid size={18} color={numColumns == 2 ? 'white' : 'gray'} />
 				</TouchableOpacity>
@@ -46,7 +46,7 @@ export default function DisplayStyle({
 					onPress={handleToggleView}
 					className={cn(
 						'rounded-[50px] p-2 px-4',
-						numColumns == 1 && 'bg-outline'
+						numColumns == 1 && 'bg-primary'
 					)}>
 					<AlignVerticalSpaceAround
 						size={18}

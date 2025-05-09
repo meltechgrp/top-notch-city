@@ -17,7 +17,7 @@ export default function TopProperties() {
 				});
 			}}>
 			<View className="flex-1 px-4">
-				<VerticalProperties disableCount={true} category="top" scrollY={0} />
+				<VerticalProperties disableCount={true} category="top" />
 			</View>
 		</SectionHeaderWithRef>
 	);

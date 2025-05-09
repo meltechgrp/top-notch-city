@@ -11,6 +11,7 @@ import DisplayStyle from '../layouts/DisplayStyle';
 import { Animated } from 'react-native';
 import { useState } from 'react';
 import PropertyListItem from './PropertyListItem';
+import { AnimatedFlashList } from '@shopify/flash-list';
 
 interface Props {
 	category?: string;
@@ -113,22 +114,15 @@ export default function VerticalProperties({
 		});
 	};
 	return (
-		<Animated.FlatList
-			style={{ flex: 1 }}
+		<AnimatedFlashList
 			refreshing={isRefreshing}
 			data={data}
-			key={`flatlist-${numColumns}`}
-			columnWrapperStyle={numColumns > 1 ? { gap: GAP } : undefined}
 			renderItem={({ item }) => (
 				<PropertyListItem className="mb-4" columns={numColumns} data={item} />
 			)}
 			numColumns={numColumns}
 			horizontal={false}
 			showsVerticalScrollIndicator={false}
-			contentContainerStyle={{
-				alignItems: 'flex-start',
-				// paddingHorizontal: SIDE_PADDING,
-			}}
 			onScroll={
 				scrollY &&
 				Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
@@ -148,6 +142,7 @@ export default function VerticalProperties({
 				/>
 			)}
 			keyExtractor={(item) => item.id}
+			estimatedItemSize={340}
 			contentInsetAdjustmentBehavior="automatic"
 			ListEmptyComponent={() => (
 				<BodyScrollView

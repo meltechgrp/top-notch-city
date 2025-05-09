@@ -17,7 +17,7 @@ function CreateButton(props: CreateButtonProps) {
 				accessibilityRole="button"
 				accessibilityLabel="Create"
 				onPress={props.onPress}>
-				<Icon size="xl" as={MessageCircleMore} />
+				<Icon size="xl" as={MessageCircleMore} className="text-white" />
 			</Pressable>
 		</View>
 	);

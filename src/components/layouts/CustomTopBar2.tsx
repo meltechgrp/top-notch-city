@@ -50,7 +50,7 @@ export default function CustomTabBar2(props: TabBarProps<RouteType>) {
 							key={route.key}
 							className={cn(
 								'flex-1 items-center justify-center z-10 rounded-[50px]',
-								isFocused && 'bg-outline'
+								isFocused && 'bg-primary'
 							)}
 							style={{ width: tabWidth - 8 }}
 							onPress={() => jumpTo(route.key)}>

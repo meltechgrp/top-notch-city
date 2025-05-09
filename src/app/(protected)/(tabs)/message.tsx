@@ -1,6 +1,6 @@
 import { MessageListItem } from '@/components/contents/MessageListItem';
 import SmartphoneChatIcon from '@/components/icons/SmartphoneChatIcon';
-import ConnectionsListSelectBottomSheet from '@/components/modals/ConnectionsListSelectBottomSheet';
+import StartChatBottomSheet from '@/components/modals/StartChatBottomSheet';
 import CreateButton from '@/components/shared/CreateButton';
 import EmptyStateWrapper from '@/components/shared/EmptyStateWrapper';
 import { Box, Heading, Icon, Text, View } from '@/components/ui';
@@ -10,7 +10,6 @@ import { useRouter } from 'expo-router';
 import { Search } from 'lucide-react-native';
 import React from 'react';
 import { RefreshControl } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function MessageScreen() {
 	const [friendsModal, setFriendsModal] = React.useState(false);
@@ -32,7 +31,7 @@ export default function MessageScreen() {
 			setRefreshing(false);
 		}
 	}
-	const isEmpty = true;
+	const isEmpty = false;
 	return (
 		<>
 			<Box className="flex-1">
@@ -44,7 +43,7 @@ export default function MessageScreen() {
 					refreshControl={
 						<RefreshControl refreshing={loading} onRefresh={refetch} />
 					}>
-					<View className="flex-1 bg-white">
+					<View className="flex-1">
 						<View className="px-4 pb-2">
 							<View className="flex-row items-center h-8 bg-gray-100 rounded-lg px-2.5">
 								<Icon as={Search} className="text-gray-600 " />
@@ -77,7 +76,7 @@ export default function MessageScreen() {
 			</Box>
 			<CreateButton onPress={onNewChat} />
 			{friendsModal && (
-				<ConnectionsListSelectBottomSheet
+				<StartChatBottomSheet
 					visible={friendsModal}
 					onDismiss={() => setFriendsModal(false)}
 					onSelect={(member) => {
