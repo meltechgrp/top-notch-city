@@ -6,9 +6,14 @@ import { format } from 'date-fns';
 import logo from '@/assets/images/32.png';
 import { ChevronRight } from 'lucide-react-native';
 import NotificationItemWrapper from './NotificationItemWrapper';
+import { cn } from '@/lib/utils';
 
-export default function PropertyListedNotificationComponent(props: {
+export default function PropertyListedNotificationComponent({
+	data,
+	setScrollEnabled,
+}: {
 	data: any;
+	setScrollEnabled: () => void;
 }) {
 	const [isRead, setIsRead] = React.useState(false);
 	const handleRead = () => {
@@ -17,16 +22,20 @@ export default function PropertyListedNotificationComponent(props: {
 	return (
 		<NotificationItemWrapper
 			isRead={isRead}
+			setScrollEnabled={setScrollEnabled}
 			onRead={handleRead}
 			onDelete={() => console.log('deleted')}>
 			<Pressable
 				// onPress={() =>
 				// 	router.push({
 				// 		pathname: '/(protected)/property/[propertyId]',
-				// 		params: { propertyId: props.data.propertyId },
+				// 		params: { propertyId: data.propertyId },
 				// 	})
 				// }
-				className="p-4 min-h-28 rounded-2xl bg-background-info ">
+				className={cn(
+					'p-4 min-h-28 rounded-2xl bg-background-info ',
+					data.description?.length > 50 && 'min-h-[145px]'
+				)}>
 				<View className="flex-1 gap-1">
 					<View className="flex-1 border-b gap-1 pb-1 border-outline">
 						<View className="flex-row gap-4 items-start">
@@ -40,14 +49,16 @@ export default function PropertyListedNotificationComponent(props: {
 								)}
 							</Avatar>
 							<Text size="lg" numberOfLines={1} className="">
-								{props.data.title}
+								{data.title}
 							</Text>
 						</View>
-						<Text className="text-sm font-light">{props.data.description}</Text>
+						<Text numberOfLines={3} className="text-sm font-light">
+							{data.description}
+						</Text>
 					</View>
 					<View className="flex-row items-center justify-between gap-2">
 						<Text size="sm">
-							{format(new Date(props.data.createdAt), 'dd MMM yyyy')}
+							{format(new Date(data.createdAt), 'dd MMM yyyy')}
 						</Text>
 						<Icon as={ChevronRight} className="text-primary" />
 					</View>

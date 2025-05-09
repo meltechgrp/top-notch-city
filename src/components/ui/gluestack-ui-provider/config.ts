@@ -139,7 +139,7 @@ export const config = {
 		'--color-background-warning': '65 47 35',
 		'--color-background-success': '28 43 33',
 		'--color-background-muted': '36 37 41',
-		'--color-background-info': '36 37 41',
+		'--color-background-info': '38 40 42',
 
 		/* Focus Ring Indicator  */
 		'--color-indicator-primary': '247 247 247',

@@ -4,8 +4,14 @@ import { Bell } from 'lucide-react-native';
 import { useCallback } from 'react';
 import { View } from 'react-native';
 import { Button, Icon } from '../ui';
+import { cn } from '@/lib/utils';
+import * as Haptics from 'expo-haptics';
 
-export default function NotificationBarButton() {
+type Props = {
+	className?: string;
+};
+
+export default function NotificationBarButton({ className }: Props) {
 	const unseenNotificationsCount = 5;
 
 	useFocusEffect(
@@ -17,6 +23,7 @@ export default function NotificationBarButton() {
 	return (
 		<Button
 			onPress={() => {
+				Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 				router.push({
 					pathname: '/notification',
 					params: {
@@ -25,7 +32,10 @@ export default function NotificationBarButton() {
 				});
 			}}
 			action="secondary"
-			className="rounded-full h-14 px-4 justify-center items-center  active:opacity-50 flex">
+			className={cn(
+				'rounded-full h-14 px-4 justify-center items-center flex',
+				className
+			)}>
 			<Icon size={'xl'} as={Bell} />
 			<View className="absolute top-1 right-0">
 				<NotificationBadge count={unseenNotificationsCount} />

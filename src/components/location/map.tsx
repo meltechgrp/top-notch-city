@@ -3,6 +3,8 @@ import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import Layout from '@/constants/Layout';
 import { CustomPropertyMarker } from './CustomPropertyMarker';
 import Platforms from '@/constants/Plaforms';
+import { useTheme } from '../layouts/ThemeProvider';
+import { Colors } from '@/constants/Colors';
 
 export type MarkerData = {
 	id: string;
@@ -38,7 +40,7 @@ export default function Map(props: MapProps) {
 		showUserLocation = false,
 		showsBuildings = true,
 	} = props;
-
+	const { theme } = useTheme();
 	const initialRegion = useMemo(
 		() => ({
 			latitude: latitude || 4.8156,
@@ -56,6 +58,12 @@ export default function Map(props: MapProps) {
 				provider={Platforms.isAndroid() ? PROVIDER_GOOGLE : undefined}
 				zoomEnabled
 				loadingEnabled
+				loadingBackgroundColor={
+					theme == 'dark' ? Colors.light.background : Colors.dark.background
+				}
+				loadingIndicatorColor={
+					theme == 'dark' ? Colors.dark.tint : Colors.light.tint
+				}
 				showsScale={true}
 				showsCompass={true}
 				showsBuildings={showsBuildings}

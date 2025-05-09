@@ -32,7 +32,7 @@ function SearchFilterBottomSheet(props: Props) {
 			visible={show}
 			onDismiss={onDismiss}>
 			<KeyboardDismissPressable>
-				<View className="flex-1 px-4 gap-8 py-5 bg-background-muted">
+				<View className="flex-1 px-4 gap-8 py-5 pb-8 bg-background">
 					<View className="gap-1">
 						<Text className="text-lg font-medium mb-2">Listing Type</Text>
 						<View className="flex-row gap-4">
@@ -42,7 +42,7 @@ function SearchFilterBottomSheet(props: Props) {
 									onPress={() => setFilter({ ...filter, type })}>
 									<Badge
 										className={cn(
-											'rounded-3xl bg-background-info py-2 px-6',
+											'rounded-3xl py-2 px-6',
 											filter.type == type ? 'bg-primary' : 'bg-background-info'
 										)}>
 										<Text
@@ -80,7 +80,7 @@ function SearchFilterBottomSheet(props: Props) {
 						<View className="flex-row gap-2 mb-2 items-center justify-center">
 							<Text size="xl">{formatMoney(100000, 'NGN')}</Text>
 							<Text size="xl">-</Text>
-							<Text size="xl">{formatMoney(filter.price.max, 'NGN')}</Text>
+							<Text size="xl">{formatMoney(filter.price.range, 'NGN')}</Text>
 						</View>
 						<View className="px-2 mt-2">
 							<Slider

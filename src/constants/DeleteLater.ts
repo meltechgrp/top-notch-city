@@ -105,7 +105,8 @@ export const notificationData = [
 			{
 				id: 'bnbnmnnbnm',
 				title: 'New description',
-				description: 'You have a new description from a buyer',
+				description:
+					'You have a new description from a buyer You have a new description from a buyer You have a new description from a buyer You have a new description from a buyer',
 				createdAt: new Date(Date.now()).toString(),
 				__typename: 'PropertyListedNotification',
 			},

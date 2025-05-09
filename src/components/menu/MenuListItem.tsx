@@ -1,7 +1,8 @@
-import { TouchableHighlight, TouchableOpacity, View as V } from 'react-native';
-import { Pressable, Text, View, Icon } from '../ui';
+import { TouchableOpacity, View as V } from 'react-native';
+import { Text, View, Icon } from '../ui';
 import { cn } from '@/lib/utils';
-import { ArrowRightIcon, ChevronRight } from 'lucide-react-native';
+import { ChevronRight } from 'lucide-react-native';
+import * as Haptics from 'expo-haptics';
 
 type MenuListItemProps = V['props'] & {
 	title: React.ReactNode;
@@ -28,7 +29,11 @@ export function MenuListItem(props: MenuListItemProps) {
 		iconBgColor,
 	} = props;
 	return (
-		<TouchableOpacity onPress={() => onPress?.()}>
+		<TouchableOpacity
+			onPress={() => {
+				Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+				onPress?.();
+			}}>
 			<View style={[style]} className={cn('flex-row items-center', className)}>
 				<View
 					className={cn(

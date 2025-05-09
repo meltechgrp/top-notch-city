@@ -53,9 +53,7 @@ export default function BottomSheetPlain(props: BottomSheetProps) {
 						<Pressable
 							onPress={handleDismiss}
 							className="bg-background-muted h-14 items-center justify-center rounded-lg">
-							<Text className="text-black-900">
-								{props.doneLabel || 'Cancel'}
-							</Text>
+							<Text className="">{props.doneLabel || 'Cancel'}</Text>
 						</Pressable>
 					</View>
 				</Animated.View>

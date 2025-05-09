@@ -6,6 +6,7 @@ import TabBarBackground from '@/components/TabBarBackground';
 import {
 	Heart,
 	Home,
+	Menu,
 	MessageSquareMore,
 	Tag,
 	UserCircle2,
@@ -21,6 +22,7 @@ export default function TabLayout() {
 				tabBarActiveTintColor: '#FF4C00',
 				headerShown: false,
 				tabBarButton: HapticTab,
+				headerTitleAlign: 'center',
 				tabBarHideOnKeyboard: true,
 				tabBarBackground: TabBarBackground,
 				tabBarStyle: Platform.select({
@@ -28,16 +30,20 @@ export default function TabLayout() {
 						// Use a transparent background on iOS to show the blur effect
 						position: 'absolute',
 					},
-					default: {},
-					android: {
+					default: {
 						backgroundColor:
 							theme == 'dark'
 								? Colors.light.background
 								: Colors.dark.background,
-						// borderTopWidth: 0,
-						// elevation: 8,
 					},
 				}),
+				headerStyle: {
+					backgroundColor:
+						theme == 'dark' ? Colors.light.background : Colors.dark.background,
+				},
+				headerTitleStyle: {
+					color: theme == 'dark' ? Colors.dark.text : Colors.light.text,
+				},
 			}}>
 			<Tabs.Screen
 				name="home"
@@ -65,16 +71,18 @@ export default function TabLayout() {
 				name="message"
 				options={{
 					title: 'Message',
+					headerShown: true,
 					tabBarIcon: ({ color }) => (
 						<MessageSquareMore size={24} color={color} />
 					),
 				}}
 			/>
 			<Tabs.Screen
-				name="profile"
+				name="menu"
 				options={{
-					title: 'Profile',
-					tabBarIcon: ({ color }) => <UserCircle2 size={24} color={color} />,
+					title: 'Menu',
+					headerShown: true,
+					tabBarIcon: ({ color }) => <Menu size={24} color={color} />,
 				}}
 			/>
 		</Tabs>

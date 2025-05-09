@@ -4,11 +4,13 @@ import PropertyListedNotificationComponent from '@/components/notifications/Prop
 import EmptyStateWrapper from '@/components/shared/EmptyStateWrapper';
 import { Box, Heading, Text } from '@/components/ui';
 import { notificationData } from '@/constants/DeleteLater';
+import eventBus from '@/lib/eventBus';
 import React, { useEffect, useMemo } from 'react';
 import { RefreshControl, SectionList, View } from 'react-native';
 
 export default function NotificationScreen() {
 	const [refreshing, setRefreshing] = React.useState(false);
+	const [scrollEnabled, setScrollEnabled] = React.useState(true);
 	async function refetch() {}
 	async function onRefresh() {
 		try {
@@ -23,9 +25,19 @@ export default function NotificationScreen() {
 	const renderItem = (item: any) => {
 		switch (item.__typename) {
 			case 'PropertytAcceptedNotification':
-				return <PropertyAcceptedNotificationComponent data={item as any} />;
+				return (
+					<PropertyAcceptedNotificationComponent
+						setScrollEnabled={() => setScrollEnabled(!scrollEnabled)}
+						data={item as any}
+					/>
+				);
 			case 'PropertyListedNotification':
-				return <PropertyListedNotificationComponent data={item as any} />;
+				return (
+					<PropertyListedNotificationComponent
+						setScrollEnabled={() => setScrollEnabled(!scrollEnabled)}
+						data={item as any}
+					/>
+				);
 			default:
 				break;
 		}
@@ -56,15 +68,18 @@ export default function NotificationScreen() {
 					}
 					contentWrapperClassName="relative -top-24">
 					<SectionList
+						scrollEnabled={scrollEnabled}
 						refreshControl={
 							<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
 						}
 						contentContainerClassName="px-4"
+						showsVerticalScrollIndicator={false}
 						renderSectionHeader={({ section: { title } }) => (
 							<View className="px-4 mb-1">
 								<Text className="font-medium">{title}</Text>
 							</View>
 						)}
+						onScroll={() => eventBus.dispatchEvent('NOTIFICATION_OPEN', null)}
 						renderSectionFooter={() => <View className="h-6" />}
 						ItemSeparatorComponent={() => <View className="h-3" />}
 						SectionSeparatorComponent={() => <View className="h-1" />}

@@ -44,9 +44,9 @@ const buttonStyle = tva({
 			primary:
 				'bg-primary data-[hover=true]:bg-primary data-[active=true]:bg-primary border-primary-300 data-[hover=true]:border-primary-400 data-[active=true]:border-primary-500 data-[focus-visible=true]:web:ring-indicator-info',
 			secondary:
-				'bg-background-muted border-secondary-300 data-[hover=true]:bg-secondary-300 data-[hover=true]:border-secondary-200 data-[active=true]:bg-secondary data-[active=true]:border-secondary data-[focus-visible=true]:web:ring-indicator-info',
+				'bg-background-muted border-secondary-300 data-[hover=true]:bg-secondary-muted data-[hover=true]:border-secondary-muted data-[active=true]:bg-secondary-muted data-[active=true]:border-secondary-muted data-[focus-visible=true]:web:ring-indicator-info',
 			positive:
-				'bg-success-500 border-success-300 data-[hover=true]:bg-success data-[hover=true]:border-success-400 data-[active=true]:bg-success-300 data-[active=true]:border-success-500 data-[focus-visible=true]:web:ring-indicator-info',
+				'bg-success border-success-300 data-[hover=true]:bg-success data-[hover=true]:border-success-400 data-[active=true]:bg-success-300 data-[active=true]:border-success-500 data-[focus-visible=true]:web:ring-indicator-info',
 			negative:
 				'bg-error border-error-300 data-[hover=true]:bg-error data-[hover=true]:border-error-400 data-[active=true]:bg-error-300 data-[active=true]:border-error-500 data-[focus-visible=true]:web:ring-indicator-info',
 			default:

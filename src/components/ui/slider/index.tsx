@@ -1,10 +1,10 @@
 import { useSharedValue } from 'react-native-reanimated';
 import { Slider as Sl } from 'react-native-awesome-slider';
 import { View } from '../view';
-import { Text } from '../text';
 import * as Haptics from 'expo-haptics';
 import { Colors } from '@/constants/Colors';
 import { cn } from '@/lib/utils';
+import { useTheme } from '@/components/layouts/ThemeProvider';
 
 type Props = {
 	value: number;
@@ -21,6 +21,7 @@ export const Slider = ({
 	maxValue,
 	steps = 8,
 }: Props) => {
+	const { theme } = useTheme();
 	const progress = useSharedValue(value);
 	const min = useSharedValue(minValue);
 	const max = useSharedValue(maxValue);
@@ -38,7 +39,7 @@ export const Slider = ({
 						'w-2 h-2 bg-primary rounded-full',
 						value > index * (maxValue / steps)
 							? 'bg-primary'
-							: 'bg-background-muted'
+							: 'bg-background-info'
 					)}></View>
 			)}
 			onHapticFeedback={() => {
@@ -47,7 +48,8 @@ export const Slider = ({
 			hapticMode="step"
 			theme={{
 				// disableMinTrackTintColor: '#fff',
-				maximumTrackTintColor: Colors.dark.background,
+				maximumTrackTintColor:
+					theme == 'light' ? 'rgb(249, 249, 249)' : 'rgb(36, 37, 41)',
 				minimumTrackTintColor: Colors.primary,
 				bubbleBackgroundColor: Colors.primary,
 				// heartbeatColor: '#999',

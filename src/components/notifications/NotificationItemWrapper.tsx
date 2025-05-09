@@ -20,10 +20,12 @@ export default function NotificationItemWrapper({
 	onDelete,
 	onRead,
 	isRead,
+	setScrollEnabled,
 }: {
 	children: React.ReactNode;
 	onDelete: () => void;
 	onRead: () => void;
+	setScrollEnabled: () => void;
 	isRead: boolean;
 }) {
 	const height = useSharedValue(1);
@@ -114,16 +116,25 @@ export default function NotificationItemWrapper({
 	return (
 		<Reanimated.View style={animatedContainerStyle}>
 			<ReanimatedSwipeable
-				friction={2}
+				friction={1}
 				ref={reanimatedRef}
 				enableTrackpadTwoFingerGesture
-				rightThreshold={40}
-				dragOffsetFromRightEdge={100}
+				rightThreshold={10}
+				onSwipeableWillOpen={() =>
+					eventBus.dispatchEvent('NOTIFICATION_SWIPED', true)
+				}
+				onSwipeableClose={() =>
+					eventBus.dispatchEvent('NOTIFICATION_SWIPED', false)
+				}
+				dragOffsetFromRightEdge={40}
+				dragOffsetFromLeftEdge={40}
 				renderLeftActions={LeftAction}
 				renderRightActions={RightAction}
+				shouldCancelWhenOutside={true}
 				onSwipeableCloseStartDrag={handleSwipeOpen}
 				overshootLeft={false}
-				leftThreshold={40}
+				overshootRight={false}
+				leftThreshold={10}
 				enableContextMenu>
 				{children}
 			</ReanimatedSwipeable>

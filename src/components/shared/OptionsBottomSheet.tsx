@@ -1,11 +1,9 @@
 import { cn } from '@/lib/utils';
 import * as React from 'react';
 import { Pressable, TouchableWithoutFeedback, View } from 'react-native';
-import BottomSheet from './BottomSheet';
 import { Text } from '../ui';
 import BottomSheetPlain from './BottomSheetPlain';
 import { FlashList } from '@shopify/flash-list';
-import Layout from '@/constants/Layout';
 type OptionProps = {
 	option: OptionType;
 	onChange: (value: OptionType) => void;
@@ -48,7 +46,7 @@ export default function OptionsBottomSheet(props: Props) {
 								value={value}
 								index={index}
 								className={cn('p-4', {
-									'border-outline-300 border-t ': !!index,
+									'border-outline border-t ': !!index,
 								})}
 								selected={value?.value === option.value}
 							/>
@@ -60,16 +58,14 @@ export default function OptionsBottomSheet(props: Props) {
 									onDismiss();
 								}}
 								className={cn('px-4 h-14 flex-row  items-center', {
-									'border-outline-300 border-t ': !!index,
+									'border-outline border-t ': !!index,
 								})}>
 								<Text
 									className={cn(
 										'text-base text-center flex-1',
 										option.mode === 'destructive'
 											? 'text-red-900'
-											: value?.value === option.value
-												? 'text-primary'
-												: 'text-black'
+											: value?.value === option.value && 'text-primary'
 									)}>
 									{option.label}
 								</Text>

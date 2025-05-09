@@ -126,7 +126,7 @@ export default function BottomSheet(props: BottomSheetProps) {
 			handleComponent={() =>
 				plain ? null : (
 					<View
-						className={cn('w-full bg-background-muted rounded-t-3xl', {
+						className={cn('w-full bg-background rounded-t-3xl', {
 							'h-8': !props.withHeader,
 							'h-[53px]': props.withHeader,
 						})}>

@@ -3,7 +3,7 @@ import SmartphoneChatIcon from '@/components/icons/SmartphoneChatIcon';
 import ConnectionsListSelectBottomSheet from '@/components/modals/ConnectionsListSelectBottomSheet';
 import CreateButton from '@/components/shared/CreateButton';
 import EmptyStateWrapper from '@/components/shared/EmptyStateWrapper';
-import { Heading, Icon, Text, View } from '@/components/ui';
+import { Box, Heading, Icon, Text, View } from '@/components/ui';
 import { useStore } from '@/store';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
@@ -35,12 +35,7 @@ export default function MessageScreen() {
 	const isEmpty = true;
 	return (
 		<>
-			<SafeAreaView edges={['top', 'bottom']} className="flex-1 bg-background">
-				<View className="px-4 py-4">
-					<Heading size="2xl" className="mb-1">
-						Messages
-					</Heading>
-				</View>
+			<Box className="flex-1">
 				<EmptyStateWrapper
 					loading={loading}
 					isEmpty={isEmpty}
@@ -79,8 +74,8 @@ export default function MessageScreen() {
 						/>
 					</View>
 				</EmptyStateWrapper>
-				<CreateButton onPress={onNewChat} />
-			</SafeAreaView>
+			</Box>
+			<CreateButton onPress={onNewChat} />
 			{friendsModal && (
 				<ConnectionsListSelectBottomSheet
 					visible={friendsModal}

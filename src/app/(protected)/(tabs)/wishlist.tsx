@@ -8,12 +8,9 @@ import { RefreshControl } from 'react-native-gesture-handler';
 import { Property } from '@/components/home/FoundProperties';
 import ScreenContianer from '@/components/shared/ScreenContianer';
 import SavedListItem from '@/components/saved/SavedListItem';
-import { Colors } from '@/constants/Colors';
-import { useTheme } from '@/components/layouts/ThemeProvider';
 
 export default function WishListScreen() {
 	const router = useRouter();
-	const { theme } = useTheme();
 	const fetch = () => {
 		return new Promise((resolve) => setTimeout(resolve, 5000));
 	};
@@ -86,46 +83,37 @@ export default function WishListScreen() {
 	return (
 		<>
 			<Box className="flex-1">
-				<ScreenContianer edges={['bottom', 'top']} className="flex-1">
-					<View className="px-4 py-4 pb-3">
-						<Heading size="2xl" className="mb-1 text-primary">
-							Saved Properties
-						</Heading>
-					</View>
-					<FlashList
-						data={data}
-						renderItem={({ item }) => (
-							<SavedListItem key={item.id} data={item} />
-						)}
-						contentContainerStyle={{
-							paddingTop: 12,
-							paddingHorizontal: 16,
-						}}
-						refreshControl={
-							<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
-						}
-						keyExtractor={(item) => item.id}
-						estimatedItemSize={200}
-						ItemSeparatorComponent={() => <View className="h-2" />}
-						contentInsetAdjustmentBehavior="automatic"
-						ListEmptyComponent={() => (
-							<BodyScrollView
-								contentContainerStyle={{
-									alignItems: 'center',
-									gap: 8,
-									paddingTop: 100,
+				<FlashList
+					data={data}
+					renderItem={({ item }) => <SavedListItem key={item.id} data={item} />}
+					contentContainerStyle={{
+						paddingTop: 12,
+						paddingHorizontal: 16,
+					}}
+					refreshControl={
+						<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+					}
+					keyExtractor={(item) => item.id}
+					estimatedItemSize={200}
+					ItemSeparatorComponent={() => <View className="h-2" />}
+					contentInsetAdjustmentBehavior="automatic"
+					ListEmptyComponent={() => (
+						<BodyScrollView
+							contentContainerStyle={{
+								alignItems: 'center',
+								gap: 8,
+								paddingTop: 100,
+							}}>
+							<Button
+								onPress={() => {
+									hapticFeed();
+									// router.push(newProductHref);
 								}}>
-								<Button
-									onPress={() => {
-										hapticFeed();
-										// router.push(newProductHref);
-									}}>
-									<ButtonText>Add the first property</ButtonText>
-								</Button>
-							</BodyScrollView>
-						)}
-					/>
-				</ScreenContianer>
+								<ButtonText>Add the first property</ButtonText>
+							</Button>
+						</BodyScrollView>
+					)}
+				/>
 			</Box>
 		</>
 	);

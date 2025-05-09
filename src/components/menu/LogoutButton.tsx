@@ -9,7 +9,7 @@ export const LogoutButton = ({ setOpenLogoutAlertDialog }: any) => {
 		<Button
 			variant="link"
 			className={cn(
-				' mt-3 h-12 flex items-center ',
+				' mt-3 h-[3.2rem] flex items-center ',
 				theme === 'dark' ? 'bg-black/50' : 'bg-white'
 			)}
 			onPress={() => {
