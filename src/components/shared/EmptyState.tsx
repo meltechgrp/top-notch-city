@@ -44,6 +44,10 @@ export default function EmptyState({
 	return (
 		<ScrollView
 			keyboardShouldPersistTaps={'always'}
+			automaticallyAdjustsScrollIndicatorInsets
+			contentInsetAdjustmentBehavior="automatic"
+			contentInset={{ bottom: 0 }}
+			scrollIndicatorInsets={{ bottom: 0 }}
 			contentContainerClassName="flex-1 items-center justify-center gap-3"
 			refreshControl={refreshControl}>
 			<View

@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
-import { ChevronLeftIcon } from 'lucide-react-native';
 import { Pressable } from 'react-native';
+import ChevronLeftIcon from '../icons/ChevronLeftIcon';
+import { Icon } from '../ui';
 
 export default function headerLeft(handler?: () => void) {
 	return (props: any) => (
@@ -11,7 +12,7 @@ export default function headerLeft(handler?: () => void) {
 			}}
 			style={[[props?.style]]}
 			className="py-2 flex-row items-center pr-2 android:pr-4">
-			<ChevronLeftIcon strokeWidth={3} size={28} color={'black'} />
+			<Icon as={ChevronLeftIcon} />
 		</Pressable>
 	);
 }

@@ -50,24 +50,23 @@ export const config = {
 		'--color-info': '13 166 242',
 
 		/* Typography */
-		'--color-typography': '10 10 10',
+		'--color-typography': '10 20 22',
+		/* Background */
+		'--color-background': '241 240 245',
 
 		/* Outline */
 		'--color-outline-100': '230 230 230',
 		'--color-outline-200': '221 220 219',
 		'--color-outline-300': '211 211 211',
 		'--color-outline-400': '165 163 163',
-		'--color-outline': '140 141 141',
-
-		/* Background */
-		'--color-background': '254 254 254',
+		'--color-outline': '228 228 231',
 
 		/* Background Special */
 		'--color-background-error': '254 241 241',
 		'--color-background-warning': '0 0 0',
 		'--color-background-success': '237 252 242',
-		'--color-background-muted': '229 231 235',
-		'--color-background-info': '243 244 246',
+		'--color-background-muted': '249 249 249',
+		'--color-background-info': '253 253 253',
 
 		/* Focus Ring Indicator  */
 		'--color-indicator-primary': '55 55 55',
@@ -124,24 +123,23 @@ export const config = {
 		'--color-info': '50 180 244',
 
 		/* Typography */
-		'--color-typography': '249 250 251',
+		'--color-typography': '250 250 250',
+		/* Background */
+		'--color-background': '22 24 25',
 
 		/* Outline */
 		'--color-outline-100': '65 65 65',
 		'--color-outline-200': '83 82 82',
 		'--color-outline-300': '115 116 116',
 		'--color-outline-400': '140 141 141',
-		'--color-outline': '165 163 163',
-
-		/* Background */
-		'--color-background': '64 64 64',
+		'--color-outline': '64 64 64',
 
 		/* Background Special */
 		'--color-background-error': '66 43 43',
 		'--color-background-warning': '65 47 35',
 		'--color-background-success': '28 43 33',
-		'--color-background-muted': '82 82 82',
-		'--color-background-info': '64 64 64',
+		'--color-background-muted': '36 37 41',
+		'--color-background-info': '36 37 41',
 
 		/* Focus Ring Indicator  */
 		'--color-indicator-primary': '247 247 247',

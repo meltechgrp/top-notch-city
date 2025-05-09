@@ -99,7 +99,7 @@ export function SearchHeader({
 						<View className="h-12 bg-background-muted flex-1 rounded-full flex-row items-center px-2 py-1">
 							<TextInput
 								ref={textInputRef}
-								className="h-[36px] flex-1 px-2"
+								className="h-[36px] flex-1 px-2 bg-background-info"
 								placeholder={'Search property, city or everything...'}
 								value={text}
 								onChangeText={onChangeText}
@@ -116,7 +116,7 @@ export function SearchHeader({
 								className="px-2 h-10 justify-center"
 								onPress={() => onChangeText('')}>
 								<View className="w-8 h-8 rounded-full bg-background-muted items-center justify-center">
-									<XIcon className="text-gray-400" width={15} height={15} />
+									<Icon as={XIcon} width={15} height={15} />
 								</View>
 							</Pressable>
 						)}
@@ -148,13 +148,13 @@ export function SearchHeader({
 								key={category.name}
 								className="min-w-[120px]" // consistent width
 								onPress={() => setFilter(category.name)}>
-								<Badge className="rounded-full pr-2 py-1.5">
+								<Badge action="info" className="rounded-full pr-2 py-1.5">
 									<View
 										className={cn(
 											'p-2 rounded-full',
 											filter.category == category.name
 												? 'bg-primary'
-												: 'bg-background-info'
+												: 'bg-background-muted'
 										)}>
 										<Icon
 											as={category.icon}

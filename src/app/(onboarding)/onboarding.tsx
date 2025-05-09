@@ -231,7 +231,9 @@ function PageTwo({
 									<Text size="4xl" className="font-bold text-white">
 										Which{' '}
 									</Text>
-
+									<Text size="4xl" className="font-bold text-primary">
+										location
+									</Text>
 									<Text size="4xl" className="font-bold text-white">
 										are
 									</Text>

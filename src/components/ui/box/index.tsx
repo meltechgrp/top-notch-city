@@ -14,10 +14,7 @@ const Box = React.forwardRef<React.ComponentRef<typeof View>, IBoxProps>(
 			<View
 				ref={ref}
 				{...props}
-				className={cn(
-					'bg-background dark:bg-background',
-					boxStyle({ class: className })
-				)}
+				className={cn('bg-background', boxStyle({ class: className }))}
 			/>
 		);
 	}

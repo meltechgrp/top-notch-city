@@ -1,6 +1,7 @@
-import { Bell, Search } from 'lucide-react-native';
-import { Button, Icon, Pressable, Text, View } from '../ui';
+import { Search } from 'lucide-react-native';
+import { Icon, Pressable, Text, View } from '../ui';
 import { useRouter } from 'expo-router';
+import NotificationBarButton from '../notifications/NotificationBarButton';
 
 export default function HomeNavigation() {
 	const router = useRouter();
@@ -17,9 +18,7 @@ export default function HomeNavigation() {
 					<Icon as={Search} color="white" />
 				</View>
 			</Pressable>
-			<Button action="secondary" className="rounded-full h-14 px-4">
-				<Icon size={'xl'} as={Bell} />
-			</Button>
+			<NotificationBarButton />
 		</View>
 	);
 }
