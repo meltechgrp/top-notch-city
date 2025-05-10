@@ -27,6 +27,8 @@ import { cn } from '@/lib/utils';
 import eventBus from '@/lib/eventBus';
 import { Text } from '../ui';
 import ChatRoomMessage from './ChatRoomMessage';
+import ChatRoomFooter from './ChatRoomFooter';
+import EditOverlay from './EditOverlay';
 
 /**
  * @note
@@ -67,7 +69,45 @@ export default function ChatRoom(props: Props) {
 	function isCompositeId(_chatId: string) {
 		return _chatId.includes('#');
 	}
-	const messages = React.useMemo(() => [] as any, []);
+	const messages = React.useMemo(
+		() =>
+			[
+				{
+					id: 'hbhdjbjhde',
+					firstName: 'John',
+					lastName: 'Daniels',
+					message:
+						'This is a test message, This is a long test message for testing',
+					createdAt: new Date(Date.now()),
+					unreadCount: 1,
+				},
+				{
+					id: 'dnnmkedk',
+					firstName: 'Mark',
+					lastName: 'Jacobs',
+					message: 'Listed property for sale, details below',
+					createdAt: new Date(Date.now()),
+					unreadCount: 4,
+				},
+				{
+					id: 'djkkede',
+					firstName: 'Humphrey',
+					lastName: 'Mike',
+					message: 'How is the family today?',
+					createdAt: new Date(Date.now()),
+					unreadCount: 9,
+				},
+				{
+					id: 'jjjjjhjkjk',
+					firstName: 'Anita',
+					lastName: 'Smith',
+					message: 'How is the weather over there',
+					createdAt: new Date(Date.now()),
+					unreadCount: 5,
+				},
+			] as any,
+		[]
+	);
 	// React.useEffect(() => {
 	//   if (isCompositeId(chatId) && chat?.id) {
 	//     setChatId(chat?.id)
@@ -227,7 +267,7 @@ export default function ChatRoom(props: Props) {
 						flexGrow: 1,
 					}}
 					renderItem={renderItem}
-					data={messages}
+					data={[]}
 					initialNumToRender={InitialNumToRender}
 					onScroll={(ev) => {
 						ev.persist();
@@ -260,32 +300,32 @@ export default function ChatRoom(props: Props) {
           </View>
         ) : null} */}
 				{!messages.length && <EmptyScreen message={'This space is empty'} />}
-				{/* <EditOverlay
-          visible={isEditing}
-          onDismiss={() => exitEditMode()}
-          activeMessage={selectedMessage}
-        /> */}
+				<EditOverlay
+					visible={isEditing}
+					onDismiss={() => exitEditMode()}
+					activeMessage={selectedMessage}
+				/>
 			</View>
-			{/* <ChatRoomFooter
-        onUpdate={onRefreshChat}
-        chatId={chatId}
-        onPost={(msg, isEdit) => {
-          handleSendMessage(msg, isEdit)
-          exitEditMode()
-          if (!isEdit) {
-            scrollToBottom()
-          }
-        }}
-        activeQuoteMsg={activeQuoteMessage}
-        clearActiveQuoteMsg={() => {
-          setActiveQuoteMessage(undefined)
-        }}
-        ref={editorRef}
-        isEditing={isEditing}
-        selectedMessage={selectedMessage}
-        {...ChatRoomFooterProps}
-        className="pb-0 bg-white border-t border-gray-200"
-      /> */}
+			<ChatRoomFooter
+				onUpdate={onRefreshChat}
+				chatId={chatId}
+				onPost={(msg, isEdit) => {
+					// handleSendMessage(msg, isEdit)
+					exitEditMode();
+					if (!isEdit) {
+						scrollToBottom();
+					}
+				}}
+				activeQuoteMsg={activeQuoteMessage}
+				clearActiveQuoteMsg={() => {
+					setActiveQuoteMessage(undefined);
+				}}
+				ref={editorRef}
+				isEditing={isEditing}
+				selectedMessage={selectedMessage}
+				{...ChatRoomFooterProps}
+				className="pb-0 bg-background-info border-t border-outline"
+			/>
 			{/* <MessageActionsBottomSheet
         visible={showMessageActionsModal}
         onDismiss={() => setShowMessageActionsModal(false)}

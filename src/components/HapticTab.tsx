@@ -18,7 +18,5 @@ export function HapticTab(props: BottomTabBarButtonProps) {
 }
 
 export async function hapticFeed() {
-	if (process.env.EXPO_OS === 'ios') {
-		await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-	}
+	await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 }

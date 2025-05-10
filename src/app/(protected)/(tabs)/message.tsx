@@ -3,11 +3,10 @@ import SmartphoneChatIcon from '@/components/icons/SmartphoneChatIcon';
 import StartChatBottomSheet from '@/components/modals/StartChatBottomSheet';
 import CreateButton from '@/components/shared/CreateButton';
 import EmptyStateWrapper from '@/components/shared/EmptyStateWrapper';
-import { Box, Heading, Icon, Text, View } from '@/components/ui';
+import { Box, View } from '@/components/ui';
 import { useStore } from '@/store';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
-import { Search } from 'lucide-react-native';
 import React from 'react';
 import { RefreshControl } from 'react-native';
 
@@ -17,7 +16,41 @@ export default function MessageScreen() {
 	const router = useRouter();
 	const [loading, setLoading] = React.useState(false);
 	const [refreshing, setRefreshing] = React.useState(false);
-
+	const data = [
+		{
+			id: 'hbhdjbjhde',
+			firstName: 'John',
+			lastName: 'Daniels',
+			message:
+				'This is a test message, This is a long test message for testing',
+			createdAt: new Date(Date.now()),
+			unreadCount: 1,
+		},
+		{
+			id: 'dnnmkedk',
+			firstName: 'Mark',
+			lastName: 'Jacobs',
+			message: 'Listed property for sale, details below',
+			createdAt: new Date(Date.now()),
+			unreadCount: 4,
+		},
+		{
+			id: 'djkkede',
+			firstName: 'Humphrey',
+			lastName: 'Mike',
+			message: 'How is the family today?',
+			createdAt: new Date(Date.now()),
+			unreadCount: 9,
+		},
+		{
+			id: 'jjjjjhjkjk',
+			firstName: 'Anita',
+			lastName: 'Smith',
+			message: 'How is the weather over there',
+			createdAt: new Date(Date.now()),
+			unreadCount: 5,
+		},
+	];
 	async function refetch() {}
 	const onNewChat = () => {
 		setFriendsModal(true);
@@ -44,28 +77,13 @@ export default function MessageScreen() {
 						<RefreshControl refreshing={loading} onRefresh={refetch} />
 					}>
 					<View className="flex-1">
-						<View className="px-4 pb-2">
-							<View className="flex-row items-center h-8 bg-gray-100 rounded-lg px-2.5">
-								<Icon as={Search} className="text-gray-600 " />
-								<Text className="text-typography/80 text-sm pl-2">
-									Search inbox
-								</Text>
-							</View>
-						</View>
 						<FlashList
-							data={[]}
+							data={data}
 							refreshControl={
 								<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
 							}
-							ListHeaderComponent={
-								// chats.length ? (
-								<View className="px-4 pt-4">
-									<Text className=" text-lg">Inbox</Text>
-								</View>
-								// ) : null
-							}
 							ListFooterComponent={<View className="h-16"></View>}
-							// keyExtractor={(item) => item.id}
+							keyExtractor={(item) => item.id}
 							renderItem={({ item }) => (
 								<MessageListItem chat={item} me={me as any} />
 							)}
@@ -87,12 +105,6 @@ export default function MessageScreen() {
 							},
 						});
 					}}
-					title="Start a conversation"
-					RightComponent={() => (
-						<View className="px-2 py-1 border border-black-900 rounded-md">
-							<Text className="text-black-900">Say hi</Text>
-						</View>
-					)}
 				/>
 			)}
 		</>

@@ -1,135 +1,119 @@
-import ConnectionListItem from '@/components/contents/ConnectionListItem';
-import { cn } from '@/lib/utils';
-
-import { BottomSheetFlatList } from '@gorhom/bottom-sheet';
-import React, { useMemo, useState } from 'react';
+import { LinearGradient } from 'expo-linear-gradient';
+import React from 'react';
+import { View } from 'react-native';
 import {
-	ActivityIndicator,
+	Avatar,
+	AvatarFallbackText,
+	AvatarGroup,
+	AvatarImage,
+	Heading,
+	Icon,
 	Pressable,
-	RefreshControl,
-	View,
-} from 'react-native';
-import { Input, InputField, Text } from '../ui';
+	Text,
+} from '../ui';
 import BottomSheet from '../shared/BottomSheet';
+import { CircleHelp, NotebookPen, SendHorizonal, X } from 'lucide-react-native';
 
 type Props = {
-	title?: string;
 	visible: boolean;
-	HeaderComponent?: any;
-	withHeaderRightComponent?: boolean;
-	groupId?: string;
-
 	onDismiss: () => void;
 	onSelect?: (member: any) => void;
-	onConfirm?: (members: string[]) => void;
-	RightComponent?: (connection: any, seleted?: boolean) => any;
 };
 export default function ConnectionsListSelectBottomSheet(props: Props) {
-	const {
-		onDismiss,
-		onConfirm,
-		groupId,
-		visible,
-		HeaderComponent,
-		withHeaderRightComponent,
-		title,
-		RightComponent,
-		onSelect,
-	} = props;
-	const [loading, setLoading] = useState(false);
-	const [search, setSearch] = React.useState('');
-	async function refetch() {}
-	const [selected, setSelected] = React.useState<string[]>([]);
-	// const { data, refetch, loading, error } = useMyConnectionsQuery({
-	//   variables: {
-	//     ...((groupId ? { groupId } : {}) as any),
-	//     filters: {
-	//       page: 1,
-	//       text: '',
-	//     },
-	//   },
-	//   skip: !visible,
-	//   fetchPolicy: 'cache-and-network',
-	// })
-
-	const connections = useMemo(() => {
-		// if (data) {
-		//   return data.myConnections
-		// }
-		return [];
-	}, []);
+	const { onDismiss, visible, onSelect } = props;
 	return (
 		<BottomSheet
 			visible={visible}
+			addBackground={false}
 			onDismiss={onDismiss}
-			withHeader
-			title={title || 'Connections'}
-			withBackButton
-			snapPoint="90%"
-			HeaderRightComponent={
-				withHeaderRightComponent ? (
-					<Pressable
-						onPress={() => {
-							onConfirm && onConfirm(selected);
-							onDismiss();
-						}}
-						className="px-4 h-6 justify-center"
-						disabled={selected.length === 0}>
-						<Text
-							className={cn('text-base', selected.length && 'text-primary')}>
-							Add
-						</Text>
-					</Pressable>
-				) : null
-			}>
-			<View className="pt-6 flex-1">
-				{HeaderComponent}
-
-				<View className="flex-1 pt-4">
-					<BottomSheetFlatList
-						refreshControl={
-							<RefreshControl
-								refreshing={loading}
-								onRefresh={() => {
-									refetch();
-								}}
-							/>
-						}
-						data={connections}
-						// keyExtractor={(item, index) => item.id}
-						ListEmptyComponent={
-							<View className="pt-8 items-center">
-								{loading ? (
-									<ActivityIndicator size="large" color="#000" />
-								) : (
-									<Text>No connection found</Text>
-								)}
-							</View>
-						}
-						renderItem={({ item }) => (
-							<ConnectionListItem
-								connection={item}
-								onSelect={(member) => {
-									if (onSelect) {
-										onSelect(member);
-										onDismiss();
-										return;
-									}
-									if (selected.includes(member.id)) {
-										setSelected(selected.filter((c) => c !== member.id));
-									} else {
-										setSelected([...selected, member.id]);
-									}
-								}}
-								RightComponent={(member) =>
-									RightComponent &&
-									RightComponent(item, selected.includes(member.id))
-								}
-							/>
-						)}
-					/>
+			plain
+			snapPoint="80%">
+			<LinearGradient
+				colors={['#F16000', '#ddd']}
+				locations={[0.3, 0.6]}
+				style={{
+					flex: 1,
+					borderTopLeftRadius: 24,
+					borderTopRightRadius: 24,
+					padding: 24,
+					paddingTop: 30,
+				}}>
+				<View className=" flex-1 relative rounded-t-3xl">
+					<View className="flex-row justify-between items-center py-2">
+						<View>
+							<Avatar size="md" className=" rounded-none bg-transparent">
+								<AvatarImage
+									className="rounded-none"
+									source={require('@/assets/images/icon.png')}
+								/>
+							</Avatar>
+						</View>
+						<View className="flex-row items-center gap-4">
+							<AvatarGroup>
+								<Avatar size="md" className=" bg-background-muted">
+									<AvatarFallbackText className=" text-typography">
+										Humphrey
+									</AvatarFallbackText>
+								</Avatar>
+								<Avatar size="md" className=" bg-background-muted">
+									<AvatarFallbackText className=" text-typography">
+										Sunday
+									</AvatarFallbackText>
+								</Avatar>
+								<Avatar size="md" className=" bg-background-muted">
+									<AvatarFallbackText className=" text-typography">
+										Monday
+									</AvatarFallbackText>
+								</Avatar>
+							</AvatarGroup>
+							<Pressable onPress={onDismiss}>
+								<X size={30} color={'white'} />
+							</Pressable>
+						</View>
+					</View>
+					<View className="mt-16 gap-3">
+						<Heading size="4xl" className=" text-gray-200">
+							Hi Humphrey
+						</Heading>
+						<Heading size="4xl" className=" text-white">
+							How can we help?
+						</Heading>
+					</View>
+					<View className=" mt-6 px-6 py-6 flex-row shadow justify-between items-center bg-background-info rounded-3xl">
+						<View>
+							<Text size="xl" className=" font-heading">
+								Chat with us
+							</Text>
+							<Text size="lg" className="text-typography/70">
+								We reply in few minutes
+							</Text>
+						</View>
+						<Icon as={SendHorizonal} />
+					</View>
+					<View className=" mt-6 px-6 py-6 flex-row shadow justify-between items-center bg-background-info rounded-3xl">
+						<View>
+							<Text size="xl" className=" font-heading">
+								Book a property tour
+							</Text>
+							<Text size="lg" className="text-typography/70">
+								Explore our properties
+							</Text>
+						</View>
+						<Icon as={NotebookPen} />
+					</View>
+					<View className=" mt-6 px-6 py-6 flex-row shadow justify-between items-center bg-background-info rounded-3xl">
+						<View>
+							<Text size="xl" className=" font-heading">
+								Help
+							</Text>
+							<Text size="lg" className="text-typography/70">
+								Search for help
+							</Text>
+						</View>
+						<Icon as={CircleHelp} />
+					</View>
 				</View>
-			</View>
+			</LinearGradient>
 		</BottomSheet>
 	);
 }

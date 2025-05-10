@@ -12,7 +12,14 @@ import Platforms from '@/constants/Plaforms';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomScreenHeader from '@/components/layouts/CustomScreenHeader';
 import { useChatStore, useStore } from '@/store';
-import { Avatar, AvatarFallbackText, AvatarImage, Text } from '@/components/ui';
+import {
+	Avatar,
+	AvatarFallbackText,
+	AvatarImage,
+	Box,
+	Heading,
+	Text,
+} from '@/components/ui';
 // import { ReportReferenceType } from '@/graphql-types/index.gql';
 
 export default function ChatRoomScreen() {
@@ -20,13 +27,13 @@ export default function ChatRoomScreen() {
 		chatId: string;
 		msg?: string;
 	}>();
-	const chatId = id as string;
+	const chatId = 'njnjnjndnjjk' as string;
 	const text = msg ? decodeURIComponent(msg || '') : '';
-	const isProfileSheetOpen = useChatStore((s) => s.isProfileOpen);
-	const toggleProfileSheet = useChatStore((s) => s.toggleProfile);
-	const [reportBottomSheetVisible, setReportBottomSheetVisible] =
-		React.useState(false);
-	const [reportData, setReportData] = React.useState<any>(null);
+	// const isProfileSheetOpen = useChatStore((s) => s.isProfileOpen);
+	// const toggleProfileSheet = useChatStore((s) => s.toggleProfile);
+	// const [reportBottomSheetVisible, setReportBottomSheetVisible] =
+	// 	React.useState(false);
+	// const [reportData, setReportData] = React.useState<any>(null);
 
 	return (
 		<>
@@ -35,7 +42,7 @@ export default function ChatRoomScreen() {
 					headerShown: false,
 				}}
 			/>
-			<View className="flex-1 bg-white ">
+			<Box className="flex-1 ">
 				<SafeAreaView edges={['top', 'bottom']} style={{ flex: 1 }}>
 					<CustomScreenHeader
 						headerCenterContent={<ScreenHeaderTitleSection />}
@@ -83,40 +90,28 @@ export default function ChatRoomScreen() {
 						/> */}
 					</View>
 				</SafeAreaView>
-			</View>
+			</Box>
 		</>
 	);
 }
 
 function ScreenHeaderTitleSection() {
-	const me = useStore((s) => s.me);
-	const { getOppositeUser, toggleProfile, chat } = useChatStore((s) => ({
-		getOppositeUser: s.getOppositeUser,
-		toggleProfile: s.toggleProfile,
-		chat: s.chat,
-	}));
-	const oppositeUser = React.useMemo(
-		() => getOppositeUser(me?.id),
-		[me, JSON.stringify(chat)]
-	);
+	// const me = useStore((s) => s.me);
+	// const { getOppositeUser, toggleProfile, chat } = useChatStore((s) => ({
+	// 	getOppositeUser: s.getOppositeUser,
+	// 	toggleProfile: s.toggleProfile,
+	// 	chat: s.chat,
+	// }));
+	// const oppositeUser = React.useMemo(
+	// 	() => getOppositeUser(me?.id),
+	// 	[me, JSON.stringify(chat)]
+	// );
 
 	return (
-		<View className="flex-1 flex flex-row items-center">
-			<Pressable
-				onPress={() => toggleProfile(true)}
-				className="active:bg-gray-100 active:rounded-full flex-row items-center pr-3">
-				<Avatar className="bg-background-muted w-20 h-20">
-					<AvatarFallbackText>Humphrey Joshua</AvatarFallbackText>
-					<AvatarImage
-						source={{
-							uri: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=800&q=60',
-						}}
-					/>
-				</Avatar>
-				<Text numberOfLines={1} className="ml-2 text-base text-black-900">
-					{fullName(oppositeUser?.user)}
-				</Text>
-			</Pressable>
+		<View className="flex-1 justify-center items-center">
+			<Heading size="lg" numberOfLines={1} className="">
+				Humphrey Joshua
+			</Heading>
 		</View>
 	);
 }
