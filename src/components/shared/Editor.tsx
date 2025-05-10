@@ -8,6 +8,7 @@ import {
 	View,
 } from 'react-native';
 import { CameraIcon, Send } from 'lucide-react-native';
+import { Icon } from '../ui';
 // import MediaPicker, { MediaPickerRef } from '@/components/feed/MediaPicker'
 // import type { ImagePickerAsset } from 'expo-image-picker'
 
@@ -106,7 +107,7 @@ const EditorComponent = React.forwardRef<
 								)}
 								onPress={() => mediaPickerRef.current?.onPickPhoto?.()}
 								disabled={media.length >= fileLimit}>
-								<CameraIcon className="text-primary" />
+								<Icon as={CameraIcon} />
 							</Pressable>
 						</View>
 					)}

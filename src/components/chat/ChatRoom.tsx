@@ -254,20 +254,255 @@ export default function ChatRoom(props: Props) {
 		}, [])
 	);
 
+	const chatMessages = [
+		{
+			id: '1',
+			text: 'Hey, how are you doing?',
+			createdAt: '2025-05-09T09:00:00Z',
+			status: 'sent',
+			sender: {
+				id: 'user1',
+				firstName: 'Divine',
+				lastName: 'Okoro',
+			},
+		},
+		{
+			id: '2',
+			text: "I'm good, just got home. You?",
+			createdAt: '2025-05-09T09:01:00Z',
+			status: 'delivered',
+			sender: {
+				id: 'user2',
+				firstName: 'Humphrey',
+				lastName: 'James',
+			},
+		},
+		{
+			id: '3',
+			text: "That's great. I'm just relaxing.",
+			createdAt: '2025-05-09T09:02:00Z',
+			status: 'seen',
+			sender: {
+				id: 'user1',
+				firstName: 'Divine',
+				lastName: 'Okoro',
+			},
+		},
+		{
+			id: '4',
+			text: 'Did you eat already?',
+			createdAt: '2025-05-09T09:03:00Z',
+			status: 'seen',
+			sender: {
+				id: 'user1',
+				firstName: 'Divine',
+				lastName: 'Okoro',
+			},
+		},
+		{
+			id: '5',
+			text: 'Not yet. Was waiting to hear from you first 😊',
+			createdAt: '2025-05-09T09:04:00Z',
+			status: 'seen',
+			sender: {
+				id: 'user2',
+				firstName: 'Humphrey',
+				lastName: 'James',
+			},
+		},
+		{
+			id: '6',
+			text: 'Awww, that’s sweet of you 😍',
+			createdAt: '2025-05-09T09:05:00Z',
+			status: 'seen',
+			sender: {
+				id: 'user1',
+				firstName: 'Divine',
+				lastName: 'Okoro',
+			},
+		},
+		{
+			id: '7',
+			text: 'Let’s order something?',
+			createdAt: '2025-05-09T09:06:00Z',
+			status: 'sent',
+			sender: {
+				id: 'user1',
+				firstName: 'Divine',
+				lastName: 'Okoro',
+			},
+		},
+		{
+			id: '8',
+			text: 'Sure! What do you feel like eating?',
+			createdAt: '2025-05-09T09:07:00Z',
+			status: 'delivered',
+			sender: {
+				id: 'user2',
+				firstName: 'Humphrey',
+				lastName: 'James',
+			},
+		},
+		{
+			id: '9',
+			text: 'Maybe something spicy today!',
+			createdAt: '2025-05-09T09:08:00Z',
+			status: 'seen',
+			sender: {
+				id: 'user1',
+				firstName: 'Divine',
+				lastName: 'Okoro',
+			},
+		},
+		{
+			id: '10',
+			text: 'Great choice. I’ll check JumiaFood now.',
+			createdAt: '2025-05-09T09:09:00Z',
+			status: 'seen',
+			sender: {
+				id: 'user2',
+				firstName: 'Humphrey',
+				lastName: 'James',
+			},
+		},
+		{
+			id: '11',
+			text: 'Found anything yet?',
+			createdAt: '2025-05-09T09:10:00Z',
+			status: 'sent',
+			sender: {
+				id: 'user1',
+				firstName: 'Divine',
+				lastName: 'Okoro',
+			},
+		},
+		{
+			id: '12',
+			text: 'Yes, there’s this suya platter with jollof 😋',
+			createdAt: '2025-05-09T09:11:00Z',
+			status: 'delivered',
+			sender: {
+				id: 'user2',
+				firstName: 'Humphrey',
+				lastName: 'James',
+			},
+		},
+		{
+			id: '13',
+			text: 'Order it then 😍',
+			createdAt: '2025-05-09T09:12:00Z',
+			status: 'seen',
+			sender: {
+				id: 'user1',
+				firstName: 'Divine',
+				lastName: 'Okoro',
+			},
+		},
+		{
+			id: '14',
+			text: 'Done! ETA 30 mins.',
+			createdAt: '2025-05-09T09:13:00Z',
+			status: 'seen',
+			sender: {
+				id: 'user2',
+				firstName: 'Humphrey',
+				lastName: 'James',
+			},
+		},
+		{
+			id: '15',
+			text: 'You’re the best ❤️',
+			createdAt: '2025-05-09T09:14:00Z',
+			status: 'seen',
+			sender: {
+				id: 'user1',
+				firstName: 'Divine',
+				lastName: 'Okoro',
+			},
+		},
+		{
+			id: '16',
+			text: 'Only for you 😉',
+			createdAt: '2025-05-09T09:15:00Z',
+			status: 'seen',
+			sender: {
+				id: 'user2',
+				firstName: 'Humphrey',
+				lastName: 'James',
+			},
+		},
+		{
+			id: '17',
+			text: 'Let’s watch something while we wait?',
+			createdAt: '2025-05-09T09:16:00Z',
+			status: 'sent',
+			sender: {
+				id: 'user1',
+				firstName: 'Divine',
+				lastName: 'Okoro',
+			},
+		},
+		{
+			id: '18',
+			text: 'Yesss, pick something nice on Netflix.',
+			createdAt: '2025-05-09T09:17:00Z',
+			status: 'delivered',
+			sender: {
+				id: 'user2',
+				firstName: 'Humphrey',
+				lastName: 'James',
+			},
+		},
+		{
+			id: '19',
+			text: 'Romcom or action?',
+			createdAt: '2025-05-09T09:18:00Z',
+			status: 'seen',
+			sender: {
+				id: 'user1',
+				firstName: 'Divine',
+				lastName: 'Okoro',
+			},
+		},
+		{
+			id: '20',
+			text: 'Romcom! I wanna laugh with you 🤭',
+			createdAt: '2025-05-09T09:19:00Z',
+			status: 'seen',
+			sender: {
+				id: 'user2',
+				firstName: 'Humphrey',
+				lastName: 'James',
+			},
+		},
+		{
+			id: '21',
+			text: 'Still there?. i want to tell you something. it is not that serious but i want to tell you something. it is not that serious but i want to tell you something. it is not that serious but i want to tell you something. it is not that serious but i want to tell you something. it is not that serious but i want to tell you something. it is not that serious but i want to tell you something. it is not that serious but i want to tell you something. it is not that serious but i want to tell you something. it is not that serious but i want to tell you something. it is not that serious but i want to tell you something. it is not that serious but i want to tell you something. it is not that serious but i want to tell you something. it is not that serious but i want to tell you something. it is not that serious but i want to tell you something. it is not that serious but i want to tell you something. it is not that serious but i want to tell you something',
+			createdAt: '2025-05-09T09:20:00Z',
+			status: 'sent',
+			sender: {
+				id: 'user2',
+				firstName: 'Humphrey',
+				lastName: 'James',
+			},
+		},
+	];
+
 	return (
 		<View className="flex-1 w-full">
 			<View className="flex-1 w-full">
 				<FlatList
 					scrollEnabled={refreshing ? false : true}
 					keyboardShouldPersistTaps="handled"
-					// ref={(r) => (listRef.current = r)}
+					ref={(r) => (listRef.current = r)}
 					keyExtractor={(item) => item.id}
 					contentContainerStyle={{
 						justifyContent: 'flex-end',
 						flexGrow: 1,
+						paddingBottom: 10,
 					}}
 					renderItem={renderItem}
-					data={[]}
+					data={chatMessages.reverse()}
 					initialNumToRender={InitialNumToRender}
 					onScroll={(ev) => {
 						ev.persist();

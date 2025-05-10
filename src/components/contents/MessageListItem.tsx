@@ -22,7 +22,7 @@ export function MessageListItem(props: MessageListItemProps) {
 	const router = useRouter();
 	const avatar = React.useMemo(() => {
 		return (
-			<View className="w-[60px] h-[60px] border-2 border-outline rounded-full">
+			<View className=" rounded-full">
 				<Avatar className="bg-background-muted w-20 h-20">
 					<AvatarFallbackText className="text-typography">
 						{fullName(chat)}
@@ -65,7 +65,7 @@ export function MessageListItem(props: MessageListItemProps) {
 						<View className="flex-1 pl-[10px] gap-1">
 							<View className="flex-row items-center justify-between">
 								<View className="flex-row items-center flex-1  pr-4">
-									<Text numberOfLines={1} className="text-black-900 text-base">
+									<Text numberOfLines={1} className=" text-base">
 										{fullName(chat)}
 									</Text>
 								</View>

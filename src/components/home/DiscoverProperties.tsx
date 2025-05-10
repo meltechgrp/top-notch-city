@@ -14,10 +14,8 @@ export default function DiscoverProperties(props: Props) {
 	const router = useRouter();
 	const mapHeight = Layout.window.height / 1.8;
 	return (
-		<View className={className}>
-			<View
-				className="overflow-hidden relative flex-1"
-				style={{ height: mapHeight }}>
+		<View style={{ minHeight: mapHeight }} className={className}>
+			<View className="overflow-hidden relative flex-1">
 				<View className="  absolute top-16 w-full z-10">
 					<HomeNavigation />
 				</View>

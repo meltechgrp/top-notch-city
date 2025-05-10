@@ -140,3 +140,117 @@ export function fullName(user: any) {
 export function mToKm(metres: number) {
 	return metres / 1000;
 }
+
+export function isText(text: any) {
+	return (
+		['string', 'number', 'undefined'].includes(typeof text) || text === null
+	);
+}
+
+type ComposerAddress = {
+	street?: string | null;
+	streetNumber?: string | null;
+	community?: string | null;
+	neighborhood?: string | null;
+	lga?: string | null;
+	state?: string | null;
+	country?: string | null;
+};
+export function composeFullAddress(
+	address: ComposerAddress,
+	streetOnly: boolean = false
+) {
+	if (streetOnly) {
+		return address.street
+			? `${address.streetNumber || ''} ${address.street}`.trim()
+			: address.community;
+	}
+	if (!address.street) {
+		return joinWithComma(
+			address.neighborhood || address.community,
+			address.lga,
+			address.state,
+			address.country
+		);
+	}
+	return joinWithComma(
+		address.streetNumber,
+		address.street,
+		address.neighborhood || address.community,
+		address.lga,
+		address.state,
+		address.country
+	);
+}
+function joinWithComma(...arr: Array<string | undefined | null>) {
+	return arr.filter(Boolean).join(', ').trim();
+}
+
+export function tokenizeText(text: string) {
+	const tokens: { type: string; value: string }[] = [];
+	// Split by spaces and line breaks
+	const textArray = text.split(/(\s+|\n)/);
+	// URL regex, matches http(s)://www.example.com, (www.|*)example.com and http(s)://example.com
+	const urlRegex = /((https?:\/\/)?(www\.)?[\w-]+\.\w{2,3}\S*)/g;
+	for (const word of textArray) {
+		if (word.match(/^\s+$/)) {
+			tokens.push({ type: 'text', value: word });
+		} else if (word.startsWith('c/')) {
+			tokens.push({ type: 'community', value: word });
+		} else if (word.startsWith('s/')) {
+			tokens.push({ type: 'split', value: word });
+		} else if (word.startsWith('@')) {
+			tokens.push({ type: 'mention', value: word });
+		} else if (word.match(urlRegex)) {
+			// TODO: Check internal links
+			tokens.push({ type: 'link', value: word });
+		} else if (word.startsWith('#')) {
+			tokens.push({ type: 'tag', value: word });
+		} else {
+			tokens.push({ type: 'text', value: word });
+		}
+	}
+	// Collapse consecutive text tokens
+	const collapsedTokens: { type: string; value: string }[] = [];
+	for (const token of tokens) {
+		if (collapsedTokens.length === 0) {
+			collapsedTokens.push(token);
+		} else {
+			const lastToken = collapsedTokens[collapsedTokens.length - 1];
+			if (lastToken.type === 'text' && token.type === 'text') {
+				lastToken.value += token.value;
+			} else {
+				collapsedTokens.push(token);
+			}
+		}
+	}
+
+	return collapsedTokens;
+}
+
+export function openExternalLink(url: string) {
+	// TODO: Use url shortener to shorten the url and track clicks
+	Linking.openURL(url);
+}
+
+export function parseInternalLink(url: string) {
+	try {
+		const _url = new URL(url);
+		const supportedHostnames = ['mynebor.com'];
+		const isSupportedHostname = supportedHostnames.some(
+			(h) => _url.hostname === h
+		);
+		const supportedPaths = ['/c/', '/s/'];
+		const isSupportedPath = supportedPaths.some((p) =>
+			_url.pathname.startsWith(p)
+		);
+
+		if (isSupportedPath && isSupportedHostname) {
+			return _url.pathname;
+		} else {
+			return null;
+		}
+	} catch {
+		return null;
+	}
+}
