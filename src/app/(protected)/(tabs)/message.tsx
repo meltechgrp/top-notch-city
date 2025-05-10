@@ -4,13 +4,15 @@ import StartChatBottomSheet from '@/components/modals/StartChatBottomSheet';
 import CreateButton from '@/components/shared/CreateButton';
 import EmptyStateWrapper from '@/components/shared/EmptyStateWrapper';
 import { Box, View } from '@/components/ui';
+import { useRefreshOnFocus } from '@/hooks/useRefreshOnFocus';
 import { useStore } from '@/store';
 import { FlashList } from '@shopify/flash-list';
-import { useRouter } from 'expo-router';
-import React from 'react';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import React, { useEffect } from 'react';
 import { RefreshControl } from 'react-native';
 
 export default function MessageScreen() {
+	const { chat } = useLocalSearchParams() as { chat: string };
 	const [friendsModal, setFriendsModal] = React.useState(false);
 	const me = useStore((state) => state.me);
 	const router = useRouter();
@@ -64,6 +66,12 @@ export default function MessageScreen() {
 			setRefreshing(false);
 		}
 	}
+	useEffect(() => {
+		console.log(chat);
+		if (chat && chat == 'new') {
+			setFriendsModal(true);
+		}
+	}, [chat]);
 	const isEmpty = false;
 	return (
 		<>

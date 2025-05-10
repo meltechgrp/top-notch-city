@@ -214,7 +214,7 @@ export default function More() {
 										title="Help and Support"
 										description="Get help and support"
 										onPress={() => {
-											// router.push('/help-and-support');
+											router.push('/support');
 										}}
 										icon={Sparkle}
 										className="py-2"
