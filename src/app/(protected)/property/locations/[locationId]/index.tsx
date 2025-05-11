@@ -106,22 +106,9 @@ export default function PropertyLocations() {
 			<Stack.Screen
 				options={{
 					statusBarStyle: 'light',
-					headerShown: true,
-					headerBackVisible: false,
 					headerTransparent: true,
+					headerStyle: { backgroundColor: undefined },
 					headerTitle: location.name,
-					headerTitleStyle: { color: 'white', fontSize: 24 },
-					headerLeft: () => (
-						<Pressable
-							onPress={() => {
-								hapticFeed();
-								if (router.canGoBack()) router.back();
-								else router.push('/home');
-							}}
-							className="p-1.5 bg-black/20 mb-1 rounded-full flex-row items-center ">
-							<ChevronLeftIcon size={26} strokeWidth={3} color={'white'} />
-						</Pressable>
-					),
 					headerRight: () => (
 						<View
 							style={{

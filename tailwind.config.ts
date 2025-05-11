@@ -93,10 +93,10 @@ module.exports = {
 				},
 			},
 			fontFamily: {
-				heading: ['Raleway-Bold'],
-				body: ['Raleway-Regular'],
-				mono: ['Raleway-Bold'],
-				roboto: ['Roboto', 'sans-serif'],
+				heading: ['Satoshi-Bold'],
+				body: ['Satoshi-Regular'],
+				mono: ['Satoshi-Light'],
+				satoshi: ['Satoshi', 'sans-serif'],
 			},
 			fontWeight: {
 				extrablack: '950',

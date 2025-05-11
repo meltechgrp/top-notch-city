@@ -20,6 +20,13 @@ const getColorSchemeName = (
 	}
 	return mode;
 };
+
+export const useResolvedTheme = (): 'light' | 'dark' => {
+	const { theme = 'system' } = useTheme(); // your app theme context
+	const systemScheme = useColorScheme(); // system theme
+	return getColorSchemeName(systemScheme, theme);
+};
+
 export function GluestackUIProvider({
 	...props
 }: {
@@ -36,10 +43,12 @@ export function GluestackUIProvider({
 	React.useEffect(() => {
 		if (Platform.OS == 'android') {
 			SystemNavigationBar.setNavigationColor(
-				theme == 'dark' ? Colors.light.background : Colors.dark.background
+				colorSchemeName == 'dark'
+					? Colors.light.background
+					: Colors.dark.background
 			);
 		}
-	}, []);
+	}, [colorSchemeName]);
 	return (
 		<View
 			style={[

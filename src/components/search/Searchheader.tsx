@@ -99,7 +99,7 @@ export function SearchHeader({
 						<View className="h-12 bg-background-muted flex-1 rounded-full flex-row items-center px-2 py-1">
 							<TextInput
 								ref={textInputRef}
-								className="h-[36px] flex-1 px-2 bg-background-info"
+								className="h-[36px] flex-1 px-2 bg-transparent"
 								placeholder={'Search property, city or everything...'}
 								value={text}
 								onChangeText={onChangeText}

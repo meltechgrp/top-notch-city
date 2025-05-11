@@ -1,4 +1,11 @@
-import { Box, Button, Pressable, Text, View } from '@/components/ui';
+import {
+	Box,
+	Button,
+	Pressable,
+	Text,
+	useResolvedTheme,
+	View,
+} from '@/components/ui';
 import { RefreshControl } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import React from 'react';
@@ -8,7 +15,6 @@ import { BodyScrollView } from '@/components/layouts/BodyScrollView';
 import { FlashList } from '@shopify/flash-list';
 import { useRefresh } from '@react-native-community/hooks';
 import TopLocationItem from '@/components/property/TopLocationItem';
-import { useTheme } from '@/components/layouts/ThemeProvider';
 
 export type Locations = {
 	id: string;
@@ -18,8 +24,6 @@ export type Locations = {
 }[];
 
 export default function PropertySections() {
-	const router = useRouter();
-	const { theme } = useTheme();
 	const fetch = () => {
 		return new Promise((resolve) => setTimeout(resolve, 5000));
 	};
@@ -65,28 +69,6 @@ export default function PropertySections() {
 	];
 	return (
 		<>
-			<Stack.Screen
-				options={{
-					headerShown: true,
-					headerBackVisible: false,
-					headerTitle: 'Top Locations',
-					headerTitleStyle: { color: theme == 'dark' ? 'white' : 'black' },
-					headerStyle: {
-						backgroundColor: theme == 'dark' ? '#404040' : '#f5f5f5', // 64 64 64
-					},
-					headerLeft: () => (
-						<Pressable
-							onPress={() => {
-								hapticFeed();
-								if (router.canGoBack()) router.back();
-								else router.push('/home');
-							}}
-							className="p-1.5 bg-black/20 mb-1 rounded-full flex-row items-center ">
-							<ChevronLeftIcon size={26} strokeWidth={3} color={'white'} />
-						</Pressable>
-					),
-				}}
-			/>
 			<Box className="flex-1 px-4">
 				<FlashList
 					data={data}

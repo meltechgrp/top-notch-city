@@ -136,20 +136,10 @@ export default function PropertyItem() {
 					headerShown: true,
 					headerTransparent: true,
 					headerBackVisible: false,
+					headerStyle: { backgroundColor: undefined },
 					statusBarStyle: 'light',
 					headerTitle: property.name,
 					headerTitleStyle: { color: 'white', fontSize: 20 },
-					headerLeft: () => (
-						<Pressable
-							onPress={() => {
-								hapticFeed();
-								if (router.canGoBack()) router.back();
-								else router.push('/home');
-							}}
-							className="p-2 bg-black/20 rounded-full flex-row items-center ">
-							<ChevronLeftIcon size={26} strokeWidth={3} color={'white'} />
-						</Pressable>
-					),
 					headerRight: () => (
 						<View
 							style={{

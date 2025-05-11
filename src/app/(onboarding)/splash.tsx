@@ -9,9 +9,13 @@ import Animated, {
 	Easing,
 } from 'react-native-reanimated';
 import Platforms from '@/constants/Plaforms';
+import { useTheme } from '@/components/layouts/ThemeProvider';
+import splashBig from '@/assets/images/landing/splash-big.png';
+import splashBigDark from '@/assets/images/topnotch-white.png';
 
 export default function SplashScreen() {
 	const rotation = useSharedValue(0);
+	const { theme } = useTheme();
 
 	React.useEffect(() => {
 		// Start the infinite rotation
@@ -44,12 +48,12 @@ export default function SplashScreen() {
 			],
 		};
 	});
-
+	const banner = theme == 'light' ? splashBig : splashBigDark;
 	return (
 		<Box className="flex-1">
 			<View className="flex-1 justify-center items-center px-4">
 				<Image
-					source={require('@/assets/images/landing/splash-big.png')}
+					source={banner}
 					className="w-80 object-cover mb-6"
 					alt="Splash"
 				/>

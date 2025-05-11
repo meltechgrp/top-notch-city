@@ -10,8 +10,8 @@ import { router } from 'expo-router';
 import { useAnimatedScrollHandler } from 'react-native-reanimated';
 import { useStore } from '@/store';
 import { Box, Icon, Text } from '../ui';
-import { AnimatedFlashList } from '../shared/AnimatedFlashList';
 import { ChevronRightIcon, House } from 'lucide-react-native';
+import { AnimatedFlashList } from '@shopify/flash-list';
 
 type Property = any;
 type Props = {

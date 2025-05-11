@@ -1,6 +1,6 @@
-import { useTheme } from '@/components/layouts/ThemeProvider';
 import AppCrashScreen from '@/components/shared/AppCrashScreen';
 import headerLeft from '@/components/shared/headerLeft';
+import { useResolvedTheme } from '@/components/ui';
 import { Colors } from '@/constants/Colors';
 import { ErrorBoundaryProps, Stack } from 'expo-router';
 
@@ -10,7 +10,7 @@ export const unstable_settings = {
 };
 
 export default function ProtectedRoutesLayout() {
-	const { theme } = useTheme();
+	const theme = useResolvedTheme();
 	return (
 		<Stack
 			screenOptions={{

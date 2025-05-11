@@ -3,7 +3,7 @@ import React from 'react';
 import { Pressable, View } from 'react-native';
 import { Avatar, AvatarBadge, AvatarImage, Icon, Text } from '../ui';
 import { format } from 'date-fns';
-import logo from '@/assets/images/32.png';
+import logo from '@/assets/images/icon.png';
 import { ChevronRight } from 'lucide-react-native';
 import NotificationItemWrapper from './NotificationItemWrapper';
 import { cn } from '@/lib/utils';

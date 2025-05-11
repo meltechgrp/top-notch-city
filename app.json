@@ -6,7 +6,6 @@
 		"orientation": "portrait",
 		"icon": "./src/assets/images/icon.png",
 		"scheme": "top-notch-city",
-		"userInterfaceStyle": "light",
 		"newArchEnabled": true,
 		"ios": {
 			"supportsTablet": false,
@@ -18,7 +17,6 @@
 		},
 		"android": {
 			"edgeToEdgeEnabled": true,
-			"userInterfaceStyle": "light",
 			"adaptiveIcon": {
 				"foregroundImage": "./src/assets/images/adaptive-icon.png",
 				"backgroundColor": "#ffffff"
@@ -48,12 +46,29 @@
 			"expo-secure-store",
 			"expo-web-browser",
 			[
+				"expo-font",
+				{
+					"fonts": [
+						"./src/assets/fonts/Satoshi-Black.otf",
+						"./src/assets/fonts/Satoshi-Bold.otf",
+						"./src/assets/fonts/Satoshi-Medium.otf",
+						"./src/assets/fonts/Satoshi-Regular.otf",
+						"./src/assets/fonts/Satoshi-Italic.otf",
+						"./src/assets/fonts/Satoshi-Light.otf"
+					]
+				}
+			],
+			[
 				"expo-splash-screen",
 				{
 					"image": "./src/assets/images/splash.png",
-					"imageWidth": 200,
 					"resizeMode": "contain",
-					"backgroundColor": "#ffffff"
+					"backgroundColor": "#232323",
+					"dark": {
+						"image": "./src/assets/images/icon2.png",
+						"backgroundColor": "#000000",
+						"imageWidth": 200
+					}
 				}
 			]
 		],

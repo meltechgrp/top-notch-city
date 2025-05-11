@@ -67,15 +67,6 @@ export default function More() {
 		<>
 			<Stack.Screen
 				options={{
-					headerStyle: {
-						backgroundColor:
-							theme == 'dark'
-								? Colors.light.background
-								: Colors.dark.background,
-					},
-					headerTitleStyle: {
-						color: theme == 'dark' ? 'white' : 'black',
-					},
 					headerRight: () => (
 						<View
 							style={{
@@ -136,11 +127,10 @@ export default function More() {
 							<Text className="text-sm text-typography/80 uppercase px-4 mb-2">
 								Profile Menu
 							</Text>
-							<View className="flex-1">
+							<View className="flex-1 mt-2">
 								<ScrollView
 									contentContainerClassName="px-4"
 									showsVerticalScrollIndicator={false}>
-									<Divider className=" h-[0.3px] mb-4 opacity-50" />
 									<MenuListItem
 										title="Account"
 										description="View and edit your account details"
@@ -156,29 +146,29 @@ export default function More() {
 										}}
 										icon={User2}
 										iconColor="primary"
-										className=" py-2"
+										className=" py-2 pb-3"
 									/>
-									<Divider className=" h-[0.3px] mb-4 opacity-50" />
+									<Divider className=" h-[0.3px] bg-background-info mb-4" />
 									<MenuListItem
 										title="Push Notifications"
 										description="Configure app notifications"
 										onPress={() => {}}
 										icon={Mail}
 										iconColor="success"
-										className=" py-2"
+										className=" py-2 pb-3"
 									/>
-									<Divider className=" h-[0.3px] mb-4 opacity-50" />
+									<Divider className=" h-[0.3px] bg-background-info mb-4" />
 									<MenuListItem
-										title="Security"
-										description="protect yourself from intruders"
+										title="Settings"
+										description="Chnage your theme and other settings"
 										onPress={() => {
-											// router.push('/settings/');
+											router.push('/settings');
 										}}
 										icon={Settings}
 										iconColor="gray-500"
-										className=" py-2"
+										className=" py-2 pb-3"
 									/>
-									<Divider className=" h-[0.3px] mb-4 opacity-50" />
+									<Divider className=" h-[0.3px] bg-background-info mb-4" />
 									<MenuListItem
 										title="Write a review"
 										description="Let's improve the app"
@@ -187,18 +177,18 @@ export default function More() {
 										className="py-2"
 										iconColor="primary"
 									/>
-									<Divider className=" h-[0.3px] mb-4 opacity-50" />
+									<Divider className=" h-[0.3px] bg-background-info mb-4" />
 									<MenuListItem
 										title="Invite friends"
 										description={`Invite your friends to join ${config.appName} app`}
 										icon={Share2}
-										className=" py-2"
+										className=" py-2 pb-3"
 										iconColor="tertiary-300"
 										onPress={() => {
 											// router.push('/account/invite-friends');
 										}}
 									/>
-									<Divider className=" h-[0.3px] mb-4 opacity-50" />
+									<Divider className=" h-[0.3px] bg-background-info mb-4" />
 									<MenuListItem
 										title="Become an Agent"
 										description={`Join us as an agent to earn more`}
@@ -209,7 +199,7 @@ export default function More() {
 											// router.push('/account/invite-friends');
 										}}
 									/>
-									<Divider className=" h-[0.3px] mb-4 opacity-50" />
+									<Divider className=" h-[0.3px] bg-background-info mb-4" />
 									<MenuListItem
 										title="Help and Support"
 										description="Get help and support"
@@ -220,7 +210,7 @@ export default function More() {
 										className="py-2"
 										iconColor="primary"
 									/>
-									<Divider className=" h-[0.3px] mb-4 opacity-50" />
+									<Divider className=" h-[0.3px] bg-background-info mb-4" />
 									<LogoutButton />
 								</ScrollView>
 							</View>

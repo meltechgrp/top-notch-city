@@ -65,6 +65,15 @@
     <array>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
     </array>
+    <key>UIAppFonts</key>
+    <array>
+      <string>Satoshi-Black.otf</string>
+      <string>Satoshi-Bold.otf</string>
+      <string>Satoshi-Medium.otf</string>
+      <string>Satoshi-Regular.otf</string>
+      <string>Satoshi-Italic.otf</string>
+      <string>Satoshi-Light.otf</string>
+    </array>
     <key>UILaunchStoryboardName</key>
     <string>SplashScreen</string>
     <key>UIRequiredDeviceCapabilities</key>
@@ -81,7 +90,7 @@
       <string>UIInterfaceOrientationPortraitUpsideDown</string>
     </array>
     <key>UIUserInterfaceStyle</key>
-    <string>Light</string>
+    <string>Automatic</string>
     <key>UIViewControllerBasedStatusBarAppearance</key>
     <true/>
   </dict>

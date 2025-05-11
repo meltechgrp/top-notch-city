@@ -3,19 +3,12 @@ import React from 'react';
 import { Platform } from 'react-native';
 import { HapticTab } from '@/components/HapticTab';
 import TabBarBackground from '@/components/TabBarBackground';
-import {
-	Heart,
-	Home,
-	Menu,
-	MessageSquareMore,
-	Tag,
-	UserCircle2,
-} from 'lucide-react-native';
-import { useTheme } from '@/components/layouts/ThemeProvider';
+import { Heart, Home, Menu, MessageSquareMore, Tag } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
+import { useResolvedTheme } from '@/components/ui';
 
 export default function TabLayout() {
-	const { theme } = useTheme();
+	const theme = useResolvedTheme();
 	return (
 		<Tabs
 			screenOptions={{
@@ -56,6 +49,7 @@ export default function TabLayout() {
 				name="wishlist"
 				options={{
 					title: 'Wishlist',
+					headerShown: true,
 					tabBarIcon: ({ color }) => <Heart size={24} color={color} />,
 				}}
 			/>

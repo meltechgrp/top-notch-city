@@ -4,11 +4,11 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-type Theme = 'light' | 'dark';
+type Theme = 'light' | 'dark' | 'system';
 
 interface ThemeContextType {
 	theme: Theme;
-	toggleTheme: () => void;
+	toggleTheme: (theme: Theme) => void;
 }
 
 export const ThemeContext = createContext<ThemeContextType | undefined>(
@@ -16,13 +16,13 @@ export const ThemeContext = createContext<ThemeContextType | undefined>(
 );
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-	const [theme, setTheme] = useState<Theme>('light');
+	const [theme, setTheme] = useState<Theme>('system');
 
 	useEffect(() => {
 		(async () => {
 			const savedTheme = (await AsyncStorage.getItem('theme')) as
 				| Theme
-				| 'light';
+				| 'system';
 			if (savedTheme) {
 				setTheme(savedTheme);
 				AsyncStorage.setItem('theme', savedTheme);
@@ -30,10 +30,9 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
 		})();
 	}, []);
 
-	const toggleTheme = () => {
-		const newTheme = theme === 'light' ? 'dark' : 'light';
-		setTheme(newTheme);
-		AsyncStorage.setItem('theme', newTheme);
+	const toggleTheme = (theme: Theme) => {
+		setTheme(theme ?? 'system');
+		AsyncStorage.setItem('theme', theme ?? 'system');
 	};
 
 	return (
