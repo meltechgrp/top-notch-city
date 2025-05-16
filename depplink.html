@@ -1,0 +1,6 @@
+<script>
+	const url = new URL(window.location.href);
+	const params = new URLSearchParams(url.search);
+	const appPath = params.get('appPath');
+	window.location.replace('top-notch-city://${appPath}');
+</script>

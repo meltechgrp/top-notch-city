@@ -4,7 +4,7 @@ import { useResolvedTheme } from '@/components/ui';
 import { Colors } from '@/constants/Colors';
 import { ErrorBoundaryProps, Stack, useRouter } from 'expo-router';
 
-export default function PropertyLayout() {
+export default function PropertysLayout() {
 	const theme = useResolvedTheme();
 	return (
 		<Stack
@@ -18,13 +18,7 @@ export default function PropertyLayout() {
 					backgroundColor:
 						theme == 'dark' ? Colors.light.background : Colors.dark.background, // 64 64 64
 				},
-			}}>
-			<Stack.Screen
-				options={{
-					headerTitle: 'Top Locations',
-				}}
-			/>
-		</Stack>
+			}}></Stack>
 	);
 }
 

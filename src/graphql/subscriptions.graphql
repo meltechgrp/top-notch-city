@@ -1,0 +1,18 @@
+subscription ChatUpdate($userId: ID!, $did: String!) {
+	chatUpdate(userId: $userId, did: $did) {
+		updateType
+		chatId
+		chatMessage {
+			...MessageFragment
+		}
+		updateMessage
+		chatMessageId
+	}
+}
+
+subscription EmailVerificationCodeVerified($userId: ID!, $did: String!) {
+	emailVerificationCodeVerified(userId: $userId, did: $did) {
+		code
+		userId
+	}
+}

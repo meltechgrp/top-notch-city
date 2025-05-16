@@ -1,0 +1,14 @@
+query Search($arg: SearchInput!) {
+	search(arg: $arg) {
+		totalCount
+		list {
+			id
+			name
+			description
+			files
+			approvals
+			category
+			subCategory
+		}
+	}
+}

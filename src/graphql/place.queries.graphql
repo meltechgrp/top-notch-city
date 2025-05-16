@@ -1,0 +1,16 @@
+query QueryPlaceAutocomplete(
+  $input: String!
+  $region: String!
+  $placeType: PlaceType
+) {
+  queryPlaceAutocomplete(
+    input: $input
+    region: $region
+    placeType: $placeType
+  ) {
+    description
+    placeId
+    mainText
+    secondaryText
+  }
+}

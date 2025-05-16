@@ -1,74 +1,45 @@
 import * as React from 'react';
+import { useVideoPlayer, VideoView } from 'expo-video';
 import { router } from 'expo-router';
-import { View, Text, Image, Box } from '@/components/ui';
-import Animated, {
-	useSharedValue,
-	useAnimatedStyle,
-	withRepeat,
-	withTiming,
-	Easing,
-} from 'react-native-reanimated';
-import Platforms from '@/constants/Plaforms';
-import { useTheme } from '@/components/layouts/ThemeProvider';
-import splashBig from '@/assets/images/landing/splash-big.png';
-import splashBigDark from '@/assets/images/topnotch-white.png';
+import { StyleSheet } from 'react-native';
+import { View } from 'react-native';
+
+const videoSource = require('@/assets/images/splash-video.mp4');
 
 export default function SplashScreen() {
-	const rotation = useSharedValue(0);
-	const { theme } = useTheme();
-
-	React.useEffect(() => {
-		// Start the infinite rotation
-		rotation.value = withRepeat(
-			withTiming(360, {
-				duration: 2000,
-				easing: Easing.linear,
-			}),
-			-1, // infinite
-			false
-		);
-
-		const timer = setTimeout(() => {
-			if (Platforms.isWeb()) {
-				router.replace('/signin');
-			} else {
-				router.replace('/onboarding');
-			}
-		}, 5000);
-
-		return () => clearTimeout(timer);
-	}, []);
-
-	const spinStyle = useAnimatedStyle(() => {
-		return {
-			transform: [
-				{
-					rotate: `${rotation.value}deg`,
-				},
-			],
-		};
+	const player = useVideoPlayer(videoSource, (player) => {
+		// Remove looping so it ends
+		player.loop = false;
+		player.play();
 	});
-	const banner = theme == 'light' ? splashBig : splashBigDark;
+
+	// Navigate when video ends
+	React.useEffect(() => {
+		if (!player) return;
+
+		const onEnded = () => {
+			router.replace('/onboarding');
+		};
+
+		player.addListener('playToEnd', onEnded);
+
+		return () => {
+			player.addListener('playToEnd', onEnded);
+		};
+	}, [player]);
+
 	return (
-		<Box className="flex-1">
-			<View className="flex-1 justify-center items-center px-4">
-				<Image
-					source={banner}
-					className="w-80 object-cover mb-6"
-					alt="Splash"
-				/>
-				<Text className="text-center  text-base">
-					Find your dream home with ease! Explore listings, connect with
-					realtors and make smarter real estate decisions – all in one app.
-				</Text>
-			</View>
-			<View className="items-center mb-20">
-				<Animated.Image
-					source={require('@/assets/images/landing/splash-spin.png')}
-					className="w-10 h-10"
-					style={spinStyle}
-				/>
-			</View>
-		</Box>
+		<View style={styles.container}>
+			<VideoView style={StyleSheet.absoluteFill} player={player} />
+		</View>
 	);
 }
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		backgroundColor: 'white',
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
+});

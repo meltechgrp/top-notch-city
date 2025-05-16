@@ -1,0 +1,25 @@
+mutation CreateAddressByPlaceId(
+	$placeId: String!
+	$label: String!
+	$type: String!
+) {
+	createAddressByPlaceId(placeId: $placeId, label: $label, type: $type) {
+		id
+		streetNumber
+		street
+		city
+		town
+		neighborhood
+		community
+		lga
+		state
+		country
+		active
+		label
+		type
+	}
+}
+
+mutation UpdateAddressAsDefault($id: ID!) {
+	updateAddressAsDefault(id: $id)
+}

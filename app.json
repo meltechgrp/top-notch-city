@@ -5,6 +5,7 @@
 		"version": "1.0.0",
 		"orientation": "portrait",
 		"icon": "./src/assets/images/icon.png",
+		"userInterfaceStyle": "automatic",
 		"scheme": "top-notch-city",
 		"newArchEnabled": true,
 		"ios": {
@@ -38,6 +39,13 @@
 		"plugins": [
 			"expo-router",
 			[
+				"expo-video",
+				{
+					"supportsBackgroundPlayback": true,
+					"supportsPictureInPicture": true
+				}
+			],
+			[
 				"expo-location",
 				{
 					"locationAlwaysAndWhenInUsePermission": "For current location, allow $(PRODUCT_NAME) to access your location."
@@ -63,12 +71,7 @@
 				{
 					"image": "./src/assets/images/splash.png",
 					"resizeMode": "contain",
-					"backgroundColor": "#232323",
-					"dark": {
-						"image": "./src/assets/images/icon2.png",
-						"backgroundColor": "#000000",
-						"imageWidth": 200
-					}
+					"backgroundColor": "#232323"
 				}
 			]
 		],

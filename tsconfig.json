@@ -12,7 +12,9 @@
 		"nativewind-env.d.ts",
 		".expo/types/**/*.ts",
 		"expo-env.d.ts",
-		"metro.config.js"
+		"metro.config.js",
+		"src/components/3d-model.tsx",
+		"src/components/price.jsx"
 	],
 	"exclude": ["node_modules"]
 }

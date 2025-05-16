@@ -1,5 +1,5 @@
 import './global.css';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { GluestackUIProvider } from '@/components/ui';
 import 'react-native-reanimated';
 import { ErrorBoundaryProps, Slot } from 'expo-router';
@@ -13,41 +13,19 @@ import * as SplashScreen from 'expo-splash-screen';
 SplashScreen.preventAutoHideAsync();
 
 SplashScreen.setOptions({
-	duration: 1000,
+	duration: 500,
 	fade: true,
 });
 
 export default function RootLayout() {
-	const [appIsReady, setAppIsReady] = useState(false);
-
 	useEffect(() => {
-		async function prepare() {
-			try {
-				await new Promise((resolve) => setTimeout(resolve, 500));
-			} catch (e) {
-				console.warn(e);
-			} finally {
-				setAppIsReady(true);
-			}
-		}
-
-		prepare();
+		SplashScreen.hide();
 	}, []);
-
-	const onLayoutRootView = useCallback(() => {
-		if (appIsReady) {
-			SplashScreen.hide();
-		}
-	}, [appIsReady]);
-
-	if (!appIsReady) {
-		return null;
-	}
 
 	return (
 		<>
 			<ThemeProvider>
-				<GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView}>
+				<GestureHandlerRootView style={{ flex: 1 }}>
 					<GluestackUIProvider>
 						<BottomSheetModalProvider>
 							<Slot />

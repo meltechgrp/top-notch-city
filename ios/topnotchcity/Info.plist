@@ -74,6 +74,10 @@
       <string>Satoshi-Italic.otf</string>
       <string>Satoshi-Light.otf</string>
     </array>
+    <key>UIBackgroundModes</key>
+    <array>
+      <string>audio</string>
+    </array>
     <key>UILaunchStoryboardName</key>
     <string>SplashScreen</string>
     <key>UIRequiredDeviceCapabilities</key>

@@ -1,0 +1,138 @@
+fragment MessageFragment on Message {
+  id
+  text
+  tokenizedText {
+    type
+    value
+  }
+  createdAt
+  editedAt
+  deletedAt
+  status
+
+  chat {
+    id
+  }
+  qoute {
+    id
+    text
+    createdAt
+    sender {
+      id
+      firstName
+      lastName
+    }
+    files {
+      id
+      path
+      mimetype
+      width
+      height
+    }
+    _count {
+      files
+    }
+  }
+  sender {
+    id
+    firstName
+    lastName
+  }
+  files {
+    id
+    path
+    mimetype
+    width
+    height
+  }
+  _count {
+    files
+  }
+}
+
+query chatMessages($arg: ChatMessagesInput!) {
+  chatMessages(arg: $arg) {
+    ...MessageFragment
+  }
+}
+
+query chat($id: ID!, $isGroup: Boolean!) {
+  chat(id: $id, isGroup: $isGroup) {
+    id
+
+    group @include(if: $isGroup) {
+      id
+      name
+      type
+      splits(where: { isActive: { equals: true } }) {
+        id
+        name
+      }
+    }
+    members {
+      muted
+      roles {
+        id
+        role
+      }
+      user {
+        id
+        firstName
+        lastName
+        username
+        photo {
+          id
+          path
+        }
+      }
+    }
+  }
+}
+
+query chats {
+  chats {
+    id
+    isGroup
+    group {
+      id
+      name
+    }
+    messages {
+      id
+      text
+      createdAt
+      files {
+        name
+      }
+      deletedAt
+    }
+    members {
+      muted
+      roles {
+        id
+        role
+      }
+      user {
+        id
+        firstName
+        lastName
+        photo {
+          id
+          path
+        }
+      }
+    }
+
+    _count {
+      members
+      messageRecipients
+    }
+  }
+}
+
+query ChatsUnreadCount {
+  chatsUnreadCount {
+    chatId
+    unreadCount
+  }
+}

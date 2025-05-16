@@ -8,6 +8,7 @@ type State = {
 	isAdmin: boolean;
 	displayStyle: 'flex' | 'grid';
 	me?: any;
+	isOnboarded: boolean;
 };
 
 type Actions = {
@@ -15,12 +16,14 @@ type Actions = {
 	getDeviceId: () => string;
 	setIsAdmin: (isAdmin: boolean) => void;
 	setDisplayStyle: (displayStyle: 'flex' | 'grid') => void;
+	setIsOnboarded: (isOnboarded: boolean) => void;
 };
 
 const initialState: State = {
 	hasAuth: false,
 	isAdmin: false,
 	displayStyle: 'flex',
+	isOnboarded: false,
 };
 
 type StateAndActions = State & Actions;
@@ -40,6 +43,9 @@ export const useStore = create<StateAndActions>(
 			resetStore: () => set(initialState),
 			setDisplayStyle: (displayStyle) => {
 				set((state) => ({ ...state, displayStyle }));
+			},
+			setIsOnboarded(isOnboarded) {
+				set((state) => ({ ...state, isOnboarded }));
 			},
 		}),
 		{
