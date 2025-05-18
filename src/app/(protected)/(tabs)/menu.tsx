@@ -132,6 +132,23 @@ export default function More() {
 									contentContainerClassName="px-4"
 									showsVerticalScrollIndicator={false}>
 									<MenuListItem
+										title="Dashboard"
+										description="View admin dashboard"
+										onPress={() => {
+											router.push({
+												pathname: '/(protected)/admin',
+												params: {
+													user: 'hghjhgjhj',
+													ref: pathname,
+												},
+											});
+										}}
+										icon={User2}
+										iconColor="primary"
+										className=" py-2 pb-3"
+									/>
+									<Divider className=" h-[0.3px] bg-background-info mb-4" />
+									<MenuListItem
 										title="Account"
 										description="View and edit your account details"
 										onPress={() => {

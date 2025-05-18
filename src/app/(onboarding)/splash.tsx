@@ -30,7 +30,11 @@ export default function SplashScreen() {
 
 	return (
 		<View style={styles.container}>
-			<VideoView style={StyleSheet.absoluteFill} player={player} />
+			<VideoView
+				style={StyleSheet.absoluteFill}
+				player={player}
+				nativeControls={false}
+			/>
 		</View>
 	);
 }

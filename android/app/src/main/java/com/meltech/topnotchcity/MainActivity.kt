@@ -1,4 +1,4 @@
-package com.joshhumphrey02.topnotchcity
+package com.meltech.topnotchcity
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

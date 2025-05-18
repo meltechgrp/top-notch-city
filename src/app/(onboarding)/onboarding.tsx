@@ -31,6 +31,7 @@ export default function OnboardingScreen() {
 			SystemNavigationBar.setNavigationColor('translucent');
 		}
 	}, []);
+
 	useFocusEffect(
 		React.useCallback(() => {
 			if (hasAuth) {
@@ -42,7 +43,7 @@ export default function OnboardingScreen() {
 		<View className="flex-1">
 			<TabView
 				activeTab={activeIndex}
-				scrollEnabled={true}
+				scrollEnabled={false}
 				onTabSelected={setActiveIndex}>
 				<PageOne
 					key={1}
@@ -316,7 +317,7 @@ function PageThree({
 						</Text>
 					</View>
 					<Button
-						onPress={() => router.push('/signin')}
+						onPress={() => router.push('/home')}
 						variant="outline"
 						size="xl"
 						className="rounded-xl border-white">

@@ -55,13 +55,38 @@ export const useStore = create<StateAndActions>(
 	)
 );
 
+type Listing = {
+	totalSteps: number;
+	step: number;
+	purpose: string;
+	category: string;
+	type?: string;
+	address?: string;
+	facilities?: {
+		label: string;
+		value: number;
+	}[];
+	features?: string[];
+	title?: string;
+	description?: string;
+	price?: number;
+};
+
 type TempState = {
 	fullScreenLoading: boolean;
+	listing: Listing;
 	updateFullScreenLoading: (fullScreenLoading: boolean) => void;
 	resetStore: () => void;
+	updateListing: (data: Listing) => void;
 };
 const initialTempState = {
 	fullScreenLoading: false,
+	listing: {
+		step: 1,
+		totalSteps: 6,
+		purpose: 'rent',
+		category: 'bungalow',
+	},
 };
 // temporary store
 export const useTempStore = create<TempState>((set, get) => ({
@@ -69,6 +94,8 @@ export const useTempStore = create<TempState>((set, get) => ({
 	updateFullScreenLoading: (fullScreenLoading: boolean) =>
 		set((state) => ({ ...state, fullScreenLoading })),
 	resetStore: () => set(initialTempState),
+	updateListing: (data) =>
+		set((state) => ({ ...state, listing: { ...state.listing, ...data } })),
 }));
 
 type ChatState = {

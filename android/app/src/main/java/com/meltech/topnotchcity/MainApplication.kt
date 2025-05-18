@@ -1,4 +1,4 @@
-package com.joshhumphrey02.topnotchcity
+package com.meltech.topnotchcity
 import com.facebook.react.common.assets.ReactFontManager
 
 import android.app.Application

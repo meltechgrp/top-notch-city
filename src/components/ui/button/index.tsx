@@ -42,9 +42,9 @@ const buttonStyle = tva({
 	variants: {
 		action: {
 			primary:
-				'bg-primary data-[hover=true]:bg-primary data-[active=true]:bg-primary border-primary-300 data-[hover=true]:border-primary-400 data-[active=true]:border-primary-500 data-[focus-visible=true]:web:ring-indicator-info',
+				'bg-primary data-[hover=true]:bg-primary data-[active=true]:bg-primary border-primary-100 data-[hover=true]:border-primary-400 data-[active=true]:border-primary-500 data-[focus-visible=true]:web:ring-indicator-info',
 			secondary:
-				'bg-background-muted border-secondary-300 data-[hover=true]:bg-secondary-muted data-[hover=true]:border-secondary-muted data-[active=true]:bg-secondary-muted data-[active=true]:border-secondary-muted data-[focus-visible=true]:web:ring-indicator-info',
+				'bg-background border-outline-100 data-[hover=true]:bg-secondary-muted data-[hover=true]:border-secondary-muted data-[active=true]:bg-secondary-muted data-[active=true]:border-secondary-muted data-[focus-visible=true]:web:ring-indicator-info',
 			positive:
 				'bg-success border-success-300 data-[hover=true]:bg-success data-[hover=true]:border-success-400 data-[active=true]:bg-success-300 data-[active=true]:border-success-500 data-[focus-visible=true]:web:ring-indicator-info',
 			negative:
@@ -102,7 +102,7 @@ const buttonStyle = tva({
 			action: 'secondary',
 			variant: 'outline',
 			class:
-				'bg-transparent data-[hover=true]:bg-background-50 data-[active=true]:bg-transparent',
+				'bg-transparent data-[hover=true]:bg-background border-outline-100 data-[active=true]:bg-transparent',
 		},
 		{
 			action: 'positive',
