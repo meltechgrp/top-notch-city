@@ -58,7 +58,7 @@ function ListingAddressBottomSheet(props: Props) {
 				<View className="flex-1 px-4 gap-8 py-5 pb-8 bg-background">
 					<View className=" h-14">
 						<TextInput
-							className="h-12 flex-1 px-2 bg-background-info rounded-2xl border border-outline-200"
+							className="h-12 text-typography flex-1 px-2 bg-background-info rounded-2xl border border-outline-200"
 							placeholder="Search property address..."
 							value={text}
 							onChangeText={onChangeText}

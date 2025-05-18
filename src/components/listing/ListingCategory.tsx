@@ -28,7 +28,12 @@ export default function ListingCategory({ option, onUpdate }: Props) {
 									{section.data.map((item) => (
 										<TouchableOpacity
 											key={item.label}
-											style={{ width: width / 2.1 }}
+											style={{
+												width: width / 2.15,
+												minWidth: width / 2.3,
+												maxWidth: width / 2.1,
+											}}
+											className="flex-1"
 											onPress={() => onUpdate(item.value)}>
 											<View
 												className={cn(

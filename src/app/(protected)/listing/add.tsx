@@ -3,6 +3,7 @@ import ListingAmenities from '@/components/listing/ListingAmenities';
 import ListingBottomNavigation from '@/components/listing/ListingBottomNavigation';
 import ListingCategory from '@/components/listing/ListingCategory';
 import ListingLocation from '@/components/listing/ListingLocation';
+import ListingMediaFiles from '@/components/listing/ListingMediaFiles';
 import ListingPurpose from '@/components/listing/ListingPurpose';
 import { Box, Button, ButtonText } from '@/components/ui';
 import { useTempStore } from '@/store';
@@ -38,6 +39,8 @@ export default function SellAddScreen() {
 				return <ListingLocation />;
 			case 4:
 				return <ListingAmenities />;
+			case 5:
+				return <ListingMediaFiles />;
 			default:
 				return null;
 		}

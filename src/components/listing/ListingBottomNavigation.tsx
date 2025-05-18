@@ -3,12 +3,15 @@ import Animated, {
 	useSharedValue,
 	withTiming,
 } from 'react-native-reanimated';
-import { Button, Icon, Pressable, Text, View } from '../ui';
+import { Button, Icon, Pressable, Text, useResolvedTheme, View } from '../ui';
 import React from 'react';
 import Svg, { Circle } from 'react-native-svg';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { cn } from '@/lib/utils';
+import { Platform } from 'react-native';
+import SystemNavigationBar from 'react-native-system-navigation-bar';
+import { Colors } from '@/constants/Colors';
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 type Props = {
@@ -22,10 +25,20 @@ export default function ListingBottomNavigation({
 	totalSteps,
 	onUpdate,
 }: Props) {
+	const colorSchemeName = useResolvedTheme();
+	React.useEffect(() => {
+		if (Platform.OS == 'android') {
+			SystemNavigationBar.setNavigationColor(
+				colorSchemeName == 'dark'
+					? Colors.light.background
+					: Colors.dark.background
+			);
+		}
+	}, [colorSchemeName]);
 	return (
-		<View className=" fixed bottom-0 z-50 left-0 right-0">
+		<View className=" fixed bg-background bottom-0 z-50 left-0 right-0">
 			<SafeAreaView edges={['bottom']}>
-				<View className=" flex-row backdrop-blur-sm bg-background/50 border-t h-24 border-outline-300 px-4 py-6 justify-center items-center">
+				<View className=" flex-row backdrop-blur-sm bg-background border-t h-20 border-outline px-4  justify-center items-center">
 					<Button
 						onPress={() => onUpdate(step - 1)}
 						size="lg"
@@ -41,7 +54,7 @@ export default function ListingBottomNavigation({
 
 						<Pressable
 							onPress={() => onUpdate(step + 1)}
-							className="bg-[#FF4C00] absolute -top-1 w-12 h-12 rounded-full justify-center items-center m-1">
+							className="bg-[#FF4C00] absolute top-1 w-10 h-10 rounded-full justify-center items-center m-1">
 							<ChevronRight color={'white'} />
 						</Pressable>
 					</View>
@@ -55,7 +68,7 @@ function CircleCurve({ step, total }: { step: number; total: number }) {
 	const progress = useSharedValue(0); // 0 to 1
 
 	// Arc math
-	const size = 56;
+	const size = 50;
 	const strokeWidth = 5;
 	const radius = (size - strokeWidth) / 2;
 	const circumference = 2 * Math.PI * radius;
