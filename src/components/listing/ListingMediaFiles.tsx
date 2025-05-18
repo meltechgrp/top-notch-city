@@ -8,7 +8,9 @@ export default function ListingMediaFiles() {
 		<>
 			<Box className="flex-1 py-6 px-4">
 				<View className=" py-6 gap-4">
-					<Heading size="xl">What Would You Like to Do Today?</Heading>
+					<Heading size="xl">
+						Bring Your Property to Life with Photos and Video
+					</Heading>
 					<Text size="sm" className=" font-light mb-4">
 						Ready to make a move? Choose whether you want to sell your property
 						for a great deal or rent it out for steady income. Select an option

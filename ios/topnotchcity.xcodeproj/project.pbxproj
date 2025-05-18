@@ -8,40 +8,32 @@
 
 /* Begin PBXBuildFile section */
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		1AB2197BCDF44459AA481DFA /* Satoshi-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 10C2E3A0ADC2408C9B7E8E40 /* Satoshi-Light.otf */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		47159247444EE7529DB61EB6 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3162B22F96F1FEBCC6E90DD2 /* ExpoModulesProvider.swift */; };
-		7E65964DF85281435D0C296E /* libPods-TopNotchCity.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 62840BB28710644ABD044449 /* libPods-TopNotchCity.a */; };
-		82E730179FF34B757B8BAAB7 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = CD5C63E53622A5A1EB59BACD /* PrivacyInfo.xcprivacy */; };
-		8E061E664D0E44F0A7D5EF3F /* Satoshi-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = DBB3BCF850334708A88B8F3A /* Satoshi-Regular.otf */; };
-		B49CDA1810A649E1B570F82C /* Satoshi-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1D901304E3094354BA786026 /* Satoshi-Black.otf */; };
-		B55CE5B31A9A4F0BB117C126 /* Satoshi-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 77A5804CE5454F2681C1D718 /* Satoshi-Italic.otf */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		D6993E01F81B44F2B1363579 /* Satoshi-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 05305528861749B69195DBF9 /* Satoshi-Medium.otf */; };
-		E874014BF06C4E52A8B656E8 /* Satoshi-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 063085BC33E748678A91CB5B /* Satoshi-Bold.otf */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
+		C55D8521B427446F85705304 /* Satoshi-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = DDF33712356948F689184E2F /* Satoshi-Black.otf */; };
+		E0F87BD0A0ED41B2AAF197B6 /* Satoshi-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 98359FB085C84DC89EEE56B3 /* Satoshi-Bold.otf */; };
+		CAEB4699CE10403EB2088411 /* Satoshi-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2086016B1BA34D7380E13CB2 /* Satoshi-Medium.otf */; };
+		BA54C8B4660C44E9925AA2B0 /* Satoshi-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 042CCBA35E0749E8AC071D58 /* Satoshi-Regular.otf */; };
+		7311659893D6444CB9A43C83 /* Satoshi-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8844B4C4BC3C417A86DB0426 /* Satoshi-Italic.otf */; };
+		7139643522864FF9A1106F02 /* Satoshi-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = D237A1B4F0D0456199051EE6 /* Satoshi-Light.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		05305528861749B69195DBF9 /* Satoshi-Medium.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Satoshi-Medium.otf"; path = "../src/assets/fonts/Satoshi-Medium.otf"; sourceTree = "<group>"; };
-		063085BC33E748678A91CB5B /* Satoshi-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Satoshi-Bold.otf"; path = "../src/assets/fonts/Satoshi-Bold.otf"; sourceTree = "<group>"; };
-		10C2E3A0ADC2408C9B7E8E40 /* Satoshi-Light.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Satoshi-Light.otf"; path = "../src/assets/fonts/Satoshi-Light.otf"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* TopNotchCity.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TopNotchCity.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = TopNotchCity/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = TopNotchCity/Info.plist; sourceTree = "<group>"; };
-		1D901304E3094354BA786026 /* Satoshi-Black.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Satoshi-Black.otf"; path = "../src/assets/fonts/Satoshi-Black.otf"; sourceTree = "<group>"; };
-		3162B22F96F1FEBCC6E90DD2 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-TopNotchCity/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		62840BB28710644ABD044449 /* libPods-TopNotchCity.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TopNotchCity.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		77A5804CE5454F2681C1D718 /* Satoshi-Italic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Satoshi-Italic.otf"; path = "../src/assets/fonts/Satoshi-Italic.otf"; sourceTree = "<group>"; };
-		84A75C26446D68477AEE7066 /* Pods-TopNotchCity.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TopNotchCity.release.xcconfig"; path = "Target Support Files/Pods-TopNotchCity/Pods-TopNotchCity.release.xcconfig"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = TopNotchCity/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		CD5C63E53622A5A1EB59BACD /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = TopNotchCity/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		DBB3BCF850334708A88B8F3A /* Satoshi-Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Satoshi-Regular.otf"; path = "../src/assets/fonts/Satoshi-Regular.otf"; sourceTree = "<group>"; };
-		ECAB4F73F8318C4800B7944D /* Pods-TopNotchCity.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TopNotchCity.debug.xcconfig"; path = "Target Support Files/Pods-TopNotchCity/Pods-TopNotchCity.debug.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = TopNotchCity/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* TopNotchCity-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "TopNotchCity-Bridging-Header.h"; path = "TopNotchCity/TopNotchCity-Bridging-Header.h"; sourceTree = "<group>"; };
+		DDF33712356948F689184E2F /* Satoshi-Black.otf */ = {isa = PBXFileReference; name = "Satoshi-Black.otf"; path = "../src/assets/fonts/Satoshi-Black.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		98359FB085C84DC89EEE56B3 /* Satoshi-Bold.otf */ = {isa = PBXFileReference; name = "Satoshi-Bold.otf"; path = "../src/assets/fonts/Satoshi-Bold.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		2086016B1BA34D7380E13CB2 /* Satoshi-Medium.otf */ = {isa = PBXFileReference; name = "Satoshi-Medium.otf"; path = "../src/assets/fonts/Satoshi-Medium.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		042CCBA35E0749E8AC071D58 /* Satoshi-Regular.otf */ = {isa = PBXFileReference; name = "Satoshi-Regular.otf"; path = "../src/assets/fonts/Satoshi-Regular.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		8844B4C4BC3C417A86DB0426 /* Satoshi-Italic.otf */ = {isa = PBXFileReference; name = "Satoshi-Italic.otf"; path = "../src/assets/fonts/Satoshi-Italic.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		D237A1B4F0D0456199051EE6 /* Satoshi-Light.otf */ = {isa = PBXFileReference; name = "Satoshi-Light.otf"; path = "../src/assets/fonts/Satoshi-Light.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,34 +41,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7E65964DF85281435D0C296E /* libPods-TopNotchCity.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0B050D7EE5A8420FB3112436 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				1D901304E3094354BA786026 /* Satoshi-Black.otf */,
-				063085BC33E748678A91CB5B /* Satoshi-Bold.otf */,
-				05305528861749B69195DBF9 /* Satoshi-Medium.otf */,
-				DBB3BCF850334708A88B8F3A /* Satoshi-Regular.otf */,
-				77A5804CE5454F2681C1D718 /* Satoshi-Italic.otf */,
-				10C2E3A0ADC2408C9B7E8E40 /* Satoshi-Light.otf */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-		};
-		0B2717B406A2F6AFA4083BD1 /* ExpoModulesProviders */ = {
-			isa = PBXGroup;
-			children = (
-				D46488B9BAC16407E5F5D86B /* TopNotchCity */,
-			);
-			name = ExpoModulesProviders;
-			sourceTree = "<group>";
-		};
 		13B07FAE1A68108700A75B9A /* TopNotchCity */ = {
 			isa = PBXGroup;
 			children = (
@@ -86,7 +56,6 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				CD5C63E53622A5A1EB59BACD /* PrivacyInfo.xcprivacy */,
 			);
 			name = TopNotchCity;
 			sourceTree = "<group>";
@@ -95,18 +64,8 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				62840BB28710644ABD044449 /* libPods-TopNotchCity.a */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		5DC8FF3B0E5FC0B74019DFB6 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				ECAB4F73F8318C4800B7944D /* Pods-TopNotchCity.debug.xcconfig */,
-				84A75C26446D68477AEE7066 /* Pods-TopNotchCity.release.xcconfig */,
-			);
-			path = Pods;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -123,9 +82,7 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				0B050D7EE5A8420FB3112436 /* Resources */,
-				5DC8FF3B0E5FC0B74019DFB6 /* Pods */,
-				0B2717B406A2F6AFA4083BD1 /* ExpoModulesProviders */,
+				B31F5F38B3F34368A0759169 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -149,13 +106,19 @@
 			path = TopNotchCity/Supporting;
 			sourceTree = "<group>";
 		};
-		D46488B9BAC16407E5F5D86B /* TopNotchCity */ = {
-			isa = PBXGroup;
+		B31F5F38B3F34368A0759169 /* Resources */ = {
+			isa = "PBXGroup";
 			children = (
-				3162B22F96F1FEBCC6E90DD2 /* ExpoModulesProvider.swift */,
+				DDF33712356948F689184E2F /* Satoshi-Black.otf */,
+				98359FB085C84DC89EEE56B3 /* Satoshi-Bold.otf */,
+				2086016B1BA34D7380E13CB2 /* Satoshi-Medium.otf */,
+				042CCBA35E0749E8AC071D58 /* Satoshi-Regular.otf */,
+				8844B4C4BC3C417A86DB0426 /* Satoshi-Italic.otf */,
+				D237A1B4F0D0456199051EE6 /* Satoshi-Light.otf */,
 			);
-			name = TopNotchCity;
+			name = Resources;
 			sourceTree = "<group>";
+			path = "";
 		};
 /* End PBXGroup section */
 
@@ -165,13 +128,11 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "TopNotchCity" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				8DDC1EC1DBA3FBCB009EBB37 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				FCC5A2C5AB461E2DB76A481C /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -221,13 +182,12 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				B49CDA1810A649E1B570F82C /* Satoshi-Black.otf in Resources */,
-				E874014BF06C4E52A8B656E8 /* Satoshi-Bold.otf in Resources */,
-				D6993E01F81B44F2B1363579 /* Satoshi-Medium.otf in Resources */,
-				8E061E664D0E44F0A7D5EF3F /* Satoshi-Regular.otf in Resources */,
-				B55CE5B31A9A4F0BB117C126 /* Satoshi-Italic.otf in Resources */,
-				1AB2197BCDF44459AA481DFA /* Satoshi-Light.otf in Resources */,
-				82E730179FF34B757B8BAAB7 /* PrivacyInfo.xcprivacy in Resources */,
+				C55D8521B427446F85705304 /* Satoshi-Black.otf in Resources */,
+				E0F87BD0A0ED41B2AAF197B6 /* Satoshi-Bold.otf in Resources */,
+				CAEB4699CE10403EB2088411 /* Satoshi-Medium.otf in Resources */,
+				BA54C8B4660C44E9925AA2B0 /* Satoshi-Regular.otf in Resources */,
+				7311659893D6444CB9A43C83 /* Satoshi-Italic.otf in Resources */,
+				7139643522864FF9A1106F02 /* Satoshi-Light.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -279,89 +239,18 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-TopNotchCity/Pods-TopNotchCity-resources.sh",
 				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/EXConstants.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/ExpoConstants_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/EXUpdates/EXUpdates.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoFileSystem/ExpoFileSystem_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoSystemUI/ExpoSystemUI_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/RCT-Folly/RCT-Folly_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/RNCAsyncStorage/RNCAsyncStorage_resources.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/RNDeviceInfo/RNDeviceInfoPrivacyInfo.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/RNSVG/RNSVGFilters.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/ReachabilitySwift/ReachabilitySwift.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/React-Core_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/React-cxxreact/React-cxxreact_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/SDWebImage/SDWebImage.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/boost/boost_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/expo-dev-launcher/EXDevLauncher.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/expo-dev-menu/EXDevMenu.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/glog/glog_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/lottie-ios/LottiePrivacyInfo.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/lottie-react-native/Lottie_React_Native_Privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/react-native-maps/ReactNativeMapsPrivacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/RCTI18nStrings.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EXConstants.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoConstants_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EXUpdates.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoFileSystem_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoSystemUI_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RCT-Folly_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RNCAsyncStorage_resources.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RNDeviceInfoPrivacyInfo.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RNSVGFilters.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ReachabilitySwift.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-Core_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-cxxreact_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SDWebImage.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/boost_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EXDevLauncher.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EXDevMenu.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/glog_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/LottiePrivacyInfo.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Lottie_React_Native_Privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ReactNativeMapsPrivacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RCTI18nStrings.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TopNotchCity/Pods-TopNotchCity-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		8DDC1EC1DBA3FBCB009EBB37 /* [Expo] Configure project */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[Expo] Configure project";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-TopNotchCity/expo-configure-project.sh\"\n";
-		};
-		FCC5A2C5AB461E2DB76A481C /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TopNotchCity/Pods-TopNotchCity-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TopNotchCity/Pods-TopNotchCity-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -372,7 +261,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				47159247444EE7529DB61EB6 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -381,13 +269,10 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = ECAB4F73F8318C4800B7944D /* Pods-TopNotchCity.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = TopNotchCity/TopNotchCity.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = PRH5WVK858;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -405,26 +290,23 @@
 					"-ObjC",
 					"-lc++",
 				);
-				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = com.meltech.topnotchcity;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.meltech.topnotchcity";
 				PRODUCT_NAME = "TopNotchCity";
 				SWIFT_OBJC_BRIDGING_HEADER = "TopNotchCity/TopNotchCity-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1";
 				VERSIONING_SYSTEM = "apple-generic";
+				TARGETED_DEVICE_FAMILY = "1";
+				CODE_SIGN_ENTITLEMENTS = TopNotchCity/TopNotchCity.entitlements;
 			};
 			name = Debug;
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 84A75C26446D68477AEE7066 /* Pods-TopNotchCity.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = TopNotchCity/TopNotchCity.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = PRH5WVK858;
 				INFOPLIST_FILE = TopNotchCity/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -437,13 +319,13 @@
 					"-ObjC",
 					"-lc++",
 				);
-				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
-				PRODUCT_BUNDLE_IDENTIFIER = com.meltech.topnotchcity;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.meltech.topnotchcity";
 				PRODUCT_NAME = "TopNotchCity";
 				SWIFT_OBJC_BRIDGING_HEADER = "TopNotchCity/TopNotchCity-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1";
 				VERSIONING_SYSTEM = "apple-generic";
+				TARGETED_DEVICE_FAMILY = "1";
+				CODE_SIGN_ENTITLEMENTS = TopNotchCity/TopNotchCity.entitlements;
 			};
 			name = Release;
 		};
@@ -499,17 +381,10 @@
 					/usr/lib/swift,
 					"$(inherited)",
 				);
-				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
+				LIBRARY_SEARCH_PATHS = "\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
-				USE_HERMES = true;
 			};
 			name = Debug;
 		};
@@ -558,15 +433,9 @@
 					/usr/lib/swift,
 					"$(inherited)",
 				);
-				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
+				LIBRARY_SEARCH_PATHS = "\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
-				USE_HERMES = true;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
