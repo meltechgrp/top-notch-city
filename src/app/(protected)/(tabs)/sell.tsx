@@ -8,6 +8,7 @@ import {
 	Text,
 	View,
 } from '@/components/ui';
+import { useLayout } from '@react-native-community/hooks';
 import { useRouter } from 'expo-router';
 
 export default function SellScreen() {
@@ -15,15 +16,20 @@ export default function SellScreen() {
 	function handleStart() {
 		router.push('/listing/add');
 	}
+	const { onLayout, height } = useLayout();
 	return (
 		<>
-			<Box className="flex-1">
-				<BodyScrollView>
-					<View>
+			<Box onLayout={onLayout} className="flex-1">
+				<BodyScrollView className="flex-1">
+					<View
+						style={{
+							height: height / 2,
+						}}
+						className="flex-1 mx-4 rounded-3xl overflow-hidden">
 						<Image
-							source={require('@/assets/images/vectors/sell-banner.png')}
+							source={require('@/assets/images/landing/agent.png')}
 							alt="sell banner"
-							className={`object-contain w-full h-[30rem]`}
+							className={`object-cover object-bottom w-full flex-1 rounded-3xl`}
 						/>
 					</View>
 					<View className="px-4 py-6 gap-4">

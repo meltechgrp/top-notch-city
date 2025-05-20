@@ -1,5 +1,6 @@
 import { Box, Heading, HStack, Icon, Image, Text, View } from '@/components/ui';
 import { cn } from '@/lib/utils';
+import { useLayout } from '@react-native-community/hooks';
 import { KeyRound, RectangleEllipsis } from 'lucide-react-native';
 import { TouchableOpacity } from 'react-native';
 
@@ -9,14 +10,19 @@ type Props = {
 };
 
 export default function ListingPurpose({ option, onUpdate }: Props) {
+	const { onLayout, height } = useLayout();
 	return (
 		<>
-			<Box className="flex-1 py-6 px-4">
-				<View>
+			<Box onLayout={onLayout} className="flex-1 py-6 px-4">
+				<View
+					style={{
+						height: height / 3,
+					}}
+					className="flex-1 rounded-3xl overflow-hidden">
 					<Image
 						source={require('@/assets/images/vectors/bookshelf.jpg')}
 						alt="sell banner"
-						className={`object-cover w-full h-[20rem] rounded-xl`}
+						className={`object-cover w-full flex-1 rounded-3xl`}
 					/>
 				</View>
 				<View className=" py-6 gap-4">
@@ -33,7 +39,7 @@ export default function ListingPurpose({ option, onUpdate }: Props) {
 							onPress={() => onUpdate('rent')}>
 							<View
 								className={cn(
-									' gap-2 p-4 rounded-2xl border border-outline-2',
+									' gap-2 p-4 rounded-2xl border border-outline',
 									option == 'rent' && 'border-primary'
 								)}>
 								<View className=" border-[0.4px] self-start border-primary rounded-full p-2 mb-2">
@@ -50,7 +56,7 @@ export default function ListingPurpose({ option, onUpdate }: Props) {
 							onPress={() => onUpdate('sell')}>
 							<View
 								className={cn(
-									' gap-2 p-4 rounded-2xl border border-outline-2',
+									' gap-2 p-4 rounded-2xl border border-outline',
 									option == 'sell' && 'border-primary'
 								)}>
 								<View className=" border-[0.4px] border-primary self-start rounded-full p-2 mb-2">

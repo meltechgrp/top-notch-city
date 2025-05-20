@@ -43,7 +43,6 @@ export default function ListingLocation() {
 				</KeyboardDismissPressable>
 				<ListingAddressBottomSheet
 					show={showBottomSheet}
-					visible={showBottomSheet}
 					onDismiss={() => setShowBottomSheet(false)}
 					address={listing.address}
 					onUpdate={(val) => updateListing({ ...listing, address: val })}

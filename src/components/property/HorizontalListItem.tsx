@@ -55,7 +55,7 @@ export default function HorizontalListItem(props: Props) {
 								<Text className=" text-sm">4</Text>
 							</View>
 						</View>
-						<Text size="lg" className="text-medium">
+						<Text size="lg" className="text-medium text-typography">
 							{formatMoney(price, 'NGN', 0)}
 						</Text>
 					</View>

@@ -59,7 +59,7 @@ export default function Property3DView() {
 						// Load model
 						try {
 							const model = await loadAsync(
-								require('@/assets/models/kitchen.glb')
+								require('@/assets/models/model.glb')
 							);
 							model.scene.scale.set(1, 1, 1);
 							modelRef.current = model.scene;

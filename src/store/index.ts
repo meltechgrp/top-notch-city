@@ -2,6 +2,7 @@ import { StateCreator, create } from 'zustand';
 import { createJSONStorage, persist, PersistOptions } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getUniqueIdSync } from 'react-native-device-info';
+import { ImagePickerAsset } from 'expo-image-picker';
 
 type State = {
 	hasAuth: boolean;
@@ -55,6 +56,10 @@ export const useStore = create<StateAndActions>(
 	)
 );
 
+export type UploadedFile = ImagePickerAsset & {
+	default: boolean;
+};
+
 type Listing = {
 	totalSteps: number;
 	step: number;
@@ -66,10 +71,13 @@ type Listing = {
 		label: string;
 		value: number;
 	}[];
+	photos?: UploadedFile[];
+	videos?: UploadedFile[];
+	modelImages?: UploadedFile[];
 	features?: string[];
 	title?: string;
 	description?: string;
-	price?: number;
+	price?: string;
 };
 
 type TempState = {
@@ -77,13 +85,14 @@ type TempState = {
 	listing: Listing;
 	updateFullScreenLoading: (fullScreenLoading: boolean) => void;
 	resetStore: () => void;
+	resetListing: () => void;
 	updateListing: (data: Listing) => void;
 };
 const initialTempState = {
 	fullScreenLoading: false,
 	listing: {
 		step: 1,
-		totalSteps: 6,
+		totalSteps: 7,
 		purpose: 'rent',
 		category: 'bungalow',
 	},
@@ -94,6 +103,8 @@ export const useTempStore = create<TempState>((set, get) => ({
 	updateFullScreenLoading: (fullScreenLoading: boolean) =>
 		set((state) => ({ ...state, fullScreenLoading })),
 	resetStore: () => set(initialTempState),
+	resetListing: () =>
+		set((state) => ({ ...state, listing: initialTempState.listing })),
 	updateListing: (data) =>
 		set((state) => ({ ...state, listing: { ...state.listing, ...data } })),
 }));

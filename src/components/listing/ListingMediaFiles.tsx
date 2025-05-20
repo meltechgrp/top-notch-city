@@ -1,9 +1,18 @@
-import { Box, Heading, HStack, Icon, Image, Text, View } from '@/components/ui';
+import { Avatar, Box, Heading, Icon, Text, View } from '@/components/ui';
 import { cn } from '@/lib/utils';
-import { KeyRound, RectangleEllipsis } from 'lucide-react-native';
+import { Images } from 'lucide-react-native';
+import { useState } from 'react';
 import { TouchableOpacity } from 'react-native';
+import ListingPhotosBottomSheet from './ListingPhotosBottomSheet';
+import { useTempStore } from '@/store';
+import ListingVideosBottomSheet from './ListingVideosBottomSheet';
 
 export default function ListingMediaFiles() {
+	const { listing, updateListing } = useTempStore();
+	const [photosBottomSheet, setPhotosBottomSheet] = useState(false);
+	const [videosBottomSheet, setVideosBottomSheet] = useState(false);
+	const [modelBottomSheet, setModelBottomSheet] = useState(false);
+
 	return (
 		<>
 			<Box className="flex-1 py-6 px-4">
@@ -11,30 +20,102 @@ export default function ListingMediaFiles() {
 					<Heading size="xl">
 						Bring Your Property to Life with Photos and Video
 					</Heading>
-					<Text size="sm" className=" font-light mb-4">
-						Ready to make a move? Choose whether you want to sell your property
-						for a great deal or rent it out for steady income. Select an option
-						below, and we’ll guide you through a seamless process tailored to
-						your needs.
-					</Text>
-					<HStack className="py-4 gap-5">
-						<TouchableOpacity className="flex-1" onPress={() => {}}>
+					<View className="py-4 gap-5">
+						<TouchableOpacity
+							className=" h-20"
+							onPress={() => setPhotosBottomSheet(true)}>
 							<View
 								className={cn(
-									' gap-2 p-4 rounded-2xl border border-outline-2'
-									// option == 'rent' && 'border-primary'
+									' gap-4 p-6 py-3 flex-row items-center rounded-2xl border border-outline-300',
+									listing.photos &&
+										listing.photos.length > 0 &&
+										'border border-primary'
 								)}>
-								<View className=" border-[0.4px] self-start border-primary rounded-full p-2 mb-2">
-									<Icon as={KeyRound} className="text-primary w-4 h-4" />
-								</View>
-								<Text>Rent My Property</Text>
-								<Text size="xs" className=" font-light">
-									(Earn passive income with trusted tenants!)
-								</Text>
+								<Icon as={Images} className="text-primary" />
+								<Text>Upload photos</Text>
+								<Avatar className=" ml-auto">
+									<Text size="lg" className="text-white">
+										{(listing?.photos ? listing?.photos.length : 0).toString()}
+									</Text>
+								</Avatar>
 							</View>
 						</TouchableOpacity>
-					</HStack>
+						<TouchableOpacity
+							className=" h-20"
+							onPress={() => setVideosBottomSheet(true)}>
+							<View
+								className={cn(
+									' gap-4 p-6 py-3 flex-row items-center rounded-2xl border border-outline-300',
+									listing.videos &&
+										listing.videos.length > 0 &&
+										'border border-primary'
+								)}>
+								<Icon as={Images} className="text-primary" />
+								<Text>Upload videos</Text>
+								<Avatar className=" ml-auto">
+									<Text size="lg" className="text-white">
+										{listing?.videos ? listing?.videos.length : 0}
+									</Text>
+								</Avatar>
+							</View>
+						</TouchableOpacity>
+						{/* <TouchableOpacity className=" h-20" onPress={() => {}}>
+							<View
+								className={cn(
+									' gap-4 p-6 py-3 flex-row items-center rounded-2xl border border-outline-300',
+									listing.modelImages &&
+										listing.modelImages.length > 0 &&
+										'border border-primary'
+								)}>
+								<Icon as={Images} className="text-primary" />
+								<Text>Create a 3D visual tour</Text>
+								<Avatar className=" ml-auto">
+									<Text size="lg" className="text-white">
+										{listing?.modelImages ? listing?.modelImages.length : 0}
+									</Text>
+								</Avatar>
+							</View>
+						</TouchableOpacity> */}
+					</View>
 				</View>
+				<ListingPhotosBottomSheet
+					visible={photosBottomSheet}
+					photos={listing.photos}
+					setCoverPhoto={(id) => {
+						let newData = listing.photos?.map((item, i) =>
+							i == id ? { ...item, default: true } : { ...item, default: false }
+						);
+						updateListing({ ...listing, photos: newData });
+					}}
+					onDismiss={() => setPhotosBottomSheet(false)}
+					deleteFile={(id) => {
+						let newData = listing.photos?.filter((_, i) => i != id);
+						updateListing({ ...listing, photos: newData });
+					}}
+					onUpdate={(data) => {
+						let combined = [...(listing.photos ?? []), ...data];
+						combined = combined.map((item, i) =>
+							i == 0 ? { ...item, default: true } : { ...item, default: false }
+						);
+						updateListing({ ...listing, photos: combined });
+					}}
+				/>
+				<ListingVideosBottomSheet
+					deleteFile={(id) => {
+						let newData = listing.videos?.filter((_, i) => i != id);
+						updateListing({ ...listing, videos: newData });
+					}}
+					onUpdate={(data) => {
+						let combined = [...(listing.videos ?? []), ...data];
+						combined = combined.map((item, i) =>
+							i == 0 ? { ...item, default: true } : { ...item, default: false }
+						);
+						updateListing({ ...listing, videos: combined });
+					}}
+					visible={videosBottomSheet}
+					videos={listing.videos}
+					onDismiss={() => setVideosBottomSheet(false)}
+				/>
 			</Box>
 		</>
 	);
