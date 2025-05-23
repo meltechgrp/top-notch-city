@@ -73,7 +73,7 @@
 			[
 				"expo-image-picker",
 				{
-					"photosPermission": "Allow $(PRODUCT_NAME) accesses your photos for property upload and profile."
+					"photosPermission": "Allow $(PRODUCT_NAME) to access your photos for property upload and profile."
 				}
 			],
 			[
