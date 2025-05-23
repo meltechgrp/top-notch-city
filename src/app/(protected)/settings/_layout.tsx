@@ -1,10 +1,10 @@
-import { useTheme } from '@/components/layouts/ThemeProvider';
 import headerLeft from '@/components/shared/headerLeft';
+import { useResolvedTheme } from '@/components/ui';
 import { Colors } from '@/constants/Colors';
 import { Stack } from 'expo-router';
 
 export default function SettingsLayout() {
-	const { theme } = useTheme();
+	const theme = useResolvedTheme();
 	return (
 		<Stack
 			screenOptions={{
@@ -14,6 +14,7 @@ export default function SettingsLayout() {
 				animationTypeForReplace: 'push',
 				headerTitleAlign: 'center',
 				animation: 'slide_from_right',
+				headerTransparent: true,
 				headerBackVisible: false,
 				headerShadowVisible: true,
 				headerLeft: headerLeft(),
@@ -21,8 +22,7 @@ export default function SettingsLayout() {
 					color: theme == 'dark' ? Colors.dark.text : Colors.light.text,
 				},
 				headerStyle: {
-					backgroundColor:
-						theme == 'dark' ? Colors.light.background : Colors.dark.background,
+					backgroundColor: 'transparent',
 				},
 				statusBarStyle: theme == 'dark' ? 'light' : 'dark',
 			}}>
@@ -36,7 +36,7 @@ export default function SettingsLayout() {
 				name="theme"
 				options={{
 					headerTitle: 'Themes',
-					animationDuration: 2000,
+					animationDuration: 1500,
 					animation: 'fade_from_bottom',
 				}}
 			/>

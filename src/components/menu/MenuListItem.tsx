@@ -49,7 +49,7 @@ export function MenuListItem(props: MenuListItemProps) {
 					<Text className="text-base font-medium">{title}</Text>
 					<Text className="text-sm text-typography/80">{description}</Text>
 				</View>
-				{withArrow && <Icon as={ChevronRight} />}
+				{withArrow && <Icon as={ChevronRight} className="text-primary" />}
 			</View>
 		</TouchableOpacity>
 	);

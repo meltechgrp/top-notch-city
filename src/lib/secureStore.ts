@@ -29,37 +29,4 @@ export function removeAuthToken() {
 	storage.clearAll();
 	eventBus.dispatchEvent('TOKEN_CHANGE', null);
 }
-// save app pin code
-export async function saveAppPinCode(pinCode: string) {
-	// hash pin code
-	const hash = await Crypto.digestStringAsync(
-		Crypto.CryptoDigestAlgorithm.SHA256,
-		pinCode
-	);
-	return secureStorage.set('__APP_PIN_CODE__', hash);
-}
-// get app pin code
-export function getAppPinCode() {
-	return secureStorage.getString('__APP_PIN_CODE__');
-}
-// check if app pin code is set
-export function hasAppPinCode() {
-	return !!secureStorage.getString('__APP_PIN_CODE__');
-}
-// remove app pin code
-export function removeAppPinCode() {
-	return secureStorage.delete('__APP_PIN_CODE__');
-}
-// verify app pin code
-export async function verifyAppPinCode(pinCode: string) {
-	const appPinHash = getAppPinCode();
-	if (!appPinHash) {
-		return false;
-	}
-	const hash = await Crypto.digestStringAsync(
-		Crypto.CryptoDigestAlgorithm.SHA256,
-		pinCode
-	);
-	return appPinHash === hash;
-}
 export default secureStorage;
