@@ -57,27 +57,8 @@ export default function ListingAmenities() {
 			});
 		}
 	}
-	function addToFeatures(label: string) {
-		const prev = listing.features?.includes(label);
-		let prevFeat = listing?.features ? listing.features : [];
-		if (!prev)
-			updateListing({
-				...listing,
-				features: [...prevFeat, label],
-			});
-		else {
-			prevFeat = prevFeat.filter((feat) => feat !== label);
-			updateListing({
-				...listing,
-				features: prevFeat,
-			});
-		}
-	}
 	function checkFacItem(item: string) {
 		return listing.facilities?.find((fac) => fac.label === item)?.value ?? 0;
-	}
-	function checkFeatItem(item: string) {
-		return listing.features?.includes(item);
 	}
 	return (
 		<>
@@ -94,16 +75,12 @@ export default function ListingAmenities() {
 								</View>
 								<View className="gap-4">
 									{section.data.map((item) => {
-										const prev = item.withNumber
-											? listing.facilities?.find(
-													(fac) => fac.label === item.label
-												)
-											: listing.features?.find((fac) => fac === item.label);
+										listing.features?.find((fac) => fac === item.label);
 										return (
 											<View
 												key={item.label}
 												className={cn(
-													' gap-2 p-4 flex-row justify-between items-center rounded-2xl border-b border-outline'
+													' gap-2 p-4 flex-row justify-between items-center rounded-2xl bg-background-muted'
 												)}>
 												<View className="flex-row gap-4 items-center">
 													<Icon
@@ -113,51 +90,33 @@ export default function ListingAmenities() {
 													<Text size="lg">{item.label}</Text>
 												</View>
 												<View>
-													{item.withNumber ? (
-														<View className="flex-row gap-3 items-center">
-															<Pressable
-																onPress={() =>
-																	item.withNumber &&
-																	addToFacilities(item.label, 'minus')
-																}>
-																<View
-																	className={cn(
-																		' p-3 border border-outline-100 rounded-full'
-																	)}>
-																	<Icon as={Minus} />
-																</View>
-															</Pressable>
-															<View>
-																<Text size="xl">
-																	{checkFacItem(item.label)}
-																</Text>
+													<View className="flex-row gap-3 items-center">
+														<Pressable
+															onPress={() =>
+																addToFacilities(item.label, 'minus')
+															}>
+															<View
+																className={cn(
+																	' p-3 border border-outline-100 rounded-full'
+																)}>
+																<Icon as={Minus} />
 															</View>
-															<Pressable
-																onPress={() =>
-																	item.withNumber &&
-																	addToFacilities(item.label, 'add')
-																}>
-																<View
-																	className={cn(
-																		' p-3 border border-outline-100 rounded-full'
-																	)}>
-																	<Icon as={Plus} />
-																</View>
-															</Pressable>
+														</Pressable>
+														<View>
+															<Text size="xl">{checkFacItem(item.label)}</Text>
 														</View>
-													) : (
-														<Checkbox
-															size="md"
-															value=""
-															isChecked={checkFeatItem(item.label)}
-															onChange={() => addToFeatures(item.label)}
-															isInvalid={false}
-															isDisabled={false}>
-															<CheckboxIndicator>
-																<CheckboxIcon as={CheckIcon} />
-															</CheckboxIndicator>
-														</Checkbox>
-													)}
+														<Pressable
+															onPress={() =>
+																addToFacilities(item.label, 'add')
+															}>
+															<View
+																className={cn(
+																	' p-3 border border-outline-100 rounded-full'
+																)}>
+																<Icon as={Plus} />
+															</View>
+														</Pressable>
+													</View>
 												</View>
 											</View>
 										);
@@ -179,25 +138,21 @@ const data = [
 			{
 				label: 'Bedroom',
 				value: 'bedroom',
-				withNumber: true,
 				icon: Bed,
 			},
 			{
 				label: 'Bathroom',
 				value: 'bathrrom',
-				withNumber: true,
 				icon: Bath,
 			},
 			{
 				label: 'Home Office',
 				value: 'home-office',
-				withNumber: false,
 				icon: Home,
 			},
 			{
 				label: 'Laundry Room',
 				value: 'laundry-room',
-				withNumber: false,
 				icon: Shirt,
 			},
 		],
@@ -208,13 +163,11 @@ const data = [
 			{
 				label: 'Lenght',
 				value: 'lenght',
-				withNumber: true,
 				icon: LandPlot,
 			},
 			{
 				label: 'Width',
 				value: 'width',
-				withNumber: true,
 				icon: LandPlot,
 			},
 		],
@@ -225,25 +178,21 @@ const data = [
 			{
 				label: 'Parking Area',
 				value: 'parking-area',
-				withNumber: false,
 				icon: ParkingCircle,
 			},
 			{
 				label: 'Garden',
 				value: 'garden',
-				withNumber: false,
 				icon: Trees,
 			},
 			{
 				label: 'Water Supply',
 				value: 'water-supply',
-				withNumber: false,
 				icon: Droplet,
 			},
 			{
 				label: 'Electricity',
 				value: 'electricity',
-				withNumber: false,
 				icon: UtilityPole,
 			},
 		],

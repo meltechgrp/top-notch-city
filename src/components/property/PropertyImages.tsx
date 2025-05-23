@@ -8,10 +8,10 @@ import Animated, {
 	withTiming,
 } from 'react-native-reanimated';
 import { Image } from '@/components/ui';
-import { Grid, GridItem } from '../ui/grid';
 import TabView from '../shared/TabView';
 import { X } from 'lucide-react-native';
 import { hapticFeed } from '../HapticTab';
+import Layout from '@/constants/Layout';
 
 type Props = {
 	images: { path: any }[];
@@ -37,7 +37,6 @@ export default function PropertyImages({ images }: Props) {
 	};
 
 	const closeImage = () => {
-		hapticFeed();
 		opacity.value = withTiming(0);
 		setTimeout(() => setVisible(false), 500);
 	};
@@ -48,33 +47,32 @@ export default function PropertyImages({ images }: Props) {
 	const animatedBackdrop = useAnimatedStyle(() => ({
 		backgroundColor: `rgba(0,0,0,${backdropOpacity.value})`,
 	}));
+	const { width } = Layout.window;
+	console.log(width);
 	return (
 		<>
-			<Grid className="gap-4 flex-1" _extra={{ className: 'grid-cols-3' }}>
+			<View className="gap-4 flex-1 flex-row flex-wrap justify-between px-4 mx-auto">
 				{images.map((image, i) => (
-					<GridItem
-						className="flex-1 aspect-square"
-						key={i + 'a'}
-						_extra={{ className: 'col-span-1' }}>
-						<Pressable
-							onPress={() => {
-								hapticFeed();
-								handleOpen(i);
-							}}>
-							<Animated.View
-								entering={FadeIn}
-								exiting={FadeOut}
-								className="w-full h-full">
-								<Image
-									source={image.path}
-									alt="Property Image"
-									className="w-full h-full rounded-md"
-								/>
-							</Animated.View>
-						</Pressable>
-					</GridItem>
+					<Pressable
+						key={image.path + i}
+						style={{ width: width / 3 - 20 }}
+						onPress={() => {
+							hapticFeed();
+							handleOpen(i);
+						}}>
+						<Animated.View
+							entering={FadeIn}
+							exiting={FadeOut}
+							className="w-full h-32">
+							<Image
+								source={image.path}
+								alt="Property Image"
+								className="w-full h-full rounded-md"
+							/>
+						</Animated.View>
+					</Pressable>
 				))}
-			</Grid>
+			</View>
 
 			<Modal
 				visible={visible}
@@ -85,7 +83,6 @@ export default function PropertyImages({ images }: Props) {
 					<View className="flex-1" collapsable={false}>
 						<TabView
 							activeTab={selectedIndex}
-							mode="parallax"
 							scrollAnimationDuration={500}
 							onTabSelected={setSelectedIndex}>
 							{images.map((item, i) => (
@@ -97,7 +94,9 @@ export default function PropertyImages({ images }: Props) {
 											{ width: '100%', height: '100%' },
 											animatedImageStyle,
 										]}>
-										<TouchableWithoutFeedback className="w-full h-full">
+										<TouchableWithoutFeedback
+											onPress={closeImage}
+											className="w-full h-full">
 											<View className="h-full items-center justify-center">
 												<Image
 													source={item.path}

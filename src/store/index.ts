@@ -4,11 +4,23 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getUniqueIdSync } from 'react-native-device-info';
 import { ImagePickerAsset } from 'expo-image-picker';
 
+export type Profile = {
+	firstName?: string;
+	lastName?: string;
+	email?: string;
+	phoneNumber?: string;
+	gender?: string;
+	dob?: any;
+	photo?: any;
+};
+
+export const profileDefault = require('@/assets/images/Avatar.png');
+
 type State = {
 	hasAuth: boolean;
 	isAdmin: boolean;
 	displayStyle: 'flex' | 'grid';
-	me?: any;
+	me?: Profile;
 	isOnboarded: boolean;
 };
 
@@ -18,6 +30,7 @@ type Actions = {
 	setIsAdmin: (isAdmin: boolean) => void;
 	setDisplayStyle: (displayStyle: 'flex' | 'grid') => void;
 	setIsOnboarded: (isOnboarded: boolean) => void;
+	updateProfile: (data: Profile) => void;
 };
 
 const initialState: State = {
@@ -25,6 +38,15 @@ const initialState: State = {
 	isAdmin: false,
 	displayStyle: 'flex',
 	isOnboarded: false,
+	me: {
+		firstName: 'Humphrey',
+		lastName: 'Joshua',
+		email: 'joshhumphrey753@gmail.com',
+		phoneNumber: '+234 814 959 3345',
+		gender: 'Male',
+		dob: Date.now(),
+		photo: null,
+	},
 };
 
 type StateAndActions = State & Actions;
@@ -48,6 +70,8 @@ export const useStore = create<StateAndActions>(
 			setIsOnboarded(isOnboarded) {
 				set((state) => ({ ...state, isOnboarded }));
 			},
+			updateProfile: (data) =>
+				set((state) => ({ ...state, me: { ...state.me, ...data } })),
 		}),
 		{
 			name: 'top-notch-storage',

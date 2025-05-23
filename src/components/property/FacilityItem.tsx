@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Text, View } from '../ui';
+import { Icon, Text, View } from '../ui';
 import {
 	Bath,
 	Bed,
@@ -17,7 +17,7 @@ type Props = {
 	hideText?: boolean;
 	textClassname?: string;
 	className?: string;
-	iconSize?: number;
+	iconSize?: '2xs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 };
 
 export default function FacilityItem({
@@ -28,7 +28,7 @@ export default function FacilityItem({
 	hideText,
 	iconSize,
 }: Props) {
-	const Icon: LucideIcon = useMemo(() => {
+	const Shape: LucideIcon = useMemo(() => {
 		if (icon == 'bathroom') {
 			return Bath;
 		} else if (icon == 'bedroom') {
@@ -45,7 +45,7 @@ export default function FacilityItem({
 	}, [icon]);
 	return (
 		<View className={cn('flex-row gap-2 items-center', className)}>
-			<Icon size={iconSize ?? 18} color={'#F8AA00'} />
+			<Icon as={Shape} size={iconSize ?? 'sm'} className="text-primary" />
 			{!hideText && (
 				<Text numberOfLines={1} className={textClassname}>
 					{name}

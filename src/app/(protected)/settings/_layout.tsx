@@ -1,7 +1,7 @@
 import { useTheme } from '@/components/layouts/ThemeProvider';
 import headerLeft from '@/components/shared/headerLeft';
 import { Colors } from '@/constants/Colors';
-import { Stack, useRouter } from 'expo-router';
+import { Stack } from 'expo-router';
 
 export default function SettingsLayout() {
 	const { theme } = useTheme();
@@ -35,7 +35,6 @@ export default function SettingsLayout() {
 			<Stack.Screen
 				name="theme"
 				options={{
-					presentation: 'fullScreenModal',
 					headerTitle: 'Themes',
 					animationDuration: 2000,
 					animation: 'fade_from_bottom',

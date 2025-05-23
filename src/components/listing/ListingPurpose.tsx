@@ -39,15 +39,18 @@ export default function ListingPurpose({ option, onUpdate }: Props) {
 							onPress={() => onUpdate('rent')}>
 							<View
 								className={cn(
-									' gap-2 p-4 rounded-2xl border border-outline',
+									' gap-2 p-4 rounded-2xl border-b-4 border-b-background-muted bg-background-muted ',
 									option == 'rent' && 'border-primary'
 								)}>
-								<View className=" border-[0.4px] self-start border-primary rounded-full p-2 mb-2">
-									<Icon as={KeyRound} className="text-primary w-4 h-4" />
+								<View
+									className={cn(
+										'  bg-background self-center rounded-full p-3 mb-2',
+										option == 'rent' && 'bg-primary'
+									)}>
+									<Icon size="xl" as={KeyRound} />
 								</View>
-								<Text>Rent My Property</Text>
-								<Text size="xs" className=" font-light">
-									(Earn passive income with trusted tenants!)
+								<Text size="xl" className="text-center font-bold">
+									Rent Property
 								</Text>
 							</View>
 						</TouchableOpacity>
@@ -56,18 +59,18 @@ export default function ListingPurpose({ option, onUpdate }: Props) {
 							onPress={() => onUpdate('sell')}>
 							<View
 								className={cn(
-									' gap-2 p-4 rounded-2xl border border-outline',
+									' gap-2 p-4 rounded-2xl border-b-4 border-b-background-muted bg-background-muted ',
 									option == 'sell' && 'border-primary'
 								)}>
-								<View className=" border-[0.4px] border-primary self-start rounded-full p-2 mb-2">
-									<Icon
-										as={RectangleEllipsis}
-										className="text-primary w-4 h-4"
-									/>
+								<View
+									className={cn(
+										'  bg-background self-center rounded-full p-3 mb-2',
+										option == 'sell' && 'bg-primary'
+									)}>
+									<Icon size="xl" as={RectangleEllipsis} />
 								</View>
-								<Text>Sell My Property </Text>
-								<Text size="xs" className=" font-light">
-									(Maximize your profit with expert valuation & fast sales!)
+								<Text size="xl" className="text-center font-bold">
+									Sell Property{' '}
 								</Text>
 							</View>
 						</TouchableOpacity>

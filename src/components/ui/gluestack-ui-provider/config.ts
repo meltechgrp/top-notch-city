@@ -52,7 +52,7 @@ export const config = {
 		/* Typography */
 		'--color-typography': '10 20 22',
 		/* Background */
-		'--color-background': '241 240 245',
+		'--color-background': '238 236 240',
 
 		/* Outline */
 		'--color-outline-100': '230 230 230',

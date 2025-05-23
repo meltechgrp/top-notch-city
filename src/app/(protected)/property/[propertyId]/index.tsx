@@ -6,6 +6,7 @@ import React, { useMemo } from 'react';
 import {
 	ChevronLeftIcon,
 	ChevronRight,
+	Heart,
 	MapPin,
 	Share2,
 } from 'lucide-react-native';
@@ -32,6 +33,7 @@ import { Divider } from '@/components/ui/divider';
 import { ChevronUpIcon, ChevronDownIcon, Icon } from '@/components/ui/icon';
 import Map from '@/components/location/map';
 import SimilarProperties from '@/components/property/SimilarProperties';
+import CustomTabBar3 from '@/components/layouts/CustomTopBar3';
 
 const data: Property[] = [
 	{
@@ -62,7 +64,7 @@ const data: Property[] = [
 
 export default function PropertyItem() {
 	const router = useRouter();
-	const [index, setIndex] = React.useState(0);
+	const [current, setCurrent] = React.useState('images');
 	const { propertyId } = useLocalSearchParams() as { propertyId: string };
 	const property = useMemo(() => {
 		return data.find((item) => item.id === 'dhghg662389kndnc');
@@ -115,14 +117,14 @@ export default function PropertyItem() {
 			path: require('@/assets/images/property/img6.png'),
 		},
 	];
-	const renderScene = {
+	const RenderScene = {
 		images: () => <PropertyImages images={images} />,
 		video: () => (
 			<View className="flex-1 items-center h-[20rem] justify-center">
 				<Text size="xl">Video Coming Soon</Text>
 			</View>
 		),
-		view: () => <Property3DView id={propertyId} image={images[0]} />,
+		view: () => <Property3DView id={propertyId} image={data[0].banner} />,
 	};
 	const routes = [
 		{ key: 'images', title: 'Pictures' },
@@ -138,14 +140,15 @@ export default function PropertyItem() {
 					headerBackVisible: false,
 					headerStyle: { backgroundColor: undefined },
 					statusBarStyle: 'light',
-					headerTitle: property.name,
+					headerTitle: '',
 					headerTitleStyle: { color: 'white', fontSize: 20 },
 					headerRight: () => (
 						<View
 							style={{
 								flexDirection: 'row',
 								alignItems: 'center',
-							}}>
+							}}
+							className="mr-4">
 							<Pressable
 								onPress={() => {
 									hapticFeed();
@@ -155,7 +158,10 @@ export default function PropertyItem() {
 									});
 								}}
 								style={{ padding: 8 }}>
-								<Share2 color={'orange'} />
+								<Icon as={Share2} className=" text-white w-7 h-7" />
+							</Pressable>
+							<Pressable onPress={() => {}} style={{ padding: 8 }}>
+								<Icon as={Heart} className=" text-white w-7 h-7" />
 							</Pressable>
 						</View>
 					),
@@ -282,16 +288,12 @@ export default function PropertyItem() {
 								</AccordionContent>
 							</AccordionItem>
 						</Accordion>
-						<View className="px-4">
-							<TabView
-								style={{ height: 340 }}
-								renderTabBar={(props) => <CustomTabBar2 {...props} />}
-								navigationState={{ index, routes }}
-								renderScene={SceneMap(renderScene)}
-								onIndexChange={setIndex}
-								initialLayout={{ width: Layout.window.width }}
-							/>
-						</View>
+						<CustomTabBar3
+							setCurrent={setCurrent}
+							routes={routes}
+							current={current}>
+							{RenderScene[current as keyof typeof RenderScene]()}
+						</CustomTabBar3>
 						<View className=" gap-4 px-4">
 							<Pressable className="flex-row gap-4 bg-background-muted p-4 rounded-xl items-center justify-between">
 								<BookPropertyIcon />
@@ -300,7 +302,9 @@ export default function PropertyItem() {
 								</Text>
 								<Icon as={ChevronRight} />
 							</Pressable>
-							<Pressable className="flex-row gap-4 bg-background-muted p-4 rounded-xl items-center justify-between">
+							<Pressable
+								onPress={() => router.push('/message')}
+								className="flex-row gap-4 bg-background-muted p-4 rounded-xl items-center justify-between">
 								<WhatsappIcon />
 								<Text size="lg" className=" mr-auto">
 									Chat with Realtor

@@ -36,6 +36,8 @@ export default function TabLayout() {
 				},
 				headerTitleStyle: {
 					color: theme == 'dark' ? Colors.dark.text : Colors.light.text,
+					fontWeight: 600,
+					fontSize: 22,
 				},
 			}}>
 			<Tabs.Screen
@@ -56,7 +58,7 @@ export default function TabLayout() {
 			<Tabs.Screen
 				name="sell"
 				options={{
-					title: 'Sell',
+					title: 'Sell Property',
 					headerShown: true,
 					tabBarIcon: ({ color }) => <Tag size={24} color={color} />,
 				}}

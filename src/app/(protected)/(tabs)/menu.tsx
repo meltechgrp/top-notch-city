@@ -4,8 +4,6 @@ import {
 	AvatarFallbackText,
 	AvatarImage,
 	Box,
-	Button,
-	ButtonText,
 	Icon,
 	ImageBackground,
 	Pressable,
@@ -21,7 +19,6 @@ import {
 	ChevronRight,
 	Mail,
 	NotebookText,
-	ReceiptText,
 	Settings,
 	Share2,
 	Sparkle,
@@ -31,12 +28,9 @@ import { MenuListItem } from '@/components/menu/MenuListItem';
 import config from '@/config';
 import { LogoutButton } from '@/components/menu/LogoutButton';
 import { Divider } from '@/components/ui/divider';
-import { cn, formatToNaira } from '@/lib/utils';
-import { MotiView } from 'moti';
-import { Skeleton } from 'moti/skeleton';
+import { cn } from '@/lib/utils';
 import NotificationBarButton from '@/components/notifications/NotificationBarButton';
-import { Colors } from '@/constants/Colors';
-import { useStore } from '@/store';
+import { profileDefault, useStore } from '@/store';
 
 export default function More() {
 	const me = useStore((v) => v.me);
@@ -48,7 +42,7 @@ export default function More() {
 	async function onInvite() {
 		try {
 			const result = await Share.share({
-				message: 'Invite your friends to join the MyNebor app',
+				message: 'Invite your friends to join TopNotch City Estate.',
 			});
 			if (result.action === Share.sharedAction) {
 				if (result.activityType) {
@@ -109,9 +103,13 @@ export default function More() {
 									<AvatarFallbackText>Humphrey Joshua</AvatarFallbackText>
 									<AvatarBadge size="md" />
 									<AvatarImage
-										source={{
-											uri: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=800&q=60',
-										}}
+										source={
+											me?.photo
+												? {
+														uri: me?.photo,
+													}
+												: profileDefault
+										}
 									/>
 								</Avatar>
 								<View className="flex-1 pl-3">
@@ -154,7 +152,7 @@ export default function More() {
 										onPress={() => {
 											// me &&
 											router.push({
-												pathname: '/(protected)/profile/[user]',
+												pathname: '/(protected)/account',
 												params: {
 													user: 'hghjhgjhj',
 													ref: pathname,
@@ -201,9 +199,7 @@ export default function More() {
 										icon={Share2}
 										className=" py-2 pb-3"
 										iconColor="tertiary-300"
-										onPress={() => {
-											// router.push('/account/invite-friends');
-										}}
+										onPress={onInvite}
 									/>
 									<Divider className=" h-[0.3px] bg-background-info mb-4" />
 									<MenuListItem
@@ -240,18 +236,5 @@ export default function More() {
 				</Box>
 			</ImageBackground>
 		</>
-	);
-}
-
-//wallet loading skeleton
-export function WalletLoadingSkeleton() {
-	return (
-		<MotiView
-			transition={{
-				type: 'timing',
-			}}
-			className="py-2 flex flex-row items-center">
-			<Skeleton colorMode="light" width="100%" height={36} />
-		</MotiView>
 	);
 }

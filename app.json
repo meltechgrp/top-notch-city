@@ -80,7 +80,7 @@
 				"expo-splash-screen",
 				{
 					"image": "./src/assets/images/splash.png",
-					"resizeMode": "cover"
+					"resizeMode": "contain"
 				}
 			]
 		],

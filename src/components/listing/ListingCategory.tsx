@@ -37,16 +37,19 @@ export default function ListingCategory({ option, onUpdate }: Props) {
 											onPress={() => onUpdate(item.value)}>
 											<View
 												className={cn(
-													' gap-2 p-4 rounded-2xl border border-outline',
+													' gap-2 p-4 rounded-2xl bg-background-muted border-b-4 border-background-muted',
 													option == item.value && 'border-primary'
 												)}>
-												<View className=" border-[0.4px] self-start border-primary rounded-full p-2 mb-2 shadow">
-													<Icon
-														as={item.icon}
-														className="text-primary w-4 h-4"
-													/>
+												<View
+													className={cn(
+														' bg-background self-center rounded-full p-2 mb-2 shadow',
+														option == item.value && 'bg-primary'
+													)}>
+													<Icon as={item.icon} size="xl" />
 												</View>
-												<Text size="lg">{item.label}</Text>
+												<Text size="lg" className=" text-center">
+													{item.label}
+												</Text>
 											</View>
 										</TouchableOpacity>
 									))}

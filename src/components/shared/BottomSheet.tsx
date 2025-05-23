@@ -135,7 +135,7 @@ export default function BottomSheet(props: BottomSheetProps) {
 								<View className="h-1 w-[54px] rounded-md bg-outline-200" />
 							</View>
 							{props.withHeader && (
-								<View className="flex-row w-full justify-between items-center px-4 relative py-2.5 border-b border-outline-300 ">
+								<View className="flex-row w-full justify-end items-center px-4 relative py-2.5 ">
 									<View className="flex-row w-full justify-center items-center absolute inset-0 pl-8">
 										<Heading className=" font-medium">{props.title}</Heading>
 									</View>
@@ -147,8 +147,8 @@ export default function BottomSheet(props: BottomSheetProps) {
 											</View>
 										) : (
 											withCloseButton && (
-												<View className="flex-row justify-center items-center">
-													<Icon as={CloseIcon} />
+												<View className="flex-row justify-center p-1 bg-background-info rounded-full items-center">
+													<Icon size="xl" as={CloseIcon} />
 												</View>
 											)
 										)}
