@@ -47,7 +47,7 @@ export default function OnboardingScreenContainer(props: Props) {
 					<ScreenContianer
 						edges={edges}
 						style={{ flex: 1 }}
-						keyboardVerticalOffset={Platforms.isIOS() ? 20 : undefined}>
+						keyboardVerticalOffset={Platforms.isIOS() ? 20 : 0}>
 						<View className="py-6 flex-1 ">
 							<View className="flex-row mt-2 items-center pb-4 px-6">
 								{allowBack && (
@@ -67,15 +67,18 @@ export default function OnboardingScreenContainer(props: Props) {
 									</View>
 								)}
 							</View>
-							{withScroll ? (
-								<ScrollView
-									keyboardShouldPersistTaps="handled"
-									contentContainerClassName="pt-2 px-6">
-									{children}
-								</ScrollView>
-							) : (
-								<View className="pt-2 px-6 flex-1">{children}</View>
-							)}
+							<ScrollView
+								keyboardShouldPersistTaps="handled"
+								contentInsetAdjustmentBehavior="automatic"
+								automaticallyAdjustsScrollIndicatorInsets={true}
+								showsVerticalScrollIndicator
+								alwaysBounceVertical
+								contentInset={{ bottom: 0 }}
+								scrollIndicatorInsets={{ bottom: 0 }}
+								automaticallyAdjustKeyboardInsets={true}
+								contentContainerClassName="pt-2 px-6">
+								{children}
+							</ScrollView>
 						</View>
 					</ScreenContianer>
 				</View>

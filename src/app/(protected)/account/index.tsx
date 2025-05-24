@@ -12,14 +12,22 @@ import {
 import { ScrollView } from 'react-native';
 import React, { useState } from 'react';
 import { cn, fullName } from '@/lib/utils';
-import { profileDefault, useStore } from '@/store';
+import { profileDefault, useStore, useTempStore } from '@/store';
 import { ChevronRight, Edit2 } from 'lucide-react-native';
 import { format } from 'date-fns';
 import ProfileImageBottomSheet from '@/components/account/ProfileImageBottomSheet';
+import { setProfileImage } from '@/actions/user';
+import { ImagePickerAsset } from 'expo-image-picker';
 
 export default function Account() {
-	const { me, updateProfile } = useStore();
+	const { me } = useStore();
+	const { updateFullScreenLoading } = useTempStore();
 	const [imageBottomSheet, setImageBottomSheet] = useState(false);
+	async function handleImageUpload(image: ImagePickerAsset) {
+		updateFullScreenLoading(true);
+		await setProfileImage(image, me?.first_name ?? 'profile');
+		updateFullScreenLoading(false);
+	}
 	return (
 		<>
 			<ImageBackground
@@ -38,9 +46,9 @@ export default function Account() {
 									<AvatarFallbackText>{fullName(me)}</AvatarFallbackText>
 									<AvatarImage
 										source={
-											me?.photo
+											me?.profile_image
 												? {
-														uri: me?.photo,
+														uri: me?.profile_image,
 													}
 												: profileDefault
 										}
@@ -87,7 +95,7 @@ export default function Account() {
 								</View>
 								<View className="flex-row justify-between items-center bg-background-muted rounded-xl p-4">
 									<Text size="lg" className=" font-normal">
-										{me?.phoneNumber ?? 'N/A'}
+										{me?.phone ?? 'N/A'}
 									</Text>
 									<Icon as={ChevronRight} />
 								</View>
@@ -113,8 +121,8 @@ export default function Account() {
 								</View>
 								<View className="flex-row justify-between items-center bg-background-muted rounded-xl p-4">
 									<Text size="lg" className=" font-normal">
-										{me?.dob
-											? format(new Date(me?.dob), 'MMM dd, yyyy')
+										{me?.date_of_birth
+											? format(new Date(me?.date_of_birth), 'MMM dd, yyyy')
 											: 'N/A'}
 									</Text>
 									<Icon as={ChevronRight} />
@@ -127,8 +135,7 @@ export default function Account() {
 			<ProfileImageBottomSheet
 				visible={imageBottomSheet}
 				onDismiss={() => setImageBottomSheet(false)}
-				photo={me?.photo}
-				onUpdate={updateProfile}
+				updateImage={handleImageUpload}
 			/>
 		</>
 	);

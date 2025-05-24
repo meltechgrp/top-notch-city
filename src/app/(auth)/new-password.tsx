@@ -51,7 +51,7 @@ export default function NewPassword() {
 	};
 	return (
 		<OnboardingScreenContainer allowBack={false}>
-			<Box className="w-[98%] bg-background/80 max-w-[26rem] gap-6 mt-4 mx-auto rounded-xl p-6">
+			<Box className="w-[98%] bg-background-muted/90 max-w-[26rem] gap-6 mt-4 mx-auto rounded-xl p-6">
 				<View>
 					<Text className=" text-2xl text-primary font-semibold font-heading text-center">
 						Set a new password

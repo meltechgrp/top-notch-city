@@ -1,3 +1,4 @@
+import { me } from '@/actions/user';
 import DiscoverProperties from '@/components/home/DiscoverProperties';
 import FeaturedProperties from '@/components/home/featured';
 import TopProperties from '@/components/home/properties';
@@ -11,8 +12,8 @@ import React from 'react';
 import { FlatList, RefreshControl } from 'react-native';
 
 export default function HomeScreen() {
-	const fetch = () => {
-		return new Promise((resolve) => setTimeout(resolve, 2000));
+	const fetch = async () => {
+		// await me();
 	};
 
 	const { isRefreshing, onRefresh } = useRefresh(fetch);

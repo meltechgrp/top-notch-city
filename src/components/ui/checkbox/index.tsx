@@ -82,7 +82,7 @@ const checkboxIndicatorStyle = tva({
 });
 
 const checkboxLabelStyle = tva({
-	base: 'text-typography data-[checked=true]:text-typography data-[hover=true]:text-typography data-[hover=true]:data-[checked=true]:text-typography data-[hover=true]:data-[checked=true]:data-[disabled=true]:text-typography data-[hover=true]:data-[disabled=true]:text-typography-400 data-[active=true]:text-typography data-[active=true]:data-[checked=true]:text-typography data-[disabled=true]:opacity-40 web:select-none',
+	base: 'text-typography data-[checked=true]:text-typography data-[hover=true]:text-typography data-[hover=true]:data-[checked=true]:text-typography data-[hover=true]:data-[checked=true]:data-[disabled=true]:text-typography data-[hover=true]:data-[disabled=true]:text-typography data-[active=true]:text-typography data-[active=true]:data-[checked=true]:text-typography data-[disabled=true]:opacity-40 web:select-none',
 	parentVariants: {
 		size: {
 			lg: 'text-lg',

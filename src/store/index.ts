@@ -3,6 +3,7 @@ import { createJSONStorage, persist, PersistOptions } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getUniqueIdSync } from 'react-native-device-info';
 import { ImagePickerAsset } from 'expo-image-picker';
+import { UpdateUserInput } from '@/lib/schema';
 
 export type Profile = {
 	firstName?: string;
@@ -20,17 +21,18 @@ type State = {
 	hasAuth: boolean;
 	isAdmin: boolean;
 	displayStyle: 'flex' | 'grid';
-	me?: Profile;
+	me?: Me;
 	isOnboarded: boolean;
 };
 
 type Actions = {
 	resetStore: () => void;
 	getDeviceId: () => string;
+	setMe: (me: Me) => void;
 	setIsAdmin: (isAdmin: boolean) => void;
 	setDisplayStyle: (displayStyle: 'flex' | 'grid') => void;
 	setIsOnboarded: (isOnboarded: boolean) => void;
-	updateProfile: (data: Profile) => void;
+	updateProfile: (data: Me) => void;
 };
 
 const initialState: State = {
@@ -38,15 +40,6 @@ const initialState: State = {
 	isAdmin: false,
 	displayStyle: 'flex',
 	isOnboarded: false,
-	me: {
-		firstName: 'Humphrey',
-		lastName: 'Joshua',
-		email: 'joshhumphrey753@gmail.com',
-		phoneNumber: '+234 814 959 3345',
-		gender: 'Male',
-		dob: Date.now(),
-		photo: null,
-	},
 };
 
 type StateAndActions = State & Actions;
@@ -62,6 +55,7 @@ export const useStore = create<StateAndActions>(
 			setIsAdmin: (isAdmin) => {
 				set((state) => ({ ...state, isAdmin }));
 			},
+			setMe: (me) => set((state) => ({ ...state, me })),
 			getDeviceId: getUniqueIdSync,
 			resetStore: () => set(initialState),
 			setDisplayStyle: (displayStyle) => {
@@ -107,9 +101,11 @@ type Listing = {
 type TempState = {
 	fullScreenLoading: boolean;
 	listing: Listing;
+	kyc?: Partial<UpdateUserInput>;
 	updateFullScreenLoading: (fullScreenLoading: boolean) => void;
 	resetStore: () => void;
 	resetListing: () => void;
+	resetKyc: () => void;
 	updateListing: (data: Listing) => void;
 };
 const initialTempState = {
@@ -127,6 +123,7 @@ export const useTempStore = create<TempState>((set, get) => ({
 	updateFullScreenLoading: (fullScreenLoading: boolean) =>
 		set((state) => ({ ...state, fullScreenLoading })),
 	resetStore: () => set(initialTempState),
+	resetKyc: () => set((state) => ({ ...state, kyc0: undefined })),
 	resetListing: () =>
 		set((state) => ({ ...state, listing: initialTempState.listing })),
 	updateListing: (data) =>

@@ -3,6 +3,7 @@ import { Linking } from 'react-native';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useEffect, useState } from 'react';
+import eventBus from './eventBus';
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -74,6 +75,11 @@ export function formatToNaira(
 	return formatMoney(toNaira(amountInKobo), 'NGN', fractionDigits);
 }
 
+// show snackbar message
+export function showSnackbar(option: SnackBarOption) {
+	eventBus.dispatchEvent('addSnackBar', option);
+}
+
 export function formatMoney(
 	amount: number,
 	currency: string,
@@ -134,7 +140,7 @@ export function formatMessageTime(
 
 // fullName of a user
 export function fullName(user: any) {
-	return !user?.firstName ? '' : `${user.firstName} ${user.lastName}`;
+	return !user?.first_name ? '' : `${user.first_name} ${user.last_name}`;
 }
 
 export function mToKm(metres: number) {

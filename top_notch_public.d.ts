@@ -17,3 +17,17 @@ type OptionType<T extends Record<string, any> = {}> = {
 	value: any;
 	[x: string]: any;
 } & T;
+
+interface ActionResponse<T> {
+	fieldError?: Partial<Record<keyof T, string | undefined>>;
+	formError?: string;
+	data?: any;
+}
+
+type SnackBarOption = {
+	message: string;
+	type: 'success' | 'error' | 'info' | 'warning';
+	duration?: number;
+	icon?: React.ReactNode;
+	backdrop?: boolean;
+};

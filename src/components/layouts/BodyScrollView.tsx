@@ -17,6 +17,7 @@ export const BodyScrollView = forwardRef<
 						<ScrollView
 							automaticallyAdjustsScrollIndicatorInsets
 							contentInsetAdjustmentBehavior="automatic"
+							alwaysBounceVertical
 							automaticallyAdjustKeyboardInsets={
 								props?.automaticallyAdjustKeyboardInsets ?? true
 							}

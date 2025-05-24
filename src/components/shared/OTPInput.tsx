@@ -6,8 +6,7 @@ import {
 } from 'react-native';
 import Layout from '@/constants/Layout';
 import { cn } from '@/lib/utils';
-import { View } from '../ui';
-import { useTheme } from '../layouts/ThemeProvider';
+import { useResolvedTheme, View } from '../ui';
 type Props = {
 	inputStyle?: TextInput['props']['style'];
 	onTextChange?: (text: string) => void;
@@ -30,7 +29,7 @@ export default function OTPInput(props: Props) {
 		inModal,
 		className,
 	} = props;
-	const { theme } = useTheme();
+	const theme = useResolvedTheme();
 	const [value, setValue] = React.useState<{ [k: number]: string }>({});
 	const [focused, setFocused] = React.useState<number>(-1);
 	const Input = TextInput;

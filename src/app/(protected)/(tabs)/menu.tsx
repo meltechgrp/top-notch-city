@@ -3,21 +3,17 @@ import {
 	AvatarBadge,
 	AvatarFallbackText,
 	AvatarImage,
-	Box,
 	Icon,
-	ImageBackground,
 	Pressable,
 	Text,
 	View,
 } from '@/components/ui';
 import { Stack, usePathname, useRouter } from 'expo-router';
-import { ScrollView, Share } from 'react-native';
+import { Share } from 'react-native';
 import React from 'react';
 import { useTheme } from '@/components/layouts/ThemeProvider';
-import LogoutAlertDialog from '@/components/shared/LogoutAlertDialog';
 import {
 	ChevronRight,
-	Mail,
 	NotebookText,
 	Settings,
 	Share2,
@@ -26,7 +22,6 @@ import {
 } from 'lucide-react-native';
 import { MenuListItem } from '@/components/menu/MenuListItem';
 import config from '@/config';
-import { LogoutButton } from '@/components/menu/LogoutButton';
 import { Divider } from '@/components/ui/divider';
 import { cn } from '@/lib/utils';
 import NotificationBarButton from '@/components/notifications/NotificationBarButton';
@@ -96,9 +91,9 @@ export default function More() {
 							<AvatarBadge size="md" />
 							<AvatarImage
 								source={
-									me?.photo
+									me?.profile_image
 										? {
-												uri: me?.photo,
+												uri: me?.profile_image,
 											}
 										: profileDefault
 								}

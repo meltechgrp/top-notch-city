@@ -3,10 +3,12 @@ import { useVideoPlayer, VideoView } from 'expo-video';
 import { router } from 'expo-router';
 import { StyleSheet } from 'react-native';
 import { View } from 'react-native';
+import { useStore } from '@/store';
 
 const videoSource = require('@/assets/images/splash-video.mp4');
 
 export default function SplashScreen() {
+	const hasAuth = useStore((v) => v.hasAuth);
 	const player = useVideoPlayer(videoSource, (player) => {
 		// Remove looping so it ends
 		player.loop = false;
@@ -18,7 +20,11 @@ export default function SplashScreen() {
 		if (!player) return;
 
 		const onEnded = () => {
-			router.replace('/onboarding');
+			if (hasAuth) {
+				router.replace('/home');
+			} else {
+				router.replace('/onboarding');
+			}
 		};
 
 		player.addListener('playToEnd', onEnded);

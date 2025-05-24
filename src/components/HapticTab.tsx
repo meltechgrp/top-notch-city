@@ -1,3 +1,4 @@
+import Platforms from '@/constants/Plaforms';
 import { BottomTabBarButtonProps } from '@react-navigation/bottom-tabs';
 import { PlatformPressable } from '@react-navigation/elements';
 import * as Haptics from 'expo-haptics';
@@ -18,5 +19,6 @@ export function HapticTab(props: BottomTabBarButtonProps) {
 }
 
 export async function hapticFeed() {
+	if (Platforms.isAndroid()) return;
 	await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 }

@@ -8,6 +8,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ThemeProvider } from '@/components/layouts/ThemeProvider';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import * as SplashScreen from 'expo-splash-screen';
+import GlobalManager from '@/components/shared/GlobalManager';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -29,6 +30,7 @@ export default function RootLayout() {
 					<GluestackUIProvider>
 						<BottomSheetModalProvider>
 							<Slot />
+							<GlobalManager />
 						</BottomSheetModalProvider>
 					</GluestackUIProvider>
 				</GestureHandlerRootView>

@@ -31,7 +31,7 @@ export default function SettingsItemList(props: SettingsItemListProps) {
 		<Pressable
 			onPress={onPress}
 			className={`h-14 py-4 px-4 pl-0 flex-row items-center active:bg-background-info ${
-				withBorder ? 'border-b border-outline' : ''
+				withBorder ? 'border-b border-outline/60' : ''
 			} ${className} `}
 			// pressed style
 			android_ripple={{ color: Colors.light.tint }}>

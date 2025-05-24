@@ -59,7 +59,7 @@ export const config = {
 		'--color-outline-200': '221 220 219',
 		'--color-outline-300': '211 211 211',
 		'--color-outline-400': '165 163 163',
-		'--color-outline': '228 228 231',
+		'--color-outline': '161 161 170',
 
 		/* Background Special */
 		'--color-background-error': '254 241 241',

@@ -14,7 +14,6 @@ export default function SettingsLayout() {
 				animationTypeForReplace: 'push',
 				headerTitleAlign: 'center',
 				animation: 'slide_from_right',
-				headerTransparent: true,
 				headerBackVisible: false,
 				headerShadowVisible: true,
 				headerLeft: headerLeft(),
@@ -22,7 +21,8 @@ export default function SettingsLayout() {
 					color: theme == 'dark' ? Colors.dark.text : Colors.light.text,
 				},
 				headerStyle: {
-					backgroundColor: 'transparent',
+					backgroundColor:
+						theme == 'dark' ? Colors.light.background : Colors.dark.background,
 				},
 				statusBarStyle: theme == 'dark' ? 'light' : 'dark',
 			}}>

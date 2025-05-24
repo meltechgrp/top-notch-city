@@ -9,20 +9,29 @@ import { Icon, Text } from '@/components/ui';
 import LogoutAlertDialog from '@/components/shared/LogoutAlertDialog';
 import { BodyScrollView } from '@/components/layouts/BodyScrollView';
 import { LogOut } from 'lucide-react-native';
+import useResetAppState from '@/hooks/useResetAppState';
 
 export default function SettingsScreen() {
 	const navigation = useNavigationContainerRef();
 	const [openLogoutAlertDialog, setOpenLogoutAlertDialog] =
 		React.useState(false);
 
+	const resetAppState = useResetAppState();
 	function logout() {
+		resetAppState();
 		navigation?.dispatch(
 			CommonActions.reset({
 				routes: [
 					{
-						name: '(onboarding)',
+						name: '(auth)',
 						state: {
 							routes: [{ name: 'onboarding' }],
+						},
+					},
+					{
+						name: '(auth)',
+						state: {
+							routes: [{ name: 'signin' }],
 						},
 					},
 				],
@@ -30,19 +39,24 @@ export default function SettingsScreen() {
 		);
 	}
 	async function onLogout() {
-		Alert.alert('Logout', 'Are you sure you want to logout?', [
-			{
-				text: 'Cancel',
-				style: 'cancel',
-			},
-			{
-				text: 'Logout',
-				style: 'destructive',
-				onPress: () => {
-					logout();
+		Alert.alert(
+			'Logout',
+			'Are you sure you want to logout?',
+			[
+				{
+					text: 'Cancel',
+					style: 'cancel',
 				},
-			},
-		]);
+				{
+					text: 'Logout',
+					style: 'destructive',
+					onPress: () => {
+						logout();
+					},
+				},
+			],
+			{}
+		);
 	}
 	function onDeleteAccount() {
 		Alert.alert(

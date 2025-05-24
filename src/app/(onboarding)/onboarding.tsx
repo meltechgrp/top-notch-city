@@ -158,7 +158,7 @@ function PageOne({
 				className="flex-1 px-4 bg-black/20">
 				<View className=" flex-1 mb-16">
 					<View className="flex-1 items-end mt-4 ">
-						<Pressable onPress={() => router.push('/home')}>
+						<Pressable onPress={() => router.push('/signin')}>
 							<Text size="lg" className="text-white font-medium">
 								Skip
 							</Text>
@@ -317,7 +317,7 @@ function PageThree({
 						</Text>
 					</View>
 					<Button
-						onPress={() => router.push('/home')}
+						onPress={() => router.push('/signin')}
 						variant="outline"
 						size="xl"
 						className="rounded-xl border-white">

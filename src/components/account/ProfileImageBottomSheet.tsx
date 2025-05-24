@@ -1,17 +1,7 @@
 import withRenderVisible from '@/components/shared/withRenderOpen';
 import { View } from 'react-native';
 import BottomSheet from '../shared/BottomSheet';
-import {
-	Avatar,
-	AvatarImage,
-	Button,
-	ButtonText,
-	Icon,
-	Image,
-	Pressable,
-	Text,
-} from '../ui';
-import { Profile } from '@/store';
+import { Icon, Pressable, Text } from '../ui';
 import * as ImagePicker from 'expo-image-picker';
 import { Camera, ImageIcon } from 'lucide-react-native';
 import { Divider } from '../ui/divider';
@@ -19,22 +9,19 @@ import { Divider } from '../ui/divider';
 type Props = {
 	visible: boolean;
 	onDismiss: () => void;
-	onUpdate: (data: Profile) => void;
-	photo?: any;
+	updateImage: (image: ImagePicker.ImagePickerAsset) => void;
 };
 
 function ProfileImageBottomSheet(props: Props) {
-	const { visible, onDismiss, onUpdate, photo } = props;
+	const { visible, onDismiss, updateImage } = props;
 	const pickImage = async () => {
-		// No permissions request is necessary for launching the image library
 		let result = await ImagePicker.launchImageLibraryAsync({
-			mediaTypes: ['images'],
-			selectionLimit: 15,
-			allowsMultipleSelection: true,
+			mediaTypes: 'images',
 			aspect: [4, 3],
 		});
-		if (!result.canceled) {
-			onUpdate({ photo: result.assets[0].uri });
+		if (!result.canceled && result.assets.length > 0) {
+			updateImage(result.assets[0]);
+			onDismiss();
 		}
 	};
 	return (

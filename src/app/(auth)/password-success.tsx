@@ -16,7 +16,7 @@ export default function VerifySuccess() {
 	}, []);
 	return (
 		<OnboardingScreenContainer allowBack={false}>
-			<Box className="w-[98%] bg-background/80 max-w-[26rem] mt-4 mx-auto rounded-xl p-6">
+			<Box className="w-[98%] bg-background-muted/90 max-w-[26rem] mt-4 mx-auto rounded-xl p-6">
 				<View className="px-2 justify-between items-center">
 					<LottieView
 						ref={successRef}

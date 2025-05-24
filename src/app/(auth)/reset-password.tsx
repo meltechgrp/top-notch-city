@@ -60,7 +60,7 @@ export default function ResetPassword() {
 	}
 	return (
 		<OnboardingScreenContainer onBack={onBack}>
-			<Box className="w-[98%] max-w-[26rem] gap-6 mt-4 mx-auto rounded-xl p-6 pb-16">
+			<Box className="w-[98%] bg-background-muted/90 max-w-[26rem] gap-6 mt-4 mx-auto rounded-xl p-6 pb-16">
 				<View className=" gap-2">
 					<Text className=" text-2xl text-primary font-semibold font-heading text-center">
 						Forgot password

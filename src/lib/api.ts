@@ -1,19 +1,26 @@
 import config from '@/config';
 import { cacheStorage } from '@/lib/asyncStorage';
 import { getAuthToken } from '@/lib/secureStore';
-import { getUniqueIdSync } from 'react-native-device-info';
 
-function fetchWithAuth(url: string, options: RequestInit) {
+export function fetchWithAuth(url: string, options: RequestInit) {
 	const authToken = getAuthToken();
-	const deviceId = getUniqueIdSync();
-	return fetch(url, {
+	return fetch(`${config.origin}${url}`, {
 		...options,
 		headers: {
 			...(authToken && { Authorization: `Bearer ${authToken}` }),
-			'X-DID': deviceId,
 			...options.headers,
 		},
 	});
+}
+export function normalFetch(url: string, options?: RequestInit) {
+	return fetch(
+		`${config.origin}${url}`,
+		options
+			? {
+					...options,
+				}
+			: {}
+	);
 }
 // export async function updatePushNotificationToken(token: string) {
 // 	try {

@@ -1,0 +1,20 @@
+type Me = {
+	username: string | null;
+	email: string;
+	phone: string | null;
+	first_name: string;
+	last_name: string;
+	middle_name: string | null;
+	gender: 'male' | 'female' | null;
+	date_of_birth: string | null;
+	status: 'online' | 'offline' | 'idle';
+	verified: boolean;
+	profile_image: string | null;
+	wallet_balance: number;
+	is_active: boolean;
+	is_superuser: boolean;
+	role: 'user' | 'admin' | 'agent';
+	id: string;
+	created_at: string;
+	updated_at: string;
+};

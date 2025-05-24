@@ -7,6 +7,7 @@ import { tva } from '@gluestack-ui/nativewind-utils/tva';
 import { withStyleContext } from '@gluestack-ui/nativewind-utils/withStyleContext';
 import type { VariantProps } from '@gluestack-ui/nativewind-utils';
 import { hapticFeed } from '@/components/HapticTab';
+import Platforms from '@/constants/Plaforms';
 
 const UIPressable = createPressable({
 	Root: withStyleContext(RNPressable),
@@ -32,7 +33,7 @@ const Pressable = React.forwardRef<
 			{...props}
 			ref={ref}
 			onPress={async (e) => {
-				if (!disableHaptic) {
+				if (Platforms.isIOS()) {
 					await hapticFeed();
 				}
 				props.onPress && props.onPress(e);

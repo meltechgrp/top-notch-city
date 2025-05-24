@@ -13,7 +13,6 @@ import {
 	ButtonText,
 	Text,
 	View,
-	VStack,
 	Pressable,
 	Checkbox,
 	CheckboxLabel,
@@ -21,65 +20,113 @@ import {
 	CheckboxIndicator,
 	Box,
 	InputIcon,
+	Icon,
 } from '@/components/ui';
-import * as z from 'zod';
-import React from 'react';
+import React, { useState } from 'react';
 import {
 	AlertCircleIcon,
 	CheckIcon,
+	Loader,
 	Lock,
 	Mail,
 	User,
 } from 'lucide-react-native';
-
-const formSchema = z.object({
-	email: z.string().email({
-		message: 'Please enter a valid email address',
-	}),
-	password: z.string().min(8, {
-		message: 'Password must be at least 8 characters long',
-	}),
-});
+import { removeAuthToken, saveAuthToken } from '@/lib/secureStore';
+import { useStore, useTempStore } from '@/store';
+import { AuthSignupInput } from '@/lib/schema';
+import { authSignup } from '@/actions/auth';
+import { hapticFeed } from '@/components/HapticTab';
+import { showSnackbar } from '@/lib/utils';
+import { getMe } from '@/actions/user';
 
 export default function SignUp() {
-	const [isInvalid, setIsInvalid] = React.useState({
-		email: false,
-		password: false,
-		username: false,
-	});
-	const [form, setForm] = React.useState({
+	const [loading, setLoading] = useState(false);
+	const [errors, setErrors] = useState<Partial<AuthSignupInput> | null>();
+	const [form, setForm] = React.useState<
+		AuthSignupInput & { isChecked: boolean }
+	>({
 		email: '',
+		first_name: '',
+		last_name: '',
 		password: '',
-		username: '',
+		comfirmPassword: '',
 		isChecked: false,
 	});
-	const handleSubmit = () => {
-		if (form.password.length < 8) {
-			setIsInvalid({ ...isInvalid, password: true });
-		} else if (form.email.length < 5 || form.username.length < 5) {
-			setIsInvalid({ ...isInvalid, email: true });
-		} else {
-			setIsInvalid({ email: false, password: false, username: false });
+	const handleSubmit = async () => {
+		if (!form.isChecked) return;
+		hapticFeed();
+		setLoading(true);
+		try {
+			const state = await authSignup(form);
+			setErrors(null);
+
+			if (state?.fieldError) {
+				setErrors(state.fieldError);
+			} else if (state?.formError) {
+				showSnackbar({
+					message: state.formError,
+					type: 'error',
+				});
+			} else if (state?.data) {
+				const { email, message, access_token } = state.data as {
+					access_token: string;
+					message: string;
+					email: string;
+				};
+				showSnackbar({
+					message: message,
+					type: 'success',
+				});
+				if (access_token) {
+					saveAuthToken(access_token);
+				}
+
+				useTempStore.setState((v) => ({
+					...v,
+					kyc: {
+						email: form.email,
+					},
+				}));
+
+				const me = await getMe();
+				if (me) {
+					useStore.setState((s) => ({
+						...s,
+						me,
+						hasAuth: true,
+					}));
+				}
+				router.push({
+					pathname: '/verify-otp',
+					params: {
+						type: 'signup',
+						activeOtpTimeLeft: '300',
+					},
+				});
+			}
+		} catch (error) {
+			console.error(error);
+		} finally {
+			setLoading(false);
 		}
 	};
 	function onBack() {
 		if (router.canGoBack()) {
 			router.back();
 		} else {
-			/*
-			 * Make it so we can go back to onboarding screen if app starts from here.
-			 */
-			// removeAuthToken();
-			// useStore.getState().resetStore();
-			// useTempStore.getState().resetStore();
+			removeAuthToken();
+			useStore.getState().resetStore();
+			useTempStore.getState().resetStore();
 			router.replace('/onboarding');
 		}
 	}
 	return (
 		<OnboardingScreenContainer onBack={onBack}>
-			<Box className="w-[98%] bg-background/80 max-w-[26rem] gap-6 mt-4 mx-auto rounded-xl p-6">
+			<Box className="w-[98%] bg-background-muted/90 max-w-[26rem] gap-6 mt-4 mx-auto rounded-xl p-6">
 				<View>
-					<Text className=" text-2xl text-[#FF1500] font-semibold font-heading text-center">
+					<Text
+						size="3xl"
+						className=" text-primary font-semibold font-heading text-center">
 						Create an Account
 					</Text>
 					<Text className=" text-center">
@@ -87,13 +134,13 @@ export default function SignUp() {
 					</Text>
 				</View>
 				<View>
-					<FormControl isInvalid={isInvalid.email} size="lg" isRequired={false}>
+					<FormControl size="lg" isInvalid={!!errors?.email}>
 						<FormControlLabel>
 							<FormControlLabelText className="font-light">
 								Email
 							</FormControlLabelText>
 						</FormControlLabel>
-						<Input className="my-1 rounded-xl px-4 h-14" size={'xl'}>
+						<Input size="md" className="my-1  rounded-xl px-4 h-12">
 							<InputIcon as={Mail} />
 							<InputField
 								type="text"
@@ -104,46 +151,62 @@ export default function SignUp() {
 						</Input>
 						<FormControlError>
 							<FormControlErrorIcon as={AlertCircleIcon} />
-							<FormControlErrorText>
-								enter a valid email address.
-							</FormControlErrorText>
+							<FormControlErrorText>{errors?.email}</FormControlErrorText>
 						</FormControlError>
 					</FormControl>
 					<FormControl
-						isInvalid={isInvalid.username}
+						isInvalid={!!errors?.first_name}
 						size="lg"
 						isRequired={false}>
 						<FormControlLabel>
 							<FormControlLabelText className="font-light">
-								Username
+								First Name
 							</FormControlLabelText>
 						</FormControlLabel>
-						<Input className="my-1 rounded-xl px-4 h-14" size={'xl'}>
+						<Input className="my-1 rounded-xl px-4 h-12" size={'md'}>
 							<InputIcon as={User} />
 							<InputField
 								type="text"
-								placeholder="Username"
-								value={form.username}
-								onChangeText={(text) => setForm({ ...form, username: text })}
+								placeholder="First Name"
+								value={form.first_name}
+								onChangeText={(text) => setForm({ ...form, first_name: text })}
 							/>
 						</Input>
 						<FormControlError>
 							<FormControlErrorIcon as={AlertCircleIcon} />
-							<FormControlErrorText>
-								enter a unique username.
-							</FormControlErrorText>
+							<FormControlErrorText>{errors?.first_name}</FormControlErrorText>
 						</FormControlError>
 					</FormControl>
 					<FormControl
-						isInvalid={isInvalid.password}
-						size="md"
+						isInvalid={!!errors?.last_name}
+						size="lg"
 						isRequired={false}>
+						<FormControlLabel>
+							<FormControlLabelText className="font-light">
+								Last Name
+							</FormControlLabelText>
+						</FormControlLabel>
+						<Input className="my-1 rounded-xl px-4 h-12" size={'md'}>
+							<InputIcon as={User} />
+							<InputField
+								type="text"
+								placeholder="Last Name"
+								value={form.last_name}
+								onChangeText={(text) => setForm({ ...form, last_name: text })}
+							/>
+						</Input>
+						<FormControlError>
+							<FormControlErrorIcon as={AlertCircleIcon} />
+							<FormControlErrorText>{errors?.last_name}</FormControlErrorText>
+						</FormControlError>
+					</FormControl>
+					<FormControl isInvalid={!!errors?.password} size="md">
 						<FormControlLabel>
 							<FormControlLabelText className="font-light">
 								Password
 							</FormControlLabelText>
 						</FormControlLabel>
-						<Input className="my-1 rounded-xl px-4 h-16" size={'xl'}>
+						<Input className="my-1 rounded-xl px-4 h-12" size={'md'}>
 							<InputIcon as={Lock} />
 							<InputField
 								type="password"
@@ -154,8 +217,30 @@ export default function SignUp() {
 						</Input>
 						<FormControlError>
 							<FormControlErrorIcon as={AlertCircleIcon} />
+							<FormControlErrorText>{errors?.password}</FormControlErrorText>
+						</FormControlError>
+					</FormControl>
+					<FormControl isInvalid={!!errors?.comfirmPassword} size="md">
+						<FormControlLabel>
+							<FormControlLabelText className="font-light">
+								Comfirm Password
+							</FormControlLabelText>
+						</FormControlLabel>
+						<Input className="my-1 rounded-xl px-4 h-12" size={'md'}>
+							<InputIcon as={Lock} />
+							<InputField
+								type="password"
+								placeholder="Comfirm Password"
+								value={form.comfirmPassword}
+								onChangeText={(text) =>
+									setForm({ ...form, comfirmPassword: text })
+								}
+							/>
+						</Input>
+						<FormControlError>
+							<FormControlErrorIcon as={AlertCircleIcon} />
 							<FormControlErrorText>
-								Atleast 8 characters are required.
+								{errors?.comfirmPassword}
 							</FormControlErrorText>
 						</FormControlError>
 					</FormControl>
@@ -164,13 +249,11 @@ export default function SignUp() {
 						size="md"
 						className="mt-2 px-1"
 						isChecked={form.isChecked}
-						onChange={(state) => setForm({ ...form, isChecked: state })}
-						isInvalid={false}
-						isDisabled={false}>
+						onChange={(state) => setForm({ ...form, isChecked: state })}>
 						<CheckboxIndicator>
 							<CheckboxIcon as={CheckIcon} />
 						</CheckboxIndicator>
-						<CheckboxLabel className=" text-wrap">
+						<CheckboxLabel className=" text-wrap text-typography">
 							I have read and accept the terms and condition.
 						</CheckboxLabel>
 					</Checkbox>
@@ -178,9 +261,13 @@ export default function SignUp() {
 
 				<Button
 					variant="solid"
-					className="w-full mt-4"
+					className="w-full mt-4 gap-2"
 					size="xl"
+					disabled={!form.isChecked}
 					onPress={handleSubmit}>
+					{loading && (
+						<Icon as={Loader} color="white" className=" animate-spin" />
+					)}
 					<ButtonText>Sign Up</ButtonText>
 				</Button>
 				<View className=" flex-row justify-center gap-2 mt-4">
