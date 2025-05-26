@@ -1,10 +1,11 @@
 import config from '@/config';
 import { cacheStorage } from '@/lib/asyncStorage';
 import { getAuthToken } from '@/lib/secureStore';
+import { profileDefault } from '@/store';
 
 export function fetchWithAuth(url: string, options: RequestInit) {
 	const authToken = getAuthToken();
-	return fetch(`${config.origin}${url}`, {
+	return fetch(`${config.origin}/api${url}`, {
 		...options,
 		headers: {
 			...(authToken && { Authorization: `Bearer ${authToken}` }),
@@ -14,7 +15,7 @@ export function fetchWithAuth(url: string, options: RequestInit) {
 }
 export function normalFetch(url: string, options?: RequestInit) {
 	return fetch(
-		`${config.origin}${url}`,
+		`${config.origin}/api${url}`,
 		options
 			? {
 					...options,
@@ -22,6 +23,13 @@ export function normalFetch(url: string, options?: RequestInit) {
 			: {}
 	);
 }
+export const getImageUrl = (url?: string | null) => {
+	if (url)
+		return {
+			uri: `${config.origin}${url}`,
+		};
+	return profileDefault;
+};
 // export async function updatePushNotificationToken(token: string) {
 // 	try {
 // 		await fetchWithAuth(`${config.origin}/v1/push-notifications`, {

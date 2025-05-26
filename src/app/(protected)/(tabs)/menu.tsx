@@ -27,6 +27,7 @@ import { cn } from '@/lib/utils';
 import NotificationBarButton from '@/components/notifications/NotificationBarButton';
 import { profileDefault, useStore } from '@/store';
 import { BodyScrollView } from '@/components/layouts/BodyScrollView';
+import { getImageUrl } from '@/lib/api';
 
 export default function More() {
 	const me = useStore((v) => v.me);
@@ -89,15 +90,7 @@ export default function More() {
 						<Avatar className=" w-20 h-20">
 							<AvatarFallbackText>Humphrey Joshua</AvatarFallbackText>
 							<AvatarBadge size="md" />
-							<AvatarImage
-								source={
-									me?.profile_image
-										? {
-												uri: me?.profile_image,
-											}
-										: profileDefault
-								}
-							/>
+							<AvatarImage source={getImageUrl(me?.profile_image)} />
 						</Avatar>
 						<View className="flex-1 pl-3">
 							<Text className="text-base font-medium">Humphrey Joshua</Text>

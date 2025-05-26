@@ -18,6 +18,8 @@ import { format } from 'date-fns';
 import ProfileImageBottomSheet from '@/components/account/ProfileImageBottomSheet';
 import { setProfileImage } from '@/actions/user';
 import { ImagePickerAsset } from 'expo-image-picker';
+import config from '@/config';
+import { getImageUrl } from '@/lib/api';
 
 export default function Account() {
 	const { me } = useStore();
@@ -44,15 +46,7 @@ export default function Account() {
 								className=" gap-2 items-center">
 								<Avatar className=" w-40 h-40">
 									<AvatarFallbackText>{fullName(me)}</AvatarFallbackText>
-									<AvatarImage
-										source={
-											me?.profile_image
-												? {
-														uri: me?.profile_image,
-													}
-												: profileDefault
-										}
-									/>
+									<AvatarImage source={getImageUrl(me?.profile_image)} />
 								</Avatar>
 								<View className="flex-row items-center gap-1">
 									<Text>Edit</Text>

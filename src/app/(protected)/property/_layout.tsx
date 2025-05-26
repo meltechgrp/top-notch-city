@@ -2,7 +2,7 @@ import AppCrashScreen from '@/components/shared/AppCrashScreen';
 import headerLeft from '@/components/shared/headerLeft';
 import { useResolvedTheme } from '@/components/ui';
 import { Colors } from '@/constants/Colors';
-import { ErrorBoundaryProps, Stack, useRouter } from 'expo-router';
+import { ErrorBoundaryProps, Stack } from 'expo-router';
 
 export default function PropertysLayout() {
 	const theme = useResolvedTheme();
