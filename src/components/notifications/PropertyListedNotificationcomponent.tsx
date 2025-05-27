@@ -10,10 +10,8 @@ import { cn } from '@/lib/utils';
 
 export default function PropertyListedNotificationComponent({
 	data,
-	setScrollEnabled,
 }: {
 	data: any;
-	setScrollEnabled: () => void;
 }) {
 	const [isRead, setIsRead] = React.useState(false);
 	const handleRead = () => {
@@ -22,7 +20,6 @@ export default function PropertyListedNotificationComponent({
 	return (
 		<NotificationItemWrapper
 			isRead={isRead}
-			setScrollEnabled={setScrollEnabled}
 			onRead={handleRead}
 			onDelete={() => console.log('deleted')}>
 			<Pressable

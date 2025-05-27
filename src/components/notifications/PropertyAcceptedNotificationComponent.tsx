@@ -9,10 +9,8 @@ import NotificationItemWrapper from './NotificationItemWrapper';
 
 export default function PropertyAcceptedNotificationComponent({
 	data,
-	setScrollEnabled,
 }: {
 	data: any;
-	setScrollEnabled: () => void;
 }) {
 	const [isRead, setIsRead] = React.useState(false);
 
@@ -23,7 +21,6 @@ export default function PropertyAcceptedNotificationComponent({
 	return (
 		<NotificationItemWrapper
 			isRead={isRead}
-			setScrollEnabled={setScrollEnabled}
 			onRead={handleRead}
 			onDelete={() => console.log('deleted')}>
 			<Pressable

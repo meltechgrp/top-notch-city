@@ -7,7 +7,9 @@ import ListingLocation from '@/components/listing/ListingLocation';
 import ListingMediaFiles from '@/components/listing/ListingMediaFiles';
 import ListingPurpose from '@/components/listing/ListingPurpose';
 import ListingSucces from '@/components/listing/ListingSuccess';
+import headerLeft from '@/components/shared/headerLeft';
 import { Box, Button, ButtonText } from '@/components/ui';
+import { cn } from '@/lib/utils';
 import { useTempStore } from '@/store';
 import { useLayout } from '@react-native-community/hooks';
 import { Stack, useRouter } from 'expo-router';
@@ -31,14 +33,7 @@ export default function SellAddScreen() {
 					/>
 				);
 			case 2:
-				return (
-					<ListingCategory
-						option={listing.category}
-						onUpdate={(option) =>
-							updateListing({ ...listing, category: option })
-						}
-					/>
-				);
+				return <ListingCategory />;
 			case 3:
 				return <ListingLocation />;
 			case 4:
@@ -58,16 +53,7 @@ export default function SellAddScreen() {
 		<>
 			<Stack.Screen
 				options={{
-					headerLeft: () => (
-						<Button
-							onPress={() => router.push('/sell')}
-							size="md"
-							variant="outline"
-							action="primary"
-							className="mb-1">
-							<ButtonText>Save & exit</ButtonText>
-						</Button>
-					),
+					headerLeft: headerLeft(),
 					headerRight: () => (
 						<Button
 							onPress={() => router.push('/(protected)/support/faq')}

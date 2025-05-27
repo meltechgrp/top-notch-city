@@ -10,7 +10,6 @@ import { RefreshControl, SectionList, View } from 'react-native';
 
 export default function NotificationScreen() {
 	const [refreshing, setRefreshing] = React.useState(false);
-	const [scrollEnabled, setScrollEnabled] = React.useState(true);
 	async function refetch() {}
 	async function onRefresh() {
 		try {
@@ -25,19 +24,9 @@ export default function NotificationScreen() {
 	const renderItem = (item: any) => {
 		switch (item.__typename) {
 			case 'PropertytAcceptedNotification':
-				return (
-					<PropertyAcceptedNotificationComponent
-						setScrollEnabled={() => setScrollEnabled(!scrollEnabled)}
-						data={item as any}
-					/>
-				);
+				return <PropertyAcceptedNotificationComponent data={item as any} />;
 			case 'PropertyListedNotification':
-				return (
-					<PropertyListedNotificationComponent
-						setScrollEnabled={() => setScrollEnabled(!scrollEnabled)}
-						data={item as any}
-					/>
-				);
+				return <PropertyListedNotificationComponent data={item as any} />;
 			default:
 				break;
 		}
@@ -68,7 +57,6 @@ export default function NotificationScreen() {
 					}
 					contentWrapperClassName="relative -top-24">
 					<SectionList
-						scrollEnabled={scrollEnabled}
 						refreshControl={
 							<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
 						}

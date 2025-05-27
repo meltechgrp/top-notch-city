@@ -14,40 +14,36 @@ type Props = {
 
 export default function CategoryItem({ item, onRefresh }: Props) {
 	const router = useRouter();
-	const [loading, setLoading] = useState(false);
 	const [category, setCategory] = useState(item.name);
 	const [categoryBottomSheet, setCategoryBottomSheet] = useState(false);
 	async function editHandler() {
 		try {
-			setLoading(true);
-			await editCategory(item);
+			await editCategory(item.id, category);
 		} catch {
 		} finally {
 			setCategoryBottomSheet(false);
 			onRefresh();
-			setLoading(false);
 		}
 	}
 	async function deleteHandler() {
-		// try {
-		// 	setLoading(true);
-		// 	await deleteCategory(item);
-		// } catch {
-		// } finally {
-		// 	setCategoryBottomSheet(false);
-		// 	onRefresh();
-		// 	setLoading(false);
-		// }
+		try {
+			await deleteCategory(item);
+		} catch {
+		} finally {
+			onRefresh();
+		}
 	}
 	return (
 		<>
 			<SwipeableWrapper
 				rightAction={() => setCategoryBottomSheet(true)}
 				leftAction={() => deleteHandler()}>
-				<View className="flex-1 p-6 py-5 flex-row justify-between items-center bg-background-muted">
+				<View className="flex-1 p-6 py-4 flex-row justify-between items-center bg-background-muted">
 					<View>
-						<Text size="md">{item.name}</Text>
-						<Text className=" capitalize font-light">Category</Text>
+						<Text size="lg" className="capitalize">
+							{item.name}
+						</Text>
+						<Text className="  font-light">Category</Text>
 					</View>
 					<View>
 						<Pressable
@@ -74,7 +70,6 @@ export default function CategoryItem({ item, onRefresh }: Props) {
 				onDismiss={() => setCategoryBottomSheet(false)}
 				onSubmit={editHandler}
 				onUpdate={setCategory}
-				loading={loading}
 				category={category}
 			/>
 		</>

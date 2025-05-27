@@ -16,18 +16,28 @@ type Props = {
 		total: number;
 	}[];
 	search?: string;
+	searchPlaceholder?: string;
 	onSearch: (search: string) => void;
 	onUpdate: (tab: string) => void;
 };
 
-export function UsersFilter({ tab, tabs, onSearch, onUpdate, search }: Props) {
+export function FilterComponent({
+	tab,
+	searchPlaceholder,
+	tabs,
+	onSearch,
+	onUpdate,
+	search,
+}: Props) {
 	return (
 		<View className="gap-5 mb-4">
 			<View className="gap-4">
 				<View>
-					<Input className="rounded-xl bg-background px-2 h-11 ">
+					<Input className="rounded-xl bg-background-muted px-2 h-11 ">
 						<InputField
-							placeholder="Search by name, email or phone..."
+							placeholder={
+								searchPlaceholder ?? 'Search by name, email or phone...'
+							}
 							value={search}
 							onChangeText={onSearch}
 						/>

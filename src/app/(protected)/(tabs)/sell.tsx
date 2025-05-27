@@ -11,7 +11,7 @@ import {
 } from '@/components/ui';
 import { useLayout } from '@react-native-community/hooks';
 import { useRouter } from 'expo-router';
-import { ArrowRight, ChevronRight, MoveRight } from 'lucide-react-native';
+import { MoveRight } from 'lucide-react-native';
 
 export default function SellScreen() {
 	const router = useRouter();
@@ -27,11 +27,11 @@ export default function SellScreen() {
 						style={{
 							height: height / 2,
 						}}
-						className="flex-1 mx-4 border-b-4 border-primary rounded-3xl overflow-hidden">
+						className="flex-1 mx-4 border-b-4 border-primary rounded-t-xl overflow-hidden">
 						<Image
 							source={require('@/assets/images/landing/agent.png')}
 							alt="sell banner"
-							className={`object-cover object-bottom w-full flex-1 rounded-3xl`}
+							className={`object-cover object-bottom w-full flex-1`}
 						/>
 					</View>
 					<View className="px-4 py-6 gap-4">

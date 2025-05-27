@@ -53,6 +53,7 @@ export async function authSignup(
 	form: AuthSignupInput
 ): Promise<ActionResponse<AuthSignupInput>> {
 	try {
+		const formData = new FormData();
 		const parsed = AuthSignupSchema.safeParse(form);
 		if (!parsed.success) {
 			const err = parsed.error.flatten();
@@ -72,6 +73,9 @@ export async function authSignup(
 				formError: 'Passwords do not match!',
 			};
 		}
+		Object.entries(form).map(([key, val]) => {
+			formData.append(key, val);
+		});
 		const res = await normalFetch('/register', {
 			method: 'POST',
 			headers: {
@@ -87,6 +91,9 @@ export async function authSignup(
 		const data = await res.json();
 		console.log(data);
 		if (data.detail) {
+			data.detail?.map((item: any) => {
+				console.log(item);
+			});
 			return {
 				formError: 'Please check your details',
 			};

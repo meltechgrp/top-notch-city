@@ -7,8 +7,6 @@ import { KeyboardDismissPressable } from '@/components/shared/KeyboardDismissPre
 // import SearchHistoryScreen from '@/components/search/SearchHistoryScreen';
 // import SearchResultsView from '@/components/search/SearchResultsView';
 import { Box } from '@/components/ui';
-import { searchTypeAhead } from '@/lib/api';
-import { cn, useLazyApiQuery } from '@/lib/utils';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import debounce from 'lodash-es/debounce';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -31,13 +29,11 @@ export type Filter = {
 	category: string;
 };
 
-export default function SearchPage() {
+export default function SearchScreen() {
 	const { q, propertyId } = useLocalSearchParams<{
 		q?: string;
 		propertyId?: string;
 	}>();
-	const [autocompleteSearch, { data, loading }] =
-		useLazyApiQuery(searchTypeAhead);
 
 	const { height: totalHeight } = Dimensions.get('screen');
 	const [text, setText] = useState(q || '');
@@ -61,10 +57,6 @@ export default function SearchPage() {
 	const { addToList: addToSearchHistory } = useSearchHistoryStorage();
 
 	const textInputRef = useRef<TextInput>(null);
-
-	const debouncedAutocompleteSearch = useRef(
-		debounce(autocompleteSearch, 500)
-	).current;
 
 	function onChangeText(text: string) {
 		setText(text);
@@ -120,7 +112,6 @@ export default function SearchPage() {
 				/>
 				<SearchFilterBottomSheet
 					show={showFilter}
-					visible={showFilter}
 					onDismiss={() => setShowFilter(false)}
 					filter={filter}
 					onApply={setFilter}
@@ -128,9 +119,9 @@ export default function SearchPage() {
 
 				{/* {!typing && !showResults && <SearchHistoryScreen service={service} />} */}
 				{/* {showResults && <SearchResultsView filter={filter} />}
-				{typing && !!data && (
-					<SearchAutoCompleteView data={data} loading={loading} />
-				)} */}
+        {typing && !!data && (
+          <SearchAutoCompleteView data={data} loading={loading} />
+        )} */}
 
 				<Map
 					scrollEnabled={true}

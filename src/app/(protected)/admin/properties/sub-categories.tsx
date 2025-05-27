@@ -1,14 +1,11 @@
-import {
-	getSubCategories,
-	newCategory,
-	newSubCategory,
-} from '@/actions/property';
+import { getSubCategories, newSubCategory } from '@/actions/property';
 import CategoryBottomSheet from '@/components/admin/properties/CategoryBottomSheet';
-import CategoryItem from '@/components/admin/properties/CategoryItem';
+import SubCategoryItem from '@/components/admin/properties/SubCategoryItem';
 import EmptyStateWrapper from '@/components/shared/EmptyStateWrapper';
 import { Box, View, Button, Icon, Heading } from '@/components/ui';
 import { FlashList } from '@shopify/flash-list';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { capitalize } from 'lodash-es';
 import { Plus } from 'lucide-react-native';
 import { useCallback, useEffect, useState } from 'react';
 import { BackHandler, RefreshControl } from 'react-native';
@@ -25,15 +22,19 @@ export default function SubCategories() {
 	const [categoryBottomSheet, setCategoryBottomSheet] = useState(false);
 
 	const getCats = useCallback(async () => {
+		const update: Category[] = [];
 		setLoading(true);
 		const res = await getSubCategories(catId);
-		setCategories(res);
+		res.map((item) => {
+			update.push({ id: item.id, name: item.name, slug: item.slug });
+		});
+		setCategories(update);
 		setLoading(false);
-	}, []);
+	}, [catId, categories]);
 
 	useEffect(() => {
 		getCats();
-	}, []);
+	}, [catId]);
 
 	async function onRefresh() {
 		try {
@@ -73,6 +74,7 @@ export default function SubCategories() {
 		<>
 			<Stack.Screen
 				options={{
+					headerTitle: capitalize(catName),
 					headerRight: () => (
 						<View>
 							<Button
@@ -81,7 +83,7 @@ export default function SubCategories() {
 									setCategoryBottomSheet(true);
 								}}
 								variant="link"
-								className="px-4 bg-transparent">
+								className="p-2 mr-3 bg-background-muted rounded-full">
 								<Icon size="xl" as={Plus} className="text-primary" />
 							</Button>
 						</View>
@@ -98,8 +100,8 @@ export default function SubCategories() {
 					illustration={
 						<View className=" bg-background-muted p-6 gap-4 rounded-xl">
 							<View className=" justify-center items-center">
-								<Heading size="2xl">No sub-categories</Heading>
-								<Heading size="2xl">found!</Heading>
+								<Heading size="xl">No sub-categories</Heading>
+								<Heading size="xl">found!</Heading>
 							</View>
 							<Button
 								onPress={() => {
@@ -121,7 +123,7 @@ export default function SubCategories() {
 						}
 						ListHeaderComponent={() => (
 							<View className="py-4 px-6 pt-0">
-								<Heading size="xl">
+								<Heading size="xl" className="capitalize">
 									{catName} Sub{' '}
 									<Heading size="xl" className="text-primary">
 										Categories
@@ -131,7 +133,11 @@ export default function SubCategories() {
 						)}
 						ItemSeparatorComponent={() => <View className="h-4" />}
 						renderItem={({ item }) => (
-							<CategoryItem onRefresh={onRefresh} item={item} />
+							<SubCategoryItem
+								onRefresh={onRefresh}
+								catId={catId}
+								item={item}
+							/>
 						)}
 					/>
 				</EmptyStateWrapper>
@@ -141,7 +147,6 @@ export default function SubCategories() {
 				onDismiss={() => setCategoryBottomSheet(false)}
 				onSubmit={newHandler}
 				onUpdate={setCategory}
-				loading={loading}
 				category={category}
 			/>
 		</>

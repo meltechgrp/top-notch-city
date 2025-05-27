@@ -1,31 +1,31 @@
 import React, { useEffect, useRef } from 'react';
 import * as Haptics from 'expo-haptics';
-import { Pressable, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import ReanimatedSwipeable, {
 	SwipeableMethods,
 } from 'react-native-gesture-handler/ReanimatedSwipeable';
 import Reanimated, {
 	runOnJS,
-	SharedValue,
 	useAnimatedStyle,
 	useSharedValue,
 	withTiming,
 } from 'react-native-reanimated';
-import { Icon, Text } from '../ui';
+import { Icon, Text, View } from '../ui';
 import { MessageCircle, Trash } from 'lucide-react-native';
 import eventBus from '@/lib/eventBus';
+import Animated from 'react-native-reanimated';
+import { RectButton } from 'react-native-gesture-handler';
+import { Colors } from '@/constants/Colors';
 
 export default function NotificationItemWrapper({
 	children,
 	onDelete,
 	onRead,
 	isRead,
-	setScrollEnabled,
 }: {
 	children: React.ReactNode;
 	onDelete: () => void;
 	onRead: () => void;
-	setScrollEnabled: () => void;
 	isRead: boolean;
 }) {
 	const height = useSharedValue(1);
@@ -43,54 +43,49 @@ export default function NotificationItemWrapper({
 			runOnJS(onDelete)();
 		});
 	};
-	const RightAction = (
-		prog: SharedValue<number>,
-		drag: SharedValue<number>
-	) => {
-		const styleAnimation = useAnimatedStyle(() => {
-			return {
-				transform: [{ translateX: drag.value + 80 }],
-			};
-		});
-
+	const RightAction = () => {
+		const pressHandler = () => {
+			if (process.env.EXPO_OS === 'ios') {
+				Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+			}
+			handleSwipeDelete();
+			reanimatedRef.current?.close();
+		};
 		return (
-			<Pressable
-				onPress={() => {
-					if (process.env.EXPO_OS === 'ios') {
-						Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-					}
-					handleSwipeDelete();
-				}}>
-				<Reanimated.View
-					className="bg-primary flex-1 items-center justify-center rounded-xl"
-					style={[styleAnimation, styles.rightAction]}>
+			<Animated.View style={{ width: 100, transform: [{ translateX: 0 }] }}>
+				<RectButton
+					style={[
+						styles.rightAction,
+						{ backgroundColor: Colors.primary, borderRadius: 12 },
+					]}
+					onPress={pressHandler}>
 					<Icon as={Trash} className="text-white" />
-				</Reanimated.View>
-			</Pressable>
+					<Text className="text-white">Delete</Text>
+				</RectButton>
+			</Animated.View>
 		);
 	};
-	const LeftAction = (prog: SharedValue<number>, drag: SharedValue<number>) => {
-		const styleAnimation = useAnimatedStyle(() => {
-			return {
-				transform: [{ translateX: drag.value - 80 }],
-			};
-		});
+	const LeftAction = () => {
+		const pressHandler = () => {
+			if (process.env.EXPO_OS === 'ios') {
+				Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+			}
+			onRead();
+			reanimatedRef.current?.close();
+		};
 		if (isRead) return undefined;
 		return (
-			<Pressable
-				onPress={() => {
-					if (process.env.EXPO_OS === 'ios') {
-						Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-					}
-					onRead();
-				}}>
-				<Reanimated.View
-					className="bg-green-500 flex-1 items-center justify-center rounded-xl"
-					style={[styleAnimation, styles.rightAction]}>
-					<Icon as={MessageCircle} className="text-white" />
-					<Text className="text-white">Read</Text>
-				</Reanimated.View>
-			</Pressable>
+			<Animated.View style={{ width: 100, transform: [{ translateX: 0 }] }}>
+				<RectButton
+					style={[
+						styles.rightAction,
+						{ backgroundColor: 'lightgray', borderRadius: 12 },
+					]}
+					onPress={pressHandler}>
+					<Icon as={MessageCircle} className="text-black" />
+					<Text className="text-black">Read</Text>
+				</RectButton>
+			</Animated.View>
 		);
 	};
 	useEffect(() => {
@@ -116,26 +111,22 @@ export default function NotificationItemWrapper({
 	return (
 		<Reanimated.View style={animatedContainerStyle}>
 			<ReanimatedSwipeable
-				friction={1}
+				friction={2}
 				ref={reanimatedRef}
-				enableTrackpadTwoFingerGesture
-				rightThreshold={10}
+				rightThreshold={40}
 				onSwipeableWillOpen={() =>
 					eventBus.dispatchEvent('NOTIFICATION_SWIPED', true)
 				}
 				onSwipeableClose={() =>
 					eventBus.dispatchEvent('NOTIFICATION_SWIPED', false)
 				}
-				dragOffsetFromRightEdge={40}
-				dragOffsetFromLeftEdge={40}
 				renderLeftActions={LeftAction}
 				renderRightActions={RightAction}
 				shouldCancelWhenOutside={true}
 				onSwipeableCloseStartDrag={handleSwipeOpen}
 				overshootLeft={false}
 				overshootRight={false}
-				leftThreshold={10}
-				enableContextMenu>
+				leftThreshold={30}>
 				{children}
 			</ReanimatedSwipeable>
 		</Reanimated.View>

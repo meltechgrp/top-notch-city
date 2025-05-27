@@ -28,8 +28,8 @@ export default function ListingLocation() {
 									size="md"
 									numberOfLines={1}
 									className="flex-1 text-typography/70">
-									{listing?.address
-										? listing.address
+									{listing?.address?.description
+										? listing.address.description
 										: 'Search property address...'}
 								</Text>
 

@@ -20,12 +20,12 @@ export default function BottomSheetTwo(props: Props) {
 			plain={true}
 			bottomPadding={false}
 			snapPoint={snapPoint}>
-			<View className="bg-white pb-4 rounded-t-lg flex-1">
-				<View className=" h-14 border-b border-gray-200 flex-row items-center px-4 justify-between">
+			<View className=" pb-4 flex-1">
+				<View className=" h-14 border-b border-outline flex-row items-center px-4 justify-between">
 					<Heading className=" text-base">{title}</Heading>
 					<Pressable
 						onPress={() => onDismiss()}
-						className="bg-gray-100 rounded-full w-8 h-8 items-center justify-center">
+						className="bg-outline rounded-full w-8 h-8 items-center justify-center">
 						<Icon as={CloseIcon} className="transform scale-[0.6]" />
 					</Pressable>
 				</View>

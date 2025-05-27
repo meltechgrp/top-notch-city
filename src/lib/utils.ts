@@ -22,44 +22,7 @@ export function convertToFile(uri: string) {
 	}
 	return null;
 }
-export function useLazyApiQuery<F extends (...args: any) => Promise<any>>(
-	fn: F
-) {
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState(null);
-	const [data, setData] = useState<Awaited<ReturnType<F>> | null>(null);
-	function query(...arg: Parameters<F>) {
-		setLoading(true);
-		return fn(...arg)
-			.finally(() => {
-				setLoading(false);
-			})
-			.then(setData)
-			.catch(setError);
-	}
 
-	return [query, { loading, error, data }] as const;
-}
-
-export function useApiQuery<F extends (...args: any) => Promise<any>>(
-	fn: F,
-	...arg: Parameters<F>
-) {
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState(null);
-	const [data, setData] = useState<Awaited<ReturnType<F>> | null>(null);
-
-	useEffect(() => {
-		fn(...arg)
-			.then(setData)
-			.catch(setError)
-			.finally(() => {
-				setLoading(false);
-			});
-	}, []);
-
-	return { loading, error, data };
-}
 export function toNaira(amountInKobo: number) {
 	return +(amountInKobo / 100).toFixed(2);
 }

@@ -2,53 +2,73 @@ import withRenderVisible from '@/components/shared/withRenderOpen';
 import { FlatList, Pressable, TextInput, View } from 'react-native';
 import { KeyboardDismissPressable } from '../shared/KeyboardDismissPressable';
 import BottomSheet from '../shared/BottomSheet';
-import { Cities } from '@/constants/Cities';
-import { useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Icon, Text } from '../ui';
 import { debounce } from 'lodash-es';
 import { MapPin } from 'lucide-react-native';
+import { useApiQueryWithParams } from '@/lib/api';
+import { autocompleteAddress } from '@/actions/utills';
 
 type Props = {
 	show: boolean;
 	onDismiss: () => void;
-	onUpdate: (data: string) => void;
-	address?: string;
+	onUpdate: (data: PlacePrediction) => void;
+	address?: PlacePrediction;
 };
 
 function ListingAddressBottomSheet(props: Props) {
-	const { show, onDismiss, onUpdate, address } = props;
-	const [text, setText] = useState('');
-	const [typing, setTyping] = useState(false);
-	const [locations, setLocations] = useState<
-		{ label: string; value: string }[]
-	>([]);
+	const { show, onDismiss, onUpdate } = props;
 
-	const autocompleteSearch = (text: string) => {
-		// if (!typing) return setLocations([]);
-		setLocations(
-			Cities.filter((item) =>
-				item.label.toLowerCase().includes(text.toLowerCase())
-			)
-		);
+	const [text, setText] = useState('');
+	const [locations, setLocations] = useState<PlacePrediction[]>([]);
+	const [typing, setTyping] = useState(false);
+
+	const { refetch, loading } = useApiQueryWithParams(autocompleteAddress);
+
+	const debouncedAutocompleteSearch = useMemo(
+		() =>
+			debounce(
+				async (query: string) => {
+					if (!query || query.length < 3) {
+						setLocations([]);
+						return;
+					}
+					try {
+						const result = await refetch(query);
+						setLocations(result);
+					} catch (error) {
+						console.error('Autocomplete error:', error);
+					}
+				},
+				500,
+				{ leading: false, trailing: true }
+			),
+		[refetch]
+	);
+
+	useEffect(() => {
+		return () => {
+			// Clean up debounce on unmount
+			debouncedAutocompleteSearch.cancel();
+		};
+	}, [debouncedAutocompleteSearch]);
+
+	const onChangeText = (val: string) => {
+		setText(val);
+		setTyping(val.length > 0);
+		debouncedAutocompleteSearch(val);
 	};
 
-	const debouncedAutocompleteSearch = useRef(
-		debounce(autocompleteSearch, 500)
-	).current;
+	const handleSelect = (item: PlacePrediction) => {
+		onUpdate(item);
+		onDismiss();
+		setText('');
+		setLocations([]);
+	};
 
-	function onChangeText(text: string) {
-		setText(text);
-		setTyping(text.length > 0);
-		debouncedAutocompleteSearch(text);
-	}
-	const suggested = [
-		{ label: 'Port Harcourt', value: 'port-harcourt' },
-		{ label: 'Lagos', value: 'lagos' },
-		{ label: 'Abuja', value: 'abuja' },
-	];
 	return (
 		<BottomSheet
-			title="Enter property address"
+			title="Enter property location"
 			withHeader={true}
 			withBackButton={false}
 			snapPoint={'80%'}
@@ -56,48 +76,44 @@ function ListingAddressBottomSheet(props: Props) {
 			onDismiss={onDismiss}>
 			<KeyboardDismissPressable>
 				<View className="flex-1 px-4 gap-8 py-5 pb-8 bg-background">
-					<View className=" h-14">
+					<View className="h-14">
 						<TextInput
 							className="h-12 text-typography flex-1 px-2 bg-background-info rounded-2xl border border-outline-200"
-							placeholder="Search property address..."
+							placeholder="Search property location..."
 							value={text}
 							onChangeText={onChangeText}
 							returnKeyLabel="Search"
 							returnKeyType="search"
 						/>
 					</View>
+
 					<View className="flex-1">
 						<FlatList
-							data={typing ? locations : suggested}
-							contentContainerClassName=" bg-background-muted p-4 rounded-xl"
-							keyExtractor={(item) => item.value}
+							data={locations}
+							keyExtractor={(item) => item.place_id}
+							contentContainerClassName="bg-background-muted p-4 rounded-xl"
+							keyboardShouldPersistTaps="handled"
 							ListHeaderComponent={() => (
-								<View className="px-4">
+								<View className="px-4 pb-2">
 									<Text size="md" className="font-light">
-										{typing ? 'Addresses' : 'Suggested'}
+										Locations
 									</Text>
 								</View>
 							)}
 							renderItem={({ item }) => (
-								<Pressable
-									onPress={() => {
-										onUpdate(item.label);
-										onDismiss();
-										setText('');
-										setLocations([]);
-									}}>
-									<View className="flex-row gap-3 items-start p-3">
+								<Pressable onPress={() => handleSelect(item)}>
+									<View className="flex-row gap-3 p-2">
 										<View className="mt-2">
 											<Icon as={MapPin} className="text-primary" />
 										</View>
-										<View>
-											<Text size="lg">{item.label} City</Text>
-											<Text>{item.value}</Text>
+										<View className="flex-1">
+											<Text className="flex-shrink text-wrap text-typography">
+												{item.description}
+											</Text>
 										</View>
 									</View>
 								</Pressable>
 							)}
-							keyboardShouldPersistTaps="handled"
 						/>
 					</View>
 				</View>

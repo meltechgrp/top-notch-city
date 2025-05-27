@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { Pressable } from 'react-native';
 import { Eye, House, MailQuestion, Users } from 'lucide-react-native';
 import { Heading, Icon, Text, View } from '@/components/ui';
+import { useRouter } from 'expo-router';
 
 type Props = {
 	data?: {
@@ -19,21 +20,24 @@ type Props = {
 };
 
 export default function AdminCards({}: Props) {
+	const router = useRouter();
 	const data = [
 		{
-			title: 'Verified Users',
+			title: 'Users',
 			icon: Users,
 			total: 25,
 			rate: 15,
 			direction: true,
+			route: '/admin/users',
 			updated: Date.now(),
 		},
 		{
-			title: 'All Properties',
+			title: 'Properties',
 			icon: House,
 			total: 200,
 			rate: 10,
 			direction: true,
+			route: '/admin/properties',
 			updated: Date.now(),
 		},
 		{
@@ -42,14 +46,16 @@ export default function AdminCards({}: Props) {
 			total: 10,
 			rate: 10,
 			direction: false,
+			route: '/admin/requests',
 			updated: Date.now(),
 		},
 		{
-			title: 'Properties Views',
+			title: 'Views',
 			icon: Eye,
 			total: 500,
 			rate: 25,
 			direction: true,
+			route: '/admin/views',
 			updated: Date.now(),
 		},
 	];
@@ -61,15 +67,16 @@ export default function AdminCards({}: Props) {
 						{row.map((item) => (
 							<Pressable
 								key={item.title}
+								onPress={() => router.push(item.route as any)}
 								className="flex-1 h-40 py-4 justify-between rounded-xl bg-background-muted">
 								<View className=" gap-4 px-4 flex-row items-center">
 									<View className=" p-2 self-start rounded-full bg-[#ffe7e3]">
 										<Icon size="md" as={item.icon} className="text-primary" />
 									</View>
-									<Text className=" text-xl font-medium">{item.title}</Text>
+									<Text className=" text-lg font-medium">{item.title}</Text>
 								</View>
 								<View className="flex-row justify-between px-4 items-center">
-									<Heading size="2xl">{item.total}</Heading>
+									<Heading size="xl">{item.total}</Heading>
 									<View
 										className={cn(
 											'flex-row gap-2 p-1.5 py-px rounded-xl',

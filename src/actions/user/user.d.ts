@@ -17,4 +17,15 @@ type Me = {
 	id: string;
 	created_at: string;
 	updated_at: string;
+	address: {
+		street: string;
+		city: string;
+		state: string;
+		postal_code: string;
+		country_code: string;
+		country: string;
+		latitude: number;
+		longitude: number;
+		id: string;
+	};
 };

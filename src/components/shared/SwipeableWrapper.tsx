@@ -1,8 +1,7 @@
-import { Icon, Pressable, Text } from '@/components/ui';
+import { Icon, Text } from '@/components/ui';
 import { Edit, Trash } from 'lucide-react-native';
 import Reanimated, {
 	runOnJS,
-	SharedValue,
 	useAnimatedStyle,
 	useSharedValue,
 	withTiming,
@@ -11,19 +10,25 @@ import ReanimatedSwipeable, {
 	SwipeableMethods,
 } from 'react-native-gesture-handler/ReanimatedSwipeable';
 import * as Haptics from 'expo-haptics';
-import { ReactNode, useRef } from 'react';
-import { StyleSheet } from 'react-native';
+import { ReactNode, useEffect, useRef } from 'react';
+import { Platform, StyleSheet } from 'react-native';
+import Animated from 'react-native-reanimated';
+import { RectButton } from 'react-native-gesture-handler';
+import { Colors } from '@/constants/Colors';
+import eventBus from '@/lib/eventBus';
 
 type Props = {
 	children: ReactNode;
 	rightAction: () => void;
 	leftAction: () => void;
+	withBorder?: boolean;
 };
 
 export default function SwipeableWrapper({
 	children,
 	rightAction,
 	leftAction,
+	withBorder,
 }: Props) {
 	const height = useSharedValue(1);
 	const opacity = useSharedValue(1);
@@ -33,84 +38,78 @@ export default function SwipeableWrapper({
 		transform: [{ scaleY: height.value }],
 	}));
 	const reanimatedRef = useRef<SwipeableMethods>(null);
-	const handleSwipeDelete = () => {
-		// Animate out
-		opacity.value = withTiming(0, { duration: 200 });
-		height.value = withTiming(0, { duration: 200 }, () => {
-			runOnJS(leftAction)();
-		});
-	};
-	const RightAction = (
-		prog: SharedValue<number>,
-		drag: SharedValue<number>
-	) => {
-		const styleAnimation = useAnimatedStyle(() => {
-			return {
-				transform: [{ translateX: drag.value + 80 }],
-			};
-		});
-
+	const RightAction = () => {
+		const pressHandler = () => {
+			if (Platform.OS === 'ios') {
+				Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+			}
+			rightAction();
+			reanimatedRef.current?.close();
+		};
 		return (
-			<Pressable
-				onPress={() => {
-					if (process.env.EXPO_OS === 'ios') {
-						Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-					}
-					console.log('edit');
-					reanimatedRef.current?.reset();
-					rightAction();
-				}}>
-				<Reanimated.View
-					className="bg-green-500 flex-1 items-center justify-center"
-					style={[styleAnimation, styles.rightAction]}>
-					<Icon as={Edit} className="text-white" />
-					<Text className="text-white">Edit</Text>
-				</Reanimated.View>
-			</Pressable>
+			<Animated.View style={{ width: 90, transform: [{ translateX: 0 }] }}>
+				<RectButton
+					style={[
+						styles.rightAction,
+						{ backgroundColor: 'lightgray', borderRadius: withBorder ? 10 : 0 },
+					]}
+					onPress={pressHandler}>
+					<Icon as={Edit} className="text-black" />
+					<Text className="text-black">Edit</Text>
+				</RectButton>
+			</Animated.View>
 		);
 	};
-	const LeftAction = (prog: SharedValue<number>, drag: SharedValue<number>) => {
-		const styleAnimation = useAnimatedStyle(() => {
-			return {
-				transform: [{ translateX: drag.value - 80 }],
-			};
-		});
+	const LeftAction = () => {
+		const pressHandler = () => {
+			if (Platform.OS === 'ios') {
+				Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+			} else {
+				Haptics.performAndroidHapticsAsync(Haptics.AndroidHaptics.Clock_Tick);
+			}
+			leftAction();
+			reanimatedRef.current?.close();
+		};
 		return (
-			<Pressable
-				onPress={() => {
-					if (process.env.EXPO_OS === 'ios') {
-						Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-					}
-					console.log('delete');
-					reanimatedRef.current?.reset();
-					handleSwipeDelete();
-				}}>
-				<Reanimated.View
-					className="bg-primary flex-1 items-center justify-center"
-					style={[styleAnimation, styles.rightAction]}>
+			<Animated.View style={{ width: 90, transform: [{ translateX: 0 }] }}>
+				<RectButton
+					style={[
+						styles.rightAction,
+						{
+							backgroundColor: Colors.primary,
+							borderRadius: withBorder ? 10 : 0,
+						},
+					]}
+					onPress={pressHandler}>
 					<Icon as={Trash} className="text-white" />
-					<Text className="text-white mb-2">Delete</Text>
-				</Reanimated.View>
-			</Pressable>
+					<Text className="text-white">Delete</Text>
+				</RectButton>
+			</Animated.View>
 		);
 	};
+
+	useEffect(() => {
+		eventBus.addEventListener('SWIPEABLE_OPEN', () =>
+			reanimatedRef.current?.close()
+		);
+
+		return () => {
+			eventBus.removeEventListener('SWIPEABLE_OPEN', () =>
+				reanimatedRef.current?.close()
+			);
+		};
+	}, []);
 	return (
 		<Reanimated.View style={animatedContainerStyle}>
 			<ReanimatedSwipeable
-				friction={1}
+				friction={2}
 				ref={reanimatedRef}
-				enableTrackpadTwoFingerGesture
-				rightThreshold={10}
-				dragOffsetFromRightEdge={40}
-				dragOffsetFromLeftEdge={40}
+				rightThreshold={40}
 				renderLeftActions={LeftAction}
 				renderRightActions={RightAction}
-				shouldCancelWhenOutside={true}
-				// onSwipeableCloseStartDrag={handleSwipeOpen}
 				overshootLeft={false}
 				overshootRight={false}
-				leftThreshold={10}
-				enableContextMenu>
+				leftThreshold={30}>
 				{children}
 			</ReanimatedSwipeable>
 		</Reanimated.View>
@@ -121,7 +120,6 @@ const styles = StyleSheet.create({
 	rightAction: {
 		minWidth: 80,
 		width: '100%',
-		minHeight: 80,
 		height: '100%',
 		alignItems: 'center',
 		justifyContent: 'center',

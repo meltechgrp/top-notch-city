@@ -83,8 +83,9 @@ type Listing = {
 	step: number;
 	purpose: string;
 	category: string;
+	subCategory?: string;
 	type?: string;
-	address?: string;
+	address?: PlacePrediction;
 	facilities?: {
 		label: string;
 		value: number;

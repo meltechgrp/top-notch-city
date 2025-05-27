@@ -3,11 +3,13 @@ import CategoryBottomSheet from '@/components/admin/properties/CategoryBottomShe
 import CategoryItem from '@/components/admin/properties/CategoryItem';
 import EmptyStateWrapper from '@/components/shared/EmptyStateWrapper';
 import { Box, View, Button, Icon, Heading } from '@/components/ui';
+import eventBus from '@/lib/eventBus';
 import { FlashList } from '@shopify/flash-list';
 import { Stack, useRouter } from 'expo-router';
 import { Plus } from 'lucide-react-native';
 import { useCallback, useEffect, useState } from 'react';
-import { BackHandler, RefreshControl } from 'react-native';
+import { BackHandler, Pressable, RefreshControl } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 export default function Categories() {
 	const router = useRouter();
@@ -56,6 +58,7 @@ export default function Categories() {
 			await newCategory(category);
 		} catch {
 		} finally {
+			onRefresh();
 			setLoading(false);
 		}
 	}
@@ -63,17 +66,18 @@ export default function Categories() {
 		<>
 			<Stack.Screen
 				options={{
+					gestureDirection: 'vertical',
+					gestureEnabled: false,
 					headerRight: () => (
 						<View>
-							<Button
+							<Pressable
 								onPress={() => {
 									setCategory('');
 									setCategoryBottomSheet(true);
 								}}
-								variant="link"
-								className="px-4 bg-transparent">
+								className="p-2 mr-3 bg-background-muted rounded-full">
 								<Icon size="xl" as={Plus} className="text-primary" />
-							</Button>
+							</Pressable>
 						</View>
 					),
 				}}
@@ -103,6 +107,7 @@ export default function Categories() {
 						keyExtractor={(item) => item.id}
 						estimatedItemSize={200}
 						refreshing={loading}
+						onScroll={() => eventBus.dispatchEvent('SWIPEABLE_OPEN', null)}
 						refreshControl={
 							<RefreshControl refreshing={loading} onRefresh={onRefresh} />
 						}
@@ -116,7 +121,7 @@ export default function Categories() {
 								</Heading>
 							</View>
 						)}
-						ItemSeparatorComponent={() => <View className="h-4" />}
+						ItemSeparatorComponent={() => <View className="h-2" />}
 						renderItem={({ item }) => (
 							<CategoryItem onRefresh={onRefresh} item={item} />
 						)}
@@ -128,7 +133,6 @@ export default function Categories() {
 				onDismiss={() => setCategoryBottomSheet(false)}
 				onSubmit={newHandler}
 				onUpdate={setCategory}
-				loading={loading}
 				category={category}
 			/>
 		</>

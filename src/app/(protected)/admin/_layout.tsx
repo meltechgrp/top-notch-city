@@ -40,6 +40,7 @@ import { cn, fullName } from '@/lib/utils';
 import { useStore } from '@/store';
 import Layout from '@/constants/Layout';
 import { getImageUrl } from '@/lib/api';
+import Platforms from '@/constants/Plaforms';
 
 function CustomDrawerContent(props: DrawerContentComponentProps) {
 	const me = useStore((s) => s.me);
@@ -198,7 +199,7 @@ export default function AdminLayout() {
 							<Icon className=" w-8 h-8" as={ChevronLeftIcon} />
 						</Pressable>
 					),
-					swipeEnabled: false,
+					swipeEnabled: Platforms.isIOS() ? true : false,
 					drawerItemStyle: {
 						display: 'none',
 					},
@@ -207,15 +208,14 @@ export default function AdminLayout() {
 			<Drawer.Screen
 				name="properties/sub-categories"
 				options={{
-					headerTitle: 'Update',
 					headerLeft: () => (
 						<Pressable
-							onPress={() => router.push('/admin/properties')}
+							onPress={() => router.push('/admin/properties/categories')}
 							className="py-2 flex-row items-center pl-2 android:pr-4">
 							<Icon className=" w-8 h-8" as={ChevronLeftIcon} />
 						</Pressable>
 					),
-					swipeEnabled: false,
+					swipeEnabled: Platforms.isIOS() ? true : false,
 					drawerItemStyle: {
 						display: 'none',
 					},

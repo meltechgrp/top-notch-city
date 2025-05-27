@@ -14,6 +14,9 @@ import React from 'react';
 import { useTheme } from '@/components/layouts/ThemeProvider';
 import {
 	ChevronRight,
+	Heart,
+	HelpCircle,
+	LayoutDashboard,
 	NotebookText,
 	Settings,
 	Share2,
@@ -23,9 +26,9 @@ import {
 import { MenuListItem } from '@/components/menu/MenuListItem';
 import config from '@/config';
 import { Divider } from '@/components/ui/divider';
-import { cn } from '@/lib/utils';
+import { cn, fullName } from '@/lib/utils';
 import NotificationBarButton from '@/components/notifications/NotificationBarButton';
-import { profileDefault, useStore } from '@/store';
+import { useStore } from '@/store';
 import { BodyScrollView } from '@/components/layouts/BodyScrollView';
 import { getImageUrl } from '@/lib/api';
 
@@ -88,17 +91,17 @@ export default function More() {
 						}}
 						className={'flex-row items-center'}>
 						<Avatar className=" w-20 h-20">
-							<AvatarFallbackText>Humphrey Joshua</AvatarFallbackText>
+							<AvatarFallbackText>{fullName(me)}</AvatarFallbackText>
 							<AvatarBadge size="md" />
 							<AvatarImage source={getImageUrl(me?.profile_image)} />
 						</Avatar>
 						<View className="flex-1 pl-3">
-							<Text className="text-base font-medium">Humphrey Joshua</Text>
+							<Text className="text-base font-medium">{fullName(me)}</Text>
 							<Text className="text-sm text-typography/80">
 								View profile record and engagements
 							</Text>
 						</View>
-						<Icon as={ChevronRight} className="text-primary" />
+						<Icon as={ChevronRight} className="" />
 					</Pressable>
 				</View>
 				<View className="pt-8 flex-1 px-4">
@@ -118,8 +121,8 @@ export default function More() {
 									},
 								});
 							}}
-							icon={User2}
-							iconColor="primary"
+							icon={LayoutDashboard}
+							iconColor="gray-500"
 							className=" py-2 pb-3"
 						/>
 						<Divider className=" h-[0.3px] bg-background-info mb-4" />
@@ -137,6 +140,15 @@ export default function More() {
 								});
 							}}
 							icon={User2}
+							iconColor="yellow-600"
+							className=" py-2 pb-3"
+						/>
+						<Divider className=" h-[0.3px] bg-background-info mb-4" />
+						<MenuListItem
+							title="Wishlist"
+							description="View all your saved properties"
+							onPress={() => {}}
+							icon={Heart}
 							iconColor="primary"
 							className=" py-2 pb-3"
 						/>
@@ -158,7 +170,7 @@ export default function More() {
 							onPress={() => {}}
 							icon={NotebookText}
 							className="py-2"
-							iconColor="primary"
+							iconColor="yellow-600"
 						/>
 						<Divider className=" h-[0.3px] bg-background-info mb-4" />
 						<MenuListItem
@@ -166,7 +178,7 @@ export default function More() {
 							description={`Invite your friends to join ${config.appName} app`}
 							icon={Share2}
 							className=" py-2 pb-3"
-							iconColor="tertiary-300"
+							iconColor="primary"
 							onPress={onInvite}
 						/>
 						<Divider className=" h-[0.3px] bg-background-info mb-4" />
@@ -175,7 +187,7 @@ export default function More() {
 							description={`Join us as an agent to earn more`}
 							icon={Sparkle}
 							className="py-2"
-							iconColor="primary"
+							iconColor="gray-600"
 							onPress={() => {
 								// router.push('/account/invite-friends');
 							}}
@@ -187,9 +199,9 @@ export default function More() {
 							onPress={() => {
 								router.push('/support');
 							}}
-							icon={Sparkle}
+							icon={HelpCircle}
 							className="py-2"
-							iconColor="primary"
+							iconColor="yellow-600"
 						/>
 					</View>
 				</View>

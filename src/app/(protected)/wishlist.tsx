@@ -6,7 +6,6 @@ import { BodyScrollView } from '@/components/layouts/BodyScrollView';
 import { hapticFeed } from '@/components/HapticTab';
 import { RefreshControl } from 'react-native-gesture-handler';
 import { Property } from '@/components/home/FoundProperties';
-import ScreenContianer from '@/components/shared/ScreenContianer';
 import SavedListItem from '@/components/saved/SavedListItem';
 
 export default function WishListScreen() {

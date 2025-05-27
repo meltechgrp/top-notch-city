@@ -12,6 +12,16 @@ export async function getMe() {
 	}
 }
 
+export async function getUsers() {
+	try {
+		const res = await fetchWithAuth('/users', {});
+		const data = await res.json();
+		return data as Me[];
+	} catch (error) {
+		console.log(error);
+		return [];
+	}
+}
 export async function setProfileImage(image: ImagePickerAsset, user: string) {
 	try {
 		console.log(image, 'kjkkjjkn');

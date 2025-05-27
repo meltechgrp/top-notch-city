@@ -18,7 +18,7 @@ export default function ListingPurpose({ option, onUpdate }: Props) {
 					style={{
 						height: height / 3,
 					}}
-					className="flex-1 rounded-3xl overflow-hidden">
+					className="flex-1 min-h-60 rounded-3xl overflow-hidden">
 					<Image
 						source={require('@/assets/images/vectors/bookshelf.jpg')}
 						alt="sell banner"
@@ -39,7 +39,7 @@ export default function ListingPurpose({ option, onUpdate }: Props) {
 							onPress={() => onUpdate('rent')}>
 							<View
 								className={cn(
-									' gap-2 p-4 rounded-2xl border-b-4 border-b-background-muted bg-background-muted ',
+									' gap-2 p-4 rounded-2xl min-h-32 border-b-4 border-b-background-muted bg-background-muted ',
 									option == 'rent' && 'border-primary'
 								)}>
 								<View
@@ -47,7 +47,11 @@ export default function ListingPurpose({ option, onUpdate }: Props) {
 										'  bg-background self-center rounded-full p-3 mb-2',
 										option == 'rent' && 'bg-primary'
 									)}>
-									<Icon size="xl" as={KeyRound} />
+									<Icon
+										size="xl"
+										as={KeyRound}
+										className={option == 'rent' ? 'text-white' : ''}
+									/>
 								</View>
 								<Text size="xl" className="text-center font-bold">
 									Rent Property
@@ -59,7 +63,7 @@ export default function ListingPurpose({ option, onUpdate }: Props) {
 							onPress={() => onUpdate('sell')}>
 							<View
 								className={cn(
-									' gap-2 p-4 rounded-2xl border-b-4 border-b-background-muted bg-background-muted ',
+									' gap-2 p-4 rounded-2xl min-h-32 border-b-4 border-b-background-muted bg-background-muted ',
 									option == 'sell' && 'border-primary'
 								)}>
 								<View
@@ -67,7 +71,11 @@ export default function ListingPurpose({ option, onUpdate }: Props) {
 										'  bg-background self-center rounded-full p-3 mb-2',
 										option == 'sell' && 'bg-primary'
 									)}>
-									<Icon size="xl" as={RectangleEllipsis} />
+									<Icon
+										size="xl"
+										as={RectangleEllipsis}
+										className={option == 'sell' ? 'text-white' : ''}
+									/>
 								</View>
 								<Text size="xl" className="text-center font-bold">
 									Sell Property{' '}

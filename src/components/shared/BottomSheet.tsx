@@ -18,8 +18,7 @@ import Animated, {
 	useAnimatedStyle,
 } from 'react-native-reanimated';
 import { cn } from '@/lib/utils';
-import { CloseIcon, Heading, Icon, Text } from '../ui';
-import { useTheme } from '../layouts/ThemeProvider';
+import { CloseIcon, Heading, Icon, Text, useResolvedTheme } from '../ui';
 import { Colors } from '@/constants/Colors';
 
 type BottomSheetProps = Modal['props'] & {
@@ -28,6 +27,7 @@ type BottomSheetProps = Modal['props'] & {
 	withCloseButton?: boolean;
 	withBackButton?: boolean;
 	bottomPadding?: boolean;
+	rounded?: boolean;
 	snapPoint?: string | string[] | number | number[];
 	HeaderRightComponent?: any;
 	contentClassName?: string;
@@ -43,13 +43,14 @@ export default function BottomSheet(props: BottomSheetProps) {
 		HeaderRightComponent,
 		withCloseButton = true,
 		addBackground = true,
+		rounded = true,
 		plain,
 		backdropVariant,
 		android_keyboardInputMode = 'adjustPan',
 		contentClassName,
 	} = props;
 	const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-	const { theme } = useTheme();
+	const theme = useResolvedTheme();
 
 	// variables
 	const snapPoints = useMemo(
@@ -117,7 +118,8 @@ export default function BottomSheet(props: BottomSheetProps) {
 			onDismiss={handleDismiss}
 			android_keyboardInputMode={android_keyboardInputMode}
 			backdropComponent={renderBackdrop}
-			keyboardBehavior={Platform.OS === 'ios' ? 'extend' : 'interactive'}
+			enableBlurKeyboardOnGesture
+			keyboardBehavior={'interactive'}
 			keyboardBlurBehavior="restore"
 			backgroundComponent={null}
 			style={{
@@ -169,7 +171,7 @@ export default function BottomSheet(props: BottomSheetProps) {
 							: Colors.dark.background
 						: 'transparent',
 				}}
-				className={contentClassName}>
+				className={cn(rounded && ' rounded-t-xl', contentClassName)}>
 				{props.children}
 			</BottomSheetView>
 		</BottomSheetModal>

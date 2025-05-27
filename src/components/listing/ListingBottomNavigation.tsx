@@ -36,7 +36,7 @@ export default function ListingBottomNavigation({
 		}
 	}, [colorSchemeName]);
 	return (
-		<View className=" fixed bg-background bottom-0 z-50 left-0 right-0">
+		<View className=" fixed bottom-0 z-50 left-0 right-0">
 			<SafeAreaView edges={['bottom']}>
 				<View className=" flex-row backdrop-blur-sm bg-background border-t h-20 border-outline px-4  justify-center items-center">
 					<Button

@@ -3,9 +3,16 @@ import React from 'react';
 import { Platform } from 'react-native';
 import { HapticTab } from '@/components/HapticTab';
 import TabBarBackground from '@/components/TabBarBackground';
-import { Heart, Home, Menu, MessageSquareMore, Tag } from 'lucide-react-native';
+import {
+	Home,
+	Menu,
+	MessageSquareMore,
+	Plus,
+	Search,
+	Tag,
+} from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
-import { useResolvedTheme } from '@/components/ui';
+import { Icon, Pressable, Text, useResolvedTheme } from '@/components/ui';
 
 export default function TabLayout() {
 	const theme = useResolvedTheme();
@@ -48,19 +55,29 @@ export default function TabLayout() {
 				}}
 			/>
 			<Tabs.Screen
-				name="wishlist"
+				name="search"
 				options={{
-					title: 'Wishlist',
-					headerShown: true,
-					tabBarIcon: ({ color }) => <Heart size={24} color={color} />,
+					title: 'Search',
+					headerShown: false,
+					tabBarIcon: ({ color }) => <Search size={24} color={color} />,
 				}}
 			/>
 			<Tabs.Screen
 				name="sell"
 				options={{
 					title: 'Sell Property',
+					tabBarItemStyle: {
+						borderTopLeftRadius: 20,
+						borderTopRightRadius: 20,
+					},
 					headerShown: true,
-					tabBarIcon: ({ color }) => <Tag size={24} color={color} />,
+					tabBarButton: (props) => (
+						<Pressable
+							onPress={props.onPress}
+							className="items-center h-16 absolute bottom-2 left-[10%] aspect-square mx-auto justify-center bg-primary rounded-full">
+							<Plus strokeWidth={3} className=" w-6 h-6" color="white" />
+						</Pressable>
+					),
 				}}
 			/>
 			<Tabs.Screen

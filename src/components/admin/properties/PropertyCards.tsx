@@ -59,8 +59,8 @@ export default function PropertyCards({}: Props) {
 								key={item.title}
 								className="flex-1 h-28 py-4 justify-between rounded-xl bg-background-muted">
 								<View className=" gap-4 px-4 justify-between flex-row">
-									<Text className=" text-xl font-medium">{item.title}</Text>
-									<Heading size="2xl">{item.total}</Heading>
+									<Text className=" text-lg">{item.title}</Text>
+									<Heading size="xl">{item.total}</Heading>
 								</View>
 								<View
 									className={cn(

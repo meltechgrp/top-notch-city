@@ -3,38 +3,31 @@ import SwipeableWrapper from '@/components/shared/SwipeableWrapper';
 import { useState } from 'react';
 import { deleteSubCategory, editSubCategory } from '@/actions/property';
 import CategoryBottomSheet from './CategoryBottomSheet';
-import { useRouter } from 'expo-router';
 
 type Props = {
 	item: Category;
+	catId: string;
 	onRefresh: () => void;
 };
 
-export default function CategoryItem({ item, onRefresh }: Props) {
-	const router = useRouter();
-	const [loading, setLoading] = useState(false);
+export default function SubCategoryItem({ item, onRefresh, catId }: Props) {
 	const [category, setCategory] = useState(item.name);
 	const [categoryBottomSheet, setCategoryBottomSheet] = useState(false);
 	async function editHandler() {
 		try {
-			setLoading(true);
-			await editSubCategory(item);
+			await editSubCategory(catId, category, item.id);
 		} catch {
 		} finally {
 			setCategoryBottomSheet(false);
 			onRefresh();
-			setLoading(false);
 		}
 	}
 	async function deleteHandler() {
 		try {
-			setLoading(true);
-			await deleteSubCategory(item);
+			await deleteSubCategory(catId, item);
 		} catch {
 		} finally {
-			setCategoryBottomSheet(false);
 			onRefresh();
-			setLoading(false);
 		}
 	}
 	return (
@@ -42,9 +35,11 @@ export default function CategoryItem({ item, onRefresh }: Props) {
 			<SwipeableWrapper
 				rightAction={() => setCategoryBottomSheet(true)}
 				leftAction={() => deleteHandler()}>
-				<View className="flex-1 p-6 py-5 flex-row justify-between items-center bg-background-muted">
+				<View className="flex-1 p-6 py-4 flex-row justify-between items-center bg-background-muted">
 					<View>
-						<Text size="md">{item.name}</Text>
+						<Text size="lg" className=" capitalize">
+							{item.name}
+						</Text>
 						<Text className=" capitalize font-light">Sub category</Text>
 					</View>
 				</View>
@@ -54,7 +49,6 @@ export default function CategoryItem({ item, onRefresh }: Props) {
 				onDismiss={() => setCategoryBottomSheet(false)}
 				onSubmit={editHandler}
 				onUpdate={setCategory}
-				loading={loading}
 				category={category}
 			/>
 		</>
