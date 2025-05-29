@@ -139,7 +139,7 @@ export default function SearchScreen() {
 							setSelectedMarker(null);
 							router.push({
 								pathname: '/(protected)/property/[propertyId]',
-								params: { propertyId: selectedMarker.id },
+								params: { propertyId: selectedMarker.name },
 							});
 						}}
 						onDismiss={() => setSelectedMarker(null)}

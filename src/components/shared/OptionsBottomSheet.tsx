@@ -15,6 +15,7 @@ export type Props = {
 	value: OptionType;
 	onChange: (value: OptionType) => void;
 	onDismiss: () => void;
+	withBackground?: boolean;
 	isOpen: boolean;
 	options: OptionType[];
 	OptionComponent?: React.ComponentType<
@@ -22,18 +23,33 @@ export type Props = {
 	>;
 };
 export default function OptionsBottomSheet(props: Props) {
-	const { isOpen, onDismiss, onChange, value, options, OptionComponent } =
-		props;
+	const {
+		isOpen,
+		onDismiss,
+		onChange,
+		value,
+		options,
+		OptionComponent,
+		withBackground = true,
+	} = props;
 	return (
-		<BottomSheetPlain visible={isOpen} onDismiss={onDismiss}>
+		<BottomSheetPlain
+			withBackground={withBackground}
+			visible={isOpen}
+			onDismiss={onDismiss}>
 			<View
 				style={{ height: options.length < 8 ? options.length * 53 : 450 }}
-				className="bg-background-muted py-2 rounded-2xl ">
+				className={
+					withBackground ? 'bg-background-muted py-2 rounded-2xl ' : ''
+				}>
 				<FlashList
 					data={options}
 					showsVerticalScrollIndicator={false}
 					keyExtractor={(item) => item.label}
 					estimatedItemSize={40}
+					ItemSeparatorComponent={
+						withBackground ? null : () => <View className=" h-2" />
+					}
 					renderItem={({ item: option, index }) =>
 						OptionComponent ? (
 							<OptionComponent
@@ -57,9 +73,11 @@ export default function OptionsBottomSheet(props: Props) {
 									onChange(option);
 									onDismiss();
 								}}
-								className={cn('px-4 h-14 flex-row  items-center', {
-									'border-outline border-t ': !!index,
-								})}>
+								className={cn(
+									'px-4 h-14 flex-row  items-center',
+									!!index && withBackground && 'border-outline border-t ',
+									!withBackground && 'bg-background-muted rounded-xl'
+								)}>
 								<Text
 									className={cn(
 										'text-base text-center flex-1',

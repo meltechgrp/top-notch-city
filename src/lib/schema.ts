@@ -47,3 +47,56 @@ export const UpdateUserSchema = z.object({
 });
 
 export type UpdateUserInput = z.infer<typeof UpdateUserSchema>;
+
+export const mediaFileSchema = z.object({
+	uri: z.string().url(),
+	width: z.number(),
+	height: z.number(),
+	type: z.enum(['image', 'video']),
+	fileName: z.string().optional(),
+	fileSize: z.number().optional(),
+	mimeType: z.string().optional(),
+});
+
+export const PropertySchema = z.object({
+	title: z.string().min(3, {
+		message: 'Enter a valid title',
+	}),
+	description: z.string().optional(),
+	price: z.string().min(2, {
+		message: 'Enter a valid price',
+	}),
+	subcategory: z.string().min(3, {
+		message: 'Select a Sub Category',
+	}),
+	category: z.string().min(3, {
+		message: 'Select a Category',
+	}),
+	purpose: z.string().min(3, {
+		message: 'Enter a valid name',
+	}),
+	street: z.string().optional(),
+	city: z.string().optional(),
+	state: z.string().optional(),
+	place_id: z.string().optional(),
+	country: z.string().optional(),
+	country_code: z.string().optional(),
+	latitude: z.number().optional(),
+	longitude: z.number().optional(),
+	images: z
+		.array(mediaFileSchema)
+		.min(3, {
+			message: 'Add at least 3 property images',
+		})
+		.max(15, {
+			message: 'Maximum of 15 images only!',
+		}),
+	videos: z
+		.array(mediaFileSchema)
+		.max(5, {
+			message: 'Maximum of 5 videos only!',
+		})
+		.optional(),
+});
+
+export type PropertyInput = z.infer<typeof PropertySchema>;

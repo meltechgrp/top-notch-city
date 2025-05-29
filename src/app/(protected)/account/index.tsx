@@ -12,13 +12,12 @@ import {
 import { ScrollView } from 'react-native';
 import React, { useState } from 'react';
 import { cn, fullName } from '@/lib/utils';
-import { profileDefault, useStore, useTempStore } from '@/store';
+import { useStore, useTempStore } from '@/store';
 import { ChevronRight, Edit2 } from 'lucide-react-native';
 import { format } from 'date-fns';
 import ProfileImageBottomSheet from '@/components/account/ProfileImageBottomSheet';
 import { setProfileImage } from '@/actions/user';
 import { ImagePickerAsset } from 'expo-image-picker';
-import config from '@/config';
 import { getImageUrl } from '@/lib/api';
 
 export default function Account() {

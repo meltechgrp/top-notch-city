@@ -74,18 +74,16 @@ export const useStore = create<StateAndActions>(
 	)
 );
 
-export type UploadedFile = ImagePickerAsset & {
-	default: boolean;
-};
+export type UploadedFile = ImagePickerAsset;
 
-type Listing = {
+export type Listing = {
 	totalSteps: number;
 	step: number;
 	purpose: string;
 	category: string;
 	subCategory?: string;
 	type?: string;
-	address?: PlacePrediction;
+	address?: GooglePlace;
 	facilities?: {
 		label: string;
 		value: number;
@@ -93,7 +91,6 @@ type Listing = {
 	photos?: UploadedFile[];
 	videos?: UploadedFile[];
 	modelImages?: UploadedFile[];
-	features?: string[];
 	title?: string;
 	description?: string;
 	price?: string;

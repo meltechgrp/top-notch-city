@@ -7,18 +7,20 @@ import ListingLocation from '@/components/listing/ListingLocation';
 import ListingMediaFiles from '@/components/listing/ListingMediaFiles';
 import ListingPurpose from '@/components/listing/ListingPurpose';
 import ListingSucces from '@/components/listing/ListingSuccess';
+import FullHeightLoaderWrapper from '@/components/loaders/FullHeightLoaderWrapper';
 import headerLeft from '@/components/shared/headerLeft';
 import { Box, Button, ButtonText } from '@/components/ui';
-import { cn } from '@/lib/utils';
+import { showSnackbar } from '@/lib/utils';
 import { useTempStore } from '@/store';
 import { useLayout } from '@react-native-community/hooks';
 import { Stack, useRouter } from 'expo-router';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import Animated, { FadeInRight, FadeOutLeft } from 'react-native-reanimated';
 
 export default function SellAddScreen() {
 	const router = useRouter();
 	const { onLayout, height } = useLayout();
+	const [loading, setLoading] = useState(false);
 	const { listing, updateListing } = useTempStore();
 
 	const Steps = useMemo(() => {
@@ -48,7 +50,33 @@ export default function SellAddScreen() {
 				return null;
 		}
 	}, [listing.step, listing.purpose, listing.category]);
-
+	function handleNext(step: number, back?: boolean) {
+		if (back) {
+			return updateListing({ ...listing, step });
+		}
+		if (listing.step == 2 && !listing?.subCategory)
+			return showSnackbar({
+				message: 'Please select a category',
+				type: 'warning',
+			});
+		if (listing.step == 3 && !listing?.address?.displayName)
+			return showSnackbar({
+				message: 'Please enter property location!',
+				type: 'warning',
+			});
+		if (listing.step == 5 && !listing?.photos?.length)
+			if (listing?.photos && listing?.photos?.length < 3)
+				return showSnackbar({
+					message: 'Select at least 3 images',
+					type: 'info',
+				});
+			else
+				return showSnackbar({
+					message: 'Add some images to proceed!',
+					type: 'warning',
+				});
+		updateListing({ ...listing, step });
+	}
 	return (
 		<>
 			<Stack.Screen
@@ -67,21 +95,25 @@ export default function SellAddScreen() {
 				}}
 			/>
 			<Box onLayout={onLayout} className="flex-1 py-3">
-				<BodyScrollView className="flex-1">
-					<Animated.View
-						entering={FadeInRight.duration(800)}
-						exiting={FadeOutLeft.duration(800)}
-						key={listing.step}
-						style={{ height }}
-						className={'flex-1'}>
-						{Steps}
-					</Animated.View>
-				</BodyScrollView>
+				<FullHeightLoaderWrapper loading={loading}>
+					<BodyScrollView className="flex-1">
+						<Animated.View
+							entering={FadeInRight.duration(800)}
+							exiting={FadeOutLeft.duration(800)}
+							key={listing.step}
+							style={{ height }}
+							className={'flex-1'}>
+							{Steps}
+						</Animated.View>
+					</BodyScrollView>
+				</FullHeightLoaderWrapper>
 			</Box>
 			<ListingBottomNavigation
 				step={listing.step}
+				listing={listing}
+				setLoading={setLoading}
 				totalSteps={listing.totalSteps}
-				onUpdate={(step) => updateListing({ ...listing, step })}
+				onUpdate={handleNext}
 			/>
 		</>
 	);

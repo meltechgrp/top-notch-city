@@ -3,12 +3,12 @@ import { useState } from 'react';
 import { View } from 'react-native';
 import { Badge, Slider, Text, Pressable, Button, ButtonText } from '../ui';
 import { KeyboardDismissPressable } from '../shared/KeyboardDismissPressable';
-import { Filter } from '@/app/(protected)/search';
 import BottomSheet from '../shared/BottomSheet';
 import { cn, formatMoney } from '@/lib/utils';
 import CustomSelect from '../shared/CustomSelect';
 import OptionsBottomSheet from '../shared/OptionsBottomSheet';
 import { Cities } from '@/constants/Cities';
+import { Filter } from '@/app/(protected)/(tabs)/search';
 
 type Props = {
 	show: boolean;

@@ -7,23 +7,25 @@ import { Icon, Text } from '../ui';
 import { debounce } from 'lodash-es';
 import { MapPin } from 'lucide-react-native';
 import { useApiQueryWithParams } from '@/lib/api';
-import { autocompleteAddress } from '@/actions/utills';
+import { autocompleteAddress, fetchPlaceFromTextQuery } from '@/actions/utills';
+import { composeFullAddress } from '@/lib/utils';
+import { MiniEmptyState } from '../shared/MiniEmptyState';
 
 type Props = {
 	show: boolean;
 	onDismiss: () => void;
-	onUpdate: (data: PlacePrediction) => void;
-	address?: PlacePrediction;
+	onUpdate: (data: GooglePlace) => void;
+	address?: GooglePlace;
 };
 
 function ListingAddressBottomSheet(props: Props) {
 	const { show, onDismiss, onUpdate } = props;
 
 	const [text, setText] = useState('');
-	const [locations, setLocations] = useState<PlacePrediction[]>([]);
+	const [locations, setLocations] = useState<GooglePlace[]>([]);
 	const [typing, setTyping] = useState(false);
 
-	const { refetch, loading } = useApiQueryWithParams(autocompleteAddress);
+	const { refetch, loading } = useApiQueryWithParams(fetchPlaceFromTextQuery);
 
 	const debouncedAutocompleteSearch = useMemo(
 		() =>
@@ -59,7 +61,7 @@ function ListingAddressBottomSheet(props: Props) {
 		debouncedAutocompleteSearch(val);
 	};
 
-	const handleSelect = (item: PlacePrediction) => {
+	const handleSelect = (item: GooglePlace) => {
 		onUpdate(item);
 		onDismiss();
 		setText('');
@@ -90,9 +92,11 @@ function ListingAddressBottomSheet(props: Props) {
 					<View className="flex-1">
 						<FlatList
 							data={locations}
-							keyExtractor={(item) => item.place_id}
+							refreshing={loading}
+							keyExtractor={(item) => item.placeId!}
 							contentContainerClassName="bg-background-muted p-4 rounded-xl"
-							keyboardShouldPersistTaps="handled"
+							keyboardShouldPersistTaps="never"
+							keyboardDismissMode="on-drag"
 							ListHeaderComponent={() => (
 								<View className="px-4 pb-2">
 									<Text size="md" className="font-light">
@@ -100,15 +104,34 @@ function ListingAddressBottomSheet(props: Props) {
 									</Text>
 								</View>
 							)}
+							ListEmptyComponent={() => (
+								<MiniEmptyState
+									className="mb-8"
+									title={
+										text?.length > 2
+											? 'No available locations'
+											: 'Start typing...'
+									}
+								/>
+							)}
 							renderItem={({ item }) => (
-								<Pressable onPress={() => handleSelect(item)}>
-									<View className="flex-row gap-3 p-2">
+								<Pressable
+									onPress={() =>
+										handleSelect({
+											...item,
+											displayName: composeFullAddress(item.addressComponents)!,
+										})
+									}>
+									<View className="flex-row gap-3 p-2 border-b border-outline">
 										<View className="mt-2">
 											<Icon as={MapPin} className="text-primary" />
 										</View>
 										<View className="flex-1">
+											<Text className="text-lg text-typography">
+												{item.displayName}
+											</Text>
 											<Text className="flex-shrink text-wrap text-typography">
-												{item.description}
+												{composeFullAddress(item.addressComponents)}
 											</Text>
 										</View>
 									</View>

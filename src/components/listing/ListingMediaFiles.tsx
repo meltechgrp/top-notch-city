@@ -81,12 +81,6 @@ export default function ListingMediaFiles() {
 				<ListingPhotosBottomSheet
 					visible={photosBottomSheet}
 					photos={listing.photos}
-					setCoverPhoto={(id) => {
-						let newData = listing.photos?.map((item, i) =>
-							i == id ? { ...item, default: true } : { ...item, default: false }
-						);
-						updateListing({ ...listing, photos: newData });
-					}}
 					onDismiss={() => setPhotosBottomSheet(false)}
 					deleteFile={(id) => {
 						let newData = listing.photos?.filter((_, i) => i != id);
@@ -94,9 +88,6 @@ export default function ListingMediaFiles() {
 					}}
 					onUpdate={(data) => {
 						let combined = [...(listing.photos ?? []), ...data];
-						combined = combined.map((item, i) =>
-							i == 0 ? { ...item, default: true } : { ...item, default: false }
-						);
 						updateListing({ ...listing, photos: combined });
 					}}
 				/>

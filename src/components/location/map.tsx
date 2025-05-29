@@ -1,18 +1,17 @@
-import { useMemo } from 'react';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import React, { ReactNode, useMemo } from 'react';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import Layout from '@/constants/Layout';
 import { CustomPropertyMarker } from './CustomPropertyMarker';
 import Platforms from '@/constants/Plaforms';
+import propertyImage from '@/assets/images/property.png';
 import { useTheme } from '../layouts/ThemeProvider';
 import { Colors } from '@/constants/Colors';
 
 export type MarkerData = {
-	id: string;
 	name: string;
 	latitude: number;
 	longitude: number;
-	description: string;
-	image: any;
+	image?: any;
 };
 interface MapProps {
 	latitude?: number;
@@ -22,9 +21,11 @@ interface MapProps {
 	scrollEnabled?: boolean;
 	showsBuildings?: boolean;
 	activeMarker?: MarkerData;
+	children?: ReactNode;
 	onMarkerPress?: (data: MarkerData) => void;
 	zoomControlEnabled?: boolean;
 	markers?: MarkerData[];
+	marker?: LocationData;
 }
 const DEFAULT_LAT_DELTA = 0.0922;
 const DEFAULT_LONG_DELTA = 0.0421;
@@ -35,10 +36,11 @@ export default function Map(props: MapProps) {
 		height,
 		markers,
 		onMarkerPress,
-		zoomControlEnabled = false,
+		zoomControlEnabled = true,
 		scrollEnabled = true,
 		showUserLocation = false,
 		showsBuildings = true,
+		marker,
 	} = props;
 	const { theme } = useTheme();
 	const initialRegion = useMemo(
@@ -75,6 +77,16 @@ export default function Map(props: MapProps) {
 				compassOffset={{ x: 10, y: 50 }}
 				scrollEnabled={scrollEnabled}
 				region={initialRegion}>
+				{marker && (
+					<Marker
+						coordinate={{
+							latitude: marker.latitude,
+							longitude: marker.longitude,
+						}}
+						image={propertyImage}
+						anchor={{ x: 0.5, y: 0.5 }}
+					/>
+				)}
 				{markers?.map((place) => (
 					<CustomPropertyMarker
 						key={place.name}

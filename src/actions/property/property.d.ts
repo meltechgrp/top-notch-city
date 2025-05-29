@@ -10,3 +10,11 @@ type SubCategory = {
 	name: string;
 	slug: string;
 };
+type CategorySections = { cat: string; subs: { name: string }[] }[];
+
+type Property = {
+	title: string;
+	description?: string;
+	price: number;
+	currency: 'ngn' | 'usd';
+};

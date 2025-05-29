@@ -5,25 +5,31 @@ import { Button, ButtonText, Icon, Text } from '../ui';
 import { UploadedFile } from '@/store';
 import * as ImagePicker from 'expo-image-picker';
 import { cn } from '@/lib/utils';
-import { Trash2 } from 'lucide-react-native';
+import { Camera, Images, MoreHorizontal } from 'lucide-react-native';
 import { uniqueId } from 'lodash-es';
+import { MiniEmptyState } from '../shared/MiniEmptyState';
+import { useMemo, useState } from 'react';
+import { useLayout } from '@react-native-community/hooks';
+import OptionsBottomSheet from '../shared/OptionsBottomSheet';
 
 type Props = {
 	visible: boolean;
 	onDismiss: () => void;
 	deleteFile: (id: number) => void;
-	setCoverPhoto: (id: number) => void;
 	onUpdate: (data: UploadedFile[]) => void;
 	photos?: UploadedFile[];
 };
 function ListingPhotosBottomSheet(props: Props) {
-	const { visible, onDismiss, setCoverPhoto, onUpdate, deleteFile, photos } =
-		props;
+	const { visible, onDismiss, onUpdate, deleteFile, photos } = props;
+	const [openEdit, setOpenEdit] = useState(false);
+	const [selected, setSelected] = useState<number | undefined>();
+	const { width, onLayout } = useLayout();
 	const pickImage = async () => {
 		// No permissions request is necessary for launching the image library
 		let result = await ImagePicker.launchImageLibraryAsync({
 			mediaTypes: ['images'],
 			selectionLimit: 15,
+			orderedSelection: true,
 			allowsMultipleSelection: true,
 			aspect: [4, 3],
 		});
@@ -31,7 +37,6 @@ function ListingPhotosBottomSheet(props: Props) {
 			onUpdate(
 				result.assets.map((img) => ({
 					...img,
-					default: false,
 					assetId: uniqueId(),
 				}))
 			);
@@ -47,6 +52,7 @@ function ListingPhotosBottomSheet(props: Props) {
 		}
 		let result = await ImagePicker.launchCameraAsync({
 			mediaTypes: ['images'],
+			cameraType: ImagePicker.CameraType.back,
 			selectionLimit: 15,
 			allowsMultipleSelection: true,
 			aspect: [4, 3],
@@ -62,67 +68,112 @@ function ListingPhotosBottomSheet(props: Props) {
 			);
 		}
 	};
+	const ListHeader = useMemo(
+		() => (
+			<View className="flex-1 gap-2  bg-background-muted rounded-xl py-6 mb-3">
+				<View className=" flex-row gap-5 items-center justify-center">
+					<Button
+						disabled={photos && photos?.length > 15}
+						size="xl"
+						onPress={pickImage}>
+						<ButtonText>Choose photos</ButtonText>
+						<Icon as={Images} />
+					</Button>
+					<Button
+						disabled={photos && photos?.length > 15}
+						size="xl"
+						onPress={takeImage}
+						variant="outline">
+						<ButtonText>Take photos</ButtonText>
+						<Icon as={Camera} className="text-primary" />
+					</Button>
+				</View>
+				<Text className=" font-light text-center">
+					Select any one to be the cover photo
+				</Text>
+			</View>
+		),
+		[takeImage, pickImage]
+	);
+	const RenderItem = ({
+		item,
+		index,
+	}: {
+		item: UploadedFile;
+		index: number;
+	}) => (
+		<Pressable
+			onPress={() => {
+				setSelected(index);
+				setOpenEdit(true);
+			}}
+			style={{ maxWidth: width / 4 }}
+			className={cn('flex-1 h-24 px-2')}>
+			<ImageBackground
+				alt="images"
+				className={cn('w-full h-full flex-1 p-1 rounded-xl overflow-hidden')}
+				source={{ uri: item.uri }}>
+				<View className=" flex-1 justify-between">
+					<Pressable
+						onPress={() => {
+							setSelected(index);
+							setOpenEdit(true);
+						}}
+						className=" self-end p-1.5 rounded-full bg-black/50 backdrop-blur-md">
+						<Icon as={MoreHorizontal} className=" text-primary" />
+					</Pressable>
+				</View>
+			</ImageBackground>
+		</Pressable>
+	);
 	return (
 		<BottomSheet
 			title="Add photos to your property"
 			withHeader={true}
 			withBackButton={false}
-			snapPoint={'80%'}
+			snapPoint={'90%'}
 			visible={visible}
 			onDismiss={onDismiss}>
-			<View className="flex-1 gap-2 py-4 pb-8 bg-background">
+			<View
+				onLayout={onLayout}
+				className="flex-1 gap-2 py-4 pb-8 bg-background">
 				<FlatList
 					data={photos}
-					numColumns={2}
+					numColumns={4}
 					contentContainerClassName=""
 					keyExtractor={(item) => item.assetId!}
-					ListHeaderComponent={() => (
-						<View className="flex-1 gap-2  bg-background-muted rounded-xl py-6 mb-3">
-							<View className=" flex-row gap-5 items-center justify-center">
-								<Button size="xl" onPress={pickImage}>
-									<ButtonText>Add photos</ButtonText>
-								</Button>
-								<Button size="xl" onPress={takeImage} variant="outline">
-									<ButtonText>Take new photos</ButtonText>
-								</Button>
-							</View>
-							<Text className=" font-light text-center">
-								Select any one to be the cover photo
-							</Text>
-						</View>
+					ListHeaderComponent={ListHeader}
+					ListEmptyComponent={() => (
+						<MiniEmptyState title="Pick or take photos to your property" />
 					)}
 					ItemSeparatorComponent={() => <View className=" h-4" />}
-					renderItem={({ item, index }) => (
-						<Pressable
-							onPress={() => setCoverPhoto(index)}
-							className={cn('flex-1 h-44 px-2')}>
-							<ImageBackground
-								alt="images"
-								className={cn(
-									'w-full h-full flex-1 p-4  rounded-xl overflow-hidden',
-									item.default && 'border border-primary'
-								)}
-								source={{ uri: item.uri }}>
-								<View className=" flex-1 justify-between">
-									<Pressable
-										onPress={() => deleteFile(index)}
-										className=" self-end p-2.5 rounded-full bg-black/50 backdrop-blur-md">
-										<Icon as={Trash2} className=" text-primary" />
-									</Pressable>
-									{item.default && (
-										<View className=" bg-black/60 backdrop-blur-md self-start p-2 px-4 rounded-xl">
-											<Text size="xl" className="text-white">
-												Cover photo
-											</Text>
-										</View>
-									)}
-								</View>
-							</ImageBackground>
-						</Pressable>
-					)}
+					renderItem={RenderItem}
 					keyboardShouldPersistTaps="handled"
 				/>
+				{photos?.length && (
+					<View className=" px-4">
+						<Button className="h-12" onPress={onDismiss}>
+							<ButtonText>Continue</ButtonText>
+						</Button>
+					</View>
+				)}
 			</View>
+			<OptionsBottomSheet
+				isOpen={openEdit}
+				onDismiss={() => setOpenEdit(false)}
+				withBackground={false}
+				onChange={(val) => {
+					if (!selected) return;
+					if (val.value == 'delete') return deleteFile(selected);
+				}}
+				value={{ label: 'Set', value: 'delete' }}
+				options={[
+					{
+						label: 'Delete Photo',
+						value: 'delete',
+					},
+				]}
+			/>
 		</BottomSheet>
 	);
 }

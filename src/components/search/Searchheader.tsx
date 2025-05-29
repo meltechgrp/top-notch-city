@@ -21,7 +21,7 @@ import { ScrollView, TextInput, TouchableOpacity } from 'react-native';
 import { useEffect } from 'react';
 import { useRouter } from 'expo-router';
 import { cn } from '@/lib/utils';
-import { Filter } from '@/app/(protected)/search';
+import { Filter } from '@/app/(protected)/(tabs)/search';
 
 const data = [
 	{
@@ -99,7 +99,7 @@ export function SearchHeader({
 						<View className="h-12 bg-background-muted flex-1 rounded-full flex-row items-center px-2 py-1">
 							<TextInput
 								ref={textInputRef}
-								className="h-[36px] flex-1 px-2 bg-transparent"
+								className="h-[36px] flex-1 px-2 text-typography bg-transparent"
 								placeholder={'Search property, city or everything...'}
 								value={text}
 								onChangeText={onChangeText}

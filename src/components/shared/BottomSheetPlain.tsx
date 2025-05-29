@@ -4,11 +4,16 @@ import { Animated, Modal, Pressable, View } from 'react-native';
 
 import { useKeyboard } from '@react-native-community/hooks';
 import { Text } from '../ui';
+import { cn } from '@/lib/utils';
 
 type BottomSheetProps = Modal['props'] & {
 	doneLabel?: string;
+	withBackground?: boolean;
 };
-export default function BottomSheetPlain(props: BottomSheetProps) {
+export default function BottomSheetPlain({
+	withBackground = true,
+	...props
+}: BottomSheetProps) {
 	const keyboard = useKeyboard();
 
 	const h = Layout.window.height - keyboard.keyboardHeight - 50;
@@ -47,7 +52,11 @@ export default function BottomSheetPlain(props: BottomSheetProps) {
 					<View
 						style={[keyboard.keyboardShown ? { height: h } : {}]}
 						className="relative overflow-hidden p-4 ios:pb-[34px] android:pb-4">
-						<View className="bg-background-muted mb-2 rounded-2xl">
+						<View
+							className={cn(
+								'bg-background-muted mb-2 rounded-2xl',
+								!withBackground && 'bg-transparent'
+							)}>
 							{props.children}
 						</View>
 						<Pressable

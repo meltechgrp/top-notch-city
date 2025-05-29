@@ -1,4 +1,7 @@
 import { fetchWithAuth } from '@/lib/api';
+import { cacheStorage } from '@/lib/asyncStorage';
+import { PropertyInput } from '@/lib/schema';
+import { Listing } from '@/store';
 
 // Property section
 
@@ -11,6 +14,96 @@ export async function getProperties(): Promise<any[]> {
 	} catch (error) {
 		console.log(error);
 		return [];
+	}
+}
+
+export async function uploadProperty(
+	listing: Listing
+): Promise<ActionResponse<PropertyInput>> {
+	try {
+		const formData = new FormData();
+
+		const {
+			photos,
+			title,
+			description,
+			price,
+			videos,
+			category,
+			subCategory,
+			facilities,
+			purpose,
+			address,
+		} = listing;
+
+		// Basic fields
+		if (title) formData.append('title', title);
+		if (description) formData.append('description', description);
+		if (price) formData.append('price', price);
+		if (category) formData.append('property_category_name', category);
+		if (subCategory) formData.append('property_subcategory_name', subCategory);
+		if (purpose) formData.append('purpose', purpose);
+
+		// Address
+		if (address) {
+			formData.append('latitude', address.location.latitude.toString());
+			formData.append('longitude', address.location.longitude.toString());
+
+			const comps = address.addressComponents;
+			if (comps.city) formData.append('city', comps.city);
+			if (comps.state) formData.append('state', comps.state);
+			if (comps.country) formData.append('country', comps.country);
+			if (comps.street) formData.append('street', comps.street);
+			if (address.placeId) formData.append('place_id', address.placeId);
+		}
+
+		// Photos
+		photos?.forEach((item, i) => {
+			formData.append(`photo_${i}`, {
+				uri: item.uri,
+				type: 'image/jpeg',
+				name: `photo_${i}.jpg`,
+			} as any);
+		});
+
+		// Videos
+		videos?.forEach((item, i) => {
+			formData.append(`video_${i}`, {
+				uri: item.uri,
+				type: 'video/mp4',
+				name: `video_${i}.mp4`,
+			} as any);
+		});
+
+		// Optional: append facilities as JSON string or array
+		if (facilities && Array.isArray(facilities)) {
+			formData.append('facilities', JSON.stringify(facilities));
+		}
+
+		const res = await fetchWithAuth('/properties', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'multipart/form-data',
+			},
+			body: formData,
+		});
+
+		const result = await res.json();
+
+		if (result?.detail) {
+			return {
+				formError: 'Please verify your property details',
+			};
+		}
+
+		return {
+			data: result,
+		};
+	} catch (error) {
+		console.log(error);
+		return {
+			formError: 'Something went wrong, please try again',
+		};
 	}
 }
 
@@ -78,10 +171,13 @@ export async function deleteCategory(item: Category) {
 
 // Sub Category section
 
-export async function getCategorySections(): Promise<
-	{ cat: string; subs: { name: string }[] }[]
-> {
+const SIX_HOURS = 2 * 60 * 60 * 1000;
+export async function getCategorySections(): Promise<CategorySections> {
 	try {
+		const cached = await cacheStorage.get(`category-sections`);
+		if (cached) {
+			return JSON.parse(cached) as CategorySections;
+		}
 		const res = await fetchWithAuth('/categories', {});
 		const data = (await res.json()) as Category[];
 
@@ -100,6 +196,7 @@ export async function getCategorySections(): Promise<
 			})
 		);
 
+		cacheStorage.set(`category-sections`, JSON.stringify(sections), SIX_HOURS);
 		return sections;
 	} catch (error) {
 		console.log(error);

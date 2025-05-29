@@ -116,42 +116,30 @@ export function isText(text: any) {
 	);
 }
 
-type ComposerAddress = {
-	street?: string | null;
-	streetNumber?: string | null;
-	community?: string | null;
-	neighborhood?: string | null;
-	lga?: string | null;
-	state?: string | null;
-	country?: string | null;
-};
 export function composeFullAddress(
-	address: ComposerAddress,
-	streetOnly: boolean = false
+	address: ParsedAddress,
+	streetOnly?: boolean
 ) {
 	if (streetOnly) {
-		return address.street
-			? `${address.streetNumber || ''} ${address.street}`.trim()
-			: address.community;
+		return address?.street?.trim();
 	}
 	if (!address.street) {
 		return joinWithComma(
-			address.neighborhood || address.community,
+			address.city,
 			address.lga,
 			address.state,
 			address.country
 		);
 	}
 	return joinWithComma(
-		address.streetNumber,
 		address.street,
-		address.neighborhood || address.community,
+		address.city,
 		address.lga,
 		address.state,
 		address.country
 	);
 }
-function joinWithComma(...arr: Array<string | undefined | null>) {
+export function joinWithComma(...arr: Array<string | undefined | null>) {
 	return arr.filter(Boolean).join(', ').trim();
 }
 
@@ -164,12 +152,6 @@ export function tokenizeText(text: string) {
 	for (const word of textArray) {
 		if (word.match(/^\s+$/)) {
 			tokens.push({ type: 'text', value: word });
-		} else if (word.startsWith('c/')) {
-			tokens.push({ type: 'community', value: word });
-		} else if (word.startsWith('s/')) {
-			tokens.push({ type: 'split', value: word });
-		} else if (word.startsWith('@')) {
-			tokens.push({ type: 'mention', value: word });
 		} else if (word.match(urlRegex)) {
 			// TODO: Check internal links
 			tokens.push({ type: 'link', value: word });
