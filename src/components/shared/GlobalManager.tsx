@@ -1,6 +1,6 @@
-import { getMe } from '@/actions/user';
 import GlobalFullScreenLoader from '@/components/loaders/GlobalFullScreenLoader';
 import SnackBar from '@/components/shared/SnackBar';
+import { useApiRequest } from '@/lib/api';
 import eventBus from '@/lib/eventBus';
 import { getAuthToken, removeAuthToken } from '@/lib/secureStore';
 import { useStore, useTempStore } from '@/store';
@@ -14,15 +14,15 @@ export default function GlobalManager() {
 		(s) => s.updateFullScreenLoading
 	);
 	const hasAuth = useStore((s) => s.hasAuth);
+	const { request, data } = useApiRequest<Me>();
 	const [snackBars, setSnackBars] = React.useState<Array<SnackBarOption>>([]);
 	const [activeSnackBar, setActiveSnackBar] =
 		React.useState<SnackBarOption | null>(null);
 
 	async function updateMe() {
-		const me = await getMe();
-		if (me) {
-			console.log(me);
-			setMe(me);
+		await request({ url: '/users/me' });
+		if (data) {
+			setMe(data);
 		}
 	}
 

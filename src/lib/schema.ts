@@ -50,12 +50,7 @@ export type UpdateUserInput = z.infer<typeof UpdateUserSchema>;
 
 export const mediaFileSchema = z.object({
 	uri: z.string().url(),
-	width: z.number(),
-	height: z.number(),
-	type: z.enum(['image', 'video']),
-	fileName: z.string().optional(),
-	fileSize: z.number().optional(),
-	mimeType: z.string().optional(),
+	id: z.string(),
 });
 
 export const PropertySchema = z.object({

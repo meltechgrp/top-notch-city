@@ -74,7 +74,10 @@ export const useStore = create<StateAndActions>(
 	)
 );
 
-export type UploadedFile = ImagePickerAsset;
+export type UploadedFile = {
+	uri: string;
+	id: string;
+};
 
 export type Listing = {
 	totalSteps: number;

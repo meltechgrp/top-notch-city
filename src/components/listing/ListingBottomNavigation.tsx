@@ -12,17 +12,15 @@ import {
 	useResolvedTheme,
 	View,
 } from '../ui';
-import React, { useState } from 'react';
+import React from 'react';
 import Svg, { Circle } from 'react-native-svg';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ChevronLeft, ChevronRight, Loader, Upload } from 'lucide-react-native';
+import { ChevronLeft, ChevronRight, Upload } from 'lucide-react-native';
 import { cn, showSnackbar } from '@/lib/utils';
 import { Platform } from 'react-native';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
 import { Colors } from '@/constants/Colors';
 import { Listing } from '@/store';
-import { uploadProperty } from '@/actions/property';
-import FullHeightLoaderWrapper from '../loaders/FullHeightLoaderWrapper';
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 type Props = {
@@ -30,7 +28,7 @@ type Props = {
 	listing: Listing;
 	totalSteps: number;
 	onUpdate: (step: number, back?: boolean) => void;
-	setLoading: (back: boolean) => void;
+	uploaHandler: () => Promise<any>;
 };
 
 export default function ListingBottomNavigation({
@@ -38,7 +36,7 @@ export default function ListingBottomNavigation({
 	totalSteps,
 	listing,
 	onUpdate,
-	setLoading,
+	uploaHandler,
 }: Props) {
 	const colorSchemeName = useResolvedTheme();
 	async function handleUpload() {
@@ -52,28 +50,7 @@ export default function ListingBottomNavigation({
 				message: 'Please enter property price!',
 				type: 'warning',
 			});
-
-		try {
-			setLoading(true);
-			const res = await uploadProperty(listing);
-			if (res?.formError) {
-				showSnackbar({
-					message: res.formError,
-					type: 'warning',
-				});
-			}
-			// else {
-			// 	onUpdate(step + 1);
-			// }
-		} catch (error) {
-			console.log(error);
-			showSnackbar({
-				message: 'Something went wrong!',
-				type: 'error',
-			});
-		} finally {
-			setLoading(false);
-		}
+		await uploaHandler();
 	}
 	React.useEffect(() => {
 		if (Platform.OS == 'android') {
@@ -85,12 +62,8 @@ export default function ListingBottomNavigation({
 		}
 	}, [colorSchemeName]);
 	return (
-		<View
-			className={cn(
-				' fixed bottom-0 z-50 left-0 right-0',
-				step == 7 && 'hidden'
-			)}>
-			<SafeAreaView edges={['bottom']}>
+		<View className={cn(' fixed bottom-0 z-50 left-0 right-0')}>
+			<SafeAreaView edges={['bottom']} className="bg-background">
 				<View className=" flex-row backdrop-blur-sm bg-background border-t h-20 border-outline px-4  justify-center items-center">
 					<Button
 						onPress={() => onUpdate(step - 1, true)}

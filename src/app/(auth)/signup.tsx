@@ -37,7 +37,7 @@ import { AuthSignupInput } from '@/lib/schema';
 import { authSignup } from '@/actions/auth';
 import { hapticFeed } from '@/components/HapticTab';
 import { showSnackbar } from '@/lib/utils';
-import { getMe } from '@/actions/user';
+import eventBus from '@/lib/eventBus';
 
 export default function SignUp() {
 	const [loading, setLoading] = useState(false);
@@ -88,14 +88,11 @@ export default function SignUp() {
 					},
 				}));
 
-				const me = await getMe();
-				if (me) {
-					useStore.setState((s) => ({
-						...s,
-						me,
-						hasAuth: true,
-					}));
-				}
+				useStore.setState((s) => ({
+					...s,
+					hasAuth: true,
+				}));
+				eventBus.dispatchEvent('REFRESH_PROFILE', null);
 				router.push({
 					pathname: '/verify-otp',
 					params: {

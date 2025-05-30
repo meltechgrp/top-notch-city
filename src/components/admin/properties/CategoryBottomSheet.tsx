@@ -1,22 +1,27 @@
 import withRenderVisible from '@/components/shared/withRenderOpen';
 import { KeyboardAvoidingView, Platform, View } from 'react-native';
 import BottomSheet from '@/components/shared/BottomSheet';
-import { Button, ButtonText } from '@/components/ui';
+import { Button, ButtonText, Icon } from '@/components/ui';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { showSnackbar } from '@/lib/utils';
+import { Loader } from 'lucide-react-native';
+import { SpinningLoader } from '@/components/loaders/SpinningLoader';
 
 type Props = {
 	visible: boolean;
 	onDismiss: () => void;
+	loading?: boolean;
+	type: 'edit' | 'add';
 	onUpdate: (data: string) => void;
 	onSubmit: () => void;
 	category?: string;
 };
 function CategoryBottomSheet(props: Props) {
-	const { visible, onDismiss, onUpdate, category, onSubmit } = props;
+	const { visible, onDismiss, onUpdate, type, loading, category, onSubmit } =
+		props;
 	return (
 		<BottomSheet
-			title={category ? 'Edit' : 'Add'}
+			title={type == 'edit' ? 'Edit' : 'Add'}
 			withHeader={true}
 			withBackButton={false}
 			snapPoint={'25%'}
@@ -42,11 +47,11 @@ function CategoryBottomSheet(props: Props) {
 										message: 'Invalid name',
 									});
 								}
-								onDismiss();
 								onSubmit();
 							}}>
+							{loading && <SpinningLoader />}
 							<ButtonText className=" text-white">
-								{category ? 'Update' : 'Save'}
+								{type == 'edit' ? 'Update' : 'Save'}
 							</ButtonText>
 						</Button>
 					</View>

@@ -2,8 +2,97 @@ import config from '@/config';
 import { cacheStorage } from '@/lib/asyncStorage';
 import { getAuthToken } from '@/lib/secureStore';
 import { profileDefault } from '@/store';
-import { useCallback, useEffect, useState } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import axios, {
+	AxiosRequestConfig,
+	AxiosResponse,
+	CancelTokenSource,
+} from 'axios';
 
+export type UseApiRequestProps<T> = {
+	url: string;
+	method?: AxiosRequestConfig['method'];
+	data?: AxiosRequestConfig['data'];
+	headers?: AxiosRequestConfig['headers'];
+	withAuth?: boolean;
+	onUploadProgress?: (progress: number) => void;
+};
+
+export function useApiRequest<T = any>() {
+	const [loading, setLoading] = useState(false);
+	const [data, setData] = useState<T | null>(null);
+	const [error, setError] = useState<string | null>(null);
+
+	const cancelSourceRef = useRef<CancelTokenSource | null>(null);
+
+	const request = useCallback(
+		async ({
+			url,
+			method = 'GET',
+			data: body,
+			headers = {},
+			withAuth = true,
+			onUploadProgress,
+		}: UseApiRequestProps<T>) => {
+			setLoading(true);
+			setError(null);
+			setData(null);
+
+			const source = axios.CancelToken.source();
+			cancelSourceRef.current = source;
+
+			const authToken = withAuth ? getAuthToken() : null;
+
+			try {
+				const response: AxiosResponse<T> = await axios({
+					method,
+					url: `${config.origin}/api${url}`,
+					data: body,
+					headers: {
+						...(authToken && { Authorization: `Bearer ${authToken}` }),
+						...headers,
+					},
+					cancelToken: source.token,
+					onUploadProgress:
+						method === 'POST' || method === 'PUT'
+							? (progressEvent) => {
+									const percent = Math.round(
+										(progressEvent.loaded * 100) / (progressEvent.total || 1)
+									);
+									onUploadProgress?.(percent);
+								}
+							: undefined,
+				});
+				console.log(response.data);
+				setData(response.data);
+				return response.data;
+			} catch (err: any) {
+				console.log(err, 'err');
+				if (axios.isCancel(err)) {
+					setError('Request cancelled');
+				} else {
+					setError('An error occurred');
+				}
+				throw err;
+			} finally {
+				setLoading(false);
+			}
+		},
+		[]
+	);
+
+	const cancel = useCallback(() => {
+		cancelSourceRef.current?.cancel('Request cancelled by user.');
+	}, []);
+
+	useEffect(() => {
+		return () => {
+			cancel();
+		};
+	}, [cancel]);
+
+	return { request, loading, data, error, cancel };
+}
 export function fetchWithAuth(url: string, options: RequestInit) {
 	const authToken = getAuthToken();
 	return fetch(`${config.origin}/api${url}`, {
@@ -14,16 +103,6 @@ export function fetchWithAuth(url: string, options: RequestInit) {
 		},
 	});
 }
-export function normalFetch(url: string, options?: RequestInit) {
-	return fetch(
-		`${config.origin}/api${url}`,
-		options
-			? {
-					...options,
-				}
-			: {}
-	);
-}
 export const getImageUrl = (url?: string | null) => {
 	if (url)
 		return {
@@ -31,115 +110,31 @@ export const getImageUrl = (url?: string | null) => {
 		};
 	return profileDefault;
 };
-// export async function updatePushNotificationToken(token: string) {
-// 	try {
-// 		await fetchWithAuth(`${config.origin}/v1/push-notifications`, {
-// 			method: 'POST',
-// 			headers: {
-// 				'Content-Type': 'application/json',
-// 			},
-// 			body: JSON.stringify({ token }),
-// 		});
-// 	} catch (error) {}
-// }
 
-const SIX_HOURS = 6 * 60 * 60 * 1000;
-export async function fetchStatesByCountry(countryCode: string) {
-	const cached = await cacheStorage.get(`states-${countryCode}`);
-	if (cached) {
-		return cached as string[];
-	}
-	const res = await fetchWithAuth(
-		`${config.origin}/v1/address/states/${countryCode}`,
-		{
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		}
-	);
-	if (!res.ok) {
-		throw new Error(await res.text());
-	}
-	const data = await res.json();
-	if (!config.isDev)
-		cacheStorage.set(`states-${countryCode}`, JSON.stringify(data), SIX_HOURS);
-	return data as string[];
-}
+type UseApiQueryOptions = {
+	withAuth?: boolean;
+};
 
-export async function fetchTownsByState(countryCode: string, state: string) {
-	const cached = await cacheStorage.get(`towns-${countryCode}-${state}`);
-	if (cached) {
-		return cached as string[];
-	}
-	const res = await fetchWithAuth(
-		`${config.origin}/v1/address/towns/${countryCode}/${state}`,
-		{
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		}
-	);
-	if (!res.ok) {
-		throw new Error(await res.text());
-	}
-	const data = await res.json();
-	if (!config.isDev)
-		cacheStorage.set(
-			`towns-${countryCode}-${state}`,
-			JSON.stringify(data),
-			SIX_HOURS
-		);
-	return data as string[];
-}
-
-export function useLazyApiQuery<F extends (...args: any) => Promise<any>>(
-	fn: F
-) {
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState(null);
-	const [data, setData] = useState<Awaited<ReturnType<F>> | null>(null);
-	function query(...arg: Parameters<F>) {
-		setLoading(true);
-		return fn(...arg)
-			.finally(() => {
-				setLoading(false);
-			})
-			.then(setData)
-			.catch(setError);
-	}
-
-	return [query, { loading, error, data }] as const;
-}
 type QueryState<T> = {
 	data: T | null;
-	error: Error | null;
+	error: string | null;
 	loading: boolean;
 	refetch: () => Promise<T>;
 };
 
-export function useApiQuery<F extends (...args: any[]) => Promise<any>>(
-	fn: F,
-	...arg: Parameters<F>
-): QueryState<Awaited<ReturnType<F>>> {
-	const [data, setData] = useState<Awaited<ReturnType<F>> | null>(null);
-	const [error, setError] = useState<Error | null>(null);
-	const [loading, setLoading] = useState(true);
+export function useGetApiQuery<T = any>(
+	url: string,
+	options: UseApiQueryOptions = {}
+): QueryState<T> {
+	const { data, error, loading, request } = useApiRequest<T>();
 
-	const refetch = useCallback(async () => {
-		setLoading(true);
-		setError(null);
-		try {
-			const result = await fn(...arg);
-			setData(result);
-			return result;
-		} catch (err) {
-			const error = err instanceof Error ? err : new Error(String(err));
-			setError(error);
-			throw error;
-		} finally {
-			setLoading(false);
-		}
-	}, [fn, ...arg]);
+	const refetch = useCallback(() => {
+		return request({
+			url,
+			method: 'GET',
+			withAuth: options.withAuth,
+		});
+	}, [url, options.withAuth, request]);
 
 	useEffect(() => {
 		refetch();

@@ -25,8 +25,9 @@ import { authLogin } from '@/actions/auth';
 import { AuthLoginInput } from '@/lib/schema';
 import { showSnackbar } from '@/lib/utils';
 import { saveAuthToken } from '@/lib/secureStore';
-import { getMe } from '@/actions/user';
 import { useStore } from '@/store';
+import { SpinningLoader } from '@/components/loaders/SpinningLoader';
+import eventBus from '@/lib/eventBus';
 
 export default function SignIn() {
 	const router = useRouter();
@@ -59,14 +60,11 @@ export default function SignIn() {
 				if (access_token) {
 					saveAuthToken(access_token);
 				}
-				const me = await getMe();
-				if (me) {
-					useStore.setState((s) => ({
-						...s,
-						me,
-						hasAuth: true,
-					}));
-				}
+				useStore.setState((s) => ({
+					...s,
+					hasAuth: true,
+				}));
+				eventBus.dispatchEvent('REFRESH_PROFILE', null);
 				router.push('/home');
 			}
 		} catch (error) {
@@ -148,9 +146,7 @@ export default function SignIn() {
 					className="w-full mt-4 gap-2"
 					size="xl"
 					onPress={handleSubmit}>
-					{loading && (
-						<Icon as={Loader} color="white" className=" animate-spin" />
-					)}
+					{loading && <SpinningLoader />}
 					<ButtonText>Submit</ButtonText>
 				</Button>
 				<View className=" flex-row justify-center gap-2 mt-4">

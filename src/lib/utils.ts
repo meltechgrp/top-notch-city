@@ -2,7 +2,7 @@ import { format, isThisYear, isToday } from 'date-fns';
 import { Linking } from 'react-native';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { useEffect, useState } from 'react';
+import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
 import eventBus from './eventBus';
 
 export function cn(...inputs: ClassValue[]) {
@@ -142,6 +142,21 @@ export function composeFullAddress(
 export function joinWithComma(...arr: Array<string | undefined | null>) {
 	return arr.filter(Boolean).join(', ').trim();
 }
+
+export const compressImage = async (
+	imageUri: string,
+	width?: number,
+	height?: number
+) => {
+	const result = ImageManipulator.manipulate(imageUri);
+	const data = await result
+		.resize({ width: width ?? 560, height: height ?? 560 })
+		.renderAsync();
+	return data.saveAsync({
+		compress: 0.3,
+		format: SaveFormat.WEBP,
+	});
+};
 
 export function tokenizeText(text: string) {
 	const tokens: { type: string; value: string }[] = [];

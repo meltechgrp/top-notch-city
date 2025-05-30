@@ -1,16 +1,13 @@
 import { Box, Heading, HStack, Icon, Image, Text, View } from '@/components/ui';
 import { cn } from '@/lib/utils';
+import { useTempStore } from '@/store';
 import { useLayout } from '@react-native-community/hooks';
 import { KeyRound, RectangleEllipsis } from 'lucide-react-native';
 import { TouchableOpacity } from 'react-native';
 
-type Props = {
-	option: string;
-	onUpdate: (option: string) => void;
-};
-
-export default function ListingPurpose({ option, onUpdate }: Props) {
+export default function ListingPurpose() {
 	const { onLayout, height } = useLayout();
+	const { listing, updateListing } = useTempStore();
 	return (
 		<>
 			<Box onLayout={onLayout} className="flex-1 py-6 px-4">
@@ -29,28 +26,28 @@ export default function ListingPurpose({ option, onUpdate }: Props) {
 					<Heading size="xl">What Would You Like to Do Today?</Heading>
 					<Text size="sm" className=" font-light mb-4">
 						Ready to make a move? Choose whether you want to sell your property
-						for a great deal or rent it out for steady income. Select an option
-						below, and we’ll guide you through a seamless process tailored to
-						your needs.
+						for a great deal or rent it out for steady income. Select an
+						listing.purpose below, and we’ll guide you through a seamless
+						process tailored to your needs.
 					</Text>
 					<HStack className="py-4 gap-5">
 						<TouchableOpacity
 							className="flex-1"
-							onPress={() => onUpdate('rent')}>
+							onPress={() => updateListing({ ...listing, purpose: 'rent' })}>
 							<View
 								className={cn(
 									' gap-2 p-4 rounded-2xl min-h-32 border-b-4 border-b-background-muted bg-background-muted ',
-									option == 'rent' && 'border-primary'
+									listing.purpose == 'rent' && 'border-primary'
 								)}>
 								<View
 									className={cn(
 										'  bg-background self-center rounded-full p-3 mb-2',
-										option == 'rent' && 'bg-primary'
+										listing.purpose == 'rent' && 'bg-primary'
 									)}>
 									<Icon
 										size="xl"
 										as={KeyRound}
-										className={option == 'rent' ? 'text-white' : ''}
+										className={listing.purpose == 'rent' ? 'text-white' : ''}
 									/>
 								</View>
 								<Text size="xl" className="text-center font-bold">
@@ -60,21 +57,21 @@ export default function ListingPurpose({ option, onUpdate }: Props) {
 						</TouchableOpacity>
 						<TouchableOpacity
 							className="flex-1"
-							onPress={() => onUpdate('sell')}>
+							onPress={() => updateListing({ ...listing, purpose: 'sell' })}>
 							<View
 								className={cn(
 									' gap-2 p-4 rounded-2xl min-h-32 border-b-4 border-b-background-muted bg-background-muted ',
-									option == 'sell' && 'border-primary'
+									listing.purpose == 'sell' && 'border-primary'
 								)}>
 								<View
 									className={cn(
 										'  bg-background self-center rounded-full p-3 mb-2',
-										option == 'sell' && 'bg-primary'
+										listing.purpose == 'sell' && 'bg-primary'
 									)}>
 									<Icon
 										size="xl"
 										as={RectangleEllipsis}
-										className={option == 'sell' ? 'text-white' : ''}
+										className={listing.purpose == 'sell' ? 'text-white' : ''}
 									/>
 								</View>
 								<Text size="xl" className="text-center font-bold">

@@ -10,8 +10,7 @@ import eventBus from '@/lib/eventBus';
 import { MiniEmptyState } from '@/components/shared/MiniEmptyState';
 import { FilterComponent } from '@/components/admin/shared/FilterComponent';
 import { useMemo, useState } from 'react';
-import { useApiQuery } from '@/lib/api';
-import { getProperties } from '@/actions/property';
+import { useGetApiQuery } from '@/lib/api';
 import PropertyListItem from '@/components/admin/properties/PropertyListItem';
 import { useRefreshOnFocus } from '@/hooks/useRefreshOnFocus';
 import PropertyBottomSheet from '@/components/admin/properties/PropertyBottomSheet';
@@ -21,36 +20,39 @@ const ITEMS_PER_PAGE = 50;
 export default function Properties() {
 	const router = useRouter();
 	const [refreshing, setRefreshing] = useState(false);
-	const [activeProperty, setActiveProperty] = useState<any | null>(null);
+	const [activeProperty, setActiveProperty] = useState<Property | null>(null);
 	const [propertyBottomSheet, setPropertyBottomSheet] = useState(false);
-	const [actveTab, setActiveTab] = useState('all');
+	const [actveTab, setActiveTab] = useState<Property['status'] | 'all'>('all');
 	const [search, setSearch] = useState('');
 	const [page, setPage] = useState(1);
-	const { refetch, loading, data } = useApiQuery(getProperties);
+	const { data, loading, error, refetch } =
+		useGetApiQuery<PropertyResponse>('/properties');
 
 	const propertysData = useMemo(() => {
-		return [];
+		return data?.properties ?? [];
 	}, [data]);
 	const filteredData = useMemo(() => {
-		let filtered: any = [];
+		let filtered = propertysData;
 
-		// Filter by role
-		// if (actveTab !== 'all') {
-		// 	if (actveTab == 'verified') filtered = filtered.filter((u) => u.verified);
-		// 	else filtered = filtered.filter((u) => u.role.toLowerCase() === actveTab);
-		// }
+		if (actveTab !== 'all') {
+			if (actveTab == 'pending')
+				filtered = filtered.filter((u) => u.status == actveTab);
+			else if (actveTab == 'approve')
+				filtered = filtered.filter((u) => u.status === actveTab);
+			else if (actveTab == 'sold')
+				filtered = filtered.filter((u) => u.status === actveTab);
+		}
 
-		// Search by name or email
-		// if (search.trim() !== '') {
-		// 	const regex = new RegExp(search.trim(), 'i');
-		// 	filtered = filtered.filter(
-		// 		(u) =>
-		// 			regex.test(u.first_name) ||
-		// 			regex.test(u.last_name) ||
-		// 			regex.test(u.phone ?? '') ||
-		// 			regex.test(u.email)
-		// 	);
-		// }
+		// Search by title
+		if (search.trim() !== '') {
+			const regex = new RegExp(search.trim(), 'i');
+			filtered = filtered.filter(
+				(u) =>
+					regex.test(u.title) ||
+					regex.test(u.category) ||
+					regex.test(u.subcategory)
+			);
+		}
 
 		const start = (page - 1) * ITEMS_PER_PAGE;
 		return filtered;
@@ -58,14 +60,23 @@ export default function Properties() {
 	}, [propertysData, actveTab, search]);
 
 	const tabs = useMemo(() => {
-		// const all = propertysData.length;
+		const all = propertysData.length;
 
+		const approved = propertysData.filter(
+			(property) => property.status == 'approve'
+		).length;
+		const pending = propertysData.filter(
+			(property) => property.status === 'pending'
+		).length;
+		const sold = propertysData.filter(
+			(property) => property.status === 'sold'
+		).length;
 		return [
-			{ title: 'all', total: 0 },
-			{ title: 'verified', total: 0 },
-			{ title: 'rejected', total: 0 },
-			{ title: 'sold', total: 0 },
-			{ title: 'banned', total: 0 },
+			{ title: 'all', total: all },
+			{ title: 'pending', total: pending },
+			{ title: 'approved', total: approved },
+			{ title: 'sold', total: sold },
+			// { title: 'banned', total: 0 },
 		];
 	}, [propertysData]);
 
@@ -83,7 +94,7 @@ export default function Properties() {
 			<FilterComponent
 				search={search}
 				onSearch={setSearch}
-				onUpdate={setActiveTab}
+				onUpdate={(tab: any) => setActiveTab(tab)}
 				searchPlaceholder="Search by name or city"
 				tabs={tabs}
 				tab={actveTab}
@@ -151,7 +162,7 @@ export default function Properties() {
 				<View className="flex-1">
 					<FlashList
 						data={filteredData}
-						// keyExtractor={(item) => item.id}
+						keyExtractor={(item) => item.id}
 						estimatedItemSize={200}
 						keyboardDismissMode="on-drag"
 						onScroll={() => eventBus.dispatchEvent('SWIPEABLE_OPEN', null)}
@@ -164,8 +175,8 @@ export default function Properties() {
 							<PropertyListItem
 								property={item}
 								onPress={(property) => {
-									setActiveProperty(property);
-									setPropertyBottomSheet(true);
+									// setActiveProperty(property);
+									// setPropertyBottomSheet(true);
 								}}
 							/>
 						)}

@@ -42,6 +42,7 @@
 		},
 		"plugins": [
 			"expo-router",
+			"react-native-compressor",
 			[
 				"expo-video",
 				{

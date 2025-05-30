@@ -3,34 +3,50 @@ import SwipeableWrapper from '@/components/shared/SwipeableWrapper';
 import { Pressable } from 'react-native';
 import { ChevronRight } from 'lucide-react-native';
 import { useState } from 'react';
-import { deleteCategory, editCategory } from '@/actions/property';
 import CategoryBottomSheet from './CategoryBottomSheet';
 import { useRouter } from 'expo-router';
+import { useApiRequest } from '@/lib/api';
+import { showSnackbar } from '@/lib/utils';
 
 type Props = {
 	item: Category;
-	onRefresh: () => void;
+	refetch: () => Promise<Category[]>;
 };
 
-export default function CategoryItem({ item, onRefresh }: Props) {
+export default function CategoryItem({ item, refetch }: Props) {
 	const router = useRouter();
+	const { request, loading, error } = useApiRequest();
 	const [category, setCategory] = useState(item.name);
 	const [categoryBottomSheet, setCategoryBottomSheet] = useState(false);
 	async function editHandler() {
-		try {
-			await editCategory(item.id, category);
-		} catch {
-		} finally {
+		await request({
+			url: `/categories/${item.id}`,
+			method: 'PUT',
+			data: { name: category },
+		});
+		if (!error) {
 			setCategoryBottomSheet(false);
-			onRefresh();
+			await refetch();
+		} else {
+			showSnackbar({
+				message: 'Something went wrong!, Try again..',
+				type: 'error',
+			});
 		}
 	}
 	async function deleteHandler() {
-		try {
-			await deleteCategory(item);
-		} catch {
-		} finally {
-			onRefresh();
+		await request({
+			url: `/categories/${item.id}`,
+			method: 'DELETE',
+		});
+		if (!error) {
+			setCategoryBottomSheet(false);
+			await refetch();
+		} else {
+			showSnackbar({
+				message: 'Something went wrong!, Try again..',
+				type: 'error',
+			});
 		}
 	}
 	return (
@@ -70,6 +86,8 @@ export default function CategoryItem({ item, onRefresh }: Props) {
 				onDismiss={() => setCategoryBottomSheet(false)}
 				onSubmit={editHandler}
 				onUpdate={setCategory}
+				loading={loading}
+				type="edit"
 				category={category}
 			/>
 		</>

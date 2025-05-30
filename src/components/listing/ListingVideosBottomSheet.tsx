@@ -12,6 +12,8 @@ import FullHeightLoaderWrapper from '../loaders/FullHeightLoaderWrapper';
 import { MiniEmptyState } from '../shared/MiniEmptyState';
 import OptionsBottomSheet from '../shared/OptionsBottomSheet';
 import { useLayout } from '@react-native-community/hooks';
+import { useMediaCompressor } from '@/hooks/useMediaCompressor';
+import { showSnackbar } from '@/lib/utils';
 
 type Props = {
 	visible: boolean;
@@ -25,6 +27,7 @@ function ListingVideosBottomSheet(props: Props) {
 	const [openEdit, setOpenEdit] = useState(false);
 	const [selected, setSelected] = useState<number | undefined>();
 	const [loading, setLoading] = useState(false);
+	const { compress } = useMediaCompressor();
 
 	const { width, onLayout } = useLayout();
 	const pickVideos = async () => {
@@ -39,12 +42,9 @@ function ListingVideosBottomSheet(props: Props) {
 		});
 		setLoading(false);
 		if (!result.canceled) {
-			console.log(result.assets[0]);
-			onUpdate(
-				result.assets.map((img) => ({
-					...img,
-					default: false,
-					assetId: uniqueId(),
+			await handleUpload(
+				result.assets.map((vid) => ({
+					uri: vid.uri,
 				}))
 			);
 		}
@@ -69,15 +69,37 @@ function ListingVideosBottomSheet(props: Props) {
 
 		setLoading(false);
 		if (!result.canceled) {
-			onUpdate(
-				result.assets.map((img) => ({
-					...img,
-					default: false,
-					assetId: uniqueId(),
+			await handleUpload(
+				result.assets.map((vid) => ({
+					uri: vid.uri,
 				}))
 			);
 		}
 	};
+
+	async function handleUpload(data: { uri: string }[]) {
+		const result = await Promise.all(
+			data.map(
+				async (file) =>
+					await compress({
+						type: 'video',
+						uri: file.uri,
+					})
+			)
+		);
+		const compressed = result
+			.filter((item) => item !== null)
+			.map((item) => ({ uri: item, id: uniqueId() }));
+		setLoading(false);
+		if (compressed.length == 0) {
+			return showSnackbar({
+				message: 'Failed to upload.. try again',
+				type: 'warning',
+			});
+		} else {
+			onUpdate(compressed);
+		}
+	}
 	const ListHeader = useMemo(
 		() => (
 			<View className="flex-1 gap-2  bg-background-muted rounded-xl py-6 mb-3">
@@ -123,7 +145,7 @@ function ListingVideosBottomSheet(props: Props) {
 							ListEmptyComponent={() => (
 								<MiniEmptyState title="Pick or take videos to your property" />
 							)}
-							keyExtractor={(item) => item.assetId!}
+							keyExtractor={(item) => item.id!}
 							ListHeaderComponent={ListHeader}
 							ItemSeparatorComponent={() => <View className=" h-4" />}
 							renderItem={({ item, index }) => (
@@ -202,7 +224,7 @@ export function VideoScreen({
 			<View className=" absolute top-3 right-3">
 				<Pressable
 					onPress={() => {
-						setSelected(index);
+						setSelected(index + 1);
 						setOpenEdit(true);
 					}}
 					className=" self-end p-1.5 rounded-full bg-black/50 backdrop-blur-md">

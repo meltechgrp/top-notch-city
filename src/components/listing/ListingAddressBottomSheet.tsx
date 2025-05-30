@@ -2,14 +2,14 @@ import withRenderVisible from '@/components/shared/withRenderOpen';
 import { FlatList, Pressable, TextInput, View } from 'react-native';
 import { KeyboardDismissPressable } from '../shared/KeyboardDismissPressable';
 import BottomSheet from '../shared/BottomSheet';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Icon, Text } from '../ui';
 import { debounce } from 'lodash-es';
 import { MapPin } from 'lucide-react-native';
-import { useApiQueryWithParams } from '@/lib/api';
-import { autocompleteAddress, fetchPlaceFromTextQuery } from '@/actions/utills';
+import { fetchPlaceFromTextQuery } from '@/actions/utills';
 import { composeFullAddress } from '@/lib/utils';
 import { MiniEmptyState } from '../shared/MiniEmptyState';
+import { useApiQueryWithParams } from '@/lib/api';
 
 type Props = {
 	show: boolean;

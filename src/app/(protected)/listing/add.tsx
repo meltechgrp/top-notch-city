@@ -1,3 +1,4 @@
+import { useUploadProperty } from '@/actions/property';
 import { BodyScrollView } from '@/components/layouts/BodyScrollView';
 import ListingAmenities from '@/components/listing/ListingAmenities';
 import ListingBasis from '@/components/listing/ListingBasis';
@@ -6,7 +7,6 @@ import ListingCategory from '@/components/listing/ListingCategory';
 import ListingLocation from '@/components/listing/ListingLocation';
 import ListingMediaFiles from '@/components/listing/ListingMediaFiles';
 import ListingPurpose from '@/components/listing/ListingPurpose';
-import ListingSucces from '@/components/listing/ListingSuccess';
 import FullHeightLoaderWrapper from '@/components/loaders/FullHeightLoaderWrapper';
 import headerLeft from '@/components/shared/headerLeft';
 import { Box, Button, ButtonText } from '@/components/ui';
@@ -14,26 +14,19 @@ import { showSnackbar } from '@/lib/utils';
 import { useTempStore } from '@/store';
 import { useLayout } from '@react-native-community/hooks';
 import { Stack, useRouter } from 'expo-router';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import Animated, { FadeInRight, FadeOutLeft } from 'react-native-reanimated';
 
 export default function SellAddScreen() {
 	const router = useRouter();
 	const { onLayout, height } = useLayout();
-	const [loading, setLoading] = useState(false);
+	const { uploadProperty, uploading: loading, error } = useUploadProperty();
 	const { listing, updateListing } = useTempStore();
 
 	const Steps = useMemo(() => {
 		switch (listing.step) {
 			case 1:
-				return (
-					<ListingPurpose
-						option={listing.purpose}
-						onUpdate={(option) =>
-							updateListing({ ...listing, purpose: option })
-						}
-					/>
-				);
+				return <ListingPurpose />;
 			case 2:
 				return <ListingCategory />;
 			case 3:
@@ -44,12 +37,10 @@ export default function SellAddScreen() {
 				return <ListingMediaFiles />;
 			case 6:
 				return <ListingBasis />;
-			case 7:
-				return <ListingSucces />;
 			default:
 				return null;
 		}
-	}, [listing.step, listing.purpose, listing.category]);
+	}, [listing.step]);
 	function handleNext(step: number, back?: boolean) {
 		if (back) {
 			return updateListing({ ...listing, step });
@@ -77,6 +68,17 @@ export default function SellAddScreen() {
 				});
 		updateListing({ ...listing, step });
 	}
+	async function uploaHandler() {
+		const data = await uploadProperty(listing);
+		if (data) {
+			router.replace('/listing/success');
+		} else {
+			showSnackbar({
+				message: error ?? 'Something went wrong',
+				type: 'error',
+			});
+		}
+	}
 	return (
 		<>
 			<Stack.Screen
@@ -95,7 +97,7 @@ export default function SellAddScreen() {
 				}}
 			/>
 			<Box onLayout={onLayout} className="flex-1 py-3">
-				<FullHeightLoaderWrapper loading={loading}>
+				<FullHeightLoaderWrapper className="flex-1" loading={loading}>
 					<BodyScrollView className="flex-1">
 						<Animated.View
 							entering={FadeInRight.duration(800)}
@@ -111,7 +113,7 @@ export default function SellAddScreen() {
 			<ListingBottomNavigation
 				step={listing.step}
 				listing={listing}
-				setLoading={setLoading}
+				uploaHandler={uploaHandler}
 				totalSteps={listing.totalSteps}
 				onUpdate={handleNext}
 			/>

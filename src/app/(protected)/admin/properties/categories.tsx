@@ -1,41 +1,34 @@
-import { getCategories, newCategory } from '@/actions/property';
 import CategoryBottomSheet from '@/components/admin/properties/CategoryBottomSheet';
 import CategoryItem from '@/components/admin/properties/CategoryItem';
 import EmptyStateWrapper from '@/components/shared/EmptyStateWrapper';
 import { Box, View, Button, Icon, Heading } from '@/components/ui';
+import { useApiRequest, useGetApiQuery } from '@/lib/api';
 import eventBus from '@/lib/eventBus';
+import { showSnackbar } from '@/lib/utils';
 import { FlashList } from '@shopify/flash-list';
 import { Stack, useRouter } from 'expo-router';
 import { Plus } from 'lucide-react-native';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { BackHandler, Pressable, RefreshControl } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 
 export default function Categories() {
 	const router = useRouter();
-	const [loading, setLoading] = useState(false);
-	const [categories, setCategories] = useState<Category[]>([]);
+	const { request, loading: loader, error } = useApiRequest();
+	const [refetching, setRefetching] = useState(false);
 	const [category, setCategory] = useState('');
+	const { data, loading, refetch } = useGetApiQuery<Category[]>('/categories');
 	const [categoryBottomSheet, setCategoryBottomSheet] = useState(false);
 
-	const getCats = useCallback(async () => {
-		setLoading(true);
-		const res = await getCategories();
-		setCategories(res);
-		setLoading(false);
-	}, []);
-
-	useEffect(() => {
-		getCats();
-	}, []);
-
+	const categories = useMemo(() => {
+		return data ?? [];
+	}, [data]);
 	async function onRefresh() {
 		try {
-			setLoading(true);
-			await getCats();
+			setRefetching(true);
+			await refetch();
 		} catch (error) {
 		} finally {
-			setLoading(false);
+			setRefetching(false);
 		}
 	}
 	useEffect(() => {
@@ -53,13 +46,19 @@ export default function Categories() {
 	}, []);
 
 	async function newHandler() {
-		try {
-			setLoading(true);
-			await newCategory(category);
-		} catch {
-		} finally {
-			onRefresh();
-			setLoading(false);
+		await request({
+			url: '/categories',
+			method: 'POST',
+			data: { name: category },
+		});
+		if (data) {
+			setCategoryBottomSheet(false);
+			await refetch();
+		} else {
+			showSnackbar({
+				message: 'Something went wrong!, Try again..',
+				type: 'error',
+			});
 		}
 	}
 	return (
@@ -84,9 +83,9 @@ export default function Categories() {
 			/>
 			<Box className="flex-1 py-4">
 				<EmptyStateWrapper
-					loading={loading}
+					loading={loading || refetching || loader}
 					refreshControl={
-						<RefreshControl refreshing={loading} onRefresh={onRefresh} />
+						<RefreshControl refreshing={refetching} onRefresh={onRefresh} />
 					}
 					isEmpty={!categories.length}
 					illustration={
@@ -123,7 +122,7 @@ export default function Categories() {
 						)}
 						ItemSeparatorComponent={() => <View className="h-2" />}
 						renderItem={({ item }) => (
-							<CategoryItem onRefresh={onRefresh} item={item} />
+							<CategoryItem refetch={refetch} item={item} />
 						)}
 					/>
 				</EmptyStateWrapper>
@@ -132,6 +131,8 @@ export default function Categories() {
 				visible={categoryBottomSheet}
 				onDismiss={() => setCategoryBottomSheet(false)}
 				onSubmit={newHandler}
+				type="add"
+				loading={loader}
 				onUpdate={setCategory}
 				category={category}
 			/>

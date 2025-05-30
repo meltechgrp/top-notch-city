@@ -1,4 +1,4 @@
-import { getCategorySections } from '@/actions/property';
+import { useCategorySections } from '@/actions/property';
 import {
 	Box,
 	Heading,
@@ -7,7 +7,6 @@ import {
 	useResolvedTheme,
 	View,
 } from '@/components/ui';
-import { useApiQuery } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { useLayout } from '@react-native-community/hooks';
 import { chunk } from 'lodash-es';
@@ -20,7 +19,7 @@ import { useTempStore } from '@/store';
 export default function ListingCategory() {
 	const { width, onLayout } = useLayout();
 	const { listing, updateListing } = useTempStore();
-	const { refetch, loading, data } = useApiQuery(getCategorySections);
+	const { sections: data, loading } = useCategorySections();
 	return (
 		<>
 			<Box className="flex-1 py-2 px-4">

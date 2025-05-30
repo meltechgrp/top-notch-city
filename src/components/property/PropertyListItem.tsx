@@ -123,7 +123,7 @@ export default function PropertyListItem(props: Props) {
 										)}
 										{...item}
 										key={item.name}
-										iconSize={16}
+										// iconSize={16}
 									/>
 								))}
 							</View>

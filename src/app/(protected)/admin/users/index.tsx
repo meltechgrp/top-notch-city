@@ -1,15 +1,14 @@
-import { getUsers } from '@/actions/user';
 import UserDetailsBottomSheet from '@/components/admin/users/UserBottomSheet';
 import UserListItem from '@/components/admin/users/UserListItem';
 import { MiniEmptyState } from '@/components/shared/MiniEmptyState';
 import { Box, View } from '@/components/ui';
 import { useRefreshOnFocus } from '@/hooks/useRefreshOnFocus';
-import { useApiQuery } from '@/lib/api';
 import eventBus from '@/lib/eventBus';
 import { FlashList } from '@shopify/flash-list';
 import { useMemo, useState } from 'react';
 import { RefreshControl } from 'react-native';
 import { FilterComponent } from '@/components/admin/shared/FilterComponent';
+import { useGetApiQuery } from '@/lib/api';
 
 const ITEMS_PER_PAGE = 50;
 
@@ -20,7 +19,7 @@ export default function Users() {
 	const [actveTab, setActiveTab] = useState('all');
 	const [search, setSearch] = useState('');
 	const [page, setPage] = useState(1);
-	const { refetch, loading, data } = useApiQuery(getUsers);
+	const { data, loading, error, refetch } = useGetApiQuery<Me[]>('/users');
 
 	const usersData = useMemo(() => {
 		return data?.slice() ?? [];

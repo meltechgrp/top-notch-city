@@ -1,5 +1,5 @@
 import { Avatar, Box, Heading, Icon, Text, View } from '@/components/ui';
-import { cn } from '@/lib/utils';
+import { cn, compressImage } from '@/lib/utils';
 import { Images } from 'lucide-react-native';
 import { useState } from 'react';
 import { TouchableOpacity } from 'react-native';
@@ -83,24 +83,21 @@ export default function ListingMediaFiles() {
 					photos={listing.photos}
 					onDismiss={() => setPhotosBottomSheet(false)}
 					deleteFile={(id) => {
-						let newData = listing.photos?.filter((_, i) => i != id);
+						let newData = listing.photos?.filter((_, i) => i + 1 != id);
 						updateListing({ ...listing, photos: newData });
 					}}
-					onUpdate={(data) => {
+					onUpdate={async (data) => {
 						let combined = [...(listing.photos ?? []), ...data];
 						updateListing({ ...listing, photos: combined });
 					}}
 				/>
 				<ListingVideosBottomSheet
 					deleteFile={(id) => {
-						let newData = listing.videos?.filter((_, i) => i != id);
+						let newData = listing.videos?.filter((_, i) => i + 1 != id);
 						updateListing({ ...listing, videos: newData });
 					}}
-					onUpdate={(data) => {
+					onUpdate={async (data) => {
 						let combined = [...(listing.videos ?? []), ...data];
-						combined = combined.map((item, i) =>
-							i == 0 ? { ...item, default: true } : { ...item, default: false }
-						);
 						updateListing({ ...listing, videos: combined });
 					}}
 					visible={videosBottomSheet}
