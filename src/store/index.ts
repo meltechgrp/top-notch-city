@@ -28,7 +28,6 @@ type State = {
 type Actions = {
 	resetStore: () => void;
 	getDeviceId: () => string;
-	setMe: (me: Me) => void;
 	setIsAdmin: (isAdmin: boolean) => void;
 	setDisplayStyle: (displayStyle: 'flex' | 'grid') => void;
 	setIsOnboarded: (isOnboarded: boolean) => void;
@@ -55,7 +54,6 @@ export const useStore = create<StateAndActions>(
 			setIsAdmin: (isAdmin) => {
 				set((state) => ({ ...state, isAdmin }));
 			},
-			setMe: (me) => set((state) => ({ ...state, me })),
 			getDeviceId: getUniqueIdSync,
 			resetStore: () => set(initialState),
 			setDisplayStyle: (displayStyle) => {

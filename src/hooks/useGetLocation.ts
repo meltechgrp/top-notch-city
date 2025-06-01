@@ -30,8 +30,10 @@ const useGetLocation = (options?: Options) => {
 
 		if (location) {
 			setLocation(location.coords);
+			return location.coords;
 		} else {
 			setLocation(null);
+			return null;
 		}
 	}, [highAccuracy, setLocation]);
 

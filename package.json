@@ -100,6 +100,7 @@
 		"react-native-awesome-slider": "^2.9.0",
 		"react-native-compressor": "^1.11.0",
 		"react-native-css-interop": "^0.1.22",
+		"react-native-date-picker": "^5.0.12",
 		"react-native-device-info": "^14.0.4",
 		"react-native-gesture-handler": "~2.24.0",
 		"react-native-gifted-charts": "^1.4.61",

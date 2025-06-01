@@ -8,18 +8,18 @@ import { Divider } from '../ui/divider';
 import { showSnackbar } from '@/lib/utils';
 import { useMediaCompressor } from '@/hooks/useMediaCompressor';
 import { useApiRequest } from '@/lib/api';
-import eventBus from '@/lib/eventBus';
 import { SpinningLoader } from '../loaders/SpinningLoader';
 
 type Props = {
 	visible: boolean;
 	onDismiss: () => void;
+	update: (data: Me) => void;
 };
 
 function ProfileImageBottomSheet(props: Props) {
 	const { visible, onDismiss } = props;
 	const { compress, compressing, error: comError } = useMediaCompressor();
-	const { request, data, loading, error } = useApiRequest();
+	const { request, loading } = useApiRequest<Me>();
 	const pickImage = async () => {
 		let result = await ImagePicker.launchImageLibraryAsync({
 			mediaTypes: 'images',
@@ -68,8 +68,7 @@ function ProfileImageBottomSheet(props: Props) {
 			name: `user.jpg`,
 			type: 'image/jpeg',
 		} as any);
-		console.log(formData);
-		await request({
+		const data = await request({
 			url: '/users/me',
 			method: 'PUT',
 			data: formData,
@@ -78,22 +77,22 @@ function ProfileImageBottomSheet(props: Props) {
 			},
 		});
 		if (data) {
-			eventBus.dispatchEvent('REFRESH_PROFILE', null);
+			props.update(data);
 			showSnackbar({
-				message: 'Profile uploaded successfully',
+				message: 'Profile photo updated successfully',
 				type: 'success',
 			});
 			onDismiss();
 		} else {
 			showSnackbar({
-				message: 'Failed to upload.. try again',
+				message: 'Failed to update photo.. try again',
 				type: 'warning',
 			});
 		}
 	}
 	return (
 		<BottomSheet
-			title="Upload profile picture"
+			title="Update profile picture"
 			withHeader={true}
 			snapPoint={'25%'}
 			visible={visible}

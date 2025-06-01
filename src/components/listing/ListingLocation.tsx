@@ -78,12 +78,16 @@ export default function ListingLocation() {
 								className=" h-12 self-center rounded-full"
 								onPress={async () => {
 									setLoading(true);
-
+									const location = await retryGetLocation();
+									if (!location)
+										return showSnackbar({
+											message: 'Unable to get location, try again!',
+											type: 'warning',
+										});
 									const result = await getReverseGeocode(location);
-									console.log(result);
 									if (result) {
 										const { address, addressComponents } = result;
-										if (!address || !location) {
+										if (!address) {
 											showSnackbar({
 												message: 'Unable to get location, try again!',
 												type: 'warning',

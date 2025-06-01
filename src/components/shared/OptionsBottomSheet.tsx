@@ -40,16 +40,15 @@ export default function OptionsBottomSheet(props: Props) {
 			<View
 				style={{ height: options.length < 8 ? options.length * 53 : 450 }}
 				className={
-					withBackground ? 'bg-background-muted py-2 rounded-2xl ' : ''
+					withBackground
+						? 'bg-background-muted py-2 rounded-2xl overflow-hidden '
+						: ''
 				}>
 				<FlashList
 					data={options}
 					showsVerticalScrollIndicator={false}
 					keyExtractor={(item) => item.label}
 					estimatedItemSize={40}
-					ItemSeparatorComponent={
-						withBackground ? null : () => <View className=" h-2" />
-					}
 					renderItem={({ item: option, index }) =>
 						OptionComponent ? (
 							<OptionComponent

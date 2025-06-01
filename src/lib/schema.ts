@@ -9,11 +9,11 @@ export const validatePassword = z
 	.min(8, 'Password is too short. Minimum 8 characters required.')
 	.max(50, 'Password is too long. Maximum 50 characters required.');
 
-export const Name = z.string().min(3, {
+export const Name = z.string().min(2, {
 	message: 'Enter a valid name',
 });
 
-export const phone = z.string().min(10, {
+export const validatePhone = z.string().min(10, {
 	message: 'Please enter a valid phone number.',
 });
 export const AuthLoginSchema = z.object({
@@ -36,7 +36,7 @@ export const UpdateUserSchema = z.object({
 	email: validateEmail,
 	first_name: Name,
 	last_name: Name,
-	phone: phone,
+	phone: validatePhone,
 	street: z.string().optional(),
 	city: z.string().optional(),
 	state: z.string().optional(),

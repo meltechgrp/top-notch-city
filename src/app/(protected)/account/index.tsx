@@ -9,25 +9,52 @@ import {
 	Text,
 	Icon,
 } from '@/components/ui';
-import { ScrollView } from 'react-native';
-import React, { useState } from 'react';
-import { cn, fullName } from '@/lib/utils';
-import { useStore, useTempStore } from '@/store';
+import { RefreshControl, ScrollView } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { cn, composeFullAddress, fullName } from '@/lib/utils';
+import { useStore } from '@/store';
 import { ChevronRight, Edit2 } from 'lucide-react-native';
 import { format } from 'date-fns';
 import ProfileImageBottomSheet from '@/components/account/ProfileImageBottomSheet';
-import { setProfileImage } from '@/actions/user';
-import { ImagePickerAsset } from 'expo-image-picker';
-import { getImageUrl } from '@/lib/api';
+import { getImageUrl, useGetApiQuery } from '@/lib/api';
+import ProfileNameBottomSheet from '@/components/account/ProfileNameBottomSheet';
+import ProfileEmailBottomSheet from '@/components/account/ProfileEmailBottomSheet';
+import ProfilePhoneBottomSheet from '@/components/account/ProfilePhoneBottomSheet';
+import ProfileGenderBottomsheet from '@/components/account/ProfileGenderBottomsheet';
+import ProfileDobBottomSheet from '@/components/account/ProfileDobBottomSheet';
+import ProfileAddressBottomSheet from '@/components/account/ProfileAddressBottomSheet';
 
 export default function Account() {
-	const { me } = useStore();
-	const { updateFullScreenLoading } = useTempStore();
+	const { me, updateProfile } = useStore();
+	const [refetching, setRefetching] = useState(false);
 	const [imageBottomSheet, setImageBottomSheet] = useState(false);
-	async function handleImageUpload(image: ImagePickerAsset) {
-		updateFullScreenLoading(true);
-		await setProfileImage(image, me?.first_name ?? 'profile');
-		updateFullScreenLoading(false);
+	const [nameBottomSheet, setNameBottomSheet] = useState(false);
+	const [emailBottomSheet, setEmailBottomSheet] = useState(false);
+	const [phoneBottomSheet, setPhoneBottomSheet] = useState(false);
+	const [genderBottomSheet, setGenderBottomSheet] = useState(false);
+	const [dobBottomSheet, setDobBottomSheet] = useState(false);
+	const [addressBottomSheet, setAddressBottomSheet] = useState(false);
+	const { data, refetch } = useGetApiQuery<Me>('/users/me');
+
+	useEffect(() => {
+		if (data) {
+			updateProfile(data);
+		}
+	}, [data]);
+	const update = useCallback((me: Me) => {
+		if (me) {
+			updateProfile(me);
+		}
+	}, []);
+
+	async function onRefresh() {
+		try {
+			setRefetching(true);
+			await refetch();
+		} catch (error) {
+		} finally {
+			setRefetching(false);
+		}
 	}
 	return (
 		<>
@@ -37,8 +64,11 @@ export default function Account() {
 				<Box className={cn('flex-1 bg-background/95')}>
 					<ScrollView
 						style={{ display: 'flex' }}
+						refreshControl={
+							<RefreshControl refreshing={refetching} onRefresh={onRefresh} />
+						}
 						showsVerticalScrollIndicator={false}
-						contentContainerClassName="pb-40 pt-10">
+						contentContainerClassName="pb-40 pt-2">
 						<View className=" items-center">
 							<Pressable
 								onPress={() => setImageBottomSheet(true)}
@@ -53,73 +83,100 @@ export default function Account() {
 								</View>
 							</Pressable>
 						</View>
-						<View className="pt-8 flex-1 px-4 gap-6">
+						<View className="pt-4 flex-1 px-4 gap-4">
 							<View className="gap-2">
 								<View className="px-4">
-									<Text size="lg" className="font-light">
+									<Text size="sm" className="font-light">
 										Full Name
 									</Text>
 								</View>
-								<View className="flex-row justify-between items-center bg-background-muted rounded-xl p-4">
-									<Text size="lg" className=" font-normal">
+								<Pressable
+									onPress={() => setNameBottomSheet(true)}
+									className="flex-row justify-between items-center bg-background-muted rounded-xl p-4">
+									<Text size="sm" className=" font-normal">
 										{fullName(me) ?? 'N/A'}
 									</Text>
 									<Icon as={ChevronRight} />
-								</View>
+								</Pressable>
 							</View>
 							<View className="gap-2">
 								<View className="px-4">
-									<Text size="lg" className="font-light">
+									<Text size="sm" className="font-light">
 										Email Address
 									</Text>
 								</View>
-								<View className="flex-row justify-between items-center bg-background-muted rounded-xl p-4">
-									<Text size="lg" className=" font-normal">
+								<Pressable
+									onPress={() => setEmailBottomSheet(true)}
+									className="flex-row justify-between items-center bg-background-muted rounded-xl p-4">
+									<Text size="sm" className=" font-normal">
 										{me?.email ?? 'N/A'}
 									</Text>
 									<Icon as={ChevronRight} />
-								</View>
+								</Pressable>
 							</View>
 							<View className="gap-2">
 								<View className="px-4">
-									<Text size="lg" className="font-light">
+									<Text size="sm" className="font-light">
 										Phone number
 									</Text>
 								</View>
-								<View className="flex-row justify-between items-center bg-background-muted rounded-xl p-4">
-									<Text size="lg" className=" font-normal">
+								<Pressable
+									onPress={() => setPhoneBottomSheet(true)}
+									className="flex-row justify-between items-center bg-background-muted rounded-xl p-4">
+									<Text size="sm" className=" font-normal">
 										{me?.phone ?? 'N/A'}
 									</Text>
 									<Icon as={ChevronRight} />
-								</View>
+								</Pressable>
 							</View>
 							<View className="gap-2">
 								<View className="px-4">
-									<Text size="lg" className="font-light">
+									<Text size="sm" className="font-light">
 										Gender
 									</Text>
 								</View>
-								<View className="flex-row justify-between items-center bg-background-muted rounded-xl p-4">
-									<Text size="lg" className=" font-normal">
+								<Pressable
+									onPress={() => setGenderBottomSheet(true)}
+									className="flex-row justify-between items-center bg-background-muted rounded-xl p-4">
+									<Text size="sm" className=" font-normal capitalize">
 										{me?.gender ?? 'N/A'}
 									</Text>
 									<Icon as={ChevronRight} />
-								</View>
+								</Pressable>
 							</View>
 							<View className="gap-2">
 								<View className="px-4">
-									<Text size="lg" className="font-light">
+									<Text size="sm" className="font-light">
 										Birthday
 									</Text>
 								</View>
-								<View className="flex-row justify-between items-center bg-background-muted rounded-xl p-4">
-									<Text size="lg" className=" font-normal">
+								<Pressable
+									onPress={() => setDobBottomSheet(true)}
+									className="flex-row justify-between items-center bg-background-muted rounded-xl p-4">
+									<Text size="sm" className=" font-normal">
 										{me?.date_of_birth
 											? format(new Date(me?.date_of_birth), 'MMM dd, yyyy')
 											: 'N/A'}
 									</Text>
 									<Icon as={ChevronRight} />
+								</Pressable>
+							</View>
+							<View className="gap-2">
+								<View className="px-4">
+									<Text size="sm" className="font-light">
+										Address
+									</Text>
 								</View>
+								<Pressable
+									onPress={() => setAddressBottomSheet(true)}
+									className="flex-row justify-between items-center bg-background-muted rounded-xl p-4">
+									<Text size="sm" className=" font-normal">
+										{me?.address?.country
+											? composeFullAddress(me?.address)
+											: 'N/A'}
+									</Text>
+									<Icon as={ChevronRight} />
+								</Pressable>
 							</View>
 						</View>
 					</ScrollView>
@@ -128,7 +185,37 @@ export default function Account() {
 			<ProfileImageBottomSheet
 				visible={imageBottomSheet}
 				onDismiss={() => setImageBottomSheet(false)}
-				updateImage={handleImageUpload}
+				update={update}
+			/>
+			<ProfileNameBottomSheet
+				visible={nameBottomSheet}
+				onDismiss={() => setNameBottomSheet(false)}
+				update={update}
+			/>
+			<ProfileEmailBottomSheet
+				visible={emailBottomSheet}
+				onDismiss={() => setEmailBottomSheet(false)}
+				update={update}
+			/>
+			<ProfilePhoneBottomSheet
+				visible={phoneBottomSheet}
+				onDismiss={() => setPhoneBottomSheet(false)}
+				update={update}
+			/>
+			<ProfileGenderBottomsheet
+				visible={genderBottomSheet}
+				onDismiss={() => setGenderBottomSheet(false)}
+				update={update}
+			/>
+			<ProfileDobBottomSheet
+				visible={dobBottomSheet}
+				onDismiss={() => setDobBottomSheet(false)}
+				update={update}
+			/>
+			<ProfileAddressBottomSheet
+				visible={addressBottomSheet}
+				onDismiss={() => setAddressBottomSheet(false)}
+				update={update}
 			/>
 		</>
 	);

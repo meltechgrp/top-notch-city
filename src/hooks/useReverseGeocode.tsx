@@ -32,7 +32,7 @@ export const getReverseGeocode = async (
 			lga: subregion || '',
 			state: region || '',
 			country: country || '',
-			street: street || name || '',
+			street: street || '',
 		};
 		return {
 			address: formattedAddress,

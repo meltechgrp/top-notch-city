@@ -73,7 +73,7 @@ export function useApiRequest<T = any>() {
 				} else {
 					setError('An error occurred');
 				}
-				throw err;
+				return null;
 			} finally {
 				setLoading(false);
 			}
@@ -125,7 +125,7 @@ type QueryState<T> = {
 export function useGetApiQuery<T = any>(
 	url: string,
 	options: UseApiQueryOptions = {}
-): QueryState<T> {
+): QueryState<T | null> {
 	const { data, error, loading, request } = useApiRequest<T>();
 
 	const refetch = useCallback(() => {

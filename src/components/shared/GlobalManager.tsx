@@ -9,7 +9,7 @@ import React, { useEffect } from 'react';
 
 export default function GlobalManager() {
 	const fullScreenLoading = useTempStore((s) => s.fullScreenLoading);
-	const setMe = useStore((s) => s.setMe);
+	const setMe = useStore((s) => s.updateProfile);
 	const updateFullScreenLoading = useTempStore(
 		(s) => s.updateFullScreenLoading
 	);

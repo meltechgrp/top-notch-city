@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
 	BackHandler,
 	Keyboard,
+	KeyboardAvoidingView,
 	Modal,
 	Platform,
 	Pressable,
@@ -172,7 +173,11 @@ export default function BottomSheet(props: BottomSheetProps) {
 						: 'transparent',
 				}}
 				className={cn(rounded && ' rounded-t-xl', contentClassName)}>
-				{props.children}
+				<KeyboardAvoidingView
+					behavior={Platform.OS === 'ios' ? 'height' : undefined}
+					style={{ flex: 1 }}>
+					{props.children}
+				</KeyboardAvoidingView>
 			</BottomSheetView>
 		</BottomSheetModal>
 	);

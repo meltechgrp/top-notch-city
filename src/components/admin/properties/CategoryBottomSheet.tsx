@@ -1,10 +1,9 @@
 import withRenderVisible from '@/components/shared/withRenderOpen';
 import { KeyboardAvoidingView, Platform, View } from 'react-native';
 import BottomSheet from '@/components/shared/BottomSheet';
-import { Button, ButtonText, Icon } from '@/components/ui';
+import { Button, ButtonText } from '@/components/ui';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { showSnackbar } from '@/lib/utils';
-import { Loader } from 'lucide-react-native';
 import { SpinningLoader } from '@/components/loaders/SpinningLoader';
 
 type Props = {
