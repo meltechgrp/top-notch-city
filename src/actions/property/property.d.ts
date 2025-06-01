@@ -34,18 +34,6 @@ type Property = {
 	amenities: Amenity[];
 };
 
-type Address = {
-	street: string;
-	city: string;
-	state: string;
-	country: string;
-	postal_code: string | null;
-	latitude: number;
-	longitude: number;
-	place_id: string;
-	country_code: string | null;
-};
-
 type Owner = {
 	id: string;
 	email: string;
@@ -55,4 +43,8 @@ type Owner = {
 	last_name: string;
 };
 
-type Amenity = any;
+type Amenity = {
+	name: string;
+	icon: string;
+	value: string;
+};

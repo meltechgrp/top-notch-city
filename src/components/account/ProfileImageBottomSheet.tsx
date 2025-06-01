@@ -56,7 +56,6 @@ function ProfileImageBottomSheet(props: Props) {
 			type: 'image',
 			uri: uri,
 			compressionRate: 0.4,
-			maxWidth: 720,
 		});
 		if (!result || comError) {
 			showSnackbar({

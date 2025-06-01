@@ -68,6 +68,11 @@ export function useUploadProperty() {
 					type: 'video/mp4',
 				} as any);
 			});
+			facilities?.forEach((fac) => {
+				formData.append('amenity_names', fac.label);
+				formData.append('amenity_values', fac.value.toString());
+				formData.append('amenity_icons', fac.icon);
+			});
 
 			const res = await axios.post(
 				`${config.origin}/api/properties/`,

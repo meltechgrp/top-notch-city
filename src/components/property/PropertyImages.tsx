@@ -48,7 +48,6 @@ export default function PropertyImages({ images }: Props) {
 		backgroundColor: `rgba(0,0,0,${backdropOpacity.value})`,
 	}));
 	const { width } = Layout.window;
-	console.log(width);
 	return (
 		<>
 			<View className="gap-4 flex-1 flex-row flex-wrap justify-between px-4 mx-auto">

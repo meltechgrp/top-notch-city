@@ -1,33 +1,3 @@
-interface PlacePredictionResponse {
-	predictions: PlacePrediction[];
-	status: string;
-}
-
-interface PlacePrediction {
-	description: string;
-	place_id: string;
-}
-
-type LatLng = {
-	lat: number;
-	lng: number;
-};
-
-type Geometry = {
-	location: LatLng;
-};
-
-type PlaceResult = {
-	formatted_address: string;
-	geometry: Geometry;
-	vicinity: string;
-};
-
-type PlaceResponse = {
-	result: PlaceResult;
-	status: string;
-};
-
 type LocationData = {
 	latitude: number;
 	longitude: number;
@@ -62,4 +32,16 @@ type AddressComponent = {
 	longText: string;
 	shortText: string;
 	types: string[];
+};
+
+type Address = {
+	street: string;
+	city: string;
+	state: string;
+	country: string;
+	postal_code: string | null;
+	latitude: number;
+	longitude: number;
+	place_id: string;
+	country_code: string | null;
 };

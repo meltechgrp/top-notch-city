@@ -15,17 +15,17 @@ import ListingAddressBottomSheet from './ListingAddressBottomSheet';
 import { Pressable } from 'react-native';
 import { Loader, MapPin, Search } from 'lucide-react-native';
 import { useTempStore } from '@/store';
-import useReverseGeocode from '@/hooks/useReverseGeocode';
 import { useLayout } from '@react-native-community/hooks';
 import { showSnackbar } from '@/lib/utils';
+import useGetLocation from '@/hooks/useGetLocation';
+import { getReverseGeocode } from '@/hooks/useReverseGeocode';
 
 export default function ListingLocation() {
+	const { location, retryGetLocation } = useGetLocation();
 	const { listing, updateListing } = useTempStore();
 	const [loading, setLoading] = useState(false);
 	const [showBottomSheet, setShowBottomSheet] = useState(false);
 	const { height, onLayout } = useLayout();
-	const { address, addressComponents, getAddress, location } =
-		useReverseGeocode();
 
 	const coords = useMemo(() => {
 		if (listing?.address?.location) {
@@ -78,22 +78,32 @@ export default function ListingLocation() {
 								className=" h-12 self-center rounded-full"
 								onPress={async () => {
 									setLoading(true);
-									await getAddress();
-									if (!address || !location) {
+
+									const result = await getReverseGeocode(location);
+									console.log(result);
+									if (result) {
+										const { address, addressComponents } = result;
+										if (!address || !location) {
+											showSnackbar({
+												message: 'Unable to get location, try again!',
+												type: 'warning',
+											});
+											return setLoading(false);
+										}
+										updateListing({
+											...listing,
+											address: {
+												displayName: address,
+												addressComponents: addressComponents!,
+												location: location,
+											},
+										});
+									} else {
 										showSnackbar({
 											message: 'Unable to get location, try again!',
 											type: 'warning',
 										});
-										return setLoading(false);
 									}
-									updateListing({
-										...listing,
-										address: {
-											displayName: address,
-											addressComponents: addressComponents!,
-											location: location,
-										},
-									});
 									setLoading(false);
 								}}>
 								<ButtonText>Use my location</ButtonText>

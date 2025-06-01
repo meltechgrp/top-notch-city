@@ -29,13 +29,13 @@ export default function FacilityItem({
 	iconSize,
 }: Props) {
 	const Shape: LucideIcon = useMemo(() => {
-		if (icon == 'bathroom') {
+		if (icon == 'Bath') {
 			return Bath;
-		} else if (icon == 'bedroom') {
+		} else if (icon == 'Bed') {
 			return Bed;
-		} else if (icon == 'parking') {
+		} else if (icon == 'ParkingCircle') {
 			return ParkingCircle;
-		} else if (icon == 'laundry') {
+		} else if (icon == 'WashingMachine') {
 			return WashingMachine;
 		} else if (icon == 'garden') {
 			return Flower2;

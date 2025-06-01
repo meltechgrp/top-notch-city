@@ -9,7 +9,7 @@ export default function ListingSuccess() {
 	const router = useRouter();
 	return (
 		<>
-			<Box className="flex-1 justify-center items-center px-4">
+			<Box className="flex-1 justify-start py-6 items-center px-4">
 				<View className="px-2 justify-between items-center">
 					<LottieView
 						ref={successRef}
@@ -20,7 +20,7 @@ export default function ListingSuccess() {
 					/>
 				</View>
 				<View className=" mb-6">
-					<Text className=" text-center">
+					<Text className=" text-center px-4">
 						Congratulations! Your property has been uploaded succesfully, and
 						awaits approval.
 					</Text>

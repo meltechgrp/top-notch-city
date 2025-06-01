@@ -10,6 +10,7 @@ import { AnimatePresence, View } from 'moti';
 import * as React from 'react';
 import { Modal, Pressable } from 'react-native';
 import { Heading, Text, Icon as IconWrapper } from '../ui';
+import { Colors } from '@/constants/Colors';
 
 type Props = {
 	onClose: () => void;
@@ -45,7 +46,7 @@ export default function SnackBar(props: Props) {
 			case 'error':
 				return <IconWrapper as={ShieldAlert} color="white" />;
 			case 'warning':
-				return <IconWrapper as={CircleAlert} color="white" />;
+				return <IconWrapper as={CircleAlert} color={Colors.primary} />;
 			case 'info':
 				return <IconWrapper as={MailOpen} color="white" />;
 			default:
@@ -100,7 +101,7 @@ export default function SnackBar(props: Props) {
 									' flex-row justify-center bg-background-info items-center p-4  rounded-lg w-full h-full',
 									props.backdrop === false &&
 										'shadow-2xl border border-outline',
-									props.type !== 'success' && 'bg-primary/80'
+									props.type == 'error' && 'bg-primary/80'
 								)}>
 								{!!Icon && (
 									<View className="items-center justify-center h-full pr-2">
@@ -112,7 +113,11 @@ export default function SnackBar(props: Props) {
 								</View>
 								<Pressable
 									onPress={handleClose}
-									className="items-center justify-center h-full pl-2">
+									className={cn(
+										'items-center justify-center h-full p-1 rounded-xl px-4',
+										props.type == 'error' && 'bg-background-muted',
+										props.type == 'warning' && 'bg-background'
+									)}>
 									<Heading className="text-sm  ">Dismiss</Heading>
 								</Pressable>
 							</View>

@@ -1,13 +1,14 @@
-import { cn } from '@/lib/utils';
+import { cn, composeFullAddress } from '@/lib/utils';
 import { formatMoney, toNaira } from '@/lib/utils';
 import { router } from 'expo-router';
 import { Pressable, useWindowDimensions, View } from 'react-native';
-import { Property } from './PropertyHorizontalList';
-import { ImageBackground, Text } from '../ui';
+import { Icon, ImageBackground, Text } from '../ui';
 import { MapPin } from 'lucide-react-native';
 import { hapticFeed } from '../HapticTab';
 import FacilityItem from './FacilityItem';
 import { useMemo } from 'react';
+import { generateMediaUrl } from '@/lib/api';
+import { Colors } from '@/constants/Colors';
 
 type Props = {
 	data: Property;
@@ -27,22 +28,8 @@ export default function PropertyListItem(props: Props) {
 		columns,
 		isHorizantal = false,
 	} = props;
-	const { banner, name, price, location, id } = data;
+	const { id, title, price, amenities, media_urls, address } = data;
 
-	const facilites = [
-		{
-			name: '6 Bedroom',
-			icon: 'bedroom',
-		},
-		{
-			name: '4 Bathroom',
-			icon: 'bathroom',
-		},
-		{
-			name: 'Garden',
-			icon: 'garden',
-		},
-	];
 	const newWidth = useMemo(
 		() =>
 			columns
@@ -57,6 +44,10 @@ export default function PropertyListItem(props: Props) {
 	const newHeight = useMemo(
 		() => (columns ? (columns == 2 ? 240 : 300) : isHorizantal ? 200 : 300),
 		[columns, isHorizantal]
+	);
+	const images = useMemo(
+		() => media_urls?.filter((item) => item.endsWith('jpg')) ?? [],
+		[media_urls]
 	);
 	return (
 		<Pressable
@@ -85,12 +76,12 @@ export default function PropertyListItem(props: Props) {
 				// }
 			}}>
 			<ImageBackground
-				source={banner}
+				source={{ uri: generateMediaUrl(images[0]) }}
 				alt="banner"
 				className="flex-1 relative overflow-hidden rounded-xl">
 				<View className="flex-1 bg-black/30 p-4">
 					<View className="flex-1 items-end">
-						<View className=" flex-row items-center justify-center gap-1 py-1 px-2.5 rounded-full bg-primary-500/60">
+						<View className=" flex-row items-center justify-center gap-1 py-1.5 px-2.5 rounded-3xl bg-primary/60">
 							<Text
 								size={columns ? (columns == 2 ? 'md' : 'xl') : 'xl'}
 								className="text-white">
@@ -103,19 +94,19 @@ export default function PropertyListItem(props: Props) {
 							size="2xl"
 							className=" text-white font-bold"
 							numberOfLines={1}>
-							{name}
+							{title}
 						</Text>
 						<View className="flex-row items-center gap-1">
-							<MapPin size={14} color={'#F8AA00'} />
+							<Icon as={MapPin} size="sm" color={Colors.primary} />
 							<Text
 								size={columns ? (columns == 2 ? 'sm' : 'md') : 'md'}
 								className="text-white">
-								{location}
+								{composeFullAddress(address)}
 							</Text>
 						</View>
 						{showFacilites && (
 							<View className="flex-row flex-wrap gap-2">
-								{facilites.map((item) => (
+								{amenities?.map((item) => (
 									<FacilityItem
 										textClassname={cn(
 											'text-white text-sm',

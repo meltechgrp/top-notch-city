@@ -123,20 +123,20 @@ export function composeFullAddress(
 	if (streetOnly) {
 		return address?.street?.trim();
 	}
-	if (!address.street) {
+	if (!address?.street) {
 		return joinWithComma(
-			address.city,
-			address.lga,
-			address.state,
-			address.country
+			address?.city,
+			address?.lga,
+			address?.state,
+			address?.country
 		);
 	}
 	return joinWithComma(
-		address.street,
-		address.city,
-		address.lga,
-		address.state,
-		address.country
+		address?.street,
+		address?.city,
+		address?.lga,
+		address?.state,
+		address?.country
 	);
 }
 export function joinWithComma(...arr: Array<string | undefined | null>) {
@@ -202,7 +202,7 @@ export function openExternalLink(url: string) {
 export function parseInternalLink(url: string) {
 	try {
 		const _url = new URL(url);
-		const supportedHostnames = ['mynebor.com'];
+		const supportedHostnames = ['topnotchcity.com'];
 		const isSupportedHostname = supportedHostnames.some(
 			(h) => _url.hostname === h
 		);

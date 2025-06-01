@@ -1,9 +1,9 @@
-import { ImageBackground, Text, View } from '@/components/ui';
-import SwipeableWrapper from '@/components/shared/SwipeableWrapper';
+import { Icon, Text, View } from '@/components/ui';
 import { Pressable } from 'react-native';
-import { getImageUrl } from '@/lib/api';
-import { formatMoney } from '@/lib/utils';
-import { MapPin } from 'lucide-react-native';
+import { composeFullAddress, formatMoney } from '@/lib/utils';
+import { Dot, MapPin } from 'lucide-react-native';
+import PropertyCarousel from '@/components/property/PropertyCarousel';
+import { useLayout } from '@react-native-community/hooks';
 
 type Props = {
 	property: Property;
@@ -11,41 +11,46 @@ type Props = {
 };
 
 export default function PropertyListItem({ property, onPress }: Props) {
-	console.log(property.media_urls);
+	const { width, onLayout } = useLayout();
 	return (
 		<>
-			{/* <SwipeableWrapper rightAction={() => {}} leftAction={() => {}}> */}
 			<Pressable
+				onLayout={onLayout}
 				onPress={() => onPress(property)}
 				className={
-					'flex-row items-center px-4 py-3 bg-background-muted rounded-xl'
+					' items-center flex-1 bg-background-muted relative overflow-hidden rounded-xl'
 				}>
-				<ImageBackground
-					source={getImageUrl(property.media_urls[0])}
-					alt="banner"
-					className="flex-1 relative overflow-hidden rounded-xl">
-					<View className="flex-1 bg-black/30 p-4">
-						<View className="flex-1 items-end">
-							<View className=" flex-row items-center justify-center gap-1 py-1 px-2.5 rounded-full bg-primary-500/60">
-								<Text size={'xl'} className="text-white">
-									{formatMoney(property.price, 'NGN', 0)}
-								</Text>
-							</View>
+				<PropertyCarousel
+					images={property?.media_urls ?? []}
+					width={width > 100 ? width - 5 : 340}
+				/>
+				<View className="flex-1 w-full p-4 gap-2">
+					<Text size={'2xl'} className="text-white">
+						{formatMoney(property.price, 'NGN', 0)}
+					</Text>
+					<View className=" w-full gap-2">
+						<View className=" flex-row gap-1">
+							{[
+								{ name: 'beds', value: 4 },
+								{ name: 'baths', value: 2 },
+								{ name: 'sqft', value: 3300 },
+							].map((item, i) => (
+								<View key={item.name} className="flex-row gap-1">
+									<View className="flex-row gap-1">
+										<Text>{item.value}</Text>
+										<Text>{item.name}</Text>
+									</View>
+									{i < 3 && <Icon as={Dot} size="sm" />}
+								</View>
+							))}
 						</View>
-						<View className="pt-3 w-full gap-2">
-							<Text
-								size="2xl"
-								className=" text-white font-bold"
-								numberOfLines={1}>
-								{property.title}
+						<View className="flex-row items-center gap-1">
+							<Icon as={MapPin} className=" text-primary" />
+							<Text size={'md'} className="text-white">
+								{composeFullAddress(property.address)}
 							</Text>
-							<View className="flex-row items-center gap-1">
-								<MapPin size={14} color={'#F8AA00'} />
-								<Text size={'md'} className="text-white">
-									A lot
-								</Text>
-							</View>
-							{/* {showFacilites && (
+						</View>
+						{/* {showFacilites && (
 								<View className="flex-row flex-wrap gap-2">
 									{facilites.map((item) => (
 										<FacilityItem
@@ -60,11 +65,9 @@ export default function PropertyListItem({ property, onPress }: Props) {
 									))}
 								</View>
 							)} */}
-						</View>
 					</View>
-				</ImageBackground>
+				</View>
 			</Pressable>
-			{/* </SwipeableWrapper> */}
 		</>
 	);
 }

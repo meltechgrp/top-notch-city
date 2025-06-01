@@ -1,16 +1,4 @@
-import {
-	Box,
-	Checkbox,
-	CheckboxGroup,
-	CheckboxIcon,
-	CheckboxIndicator,
-	CheckIcon,
-	Heading,
-	Icon,
-	Pressable,
-	Text,
-	View,
-} from '@/components/ui';
+import { Box, Heading, Icon, Pressable, Text, View } from '@/components/ui';
 import { cn } from '@/lib/utils';
 import { useTempStore } from '@/store';
 import {
@@ -19,6 +7,7 @@ import {
 	Droplet,
 	Home,
 	LandPlot,
+	LucideIcon,
 	Minus,
 	ParkingCircle,
 	Plus,
@@ -29,34 +18,52 @@ import {
 
 export default function ListingAmenities() {
 	const { listing, updateListing } = useTempStore();
-	function addToFacilities(label: string, action: 'add' | 'minus') {
-		const prev = listing.facilities?.find((fac) => fac.label === label);
-		let prevFac = listing?.facilities ? listing.facilities : [];
-		if (!prev && action == 'add')
-			updateListing({
-				...listing,
-				facilities: [...prevFac, { label: label, value: 1 }],
-			});
-		else {
-			prevFac = prevFac.map((fac) =>
-				fac.label !== label
-					? fac
-					: {
-							...fac,
-							value:
-								action == 'add'
-									? fac.value + 1
-									: fac.value < 2
-										? fac.value
-										: fac.value - 1,
-						}
-			);
-			updateListing({
-				...listing,
-				facilities: prevFac,
-			});
+	function addToFacilities(
+		{
+			label,
+			iconName,
+		}: {
+			label: string;
+			icon: LucideIcon;
+			iconName: string;
+		},
+		action: 'add' | 'minus'
+	) {
+		const prevFacilities = listing.facilities ?? [];
+		const existing = prevFacilities.find((fac) => fac.label === label);
+
+		let updatedFacilities;
+
+		if (!existing && action === 'add') {
+			// Add new facility with value 1
+			updatedFacilities = [
+				...prevFacilities,
+				{ label, value: 1, icon: iconName },
+			];
+		} else if (existing) {
+			const newValue =
+				action === 'add' ? existing.value + 1 : existing.value - 1;
+
+			if (newValue > 0) {
+				// Update value
+				updatedFacilities = prevFacilities.map((fac) =>
+					fac.label === label ? { ...fac, value: newValue } : fac
+				);
+			} else {
+				// Remove item when value becomes 0
+				updatedFacilities = prevFacilities.filter((fac) => fac.label !== label);
+			}
+		} else {
+			// No change if action is 'minus' and item doesn't exist
+			updatedFacilities = prevFacilities;
 		}
+
+		updateListing({
+			...listing,
+			facilities: updatedFacilities,
+		});
 	}
+
 	function checkFacItem(item: string) {
 		return listing.facilities?.find((fac) => fac.label === item)?.value ?? 0;
 	}
@@ -75,7 +82,6 @@ export default function ListingAmenities() {
 								</View>
 								<View className="gap-4">
 									{section.data.map((item) => {
-										listing.features?.find((fac) => fac === item.label);
 										return (
 											<View
 												key={item.label}
@@ -92,9 +98,7 @@ export default function ListingAmenities() {
 												<View>
 													<View className="flex-row gap-3 items-center">
 														<Pressable
-															onPress={() =>
-																addToFacilities(item.label, 'minus')
-															}>
+															onPress={() => addToFacilities(item, 'minus')}>
 															<View
 																className={cn(
 																	' p-3 border border-outline-100 rounded-full'
@@ -106,9 +110,7 @@ export default function ListingAmenities() {
 															<Text size="xl">{checkFacItem(item.label)}</Text>
 														</View>
 														<Pressable
-															onPress={() =>
-																addToFacilities(item.label, 'add')
-															}>
+															onPress={() => addToFacilities(item, 'add')}>
 															<View
 																className={cn(
 																	' p-3 border border-outline-100 rounded-full'
@@ -137,63 +139,61 @@ const data = [
 		data: [
 			{
 				label: 'Bedroom',
-				value: 'bedroom',
 				icon: Bed,
+				iconName: 'Bed',
 			},
 			{
 				label: 'Bathroom',
-				value: 'bathrrom',
 				icon: Bath,
+				iconName: 'Bath',
 			},
 			{
 				label: 'Home Office',
-				value: 'home-office',
 				icon: Home,
+				iconName: 'Home',
 			},
 			{
 				label: 'Laundry Room',
-				value: 'laundry-room',
 				icon: Shirt,
+				iconName: 'Shirt',
 			},
 		],
 	},
-	{
-		title: 'Land Area',
-		data: [
-			{
-				label: 'Lenght',
-				value: 'lenght',
-				icon: LandPlot,
-			},
-			{
-				label: 'Width',
-				value: 'width',
-				icon: LandPlot,
-			},
-		],
-	},
+	// {
+	// 	title: 'Land Area',
+	// 	data: [
+	// 		{
+	// 			label: 'Lenght',
+	// 			icon: LandPlot,
+	// 		},
+	// 		{
+	// 			label: 'Width',
+	// 			icon: LandPlot,
+	// 		},
+	// 	],
+	// },
 	{
 		title: 'Essential Amenities',
 		data: [
 			{
 				label: 'Parking Area',
-				value: 'parking-area',
 				icon: ParkingCircle,
+				iconName: 'ParkingCircle',
 			},
 			{
 				label: 'Garden',
-				value: 'garden',
 				icon: Trees,
+				iconName: 'Trees',
 			},
 			{
 				label: 'Water Supply',
-				value: 'water-supply',
 				icon: Droplet,
+				iconName: 'Droplet',
 			},
 			{
 				label: 'Electricity',
-				value: 'electricity',
 				icon: UtilityPole,
+				iconName: 'UtilityPole',
 			},
 		],
 	},

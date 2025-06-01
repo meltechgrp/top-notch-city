@@ -159,7 +159,7 @@ export default function Properties() {
 				}}
 			/>
 			<Box className=" flex-1 px-2 pt-2">
-				<View className="flex-1">
+				<View className="flex-1 pb-8">
 					<FlashList
 						data={filteredData}
 						keyExtractor={(item) => item.id}
@@ -169,8 +169,9 @@ export default function Properties() {
 						refreshControl={
 							<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
 						}
-						ListEmptyComponent={<MiniEmptyState title="No propeerty found" />}
-						ItemSeparatorComponent={() => <View className="h-2" />}
+						showsVerticalScrollIndicator={false}
+						ListEmptyComponent={<MiniEmptyState title="No property found" />}
+						ItemSeparatorComponent={() => <View className="h-4" />}
 						renderItem={({ item }) => (
 							<PropertyListItem
 								property={item}

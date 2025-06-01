@@ -110,8 +110,8 @@ export const getImageUrl = (url?: string | null) => {
 		};
 	return profileDefault;
 };
-
-type UseApiQueryOptions = {
+export const generateMediaUrl = (url: string) => `${config.origin}${url}`;
+export type UseApiQueryOptions = {
 	withAuth?: boolean;
 };
 

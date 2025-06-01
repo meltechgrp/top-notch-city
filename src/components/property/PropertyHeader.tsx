@@ -1,24 +1,30 @@
 import { Icon, ImageBackground, Text, View } from '@/components/ui';
-import { Map, MapPin } from 'lucide-react-native';
-import { Property } from '../home/FoundProperties';
-import { formatMoney } from '@/lib/utils';
+import { MapPin } from 'lucide-react-native';
+import { composeFullAddress, formatMoney } from '@/lib/utils';
 import Layout from '@/constants/Layout';
+import { useMemo } from 'react';
+import { generateMediaUrl } from '@/lib/api';
 
 export default function PropertyHeader({
-	banner,
+	media_urls,
 	price,
-	location,
-	name,
+	address,
+	title,
 }: Property) {
 	const height = Layout.window.height / 2.3;
+
+	const images = useMemo(
+		() => media_urls?.filter((item) => item.endsWith('jpg')) ?? [],
+		[media_urls]
+	);
 	return (
 		<ImageBackground
-			source={banner}
+			source={{ uri: generateMediaUrl(images[0]) }}
 			style={{ height }}
 			className="  bg-cover object-cover bg-center overflow-hidden rounded-b-3xl">
 			<View className="gap-2 flex-1 p-4 py-8 justify-end bg-black/40">
 				<Text size="3xl" className="text-white">
-					{name}
+					{title}
 				</Text>
 				<View className=" bg-primary w-1/2 rounded-2xl p-1 px-4">
 					<Text size="2xl" className="text-white">
@@ -28,7 +34,7 @@ export default function PropertyHeader({
 				<View className=" flex-row items-center gap-2">
 					<Icon as={MapPin} className="text-primary" />
 					<Text size="xl" className=" text-white">
-						{location}
+						{composeFullAddress(address)}
 					</Text>
 				</View>
 			</View>

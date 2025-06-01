@@ -1,23 +1,23 @@
-import { Button, View } from '@/components/ui';
-import { useRefresh } from '@react-native-community/hooks';
+import { View } from '@/components/ui';
 import { Skeleton } from 'moti/skeleton';
 import { MotiView } from 'moti';
 import { useRouter } from 'expo-router';
-import { BodyScrollView } from '@/components/layouts/BodyScrollView';
-import { hapticFeed } from '@/components/HapticTab';
 import { RefreshControl } from 'react-native-gesture-handler';
-import { Property } from '@/components/home/FoundProperties';
 import DisplayStyle from '../layouts/DisplayStyle';
 import { Animated } from 'react-native';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import PropertyListItem from './PropertyListItem';
 import { AnimatedFlashList } from '@shopify/flash-list';
+import { MiniEmptyState } from '../shared/MiniEmptyState';
 
 interface Props {
 	category?: string;
 	className?: string;
 	scrollY?: any;
 	disableCount?: boolean;
+	scrollEnabled?: boolean;
+	data: Property[];
+	refetch: () => Promise<PropertyResponse>;
 }
 const GAP = 16;
 const SIDE_PADDING = 16;
@@ -26,75 +26,16 @@ export default function VerticalProperties({
 	category,
 	scrollY,
 	disableCount = false,
+	data,
+	scrollEnabled = false,
+	refetch,
 }: Props) {
 	const router = useRouter();
 	const [numColumns, setNumColumns] = useState(2);
 	const layoutAnim = new Animated.Value(0);
-	const fetch = () => {
-		return new Promise((resolve) => setTimeout(resolve, 5000));
-	};
+	const [refreshing, setRefreshing] = useState(false);
 
-	const { isRefreshing, onRefresh } = useRefresh(fetch);
-	const data: Property[] = [
-		{
-			id: 'dhghg662389kndnc',
-			name: 'Wings Tower',
-			location: 'Emma Estate, Trans Amadi',
-			price: 2500000,
-			banner: require('@/assets/images/property/property6.png'),
-			images: [],
-		},
-		{
-			id: 'dhghg6623ds66skndnc',
-			name: 'Topaz Villa',
-			location: 'Emma Estate, Slaughter',
-			price: 1500000,
-			banner: require('@/assets/images/property/property5.png'),
-			images: [],
-		},
-		{
-			id: 'dhgdsbj332389kndnc',
-			name: 'Great House',
-			location: 'Green Estate, Rumuomasi',
-			price: 2000000,
-			banner: require('@/assets/images/property/property4.png'),
-			images: [],
-		},
-		{
-			id: 'dhghg66mdm89kndnc',
-			name: 'Gracie Home',
-			location: 'Emma Estate, Ada George',
-			price: 2500000,
-			banner: require('@/assets/images/property/property2.png'),
-			images: [],
-		},
-		{
-			id: 'dhejdkd66skndnc',
-			name: 'Topaz Estate',
-			location: 'Topaz Estate, Abuja',
-			price: 1500000,
-			banner: require('@/assets/images/property/property7.png'),
-			images: [],
-		},
-		{
-			id: 'dhgdscxskk89kndnc',
-			name: 'Great House',
-			location: 'Green Estate, Rumuomasi',
-			price: 2000000,
-			banner: require('@/assets/images/property/property1.png'),
-			images: [],
-		},
-		{
-			id: 'jdnckkdsklcdednk',
-			name: 'Humphrey House',
-			location: 'Green Estate, Rumuomasi',
-			price: 2000000,
-			banner: require('@/assets/images/property/property3.png'),
-			images: [],
-		},
-	];
-
-	if (isRefreshing) {
+	if (refreshing) {
 		return (
 			<View className=" gap-y-2 pt-4 px-4">
 				{[1, 2, 3, 4].map((key) => (
@@ -104,6 +45,18 @@ export default function VerticalProperties({
 		);
 	}
 
+	const propertysData = useMemo(() => {
+		return data ?? [];
+	}, [data]);
+	async function onRefresh() {
+		try {
+			setRefreshing(true);
+			await refetch();
+		} catch (error) {
+		} finally {
+			setRefreshing(false);
+		}
+	}
 	const toggleView = () => {
 		Animated.timing(layoutAnim, {
 			toValue: numColumns === 1 ? 1 : 0,
@@ -113,14 +66,26 @@ export default function VerticalProperties({
 			setNumColumns(numColumns === 1 ? 2 : 1);
 		});
 	};
+
+	const headerComponent = useMemo(
+		() => (
+			<DisplayStyle
+				toggleView={toggleView}
+				numColumns={numColumns}
+				total={data.length}
+				disableCount={disableCount}
+			/>
+		),
+		[toggleView, numColumns]
+	);
 	return (
 		<AnimatedFlashList
-			refreshing={isRefreshing}
-			data={data}
+			data={propertysData}
 			renderItem={({ item }) => (
 				<PropertyListItem className="mb-4" columns={numColumns} data={item} />
 			)}
 			numColumns={numColumns}
+			scrollEnabled={scrollEnabled}
 			horizontal={false}
 			showsVerticalScrollIndicator={false}
 			onScroll={
@@ -131,35 +96,15 @@ export default function VerticalProperties({
 			}
 			scrollEventThrottle={16}
 			refreshControl={
-				<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+				scrollEnabled ? (
+					<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+				) : undefined
 			}
-			ListHeaderComponent={() => (
-				<DisplayStyle
-					toggleView={toggleView}
-					numColumns={numColumns}
-					total={data.length}
-					disableCount={disableCount}
-				/>
-			)}
+			ListHeaderComponent={headerComponent}
 			keyExtractor={(item) => item.id}
 			estimatedItemSize={340}
 			contentInsetAdjustmentBehavior="automatic"
-			ListEmptyComponent={() => (
-				<BodyScrollView
-					contentContainerStyle={{
-						alignItems: 'center',
-						gap: 8,
-						paddingTop: 100,
-					}}>
-					<Button
-						onPress={() => {
-							hapticFeed();
-							// router.push(newProductHref);
-						}}>
-						Add the first property
-					</Button>
-				</BodyScrollView>
-			)}
+			ListEmptyComponent={() => <MiniEmptyState title="No property found" />}
 		/>
 	);
 }

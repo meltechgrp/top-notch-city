@@ -1,72 +1,32 @@
 import PropertyListItem from '@/components/property/PropertyListItem';
-import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 import { ImageSourcePropType, ScrollView } from 'react-native';
-import PropertyOverviewSkeleton from '../skeleton/PropertyOverviewSkeleton';
-import { Text, View } from '@/components/ui';
+import { View } from '@/components/ui';
 import { useRefresh } from '@react-native-community/hooks';
 import eventBus from '@/lib/eventBus';
-import BeachPersonWaterParasolIcon from '../icons/BeachPersonWaterParasolIcon';
 
 type Props = {
 	category?: string;
 	fullWidth?: boolean;
 	emptyState?: React.ReactNode;
+	data: Property[];
+	refetch: () => Promise<PropertyResponse>;
 };
 
-export type Property = {
-	id: string;
-	name: string;
-	location: string;
-	price: number;
-	banner: ImageSourcePropType;
-	images: string[];
-};
 export default function PropertyHorizontalList(props: Props) {
-	const { category, fullWidth = true, emptyState } = props;
+	const { category, fullWidth = true, emptyState, data, refetch } = props;
+	const [refreshing, setRefreshing] = useState(false);
 
-	const fetch = () => {
-		return new Promise((resolve) => setTimeout(resolve, 5000));
-	};
-
-	const { isRefreshing, onRefresh } = useRefresh(fetch);
-	const data: Property[] = [
-		{
-			id: 'dhghsnknkl89kndnc',
-			name: 'Karty Mansion',
-			location: 'Warri, Delta State',
-			price: 2500000,
-			banner: require('@/assets/images/property/property7.png'),
-			images: [],
-		},
-		{
-			id: 'dhghgdwjndws66skndnc',
-			name: 'Fortune Caste',
-			location: 'Benin City, Edo State',
-			price: 1500000,
-			banner: require('@/assets/images/property/property4.png'),
-			images: [],
-		},
-		{
-			id: 'dhgasdkjfndjkfnekndnc',
-			name: 'Great House',
-			location: 'Green Estate, Rumuomasi',
-			price: 2000000,
-			banner: require('@/assets/images/property/property3.png'),
-			images: [],
-		},
-		{
-			id: 'dhjnsdjewkjfnekndnc',
-			name: 'Comfort Home',
-			location: 'Green Estate, Rumuomasi',
-			price: 2000000,
-			banner: require('@/assets/images/property/property6.png'),
-			images: [],
-		},
-	];
-
+	async function onRefresh() {
+		try {
+			setRefreshing(true);
+			await refetch();
+		} catch (error) {
+		} finally {
+			setRefreshing(false);
+		}
+	}
 	useEffect(() => {
-		onRefresh();
 		eventBus.addEventListener('PROPERTY_HORIZONTAL_LIST_REFRESH', onRefresh);
 
 		return () => {
@@ -87,7 +47,7 @@ export default function PropertyHorizontalList(props: Props) {
 	// 	);
 	// }
 
-	if (!data.length && emptyState) {
+	if (!data?.length && emptyState) {
 		return <View>{emptyState}</View>;
 	}
 

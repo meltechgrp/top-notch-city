@@ -20,8 +20,6 @@ export function useMediaCompressor() {
 		type,
 		uri,
 		compressionRate = 0.6,
-		maxWidth = 1080,
-		maxHeight = 1080,
 	}: CompressOptions): Promise<string | null> => {
 		setCompressing(true);
 		setError(null);
@@ -31,8 +29,6 @@ export function useMediaCompressor() {
 				result = await Image.compress(uri, {
 					compressionMethod: 'manual',
 					quality: compressionRate,
-					maxWidth,
-					maxHeight,
 					output: 'jpg',
 					returnableOutputType: 'uri',
 				});

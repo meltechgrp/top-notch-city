@@ -12,7 +12,7 @@ import Animated, { useSharedValue, runOnJS } from 'react-native-reanimated';
 export default function Property3DView() {
 	const modelRef = useRef<THREE.Group | null>(null);
 	const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
-	const zoomLevel = useRef(20); // Start zoom level
+	const zoomLevel = useRef(300); // Start zoom level
 	const [isLoading, setIsLoading] = useState(true);
 	const directionalLightRef = useRef<THREE.DirectionalLight | null>(null);
 	const pinchScale = useSharedValue(0.5);
@@ -45,7 +45,7 @@ export default function Property3DView() {
 
 	const loadModel = async (scene: THREE.Scene) => {
 		try {
-			const asset = Asset.fromModule(require('@/assets/models/model2.glb'));
+			const asset = Asset.fromModule(require('@/assets/models/test3.glb'));
 			await asset.downloadAsync();
 			const model = await loadAsync(asset.localUri || '');
 			model.scene.scale.set(1, 1, 1);
@@ -95,7 +95,7 @@ export default function Property3DView() {
 	const handleReset = () => {
 		if (modelRef.current && cameraRef.current) {
 			modelRef.current.rotation.set(0, 0, 0);
-			zoomLevel.current = 60;
+			zoomLevel.current = 1000;
 			cameraRef.current.position.z = zoomLevel.current;
 		}
 	};
