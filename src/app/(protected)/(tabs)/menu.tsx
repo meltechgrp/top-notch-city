@@ -6,6 +6,7 @@ import {
 	Icon,
 	Pressable,
 	Text,
+	useResolvedTheme,
 	View,
 } from '@/components/ui';
 import { Stack, usePathname, useRouter } from 'expo-router';
@@ -36,7 +37,7 @@ export default function More() {
 	const me = useStore((v) => v.me);
 	const router = useRouter();
 	const pathname = usePathname();
-	const { theme } = useTheme();
+	const theme = useResolvedTheme();
 	async function onInvite() {
 		try {
 			const result = await Share.share({
@@ -80,17 +81,18 @@ export default function More() {
 							: 'bg-background-muted/60'
 					)}>
 					<Pressable
+						disabled={!me?.id}
 						onPress={() => {
 							router.push({
 								pathname: '/(protected)/profile/[user]',
 								params: {
-									user: 'hghjhgjhj',
+									user: me?.id!,
 									ref: pathname,
 								},
 							});
 						}}
 						className={'flex-row items-center'}>
-						<Avatar className=" w-20 h-20">
+						<Avatar className=" w-14 h-14">
 							<AvatarFallbackText>{fullName(me)}</AvatarFallbackText>
 							<AvatarBadge size="md" />
 							<AvatarImage source={getImageUrl(me?.profile_image)} />
@@ -106,7 +108,7 @@ export default function More() {
 				</View>
 				<View className="pt-8 flex-1 px-4">
 					<Text className="text-sm text-typography/80 uppercase px-4 mb-2">
-						Profile Menu
+						Menu
 					</Text>
 					<View className="flex-1 mt-2">
 						<MenuListItem
@@ -123,24 +125,6 @@ export default function More() {
 							}}
 							icon={LayoutDashboard}
 							iconColor="gray-500"
-							className=" py-2 pb-3"
-						/>
-						<Divider className=" h-[0.3px] bg-background-info mb-4" />
-						<MenuListItem
-							title="Account"
-							description="View and edit your account details"
-							onPress={() => {
-								// me &&
-								router.push({
-									pathname: '/(protected)/account',
-									params: {
-										user: 'hghjhgjhj',
-										ref: pathname,
-									},
-								});
-							}}
-							icon={User2}
-							iconColor="yellow-600"
 							className=" py-2 pb-3"
 						/>
 						<Divider className=" h-[0.3px] bg-background-info mb-4" />

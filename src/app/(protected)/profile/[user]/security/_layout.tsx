@@ -4,7 +4,11 @@ import { useResolvedTheme } from '@/components/ui';
 import { Colors } from '@/constants/Colors';
 import { ErrorBoundaryProps, Stack } from 'expo-router';
 
-export default function AccountLayout() {
+export const unstable_settings = {
+	initialRouteName: 'index',
+};
+
+export default function SecurityLayout() {
 	const theme = useResolvedTheme();
 	return (
 		<Stack
@@ -22,7 +26,19 @@ export default function AccountLayout() {
 			<Stack.Screen
 				name="index"
 				options={{
-					headerTitle: 'Personal Info',
+					title: 'Security',
+				}}
+			/>
+			<Stack.Screen
+				name="delete-account"
+				options={{
+					title: 'Delete Account',
+				}}
+			/>
+			<Stack.Screen
+				name="change-password"
+				options={{
+					title: 'Change Password',
 				}}
 			/>
 		</Stack>

@@ -14,6 +14,9 @@ import {
 import { Colors } from '@/constants/Colors';
 import { Icon, Pressable, Text, useResolvedTheme } from '@/components/ui';
 
+export const unstable_settings = {
+	initialRouteName: 'home',
+};
 export default function TabLayout() {
 	const theme = useResolvedTheme();
 	return (

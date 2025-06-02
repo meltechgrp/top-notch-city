@@ -5,39 +5,28 @@ import { Colors } from '@/constants/Colors';
 import { ErrorBoundaryProps, Stack } from 'expo-router';
 
 export const unstable_settings = {
-	// Ensure any route can link back to `/`
-	initialRouteName: '/',
+	initialRouteName: 'index',
 };
 
-export default function ProtectedRoutesLayout() {
+export default function PropertysLayout() {
 	const theme = useResolvedTheme();
 	return (
 		<Stack
 			screenOptions={{
-				headerShown: false,
-				gestureEnabled: true,
-				animationDuration: 1000,
-				animationTypeForReplace: 'push',
+				headerShown: true,
 				headerTitleAlign: 'center',
-				animation: 'slide_from_right',
 				headerBackVisible: false,
-				headerShadowVisible: true,
 				headerLeft: headerLeft(),
-				headerTitleStyle: {
-					color: theme == 'dark' ? Colors.dark.text : Colors.light.text,
-				},
+				headerTitleStyle: { color: theme == 'dark' ? 'white' : 'black' },
 				headerStyle: {
 					backgroundColor:
-						theme == 'dark' ? Colors.light.background : Colors.dark.background,
+						theme == 'dark' ? Colors.light.background : Colors.dark.background, // 64 64 64
 				},
-				statusBarStyle: theme == 'dark' ? 'light' : 'dark',
 			}}>
 			<Stack.Screen
-				name="notification"
+				name="index"
 				options={{
-					animation: 'fade',
-					headerTitle: 'Notifications',
-					headerShown: true,
+					title: 'Properties',
 				}}
 			/>
 		</Stack>

@@ -10,13 +10,13 @@ import {
 	Icon,
 } from '@/components/ui';
 import { RefreshControl, ScrollView } from 'react-native';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { cn, composeFullAddress, fullName } from '@/lib/utils';
 import { useStore } from '@/store';
 import { ChevronRight, Edit2 } from 'lucide-react-native';
 import { format } from 'date-fns';
 import ProfileImageBottomSheet from '@/components/account/ProfileImageBottomSheet';
-import { getImageUrl, useGetApiQuery } from '@/lib/api';
+import { getImageUrl, useApiRequest } from '@/lib/api';
 import ProfileNameBottomSheet from '@/components/account/ProfileNameBottomSheet';
 import ProfileEmailBottomSheet from '@/components/account/ProfileEmailBottomSheet';
 import ProfilePhoneBottomSheet from '@/components/account/ProfilePhoneBottomSheet';
@@ -34,13 +34,8 @@ export default function Account() {
 	const [genderBottomSheet, setGenderBottomSheet] = useState(false);
 	const [dobBottomSheet, setDobBottomSheet] = useState(false);
 	const [addressBottomSheet, setAddressBottomSheet] = useState(false);
-	const { data, refetch } = useGetApiQuery<Me>('/users/me');
+	const { request } = useApiRequest<Me>();
 
-	useEffect(() => {
-		if (data) {
-			updateProfile(data);
-		}
-	}, [data]);
 	const update = useCallback((me: Me) => {
 		if (me) {
 			updateProfile(me);
@@ -50,7 +45,12 @@ export default function Account() {
 	async function onRefresh() {
 		try {
 			setRefetching(true);
-			await refetch();
+			const data = await request({
+				url: 'users/me',
+			});
+			if (data) {
+				updateProfile(data);
+			}
 		} catch (error) {
 		} finally {
 			setRefetching(false);
