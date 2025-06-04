@@ -12,7 +12,7 @@ import {
 	Tag,
 } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
-import { Icon, Pressable, Text, useResolvedTheme } from '@/components/ui';
+import { Pressable, useResolvedTheme } from '@/components/ui';
 
 export const unstable_settings = {
 	initialRouteName: 'home',
@@ -69,18 +69,8 @@ export default function TabLayout() {
 				name="sell"
 				options={{
 					title: 'Sell Property',
-					tabBarItemStyle: {
-						borderTopLeftRadius: 20,
-						borderTopRightRadius: 20,
-					},
 					headerShown: true,
-					tabBarButton: (props) => (
-						<Pressable
-							onPress={props.onPress}
-							className="items-center h-16 absolute bottom-2 left-[10%] aspect-square mx-auto justify-center bg-primary rounded-full">
-							<Plus strokeWidth={3} className=" w-6 h-6" color="white" />
-						</Pressable>
-					),
+					tabBarIcon: ({ color }) => <Plus size={24} color={color} />,
 				}}
 			/>
 			<Tabs.Screen

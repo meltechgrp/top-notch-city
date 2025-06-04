@@ -46,7 +46,7 @@ export default function Account() {
 		try {
 			setRefetching(true);
 			const data = await request({
-				url: 'users/me',
+				url: '/users/me',
 			});
 			if (data) {
 				updateProfile(data);

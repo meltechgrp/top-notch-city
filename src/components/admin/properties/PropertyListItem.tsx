@@ -4,6 +4,7 @@ import { composeFullAddress, formatMoney } from '@/lib/utils';
 import { Dot, MapPin } from 'lucide-react-native';
 import PropertyCarousel from '@/components/property/PropertyCarousel';
 import { useLayout } from '@react-native-community/hooks';
+import { format } from 'date-fns';
 
 type Props = {
 	property: Property;

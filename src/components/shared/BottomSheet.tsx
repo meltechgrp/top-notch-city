@@ -35,6 +35,9 @@ type BottomSheetProps = Modal['props'] & {
 	backdropVariant?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 	plain?: boolean;
 	addBackground?: boolean;
+	enableOverDrag?: boolean;
+	enableClose?: boolean;
+	onAnimate?: (fromIndex: number, toIndex: number) => void;
 	android_keyboardInputMode?: 'adjustResize' | 'adjustPan';
 };
 export default function BottomSheet(props: BottomSheetProps) {
@@ -45,10 +48,13 @@ export default function BottomSheet(props: BottomSheetProps) {
 		withCloseButton = true,
 		addBackground = true,
 		rounded = true,
+		enableOverDrag = true,
 		plain,
 		backdropVariant,
 		android_keyboardInputMode = 'adjustPan',
 		contentClassName,
+		enableClose = true,
+		onAnimate,
 	} = props;
 	const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 	const theme = useResolvedTheme();
@@ -102,13 +108,14 @@ export default function BottomSheet(props: BottomSheetProps) {
 	}, [handleDismiss, props.visible]);
 
 	const renderBackdrop = useCallback(
-		(props: any) => (
-			<CustomBackdrop
-				backdropVariant={backdropVariant}
-				{...props}
-				onPress={handleDismiss}
-			/>
-		),
+		(props: any) =>
+			backdropVariant ? (
+				<CustomBackdrop
+					backdropVariant={backdropVariant}
+					{...props}
+					onPress={handleDismiss}
+				/>
+			) : undefined,
 		[]
 	);
 
@@ -123,6 +130,10 @@ export default function BottomSheet(props: BottomSheetProps) {
 			keyboardBehavior={'interactive'}
 			keyboardBlurBehavior="restore"
 			backgroundComponent={null}
+			onAnimate={onAnimate}
+			enableOverDrag={enableOverDrag}
+			enableDismissOnClose={enableClose}
+			enablePanDownToClose={enableClose}
 			style={{
 				flex: 1,
 			}}

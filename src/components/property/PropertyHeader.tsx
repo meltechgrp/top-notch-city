@@ -1,43 +1,43 @@
-import { Icon, ImageBackground, Text, View } from '@/components/ui';
-import { MapPin } from 'lucide-react-native';
-import { composeFullAddress, formatMoney } from '@/lib/utils';
-import Layout from '@/constants/Layout';
-import { useMemo } from 'react';
-import { generateMediaUrl } from '@/lib/api';
+import { Icon, Pressable, View } from '@/components/ui';
+import { ChevronLeftIcon, Heart, Share2 } from 'lucide-react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
+import { hapticFeed } from '../HapticTab';
 
-export default function PropertyHeader({
-	media_urls,
-	price,
-	address,
-	title,
-}: Property) {
-	const height = Layout.window.height / 2.3;
-
-	const images = useMemo(
-		() => media_urls?.filter((item) => item.endsWith('jpg')) ?? [],
-		[media_urls]
-	);
+export default function PropertyHeader({ id, title }: Property) {
+	const router = useRouter();
 	return (
-		<ImageBackground
-			source={{ uri: generateMediaUrl(images[0]) }}
-			style={{ height }}
-			className="  bg-cover object-cover bg-center overflow-hidden rounded-b-3xl">
-			<View className="gap-2 flex-1 p-4 py-8 justify-end bg-black/40">
-				<Text size="3xl" className="text-white">
-					{title}
-				</Text>
-				<View className=" bg-primary w-1/2 rounded-2xl p-1 px-4">
-					<Text size="2xl" className="text-white">
-						{formatMoney(price, 'NGN', 0)}
-					</Text>
+		<View className="bg-transparent absolute top-0 z-30 w-full">
+			<SafeAreaView edges={['top']} className=" bg-transparent">
+				<View className="flex-row justify-between">
+					<Pressable
+						onPress={() => router.back()}
+						className="py-2 flex-row items-center pl-2 android:pr-4">
+						<Icon className=" w-8 h-8" as={ChevronLeftIcon} />
+					</Pressable>
+					<View
+						style={{
+							flexDirection: 'row',
+							alignItems: 'center',
+						}}
+						className="mr-2 gap-4">
+						<Pressable
+							onPress={() => {
+								hapticFeed();
+								router.push({
+									pathname: '/property/[propertyId]/share',
+									params: { propertyId: id, name: title },
+								});
+							}}
+							style={{ padding: 8 }}>
+							<Icon as={Share2} className=" text-white w-7 h-7" />
+						</Pressable>
+						<Pressable onPress={() => {}} style={{ padding: 8 }}>
+							<Icon as={Heart} className=" text-white w-7 h-7" />
+						</Pressable>
+					</View>
 				</View>
-				<View className=" flex-row items-center gap-2">
-					<Icon as={MapPin} className="text-primary" />
-					<Text size="xl" className=" text-white">
-						{composeFullAddress(address)}
-					</Text>
-				</View>
-			</View>
-		</ImageBackground>
+			</SafeAreaView>
+		</View>
 	);
 }

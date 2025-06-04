@@ -12,15 +12,24 @@ import { useResolvedTheme } from '../ui';
 type Props = {
 	images: string[];
 	width: number;
+	factor?: number;
+	pointerPosition?: number;
+	withBackdrop?: boolean;
 };
 
-function PropertyCarousel({ images, width }: Props) {
+function PropertyCarousel({
+	images,
+	width,
+	factor = 0.6,
+	pointerPosition = 10,
+	withBackdrop,
+}: Props) {
 	const theme = useResolvedTheme();
 	const progress = useSharedValue<number>(0);
 	const baseOptions = {
 		vertical: false,
 		width: width,
-		height: width * 0.6,
+		height: width * factor,
 	} as const;
 
 	const ref = React.useRef<ICarouselInstance>(null);
@@ -32,7 +41,7 @@ function PropertyCarousel({ images, width }: Props) {
 		});
 	};
 	const files = React.useMemo(
-		() => images.filter((img) => img.endsWith('jpg')),
+		() => images.filter((img) => img.endsWith('.jpg')),
 		[images]
 	);
 	return (
@@ -45,7 +54,13 @@ function PropertyCarousel({ images, width }: Props) {
 				onProgressChange={progress}
 				style={{ width: width }}
 				data={files}
-				renderItem={(props) => <PropertyImage source={props.item} {...props} />}
+				renderItem={(props) => (
+					<PropertyImage
+						withBackdrop={withBackdrop}
+						source={props.item}
+						{...props}
+					/>
+				)}
 			/>
 			<Pagination.Basic<string>
 				progress={progress}
@@ -64,7 +79,7 @@ function PropertyCarousel({ images, width }: Props) {
 				containerStyle={[
 					{
 						position: 'absolute',
-						bottom: 10,
+						bottom: pointerPosition,
 						gap: 5,
 					},
 				]}

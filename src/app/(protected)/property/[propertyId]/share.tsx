@@ -1,7 +1,7 @@
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { Share } from 'react-native';
 import * as Linking from 'expo-linking';
-import { Button, View, Text, ButtonText } from '@/components/ui';
+import { Button, View, Text, ButtonText, Box } from '@/components/ui';
 import { BodyScrollView } from '@/components/layouts/BodyScrollView';
 import { Feather, FontAwesome } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native';
@@ -65,13 +65,7 @@ export default function ShareListScreen() {
 
 	return (
 		<>
-			<Stack.Screen
-				options={{
-					headerTitle: 'Share',
-				}}
-			/>
-			<BodyScrollView
-				contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
+			<Box className="flex-1 py-6">
 				<View className="items-center mb-6 gap-1">
 					<Text size="2xl" className="text-center">
 						Share {name}
@@ -107,7 +101,7 @@ export default function ShareListScreen() {
 						system
 					</ButtonText>
 				</Button>
-			</BodyScrollView>
+			</Box>
 		</>
 	);
 }
