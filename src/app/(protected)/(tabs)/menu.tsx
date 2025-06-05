@@ -12,7 +12,6 @@ import {
 import { Stack, usePathname, useRouter } from 'expo-router';
 import { Share } from 'react-native';
 import React from 'react';
-import { useTheme } from '@/components/layouts/ThemeProvider';
 import {
 	ChevronRight,
 	Heart,
@@ -22,7 +21,6 @@ import {
 	Settings,
 	Share2,
 	Sparkle,
-	User2,
 } from 'lucide-react-native';
 import { MenuListItem } from '@/components/menu/MenuListItem';
 import config from '@/config';
@@ -116,7 +114,7 @@ export default function More() {
 							description="View admin dashboard"
 							onPress={() => {
 								router.push({
-									pathname: '/(protected)/admin',
+									pathname: '/admin',
 									params: {
 										user: 'hghjhgjhj',
 										ref: pathname,

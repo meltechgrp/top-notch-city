@@ -65,7 +65,7 @@ function PropertyCarousel({
 			<Pagination.Basic<string>
 				progress={progress}
 				data={files}
-				size={7}
+				size={8}
 				dotStyle={{
 					borderRadius: 100,
 					backgroundColor:

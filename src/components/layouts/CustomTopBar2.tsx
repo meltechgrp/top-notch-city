@@ -17,10 +17,10 @@ export default function CustomTabBar2(props: TabBarProps<RouteType>) {
 	}, [width, navigationState.routes.length]);
 	return (
 		<View className="w-full py-3 ">
-			<View className="flex-row bg-background-muted rounded-[50px] px-1 py-py h-12 overflow-hidden relative">
+			<View className="flex-row bg-background-muted rounded-xl px-1 py-py h-12 overflow-hidden relative">
 				{/* Animated tab indicator */}
 				<Animated.View
-					className="absolute h-full bg-outline rounded-[50px] z-0 top-0"
+					className="absolute h-full bg-primary rounded-xl z-0 top-0"
 					style={{
 						width: tabWidth - 28,
 						transform: [
@@ -49,7 +49,7 @@ export default function CustomTabBar2(props: TabBarProps<RouteType>) {
 						<Pressable
 							key={route.key}
 							className={cn(
-								'flex-1 items-center justify-center z-10 rounded-[50px]',
+								'flex-1 items-center justify-center z-10 rounded-xl',
 								isFocused && 'bg-primary'
 							)}
 							style={{ width: tabWidth - 8 }}

@@ -29,15 +29,6 @@ export default function PropertysLayout() {
 				}}
 			/>
 			<Stack.Screen
-				name="[propertyId]/share"
-				options={{
-					presentation: 'formSheet',
-					sheetAllowedDetents: [0.4, 0.75],
-					sheetGrabberVisible: true,
-					sheetElevation: 100,
-				}}
-			/>
-			<Stack.Screen
 				name="[propertyId]/images"
 				options={{
 					presentation: 'formSheet',

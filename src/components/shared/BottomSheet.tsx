@@ -11,6 +11,7 @@ import {
 import {
 	BottomSheetBackdropProps,
 	BottomSheetModal,
+	BottomSheetScrollView,
 	BottomSheetView,
 } from '@gorhom/bottom-sheet';
 import Animated, {
@@ -27,6 +28,8 @@ type BottomSheetProps = Modal['props'] & {
 	title?: string;
 	withCloseButton?: boolean;
 	withBackButton?: boolean;
+	withScroll?: boolean;
+	enableDynamicSizing?: boolean;
 	bottomPadding?: boolean;
 	rounded?: boolean;
 	snapPoint?: string | string[] | number | number[];
@@ -50,10 +53,12 @@ export default function BottomSheet(props: BottomSheetProps) {
 		rounded = true,
 		enableOverDrag = true,
 		plain,
+		enableDynamicSizing = false,
 		backdropVariant,
 		android_keyboardInputMode = 'adjustPan',
 		contentClassName,
 		enableClose = true,
+		withScroll = false,
 		onAnimate,
 	} = props;
 	const bottomSheetModalRef = useRef<BottomSheetModal>(null);
@@ -129,6 +134,7 @@ export default function BottomSheet(props: BottomSheetProps) {
 			enableBlurKeyboardOnGesture
 			keyboardBehavior={'interactive'}
 			keyboardBlurBehavior="restore"
+			enableDynamicSizing={enableDynamicSizing}
 			backgroundComponent={null}
 			onAnimate={onAnimate}
 			enableOverDrag={enableOverDrag}
@@ -174,22 +180,42 @@ export default function BottomSheet(props: BottomSheetProps) {
 					</View>
 				)
 			}>
-			<BottomSheetView
-				style={{
-					flex: 1,
-					backgroundColor: addBackground
-						? theme == 'dark'
-							? Colors.light.background
-							: Colors.dark.background
-						: 'transparent',
-				}}
-				className={cn(rounded && ' rounded-t-xl', contentClassName)}>
-				<KeyboardAvoidingView
-					behavior={Platform.OS === 'ios' ? 'height' : undefined}
-					style={{ flex: 1 }}>
-					{props.children}
-				</KeyboardAvoidingView>
-			</BottomSheetView>
+			{withScroll ? (
+				<BottomSheetScrollView
+					style={{
+						flex: 1,
+						backgroundColor: addBackground
+							? theme == 'dark'
+								? Colors.light.background
+								: Colors.dark.background
+							: 'transparent',
+					}}
+					className={cn(rounded && ' rounded-t-xl', contentClassName)}>
+					<KeyboardAvoidingView
+						behavior={Platform.OS === 'ios' ? 'height' : undefined}
+						style={{ flex: 1 }}>
+						{props.children}
+					</KeyboardAvoidingView>
+				</BottomSheetScrollView>
+			) : (
+				<BottomSheetView
+				// style={{
+				// 	flex: 1,
+				// 	backgroundColor: addBackground
+				// 		? theme == 'dark'
+				// 			? Colors.light.background
+				// 			: Colors.dark.background
+				// 		: 'transparent',
+				// }}
+				// className={cn(rounded && ' rounded-t-xl', contentClassName)}
+				>
+					<KeyboardAvoidingView
+						behavior={Platform.OS === 'ios' ? 'height' : undefined}
+						style={{ flex: 1 }}>
+						{props.children}
+					</KeyboardAvoidingView>
+				</BottomSheetView>
+			)}
 		</BottomSheetModal>
 	);
 }

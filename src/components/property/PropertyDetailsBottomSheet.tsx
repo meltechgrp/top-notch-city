@@ -1,20 +1,39 @@
-import { BodyScrollView } from '@/components/layouts/BodyScrollView';
-import { Box, Heading, Icon, Pressable, Text, View } from '@/components/ui';
-import BookPropertyIcon from '@/components/icons/BookPropertyIcon';
-import WhatsappIcon from '@/components/icons/WhatsappIcon';
+import {
+	Box,
+	Heading,
+	Icon,
+	Image,
+	Pressable,
+	Text,
+	View,
+} from '@/components/ui';
+import { TabView, SceneMap } from 'react-native-tab-view';
 import Layout from '@/constants/Layout';
-import { ChevronRight, Heart, MapPin, Share2 } from 'lucide-react-native';
-import FacilityItem from '@/components/property/FacilityItem';
 import CustomTabBar2 from '@/components/layouts/CustomTopBar2';
+import {
+	Bath,
+	Bed,
+	BookCheck,
+	BoxIcon,
+	ChevronRight,
+	Images,
+	LandPlot,
+	MapPin,
+	MessageCircle,
+	Video,
+} from 'lucide-react-native';
 import Map from '@/components/location/map';
 import { composeFullAddress, formatMoney } from '@/lib/utils';
-import SimilarProperties from '@/components/property/SimilarProperties';
-import CustomTabBar3 from '@/components/layouts/CustomTopBar3';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useMemo } from 'react';
-import { useGetApiQuery } from '@/lib/api';
-import PropertyImages from '@/components/property/PropertyImages';
+import { useRouter } from 'expo-router';
+import React, { useCallback } from 'react';
+import { generateMediaUrl } from '@/lib/api';
 import BottomSheet from '../shared/BottomSheet';
+import { useLayout } from '@react-native-community/hooks';
+import { usePropertyStore } from '@/store/propertyStore';
+import { CustomCenterSheet } from './CustomMapCenterSheet';
+import { Divider } from '../ui/divider';
+import { PropertyMapSection } from './PropertyMapSection';
+import { PropertyNearbySection } from './PropertyNearbySection';
 
 type Props = {
 	visible: boolean;
@@ -25,120 +44,139 @@ type Props = {
 export default function PropertyDetailsBottomSheet(props: Props) {
 	const { visible, onDismiss, property } = props;
 	const router = useRouter();
-	const images = [
-		{
-			path: require('@/assets/images/property/img1.png'),
-		},
-		{
-			path: require('@/assets/images/property/img2.png'),
-		},
-		{
-			path: require('@/assets/images/property/img3.png'),
-		},
-		{
-			path: require('@/assets/images/property/img4.png'),
-		},
-		{
-			path: require('@/assets/images/property/img5.png'),
-		},
-		{
-			path: require('@/assets/images/property/img6.png'),
-		},
-	];
-	// const RenderScene = {
-	// 	images: () => <PropertyImages images={images} />,
-	// 	video: () => (
-	// 		<View className="flex-1 items-center h-[20rem] justify-center">
-	// 			<Text size="xl">Video Coming Soon</Text>
-	// 		</View>
-	// 	),
-	// 	view: () => <Property3DView id={propertyId} image={null} />,
-	// };
-	const routes = [
-		{ key: 'images', title: 'Pictures' },
-		{ key: 'video', title: 'Videos' },
-		{ key: 'view', title: '3D View' },
-	];
+	const [index, setIndex] = React.useState(0);
+	const { width, onLayout } = useLayout();
+
+	const findAmenity = useCallback(
+		(name: string) =>
+			property.amenities.find((item) => item.icon == name)?.value || '0',
+		[]
+	);
 	return (
-		<BottomSheet
-			withHeader={false}
-			withBackButton={false}
-			snapPoint={['60%', '100%']}
-			backdropVariant={undefined}
-			enableClose={false}
-			visible={visible}
-			onDismiss={onDismiss}>
-			<Box className=" flex-1">
-				<View className="gap-2 flex-1 p-4 py-8 justify-end">
-					<Text size="3xl" className="">
-						{property.title}
-					</Text>
-					<View className=" bg-primary self-start rounded-2xl p-1 px-4">
-						<Text size="2xl" className="">
-							{formatMoney(property.price, 'NGN', 0)}
-						</Text>
-					</View>
-					<View className=" flex-row items-center gap-2">
-						<Icon as={MapPin} className="text-primary" />
-						<Text size="xl" className=" ">
-							{composeFullAddress(property.address)}
-						</Text>
-					</View>
-				</View>
-				<View className=" pt-4 flex-1 gap-6 pb-20">
-					<View className="gap-2 px-4">
-						<Heading size="lg">Description</Heading>
-						<Text size="md">{property?.description}</Text>
-					</View>
-					<View className="flex-row gap-4 flex-wrap px-4">
-						{property.amenities?.map((item) => (
-							<FacilityItem {...item} key={item.name} />
-						))}
-					</View>
-					{/* <CustomTabBar3
-            setCurrent={setCurrent}
-            routes={routes}
-            current={current}>
-            {RenderScene[current as keyof typeof RenderScene]()}
-          </CustomTabBar3> */}
-					<View className=" gap-4 px-4">
-						<Pressable className="flex-row gap-4 bg-background-muted p-4 rounded-xl items-center justify-between">
-							<BookPropertyIcon />
-							<Text size="lg" className=" mr-auto">
-								Book a visit
-							</Text>
-							<Icon as={ChevronRight} />
-						</Pressable>
-						<Pressable
-							onPress={() =>
-								router.push({
-									pathname: '/(protected)/property/[propertyId]/booking',
-									params: {
-										propertyId: property.id,
-									},
-								})
-							}
-							className="flex-row gap-4 bg-background-muted p-4 rounded-xl items-center justify-between">
-							<WhatsappIcon />
-							<Text size="lg" className=" mr-auto">
-								Chat with Realtor
-							</Text>
-							<Icon as={ChevronRight} />
-						</Pressable>
-					</View>
-					<View className="gap-2 px-4">
-						<Heading>Properties Address</Heading>
-						<View className="flex-row items-center gap-2">
-							<MapPin size={18} color={'#F8AA00'} />
-							<Text>{composeFullAddress(property?.address)}</Text>
-						</View>
-						<View className="rounded-xl overflow-hidden">
-							<Map height={Layout.window.height / 3} scrollEnabled={false} />
+		<>
+			<BottomSheet
+				withHeader={false}
+				withBackButton={false}
+				snapPoint={['53%', '85%']}
+				withScroll={true}
+				backdropVariant={undefined}
+				enableClose={false}
+				rounded={false}
+				enableDynamicSizing={true}
+				visible={visible}
+				onDismiss={onDismiss}>
+				<Box onLayout={onLayout} className=" flex-1 bg-transparent gap-4">
+					<View className="gap-4 p-4 py-2">
+						<View className="flex-row gap-4 mt-2">
+							<View className="flex-row flex-1 bg-background-muted rounded-xl p-4 items-center justify-center gap-2">
+								<Icon size="sm" as={Bed} className="text-primary" />
+								<Text size="sm">{findAmenity('Bed')} Beds</Text>
+							</View>
+							<View className="flex-row flex-1 bg-background-muted rounded-xl p-4 items-center justify-center gap-2">
+								<Icon size="sm" as={Bath} className="text-primary" />
+								<Text size="sm">{findAmenity('Bath')} Baths</Text>
+							</View>
+							<View className="flex-row flex-1 bg-background-muted rounded-xl p-4 items-center justify-center gap-2">
+								<Icon size="sm" as={LandPlot} className="text-primary" />
+								<Text size="sm">{2400} Sq</Text>
+							</View>
 						</View>
 					</View>
-					{/* <SimilarProperties /> */}
+					<View className=" pt-2 flex-1 gap-6 pb-20">
+						<View className=" flex-row gap-4 px-4">
+							<Pressable className="flex-row flex-1 bg-gray-500 gap-2 p-4 py-5 rounded-xl items-center justify-between">
+								<Icon size="xl" as={BookCheck} className="text-primary" />
+								<Text size="md" className=" mr-auto">
+									Book a visit
+								</Text>
+								<Icon as={ChevronRight} />
+							</Pressable>
+							<Pressable
+								onPress={() =>
+									router.push({
+										pathname: '/(protected)/property/[propertyId]/booking',
+										params: {
+											propertyId: property.id,
+										},
+									})
+								}
+								className="flex-row flex-1 gap-2 bg-primary p-4 py-5 rounded-xl items-center justify-between">
+								<Icon size="xl" as={MessageCircle} className="text-white" />
+								<Text size="md" className=" mr-auto">
+									Chat Agent
+								</Text>
+								<Icon as={ChevronRight} />
+							</Pressable>
+						</View>
+						<View className="gap-3 px-4 flex">
+							<Heading size="lg">Description</Heading>
+							<Text size="md" className=" font-light">
+								Lorem ipsum dolor sit amet consectetur adipisicing elit.
+								Perferendis, ipsa ducimus ipsam molestiae dolorum quasi totam
+								laborum nostrum, consequatur rem id tempora eveniet, harum
+								dignissimos expedita nulla quod quas cum.
+							</Text>
+						</View>
+						<View className=" px-4 gap-4">
+							<View className=" gap-3">
+								<View className="flex-row gap-2 px-2 items-center">
+									<Icon size="md" as={Images} className="text-primary" />
+									<Heading size="lg">Images</Heading>
+								</View>
+								<Pressable className="bg-background-muted rounded-xl p-4">
+									<ImageGrid width={(width - 110) / 5} />
+								</Pressable>
+							</View>
+							<Pressable className="flex-row gap-4 bg-background-muted p-4 rounded-xl items-center justify-between">
+								<Icon as={Video} className="text-primary" />
+								<Text size="lg" className=" mr-auto">
+									Videos
+								</Text>
+								<Icon as={ChevronRight} />
+							</Pressable>
+							<Pressable className="flex-row gap-4 bg-background-muted p-4 rounded-xl items-center justify-between">
+								<Icon as={BoxIcon} className="text-primary" />
+								<Text size="lg" className=" mr-auto">
+									Visual Tour
+								</Text>
+								<Icon as={ChevronRight} />
+							</Pressable>
+						</View>
+						<PropertyMapSection />
+						<Divider />
+						<PropertyNearbySection />
+					</View>
+				</Box>
+			</BottomSheet>
+		</>
+	);
+}
+
+function ImageGrid({ width }: { width: number }) {
+	const { getImages } = usePropertyStore();
+	return (
+		<View className=" flex-row gap-3">
+			{getImages()
+				?.slice(0, 4)
+				.map((img) => (
+					<View
+						key={img}
+						style={{ width, height: width }}
+						className=" rounded-xl overflow-hidden">
+						<Image
+							source={{ uri: generateMediaUrl(img) }}
+							className="w-full h-full object-cover"
+							alt="images"
+						/>
+					</View>
+				))}
+			{getImages()?.length > 4 && (
+				<View
+					style={{ width: width + 3, height: width + 3 }}
+					className=" rounded-xl bg-background items-center justify-center overflow-hidden">
+					<Text size="lg">+{getImages().length - 4}</Text>
 				</View>
-			</Box>
-		</BottomSheet>
+			)}
+		</View>
 	);
 }

@@ -39,7 +39,7 @@ export const PropertyImage: React.FC<Props> = (props) => {
 				resizeMode="cover"
 			/>
 			{withBackdrop && (
-				<View className=" absolute w-full h-full z-20 bg-black/20" />
+				<View className=" absolute w-full h-full z-20 bg-black/40" />
 			)}
 		</Animated.View>
 	);

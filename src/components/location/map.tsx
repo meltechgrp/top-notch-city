@@ -1,5 +1,5 @@
 import React, { ReactNode, useMemo } from 'react';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Circle, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import Layout from '@/constants/Layout';
 import { CustomPropertyMarker } from './CustomPropertyMarker';
 import Platforms from '@/constants/Plaforms';
@@ -26,6 +26,9 @@ interface MapProps {
 	zoomControlEnabled?: boolean;
 	markers?: MarkerData[];
 	marker?: LocationData;
+	showRadius?: boolean;
+	radiusInMeters?: number;
+	customMarkerImage?: any;
 }
 const DEFAULT_LAT_DELTA = 0.0922;
 const DEFAULT_LONG_DELTA = 0.0421;
@@ -40,6 +43,9 @@ export default function Map(props: MapProps) {
 		scrollEnabled = true,
 		showUserLocation = false,
 		showsBuildings = true,
+		showRadius,
+		radiusInMeters,
+		customMarkerImage,
 		marker,
 	} = props;
 	const { theme } = useTheme();
@@ -66,7 +72,6 @@ export default function Map(props: MapProps) {
 				loadingIndicatorColor={
 					theme == 'dark' ? Colors.dark.tint : Colors.light.tint
 				}
-				showsScale={true}
 				showsCompass={true}
 				showsBuildings={showsBuildings}
 				showsTraffic={true}
@@ -83,8 +88,27 @@ export default function Map(props: MapProps) {
 							latitude: marker.latitude,
 							longitude: marker.longitude,
 						}}
-						image={propertyImage}
+						image={customMarkerImage || propertyImage}
 						anchor={{ x: 0.5, y: 0.5 }}
+					/>
+				)}
+				{latitude && longitude && (
+					<Marker
+						coordinate={{
+							latitude: latitude,
+							longitude: longitude,
+						}}
+						image={customMarkerImage || propertyImage}
+						anchor={{ x: 0.5, y: 0.5 }}
+					/>
+				)}
+				{latitude && longitude && showRadius && (
+					<Circle
+						center={{ latitude, longitude }}
+						radius={radiusInMeters || 5000} // default 5km
+						fillColor="rgba(0, 0, 0, 0.1)"
+						strokeColor="rgba(241, 96, 0, 0.6)"
+						strokeWidth={5}
 					/>
 				)}
 				{markers?.map((place) => (

@@ -151,7 +151,7 @@ export function useCategorySections() {
 				})
 			);
 
-			await cacheStorage.set(
+			cacheStorage.set(
 				'category-sections',
 				JSON.stringify(sections),
 				SIX_HOURS

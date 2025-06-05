@@ -9,12 +9,15 @@ import axios, {
 	CancelTokenSource,
 } from 'axios';
 
+const SIX_HOURS = 2 * 60 * 60 * 1000;
+
 export type UseApiRequestProps<T> = {
 	url: string;
 	method?: AxiosRequestConfig['method'];
 	data?: AxiosRequestConfig['data'];
 	headers?: AxiosRequestConfig['headers'];
 	withAuth?: boolean;
+	tag?: string;
 	onUploadProgress?: (progress: number) => void;
 };
 
@@ -32,12 +35,22 @@ export function useApiRequest<T = any>() {
 			data: body,
 			headers = {},
 			withAuth = true,
+			tag,
 			onUploadProgress,
 		}: UseApiRequestProps<T>) => {
 			setLoading(true);
 			setError(null);
 			setData(null);
 
+			// Check cache
+			if (tag) {
+				const cachedData = await cacheStorage.get(tag);
+				if (cachedData) {
+					setData(JSON.parse(cachedData));
+					setLoading(false);
+					return JSON.parse(cachedData);
+				}
+			}
 			const source = axios.CancelToken.source();
 			cancelSourceRef.current = source;
 
@@ -65,6 +78,10 @@ export function useApiRequest<T = any>() {
 				});
 				console.log(response.data);
 				setData(response.data);
+				// Cache response if tabName is provided
+				if (tag) {
+					cacheStorage.set(tag, JSON.stringify(response.data), SIX_HOURS);
+				}
 				return response.data;
 			} catch (err: any) {
 				console.log(err, 'err');
@@ -124,7 +141,8 @@ type QueryState<T> = {
 
 export function useGetApiQuery<T = any>(
 	url: string,
-	options: UseApiQueryOptions = {}
+	options: UseApiQueryOptions = {},
+	tag?: string
 ): QueryState<T | null> {
 	const { data, error, loading, request } = useApiRequest<T>();
 
@@ -133,6 +151,7 @@ export function useGetApiQuery<T = any>(
 			url,
 			method: 'GET',
 			withAuth: options.withAuth,
+			tag,
 		});
 	}, [url, options.withAuth, request]);
 
