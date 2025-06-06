@@ -4,19 +4,20 @@ import { Platform } from 'react-native';
 import { HapticTab } from '@/components/HapticTab';
 import TabBarBackground from '@/components/TabBarBackground';
 import {
-	Home,
-	Menu,
-	MessageSquareMore,
-	Plus,
-	Search,
+	ChartNoAxesColumn,
+	LayoutDashboard,
+	List,
+	Settings2,
+	Users2,
+	Wallet,
 } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 import { useResolvedTheme } from '@/components/ui';
 
 export const unstable_settings = {
-	initialRouteName: 'home',
+	initialRouteName: 'dashboard',
 };
-export default function TabLayout() {
+export default function AdminTabLayout() {
 	const theme = useResolvedTheme();
 	return (
 		<Tabs
@@ -50,44 +51,50 @@ export default function TabLayout() {
 				},
 			}}>
 			<Tabs.Screen
-				name="home"
+				name="dashboard"
 				options={{
-					title: 'Home',
-					tabBarIcon: ({ color }) => <Home size={24} color={color} />,
-				}}
-			/>
-			<Tabs.Screen
-				name="search"
-				options={{
-					title: 'Search',
-					headerShown: false,
-					tabBarIcon: ({ color }) => <Search size={24} color={color} />,
-				}}
-			/>
-			<Tabs.Screen
-				name="sell"
-				options={{
-					title: 'Sell Property',
-					headerShown: true,
-					tabBarIcon: ({ color }) => <Plus size={24} color={color} />,
-				}}
-			/>
-			<Tabs.Screen
-				name="message"
-				options={{
-					title: 'Message',
-					headerShown: true,
+					title: 'Dashboard',
 					tabBarIcon: ({ color }) => (
-						<MessageSquareMore size={24} color={color} />
+						<LayoutDashboard size={24} color={color} />
 					),
 				}}
 			/>
 			<Tabs.Screen
-				name="menu"
+				name="users"
 				options={{
-					title: 'Menu',
-					headerShown: true,
-					tabBarIcon: ({ color }) => <Menu size={24} color={color} />,
+					title: 'Users',
+					tabBarIcon: ({ color }) => <Users2 size={24} color={color} />,
+				}}
+			/>
+			<Tabs.Screen
+				name="listings"
+				options={{
+					title: 'Listings',
+					tabBarIcon: ({ color }) => <List size={24} color={color} />,
+				}}
+			/>
+			<Tabs.Screen
+				name="analytics"
+				options={{
+					title: 'Analytics',
+					tabBarIcon: ({ color }) => (
+						<ChartNoAxesColumn size={24} color={color} />
+					),
+				}}
+			/>
+			<Tabs.Screen
+				name="settings"
+				options={{
+					title: 'Settings',
+					href: null,
+					tabBarIcon: ({ color }) => <Settings2 size={24} color={color} />,
+				}}
+			/>
+			<Tabs.Screen
+				name="revenue"
+				options={{
+					title: 'Revenue',
+					tabBarIcon: ({ color }) => <Wallet size={24} color={color} />,
 				}}
 			/>
 		</Tabs>

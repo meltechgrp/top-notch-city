@@ -9,6 +9,8 @@ import { useMemo, useState } from 'react';
 import { RefreshControl } from 'react-native';
 import { FilterComponent } from '@/components/admin/shared/FilterComponent';
 import { useGetApiQuery } from '@/lib/api';
+import AdminCreateButton from '@/components/admin/shared/AdminCreateButton';
+import { User2, UserCog2, UserSearch } from 'lucide-react-native';
 
 const ITEMS_PER_PAGE = 50;
 
@@ -82,6 +84,12 @@ export default function Users() {
 		);
 	}, [tabs, actveTab, search, setSearch]);
 
+	const BUTTONS = [
+		{ icon: User2, value: 'user' },
+		{ icon: UserCog2, value: 'admin' },
+		{ icon: UserSearch, value: 'agent' },
+	];
+	function handleButtonPress(val: string) {}
 	useRefreshOnFocus(refetch);
 	return (
 		<Box className=" flex-1 px-2 pt-2">
@@ -116,6 +124,7 @@ export default function Users() {
 					onDismiss={() => setUserBottomSheet(false)}
 				/>
 			)}
+			<AdminCreateButton buttons={BUTTONS} onPress={handleButtonPress} />
 		</Box>
 	);
 }

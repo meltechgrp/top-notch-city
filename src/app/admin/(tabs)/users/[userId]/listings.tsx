@@ -1,9 +1,9 @@
 import { Box, Text } from '@/components/ui';
 
-export default function AgentRequests() {
+export default function UserListings() {
 	return (
 		<Box className="flex-1">
-			<Text>AgentRequests</Text>
+			<Text>UserListings</Text>
 		</Box>
 	);
 }

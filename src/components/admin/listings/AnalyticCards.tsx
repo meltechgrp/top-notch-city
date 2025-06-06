@@ -1,11 +1,16 @@
-import { LucideIcon } from 'lucide-react-native';
+import {
+	Download,
+	FileText,
+	LucideIcon,
+	ServerCrash,
+	Smartphone,
+} from 'lucide-react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { chunk } from 'lodash-es';
 import { cn } from '@/lib/utils';
 import { Pressable } from 'react-native';
 import { Eye, House, MailQuestion, Users } from 'lucide-react-native';
 import { Heading, Icon, Text, View } from '@/components/ui';
-import { useRouter } from 'expo-router';
 
 type Props = {
 	data?: {
@@ -18,40 +23,35 @@ type Props = {
 	}[];
 };
 
-export default function AdminCards({}: Props) {
-	const router = useRouter();
+export default function AnalyticCards({}: Props) {
 	const data = [
 		{
-			title: 'Users',
-			icon: Users,
+			title: 'Downloads',
+			icon: Download,
 			total: 25,
 			rate: 15,
 			direction: true,
-			route: '/admin/users',
 		},
 		{
-			title: 'Properties',
-			icon: House,
-			total: 200,
-			rate: 10,
-			direction: true,
-			route: '/admin/properties',
-		},
-		{
-			title: 'Requests',
-			icon: MailQuestion,
-			total: 10,
-			rate: 10,
-			direction: false,
-			route: '/admin/requests',
-		},
-		{
-			title: 'Views',
-			icon: Eye,
+			title: 'Devices',
+			icon: Smartphone,
 			total: 500,
 			rate: 25,
 			direction: true,
-			route: '/admin/views',
+		},
+		{
+			title: 'Reports',
+			icon: FileText,
+			total: 10,
+			rate: 10,
+			direction: false,
+		},
+		{
+			title: 'Crashes',
+			icon: ServerCrash,
+			total: 200,
+			rate: 10,
+			direction: true,
 		},
 	];
 	return (
@@ -62,7 +62,6 @@ export default function AdminCards({}: Props) {
 						{row.map((item) => (
 							<Pressable
 								key={item.title}
-								onPress={() => router.push(item.route as any)}
 								className="flex-1 h-28 py-4 justify-between rounded-xl bg-background-muted">
 								<View className=" gap-4 px-4 flex-row justify-between items-center">
 									<View className=" p-1.5 self-start rounded-full bg-[#ffe7e3]">

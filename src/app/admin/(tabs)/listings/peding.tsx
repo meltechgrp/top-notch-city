@@ -1,9 +1,9 @@
 import { Box, Text } from '@/components/ui';
 
-export default function AdminViewScreen() {
+export default function PendingListing() {
 	return (
 		<Box className="flex-1">
-			<Text>AdminViewScreen</Text>
+			<Text>PendingListing</Text>
 		</Box>
 	);
 }

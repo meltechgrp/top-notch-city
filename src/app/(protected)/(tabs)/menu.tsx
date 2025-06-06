@@ -113,7 +113,7 @@ export default function More() {
 							title="Dashboard"
 							description="View admin dashboard"
 							onPress={() => {
-								router.push({
+								router.dismissTo({
 									pathname: '/admin',
 									params: {
 										user: 'hghjhgjhj',
