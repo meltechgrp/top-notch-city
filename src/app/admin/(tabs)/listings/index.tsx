@@ -25,8 +25,11 @@ export default function Properties() {
 	const [actveTab, setActiveTab] = useState<Property['status'] | 'all'>('all');
 	const [search, setSearch] = useState('');
 	const [page, setPage] = useState(1);
-	const { data, loading, error, refetch } =
-		useGetApiQuery<PropertyResponse>('/properties');
+	const { data, loading, error, refetch } = useGetApiQuery<PropertyResponse>(
+		'/properties',
+		{},
+		'properties'
+	);
 
 	const propertysData = useMemo(() => {
 		return data?.properties ?? [];

@@ -184,11 +184,10 @@ export default function BottomSheet(props: BottomSheetProps) {
 				<BottomSheetScrollView
 					style={{
 						flex: 1,
-						backgroundColor: addBackground
-							? theme == 'dark'
+						backgroundColor:
+							theme == 'dark'
 								? Colors.light.background
-								: Colors.dark.background
-							: 'transparent',
+								: Colors.dark.background,
 					}}
 					className={cn(rounded && ' rounded-t-xl', contentClassName)}>
 					<KeyboardAvoidingView
@@ -199,16 +198,15 @@ export default function BottomSheet(props: BottomSheetProps) {
 				</BottomSheetScrollView>
 			) : (
 				<BottomSheetView
-				// style={{
-				// 	flex: 1,
-				// 	backgroundColor: addBackground
-				// 		? theme == 'dark'
-				// 			? Colors.light.background
-				// 			: Colors.dark.background
-				// 		: 'transparent',
-				// }}
-				// className={cn(rounded && ' rounded-t-xl', contentClassName)}
-				>
+					style={{
+						flex: 1,
+						backgroundColor: addBackground
+							? theme == 'dark'
+								? Colors.light.background
+								: Colors.dark.background
+							: 'transparent',
+					}}
+					className={cn(rounded && ' rounded-t-xl', contentClassName)}>
 					<KeyboardAvoidingView
 						behavior={Platform.OS === 'ios' ? 'height' : undefined}
 						style={{ flex: 1 }}>

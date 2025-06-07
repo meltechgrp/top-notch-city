@@ -1,4 +1,3 @@
-import AdminCreateButton from '@/components/admin/shared/AdminCreateButton';
 import MainLayout from '@/components/admin/shared/MainLayout';
 import CustomTopBar from '@/components/layouts/CustomTopBar';
 import { MaterialTopTabs } from '@/components/layouts/MaterialTopTabs';
@@ -6,8 +5,6 @@ import NotificationBadge from '@/components/notifications/NotificationBadge';
 import { useResolvedTheme } from '@/components/ui';
 import { Colors } from '@/constants/Colors';
 import Layout from '@/constants/Layout';
-import { useRouter } from 'expo-router';
-import { Home, Layers } from 'lucide-react-native';
 
 export const unstable_settings = {
 	initialRouteName: 'index',
@@ -15,26 +12,13 @@ export const unstable_settings = {
 
 export default function ListingLayoutsComponent() {
 	const theme = useResolvedTheme();
-	const router = useRouter();
-	const BUTTONS = [
-		{ icon: Home, value: 'property' },
-		{ icon: Layers, value: 'category' },
-	];
-	function handleButtonPress(val: string) {
-		console.log(val);
-		if (val == 'category') {
-			router.push({
-				pathname: '/admin/(tabs)/listings/category',
-				params: { new: 'cateogry' },
-			});
-		}
-	}
 	return (
 		<MainLayout>
 			<MaterialTopTabs
 				initialRouteName="index"
 				tabBar={(props) => <CustomTopBar {...props} />}
 				screenOptions={{
+					swipeEnabled: false,
 					lazy: true,
 					tabBarStyle: {
 						backgroundColor:
@@ -69,7 +53,6 @@ export default function ListingLayoutsComponent() {
 					}}
 				/>
 			</MaterialTopTabs>
-			<AdminCreateButton buttons={BUTTONS} onPress={handleButtonPress} />
 		</MainLayout>
 	);
 }

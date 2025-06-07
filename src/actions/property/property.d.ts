@@ -10,7 +10,11 @@ type SubCategory = {
 	name: string;
 	slug: string;
 };
-type CategorySections = { cat: string; subs: { name: string }[] }[];
+type CategorySections = {
+	name: string;
+	id: string;
+	data: { name: string; id: string; catId: string }[];
+}[];
 
 type PropertyResponse = {
 	count: number;

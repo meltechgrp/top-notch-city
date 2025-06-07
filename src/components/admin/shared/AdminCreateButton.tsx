@@ -13,13 +13,14 @@ import { Icon } from '@/components/ui';
 type AdminCreateButtonProps = {
 	onPress: (val: string) => void;
 	className?: string;
-	buttons: {
+	solo?: boolean;
+	buttons?: {
 		icon: LucideIcon;
 		value: string;
 	}[];
 };
 
-function AdminCreateButton(props: AdminCreateButtonProps) {
+function AdminCreateButton({ solo = false, ...props }: AdminCreateButtonProps) {
 	const [open, setOpen] = useState(false);
 	const toggle = (forceClose = false) => {
 		const closing = forceClose || open;
@@ -52,10 +53,10 @@ function AdminCreateButton(props: AdminCreateButtonProps) {
 				)}>
 				{props.buttons?.map((btn, index) => {
 					const angleRad =
-						((index == 0 ? -90 : index == 1 ? -160 : -220) * Math.PI) / 180;
+						((index == 0 ? -95 : index == 1 ? -150 : -200) * Math.PI) / 180;
 
 					const style = useAnimatedStyle(() => {
-						const r = interpolate(radius.value, [0, 1], [0, 55]);
+						const r = interpolate(radius.value, [0, 1], [0, 70]);
 						const x = r * Math.cos(angleRad);
 						const y = r * Math.sin(angleRad);
 						return {
@@ -71,14 +72,13 @@ function AdminCreateButton(props: AdminCreateButtonProps) {
 					return (
 						<Pressable
 							onPress={() => {
-								console.log('ndjkn');
-								// toggle(true);
+								toggle();
 								props.onPress(btn.value);
 							}}
 							key={index}>
 							<Animated.View
 								style={[style]}
-								className="absolute p-2.5 bg-background-info rounded-full items-center justify-center shadow">
+								className="absolute p-4 bg-background-info rounded-full items-center justify-center shadow">
 								<Icon as={btn.icon} className="w-7 h-7 text-primary" />
 							</Animated.View>
 						</Pressable>
@@ -89,7 +89,14 @@ function AdminCreateButton(props: AdminCreateButtonProps) {
 					className="bg-primary rounded-full p-1 w-14 h-14 focus:scale-95 items-center justify-center z-30 shadow"
 					accessibilityRole="button"
 					accessibilityLabel="Create"
-					onPress={() => toggle()}>
+					onPress={() => {
+						if (solo) {
+							toggle();
+							props.onPress('');
+						} else {
+							toggle();
+						}
+					}}>
 					<Animated.View style={[rotationStyle]}>
 						<Icon as={Plus} className="text-white w-8 h-8" />
 					</Animated.View>

@@ -116,7 +116,7 @@ export function useUploadProperty() {
 
 const SIX_HOURS = 2 * 60 * 60 * 1000;
 
-export function useCategorySections() {
+export function useCategorySections(withCache?: boolean) {
 	const [sections, setSections] = useState<CategorySections>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<Error | null>(null);
@@ -126,44 +126,52 @@ export function useCategorySections() {
 			setLoading(true);
 			setError(null);
 
-			const cached = await cacheStorage.get('category-sections');
-			if (cached) {
-				setSections(JSON.parse(cached));
-				setLoading(false);
-				return;
+			if (withCache) {
+				const cached = await cacheStorage.get('category-sections');
+				if (cached) {
+					setSections(JSON.parse(cached));
+					setLoading(false);
+					return;
+				}
 			}
 
 			const res = await fetchWithAuth('/categories', {});
 			const data = (await res.json()) as Category[];
+			const sections = data.map(async (item) => {
+				const subsRes = await fetchWithAuth(
+					`/categories/${item.id}/subcategories`,
+					{}
+				);
+				const subsData = (await subsRes.json()) as SubCategory[];
 
-			const sections = await Promise.all(
-				data.map(async (item) => {
-					const subsRes = await fetchWithAuth(
-						`/categories/${item.id}/subcategories`,
-						{}
-					);
-					const subsData = (await subsRes.json()) as SubCategory[];
+				return {
+					name: item.name,
+					id: item.id,
+					data:
+						subsData?.map((sub) => ({
+							name: sub.name,
+							id: sub.id,
+							catId: sub?.cat?.id || item.id,
+						})) || [],
+				};
+			});
 
-					return {
-						cat: item.name,
-						subs: subsData.map((sub) => ({ name: sub.name })),
-					};
-				})
-			);
-
-			cacheStorage.set(
-				'category-sections',
-				JSON.stringify(sections),
-				SIX_HOURS
-			);
-
-			setSections(sections);
+			const result = await Promise.all(sections);
+			if (withCache) {
+				cacheStorage.set(
+					'category-sections',
+					JSON.stringify(result),
+					SIX_HOURS
+				);
+			}
+			setSections(result);
+			return result;
 		} catch (err: any) {
 			setError(err);
 		} finally {
 			setLoading(false);
 		}
-	}, []);
+	}, [withCache]);
 
 	useEffect(() => {
 		getSections();

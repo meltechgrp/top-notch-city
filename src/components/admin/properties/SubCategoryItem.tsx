@@ -1,28 +1,32 @@
-import { Text, View } from '@/components/ui';
+import { Icon, Text, View } from '@/components/ui';
 import SwipeableWrapper from '@/components/shared/SwipeableWrapper';
 import { useState } from 'react';
 import CategoryBottomSheet from './CategoryBottomSheet';
 import { useApiRequest } from '@/lib/api';
 import { showSnackbar } from '@/lib/utils';
+import { CornerDownRight } from 'lucide-react-native';
 
 type Props = {
-	item: Category;
-	catId: string;
-	refetch: () => Promise<Category[]>;
+	item: CategorySections[0]['data'][0];
+	refetch: () => Promise<void>;
 };
 
-export default function SubCategoryItem({ item, refetch, catId }: Props) {
-	const [category, setCategory] = useState(item.name);
+export default function SubCategoryItem({ item, refetch }: Props) {
 	const [categoryBottomSheet, setCategoryBottomSheet] = useState(false);
 	const { request, loading, error } = useApiRequest();
-	async function editHandler() {
+
+	async function editHandler(val: string) {
 		await request({
 			url: `/categories/subcategories/${item.id}`,
 			method: 'PUT',
-			data: { name: category, category_id: catId },
+			data: { name: val, category_id: item.catId },
 		});
 		if (!error) {
 			setCategoryBottomSheet(false);
+			showSnackbar({
+				message: 'Sub category updated successfully.',
+				type: 'success',
+			});
 			await refetch();
 		} else {
 			showSnackbar({
@@ -35,10 +39,14 @@ export default function SubCategoryItem({ item, refetch, catId }: Props) {
 		await request({
 			url: `/categories/subcategories/${item.id}`,
 			method: 'DELETE',
-			data: { category_id: catId },
+			data: { category_id: item.catId },
 		});
 		if (!error) {
 			setCategoryBottomSheet(false);
+			showSnackbar({
+				message: 'Sub category deleted successfully.',
+				type: 'success',
+			});
 			await refetch();
 		} else {
 			showSnackbar({
@@ -52,12 +60,12 @@ export default function SubCategoryItem({ item, refetch, catId }: Props) {
 			<SwipeableWrapper
 				rightAction={() => setCategoryBottomSheet(true)}
 				leftAction={() => deleteHandler()}>
-				<View className="flex-1 p-6 py-4 flex-row justify-between items-center bg-background-muted">
-					<View>
-						<Text size="lg" className=" capitalize">
+				<View className="flex-1 p-6 py-5 border-t border-outline flex-row justify-between items-center bg-background-muted">
+					<View className="flex-row gap-2 items-center">
+						<Icon size="sm" as={CornerDownRight} className="text-primary" />
+						<Text size="md" className=" capitalize font-light">
 							{item.name}
 						</Text>
-						<Text className=" capitalize font-light">Sub category</Text>
 					</View>
 				</View>
 			</SwipeableWrapper>
@@ -67,8 +75,7 @@ export default function SubCategoryItem({ item, refetch, catId }: Props) {
 				onSubmit={editHandler}
 				loading={loading}
 				type="edit"
-				onUpdate={setCategory}
-				category={category}
+				value={item.name}
 			/>
 		</>
 	);

@@ -51,11 +51,11 @@ export default function SwipeableWrapper({
 				<RectButton
 					style={[
 						styles.rightAction,
-						{ backgroundColor: 'lightgray', borderRadius: withBorder ? 10 : 0 },
+						{ backgroundColor: 'gray', borderRadius: withBorder ? 10 : 0 },
 					]}
 					onPress={pressHandler}>
-					<Icon as={Edit} className="text-black" />
-					<Text className="text-black">Edit</Text>
+					<Icon as={Edit} className="text-white" />
+					<Text className="text-white">Edit</Text>
 				</RectButton>
 			</Animated.View>
 		);

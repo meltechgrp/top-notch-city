@@ -29,14 +29,14 @@ export default function ListingCategory() {
 						{!loading &&
 							data &&
 							data.map((section) => (
-								<View key={section.cat} className="gap-3">
+								<View key={section.id} className="gap-3">
 									<View className="">
 										<Text size="xl" className="font-light">
-											{section.cat} Properties
+											{section.name} Properties
 										</Text>
 									</View>
 
-									{chunk(section.subs, 2).map((row, i) => (
+									{chunk(section.data, 2).map((row, i) => (
 										<View className={cn('flex-row gap-4')} key={i}>
 											{row.map((item) => (
 												<TouchableOpacity
@@ -48,7 +48,7 @@ export default function ListingCategory() {
 													onPress={() => {
 														updateListing({
 															...listing,
-															category: section.cat,
+															category: section.name,
 															subCategory: item.name,
 														});
 													}}>
