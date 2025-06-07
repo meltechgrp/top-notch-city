@@ -15,6 +15,7 @@ export type UseApiRequestProps<T> = {
 	url: string;
 	method?: AxiosRequestConfig['method'];
 	data?: AxiosRequestConfig['data'];
+	isExternal?: boolean;
 	headers?: AxiosRequestConfig['headers'];
 	withAuth?: boolean;
 	tag?: string;
@@ -35,6 +36,7 @@ export function useApiRequest<T = any>() {
 			data: body,
 			headers = {},
 			withAuth = true,
+			isExternal = false,
 			tag,
 			onUploadProgress,
 		}: UseApiRequestProps<T>) => {
@@ -59,7 +61,7 @@ export function useApiRequest<T = any>() {
 			try {
 				const response: AxiosResponse<T> = await axios({
 					method,
-					url: `${config.origin}/api${url}`,
+					url: isExternal ? url : `${config.origin}/api${url}`,
 					data: body,
 					headers: {
 						...(authToken && { Authorization: `Bearer ${authToken}` }),
@@ -130,6 +132,10 @@ export const getImageUrl = (url?: string | null) => {
 export const generateMediaUrl = (url: string) => `${config.origin}${url}`;
 export type UseApiQueryOptions = {
 	withAuth?: boolean;
+	method?: AxiosRequestConfig['method'];
+	data?: AxiosRequestConfig['data'];
+	headers?: AxiosRequestConfig['headers'];
+	isExternal?: boolean;
 };
 
 type QueryState<T> = {
@@ -149,11 +155,12 @@ export function useGetApiQuery<T = any>(
 	const refetch = useCallback(() => {
 		return request({
 			url,
-			method: 'GET',
+			method: options?.method || 'GET',
 			withAuth: options.withAuth,
 			tag,
+			...options,
 		});
-	}, [url, options.withAuth, request]);
+	}, [url, options.withAuth, request, tag]);
 
 	useEffect(() => {
 		refetch();

@@ -10,7 +10,7 @@ type Props = {
 	fullWidth?: boolean;
 	emptyState?: React.ReactNode;
 	data: Property[];
-	refetch: () => Promise<PropertyResponse>;
+	refetch?: () => Promise<PropertyResponse>;
 };
 
 export default function PropertyHorizontalList(props: Props) {
@@ -20,7 +20,7 @@ export default function PropertyHorizontalList(props: Props) {
 	async function onRefresh() {
 		try {
 			setRefreshing(true);
-			await refetch();
+			refetch && (await refetch());
 		} catch (error) {
 		} finally {
 			setRefreshing(false);
@@ -50,7 +50,6 @@ export default function PropertyHorizontalList(props: Props) {
 	if (!data?.length && emptyState) {
 		return <View>{emptyState}</View>;
 	}
-
 	return (
 		<ScrollView
 			horizontal

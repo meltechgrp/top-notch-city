@@ -3,7 +3,7 @@ import MapView, { Circle, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import Layout from '@/constants/Layout';
 import { CustomPropertyMarker } from './CustomPropertyMarker';
 import Platforms from '@/constants/Plaforms';
-import propertyImage from '@/assets/images/property.png';
+import PropertyMedia from '@/assets/images/property.png';
 import { useTheme } from '../layouts/ThemeProvider';
 import { Colors } from '@/constants/Colors';
 
@@ -88,7 +88,7 @@ export default function Map(props: MapProps) {
 							latitude: marker.latitude,
 							longitude: marker.longitude,
 						}}
-						image={customMarkerImage || propertyImage}
+						image={customMarkerImage || PropertyMedia}
 						anchor={{ x: 0.5, y: 0.5 }}
 					/>
 				)}
@@ -98,7 +98,7 @@ export default function Map(props: MapProps) {
 							latitude: latitude,
 							longitude: longitude,
 						}}
-						image={customMarkerImage || propertyImage}
+						image={customMarkerImage || PropertyMedia}
 						anchor={{ x: 0.5, y: 0.5 }}
 					/>
 				)}

@@ -16,7 +16,7 @@ export function PropertyMapSection() {
 		{ key: 'street', title: 'Street View' },
 	];
 	return (
-		<View className="px-4">
+		<View className="">
 			<TabView
 				style={{ height: 300 }}
 				renderTabBar={(props) => <CustomTabBar2 {...props} />}

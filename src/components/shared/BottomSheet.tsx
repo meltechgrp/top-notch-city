@@ -40,6 +40,7 @@ type BottomSheetProps = Modal['props'] & {
 	addBackground?: boolean;
 	enableOverDrag?: boolean;
 	enableClose?: boolean;
+	sheetKey?: number;
 	onAnimate?: (fromIndex: number, toIndex: number) => void;
 	android_keyboardInputMode?: 'adjustResize' | 'adjustPan';
 };
@@ -59,6 +60,7 @@ export default function BottomSheet(props: BottomSheetProps) {
 		contentClassName,
 		enableClose = true,
 		withScroll = false,
+		sheetKey,
 		onAnimate,
 	} = props;
 	const bottomSheetModalRef = useRef<BottomSheetModal>(null);
@@ -129,6 +131,7 @@ export default function BottomSheet(props: BottomSheetProps) {
 			ref={bottomSheetModalRef}
 			snapPoints={snapPoints}
 			onDismiss={handleDismiss}
+			key={sheetKey || undefined}
 			android_keyboardInputMode={android_keyboardInputMode}
 			backdropComponent={renderBackdrop}
 			enableBlurKeyboardOnGesture

@@ -45,7 +45,7 @@ export default function Property3DView() {
 
 	const loadModel = async (scene: THREE.Scene) => {
 		try {
-			const asset = Asset.fromModule(require('@/assets/models/test3.glb'));
+			const asset = Asset.fromModule(require('@/assets/models/kitchen.glb'));
 			await asset.downloadAsync();
 			const model = await loadAsync(asset.localUri || '');
 			model.scene.scale.set(1, 1, 1);

@@ -18,7 +18,7 @@ export function HapticTab(props: BottomTabBarButtonProps) {
 	);
 }
 
-export async function hapticFeed() {
-	if (Platforms.isAndroid()) return;
+export async function hapticFeed(both?: boolean) {
+	if (!both && Platforms.isAndroid()) return;
 	await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 }

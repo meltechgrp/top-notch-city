@@ -1,4 +1,3 @@
-import { me } from '@/actions/user';
 import DiscoverProperties from '@/components/home/DiscoverProperties';
 import FeaturedProperties from '@/components/home/featured';
 import TopProperties from '@/components/home/properties';
@@ -22,7 +21,7 @@ export default function HomeScreen() {
 			id: 'locations',
 			_typename: 'Locations',
 		} as any;
-		const populerCommunities = {
+		const featured = {
 			id: 'featured',
 			__typename: 'Featured',
 		} as any;
@@ -34,7 +33,7 @@ export default function HomeScreen() {
 			id: 'bottomPlaceHolder',
 			__typename: 'bottomPlaceHolder',
 		} as any;
-		return [topLocations, populerCommunities, properties, bottomPlaceHolder];
+		return [topLocations, featured, properties, bottomPlaceHolder];
 	}, []);
 	type FeedList = any;
 	const renderItem: ListRenderItem<FeedList> = ({ item }) => {

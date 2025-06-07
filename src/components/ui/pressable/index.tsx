@@ -23,18 +23,22 @@ type IPressableProps = Omit<
 > &
 	VariantProps<typeof pressableStyle> & {
 		disableHaptic?: boolean;
+		both?: boolean;
 	};
 const Pressable = React.forwardRef<
 	React.ComponentRef<typeof UIPressable>,
 	IPressableProps
->(function Pressable({ className, disableHaptic = false, ...props }, ref) {
+>(function Pressable(
+	{ className, disableHaptic = false, both = false, ...props },
+	ref
+) {
 	return (
 		<UIPressable
 			{...props}
 			ref={ref}
 			onPress={async (e) => {
-				if (Platforms.isIOS()) {
-					await hapticFeed();
+				if (!disableHaptic) {
+					await hapticFeed(both);
 				}
 				props.onPress && props.onPress(e);
 			}}

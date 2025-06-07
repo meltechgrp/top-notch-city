@@ -31,17 +31,22 @@ export default function PropertysLayout() {
 			<Stack.Screen
 				name="[propertyId]/images"
 				options={{
-					presentation: 'formSheet',
-					sheetAllowedDetents: [0.75, 1],
-					sheetGrabberVisible: true,
+					headerShown: true,
+					title: 'Images',
 				}}
 			/>
 			<Stack.Screen
 				name="[propertyId]/videos"
 				options={{
-					presentation: 'formSheet',
-					sheetAllowedDetents: [0.75, 1],
-					sheetGrabberVisible: true,
+					headerShown: true,
+					title: 'Videos',
+				}}
+			/>
+			<Stack.Screen
+				name="[propertyId]/3d-view"
+				options={{
+					headerShown: true,
+					title: 'Visual Tour',
 				}}
 			/>
 			<Stack.Screen

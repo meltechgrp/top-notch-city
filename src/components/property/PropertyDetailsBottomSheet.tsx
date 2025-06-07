@@ -7,9 +7,6 @@ import {
 	Text,
 	View,
 } from '@/components/ui';
-import { TabView, SceneMap } from 'react-native-tab-view';
-import Layout from '@/constants/Layout';
-import CustomTabBar2 from '@/components/layouts/CustomTopBar2';
 import {
 	Bath,
 	Bed,
@@ -18,19 +15,15 @@ import {
 	ChevronRight,
 	Images,
 	LandPlot,
-	MapPin,
 	MessageCircle,
 	Video,
 } from 'lucide-react-native';
-import Map from '@/components/location/map';
-import { composeFullAddress, formatMoney } from '@/lib/utils';
 import { useRouter } from 'expo-router';
 import React, { useCallback } from 'react';
 import { generateMediaUrl } from '@/lib/api';
 import BottomSheet from '../shared/BottomSheet';
 import { useLayout } from '@react-native-community/hooks';
 import { usePropertyStore } from '@/store/propertyStore';
-import { CustomCenterSheet } from './CustomMapCenterSheet';
 import { Divider } from '../ui/divider';
 import { PropertyMapSection } from './PropertyMapSection';
 import { PropertyNearbySection } from './PropertyNearbySection';
@@ -39,12 +32,12 @@ type Props = {
 	visible: boolean;
 	onDismiss: () => void;
 	property: Property;
+	sheetKey: number;
 };
 
 export default function PropertyDetailsBottomSheet(props: Props) {
-	const { visible, onDismiss, property } = props;
+	const { visible, onDismiss, property, sheetKey } = props;
 	const router = useRouter();
-	const [index, setIndex] = React.useState(0);
 	const { width, onLayout } = useLayout();
 
 	const findAmenity = useCallback(
@@ -59,6 +52,7 @@ export default function PropertyDetailsBottomSheet(props: Props) {
 				withBackButton={false}
 				snapPoint={['53%', '85%']}
 				withScroll={true}
+				sheetKey={sheetKey}
 				backdropVariant={undefined}
 				enableClose={false}
 				rounded={false}
@@ -92,14 +86,15 @@ export default function PropertyDetailsBottomSheet(props: Props) {
 								<Icon as={ChevronRight} />
 							</Pressable>
 							<Pressable
-								onPress={() =>
-									router.push({
-										pathname: '/(protected)/property/[propertyId]/booking',
-										params: {
-											propertyId: property.id,
-										},
-									})
-								}
+								// onPress={() => {
+								// 	onDismiss();
+								// 	router.push({
+								// 		pathname: '/(protected)/property/[propertyId]/booking',
+								// 		params: {
+								// 			propertyId: property.id,
+								// 		},
+								// 	});
+								// }}
 								className="flex-row flex-1 gap-2 bg-primary p-4 py-5 rounded-xl items-center justify-between">
 								<Icon size="xl" as={MessageCircle} className="text-white" />
 								<Text size="md" className=" mr-auto">
@@ -123,18 +118,30 @@ export default function PropertyDetailsBottomSheet(props: Props) {
 									<Icon size="md" as={Images} className="text-primary" />
 									<Heading size="lg">Images</Heading>
 								</View>
-								<Pressable className="bg-background-muted rounded-xl p-4">
+								<Pressable
+									onPress={() => {
+										router.push('/(protected)/property/[propertyId]/images');
+									}}
+									className="bg-background-muted rounded-xl p-4">
 									<ImageGrid width={(width - 110) / 5} />
 								</Pressable>
 							</View>
-							<Pressable className="flex-row gap-4 bg-background-muted p-4 rounded-xl items-center justify-between">
+							<Pressable
+								onPress={() => {
+									router.push('/(protected)/property/[propertyId]/videos');
+								}}
+								className="flex-row gap-4 bg-background-muted p-4 rounded-xl items-center justify-between">
 								<Icon as={Video} className="text-primary" />
 								<Text size="lg" className=" mr-auto">
 									Videos
 								</Text>
 								<Icon as={ChevronRight} />
 							</Pressable>
-							<Pressable className="flex-row gap-4 bg-background-muted p-4 rounded-xl items-center justify-between">
+							<Pressable
+								onPress={() => {
+									router.push('/(protected)/property/[propertyId]/3d-view');
+								}}
+								className="flex-row gap-4 bg-background-muted p-4 rounded-xl items-center justify-between">
 								<Icon as={BoxIcon} className="text-primary" />
 								<Text size="lg" className=" mr-auto">
 									Visual Tour
@@ -142,9 +149,11 @@ export default function PropertyDetailsBottomSheet(props: Props) {
 								<Icon as={ChevronRight} />
 							</Pressable>
 						</View>
-						<PropertyMapSection />
-						<Divider />
-						<PropertyNearbySection />
+						<View className="px-4 gap-6">
+							<PropertyMapSection />
+							<Divider />
+							<PropertyNearbySection />
+						</View>
 					</View>
 				</Box>
 			</BottomSheet>

@@ -1,5 +1,5 @@
 import { Marker } from 'react-native-maps';
-import propertyImage from '@/assets/images/property.png';
+import PropertyMedia from '@/assets/images/property.png';
 import { MarkerData } from './map';
 
 interface Props {
@@ -14,7 +14,7 @@ export function CustomPropertyMarker({ property, onPress }: Props) {
 			<Marker
 				coordinate={{ latitude: latitude, longitude: longitude }}
 				onPress={() => onPress(property)}
-				image={propertyImage}
+				image={PropertyMedia}
 				anchor={{ x: 0.5, y: 0.5 }}
 			/>
 		</>

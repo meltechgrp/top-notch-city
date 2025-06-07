@@ -1,6 +1,6 @@
 import { Box, Heading, Icon, Text, View } from '@/components/ui';
-import { Stack, useLocalSearchParams } from 'expo-router';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
+import React, { useEffect, useMemo, useState } from 'react';
 import PropertyHeader from '@/components/property/PropertyHeader';
 import { useGetApiQuery } from '@/lib/api';
 import { usePropertyStore } from '@/store/propertyStore';
@@ -8,13 +8,13 @@ import PropertyDetailsBottomSheet from '@/components/property/PropertyDetailsBot
 import PropertyCarousel from '@/components/property/PropertyCarousel';
 import { useLayout } from '@react-native-community/hooks';
 import FullHeightLoaderWrapper from '@/components/loaders/FullHeightLoaderWrapper';
-import headerLeft from '@/components/shared/headerLeft';
 import { composeFullAddress, formatMoney } from '@/lib/utils';
 import { MapPin } from 'lucide-react-native';
 
 export default function PropertyItem() {
 	const { propertyId } = useLocalSearchParams() as { propertyId: string };
 	const { updateProperty } = usePropertyStore();
+	const [sheetKey, setSheetKey] = useState(Date.now());
 	const { data, loading } = useGetApiQuery<Property>(
 		`/properties/${propertyId}`,
 		{},
@@ -30,28 +30,30 @@ export default function PropertyItem() {
 		}
 	}, [property]);
 	const { width, onLayout } = useLayout();
+	useFocusEffect(
+		React.useCallback(() => {
+			setSheetKey(Date.now());
+			setDetailsBotttomSheet(true); // open it on screen focus
+			return () => {
+				setDetailsBotttomSheet(false); // close on blur/unmount
+			};
+		}, [])
+	);
 	return (
 		<>
-			<Stack.Screen
-				options={{
-					headerShown: true,
-					headerTransparent: true,
-					headerStyle: {
-						backgroundColor: 'transparent',
-					},
-					headerTitle: '',
-					headerLeft: headerLeft(),
-					headerRight: () => <PropertyHeader {...(property as any)} />,
-				}}
-			/>
 			<FullHeightLoaderWrapper loading={loading}>
 				<Box onLayout={onLayout} className="flex-1 relative">
 					{property && (
 						<View className="flex-1">
+							<PropertyHeader
+								setDetailsBotttomSheet={setDetailsBotttomSheet}
+								{...(property as any)}
+							/>
 							<PropertyCarousel
 								width={width || 400}
 								factor={1.15}
 								withBackdrop={true}
+								loop={false}
 								images={property.media_urls}
 								pointerPosition={60}
 							/>
@@ -73,11 +75,14 @@ export default function PropertyItem() {
 									</View>
 								</View>
 							</View>
-							<PropertyDetailsBottomSheet
-								visible={detailsBottomSheet}
-								onDismiss={() => setDetailsBotttomSheet(false)}
-								property={property}
-							/>
+							{detailsBottomSheet && (
+								<PropertyDetailsBottomSheet
+									visible={detailsBottomSheet}
+									onDismiss={() => setDetailsBotttomSheet(false)}
+									property={property}
+									sheetKey={sheetKey}
+								/>
+							)}
 						</View>
 					)}
 				</Box>

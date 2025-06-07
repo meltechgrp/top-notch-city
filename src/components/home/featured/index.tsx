@@ -2,10 +2,15 @@ import PropertyHorizontalList from '@/components/property/PropertyHorizontalList
 import SectionHeaderWithRef from '@/components/home/SectionHeaderWithRef';
 import { router } from 'expo-router';
 import { useGetApiQuery } from '@/lib/api';
+import { useMemo } from 'react';
 
 export default function FeaturedProperties() {
-	const { data, loading, error, refetch } =
-		useGetApiQuery<PropertyResponse>('/properties');
+	const { data } = useGetApiQuery<PropertyResponse>(
+		'/properties',
+		{},
+		'properties'
+	);
+	const featured = useMemo(() => data?.properties ?? [], [data]);
 	return (
 		<SectionHeaderWithRef
 			title="Featured Properties"
@@ -17,7 +22,7 @@ export default function FeaturedProperties() {
 					},
 				});
 			}}>
-			<PropertyHorizontalList data={data?.properties ?? []} refetch={refetch} />
+			<PropertyHorizontalList data={featured} />
 		</SectionHeaderWithRef>
 	);
 }
