@@ -5,7 +5,7 @@ import { ImageStyle, StyleProp, ViewProps } from 'react-native';
 import type { AnimatedProps } from 'react-native-reanimated';
 import Animated from 'react-native-reanimated';
 import { Icon, Pressable, View } from '../ui';
-import { CirclePlay, Pause, Play } from 'lucide-react-native';
+import { CirclePlay, Pause } from 'lucide-react-native';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import { useEvent } from 'expo';
 
@@ -17,6 +17,7 @@ interface Props extends AnimatedProps<ViewProps> {
 	source: string;
 	withBackdrop?: boolean;
 	canPlayVideo?: boolean;
+	isVisible?: boolean;
 	nativeControls?: boolean;
 	onPress?: (val: string) => void;
 }
@@ -32,10 +33,10 @@ export const PropertyMedia: React.FC<Props> = (props) => {
 		nativeControls = false,
 		mediaType = 'image',
 		className,
+		isVisible = true,
 		onPress,
 		...animatedViewProps
 	} = props;
-
 	const uri = useMemo(() => generateMediaUrl(props.source), [props.source]);
 
 	// Setup player if media is video
@@ -53,7 +54,7 @@ export const PropertyMedia: React.FC<Props> = (props) => {
 			testID={testID}
 			className={cn('relative flex-1', className)}
 			{...animatedViewProps}>
-			{mediaType === 'image' ? (
+			{isVisible && mediaType === 'image' ? (
 				<Pressable className="flex-1" onPress={() => onPress?.(uri)}>
 					<Animated.Image
 						style={[style]}
@@ -62,7 +63,8 @@ export const PropertyMedia: React.FC<Props> = (props) => {
 						resizeMode="cover"
 					/>
 				</Pressable>
-			) : (
+			) : null}
+			{isVisible && mediaType === 'video' ? (
 				<Pressable
 					className={cn(
 						'relative w-full h-full',
@@ -98,7 +100,7 @@ export const PropertyMedia: React.FC<Props> = (props) => {
 						</Pressable>
 					)}
 				</Pressable>
-			)}
+			) : null}
 
 			{withBackdrop && (
 				<View className="absolute w-full h-full bg-black/30 ios:z-10" />

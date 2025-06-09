@@ -36,6 +36,7 @@ type Property = {
 	media_urls: string[];
 	owner: Owner;
 	amenities: Amenity[];
+	interaction: Interaction;
 };
 
 type Owner = {
@@ -51,4 +52,15 @@ type Amenity = {
 	name: string;
 	icon: string;
 	value: string;
+};
+
+type Interaction = {
+	viewed: boolean;
+	liked: boolean;
+	added_to_wishlist: boolean;
+};
+
+type Place = {
+	name: string;
+	vicinity: string;
 };

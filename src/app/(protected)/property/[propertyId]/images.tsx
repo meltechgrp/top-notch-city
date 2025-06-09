@@ -20,7 +20,6 @@ export default function Images() {
 		setSelectedIndex(index);
 		setVisible(true);
 	};
-
 	return (
 		<>
 			<Box onLayout={onLayout} className="flex-1">

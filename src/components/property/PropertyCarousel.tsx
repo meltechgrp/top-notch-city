@@ -8,6 +8,7 @@ import Carousel, {
 import { PropertyMedia } from './PropertyMedia';
 import { Colors } from '@/constants/Colors';
 import { useResolvedTheme } from '../ui';
+import Layout from '@/constants/Layout';
 
 type Props = {
 	images: string[];
@@ -17,6 +18,8 @@ type Props = {
 	withBackdrop?: boolean;
 	loop?: boolean;
 	autoPlay?: boolean;
+	paginationLenght?: number;
+	scrollAnimationDuration?: number;
 	stackMode?: boolean;
 	withPagination?: boolean;
 	canPlayVideo?: boolean;
@@ -28,24 +31,27 @@ type Props = {
 function PropertyCarousel({
 	images,
 	width,
-	factor = 0.6,
+	factor,
 	pointerPosition = 10,
 	withBackdrop,
 	loop = false,
+	scrollAnimationDuration = 800,
 	autoPlay = false,
 	stackMode = false,
 	withPagination = true,
 	canPlayVideo,
 	mediaType,
+	paginationLenght,
 	setSelectedIndex,
 	selectedIndex,
 }: Props) {
+	const { bannerHeight } = Layout;
 	const theme = useResolvedTheme();
 	const progress = useSharedValue<number>(0);
 	const baseOptions = {
 		vertical: false,
 		width: width,
-		height: width * factor,
+		height: factor ? width * factor : bannerHeight,
 	} as const;
 	const ref = React.useRef<ICarouselInstance>(null);
 
@@ -67,7 +73,7 @@ function PropertyCarousel({
 				loop={loop}
 				autoPlay={autoPlay}
 				autoPlayInterval={2000}
-				scrollAnimationDuration={800}
+				scrollAnimationDuration={scrollAnimationDuration}
 				defaultIndex={selectedIndex}
 				onProgressChange={progress}
 				onConfigurePanGesture={(g: { enabled: (arg0: boolean) => any }) => {
@@ -81,6 +87,7 @@ function PropertyCarousel({
 					<PropertyMedia
 						withBackdrop={withBackdrop}
 						source={props.item}
+						isVisible
 						mediaType={mediaType}
 						canPlayVideo={canPlayVideo}
 						{...props}
@@ -103,7 +110,7 @@ function PropertyCarousel({
 			{withPagination && (
 				<Pagination.Basic<string>
 					progress={progress}
-					data={files}
+					data={files.slice(0, paginationLenght)}
 					size={8}
 					dotStyle={{
 						borderRadius: 100,

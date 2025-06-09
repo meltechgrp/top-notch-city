@@ -3,11 +3,13 @@ import { router } from 'expo-router';
 import React from 'react';
 import VerticalProperties from '@/components/property/VerticalProperties';
 import { View } from '@/components/ui';
-import { useGetApiQuery } from '@/lib/api';
+interface Props {
+	isLoading?: boolean;
+	data: Property[];
+	refetch: () => Promise<any>;
+}
 
-export default function TopProperties() {
-	const { data, loading, error, refetch } =
-		useGetApiQuery<PropertyResponse>('/properties');
+export default function TopProperties({ data, isLoading, refetch }: Props) {
 	return (
 		<SectionHeaderWithRef
 			title="Top Properties"
@@ -21,10 +23,10 @@ export default function TopProperties() {
 			}}>
 			<View className="flex-1 px-4">
 				<VerticalProperties
-					data={data?.properties ?? []}
+					data={data}
 					refetch={refetch}
 					disableCount={true}
-					category="top"
+					isLoading={isLoading}
 					scrollEnabled={false}
 				/>
 			</View>

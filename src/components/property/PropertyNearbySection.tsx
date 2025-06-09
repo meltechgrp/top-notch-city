@@ -1,15 +1,13 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Heading, Icon, Text, View } from '../ui';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import { Colors } from '@/constants/Colors';
 import Layout from '@/constants/Layout';
-import { cacheStorage } from '@/lib/asyncStorage';
 import { ActivityIndicator, ScrollView } from 'react-native';
 import { usePropertyStore } from '@/store/propertyStore';
-import { useGetApiQuery } from '@/lib/api';
 import { Church, Fuel, School, Utensils } from 'lucide-react-native';
-
-const API_KEY = process.env.EXPO_PUBLIC_ANDROID_MAPS_API_KEY;
+import { fetchNearbySection } from '@/actions/property';
+import { useQuery } from '@tanstack/react-query';
 
 const categories = {
 	Restaurants: 'restaurant',
@@ -17,12 +15,6 @@ const categories = {
 	GasStations: 'gas_station',
 	Churches: 'church',
 };
-
-type Place = {
-	name: string;
-	vicinity: string;
-};
-const url = 'https://places.googleapis.com/v1/places:searchNearby';
 
 const NearbyCategory = ({
 	type,
@@ -33,33 +25,10 @@ const NearbyCategory = ({
 	latitude: number;
 	longitude: number;
 }) => {
-	const { data, loading } = useGetApiQuery(
-		url,
-		{
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				'X-Goog-Api-Key': API_KEY!,
-				'X-Goog-FieldMask': 'places.displayName,places.formattedAddress',
-			},
-			withAuth: false,
-			isExternal: true,
-			data: {
-				includedTypes: [type],
-				maxResultCount: 3,
-				locationRestriction: {
-					circle: {
-						center: {
-							latitude,
-							longitude,
-						},
-						radius: 2000, // meters
-					},
-				},
-			},
-		},
-		`places-${type}`
-	);
+	const { data, isLoading } = useQuery({
+		queryKey: [type],
+		queryFn: () => fetchNearbySection({ type, latitude, longitude }),
+	});
 	const places = useMemo<Place[]>(() => {
 		if (!data?.places) return [];
 		return data.places.map((place: any) => ({
@@ -68,7 +37,7 @@ const NearbyCategory = ({
 		}));
 	}, [data]);
 
-	if (loading) {
+	if (isLoading) {
 		return (
 			<View className="items-center justify-center mt-6">
 				<ActivityIndicator size="small" />

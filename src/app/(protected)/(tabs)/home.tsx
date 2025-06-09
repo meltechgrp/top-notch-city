@@ -1,3 +1,4 @@
+import { fetchProperties } from '@/actions/property';
 import DiscoverProperties from '@/components/home/DiscoverProperties';
 import FeaturedProperties from '@/components/home/featured';
 import TopProperties from '@/components/home/properties';
@@ -5,26 +6,28 @@ import TopLocations from '@/components/home/topLocations';
 import BeachPersonWaterParasolIcon from '@/components/icons/BeachPersonWaterParasolIcon';
 import { Box, Text, View } from '@/components/ui';
 import eventBus from '@/lib/eventBus';
-import { useRefresh } from '@react-native-community/hooks';
 import { ListRenderItem } from '@shopify/flash-list';
-import React from 'react';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import React, { useState } from 'react';
 import { FlatList, RefreshControl } from 'react-native';
 
 export default function HomeScreen() {
-	const fetch = async () => {
-		// await me();
-	};
-
-	const { isRefreshing, onRefresh } = useRefresh(fetch);
+	const { data, isLoading, fetchNextPage, refetch } = useInfiniteQuery({
+		queryKey: ['properties'],
+		queryFn: fetchProperties,
+		initialPageParam: 1,
+		getNextPageParam: (lastPage, pages) => pages.length + 1,
+	});
+	const [refreshing, setRefreshing] = useState(false);
 	const feedList = React.useMemo(() => {
 		const topLocations = {
 			id: 'locations',
 			_typename: 'Locations',
 		} as any;
-		const featured = {
-			id: 'featured',
-			__typename: 'Featured',
-		} as any;
+		// const featured = {
+		// 	id: 'featured',
+		// 	__typename: 'Featured',
+		// } as any;
 		const properties = {
 			id: 'properties',
 			_typename: 'Properties',
@@ -33,18 +36,30 @@ export default function HomeScreen() {
 			id: 'bottomPlaceHolder',
 			__typename: 'bottomPlaceHolder',
 		} as any;
-		return [topLocations, featured, properties, bottomPlaceHolder];
-	}, []);
+		return [topLocations, properties, bottomPlaceHolder];
+	}, [data]);
 	type FeedList = any;
+
+	async function onRefresh() {
+		try {
+			setRefreshing(true);
+			await refetch();
+		} catch (error) {
+		} finally {
+			setRefreshing(false);
+		}
+	}
 	const renderItem: ListRenderItem<FeedList> = ({ item }) => {
 		if (item.id === 'locations') {
 			return <TopLocations />;
 		}
-		if (item.id === 'featured') {
-			return <FeaturedProperties />;
-		}
+		// if (item.id === 'featured') {
+		// 	return <FeaturedProperties />;
+		// }
 		if (item.id === 'properties') {
-			return <TopProperties />;
+			return (
+				<TopProperties data={data?.pages?.flat() || []} refetch={refetch} />
+			);
 		}
 		if (item.id === 'bottomPlaceHolder') {
 			return <View className="h-24" />;
@@ -56,7 +71,7 @@ export default function HomeScreen() {
 			<FlatList
 				refreshControl={
 					<RefreshControl
-						refreshing={isRefreshing}
+						refreshing={refreshing}
 						onRefresh={() => {
 							onRefresh();
 							eventBus.dispatchEvent('PROPERTY_HORIZONTAL_LIST_REFRESH', null);
@@ -71,7 +86,7 @@ export default function HomeScreen() {
 				ItemSeparatorComponent={() => (
 					<View style={[{ height: 1 }]} className="bg-background" />
 				)}
-				ListEmptyComponent={isRefreshing ? null : EmptyFeed}
+				ListEmptyComponent={refreshing ? null : EmptyFeed}
 			/>
 		</Box>
 	);

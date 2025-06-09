@@ -1,25 +1,39 @@
 import { Icon, Pressable, View } from '@/components/ui';
-import { ChevronLeftIcon, Heart, Share2 } from 'lucide-react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { BookMarked, Heart, Share2 } from 'lucide-react-native';
 import { hapticFeed } from '../HapticTab';
 import { Share } from 'react-native';
-
-type Props = {
-	data: Property;
-	setDetailsBotttomSheet: (val: boolean) => void;
-};
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { likeProperty } from '@/actions/property';
+import { useEffect } from 'react';
+import { cn, showSnackbar } from '@/lib/utils';
 
 export default function PropertyHeader({
-	data,
-	setDetailsBotttomSheet,
-}: Props) {
-	const router = useRouter();
+	title,
+	id,
+	interaction,
+}: {
+	title: string;
+	id: string;
+	interaction?: Interaction;
+}) {
+	const client = useQueryClient();
+	const { mutate, isSuccess } = useMutation({
+		mutationFn: () => likeProperty({ id }),
+		onSuccess: () => {
+			client.invalidateQueries({ queryKey: ['properties', id] });
+		},
+	});
+	const { mutate: mutate2, isSuccess: isSuccess2 } = useMutation({
+		mutationFn: () => likeProperty({ id }),
+		onSuccess: () => {
+			client.invalidateQueries({ queryKey: ['properties', id] });
+		},
+	});
 
 	async function onInvite() {
 		try {
 			const result = await Share.share({
-				message: `Share ${data.title} property to friends or family.`,
+				message: `Share ${title} property to friends or family.`,
 			});
 			if (result.action === Share.sharedAction) {
 				if (result.activityType) {
@@ -34,40 +48,61 @@ export default function PropertyHeader({
 			alert(error.message);
 		}
 	}
+	useEffect(() => {
+		if (isSuccess) {
+			showSnackbar({
+				message: 'Property Liked successfully',
+				type: 'success',
+			});
+		}
+	}, [isSuccess]);
+	useEffect(() => {
+		if (isSuccess2) {
+			showSnackbar({
+				message: 'Property added to wishlist',
+				type: 'success',
+			});
+		}
+	}, [isSuccess2]);
+	function hnadleLike() {
+		mutate();
+	}
+	function hnadleWishList() {
+		mutate2();
+	}
 	return (
-		<View className=" absolute top-4 z-50 left-0 w-full">
-			<SafeAreaView edges={['top']} className="bg-transparent">
-				<View className="flex-row justify-between items-center flex-1">
-					<Pressable
-						both={true}
-						onPress={() => {
-							setDetailsBotttomSheet(false);
-							if (router.canGoBack()) router.back();
-							else router.push('/home');
-						}}
-						className="p-1.5 rounded-full bg-background/50 ml-2 flex-row items-center">
-						<Icon className=" w-8 h-8" as={ChevronLeftIcon} />
-					</Pressable>
-					<View
-						style={{
-							flexDirection: 'row',
-							alignItems: 'center',
-						}}
-						className="mr-2 gap-4">
-						<Pressable
-							onPress={async () => {
-								await hapticFeed(true);
-								await onInvite();
-							}}
-							style={{ padding: 8 }}>
-							<Icon as={Share2} className=" text-white w-7 h-7" />
-						</Pressable>
-						<Pressable onPress={() => {}} style={{ padding: 8 }}>
-							<Icon as={Heart} className=" text-white w-7 h-7" />
-						</Pressable>
-					</View>
-				</View>
-			</SafeAreaView>
+		<View
+			style={{
+				flexDirection: 'row',
+				alignItems: 'center',
+			}}
+			className="mr-2 gap-4">
+			<Pressable
+				onPress={async () => {
+					await hapticFeed(true);
+					await onInvite();
+				}}
+				style={{ padding: 8 }}>
+				<Icon as={Share2} className=" text-white w-7 h-7" />
+			</Pressable>
+			<Pressable onPress={hnadleLike} style={{ padding: 8 }}>
+				<Icon
+					as={Heart}
+					className={cn(
+						' text-white w-7 h-7',
+						interaction?.liked ? 'text-primary' : 'text-white'
+					)}
+				/>
+			</Pressable>
+			<Pressable onPress={hnadleWishList} style={{ padding: 8 }}>
+				<Icon
+					as={BookMarked}
+					className={cn(
+						' text-white w-7 h-7',
+						interaction?.added_to_wishlist ? 'text-primary' : 'text-white'
+					)}
+				/>
+			</Pressable>
 		</View>
 	);
 }

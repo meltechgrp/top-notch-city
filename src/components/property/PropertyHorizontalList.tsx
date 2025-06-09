@@ -9,33 +9,31 @@ type Props = {
 	category?: string;
 	fullWidth?: boolean;
 	emptyState?: React.ReactNode;
-	data: Property[];
-	refetch?: () => Promise<PropertyResponse>;
 };
 
 export default function PropertyHorizontalList(props: Props) {
-	const { category, fullWidth = true, emptyState, data, refetch } = props;
+	const { category, fullWidth = true, emptyState } = props;
 	const [refreshing, setRefreshing] = useState(false);
 
-	async function onRefresh() {
-		try {
-			setRefreshing(true);
-			refetch && (await refetch());
-		} catch (error) {
-		} finally {
-			setRefreshing(false);
-		}
-	}
-	useEffect(() => {
-		eventBus.addEventListener('PROPERTY_HORIZONTAL_LIST_REFRESH', onRefresh);
+	// async function onRefresh() {
+	// 	try {
+	// 		setRefreshing(true);
+	// 		refetch && (await refetch());
+	// 	} catch (error) {
+	// 	} finally {
+	// 		setRefreshing(false);
+	// 	}
+	// }
+	// useEffect(() => {
+	// 	eventBus.addEventListener('PROPERTY_HORIZONTAL_LIST_REFRESH', onRefresh);
 
-		return () => {
-			eventBus.removeEventListener(
-				'PROPERTY_HORIZONTAL_LIST_REFRESH',
-				onRefresh
-			);
-		};
-	}, []);
+	// 	return () => {
+	// 		eventBus.removeEventListener(
+	// 			'PROPERTY_HORIZONTAL_LIST_REFRESH',
+	// 			onRefresh
+	// 		);
+	// 	};
+	// }, []);
 
 	// if (isRefreshing) {
 	// 	return (
@@ -47,9 +45,6 @@ export default function PropertyHorizontalList(props: Props) {
 	// 	);
 	// }
 
-	if (!data?.length && emptyState) {
-		return <View>{emptyState}</View>;
-	}
 	return (
 		<ScrollView
 			horizontal
@@ -59,14 +54,14 @@ export default function PropertyHorizontalList(props: Props) {
 			snapToInterval={238 + 4}
 			snapToAlignment="center"
 			decelerationRate="fast">
-			{data.map((property) => (
+			{/* {data.map((property) => (
 				<PropertyListItem
 					key={property.id}
 					data={property}
 					isHorizantal={true}
 					className={'w-[238px]'}
 				/>
-			))}
+			))} */}
 		</ScrollView>
 	);
 }

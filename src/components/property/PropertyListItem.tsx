@@ -1,14 +1,17 @@
-import { cn, composeFullAddress } from '@/lib/utils';
-import { formatMoney, toNaira } from '@/lib/utils';
+import { cn, composeFullAddress, showSnackbar } from '@/lib/utils';
+import { formatMoney } from '@/lib/utils';
 import { router } from 'expo-router';
-import { Pressable, useWindowDimensions, View } from 'react-native';
-import { Icon, ImageBackground, Text } from '../ui';
-import { MapPin } from 'lucide-react-native';
+import { Pressable, StyleProp, View, ViewStyle } from 'react-native';
+import { Icon, Text } from '../ui';
+import { Heart, MapPin } from 'lucide-react-native';
 import { hapticFeed } from '../HapticTab';
-import FacilityItem from './FacilityItem';
-import { useMemo } from 'react';
-import { generateMediaUrl } from '@/lib/api';
+import { useEffect, useMemo } from 'react';
 import { Colors } from '@/constants/Colors';
+import Layout from '@/constants/Layout';
+import PropertyCarousel from './PropertyCarousel';
+import { useLayout } from '@react-native-community/hooks';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { likeProperty } from '@/actions/property';
 
 type Props = {
 	data: Property;
@@ -16,112 +19,104 @@ type Props = {
 	showFacilites?: boolean;
 	isMine?: boolean;
 	columns?: number;
-	isHorizantal?: boolean;
+	isHorizontal?: boolean;
+	style?: StyleProp<ViewStyle>;
 };
 export default function PropertyListItem(props: Props) {
-	const { width } = useWindowDimensions();
 	const {
 		data,
 		className,
 		showFacilites = false,
 		isMine,
 		columns,
-		isHorizantal = false,
+		isHorizontal = false,
+		style,
 	} = props;
-	const { id, title, price, amenities, media_urls, address } = data;
-
-	const newWidth = useMemo(
-		() =>
-			columns
-				? columns == 2
-					? width / 2 - 22
-					: width - 30
-				: isHorizantal
-					? width / 1.4
-					: width - 30,
-		[columns, width, isHorizantal]
-	);
-	const newHeight = useMemo(
-		() => (columns ? (columns == 2 ? 240 : 300) : isHorizantal ? 200 : 300),
-		[columns, isHorizantal]
-	);
+	const { bannerHeight } = Layout;
+	const { id, title, price, media_urls, address, interaction } = data;
+	const { width, onLayout } = useLayout();
 	const images = useMemo(
 		() => media_urls?.filter((item) => item.endsWith('jpg')) ?? [],
 		[media_urls]
 	);
+
+	const client = useQueryClient();
+	const { mutate, isSuccess } = useMutation({
+		mutationFn: () => likeProperty({ id }),
+		onSuccess: () => {
+			client.invalidateQueries({ queryKey: ['properties'] });
+		},
+	});
+
+	useEffect(() => {
+		if (isSuccess) {
+			showSnackbar({
+				message: 'Like successfully',
+				type: 'success',
+			});
+		}
+	}, [isSuccess]);
+	function hnadleLike() {
+		mutate();
+	}
 	return (
 		<Pressable
+			onLayout={onLayout}
 			key={data.id}
-			style={{
-				width: newWidth,
-				height: newHeight,
-			}}
-			className={cn('relative rounded-xl active:scale-[0.95]', className)}
+			style={[{ height: bannerHeight }, style]}
+			className={cn('relative flex-1 rounded-xl', className)}
 			onPress={() => {
-				hapticFeed();
-				// if (isMine) {
-				// 	router.push({
-				// 		pathname: `/(protected)/(tabs)/home`,
-				// 		params: {
-				// 			propertyId: '',
-				// 		},
-				// 	});
-				// } else {
+				hapticFeed(true);
 				router.push({
 					pathname: `/property/[propertyId]`,
 					params: {
 						propertyId: id,
 					},
 				});
-				// }
 			}}>
-			<ImageBackground
-				source={{ uri: generateMediaUrl(images[0]) }}
-				alt="banner"
-				className="flex-1 relative overflow-hidden rounded-xl">
-				<View className="flex-1 bg-black/30 p-4">
-					<View className="flex-1 items-end">
-						<View className=" flex-row items-center justify-center gap-1 py-1.5 px-2.5 rounded-3xl bg-primary/60">
-							<Text
-								size={columns ? (columns == 2 ? 'md' : 'xl') : 'xl'}
-								className="text-white">
-								{formatMoney(price, 'NGN', 0)}
-							</Text>
-						</View>
-					</View>
-					<View className="pt-3 w-full gap-2">
+			<PropertyCarousel
+				width={width || 300}
+				withBackdrop={true}
+				loop={true}
+				images={images.slice(0, 5)}
+				pointerPosition={20}
+			/>
+			<View className=" absolute top-0 w-full h-full p-4">
+				<View className="flex-1 flex-row items-start justify-between">
+					<Pressable onPress={hnadleLike} style={{ padding: 8 }}>
+						<Icon
+							as={Heart}
+							className={cn(
+								' text-white w-7 h-7',
+								interaction.liked ? 'text-primary' : 'text-white'
+							)}
+						/>
+					</Pressable>
+					<View className="flex-row items-center justify-center gap-1 py-1.5 px-2.5 rounded-3xl bg-primary/60">
 						<Text
-							size="2xl"
-							className=" text-white font-bold"
-							numberOfLines={1}>
-							{title}
+							size={columns ? (columns == 2 ? 'md' : 'xl') : 'xl'}
+							className="text-white">
+							{formatMoney(price, 'NGN', 0)}
 						</Text>
-						<View className="flex-row items-center gap-1">
-							<Icon as={MapPin} size="sm" color={Colors.primary} />
-							<Text
-								size={columns ? (columns == 2 ? 'sm' : 'md') : 'md'}
-								className="text-white">
-								{composeFullAddress(address)}
-							</Text>
-						</View>
-						{showFacilites && (
-							<View className="flex-row flex-wrap gap-2">
-								{amenities?.map((item) => (
-									<FacilityItem
-										textClassname={cn(
-											'text-white text-sm',
-											columns && columns == 2 && 'hidden'
-										)}
-										{...item}
-										key={item.name}
-										// iconSize={16}
-									/>
-								))}
-							</View>
-						)}
 					</View>
 				</View>
-			</ImageBackground>
+				<View className="pb-5 w-full gap-1">
+					<Text
+						size={columns ? (columns == 2 ? 'lg' : '2xl') : '2xl'}
+						className={cn(' text-white font-bold')}
+						numberOfLines={1}>
+						{title}
+					</Text>
+					<View className="flex-row items-center gap-1">
+						<Icon as={MapPin} size="sm" color={Colors.primary} />
+						<Text
+							size={columns ? (columns == 2 ? 'xs' : 'md') : 'md'}
+							className="text-white">
+							{composeFullAddress(address, true)}
+						</Text>
+					</View>
+				</View>
+			</View>
 		</Pressable>
 	);
 }

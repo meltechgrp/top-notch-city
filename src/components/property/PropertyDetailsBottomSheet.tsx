@@ -21,142 +21,123 @@ import {
 import { useRouter } from 'expo-router';
 import React, { useCallback } from 'react';
 import { generateMediaUrl } from '@/lib/api';
-import BottomSheet from '../shared/BottomSheet';
 import { useLayout } from '@react-native-community/hooks';
 import { usePropertyStore } from '@/store/propertyStore';
 import { Divider } from '../ui/divider';
 import { PropertyMapSection } from './PropertyMapSection';
 import { PropertyNearbySection } from './PropertyNearbySection';
 
-type Props = {
-	visible: boolean;
-	onDismiss: () => void;
-	property: Property;
-	sheetKey: number;
-};
-
-export default function PropertyDetailsBottomSheet(props: Props) {
-	const { visible, onDismiss, property, sheetKey } = props;
+export default function PropertyDetailsBottomSheet() {
+	const { details: property } = usePropertyStore();
 	const router = useRouter();
 	const { width, onLayout } = useLayout();
 
 	const findAmenity = useCallback(
 		(name: string) =>
-			property.amenities.find((item) => item.icon == name)?.value || '0',
+			property?.amenities.find((item) => item.icon == name)?.value || '0',
 		[]
 	);
 	return (
 		<>
-			<BottomSheet
-				withHeader={false}
-				withBackButton={false}
-				snapPoint={['53%', '85%']}
-				withScroll={true}
-				sheetKey={sheetKey}
-				backdropVariant={undefined}
-				enableClose={false}
-				rounded={false}
-				enableDynamicSizing={true}
-				visible={visible}
-				onDismiss={onDismiss}>
-				<Box onLayout={onLayout} className=" flex-1 bg-transparent gap-4">
-					<View className="gap-4 p-4 py-2">
-						<View className="flex-row gap-4 mt-2">
-							<View className="flex-row flex-1 bg-background-muted rounded-xl p-4 items-center justify-center gap-2">
-								<Icon size="sm" as={Bed} className="text-primary" />
-								<Text size="sm">{findAmenity('Bed')} Beds</Text>
-							</View>
-							<View className="flex-row flex-1 bg-background-muted rounded-xl p-4 items-center justify-center gap-2">
-								<Icon size="sm" as={Bath} className="text-primary" />
-								<Text size="sm">{findAmenity('Bath')} Baths</Text>
-							</View>
-							<View className="flex-row flex-1 bg-background-muted rounded-xl p-4 items-center justify-center gap-2">
-								<Icon size="sm" as={LandPlot} className="text-primary" />
-								<Text size="sm">{2400} Sq</Text>
-							</View>
+			<Box onLayout={onLayout} className=" flex-1 bg-transparent gap-4">
+				<View className="gap-4 p-4 py-2">
+					<View className="flex-row gap-4 mt-2">
+						<View className="flex-row flex-1 bg-background-muted rounded-xl p-4 items-center justify-center gap-2">
+							<Icon size="sm" as={Bed} className="text-primary" />
+							<Text size="sm">{findAmenity('Bed')} Beds</Text>
+						</View>
+						<View className="flex-row flex-1 bg-background-muted rounded-xl p-4 items-center justify-center gap-2">
+							<Icon size="sm" as={Bath} className="text-primary" />
+							<Text size="sm">{findAmenity('Bath')} Baths</Text>
+						</View>
+						<View className="flex-row flex-1 bg-background-muted rounded-xl p-4 items-center justify-center gap-2">
+							<Icon size="sm" as={LandPlot} className="text-primary" />
+							<Text size="sm">{2400} Sq</Text>
 						</View>
 					</View>
-					<View className=" pt-2 flex-1 gap-6 pb-20">
-						<View className=" flex-row gap-4 px-4">
-							<Pressable className="flex-row flex-1 bg-gray-500 gap-2 p-4 py-5 rounded-xl items-center justify-between">
-								<Icon size="xl" as={BookCheck} className="text-primary" />
-								<Text size="md" className=" mr-auto">
-									Book a visit
-								</Text>
-								<Icon as={ChevronRight} />
-							</Pressable>
-							<Pressable
-								// onPress={() => {
-								// 	onDismiss();
-								// 	router.push({
-								// 		pathname: '/(protected)/property/[propertyId]/booking',
-								// 		params: {
-								// 			propertyId: property.id,
-								// 		},
-								// 	});
-								// }}
-								className="flex-row flex-1 gap-2 bg-primary p-4 py-5 rounded-xl items-center justify-between">
-								<Icon size="xl" as={MessageCircle} className="text-white" />
-								<Text size="md" className=" mr-auto">
-									Chat Agent
-								</Text>
-								<Icon as={ChevronRight} />
-							</Pressable>
-						</View>
-						<View className="gap-3 px-4 flex">
-							<Heading size="lg">Description</Heading>
-							<Text size="md" className=" font-light">
-								Lorem ipsum dolor sit amet consectetur adipisicing elit.
-								Perferendis, ipsa ducimus ipsam molestiae dolorum quasi totam
-								laborum nostrum, consequatur rem id tempora eveniet, harum
-								dignissimos expedita nulla quod quas cum.
+				</View>
+				<View className=" pt-2 flex-1 gap-6 pb-20">
+					<View className=" flex-row gap-4 px-4">
+						<Pressable className="flex-row flex-1 bg-gray-500 gap-2 p-4 py-5 rounded-xl items-center justify-between">
+							<Icon size="xl" as={BookCheck} className="text-primary" />
+							<Text size="md" className=" mr-auto text-white">
+								Book a visit
 							</Text>
-						</View>
-						<View className=" px-4 gap-4">
-							<View className=" gap-3">
-								<View className="flex-row gap-2 px-2 items-center">
-									<Icon size="md" as={Images} className="text-primary" />
-									<Heading size="lg">Images</Heading>
-								</View>
-								<Pressable
-									onPress={() => {
-										router.push('/(protected)/property/[propertyId]/images');
-									}}
-									className="bg-background-muted rounded-xl p-4">
-									<ImageGrid width={(width - 110) / 5} />
-								</Pressable>
+							<Icon as={ChevronRight} color="white" />
+						</Pressable>
+						<Pressable
+							// onPress={() => {
+							// 	onDismiss();
+							// 	router.push({
+							// 		pathname: '/(protected)/property/[propertyId]/booking',
+							// 		params: {
+							// 			propertyId: property.id,
+							// 		},
+							// 	});
+							// }}
+							className="flex-row flex-1 gap-2 bg-primary p-4 py-5 rounded-xl items-center justify-between">
+							<Icon size="xl" as={MessageCircle} className="text-white" />
+							<Text size="md" className=" mr-auto text-white">
+								Chat Agent
+							</Text>
+							<Icon as={ChevronRight} color="white" />
+						</Pressable>
+					</View>
+					<View className="gap-3 px-4 flex">
+						<Heading size="lg">Description</Heading>
+						<Text size="md" className=" font-light">
+							Lorem ipsum dolor sit amet consectetur adipisicing elit.
+							Perferendis, ipsa ducimus ipsam molestiae dolorum quasi totam
+							laborum nostrum, consequatur rem id tempora eveniet, harum
+							dignissimos expedita nulla quod quas cum.
+						</Text>
+					</View>
+					<View className=" px-4 gap-4">
+						<View className=" gap-3">
+							<View className="flex-row gap-2 px-2 items-center">
+								<Icon size="md" as={Images} className="text-primary" />
+								<Heading size="lg">Images</Heading>
 							</View>
 							<Pressable
 								onPress={() => {
-									router.push('/(protected)/property/[propertyId]/videos');
+									router.push('/(protected)/property/[propertyId]/images');
 								}}
-								className="flex-row gap-4 bg-background-muted p-4 rounded-xl items-center justify-between">
-								<Icon as={Video} className="text-primary" />
-								<Text size="lg" className=" mr-auto">
-									Videos
-								</Text>
-								<Icon as={ChevronRight} />
-							</Pressable>
-							<Pressable
-								onPress={() => {
-									router.push('/(protected)/property/[propertyId]/3d-view');
-								}}
-								className="flex-row gap-4 bg-background-muted p-4 rounded-xl items-center justify-between">
-								<Icon as={BoxIcon} className="text-primary" />
-								<Text size="lg" className=" mr-auto">
-									Visual Tour
-								</Text>
-								<Icon as={ChevronRight} />
+								className="bg-background-muted rounded-xl p-4">
+								<ImageGrid width={(width - 110) / 5} />
 							</Pressable>
 						</View>
-						<View className="px-4 gap-6">
-							<PropertyMapSection />
-							<Divider />
-							<PropertyNearbySection />
-						</View>
+						<Pressable
+							onPress={() => {
+								router.push('/(protected)/property/[propertyId]/videos');
+							}}
+							className="flex-row gap-4 bg-background-muted p-4 rounded-xl items-center justify-between">
+							<Icon as={Video} className="text-primary" />
+							<Text size="lg" className=" mr-auto">
+								Videos
+							</Text>
+							<Icon as={ChevronRight} />
+						</Pressable>
+						<Pressable
+							onPress={() => {
+								router.push('/(protected)/property/[propertyId]/3d-view');
+							}}
+							className="flex-row gap-4 bg-background-muted p-4 rounded-xl items-center justify-between">
+							<Icon as={BoxIcon} className="text-primary" />
+							<Text size="lg" className=" mr-auto">
+								Visual Tour
+							</Text>
+							<Icon as={ChevronRight} />
+						</Pressable>
 					</View>
-				</Box>
-			</BottomSheet>
+					<View className="px-4 gap-6">
+						<PropertyMapSection />
+
+						<Divider />
+
+						<PropertyNearbySection />
+					</View>
+				</View>
+			</Box>
 		</>
 	);
 }

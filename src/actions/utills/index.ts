@@ -1,47 +1,23 @@
-import { fetchWithAuth } from '@/lib/api';
+import { getAuthToken } from '@/lib/secureStore';
+import config from '@/config';
+const MAPS_API_KEY = process.env.EXPO_PUBLIC_ANDROID_MAPS_API_KEY;
 
-// export async function autocompleteAddress(
-// 	text?: string
-// ): Promise<PlacePrediction[]> {
-// 	try {
-// 		if (!text || text?.length < 3) return [];
-// 		const res = await fetchWithAuth(
-// 			`/api/autocomplete-address?input=${encodeURIComponent(text)}`,
-// 			{}
-// 		);
-// 		const data = (await res.json()) as PlacePredictionResponse;
-// 		console.log(data?.predictions);
-// 		const locations =
-// 			data.predictions?.map(({ description, place_id }) => ({
-// 				description,
-// 				place_id,
-// 			})) ?? [];
-// 		console.log(locations);
-// 		return locations;
-// 	} catch (error) {
-// 		console.log(error);
-// 		return [];
-// 	}
-// }
-
-// export async function getPlaceDescription(): Promise<PlaceResult | null> {
-// 	try {
-// 		const res = await fetchWithAuth('/api/place-details', {});
-// 		const data = (await res.json()) as PlaceResponse;
-
-// 		return data?.result;
-// 	} catch (error) {
-// 		console.log(error);
-// 		return null;
-// 	}
-// }
+export function Fetch(url: string, options: RequestInit) {
+	const authToken = getAuthToken();
+	return fetch(`${config.origin}/api${url}`, {
+		...options,
+		headers: {
+			...(authToken && { Authorization: `Bearer ${authToken}` }),
+			...options.headers,
+		},
+	});
+}
 
 export async function fetchPlaceFromTextQuery(
 	query: string
 ): Promise<GooglePlace[]> {
 	if (!query || query.trim().length === 0) return [];
 
-	const API_KEY = process.env.EXPO_PUBLIC_ANDROID_MAPS_API_KEY;
 	const endpoint = 'https://places.googleapis.com/v1/places:searchText';
 
 	try {
@@ -49,7 +25,7 @@ export async function fetchPlaceFromTextQuery(
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				'X-Goog-Api-Key': API_KEY!,
+				'X-Goog-Api-Key': MAPS_API_KEY!,
 				'X-Goog-FieldMask':
 					'places.displayName,places.formattedAddress,places.location,places.id,places.addressComponents',
 			},

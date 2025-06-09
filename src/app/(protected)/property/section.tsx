@@ -1,51 +1,26 @@
 import { Box, Pressable, View } from '@/components/ui';
-import { useWindowDimensions } from 'react-native';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ChevronLeftIcon, ListFilter } from 'lucide-react-native';
-import { TabView, SceneRendererProps } from 'react-native-tab-view';
 import { hapticFeed } from '@/components/HapticTab';
-import CustomTabBar2 from '@/components/layouts/CustomTopBar2';
 import VerticalProperties from '@/components/property/VerticalProperties';
 import { useTheme } from '@/components/layouts/ThemeProvider';
 import { Colors } from '@/constants/Colors';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { fetchProperties } from '@/actions/property';
 
 export default function PropertySections() {
 	const { title } = useLocalSearchParams() as { title?: string };
 	const { theme } = useTheme();
 	const router = useRouter();
-	const layout = useWindowDimensions();
-	const [index, setIndex] = React.useState(0);
-	const tabs = [
-		{
-			key: 'duplex',
-			title: 'Duplex',
-			component: () => <VerticalProperties category="duplex" />,
-		},
-		{
-			key: 'bungalow',
-			title: 'Bungalow',
-			component: () => <VerticalProperties category="duplex" />,
-		},
-		{
-			key: 'flat',
-			title: 'Flat',
-			component: () => <VerticalProperties category="duplex" />,
-		},
-		{
-			key: 'mansion',
-			title: 'Mansion',
-			component: () => <VerticalProperties category="duplex" />,
-		},
-	];
+	const { data, isLoading, fetchNextPage, refetch } = useInfiniteQuery({
+		queryKey: ['properties'],
+		queryFn: fetchProperties,
+		initialPageParam: 1,
+		getNextPageParam: (lastPage, pages) => pages.length + 1,
+	});
 
-	const routes = tabs.map(({ key, title }) => ({ key, title }));
-	const renderScene = ({
-		route,
-	}: SceneRendererProps & { route: { key: string } }) => {
-		const tab = tabs.find((t) => t.key === route.key);
-		return tab?.component ? tab.component() : null;
-	};
+	const properties = useMemo(() => data?.pages.flat() || [], [data]);
 	return (
 		<>
 			<Stack.Screen
@@ -93,13 +68,11 @@ export default function PropertySections() {
 				}}
 			/>
 			<Box className="flex-1 px-4">
-				<TabView
-					style={{ flex: 1 }}
-					renderTabBar={(props) => <CustomTabBar2 {...props} />}
-					navigationState={{ index, routes }}
-					renderScene={renderScene}
-					onIndexChange={setIndex}
-					initialLayout={{ width: layout.width }}
+				<VerticalProperties
+					data={properties}
+					isLoading={isLoading}
+					refetch={refetch}
+					// fetchNextPage={fetchNextPage}
 				/>
 			</Box>
 		</>

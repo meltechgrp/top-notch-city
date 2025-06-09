@@ -40,7 +40,7 @@ type BottomSheetProps = Modal['props'] & {
 	addBackground?: boolean;
 	enableOverDrag?: boolean;
 	enableClose?: boolean;
-	sheetKey?: number;
+	sheetKey?: string;
 	onAnimate?: (fromIndex: number, toIndex: number) => void;
 	android_keyboardInputMode?: 'adjustResize' | 'adjustPan';
 };

@@ -1,13 +1,10 @@
 import { View } from '@/components/ui';
-import { Skeleton } from 'moti/skeleton';
-import { MotiView } from 'moti';
-import { useRouter } from 'expo-router';
 import { RefreshControl } from 'react-native-gesture-handler';
 import DisplayStyle from '../layouts/DisplayStyle';
-import { Animated } from 'react-native';
-import { useMemo, useState } from 'react';
+import { ActivityIndicator, Animated } from 'react-native';
+import { useCallback, useMemo, useState } from 'react';
 import PropertyListItem from './PropertyListItem';
-import { AnimatedFlashList } from '@shopify/flash-list';
+import { AnimatedFlashList, ViewToken } from '@shopify/flash-list';
 import { MiniEmptyState } from '../shared/MiniEmptyState';
 
 interface Props {
@@ -16,38 +13,44 @@ interface Props {
 	scrollY?: any;
 	disableCount?: boolean;
 	scrollEnabled?: boolean;
+	isHorizontal?: boolean;
+	showsVerticalScrollIndicator?: boolean;
+	isLoading?: boolean;
 	data: Property[];
-	refetch: () => Promise<PropertyResponse>;
+	refetch: () => Promise<any>;
+	fetchNextPage?: () => Promise<any>;
 }
-const GAP = 16;
-const SIDE_PADDING = 16;
-
 export default function VerticalProperties({
 	category,
 	scrollY,
 	disableCount = false,
-	data,
 	scrollEnabled = false,
+	data,
+	isLoading,
+	showsVerticalScrollIndicator = false,
 	refetch,
+	fetchNextPage,
+	isHorizontal = false,
 }: Props) {
-	const router = useRouter();
 	const [numColumns, setNumColumns] = useState(2);
 	const layoutAnim = new Animated.Value(0);
 	const [refreshing, setRefreshing] = useState(false);
+	const [visibleItems, setVisibleItems] = useState<number[]>([]);
 
-	if (refreshing) {
-		return (
-			<View className=" gap-y-2 pt-4 px-4">
-				{[1, 2, 3, 4].map((key) => (
-					<PropertyOverviewSkeleton key={key} />
-				))}
-			</View>
-		);
-	}
+	const viewabilityConfig = useMemo(
+		() => ({
+			itemVisiblePercentThreshold: 50,
+		}),
+		[]
+	);
 
-	const propertysData = useMemo(() => {
-		return data ?? [];
-	}, [data]);
+	const onViewableItemsChanged = useCallback(
+		({ viewableItems }: { viewableItems: ViewToken[] }) => {
+			setVisibleItems(viewableItems.map((val) => val.index || 0));
+		},
+		[]
+	);
+
 	async function onRefresh() {
 		try {
 			setRefreshing(true);
@@ -57,7 +60,11 @@ export default function VerticalProperties({
 			setRefreshing(false);
 		}
 	}
-	const toggleView = () => {
+
+	if (isLoading) {
+		return <ActivityIndicator />;
+	}
+	const toggleView = useCallback(() => {
 		Animated.timing(layoutAnim, {
 			toValue: numColumns === 1 ? 1 : 0,
 			duration: 300,
@@ -65,66 +72,66 @@ export default function VerticalProperties({
 		}).start(() => {
 			setNumColumns(numColumns === 1 ? 2 : 1);
 		});
-	};
+	}, [numColumns]);
 
-	const headerComponent = useMemo(
-		() => (
+	const headerComponent = useMemo(() => {
+		return (
 			<DisplayStyle
 				toggleView={toggleView}
 				numColumns={numColumns}
 				total={data.length}
 				disableCount={disableCount}
 			/>
-		),
-		[toggleView, numColumns]
+		);
+	}, [toggleView, numColumns, data.length, disableCount]);
+	const renderItem = useCallback(
+		({ item, index }: { item: Property; index: number }) => {
+			return (
+				<PropertyListItem
+					style={{
+						marginRight: (index + 1) % numColumns === 0 ? 0 : 4,
+						marginLeft: index % numColumns === 0 ? 0 : 4,
+					}}
+					isHorizontal={isHorizontal}
+					columns={numColumns}
+					data={item}
+				/>
+			);
+		},
+		[numColumns]
 	);
 	return (
 		<AnimatedFlashList
-			data={propertysData}
-			renderItem={({ item }) => (
-				<PropertyListItem className="mb-4" columns={numColumns} data={item} />
-			)}
-			numColumns={numColumns}
+			data={data}
+			extraData={numColumns}
+			renderItem={renderItem}
+			numColumns={!isHorizontal ? numColumns : undefined}
 			scrollEnabled={scrollEnabled}
-			horizontal={false}
-			showsVerticalScrollIndicator={false}
+			horizontal={isHorizontal}
+			refreshing={refreshing}
+			showsVerticalScrollIndicator={showsVerticalScrollIndicator}
 			onScroll={
 				scrollY &&
 				Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
 					useNativeDriver: false,
 				})
 			}
+			ItemSeparatorComponent={() => <View className="h-3" />}
 			scrollEventThrottle={16}
 			refreshControl={
 				scrollEnabled ? (
 					<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
 				) : undefined
 			}
-			ListHeaderComponent={headerComponent}
+			ListHeaderComponent={!isHorizontal ? headerComponent : undefined}
 			keyExtractor={(item) => item.id}
 			estimatedItemSize={340}
+			onEndReached={() => fetchNextPage?.()}
+			onEndReachedThreshold={20}
+			onViewableItemsChanged={onViewableItemsChanged}
+			viewabilityConfig={viewabilityConfig}
 			contentInsetAdjustmentBehavior="automatic"
 			ListEmptyComponent={() => <MiniEmptyState title="No property found" />}
 		/>
-	);
-}
-
-function PropertyOverviewSkeleton() {
-	return (
-		<MotiView
-			transition={{
-				type: 'timing',
-			}}
-			className="relative bg-gray-200 p-2 border-2 border-gray-200 rounded-md">
-			<Skeleton colorMode="light" radius="round" height={16} width={100} />
-
-			<View className="flex-row items-center mb-4 mt-5">
-				<Skeleton colorMode="light" radius="round" height={48} width={48} />
-				<View className="flex-1 pl-4">
-					<Skeleton colorMode="light" height={16} width="100%" />
-				</View>
-			</View>
-			<Skeleton colorMode="light" height={32} width="100%" />
-		</MotiView>
 	);
 }
