@@ -32,7 +32,7 @@ export default function VerticalProperties({
 	fetchNextPage,
 	isHorizontal = false,
 }: Props) {
-	const [numColumns, setNumColumns] = useState(2);
+	const [numColumns, setNumColumns] = useState(1);
 	const layoutAnim = new Animated.Value(0);
 	const [refreshing, setRefreshing] = useState(false);
 	const [visibleItems, setVisibleItems] = useState<number[]>([]);
@@ -116,8 +116,10 @@ export default function VerticalProperties({
 					useNativeDriver: false,
 				})
 			}
-			ItemSeparatorComponent={() => <View className="h-3" />}
-			scrollEventThrottle={16}
+			ItemSeparatorComponent={() => (
+				<View className={numColumns == 1 ? 'h-6' : 'h-3'} />
+			)}
+			// scrollEventThrottle={16}
 			refreshControl={
 				scrollEnabled ? (
 					<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
