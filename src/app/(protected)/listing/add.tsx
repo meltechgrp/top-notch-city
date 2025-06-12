@@ -20,8 +20,13 @@ import Animated, { FadeInRight, FadeOutLeft } from 'react-native-reanimated';
 export default function SellAddScreen() {
 	const router = useRouter();
 	const { onLayout, height } = useLayout();
-	const { uploadProperty, uploading: loading, error } = useUploadProperty();
-	const { listing, updateListing } = useTempStore();
+	const {
+		uploadProperty,
+		uploading: loading,
+		error,
+		success,
+	} = useUploadProperty();
+	const { listing, updateListing, updateListingStep } = useTempStore();
 
 	const Steps = useMemo(() => {
 		switch (listing.step) {
@@ -45,6 +50,11 @@ export default function SellAddScreen() {
 		if (back) {
 			return updateListing({ ...listing, step });
 		}
+		if (listing.step == 1 && !listing?.purpose)
+			return showSnackbar({
+				message: 'Please pick your purpose',
+				type: 'warning',
+			});
 		if (listing.step == 2 && !listing?.subCategory)
 			return showSnackbar({
 				message: 'Please select a category',
@@ -66,12 +76,12 @@ export default function SellAddScreen() {
 					message: 'Add some images to proceed!',
 					type: 'warning',
 				});
-		updateListing({ ...listing, step });
+		updateListingStep();
 	}
 	async function uploaHandler() {
 		const data = await uploadProperty(listing);
-		if (data) {
-			router.replace('/listing/success');
+		if (data?.id) {
+			router.dismissTo('/listing/success');
 		} else {
 			showSnackbar({
 				message: error ?? 'Something went wrong',
@@ -98,7 +108,7 @@ export default function SellAddScreen() {
 			/>
 			<Box onLayout={onLayout} className="flex-1 py-3">
 				<FullHeightLoaderWrapper className="flex-1" loading={loading}>
-					<BodyScrollView className="flex-1">
+					<BodyScrollView className="flex-1" contentContainerClassName="pb-60">
 						<Animated.View
 							entering={FadeInRight.duration(800)}
 							exiting={FadeOutLeft.duration(800)}
@@ -114,7 +124,6 @@ export default function SellAddScreen() {
 				step={listing.step}
 				listing={listing}
 				uploaHandler={uploaHandler}
-				totalSteps={listing.totalSteps}
 				onUpdate={handleNext}
 			/>
 		</>

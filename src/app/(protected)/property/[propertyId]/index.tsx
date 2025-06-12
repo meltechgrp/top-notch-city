@@ -20,6 +20,8 @@ import { MapPin } from 'lucide-react-native';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchProperty, viewProperty } from '@/actions/property';
 import { ScrollView } from 'react-native';
+import Platforms from '@/constants/Plaforms';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function PropertyItem() {
 	const { propertyId } = useLocalSearchParams() as { propertyId: string };
@@ -63,7 +65,7 @@ export default function PropertyItem() {
 		<>
 			<Stack.Screen
 				options={{
-					headerShown: true,
+					headerShown: Platforms.isIOS(),
 					headerTitle: '',
 					headerTransparent: true,
 					headerStyle: { backgroundColor: 'transparent' },
@@ -74,7 +76,7 @@ export default function PropertyItem() {
 								if (router.canGoBack()) router.back();
 								else router.push('/');
 							}}
-							className="py-2 flex-row items-center pr-2 android:pr-4">
+							className="py-2 flex-row items-center  p-2 bg-black/20 rounded-full">
 							<Icon className=" w-8 h-8" as={ChevronLeftIcon} color="white" />
 						</Pressable>
 					),
@@ -87,6 +89,28 @@ export default function PropertyItem() {
 					),
 				}}
 			/>
+			{Platforms.isAndroid() && (
+				<View className=" absolute top-0 z-30 pl-4 left-0 w-full">
+					<SafeAreaView edges={['top']} className=" bg-transparent">
+						<View className="flex-row justify-between items-center flex-1">
+							<Pressable
+								both
+								onPress={() => {
+									if (router.canGoBack()) router.back();
+									else router.push('/');
+								}}
+								className=" flex-row items-center  p-1 bg-black/20 rounded-full">
+								<Icon className=" w-7 h-7" as={ChevronLeftIcon} color="white" />
+							</Pressable>
+							<PropertyHeader
+								interaction={property?.interaction}
+								title={property?.title || ''}
+								id={propertyId}
+							/>
+						</View>
+					</SafeAreaView>
+				</View>
+			)}
 			<FullHeightLoaderWrapper loading={isLoading}>
 				<Box onLayout={onLayout} className="flex-1 relative">
 					<ScrollView style={{ flex: 1 }}>

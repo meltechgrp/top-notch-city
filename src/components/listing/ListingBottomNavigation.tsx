@@ -1,19 +1,5 @@
-import Animated, {
-	useAnimatedProps,
-	useSharedValue,
-	withTiming,
-} from 'react-native-reanimated';
-import {
-	Button,
-	ButtonText,
-	Icon,
-	Pressable,
-	Text,
-	useResolvedTheme,
-	View,
-} from '../ui';
+import { Button, ButtonText, Icon, Text, useResolvedTheme, View } from '../ui';
 import React from 'react';
-import Svg, { Circle } from 'react-native-svg';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ChevronLeft, ChevronRight, Upload } from 'lucide-react-native';
 import { cn, showSnackbar } from '@/lib/utils';
@@ -21,19 +7,16 @@ import { Platform } from 'react-native';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
 import { Colors } from '@/constants/Colors';
 import { Listing } from '@/store';
-const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 type Props = {
 	step: number;
 	listing: Listing;
-	totalSteps: number;
 	onUpdate: (step: number, back?: boolean) => void;
 	uploaHandler: () => Promise<any>;
 };
 
 export default function ListingBottomNavigation({
 	step,
-	totalSteps,
 	listing,
 	onUpdate,
 	uploaHandler,
@@ -67,11 +50,13 @@ export default function ListingBottomNavigation({
 				<View className=" flex-row backdrop-blur-sm bg-background border-t h-20 border-outline px-4  justify-center items-center">
 					<Button
 						onPress={() => onUpdate(step - 1, true)}
-						size="lg"
-						variant="link"
+						size="xl"
 						disabled={step == 1}
-						className={cn('mr-auto gap-1', step == 1 && 'opacity-0')}>
-						<Icon as={ChevronLeft} />
+						className={cn(
+							'mr-auto gap-1 px-4 bg-gray-500',
+							step == 1 && 'opacity-0'
+						)}>
+						<Icon as={ChevronLeft} className="mr-2" />
 						<Text>Back</Text>
 					</Button>
 					{step == 6 ? (
@@ -83,68 +68,16 @@ export default function ListingBottomNavigation({
 							<Icon size="sm" as={Upload} color="white" />
 						</Button>
 					) : (
-						<View className="relative justify-center items-center">
-							{/* Animated Half Circle */}
-							<CircleCurve step={step} total={totalSteps} />
-
-							<Pressable
-								onPress={() => onUpdate(step + 1)}
-								className="bg-[#FF4C00] absolute top-1 w-10 h-10 rounded-full justify-center items-center m-1">
-								<ChevronRight color={'white'} />
-							</Pressable>
-						</View>
+						<Button
+							size="xl"
+							className={cn('px-6')}
+							onPress={() => onUpdate(step + 1)}>
+							<ButtonText>Next</ButtonText>
+							<Icon size="sm" as={ChevronRight} color="white" />
+						</Button>
 					)}
 				</View>
 			</SafeAreaView>
 		</View>
-	);
-}
-
-function CircleCurve({ step, total }: { step: number; total: number }) {
-	const progress = useSharedValue(0); // 0 to 1
-
-	// Arc math
-	const size = 50;
-	const strokeWidth = 5;
-	const radius = (size - strokeWidth) / 2;
-	const circumference = 2 * Math.PI * radius;
-
-	const animatedProps = useAnimatedProps(() => ({
-		strokeDashoffset: circumference * (1 - progress.value),
-	}));
-
-	React.useEffect(() => {
-		let nextProgress = step / total;
-
-		progress.value = withTiming(nextProgress, { duration: 1000 });
-	}, [step]);
-	return (
-		<Svg width={size} height={size}>
-			{/* Background Border */}
-			<Circle
-				stroke="gray"
-				fill="none"
-				cx={size / 2}
-				cy={size / 2}
-				r={radius}
-				strokeWidth={strokeWidth}
-			/>
-
-			{/* Animated Foreground Arc */}
-			<AnimatedCircle
-				stroke="#FF4C00"
-				fill="none"
-				cx={size / 2}
-				cy={size / 2}
-				r={radius}
-				strokeWidth={strokeWidth}
-				strokeDasharray={`${circumference}, ${circumference}`}
-				animatedProps={animatedProps}
-				strokeLinecap="round"
-				rotation="-90"
-				originX={size / 2}
-				originY={size / 2}
-			/>
-		</Svg>
 	);
 }

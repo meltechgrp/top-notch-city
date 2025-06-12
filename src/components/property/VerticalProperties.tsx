@@ -19,6 +19,7 @@ interface Props {
 	data: Property[];
 	refetch: () => Promise<any>;
 	fetchNextPage?: () => Promise<any>;
+	headerTopComponent?: any;
 }
 export default function VerticalProperties({
 	category,
@@ -31,6 +32,7 @@ export default function VerticalProperties({
 	refetch,
 	fetchNextPage,
 	isHorizontal = false,
+	headerTopComponent,
 }: Props) {
 	const [numColumns, setNumColumns] = useState(1);
 	const layoutAnim = new Animated.Value(0);
@@ -76,12 +78,14 @@ export default function VerticalProperties({
 
 	const headerComponent = useMemo(() => {
 		return (
-			<DisplayStyle
-				toggleView={toggleView}
-				numColumns={numColumns}
-				total={data.length}
-				disableCount={disableCount}
-			/>
+			<>
+				<DisplayStyle
+					toggleView={toggleView}
+					numColumns={numColumns}
+					total={data.length}
+					disableCount={disableCount}
+				/>
+			</>
 		);
 	}, [toggleView, numColumns, data.length, disableCount]);
 	const renderItem = useCallback(
@@ -125,7 +129,14 @@ export default function VerticalProperties({
 					<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
 				) : undefined
 			}
-			ListHeaderComponent={!isHorizontal ? headerComponent : undefined}
+			ListHeaderComponent={
+				!isHorizontal ? (
+					<>
+						{headerTopComponent}
+						{headerComponent}
+					</>
+				) : undefined
+			}
 			keyExtractor={(item) => item.id}
 			estimatedItemSize={340}
 			onEndReached={() => fetchNextPage?.()}

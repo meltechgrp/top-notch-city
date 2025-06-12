@@ -50,7 +50,7 @@ export default function SellScreen() {
 						</View>
 						<View className="  mt-4 rounded-xl flex-row gap-4">
 							<Button
-								onPress={handleStart}
+								onPress={() => router.push('/property/locations')}
 								size="md"
 								className="flex-1 h-12 bg-background-muted border-b-[1px] border-primary rounded">
 								<ButtonText className=" text-typography">
@@ -58,7 +58,7 @@ export default function SellScreen() {
 								</ButtonText>
 							</Button>
 							<Button
-								onPress={handleStart}
+								onPress={() => router.push('/property/section')}
 								size="md"
 								className="flex-1 h-12 bg-background-muted border-b-[1px] border-primary rounded">
 								<ButtonText className=" text-typography">

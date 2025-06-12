@@ -52,10 +52,8 @@ export default function PropertysLayout() {
 			<Stack.Screen
 				name="[propertyId]/booking"
 				options={{
-					presentation: 'formSheet',
-					sheetAllowedDetents: [0.75, 1],
-					sheetGrabberVisible: true,
-					sheetElevation: 300,
+					headerShown: true,
+					title: 'Booking',
 				}}
 			/>
 		</Stack>

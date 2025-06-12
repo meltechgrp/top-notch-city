@@ -1,60 +1,51 @@
 import { Icon, Text, View } from '@/components/ui';
 import SwipeableWrapper from '@/components/shared/SwipeableWrapper';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import CategoryBottomSheet from './CategoryBottomSheet';
-import { useApiRequest } from '@/lib/api';
-import { showSnackbar } from '@/lib/utils';
 import { CornerDownRight } from 'lucide-react-native';
+import { useCategoryMutations } from '@/tanstack/mutations/useCategoryMutations';
 
 type Props = {
-	item: CategorySections[0]['data'][0];
-	refetch: () => Promise<void>;
+	categoryId: string;
+	item: {
+		name: string;
+		id: string;
+	};
 };
 
-export default function SubCategoryItem({ item, refetch }: Props) {
+export default function SubCategoryItem({ item, categoryId }: Props) {
 	const [categoryBottomSheet, setCategoryBottomSheet] = useState(false);
-	const { request, loading, error } = useApiRequest();
+	const {
+		mutateAsync: editSubCategory,
+		isPending: loading2,
+		isSuccess: isSuccess2,
+	} = useCategoryMutations().editSubcategoryMutation;
+	const {
+		mutateAsync: deleteSubCategory,
+		isPending: loading,
+		isSuccess,
+	} = useCategoryMutations().deleteSubcategoryMutation;
 
 	async function editHandler(val: string) {
-		await request({
-			url: `/categories/subcategories/${item.id}`,
-			method: 'PUT',
-			data: { name: val, category_id: item.catId },
+		await editSubCategory({
+			id: item.id,
+			data: {
+				category_id: categoryId,
+				name: item.name,
+			},
 		});
-		if (!error) {
-			setCategoryBottomSheet(false);
-			showSnackbar({
-				message: 'Sub category updated successfully.',
-				type: 'success',
-			});
-			await refetch();
-		} else {
-			showSnackbar({
-				message: 'Something went wrong!, Try again..',
-				type: 'error',
-			});
-		}
 	}
 	async function deleteHandler() {
-		await request({
-			url: `/categories/subcategories/${item.id}`,
-			method: 'DELETE',
-			data: { category_id: item.catId },
+		await deleteSubCategory({
+			categoryId: categoryId,
+			subcategoryId: item.id,
 		});
-		if (!error) {
-			setCategoryBottomSheet(false);
-			showSnackbar({
-				message: 'Sub category deleted successfully.',
-				type: 'success',
-			});
-			await refetch();
-		} else {
-			showSnackbar({
-				message: 'Something went wrong!, Try again..',
-				type: 'error',
-			});
-		}
 	}
+	useEffect(() => {
+		if (isSuccess || isSuccess2) {
+			setCategoryBottomSheet(false);
+		}
+	}, [isSuccess, isSuccess2]);
 	return (
 		<>
 			<SwipeableWrapper
@@ -73,7 +64,7 @@ export default function SubCategoryItem({ item, refetch }: Props) {
 				visible={categoryBottomSheet}
 				onDismiss={() => setCategoryBottomSheet(false)}
 				onSubmit={editHandler}
-				loading={loading}
+				loading={loading || loading2}
 				type="edit"
 				value={item.name}
 			/>

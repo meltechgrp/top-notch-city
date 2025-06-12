@@ -88,7 +88,7 @@ export default function PropertyListItem(props: Props) {
 							as={Heart}
 							className={cn(
 								' text-white w-7 h-7',
-								interaction.liked ? 'text-primary' : 'text-white'
+								interaction?.liked ? 'text-primary' : 'text-white'
 							)}
 						/>
 					</Pressable>

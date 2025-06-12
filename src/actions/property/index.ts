@@ -1,25 +1,18 @@
-import { fetchWithAuth } from '@/lib/api';
-import { cacheStorage } from '@/lib/asyncStorage';
 import { getAuthToken } from '@/lib/secureStore';
 import { Listing } from '@/store';
 import config from '@/config';
 import axios from 'axios';
-import { useCallback, useEffect, useState } from 'react';
 import { Fetch } from '../utills';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const API_KEY = process.env.EXPO_PUBLIC_ANDROID_MAPS_API_KEY;
+
 export function useUploadProperty() {
-	const token = getAuthToken();
-	const [uploading, setUploading] = useState(false);
-	const [error, setError] = useState<string | null>(null);
-	const [success, setSuccess] = useState(false);
+	const queryClient = useQueryClient();
 
-	const uploadProperty = async (listing: Listing) => {
-		setUploading(true);
-		setError(null);
-		setSuccess(false);
-
-		try {
+	const mutation = useMutation({
+		mutationFn: async (listing: Listing) => {
+			const token = getAuthToken();
 			const formData = new FormData();
 
 			const {
@@ -70,6 +63,7 @@ export function useUploadProperty() {
 					type: 'video/mp4',
 				} as any);
 			});
+
 			facilities?.forEach((fac) => {
 				formData.append('amenity_names', fac.label);
 				formData.append('amenity_values', fac.value.toString());
@@ -91,100 +85,37 @@ export function useUploadProperty() {
 			const result = res.data;
 
 			if (result?.detail) {
-				setUploading(false);
-				return setError('Please verify your property details');
-			} else if (result?.property_id) {
-				setSuccess(true);
-				setUploading(false);
-				return { data: true };
-			} else {
-				setUploading(false);
-				return setError('Something went wrong, please try again');
+				throw new Error('Please verify your property details');
 			}
-		} catch (err) {
-			console.log('Upload error:', err);
-			setUploading(false);
-			return setError('Something went wrong, please try again');
-		}
-	};
+
+			if (result?.property_id) {
+				return result as Property;
+			}
+
+			throw new Error('Something went wrong, please try again');
+		},
+		onSuccess: () => {
+			// Invalidate `properties` query so it's refetched
+			queryClient.invalidateQueries({ queryKey: ['properties'] });
+		},
+	});
 
 	return {
-		uploading,
-		error,
-		success,
-		uploadProperty,
+		uploading: mutation.isPending,
+		error: mutation.error?.message ?? null,
+		success: mutation.isSuccess,
+		uploadProperty: mutation.mutateAsync,
 	};
 }
 
-const SIX_HOURS = 2 * 60 * 60 * 1000;
-
-export function useCategorySections(withCache?: boolean) {
-	const [sections, setSections] = useState<CategorySections>([]);
-	const [loading, setLoading] = useState<boolean>(true);
-	const [error, setError] = useState<Error | null>(null);
-
-	const getSections = useCallback(async () => {
-		try {
-			setLoading(true);
-			setError(null);
-
-			if (withCache) {
-				const cached = await cacheStorage.get('category-sections');
-				if (cached) {
-					setSections(JSON.parse(cached));
-					setLoading(false);
-					return;
-				}
-			}
-
-			const res = await fetchWithAuth('/categories', {});
-			const data = (await res.json()) as Category[];
-			const sections = data.map(async (item) => {
-				const subsRes = await fetchWithAuth(
-					`/categories/${item.id}/subcategories`,
-					{}
-				);
-				const subsData = (await subsRes.json()) as SubCategory[];
-
-				return {
-					name: item.name,
-					id: item.id,
-					data:
-						subsData?.map((sub) => ({
-							name: sub.name,
-							id: sub.id,
-							catId: sub?.cat?.id || item.id,
-						})) || [],
-				};
-			});
-
-			const result = await Promise.all(sections);
-			if (withCache) {
-				cacheStorage.set(
-					'category-sections',
-					JSON.stringify(result),
-					SIX_HOURS
-				);
-			}
-			setSections(result);
-			return result;
-		} catch (err: any) {
-			setError(err);
-		} finally {
-			setLoading(false);
-		}
-	}, [withCache]);
-
-	useEffect(() => {
-		getSections();
-	}, [getSections]);
-
-	return { sections, loading, error, refetch: getSections };
-}
-
-export async function fetchProperties({ pageParam }: { pageParam: number }) {
+export async function fetchProperties({
+	pageParam,
+}: {
+	pageParam: number;
+	userId?: string;
+}) {
 	try {
-		const res = await Fetch('/properties', {});
+		const res = await Fetch(`/properties?user`, {});
 
 		if (!res.ok) {
 			throw new Error('Failed to fetch properties');
@@ -323,3 +254,166 @@ export async function viewProperty({ id }: { id: string }) {
 		throw new Error('Failed to view');
 	}
 }
+
+export const fetchCategories = async () => {
+	try {
+		const res = await Fetch(`/categories`, {});
+
+		if (!res.ok) {
+			throw new Error('Failed to categories');
+		}
+
+		const data = (await res.json()) as Category[];
+		return data;
+	} catch (error) {
+		console.log(error);
+		throw new Error('Failed to categories');
+	}
+};
+
+export const fetchSubcategoriesByCategory = async (categoryId: string) => {
+	try {
+		const res = await Fetch(`/categories/${categoryId}/subcategories`, {});
+
+		if (!res.ok) {
+			throw new Error('Failed to subcategories');
+		}
+
+		const data = (await res.json()) as SubCategory[];
+		return data;
+	} catch (error) {
+		console.log(error);
+		throw new Error('Failed to subcategories');
+	}
+};
+
+export const addCategory = async ({ name }: { name: string }) => {
+	try {
+		const res = await Fetch(`/categories`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ name }),
+		});
+
+		if (!res.ok) throw new Error('Failed to add category');
+		return await res.json();
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+export const editCategory = async ({
+	id,
+	data,
+}: {
+	id: string;
+	data: {
+		name: string;
+	};
+}) => {
+	try {
+		const res = await Fetch(`/categories/${id}`, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(data),
+		});
+
+		if (!res.ok) throw new Error('Failed to edit category');
+		return await res.json();
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+export const deleteCategory = async ({ id }: { id: string }) => {
+	try {
+		const res = await Fetch(`/categories/${id}`, {
+			method: 'DELETE',
+		});
+
+		if (!res.ok) throw new Error('Failed to delete category');
+		return true;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+export const addSubcategory = async ({
+	categoryId,
+	data,
+}: {
+	categoryId: string;
+	data: {
+		category_id: string;
+		name: string;
+	};
+}) => {
+	try {
+		const res = await Fetch(`/categories/${categoryId}/subcategories`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(data),
+		});
+
+		if (!res.ok) throw new Error('Failed to add subcategory');
+		return await res.json();
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+export const editSubcategory = async ({
+	id,
+	data,
+}: {
+	id: string;
+	data: {
+		category_id: string;
+		name: string;
+	};
+}) => {
+	try {
+		const res = await Fetch(`/categories/subcategories/${id}`, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(data),
+		});
+
+		if (!res.ok) throw new Error('Failed to edit subcategory');
+		return await res.json();
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+export const deleteSubcategory = async ({
+	categoryId,
+	subcategoryId,
+}: {
+	categoryId: string;
+	subcategoryId: string;
+}) => {
+	try {
+		const res = await Fetch(`/categories/subcategories/${subcategoryId}`, {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ category_id: categoryId }),
+		});
+
+		if (!res.ok) throw new Error('Failed to delete subcategory');
+		return true;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};

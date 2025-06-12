@@ -96,7 +96,9 @@ export default function More() {
 							<AvatarImage source={getImageUrl(me?.profile_image)} />
 						</Avatar>
 						<View className="flex-1 pl-3">
-							<Text className="text-base font-medium">{fullName(me)}</Text>
+							<Text className="text-base text-typography font-medium">
+								{fullName(me)}
+							</Text>
 							<Text className="text-sm text-typography/80">
 								View profile record and engagements
 							</Text>

@@ -1,4 +1,3 @@
-import { useCategorySections } from '@/actions/property';
 import {
 	Box,
 	Heading,
@@ -15,11 +14,12 @@ import { TouchableOpacity } from 'react-native';
 import { MotiView } from 'moti';
 import { Skeleton } from 'moti/skeleton';
 import { useTempStore } from '@/store';
+import { useCategoryQueries } from '@/tanstack/queries/useCategoryQueries';
 
 export default function ListingCategory() {
 	const { width, onLayout } = useLayout();
-	const { listing, updateListing } = useTempStore();
-	const { sections: data, loading } = useCategorySections();
+	const { listing, updateListing, updateListingStep } = useTempStore();
+	const { subcategoriesData, loading } = useCategoryQueries();
 	return (
 		<>
 			<Box className="flex-1 py-2 px-4">
@@ -27,12 +27,11 @@ export default function ListingCategory() {
 					<Heading size="xl">Select your property category</Heading>
 					<View onLayout={onLayout} className="py-4 gap-8">
 						{!loading &&
-							data &&
-							data.map((section) => (
-								<View key={section.id} className="gap-3">
+							subcategoriesData?.map((section) => (
+								<View key={section.category.id} className="gap-3">
 									<View className="">
 										<Text size="xl" className="font-light">
-											{section.name} Properties
+											{section.category.name} Properties
 										</Text>
 									</View>
 
@@ -48,9 +47,11 @@ export default function ListingCategory() {
 													onPress={() => {
 														updateListing({
 															...listing,
-															category: section.name,
+															category: section.category.name,
 															subCategory: item.name,
 														});
+
+														updateListingStep();
 													}}>
 													<View
 														className={cn(

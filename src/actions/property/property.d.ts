@@ -36,7 +36,7 @@ type Property = {
 	media_urls: string[];
 	owner: Owner;
 	amenities: Amenity[];
-	interaction: Interaction;
+	interaction?: Interaction;
 };
 
 type Owner = {
@@ -64,3 +64,12 @@ type Place = {
 	name: string;
 	vicinity: string;
 };
+
+type FlatCategoryItem = { type: 'category'; id: string; name: string };
+type FlatSubcategoryItem = {
+	type: 'subcategory';
+	id: string;
+	name: string;
+	categoryId: string;
+};
+type FlatItem = FlatCategoryItem | FlatSubcategoryItem;

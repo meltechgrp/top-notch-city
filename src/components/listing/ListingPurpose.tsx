@@ -7,7 +7,7 @@ import { TouchableOpacity } from 'react-native';
 
 export default function ListingPurpose() {
 	const { onLayout, height } = useLayout();
-	const { listing, updateListing } = useTempStore();
+	const { listing, updateListing, updateListingStep } = useTempStore();
 	return (
 		<>
 			<Box onLayout={onLayout} className="flex-1 py-6 px-4">
@@ -33,7 +33,10 @@ export default function ListingPurpose() {
 					<HStack className="py-4 gap-5">
 						<TouchableOpacity
 							className="flex-1"
-							onPress={() => updateListing({ ...listing, purpose: 'rent' })}>
+							onPress={() => {
+								updateListing({ ...listing, purpose: 'rent' });
+								updateListingStep();
+							}}>
 							<View
 								className={cn(
 									' gap-2 p-4 rounded-2xl min-h-32 border-b-4 border-b-background-muted bg-background-muted ',
@@ -57,7 +60,10 @@ export default function ListingPurpose() {
 						</TouchableOpacity>
 						<TouchableOpacity
 							className="flex-1"
-							onPress={() => updateListing({ ...listing, purpose: 'sell' })}>
+							onPress={() => {
+								updateListing({ ...listing, purpose: 'sell' });
+								updateListingStep();
+							}}>
 							<View
 								className={cn(
 									' gap-2 p-4 rounded-2xl min-h-32 border-b-4 border-b-background-muted bg-background-muted ',

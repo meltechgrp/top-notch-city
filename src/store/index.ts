@@ -77,16 +77,16 @@ export type UploadedFile = {
 };
 
 export type Listing = {
-	totalSteps: number;
 	step: number;
-	purpose: string;
-	category: string;
+	purpose?: string;
+	category?: string;
 	subCategory?: string;
 	type?: string;
 	address?: GooglePlace;
 	facilities?: {
 		label: string;
-		value: number;
+		value: any;
+		isAvailable?: boolean;
 		icon: string;
 	}[];
 	photos?: UploadedFile[];
@@ -106,14 +106,13 @@ type TempState = {
 	resetListing: () => void;
 	resetKyc: () => void;
 	updateListing: (data: Listing) => void;
+	updateListingStep: () => void;
 };
 const initialTempState = {
 	fullScreenLoading: false,
 	listing: {
 		step: 1,
 		totalSteps: 7,
-		purpose: 'rent',
-		category: 'bungalow',
 	},
 };
 // temporary store
@@ -127,6 +126,11 @@ export const useTempStore = create<TempState>((set, get) => ({
 		set((state) => ({ ...state, listing: initialTempState.listing })),
 	updateListing: (data) =>
 		set((state) => ({ ...state, listing: { ...state.listing, ...data } })),
+	updateListingStep: () =>
+		set((state) => ({
+			...state,
+			listing: { ...state.listing, step: state?.listing?.step + 1 },
+		})),
 }));
 
 type ChatState = {
