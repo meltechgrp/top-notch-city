@@ -1,122 +1,160 @@
 import { View } from 'react-native';
-import { format } from 'date-fns';
-import { fullName } from '@/lib/utils';
-import BottomSheetTwo from '@/components/shared/BottomSheetTwo';
-import {
-	Avatar,
-	AvatarFallbackText,
-	AvatarImage,
-	Button,
-	ButtonText,
-	Heading,
-	Icon,
-	Pressable,
-	Text,
-} from '@/components/ui';
-import { getImageUrl } from '@/lib/api';
+import { Button, ButtonText, Heading, Pressable, Text } from '@/components/ui';
 import withRenderVisible from '@/components/shared/withRenderOpen';
-import { ChevronRight } from 'lucide-react-native';
-import { useRouter } from 'expo-router';
-import { capitalize } from 'lodash-es';
+import { composeFullAddress, formatMoney, fullName } from '@/lib/utils';
+import { capitalize, chunk } from 'lodash-es';
+import BottomSheet from '@/components/shared/BottomSheet';
+import { PropertyStatus } from '@/components/property/PropertyStatus';
+import { useMemo, useState } from 'react';
+import { PropertyModalMediaViewer } from '@/components/property/PropertyModalMediaViewer';
+import { useLayout } from '@react-native-community/hooks';
+import { PropertyMedia } from '@/components/property/PropertyMedia';
 
 type PropertyBottomSheetProps = {
 	visible: boolean;
-	property: any;
+	property: Property;
 	onDismiss: () => void;
+	onApprove?: () => void;
+	onReject?: () => void;
 };
 
 function PropertyBottomSheet(props: PropertyBottomSheetProps) {
-	const { visible, property, onDismiss } = props;
-	const router = useRouter();
+	const { visible, property, onDismiss, onApprove, onReject } = props;
+	const [isViewer, setIsViewer] = useState(false);
+	const [imageIndex, setImagesIndex] = useState(0);
+	const { width, onLayout } = useLayout();
 	return (
-		<BottomSheetTwo
-			title="User detail"
+		<BottomSheet
+			title="Review Property"
 			onDismiss={onDismiss}
 			visible={visible}
-			snapPoint={530}>
-			<View className="flex-1 gap-y-2 pb-8 px-4">
-				<View className="flex-row gap-4 pb-2 justify-between items-center">
-					<Avatar className=" w-14 h-14">
-						<AvatarFallbackText>{fullName(property)}</AvatarFallbackText>
-						<AvatarImage source={getImageUrl(property?.profile_image)} />
-					</Avatar>
-					<View className="flex-1 gap-1">
-						<Heading className="text-sm capitalize">
-							{fullName(property)}
+			withHeader
+			withScroll={true}
+			snapPoint={[450, 720]}>
+			<View onLayout={onLayout} className="gap-y-4 flex-1 mt-4 px-4 pb-32">
+				<View className=" rounded-2xl bg-background-muted p-4">
+					<Heading size="md" className="mb-3">
+						Property Info
+					</Heading>
+
+					<View className="gap-y-3">
+						<InfoRow label="Title" value={property.title} />
+						<InfoRow
+							label="Price"
+							value={formatMoney(property.price, property.currency, 0)}
+						/>
+						<InfoRow label="Purpose" value={capitalize(property.purpose)} />
+						<View className="flex-row justify-between py-1">
+							<Text className="text-sm">Status:</Text>
+							<PropertyStatus status={property.status} />
+						</View>
+						<InfoRow label="Category" value={capitalize(property.category)} />
+						<InfoRow
+							label="Subcategory"
+							value={capitalize(property.subcategory)}
+						/>
+						<InfoRow
+							label="Address"
+							value={composeFullAddress(property.address, true)}
+						/>
+					</View>
+				</View>
+				<View className="bg-background-muted rounded-2xl p-4 shadow-sm">
+					<Heading size="md" className="mb-3">
+						Description
+					</Heading>
+					<View className=" min-h-20">
+						<Text numberOfLines={5}>{property?.description || 'N/A'}</Text>
+					</View>
+				</View>
+				<View className="bg-background-muted min-h-32 rounded-2xl p-4 shadow-sm">
+					<Heading size="md" className="mb-3">
+						Media
+					</Heading>
+					<View className="flex-wrap gap-4">
+						{chunk(property?.media_urls, 4).map((row, i) => (
+							<View className={'flex-row gap-4'} key={i}>
+								{row.map((media, i) => (
+									<Pressable key={media}>
+										<PropertyMedia
+											style={{
+												width: width > 100 ? (width - 100) / 4 : 72,
+												height: width > 100 ? (width - 100) / 4 : 72,
+											}}
+											rounded
+											className={' bg-background-muted'}
+											source={media}
+											canPlayVideo={false}
+											onPress={() => {
+												setImagesIndex(i);
+												setIsViewer(true);
+											}}
+										/>
+									</Pressable>
+								))}
+							</View>
+						))}
+					</View>
+				</View>
+				<View className="bg-background-muted rounded-2xl p-4 shadow-sm">
+					<Heading size="md" className="mb-3">
+						Owner
+					</Heading>
+					<View className="gap-y-3">
+						<InfoRow label="Name" value={fullName(property.owner)} />
+						<InfoRow label="Email" value={property.owner?.email ?? 'N/A'} />
+						{/* <InfoRow
+								label="Joined"
+								value={format(
+									new Date(property.owner?.created_at ?? new Date()),
+									'dd MMM yyyy'
+								)}
+							/> */}
+					</View>
+				</View>
+				{property.amenities.length > 0 && (
+					<View className="bg-background-muted rounded-2xl p-4 shadow-sm">
+						<Heading size="md" className="mb-3">
+							Amenities
 						</Heading>
-						<Text className="text-gray-400 text-xs">
-							{capitalize(property.email)}
+						<Text className="text-sm">
+							{property.amenities.map((a) => a.name).join(', ')}
 						</Text>
 					</View>
-				</View>
-				<View className="w-full h-[1px] bg-outline" />
-				<View className=" mt-2 pb-2 gap-y-4 ">
-					<View className="flex-row justify-between items-center">
-						<Text className="">Joined at:</Text>
-						<Text className="">
-							{format(new Date(property.created_at), 'dd MMM yyyy')}
-						</Text>
+				)}
+				{property.status == 'pending' && (
+					<View className="mt-6 flex-row gap-4">
+						<Button className="flex-1 h-12" variant="solid" onPress={onReject}>
+							<ButtonText>Reject</ButtonText>
+						</Button>
+						<Button
+							className="flex-1 h-12 bg-gray-500"
+							variant="solid"
+							onPress={onApprove}>
+							<ButtonText>Approve</ButtonText>
+						</Button>
 					</View>
-					<View className="flex-row justify-between items-center">
-						<Text className="">Phone Number:</Text>
-						<Text className="">{property.phone ?? 'N/A'}</Text>
-					</View>
-					<View className="flex-row justify-between items-center">
-						<Text className="">Role:</Text>
-						<Text className=" capitalize">{property.role}</Text>
-					</View>
-				</View>
-				<View className="w-full h-[1px] bg-outline" />
-				<View className="gap-4 flex-1 mt-4">
-					<View className="flex-row gap-4">
-						<Pressable className="flex-1 h-20 gap-2 justify-center items-center rounded-xl bg-background-muted">
-							<Heading size="xl" className="text-primary">
-								0
-							</Heading>
-							<Text className=" text-md">Uploaded</Text>
-						</Pressable>
-						<Pressable className="flex-1 h-20 gap-2 justify-center items-center rounded-xl bg-background-muted">
-							<Heading size="xl" className="text-primary">
-								0
-							</Heading>
-							<Text className=" text-md">Views</Text>
-						</Pressable>
-						<Pressable className="flex-1 h-20 gap-2 justify-center items-center rounded-xl bg-background-muted">
-							<Heading size="xl" className="text-primary">
-								0
-							</Heading>
-							<Text className=" text-md">Saved</Text>
-						</Pressable>
-					</View>
-					<View className="flex-row gap-4">
-						<Pressable className="flex-1 h-20 gap-2 justify-center items-center rounded-xl bg-background-muted">
-							<Heading size="xl" className="text-primary">
-								0
-							</Heading>
-							<Text className=" text-md">Sold</Text>
-						</Pressable>
-						<Pressable className="flex-1 h-20 gap-2 justify-center items-center rounded-xl bg-background-muted">
-							<Heading size="xl" className="text-primary">
-								0
-							</Heading>
-							<Text className=" text-md">Reports</Text>
-						</Pressable>
-						<Pressable className="flex-1 h-20 gap-2 justify-center items-center rounded-xl bg-background-muted">
-							<Heading size="xl" className="text-primary">
-								0
-							</Heading>
-							<Text className=" text-md">Messages</Text>
-						</Pressable>
-					</View>
-				</View>
-				<View>
-					<Button className="h-12 gap-1">
-						<ButtonText>View Property</ButtonText>
-						<Icon as={ChevronRight} color="white" />
-					</Button>
-				</View>
+				)}
 			</View>
-		</BottomSheetTwo>
+
+			<PropertyModalMediaViewer
+				width={width}
+				selectedIndex={imageIndex}
+				visible={isViewer}
+				setVisible={setIsViewer}
+				canPlayVideo
+				media={property?.media_urls}
+			/>
+		</BottomSheet>
+	);
+}
+
+function InfoRow({ label, value }: { label: string; value: string }) {
+	return (
+		<View className="flex-row justify-between py-2">
+			<Text className="text-sm">{label}:</Text>
+			<Text className="text-sm text-right max-w-[60%]">{value}</Text>
+		</View>
 	);
 }
 

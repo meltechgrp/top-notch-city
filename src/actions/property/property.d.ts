@@ -26,9 +26,11 @@ type Property = {
 	title: string;
 	description: string | null;
 	price: number;
-	currency: 'ngn' | 'usd';
-	status: 'pending' | 'approve' | 'sold';
-	purpose: 'rent' | 'sell';
+	created_at: string;
+	updated_at: string;
+	currency: Currency;
+	status: PropertyStatus;
+	purpose: PropertyPurpose;
 	is_featured: boolean;
 	category: string;
 	subcategory: string;
@@ -37,6 +39,7 @@ type Property = {
 	owner: Owner;
 	amenities: Amenity[];
 	interaction?: Interaction;
+	owner_interaction?: Owner_interaction;
 };
 
 type Owner = {
@@ -55,6 +58,11 @@ type Amenity = {
 };
 
 type Interaction = {
+	viewed: number;
+	liked: number;
+};
+
+type Owner_interaction = {
 	viewed: boolean;
 	liked: boolean;
 	added_to_wishlist: boolean;
@@ -73,3 +81,34 @@ type FlatSubcategoryItem = {
 	categoryId: string;
 };
 type FlatItem = FlatCategoryItem | FlatSubcategoryItem;
+
+type Wishlist = {
+	id: string;
+	title: string;
+	description: string | null;
+	price: number;
+	currency: Currency;
+	status: PropertyStatus;
+	purpose: PropertyPurpose;
+	category: string;
+	subcategory: string;
+	// address: Address;
+	media_urls: string[];
+};
+
+enum PropertyStatus {
+	pending,
+	approve,
+	sold,
+	reject,
+	flag,
+	expire,
+}
+enum PropertyPurpose {
+	rent,
+	sell,
+}
+enum Currency {
+	ngn,
+	usd,
+}

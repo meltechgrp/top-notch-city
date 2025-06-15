@@ -17,7 +17,6 @@ type Props = {
 	selectedIndex: number;
 	width: number;
 	media: string[];
-	mediaType?: 'image' | 'video';
 	canPlayVideo?: boolean;
 };
 
@@ -27,7 +26,6 @@ export function PropertyModalMediaViewer({
 	selectedIndex,
 	width,
 	media,
-	mediaType,
 	canPlayVideo,
 }: Props) {
 	const opacity = useSharedValue(1);
@@ -68,11 +66,10 @@ export function PropertyModalMediaViewer({
 								<PropertyCarousel
 									width={width || 400}
 									factor={1}
-									images={media}
+									media={media}
 									withPagination={false}
 									stackMode
 									canPlayVideo={canPlayVideo}
-									mediaType={mediaType}
 									selectedIndex={selectedIndex}
 								/>
 							</View>

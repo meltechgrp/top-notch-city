@@ -5,15 +5,14 @@ const MAPS_API_KEY = process.env.EXPO_PUBLIC_ANDROID_MAPS_API_KEY;
 
 export function Fetch(url: string, options: RequestInit) {
 	const authToken = getAuthToken();
-	// const deviceId = getUniqueIdSync();
-	// console.log(deviceId);
+	const deviceId = getUniqueIdSync();
 	return fetch(`${config.origin}/api${url}`, {
 		...options,
 		headers: {
 			...(authToken && { Authorization: `Bearer ${authToken}` }),
 			...options.headers,
 			// device id
-			// 'X-DID': deviceId,
+			'X-DID': deviceId,
 		},
 	});
 }

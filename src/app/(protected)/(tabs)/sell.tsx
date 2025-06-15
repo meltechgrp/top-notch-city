@@ -10,7 +10,7 @@ import {
 	View,
 } from '@/components/ui';
 import { useLayout } from '@react-native-community/hooks';
-import { useRouter } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { MoveRight } from 'lucide-react-native';
 
 export default function SellScreen() {
@@ -21,6 +21,11 @@ export default function SellScreen() {
 	const { onLayout, height } = useLayout();
 	return (
 		<>
+			<Stack.Screen
+				options={{
+					title: 'Add Property',
+				}}
+			/>
 			<Box onLayout={onLayout} className="flex-1">
 				<BodyScrollView className="flex-1">
 					<View
@@ -36,12 +41,12 @@ export default function SellScreen() {
 					</View>
 					<View className="px-4 py-6 gap-4">
 						<View className=" bg-background-muted rounded-xl p-6">
-							<Heading size="xl">Looking to sell your Property?</Heading>
+							<Heading size="xl">Looking to list your Property?</Heading>
 							<Text size="sm" className=" font-light mb-4 mt-2">
 								Selling or renting your property has never been easier. With
-								just a few simple steps, you can sell your home, reach thousands
-								of potential buyers, and manage inquiries right from your phone.
-								Add photos, set your price, and provide key details
+								just a few simple steps, you can sell or rent your home, reach
+								thousands of potential buyers, and manage inquiries right from
+								your phone. Add photos, set your price, and provide key details
 							</Text>
 							<Button onPress={handleStart} size="xl" className="mt-6 rounded">
 								<ButtonText>Get Started</ButtonText>

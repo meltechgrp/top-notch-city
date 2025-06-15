@@ -16,7 +16,7 @@ import PropertyCarousel from '@/components/property/PropertyCarousel';
 import { useLayout } from '@react-native-community/hooks';
 import FullHeightLoaderWrapper from '@/components/loaders/FullHeightLoaderWrapper';
 import { composeFullAddress, formatMoney } from '@/lib/utils';
-import { MapPin } from 'lucide-react-native';
+import { Eye, Heart, MapPin } from 'lucide-react-native';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchProperty, viewProperty } from '@/actions/property';
 import { ScrollView } from 'react-native';
@@ -49,11 +49,11 @@ export default function PropertyItem() {
 			updateProperty(property);
 		}
 	}, [property]);
-	useEffect(() => {
-		if (property) {
-			mutate();
-		}
-	}, [property]);
+	// useEffect(() => {
+	// 	if (property) {
+	// 		mutate();
+	// 	}
+	// }, [property]);
 	if (error) {
 		return (
 			<View className=" bg-background flex-1 justify-center items-center">
@@ -82,7 +82,7 @@ export default function PropertyItem() {
 					),
 					headerRight: () => (
 						<PropertyHeader
-							interaction={property?.interaction}
+							interaction={property?.owner_interaction}
 							title={property?.title || ''}
 							id={propertyId}
 						/>
@@ -103,7 +103,7 @@ export default function PropertyItem() {
 								<Icon className=" w-7 h-7" as={ChevronLeftIcon} color="white" />
 							</Pressable>
 							<PropertyHeader
-								interaction={property?.interaction}
+								interaction={property?.owner_interaction}
 								title={property?.title || ''}
 								id={propertyId}
 							/>
@@ -122,10 +122,10 @@ export default function PropertyItem() {
 										factor={1.15}
 										withBackdrop={true}
 										loop={false}
-										images={property.media_urls}
+										media={property.media_urls}
 										pointerPosition={60}
 									/>
-									<View className=" absolute bottom-10 left-4 w-full">
+									<View className=" absolute flex-row justify-between bottom-10 left-4 right-4 w-full px-1">
 										<View className="gap-2">
 											<Heading size="xl" className=" text-white">
 												{property.title}
@@ -139,6 +139,20 @@ export default function PropertyItem() {
 												<Icon size="md" as={MapPin} className="text-primary" />
 												<Text size="md" className=" text-white">
 													{composeFullAddress(property?.address, true)}
+												</Text>
+											</View>
+										</View>
+										<View className="gap-4 pr-8">
+											<View className="flex-row gap-2 items-center">
+												<Icon as={Eye} color="white" />
+												<Text className="text-white text-lg">
+													{property?.interaction?.viewed}
+												</Text>
+											</View>
+											<View className="flex-row gap-2 items-center">
+												<Icon as={Heart} color="white" />
+												<Text className="text-white text-lg">
+													{property?.interaction?.liked}
 												</Text>
 											</View>
 										</View>

@@ -1,57 +1,87 @@
 import { View } from '@/components/ui';
 import { RefreshControl } from 'react-native-gesture-handler';
 import DisplayStyle from '../layouts/DisplayStyle';
-import { ActivityIndicator, Animated } from 'react-native';
-import { useCallback, useMemo, useState } from 'react';
+import { ActivityIndicator, Animated, NativeScrollEvent } from 'react-native';
+import React, {
+	forwardRef,
+	useCallback,
+	useImperativeHandle,
+	useMemo,
+	useState,
+} from 'react';
 import PropertyListItem from './PropertyListItem';
-import { AnimatedFlashList, ViewToken } from '@shopify/flash-list';
 import { MiniEmptyState } from '../shared/MiniEmptyState';
+import { useRouter } from 'expo-router';
+import { SharedValue, useAnimatedScrollHandler } from 'react-native-reanimated';
+import { AnimatedFlashList } from '../shared/AnimatedFlashList';
 
 interface Props {
 	category?: string;
 	className?: string;
-	scrollY?: any;
+	scrollY?: SharedValue<number>;
 	disableCount?: boolean;
+	isAdmin?: boolean;
+	onScroll?: (e: NativeScrollEvent) => any;
 	scrollEnabled?: boolean;
 	isHorizontal?: boolean;
 	showsVerticalScrollIndicator?: boolean;
 	isLoading?: boolean;
 	data: Property[];
+	scrollElRef?: any;
+	disableHeader?: boolean;
 	refetch: () => Promise<any>;
 	fetchNextPage?: () => Promise<any>;
 	headerTopComponent?: any;
+	headerHeight?: number;
+	listRef?: any;
+	onPress?: (data: Props['data'][0]) => void;
 }
-export default function VerticalProperties({
-	category,
-	scrollY,
-	disableCount = false,
-	scrollEnabled = false,
-	data,
-	isLoading,
-	showsVerticalScrollIndicator = false,
-	refetch,
-	fetchNextPage,
-	isHorizontal = false,
-	headerTopComponent,
-}: Props) {
+const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
+	{
+		category,
+		scrollY,
+		disableCount = false,
+		scrollEnabled = true,
+		data,
+		isLoading,
+		showsVerticalScrollIndicator = false,
+		refetch,
+		fetchNextPage,
+		isHorizontal = false,
+		headerTopComponent,
+		disableHeader,
+		isAdmin,
+		onScroll,
+		onPress,
+		scrollElRef,
+		headerHeight,
+	},
+	ref
+) {
+	const router = useRouter();
 	const [numColumns, setNumColumns] = useState(1);
 	const layoutAnim = new Animated.Value(0);
 	const [refreshing, setRefreshing] = useState(false);
-	const [visibleItems, setVisibleItems] = useState<number[]>([]);
 
-	const viewabilityConfig = useMemo(
-		() => ({
-			itemVisiblePercentThreshold: 50,
-		}),
-		[]
-	);
+	const onScrollToTop = useCallback(() => {
+		scrollElRef?.current?.scrollToOffset({
+			animated: true,
+			offset: headerHeight || 0,
+		});
+	}, [scrollElRef, headerHeight]);
 
-	const onViewableItemsChanged = useCallback(
-		({ viewableItems }: { viewableItems: ViewToken[] }) => {
-			setVisibleItems(viewableItems.map((val) => val.index || 0));
+	useImperativeHandle(ref, () => ({
+		scrollToTop: onScrollToTop,
+	}));
+
+	const scrollHandler = useAnimatedScrollHandler({
+		onScroll: (event) => {
+			'worklet';
+			if (scrollY) {
+				scrollY.value = event.contentOffset.y;
+			}
 		},
-		[]
-	);
+	});
 
 	async function onRefresh() {
 		try {
@@ -89,12 +119,21 @@ export default function VerticalProperties({
 		);
 	}, [toggleView, numColumns, data.length, disableCount]);
 	const renderItem = useCallback(
-		({ item, index }: { item: Property; index: number }) => {
+		({ item, index }: { item: any; index: number }) => {
 			return (
 				<PropertyListItem
 					style={{
 						marginRight: (index + 1) % numColumns === 0 ? 0 : 4,
 						marginLeft: index % numColumns === 0 ? 0 : 4,
+					}}
+					onPress={(data) => {
+						if (onPress) return onPress(data);
+						router.push({
+							pathname: `/property/[propertyId]`,
+							params: {
+								propertyId: data.id,
+							},
+						});
 					}}
 					isHorizontal={isHorizontal}
 					columns={numColumns}
@@ -114,37 +153,33 @@ export default function VerticalProperties({
 			horizontal={isHorizontal}
 			refreshing={refreshing}
 			showsVerticalScrollIndicator={showsVerticalScrollIndicator}
-			onScroll={
-				scrollY &&
-				Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
-					useNativeDriver: false,
-				})
-			}
+			onScroll={scrollHandler}
+			ref={scrollElRef}
 			ItemSeparatorComponent={() => (
-				<View className={numColumns == 1 ? 'h-6' : 'h-3'} />
+				<View className={numColumns == 1 ? 'h-5' : 'h-3'} />
 			)}
-			// scrollEventThrottle={16}
+			scrollEventThrottle={1}
 			refreshControl={
 				scrollEnabled ? (
 					<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
 				) : undefined
 			}
 			ListHeaderComponent={
-				!isHorizontal ? (
+				!isHorizontal && !disableHeader ? (
 					<>
 						{headerTopComponent}
 						{headerComponent}
 					</>
 				) : undefined
 			}
-			keyExtractor={(item) => item.id}
+			keyExtractor={(item: any) => item.id.toString()}
 			estimatedItemSize={340}
 			onEndReached={() => fetchNextPage?.()}
 			onEndReachedThreshold={20}
-			onViewableItemsChanged={onViewableItemsChanged}
-			viewabilityConfig={viewabilityConfig}
 			contentInsetAdjustmentBehavior="automatic"
 			ListEmptyComponent={() => <MiniEmptyState title="No property found" />}
 		/>
 	);
-}
+});
+
+export default VerticalProperties;

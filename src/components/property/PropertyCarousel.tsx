@@ -11,7 +11,7 @@ import { useResolvedTheme } from '../ui';
 import Layout from '@/constants/Layout';
 
 type Props = {
-	images: string[];
+	media: string[];
 	width: number;
 	factor?: number;
 	pointerPosition?: number;
@@ -25,11 +25,10 @@ type Props = {
 	canPlayVideo?: boolean;
 	setSelectedIndex?: (val: number) => void;
 	selectedIndex?: number;
-	mediaType?: 'image' | 'video';
 };
 
 function PropertyCarousel({
-	images,
+	media,
 	width,
 	factor,
 	pointerPosition = 10,
@@ -40,7 +39,6 @@ function PropertyCarousel({
 	stackMode = false,
 	withPagination = true,
 	canPlayVideo,
-	mediaType,
 	paginationLenght,
 	setSelectedIndex,
 	selectedIndex,
@@ -61,10 +59,6 @@ function PropertyCarousel({
 			animated: true,
 		});
 	};
-	const files = React.useMemo(
-		() => images.filter((img) => img.endsWith('.jpg')),
-		[images]
-	);
 	return (
 		<View className="relative rounded-xl overflow-hidden">
 			<Carousel
@@ -82,13 +76,12 @@ function PropertyCarousel({
 				}}
 				onSnapToItem={setSelectedIndex}
 				style={{ width: width }}
-				data={files}
+				data={media}
 				renderItem={(props) => (
 					<PropertyMedia
 						withBackdrop={withBackdrop}
 						source={props.item}
 						isVisible
-						mediaType={mediaType}
 						canPlayVideo={canPlayVideo}
 						{...props}
 					/>
@@ -110,7 +103,7 @@ function PropertyCarousel({
 			{withPagination && (
 				<Pagination.Basic<string>
 					progress={progress}
-					data={files.slice(0, paginationLenght)}
+					data={media.slice(0, paginationLenght)}
 					size={8}
 					dotStyle={{
 						borderRadius: 100,

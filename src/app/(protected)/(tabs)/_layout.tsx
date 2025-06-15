@@ -67,7 +67,7 @@ export default function TabLayout() {
 			<Tabs.Screen
 				name="sell"
 				options={{
-					title: 'Sell Property',
+					title: 'Add',
 					headerShown: true,
 					tabBarIcon: ({ color }) => <Plus size={24} color={color} />,
 				}}

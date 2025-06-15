@@ -1,4 +1,3 @@
-import { useTheme } from '@/components/layouts/ThemeProvider';
 import AppCrashScreen from '@/components/shared/AppCrashScreen';
 import headerLeft from '@/components/shared/headerLeft';
 import { useResolvedTheme } from '@/components/ui';
@@ -40,27 +39,9 @@ export default function ProfileScreensLayout() {
 				}}
 			/>
 			<Stack.Screen
-				name="properties"
-				options={{
-					headerShown: false,
-				}}
-			/>
-			<Stack.Screen
 				name="account"
 				options={{
 					title: 'Account',
-				}}
-			/>
-			<Stack.Screen
-				name="analytics"
-				options={{
-					title: 'Analytics',
-				}}
-			/>
-			<Stack.Screen
-				name="security"
-				options={{
-					headerShown: false,
 				}}
 			/>
 		</Stack>

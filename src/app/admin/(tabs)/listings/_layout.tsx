@@ -49,7 +49,13 @@ export default function ListingLayoutsComponent() {
 					name="peding"
 					options={{
 						title: 'Pending',
-						tabBarBadge: () => <NotificationBadge count={4} />,
+						tabBarBadge: () => (
+							<NotificationBadge
+								className="bg-background"
+								textClassName="text-typography"
+								count={4}
+							/>
+						),
 					}}
 				/>
 			</MaterialTopTabs>

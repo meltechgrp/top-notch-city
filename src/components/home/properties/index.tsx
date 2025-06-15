@@ -24,10 +24,10 @@ export default function TopProperties({ data, isLoading, refetch }: Props) {
 			<View className="flex-1 px-4">
 				<VerticalProperties
 					data={data}
+					scrollEnabled={false}
 					refetch={refetch}
 					disableCount={true}
 					isLoading={isLoading}
-					scrollEnabled={false}
 				/>
 			</View>
 		</SectionHeaderWithRef>

@@ -32,7 +32,6 @@ export default function Images() {
 							rounded
 							className={' bg-background-muted'}
 							source={item}
-							mediaType="video"
 							// canPlayVideo
 							nativeControls
 							onPress={() => handleOpen(index)}
@@ -47,7 +46,6 @@ export default function Images() {
 			<PropertyModalMediaViewer
 				width={width}
 				media={videos}
-				mediaType="video"
 				visible={visible}
 				setVisible={setVisible}
 				selectedIndex={selectedIndex}

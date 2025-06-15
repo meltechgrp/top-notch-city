@@ -1,10 +1,10 @@
-import { useTheme } from '@/components/layouts/ThemeProvider';
 import headerLeft from '@/components/shared/headerLeft';
+import { useResolvedTheme } from '@/components/ui';
 import { Colors } from '@/constants/Colors';
-import { Stack, useRouter } from 'expo-router';
+import { Stack } from 'expo-router';
 
 export default function SupportLayout() {
-	const { theme } = useTheme();
+	const theme = useResolvedTheme();
 	return (
 		<Stack
 			screenOptions={{

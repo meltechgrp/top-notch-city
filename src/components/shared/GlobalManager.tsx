@@ -1,6 +1,6 @@
+import { Fetch } from '@/actions/utills';
 import GlobalFullScreenLoader from '@/components/loaders/GlobalFullScreenLoader';
 import SnackBar from '@/components/shared/SnackBar';
-import { useApiRequest } from '@/lib/api';
 import eventBus from '@/lib/eventBus';
 import { getAuthToken, removeAuthToken } from '@/lib/secureStore';
 import { useStore, useTempStore } from '@/store';
@@ -14,20 +14,13 @@ export default function GlobalManager() {
 		(s) => s.updateFullScreenLoading
 	);
 	const hasAuth = useStore((s) => s.hasAuth);
-	const { request, data } = useApiRequest<Me>();
 	const [snackBars, setSnackBars] = React.useState<Array<SnackBarOption>>([]);
 	const [activeSnackBar, setActiveSnackBar] =
 		React.useState<SnackBarOption | null>(null);
 
-	async function updateMe() {
-		await request({ url: '/users/me' });
-		if (data) {
-			setMe(data);
-		}
-	}
-
 	async function unsetAuthToken() {
 		useStore.getState().resetStore();
+		useTempStore.getState().resetStore();
 		removeAuthToken();
 		router.replace({
 			pathname: '/(auth)/signin',
@@ -36,6 +29,26 @@ export default function GlobalManager() {
 			},
 		});
 	}
+	async function updateMe() {
+		try {
+			const res = await Fetch('/users/me', {});
+			const data = await res.json();
+			if (data?.detail?.includes('expired')) {
+				await unsetAuthToken();
+			} else if (data?.detail == 'Not authenticated') {
+				await unsetAuthToken();
+			}
+			if (data) {
+				setMe(data);
+			}
+		} catch (err: any) {
+			if (err?.detail?.includes('expired')) {
+				console.log('expired');
+				await unsetAuthToken();
+			}
+		}
+	}
+
 	function addSnackBar(snackBar: SnackBarOption) {
 		if (activeSnackBar) {
 			setSnackBars([snackBar, ...snackBars]);
@@ -66,6 +79,9 @@ export default function GlobalManager() {
 			unsetAuthToken();
 		}
 	}, [hasAuth]);
+	useEffect(() => {
+		updateMe();
+	}, []);
 	return (
 		<>
 			{!!activeSnackBar && (

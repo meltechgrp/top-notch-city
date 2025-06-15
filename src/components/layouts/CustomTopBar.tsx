@@ -31,7 +31,7 @@ export default function CustomTopBar(props: Props) {
 		<View className={cn('py-2 gap-4 w-full bg-background', containerClassName)}>
 			<View
 				onLayout={onLayout2}
-				className="flex-row h-12 bg-background-muted rounded-sm p-1">
+				className="flex-row h-14 bg-background-muted rounded-sm p-1">
 				<View className="relative flex-row w-full">
 					<Animated.View
 						style={[

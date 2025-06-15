@@ -1,117 +1,78 @@
-import * as React from 'react';
-
-import { Alert, Animated, View } from 'react-native';
-
+import React, { useCallback, useRef, useState } from 'react';
+import { LayoutChangeEvent, NativeScrollEvent } from 'react-native';
+import Animated, {
+	useSharedValue,
+	useAnimatedStyle,
+	scrollTo,
+	useAnimatedRef,
+} from 'react-native-reanimated';
+import PagerView from 'react-native-pager-view';
+import { Stack, useRouter } from 'expo-router';
+import { Box, Pressable, Text, View } from '@/components/ui';
 import { useStore } from '@/store';
-import {
-	Stack,
-	useLocalSearchParams,
-	useNavigationContainerRef,
-	useRouter,
-} from 'expo-router';
+import { ProfileTopSection } from '@/components/profile/ProfileTopSection';
+import ProfileTabHeaderSection from '@/components/profile/ProfileTabHeaderSection';
+import PropertiesTabView from '@/components/profile/PropertiesTab';
 import BeachPersonWaterParasolSingleColorIcon from '@/components/icons/BeachPersonWaterParasolIcon';
-import {
-	Avatar,
-	AvatarFallbackText,
-	AvatarImage,
-	Icon,
-	Pressable,
-	Text,
-	useResolvedTheme,
-} from '@/components/ui';
-import { getImageUrl, useApiRequest } from '@/lib/api';
-import { BodyScrollView } from '@/components/layouts/BodyScrollView';
-import { Divider } from '@/components/ui/divider';
-import { MenuListItem } from '@/components/menu/MenuListItem';
-import {
-	BookCheck,
-	Building2,
-	ChartNoAxesColumnIncreasing,
-	ChevronRight,
-	House,
-	LogOut,
-	Shield,
-	User,
-	Warehouse,
-} from 'lucide-react-native';
-import { cn, fullName } from '@/lib/utils';
-import { CommonActions } from '@react-navigation/native';
-import LogoutAlertDialog from '@/components/shared/LogoutAlertDialog';
-import useResetAppState from '@/hooks/useResetAppState';
+import { fullName } from '@/lib/utils';
+import WishlistTabView from '@/components/profile/WishlistTabView';
+import AnalyticsTabView from '@/components/profile/AnalyticsTabView';
 
+const TABS = ['Properties', 'Wishlist', 'Analytics'];
 export default function ProfileScreen() {
-	const { user, ref } = useLocalSearchParams<{
-		user: string;
-		ref?: string;
-	}>();
-	const { me, updateProfile } = useStore();
-	const resetAppState = useResetAppState();
-	const [refetching, setRefetching] = React.useState(false);
+	const { me } = useStore();
 	const router = useRouter();
-	const navigation = useNavigationContainerRef();
-	const [openLogoutAlertDialog, setOpenLogoutAlertDialog] =
-		React.useState(false);
-	const { request } = useApiRequest<Me>();
-	const theme = useResolvedTheme();
+	const userId = me?.id;
+	const pagerRef = useRef<PagerView>(null);
+	const [currentPage, setCurrentPage] = useState(0);
+	const scrollYs = useRef(TABS.map(() => useSharedValue(0))).current;
+	const scrollRefs = useRef(TABS.map(() => useAnimatedRef())).current;
 
-	async function onRefresh() {
-		try {
-			setRefetching(true);
-			const data = await request({
-				url: 'users/me',
-			});
-			if (data) {
-				updateProfile(data);
-			}
-		} catch (error) {
-		} finally {
-			setRefetching(false);
-		}
-	}
-	function logout() {
-		resetAppState();
-		navigation?.dispatch(
-			CommonActions.reset({
-				routes: [
-					{
-						name: '(auth)',
-						state: {
-							routes: [{ name: 'onboarding' }],
-						},
-					},
-					{
-						name: '(auth)',
-						state: {
-							routes: [{ name: 'signin' }],
-						},
-					},
-				],
-			})
-		);
-	}
-	async function onLogout() {
-		Alert.alert(
-			'Logout',
-			'Are you sure you want to logout?',
-			[
+	const [headerOnlyHeight, setHeaderOnlyHeight] = useState(0);
+	const [tabBarHeight, setTabBarHeight] = useState(0);
+	const fullHeaderHeight = headerOnlyHeight + tabBarHeight;
+
+	const onHeaderLayout = useCallback((e: LayoutChangeEvent) => {
+		setHeaderOnlyHeight(Math.round(e.nativeEvent.layout.height));
+	}, []);
+
+	const onTabBarLayout = useCallback((e: LayoutChangeEvent) => {
+		setTabBarHeight(Math.round(e.nativeEvent.layout.height));
+	}, []);
+
+	const headerTranslateY = useAnimatedStyle(() => {
+		return {
+			transform: [
 				{
-					text: 'Cancel',
-					style: 'cancel',
-				},
-				{
-					text: 'Logout',
-					style: 'destructive',
-					onPress: () => {
-						logout();
-					},
+					translateY: -Math.min(scrollYs[currentPage].value, headerOnlyHeight),
 				},
 			],
-			{}
-		);
-	}
-	if (!me?.id) {
-		return <EmptyProfile />;
-	}
+		};
+	}, [currentPage, headerOnlyHeight]);
+
+	React.useEffect(() => {
+		if (me) {
+			router.setParams({ title: fullName(me) });
+		}
+	}, [me]);
+
+	const scrollToTop = React.useCallback((index: number) => {
+		const ref = scrollRefs[index];
+		if (ref) {
+			scrollTo(ref, 0, 0, true);
+		}
+	}, []);
+
+	const onTabChange = React.useCallback(
+		(index: number) => {
+			setCurrentPage(index);
+			pagerRef.current?.setPage(index);
+			scrollToTop(index);
+		},
+		[scrollToTop]
+	);
+
+	if (!me?.id) return <EmptyProfile />;
 	return (
 		<>
 			<Stack.Screen
@@ -130,97 +91,83 @@ export default function ProfileScreen() {
 					),
 				}}
 			/>
-			<BodyScrollView
-				onRefresh={onRefresh}
-				refreshing={refetching}
-				withBackground={true}
-				className="pt-4">
-				<View
-					className={cn(
-						'px-4 py-2 mt-2',
-						theme == 'dark'
-							? 'bg-background-muted/95'
-							: 'bg-background-muted/60'
-					)}>
-					<Pressable className={'flex-row items-center'}>
-						<Avatar className=" w-16 h-16">
-							<AvatarFallbackText>{fullName(me)}</AvatarFallbackText>
-							<AvatarImage source={getImageUrl(me?.profile_image)} />
-						</Avatar>
-						<View className="flex-1 pl-3">
-							<Text className="text-lg font-medium">{fullName(me)}</Text>
-							<Text className="text-sm text-typography/80">{me?.email}</Text>
-						</View>
-					</Pressable>
-				</View>
-				<View className="pt-10 flex-1 px-4">
-					<Text className="text-sm text-typography/80 uppercase px-4 mb-2">
-						Profile Menu
-					</Text>
-					<View className="flex-1 mt-2">
-						<MenuListItem
-							title="Properties"
-							description="View all your saved properties"
-							onPress={() =>
-								router.push('/(protected)/profile/[user]/properties')
-							}
-							icon={Building2}
-							iconColor="primary"
-							className=" py-2 pb-3"
-						/>
-						<Divider className=" h-[0.3px] bg-background-info mb-4" />
-						<MenuListItem
-							title="Bookings"
-							description="View all customers requests"
-							onPress={() => {}}
-							icon={BookCheck}
-							iconColor="yellow-600"
-							className=" py-2 pb-3"
-						/>
-						<Divider className=" h-[0.3px] bg-background-info mb-4" />
-						<MenuListItem
-							title="Security"
-							description="Change your password or delete account"
-							onPress={() =>
-								router.push('/(protected)/profile/[user]/security')
-							}
-							icon={Shield}
-							iconColor="gray-500"
-							className=" py-2 pb-3"
-						/>
-						<Divider className=" h-[0.3px] bg-background-info mb-4" />
-						<MenuListItem
-							title="Analytics"
-							description="Monitor your sells and views"
-							onPress={() =>
-								router.push('/(protected)/profile/[user]/analytics')
-							}
-							icon={ChartNoAxesColumnIncreasing}
-							className="py-2"
-							iconColor="yellow-600"
-						/>
-						<Divider className=" h-[0.3px] bg-background-info mb-4" />
-						<MenuListItem
-							title="Sell or Rent your property"
-							description={`Join us as an agent to earn more`}
-							icon={Warehouse}
-							className="py-2"
-							iconColor="gray-600"
-							onPress={() => router.push('/sell')}
+			<Box className="flex-1">
+				<Animated.View
+					style={[
+						headerTranslateY,
+						{ zIndex: 10, position: 'absolute', width: '100%' },
+					]}
+					pointerEvents="box-none">
+					<View onLayout={onHeaderLayout} pointerEvents="box-none">
+						<ProfileTopSection />
+					</View>
+					<View onLayout={onTabBarLayout}>
+						<ProfileTabHeaderSection
+							activeIndex={currentPage}
+							onTabChange={onTabChange}
+							profile={me}
 						/>
 					</View>
-					<Pressable
-						onPress={onLogout}
-						className="bg-background-muted h-14 mt-8 rounded-xl px-4 flex-row justify-center items-center gap-2">
-						<Text size="lg">Sign Out</Text>
-						<Icon size="md" as={LogOut} className="text-primary" />
-					</Pressable>
-				</View>
-			</BodyScrollView>
-			<LogoutAlertDialog
-				setOpenLogoutAlertDialog={setOpenLogoutAlertDialog}
-				openLogoutAlertDialog={openLogoutAlertDialog}
-			/>
+				</Animated.View>
+
+				<PagerView
+					style={{ flex: 1, marginTop: fullHeaderHeight }}
+					initialPage={0}
+					ref={pagerRef}
+					onPageSelected={(e) => setCurrentPage(e.nativeEvent.position)}>
+					{TABS.map((tab, index) => {
+						switch (tab) {
+							case 'Properties':
+								return (
+									<View style={{ flex: 1 }} key={index}>
+										{userId && currentPage === index ? (
+											<PropertiesTabView
+												key={index}
+												listRef={scrollRefs[index]}
+												profileId={userId}
+												scrollElRef={scrollRefs[index]}
+												headerHeight={fullHeaderHeight}
+												scrollY={scrollYs[index]}
+											/>
+										) : null}
+									</View>
+								);
+							case 'Wishlist':
+								return (
+									<View style={{ flex: 1 }} key={index}>
+										{userId && currentPage === index ? (
+											<WishlistTabView
+												key={index}
+												listRef={scrollRefs[index]}
+												profileId={userId}
+												scrollElRef={scrollRefs[index]}
+												headerHeight={fullHeaderHeight}
+												scrollY={scrollYs[index]}
+											/>
+										) : null}
+									</View>
+								);
+							case 'Analytics':
+								return (
+									<View style={{ flex: 1 }} key={index}>
+										{userId && currentPage === index ? (
+											<AnalyticsTabView
+												key={index}
+												listRef={scrollRefs[index]}
+												profileId={userId}
+												scrollElRef={scrollRefs[index]}
+												headerHeight={fullHeaderHeight}
+												scrollY={scrollYs[index]}
+											/>
+										) : null}
+									</View>
+								);
+							default:
+								return null;
+						}
+					})}
+				</PagerView>
+			</Box>
 		</>
 	);
 }

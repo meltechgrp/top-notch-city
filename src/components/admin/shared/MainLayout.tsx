@@ -18,8 +18,11 @@ export default function MainLayout(props: Props) {
 
 	return (
 		<View className="flex-1 bg-background">
-			<SafeAreaView edges={['top']} style={{ flex: 1 }}>
-				<View style={style} className="flex-1 bg-primary">
+			<SafeAreaView
+				edges={['top']}
+				style={{ flex: 1 }}
+				className=" bg-transparent">
+				<View style={style} className="flex-1">
 					<View
 						className={cn(
 							'w-full bg-background border-b border-outline h-[64px]',
@@ -45,8 +48,7 @@ export default function MainLayout(props: Props) {
 							</View>
 						</View>
 					</View>
-					<View
-						className={cn('flex-1 bg-background relative', props.className)}>
+					<View className={cn('flex-1 relative', props.className)}>
 						{children}
 					</View>
 				</View>

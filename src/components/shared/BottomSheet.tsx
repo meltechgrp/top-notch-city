@@ -55,7 +55,7 @@ export default function BottomSheet(props: BottomSheetProps) {
 		enableOverDrag = true,
 		plain,
 		enableDynamicSizing = false,
-		backdropVariant,
+		backdropVariant = true,
 		android_keyboardInputMode = 'adjustPan',
 		contentClassName,
 		enableClose = true,
@@ -187,12 +187,12 @@ export default function BottomSheet(props: BottomSheetProps) {
 				<BottomSheetScrollView
 					style={{
 						flex: 1,
-						backgroundColor:
-							theme == 'dark'
-								? Colors.light.background
-								: Colors.dark.background,
 					}}
-					className={cn(rounded && ' rounded-t-xl', contentClassName)}>
+					className={cn(
+						'bg-background',
+						rounded && ' rounded-t-xl',
+						contentClassName
+					)}>
 					<KeyboardAvoidingView
 						behavior={Platform.OS === 'ios' ? 'height' : undefined}
 						style={{ flex: 1 }}>
@@ -203,13 +203,12 @@ export default function BottomSheet(props: BottomSheetProps) {
 				<BottomSheetView
 					style={{
 						flex: 1,
-						backgroundColor: addBackground
-							? theme == 'dark'
-								? Colors.light.background
-								: Colors.dark.background
-							: 'transparent',
 					}}
-					className={cn(rounded && ' rounded-t-xl', contentClassName)}>
+					className={cn(
+						'bg-background',
+						rounded && ' rounded-t-xl',
+						contentClassName
+					)}>
 					<KeyboardAvoidingView
 						behavior={Platform.OS === 'ios' ? 'height' : undefined}
 						style={{ flex: 1 }}>

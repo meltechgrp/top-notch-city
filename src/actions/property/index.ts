@@ -115,8 +115,7 @@ export async function fetchProperties({
 	userId?: string;
 }) {
 	try {
-		const res = await Fetch(`/properties?user`, {});
-
+		const res = await Fetch(`/properties`, {});
 		if (!res.ok) {
 			throw new Error('Failed to fetch properties');
 		}
@@ -128,7 +127,43 @@ export async function fetchProperties({
 		throw new Error('Failed to fetch properties');
 	}
 }
+export async function fetchUserProperties({
+	userId,
+	pageParam,
+}: {
+	userId?: string;
+	pageParam: number;
+}) {
+	try {
+		const res = await Fetch(`/user/${userId}`, {});
+		if (!res.ok) {
+			throw new Error('Failed to fetch properties');
+		}
 
+		const json = await res.json();
+		if (json?.detail) {
+			return [];
+		}
+		return json as Property[];
+	} catch (error) {
+		console.log(error);
+		throw new Error('Failed to fetch properties');
+	}
+}
+export async function fetchWishlist() {
+	try {
+		const res = await Fetch(`/me`, {});
+		if (!res.ok) {
+			throw new Error('Failed to fetch properties');
+		}
+
+		const json = (await res.json()) as Wishlist[];
+		return json;
+	} catch (error) {
+		console.log(error);
+		throw new Error('Failed to fetch properties');
+	}
+}
 export async function fetchProperty({ id }: { id: string }) {
 	try {
 		const res = await Fetch(`/properties/${id}`, {});
@@ -232,6 +267,28 @@ export async function likeProperty({ id }: { id: string }) {
 		throw new Error('Failed to like');
 	}
 }
+export async function approveProperty({ id }: { id: string }) {
+	try {
+		const res = await Fetch(`/properties/${id}/approve`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ property_id: id }),
+		});
+
+		if (!res.ok) {
+			throw new Error('Failed to like');
+		}
+
+		const data = await res.json();
+		console.log(data);
+		return data;
+	} catch (error) {
+		console.log(error);
+		throw new Error('Failed to like');
+	}
+}
 export async function viewProperty({ id }: { id: string }) {
 	try {
 		const res = await Fetch(`/properties/${id}/view`, {
@@ -264,6 +321,32 @@ export const fetchCategories = async () => {
 		}
 
 		const data = (await res.json()) as Category[];
+		return data;
+	} catch (error) {
+		console.log(error);
+		throw new Error('Failed to categories');
+	}
+};
+
+export const deleteInteractions = async () => {
+	try {
+		const res = await Fetch(`/interactions`, {});
+
+		if (!res.ok) {
+			throw new Error('Failed to categories');
+		}
+
+		const data = await res.json();
+		await Promise.all(
+			data?.map(async (item: any) => {
+				await Fetch(`/interactions/${item.id}`, {
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					method: 'DELETE',
+				});
+			})
+		);
 		return data;
 	} catch (error) {
 		console.log(error);

@@ -8,12 +8,12 @@ import { Icon, Pressable, View } from '../ui';
 import { CirclePlay, Pause } from 'lucide-react-native';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import { useEvent } from 'expo';
+import { useIsFocused } from '@react-navigation/native';
 
 interface Props extends AnimatedProps<ViewProps> {
 	style?: StyleProp<ImageStyle>;
 	index?: number;
 	rounded?: boolean;
-	mediaType?: 'image' | 'video';
 	source: string;
 	withBackdrop?: boolean;
 	canPlayVideo?: boolean;
@@ -28,22 +28,30 @@ export const PropertyMedia: React.FC<Props> = (props) => {
 		index = 0,
 		rounded = false,
 		withBackdrop = false,
-		canPlayVideo = false,
+		canPlayVideo = true,
 		testID,
 		nativeControls = false,
-		mediaType = 'image',
 		className,
 		isVisible = true,
 		onPress,
 		...animatedViewProps
 	} = props;
+	const isFocused = useIsFocused();
 	const uri = useMemo(() => generateMediaUrl(props.source), [props.source]);
-
+	const isImage = uri.endsWith('.jpg');
+	const isVideo = uri.endsWith('.mp4');
 	// Setup player if media is video
-	const player = useVideoPlayer(mediaType == 'video' ? uri : null, (player) => {
-		player.loop = false;
-		player.muted = true;
-	});
+	const player = useVideoPlayer(
+		isVideo && isFocused && uri ? uri : null,
+		(player) => {
+			try {
+				player.loop = false;
+				player.muted = true;
+			} catch (e) {
+				console.warn('VideoPlayer setup failed', e);
+			}
+		}
+	);
 
 	const { isPlaying } = useEvent(player, 'playingChange', {
 		isPlaying: player?.playing,
@@ -54,7 +62,7 @@ export const PropertyMedia: React.FC<Props> = (props) => {
 			testID={testID}
 			className={cn('relative flex-1', className)}
 			{...animatedViewProps}>
-			{isVisible && mediaType === 'image' ? (
+			{isVisible && isImage ? (
 				<Pressable className="flex-1" onPress={() => onPress?.(uri)}>
 					<Animated.Image
 						style={[style]}
@@ -64,7 +72,7 @@ export const PropertyMedia: React.FC<Props> = (props) => {
 					/>
 				</Pressable>
 			) : null}
-			{isVisible && mediaType === 'video' ? (
+			{isVisible && isVideo && player ? (
 				<Pressable
 					className={cn(
 						'relative w-full h-full',
@@ -74,22 +82,22 @@ export const PropertyMedia: React.FC<Props> = (props) => {
 						style={[style, { backgroundColor: 'transparent' }]}
 						player={player}
 						contentFit="cover"
-						allowsFullscreen
 						// surfaceType="textureView"
 						nativeControls={false}
 						className={cn('w-full h-full', rounded && 'rounded-xl')}
 					/>
 					{/* ▶️ Play icon overlay */}
-					{!canPlayVideo && (
-						<Pressable
-							onPress={() => {
-								if (isPlaying) {
-									player.pause();
-								} else {
-									player.play();
-								}
-							}}
-							className="absolute z-10 inset-0 items-center justify-center">
+					<Pressable
+						onPress={() => {
+							if (!canPlayVideo) return onPress?.(uri);
+							if (isPlaying) {
+								player.pause();
+							} else {
+								player.play();
+							}
+						}}
+						className="absolute z-10 inset-0 items-center justify-center">
+						{canPlayVideo && (
 							<View className="p-2 rounded-full bg-black/30 ">
 								{isPlaying ? (
 									<Icon as={Pause} className=" text-primary w-10 h-10" />
@@ -97,8 +105,8 @@ export const PropertyMedia: React.FC<Props> = (props) => {
 									<Icon as={CirclePlay} className=" text-primary w-10 h-10" />
 								)}
 							</View>
-						</Pressable>
-					)}
+						)}
+					</Pressable>
 				</Pressable>
 			) : null}
 

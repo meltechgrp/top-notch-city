@@ -14,14 +14,14 @@ import { Svg } from 'react-native-svg';
 const SCOPE = 'BADGE';
 
 const badgeStyle = tva({
-	base: 'flex-row items-center rounded-sm data-[disabled=true]:opacity-50 px-2 py-1',
+	base: 'flex-row items-center rounded-xl data-[disabled=true]:opacity-50 px-2 py-1',
 	variants: {
 		action: {
-			error: 'bg-background-error border-error-300',
-			warning: 'bg-background-warning border-warning-300',
-			success: 'bg-background-success border-success-300',
+			error: 'bg-background-error border-error',
+			warning: 'bg-background-warning border-outline',
+			success: 'bg-background-success border-outline',
 			info: 'bg-background-info border-outline',
-			muted: 'bg-background-muted border-outline-300',
+			muted: 'bg-background-muted border-outline',
 		},
 		variant: {
 			solid: '',
@@ -40,10 +40,10 @@ const badgeTextStyle = tva({
 
 	parentVariants: {
 		action: {
-			error: 'text-error-600',
-			warning: 'text-warning-600',
-			success: 'text-success-600',
-			info: 'text-info-600',
+			error: 'text-error',
+			warning: 'text-warning',
+			success: 'text-success',
+			info: 'text-info',
 			muted: 'text-typography',
 		},
 		size: {
@@ -81,10 +81,10 @@ const badgeIconStyle = tva({
 	base: 'fill-none',
 	parentVariants: {
 		action: {
-			error: 'text-error-600',
-			warning: 'text-warning-600',
-			success: 'text-success-600',
-			info: 'text-info-600',
+			error: 'text-error',
+			warning: 'text-warning',
+			success: 'text-success',
+			info: 'text-info',
 			muted: 'text-secondary',
 		},
 		size: {

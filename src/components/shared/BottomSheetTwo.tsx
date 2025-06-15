@@ -7,16 +7,26 @@ import { CloseIcon, Heading, Icon } from '../ui';
 type Props = View['props'] & {
 	onDismiss: () => void;
 	visible: boolean;
+	withScroll?: boolean;
 	title: string;
-	snapPoint?: string | number;
+	snapPoint?: string | number | string[] | number[];
 };
 export default function BottomSheetTwo(props: Props) {
-	const { visible, onDismiss, title, children, snapPoint, className } = props;
+	const {
+		visible,
+		onDismiss,
+		title,
+		withScroll,
+		children,
+		snapPoint,
+		className,
+	} = props;
 
 	return (
 		<BottomSheet
 			visible={visible}
 			onDismiss={onDismiss}
+			withScroll={withScroll}
 			plain={true}
 			bottomPadding={false}
 			snapPoint={snapPoint}>
