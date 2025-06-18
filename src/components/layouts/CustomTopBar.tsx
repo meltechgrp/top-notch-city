@@ -24,7 +24,7 @@ export default function CustomTopBar(props: Props) {
 		})
 		.filter((v) => v !== null) as unknown as NavigationState['routes'];
 	const tabWidth = useMemo(
-		() => Math.round((w - 8) / activeRoutes.length),
+		() => Math.round(((w < 100 ? 380 : w) - 8) / activeRoutes.length),
 		[w, activeRoutes]
 	);
 	return (

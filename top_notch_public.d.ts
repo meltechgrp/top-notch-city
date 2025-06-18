@@ -31,3 +31,14 @@ type SnackBarOption = {
 	icon?: React.ReactNode;
 	backdrop?: boolean;
 };
+
+type ConfirmationActionConfig = {
+	visible: boolean;
+	header: string;
+	description: string;
+	actionText: string;
+	onConfirm: (data: { propertyId: string; reason?: string }) => Promise<void>;
+	requireReason?: boolean;
+	className?: string;
+	iconClassName?: string;
+};

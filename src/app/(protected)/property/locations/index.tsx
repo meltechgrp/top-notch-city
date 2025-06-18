@@ -1,15 +1,6 @@
-import {
-	Box,
-	Button,
-	Pressable,
-	Text,
-	useResolvedTheme,
-	View,
-} from '@/components/ui';
+import { Box, Button, Text, View } from '@/components/ui';
 import { RefreshControl } from 'react-native';
-import { Stack, useRouter } from 'expo-router';
 import React from 'react';
-import { ChevronLeftIcon } from 'lucide-react-native';
 import { hapticFeed } from '@/components/HapticTab';
 import { BodyScrollView } from '@/components/layouts/BodyScrollView';
 import { FlashList } from '@shopify/flash-list';

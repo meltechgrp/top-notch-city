@@ -17,7 +17,15 @@
 			"distribution": "internal"
 		},
 		"production": {
-			"autoIncrement": true
+			"android": {
+				"buildType": "apk"
+			},
+			"env": {
+				"EXPO_PUBLIC_ANDROID_MAPS_API_KEY": "AIzaSyA0KuQDKgwN92uPKBr17IIFX0ve4rVoszA",
+				"EXPO_OS": "android",
+				"EXPO_PUBLIC_WEBSITE_URL": "https://topnotchcity.com",
+				"EXPO_PUBLIC_API_URL": "https://app.topnotchcity.com"
+			}
 		}
 	},
 	"submit": {

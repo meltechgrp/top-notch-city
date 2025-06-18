@@ -1,28 +1,67 @@
 import eventBus from '@/lib/eventBus';
-import { ImagePickerAsset } from 'expo-image-picker';
-import { compressImage } from '@/lib/utils';
-import { useApiRequest } from '@/lib/api';
+import { Fetch } from '../utills';
 
-export async function setProfileImage(image: ImagePickerAsset, user: string) {
+export async function getMe() {
+	const res = await Fetch('/users/me', {});
+	const data = await res.json();
+
+	if (!res.ok) {
+		throw new Error(data?.detail || 'Failed to update profile');
+	}
+	return data as Me;
+}
+
+export async function setProfileImage(image: string) {
+	if (!image) return;
+	const formData = new FormData();
+	formData.append('profile_image', {
+		uri: image,
+		name: `user.jpg`,
+		type: 'image/jpeg',
+	} as any);
+
+	const res = await Fetch('/users/me', {
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'multipart/form-data',
+		},
+		body: formData,
+	});
+	const data = await res.json();
+	eventBus.dispatchEvent('REFRESH_PROFILE', null);
+
+	// if (data?.detail) {
+	// 	throw new Error('Failed to update profile');
+	// }
+
+	return data;
+}
+
+export async function updateProfileField(
+	form: { field: keyof Me; value: any }[]
+) {
 	try {
-		if (!image) return;
-		const { request, data, error } = useApiRequest<Me>();
 		const formData = new FormData();
-		const newImage = await compressImage(image.uri);
-		formData.append('profile_image', {
-			uri: newImage.uri,
-			name: `${user}.webp`,
-			type: 'image/jpeg',
-		} as any);
-		await request({
-			url: '/users/me',
-			method: 'PUT',
-			data: formData,
+		form.map(({ field, value }) => {
+			formData.append(field, value);
 		});
-		console.log(data);
+
+		const res = await Fetch('/users/me', {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'multipart/form-data',
+			},
+			body: formData,
+		});
+		const data = await res.json();
 		eventBus.dispatchEvent('REFRESH_PROFILE', null);
+
+		// if (data?.detail) {
+		// 	throw new Error('Failed to update profile');
+		// }
+
 		return data;
 	} catch (error) {
-		console.log(error);
+		throw error;
 	}
 }

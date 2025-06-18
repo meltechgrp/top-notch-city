@@ -40,6 +40,7 @@ type Property = {
 	amenities: Amenity[];
 	interaction?: Interaction;
 	owner_interaction?: Owner_interaction;
+	reason_or_comment?: string;
 };
 
 type Owner = {
@@ -96,19 +97,13 @@ type Wishlist = {
 	media_urls: string[];
 };
 
-enum PropertyStatus {
-	pending,
-	approve,
-	sold,
-	reject,
-	flag,
-	expire,
-}
-enum PropertyPurpose {
-	rent,
-	sell,
-}
-enum Currency {
-	ngn,
-	usd,
-}
+type PropertyStatus =
+	| 'pending'
+	| 'approved'
+	| 'sold'
+	| 'rejected'
+	| 'flagged'
+	| 'expired';
+
+type PropertyPurpose = 'rent' | 'sell';
+type Currency = 'ngn' | 'usd';

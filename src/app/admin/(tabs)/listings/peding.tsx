@@ -28,7 +28,6 @@ export default function PendingProperties() {
 				<View className="flex-1">
 					<VerticalProperties
 						data={propertysData}
-						scrollEnabled
 						isLoading={isLoading}
 						disableHeader
 						onPress={(data) => {

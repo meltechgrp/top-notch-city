@@ -10,7 +10,7 @@ import {
 	Icon,
 } from '@/components/ui';
 import { RefreshControl, ScrollView } from 'react-native';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { cn, composeFullAddress, fullName } from '@/lib/utils';
 import { useStore } from '@/store';
 import { ChevronRight, Edit2 } from 'lucide-react-native';
@@ -23,6 +23,8 @@ import ProfilePhoneBottomSheet from '@/components/account/ProfilePhoneBottomShee
 import ProfileGenderBottomsheet from '@/components/account/ProfileGenderBottomsheet';
 import ProfileDobBottomSheet from '@/components/account/ProfileDobBottomSheet';
 import ProfileAddressBottomSheet from '@/components/account/ProfileAddressBottomSheet';
+import { useQuery } from '@tanstack/react-query';
+import { getMe } from '@/actions/user';
 
 export default function Account() {
 	const { me, updateProfile } = useStore();
@@ -34,20 +36,19 @@ export default function Account() {
 	const [genderBottomSheet, setGenderBottomSheet] = useState(false);
 	const [dobBottomSheet, setDobBottomSheet] = useState(false);
 	const [addressBottomSheet, setAddressBottomSheet] = useState(false);
-	const { request } = useApiRequest<Me>();
-
-	const update = useCallback((me: Me) => {
-		if (me) {
-			updateProfile(me);
+	const { refetch, data } = useQuery({
+		queryKey: ['user'],
+		queryFn: getMe,
+	});
+	useEffect(() => {
+		if (data) {
+			updateProfile(data);
 		}
-	}, []);
-
+	}, [data]);
 	async function onRefresh() {
 		try {
 			setRefetching(true);
-			const data = await request({
-				url: '/users/me',
-			});
+			const { data } = await refetch();
 			if (data) {
 				updateProfile(data);
 			}
@@ -185,37 +186,30 @@ export default function Account() {
 			<ProfileImageBottomSheet
 				visible={imageBottomSheet}
 				onDismiss={() => setImageBottomSheet(false)}
-				update={update}
 			/>
 			<ProfileNameBottomSheet
 				visible={nameBottomSheet}
 				onDismiss={() => setNameBottomSheet(false)}
-				update={update}
 			/>
 			<ProfileEmailBottomSheet
 				visible={emailBottomSheet}
 				onDismiss={() => setEmailBottomSheet(false)}
-				update={update}
 			/>
 			<ProfilePhoneBottomSheet
 				visible={phoneBottomSheet}
 				onDismiss={() => setPhoneBottomSheet(false)}
-				update={update}
 			/>
 			<ProfileGenderBottomsheet
 				visible={genderBottomSheet}
 				onDismiss={() => setGenderBottomSheet(false)}
-				update={update}
 			/>
 			<ProfileDobBottomSheet
 				visible={dobBottomSheet}
 				onDismiss={() => setDobBottomSheet(false)}
-				update={update}
 			/>
 			<ProfileAddressBottomSheet
 				visible={addressBottomSheet}
 				onDismiss={() => setAddressBottomSheet(false)}
-				update={update}
 			/>
 		</>
 	);

@@ -1,20 +1,21 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { LayoutChangeEvent, NativeScrollEvent } from 'react-native';
+import { LayoutChangeEvent } from 'react-native';
 import Animated, {
 	useSharedValue,
 	useAnimatedStyle,
 	scrollTo,
 	useAnimatedRef,
+	useAnimatedReaction,
+	runOnJS,
 } from 'react-native-reanimated';
 import PagerView from 'react-native-pager-view';
-import { Stack, useRouter } from 'expo-router';
-import { Box, Pressable, Text, View } from '@/components/ui';
+import { useRouter } from 'expo-router';
+import { Box, Text, View } from '@/components/ui';
 import { useStore } from '@/store';
 import { ProfileTopSection } from '@/components/profile/ProfileTopSection';
 import ProfileTabHeaderSection from '@/components/profile/ProfileTabHeaderSection';
 import PropertiesTabView from '@/components/profile/PropertiesTab';
 import BeachPersonWaterParasolSingleColorIcon from '@/components/icons/BeachPersonWaterParasolIcon';
-import { fullName } from '@/lib/utils';
 import WishlistTabView from '@/components/profile/WishlistTabView';
 import AnalyticsTabView from '@/components/profile/AnalyticsTabView';
 
@@ -31,10 +32,11 @@ export default function ProfileScreen() {
 	const [headerOnlyHeight, setHeaderOnlyHeight] = useState(0);
 	const [tabBarHeight, setTabBarHeight] = useState(0);
 	const fullHeaderHeight = headerOnlyHeight + tabBarHeight;
-
 	const onHeaderLayout = useCallback((e: LayoutChangeEvent) => {
 		setHeaderOnlyHeight(Math.round(e.nativeEvent.layout.height));
 	}, []);
+
+	const lastTitleState = useSharedValue<'profile' | 'name'>('profile');
 
 	const onTabBarLayout = useCallback((e: LayoutChangeEvent) => {
 		setTabBarHeight(Math.round(e.nativeEvent.layout.height));
@@ -49,12 +51,6 @@ export default function ProfileScreen() {
 			],
 		};
 	}, [currentPage, headerOnlyHeight]);
-
-	React.useEffect(() => {
-		if (me) {
-			router.setParams({ title: fullName(me) });
-		}
-	}, [me]);
 
 	const scrollToTop = React.useCallback((index: number) => {
 		const ref = scrollRefs[index];
@@ -71,37 +67,45 @@ export default function ProfileScreen() {
 		},
 		[scrollToTop]
 	);
+	useAnimatedReaction(
+		() => scrollYs[currentPage].value,
+		(scroll) => {
+			if (!me) return;
 
+			const threshold = headerOnlyHeight / 1.5;
+
+			if (scroll > threshold && lastTitleState.value !== 'name') {
+				lastTitleState.value = 'name';
+				runOnJS(router.setParams)({
+					title: me.first_name + ' ' + me.last_name,
+				});
+			} else if (scroll <= threshold && lastTitleState.value !== 'profile') {
+				lastTitleState.value = 'profile';
+				runOnJS(router.setParams)({
+					title: 'Profile',
+				});
+			}
+		},
+		[currentPage, headerOnlyHeight, me]
+	);
 	if (!me?.id) return <EmptyProfile />;
 	return (
 		<>
-			<Stack.Screen
-				options={{
-					headerRight: () => (
-						<View className="flex-row items-center">
-							<Pressable
-								onPress={() => {
-									router.push('/(protected)/profile/[user]/account');
-								}}>
-								<Text size="xl" className="text-primary">
-									Edit
-								</Text>
-							</Pressable>
-						</View>
-					),
-				}}
-			/>
 			<Box className="flex-1">
 				<Animated.View
 					style={[
 						headerTranslateY,
-						{ zIndex: 10, position: 'absolute', width: '100%' },
+						{
+							zIndex: 10,
+							position: 'absolute',
+							width: '100%',
+						},
 					]}
 					pointerEvents="box-none">
 					<View onLayout={onHeaderLayout} pointerEvents="box-none">
 						<ProfileTopSection />
 					</View>
-					<View onLayout={onTabBarLayout}>
+					<View onLayout={onTabBarLayout} className="bg-black">
 						<ProfileTabHeaderSection
 							activeIndex={currentPage}
 							onTabChange={onTabChange}
@@ -111,7 +115,7 @@ export default function ProfileScreen() {
 				</Animated.View>
 
 				<PagerView
-					style={{ flex: 1, marginTop: fullHeaderHeight }}
+					style={{ flex: 1 }}
 					initialPage={0}
 					ref={pagerRef}
 					onPageSelected={(e) => setCurrentPage(e.nativeEvent.position)}>

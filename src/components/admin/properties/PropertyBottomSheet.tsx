@@ -1,41 +1,149 @@
 import { View } from 'react-native';
-import { Button, ButtonText, Heading, Pressable, Text } from '@/components/ui';
+import {
+	Button,
+	ButtonText,
+	Heading,
+	Icon,
+	Pressable,
+	Text,
+} from '@/components/ui';
 import withRenderVisible from '@/components/shared/withRenderOpen';
 import { composeFullAddress, formatMoney, fullName } from '@/lib/utils';
 import { capitalize, chunk } from 'lodash-es';
 import BottomSheet from '@/components/shared/BottomSheet';
 import { PropertyStatus } from '@/components/property/PropertyStatus';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { PropertyModalMediaViewer } from '@/components/property/PropertyModalMediaViewer';
 import { useLayout } from '@react-native-community/hooks';
 import { PropertyMedia } from '@/components/property/PropertyMedia';
+import { ConfirmationModal } from '@/components/modals/ConfirmationModal';
+import { format } from 'date-fns';
+import { usePropertyStatusMutations } from '@/tanstack/mutations/usePropertyStatusMutations';
+import PropertyActionsBottomSheet from './PropertyActionsBottomSheet';
+import { Edit, MoreHorizontal } from 'lucide-react-native';
 
 type PropertyBottomSheetProps = {
 	visible: boolean;
 	property: Property;
+	user: Me;
 	onDismiss: () => void;
-	onApprove?: () => void;
-	onReject?: () => void;
 };
 
 function PropertyBottomSheet(props: PropertyBottomSheetProps) {
-	const { visible, property, onDismiss, onApprove, onReject } = props;
+	const { visible, property, onDismiss, user } = props;
 	const [isViewer, setIsViewer] = useState(false);
 	const [imageIndex, setImagesIndex] = useState(0);
+	const [openEdit, setOpenEdit] = useState(false);
+	const { mutateAsync: approve } = usePropertyStatusMutations().approveMutation;
+	const { mutateAsync: reject } = usePropertyStatusMutations().rejectMutation;
+	const { mutateAsync: permanentDelete } =
+		usePropertyStatusMutations().deleteMutation;
+	const { mutateAsync: expire } = usePropertyStatusMutations().expireMutation;
+	const { mutateAsync: flag } = usePropertyStatusMutations().flagMutation;
+	const { mutateAsync: pending } = usePropertyStatusMutations().pendingMutation;
+	const { mutateAsync: sell } = usePropertyStatusMutations().sellMutation;
+	const { mutateAsync: softDelete } =
+		usePropertyStatusMutations().softDeleteMutation;
 	const { width, onLayout } = useLayout();
+
+	const actions: ConfirmationActionConfig[] = [
+		{
+			visible: user?.role === 'admin' && property.status === 'pending',
+			header: 'Property Status Update',
+			actionText: 'Approve',
+			description: 'This will approve the property. Proceed?',
+			onConfirm: approve,
+		},
+		{
+			visible: user?.role === 'admin' && property.status === 'pending',
+			header: 'Property Status Update',
+			actionText: 'Reject',
+			description: 'This will reject the property. A valid reason is required.',
+			requireReason: true,
+			onConfirm: reject,
+		},
+		{
+			visible: user?.role === 'admin' && property.status === 'approved',
+			header: 'Property Status Update',
+			actionText: 'Flag',
+			description:
+				'This will flag the property. Please provide a valid reason.',
+			requireReason: true,
+			onConfirm: flag,
+		},
+		{
+			visible: user?.role === 'admin' && property.status === 'approved',
+			header: 'Property Status Update',
+			actionText: 'Expire',
+			description:
+				'This will expire the property. Provide a reason to proceed.',
+			requireReason: true,
+			onConfirm: expire,
+		},
+		{
+			visible:
+				user?.role === 'admin' &&
+				property.status !== 'sold' &&
+				property.status !== 'pending',
+			header: 'Property Status Update',
+			actionText: 'Set Pending',
+			description: 'This will mark the property as pending again.',
+			onConfirm: pending,
+		},
+		{
+			visible: user?.id === property.owner.id && property.status === 'approved',
+			header: 'Mark As Sold',
+			actionText: 'Mark Sold',
+			description: 'Are you sure you want to mark this property as sold?',
+			onConfirm: sell,
+		},
+		{
+			visible: user?.id === property.owner.id && property.status !== 'pending',
+			header: 'Delete Property',
+			actionText: 'Delete Property',
+			description: 'This will temporarily remove the property. Are you sure?',
+			onConfirm: softDelete,
+			className: 'bg-primary',
+		},
+		{
+			visible: property.status == 'approved' && user.role == 'admin',
+			header: 'Permanent Delete',
+			actionText: 'Delete',
+			description:
+				'This action is irreversible. Are you sure you want to permanently delete this property?',
+			onConfirm: permanentDelete,
+			className: 'bg-primary',
+		},
+	];
+	const HeaderRightComponent = (
+		<Pressable
+			onPress={() => {
+				setOpenEdit(true);
+			}}
+			className=" self-end ">
+			<Icon size="xl" as={MoreHorizontal} className=" text-primary" />
+		</Pressable>
+	);
 	return (
 		<BottomSheet
 			title="Review Property"
 			onDismiss={onDismiss}
 			visible={visible}
 			withHeader
+			HeaderRightComponent={HeaderRightComponent}
 			withScroll={true}
 			snapPoint={[450, 720]}>
 			<View onLayout={onLayout} className="gap-y-4 flex-1 mt-4 px-4 pb-32">
 				<View className=" rounded-2xl bg-background-muted p-4">
-					<Heading size="md" className="mb-3">
-						Property Info
-					</Heading>
+					<View className="flex-row justify-between">
+						<Heading size="md" className="mb-3">
+							Property Info
+						</Heading>
+						<Button>
+							<ButtonText>Edit</ButtonText>
+							<Icon size="sm" as={Edit} />
+						</Button>
+					</View>
 
 					<View className="gap-y-3">
 						<InfoRow label="Title" value={property.title} />
@@ -56,6 +164,13 @@ function PropertyBottomSheet(props: PropertyBottomSheetProps) {
 						<InfoRow
 							label="Address"
 							value={composeFullAddress(property.address, true)}
+						/>
+						<InfoRow
+							label="Created"
+							value={format(
+								new Date(property?.created_at ?? new Date()),
+								'dd MMM yyyy'
+							)}
 						/>
 					</View>
 				</View>
@@ -103,13 +218,6 @@ function PropertyBottomSheet(props: PropertyBottomSheetProps) {
 					<View className="gap-y-3">
 						<InfoRow label="Name" value={fullName(property.owner)} />
 						<InfoRow label="Email" value={property.owner?.email ?? 'N/A'} />
-						{/* <InfoRow
-								label="Joined"
-								value={format(
-									new Date(property.owner?.created_at ?? new Date()),
-									'dd MMM yyyy'
-								)}
-							/> */}
 					</View>
 				</View>
 				{property.amenities.length > 0 && (
@@ -122,19 +230,6 @@ function PropertyBottomSheet(props: PropertyBottomSheetProps) {
 						</Text>
 					</View>
 				)}
-				{property.status == 'pending' && (
-					<View className="mt-6 flex-row gap-4">
-						<Button className="flex-1 h-12" variant="solid" onPress={onReject}>
-							<ButtonText>Reject</ButtonText>
-						</Button>
-						<Button
-							className="flex-1 h-12 bg-gray-500"
-							variant="solid"
-							onPress={onApprove}>
-							<ButtonText>Approve</ButtonText>
-						</Button>
-					</View>
-				)}
 			</View>
 
 			<PropertyModalMediaViewer
@@ -144,6 +239,28 @@ function PropertyBottomSheet(props: PropertyBottomSheetProps) {
 				setVisible={setIsViewer}
 				canPlayVideo
 				media={property?.media_urls}
+			/>
+			<PropertyActionsBottomSheet
+				isOpen={openEdit}
+				onDismiss={() => setOpenEdit(false)}
+				withBackground={false}
+				options={actions.filter((action) => action.visible)}
+				OptionComponent={({ index, option, onPress }) => (
+					<ConfirmationModal
+						key={index}
+						visible={option.visible}
+						index={index}
+						header={option.header}
+						description={option.description}
+						actionText={option.actionText}
+						requireReason={option.requireReason}
+						onConfirm={option.onConfirm}
+						propertyId={property.id}
+						className={option.className}
+						onDismiss={onDismiss}
+						onPress={onPress}
+					/>
+				)}
 			/>
 		</BottomSheet>
 	);

@@ -18,7 +18,6 @@ export default function SplashScreen() {
 	// Navigate when video ends
 	React.useEffect(() => {
 		if (!player) return;
-
 		const onEnded = () => {
 			if (hasAuth) {
 				router.replace('/home');

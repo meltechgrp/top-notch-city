@@ -6,32 +6,28 @@ import { useEffect, useMemo, useState } from 'react';
 import { Button, ButtonIcon, ButtonText, Icon, Text } from '../ui';
 import { debounce } from 'lodash-es';
 import { MapPin, Send } from 'lucide-react-native';
-import { fetchPlaceFromTextQuery } from '@/actions/utills';
 import { composeFullAddress, showSnackbar } from '@/lib/utils';
 import { MiniEmptyState } from '../shared/MiniEmptyState';
-import { useApiQueryWithParams, useApiRequest } from '@/lib/api';
 import { SpinningLoader } from '../loaders/SpinningLoader';
 import useGetLocation from '@/hooks/useGetLocation';
 import { getReverseGeocode } from '@/hooks/useReverseGeocode';
+import { useProfileMutations } from '@/tanstack/mutations/useProfileMutations';
+import { fetchPlaceFromTextQuery } from '@/actions/utills';
 
 type Props = {
 	visible: boolean;
 	onDismiss: () => void;
-	update: (data: Me) => void;
 };
 
 function ProfileAddressBottomSheet(props: Props) {
-	const { visible, onDismiss, update } = props;
+	const { visible, onDismiss } = props;
 	const { retryGetLocation } = useGetLocation();
 	const [text, setText] = useState('');
+	const [fetching, setFetching] = useState(false);
 	const [locating, setLocating] = useState(false);
-	const { request, loading } = useApiRequest<Me>();
+	const { mutateAsync, isPending: loading } =
+		useProfileMutations().updateAddressMutation;
 	const [locations, setLocations] = useState<GooglePlace[]>([]);
-
-	const { refetch, loading: fetching } = useApiQueryWithParams(
-		fetchPlaceFromTextQuery
-	);
-
 	const debouncedAutocompleteSearch = useMemo(
 		() =>
 			debounce(
@@ -41,16 +37,19 @@ function ProfileAddressBottomSheet(props: Props) {
 						return;
 					}
 					try {
-						const result = await refetch(query);
+						setFetching(true);
+						const result = await fetchPlaceFromTextQuery(query);
 						setLocations(result);
 					} catch (error) {
 						console.error('Autocomplete error:', error);
+					} finally {
+						setFetching(false);
 					}
 				},
 				500,
 				{ leading: false, trailing: true }
 			),
-		[refetch]
+		[]
 	);
 
 	useEffect(() => {
@@ -66,36 +65,22 @@ function ProfileAddressBottomSheet(props: Props) {
 	};
 
 	async function handleAddress(item: GooglePlace) {
-		const formData = new FormData();
-		formData.append('street', item?.addressComponents?.street ?? '');
-		formData.append('city', item?.addressComponents?.city ?? '');
-		formData.append('country', item?.addressComponents?.country ?? '');
-		formData.append('state', item?.addressComponents?.state ?? '');
-		formData.append('latitude', item?.location?.latitude.toString() ?? '');
-		formData.append('longitude', item?.location?.longitude.toString() ?? '');
-		const data = await request({
-			url: '/users/me',
-			method: 'PUT',
-			data: formData,
-			headers: {
-				'Content-Type': 'multipart/form-data',
-			},
-		});
-		if (data) {
-			onDismiss();
-			update(data);
-			showSnackbar({
-				message: 'Profile address updated successfully',
-				type: 'success',
-			});
-			setText('');
-			setLocations([]);
-		} else {
-			showSnackbar({
-				message: 'Failed to update.. try again',
-				type: 'warning',
-			});
-		}
+		await mutateAsync(
+			[
+				{ field: 'street', value: item?.addressComponents?.street || '' },
+				{ field: 'city', value: item?.addressComponents?.city || '' },
+				{ field: 'country', value: item?.addressComponents?.country || '' },
+				{ field: 'state', value: item?.addressComponents?.state || '' },
+				{ field: 'latitude', value: item?.location?.latitude.toString() || '' },
+				{
+					field: 'longitude',
+					value: item?.location?.longitude.toString() || '',
+				},
+			],
+			{
+				onSuccess: () => onDismiss(),
+			}
+		);
 	}
 	return (
 		<BottomSheet

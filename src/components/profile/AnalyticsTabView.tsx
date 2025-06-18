@@ -4,13 +4,19 @@ import React, {
 	useImperativeHandle,
 	useRef,
 } from 'react';
-import { Animated, NativeScrollEvent, View } from 'react-native';
+import { Animated, NativeScrollEvent, ScrollView, View } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { SharedValue, useAnimatedScrollHandler } from 'react-native-reanimated';
 import { chunk } from 'lodash-es';
 import { Heading, Icon, Pressable, Text } from '../ui';
 import { Eye, House, MailQuestion, ShoppingBag } from 'lucide-react-native';
 import { cn } from '@/lib/utils';
+import {
+	AnimatedFlashList,
+	AnimatedScrollView,
+} from '../shared/AnimatedFlashList';
+import AgentTable from '../admin/dashboard/AgentTable';
+import ViewsTable from '../admin/dashboard/ViewsTable';
 
 type IProps = {
 	profileId: string;
@@ -77,9 +83,10 @@ const AnalyticsTabView = forwardRef<any, IProps>(function AnalyticsTabView(
 	];
 	return (
 		<View className="flex-1 p-4">
-			<Animated.ScrollView
+			<AnimatedScrollView
 				onScroll={scrollHandler}
 				ref={scrollElRef}
+				contentContainerStyle={{ paddingTop: headerHeight }}
 				scrollEventThrottle={1}>
 				<View className="flex-wrap gap-4">
 					{chunk(data, 2).map((row, i) => (
@@ -121,7 +128,9 @@ const AnalyticsTabView = forwardRef<any, IProps>(function AnalyticsTabView(
 						</View>
 					))}
 				</View>
-			</Animated.ScrollView>
+				<ViewsTable title="Properties Views" className="px-0" />
+				<AgentTable title="Properties Uploads" className="px-0" />
+			</AnimatedScrollView>
 		</View>
 	);
 });

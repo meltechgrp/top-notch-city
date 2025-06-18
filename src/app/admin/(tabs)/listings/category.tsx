@@ -13,7 +13,7 @@ import { RefreshControl } from 'react-native';
 
 export default function Categories() {
 	const [refreshing, setRefreshing] = useState(false);
-	const { subcategoriesData, refetch } = useCategoryQueries();
+	const { subcategoriesData, refetch, loading } = useCategoryQueries();
 	const { addCategoryMutation } = useCategoryMutations();
 	const { mutateAsync, isPending, isSuccess } = addCategoryMutation;
 	const [categoryBottomSheet, setCategoryBottomSheet] = useState(false);
@@ -55,6 +55,7 @@ export default function Categories() {
 			<View className="py-px flex-1">
 				<EmptyStateWrapper
 					isEmpty={!data.length}
+					loading={loading}
 					illustration={<BeachPersonWaterParasolIcon />}
 					cta={
 						<View className=" gap-2 items-center px-12">

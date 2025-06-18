@@ -9,9 +9,9 @@ export default function OverView() {
 		<Box className="flex-1">
 			<BodyScrollView className="flex-1 pt-4 pb-8">
 				<AnalyticCards />
-				<AgentTable />
-				<ViewsTable />
-				<AgentTable />
+				<AgentTable title="Devices" />
+				<ViewsTable title="Sold" />
+				<AgentTable title="Requests" />
 			</BodyScrollView>
 		</Box>
 	);

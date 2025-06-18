@@ -3,50 +3,30 @@ import { View } from 'react-native';
 import BottomSheet from '../shared/BottomSheet';
 import { Button, ButtonText, Text } from '../ui';
 import { showSnackbar } from '@/lib/utils';
-import { useApiRequest } from '@/lib/api';
 import { SpinningLoader } from '../loaders/SpinningLoader';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { useState } from 'react';
 import { validateEmail } from '@/lib/schema';
 import { useStore } from '@/store';
+import { useProfileMutations } from '@/tanstack/mutations/useProfileMutations';
 
 type Props = {
 	visible: boolean;
 	onDismiss: () => void;
-	update: (data: Me) => void;
 };
 
 function ProfileEmailBottomSheet(props: Props) {
 	const { visible, onDismiss } = props;
 	const { me } = useStore();
-	const { request, loading } = useApiRequest<Me>();
+	const { mutateAsync, isPending: loading } =
+		useProfileMutations().updateEmailMutation;
 	const [form, setForm] = useState({
 		email: me?.email || '',
 	});
 	async function handleUpload() {
-		const formData = new FormData();
-		formData.append('email', form.email);
-		const data = await request({
-			url: '/users/me',
-			method: 'PUT',
-			data: formData,
-			headers: {
-				'Content-Type': 'multipart/form-data',
-			},
+		await mutateAsync(form.email, {
+			onSuccess: () => onDismiss(),
 		});
-		if (data) {
-			props.update(data);
-			showSnackbar({
-				message: 'Profile email updated successfully',
-				type: 'success',
-			});
-			onDismiss();
-		} else {
-			showSnackbar({
-				message: 'Failed to update.. try again',
-				type: 'warning',
-			});
-		}
 	}
 	return (
 		<BottomSheet

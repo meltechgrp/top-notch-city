@@ -1,7 +1,7 @@
 import { View } from '@/components/ui';
 import { RefreshControl } from 'react-native-gesture-handler';
 import DisplayStyle from '../layouts/DisplayStyle';
-import { ActivityIndicator, Animated, NativeScrollEvent } from 'react-native';
+import { Animated, NativeScrollEvent } from 'react-native';
 import React, {
 	forwardRef,
 	useCallback,
@@ -14,13 +14,16 @@ import { MiniEmptyState } from '../shared/MiniEmptyState';
 import { useRouter } from 'expo-router';
 import { SharedValue, useAnimatedScrollHandler } from 'react-native-reanimated';
 import { AnimatedFlashList } from '../shared/AnimatedFlashList';
+import FullHeightLoaderWrapper from '../loaders/FullHeightLoaderWrapper';
 
 interface Props {
 	category?: string;
 	className?: string;
-	scrollY?: SharedValue<number>;
+	isEmptyTitle?: string;
+	scrollY?: any;
 	disableCount?: boolean;
 	isAdmin?: boolean;
+	profileId?: string;
 	onScroll?: (e: NativeScrollEvent) => any;
 	scrollEnabled?: boolean;
 	isHorizontal?: boolean;
@@ -52,9 +55,12 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
 		disableHeader,
 		isAdmin,
 		onScroll,
+		className,
 		onPress,
 		scrollElRef,
 		headerHeight,
+		isEmptyTitle,
+		profileId,
 	},
 	ref
 ) {
@@ -74,15 +80,6 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
 		scrollToTop: onScrollToTop,
 	}));
 
-	const scrollHandler = useAnimatedScrollHandler({
-		onScroll: (event) => {
-			'worklet';
-			if (scrollY) {
-				scrollY.value = event.contentOffset.y;
-			}
-		},
-	});
-
 	async function onRefresh() {
 		try {
 			setRefreshing(true);
@@ -93,9 +90,6 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
 		}
 	}
 
-	if (isLoading) {
-		return <ActivityIndicator />;
-	}
 	const toggleView = useCallback(() => {
 		Animated.timing(layoutAnim, {
 			toValue: numColumns === 1 ? 1 : 0,
@@ -109,12 +103,14 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
 	const headerComponent = useMemo(() => {
 		return (
 			<>
-				<DisplayStyle
-					toggleView={toggleView}
-					numColumns={numColumns}
-					total={data.length}
-					disableCount={disableCount}
-				/>
+				{data?.length > 0 && (
+					<DisplayStyle
+						toggleView={toggleView}
+						numColumns={numColumns}
+						total={data.length}
+						disableCount={disableCount}
+					/>
+				)}
 			</>
 		);
 	}, [toggleView, numColumns, data.length, disableCount]);
@@ -135,6 +131,8 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
 							},
 						});
 					}}
+					isAdmin={isAdmin}
+					profileId={profileId}
 					isHorizontal={isHorizontal}
 					columns={numColumns}
 					data={item}
@@ -143,42 +141,57 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
 		},
 		[numColumns]
 	);
+	const scrollHandler = useAnimatedScrollHandler({
+		onScroll: (event) => {
+			'worklet';
+			if (scrollY) {
+				scrollY.value = event.contentOffset.y;
+			}
+		},
+	});
 	return (
-		<AnimatedFlashList
-			data={data}
-			extraData={numColumns}
-			renderItem={renderItem}
-			numColumns={!isHorizontal ? numColumns : undefined}
-			scrollEnabled={scrollEnabled}
-			horizontal={isHorizontal}
-			refreshing={refreshing}
-			showsVerticalScrollIndicator={showsVerticalScrollIndicator}
-			onScroll={scrollHandler}
-			ref={scrollElRef}
-			ItemSeparatorComponent={() => (
-				<View className={numColumns == 1 ? 'h-5' : 'h-3'} />
-			)}
-			scrollEventThrottle={1}
-			refreshControl={
-				scrollEnabled ? (
-					<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-				) : undefined
-			}
-			ListHeaderComponent={
-				!isHorizontal && !disableHeader ? (
-					<>
-						{headerTopComponent}
-						{headerComponent}
-					</>
-				) : undefined
-			}
-			keyExtractor={(item: any) => item.id.toString()}
-			estimatedItemSize={340}
-			onEndReached={() => fetchNextPage?.()}
-			onEndReachedThreshold={20}
-			contentInsetAdjustmentBehavior="automatic"
-			ListEmptyComponent={() => <MiniEmptyState title="No property found" />}
-		/>
+		<FullHeightLoaderWrapper loading={isLoading || false}>
+			<AnimatedFlashList
+				data={data}
+				extraData={numColumns}
+				renderItem={renderItem}
+				numColumns={!isHorizontal ? numColumns : undefined}
+				scrollEnabled={scrollEnabled}
+				horizontal={isHorizontal}
+				refreshing={refreshing}
+				showsVerticalScrollIndicator={showsVerticalScrollIndicator}
+				onScroll={scrollHandler}
+				removeClippedSubviews
+				contentContainerClassName={className}
+				ref={scrollElRef}
+				ItemSeparatorComponent={() => (
+					<View className={numColumns == 1 ? 'h-5' : 'h-3'} />
+				)}
+				scrollEventThrottle={16}
+				refreshControl={
+					scrollEnabled ? (
+						<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+					) : undefined
+				}
+				contentContainerStyle={{ paddingTop: headerHeight }}
+				ListHeaderComponent={
+					!isHorizontal && !disableHeader ? (
+						<>
+							{headerTopComponent}
+							{headerComponent}
+						</>
+					) : undefined
+				}
+				keyExtractor={(item: any) => item.id.toString()}
+				estimatedItemSize={340}
+				onEndReached={() => fetchNextPage?.()}
+				onEndReachedThreshold={20}
+				contentInsetAdjustmentBehavior="automatic"
+				ListEmptyComponent={() => (
+					<MiniEmptyState title={isEmptyTitle || 'No property found'} />
+				)}
+			/>
+		</FullHeightLoaderWrapper>
 	);
 });
 

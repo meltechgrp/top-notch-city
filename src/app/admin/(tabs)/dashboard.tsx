@@ -9,8 +9,8 @@ export default function Dashboard() {
 		<MainLayout>
 			<BodyScrollView className="flex-1 pt-4 pb-8">
 				<AdminCards />
-				<AgentTable />
-				<ViewsTable />
+				<AgentTable title="Properties Uploads" />
+				<ViewsTable title="Property Views" />
 			</BodyScrollView>
 		</MainLayout>
 	);

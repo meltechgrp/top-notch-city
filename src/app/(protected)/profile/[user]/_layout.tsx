@@ -1,8 +1,9 @@
+import { AnimatedHeaderTitle } from '@/components/shared/AnimatedHeaderTitle';
 import AppCrashScreen from '@/components/shared/AppCrashScreen';
 import headerLeft from '@/components/shared/headerLeft';
-import { useResolvedTheme } from '@/components/ui';
+import { Pressable, Text, useResolvedTheme, View } from '@/components/ui';
 import { Colors } from '@/constants/Colors';
-import { ErrorBoundaryProps, Stack } from 'expo-router';
+import { ErrorBoundaryProps, Stack, useRouter } from 'expo-router';
 
 export const unstable_settings = {
 	// Ensure any route can link back to `/`
@@ -11,6 +12,7 @@ export const unstable_settings = {
 
 export default function ProfileScreensLayout() {
 	const theme = useResolvedTheme();
+	const router = useRouter();
 	return (
 		<Stack
 			screenOptions={{
@@ -34,8 +36,27 @@ export default function ProfileScreensLayout() {
 			}}>
 			<Stack.Screen
 				name="index"
-				options={{
-					title: 'Profile',
+				options={({ route }) => {
+					const params = route.params as any;
+					const title = params?.title ?? 'Profile';
+
+					return {
+						headerTitle: () => (
+							<AnimatedHeaderTitle defaultTitle="Profile" title={title} />
+						),
+						headerRight: () => (
+							<View className="flex-row items-center">
+								<Pressable
+									onPress={() => {
+										router.push('/(protected)/profile/[user]/account');
+									}}>
+									<Text size="xl" className="text-primary">
+										Edit
+									</Text>
+								</Pressable>
+							</View>
+						),
+					};
 				}}
 			/>
 			<Stack.Screen

@@ -50,6 +50,20 @@ export default function PropertysLayout() {
 				}}
 			/>
 			<Stack.Screen
+				name="locations/index"
+				options={{
+					headerShown: true,
+					title: 'Trending Locations',
+				}}
+			/>
+			<Stack.Screen
+				name="section"
+				options={{
+					headerShown: true,
+					title: 'Top Properties',
+				}}
+			/>
+			<Stack.Screen
 				name="[propertyId]/booking"
 				options={{
 					headerShown: true,

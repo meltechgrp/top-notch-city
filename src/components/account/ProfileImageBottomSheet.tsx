@@ -7,19 +7,19 @@ import { Camera, ImageIcon } from 'lucide-react-native';
 import { Divider } from '../ui/divider';
 import { showSnackbar } from '@/lib/utils';
 import { useMediaCompressor } from '@/hooks/useMediaCompressor';
-import { useApiRequest } from '@/lib/api';
 import { SpinningLoader } from '../loaders/SpinningLoader';
+import { useProfileMutations } from '@/tanstack/mutations/useProfileMutations';
 
 type Props = {
 	visible: boolean;
 	onDismiss: () => void;
-	update: (data: Me) => void;
 };
 
 function ProfileImageBottomSheet(props: Props) {
 	const { visible, onDismiss } = props;
 	const { compress, compressing, error: comError } = useMediaCompressor();
-	const { request, loading } = useApiRequest<Me>();
+	const { mutateAsync, isPending: loading } =
+		useProfileMutations().updatePhotoMutation;
 	const pickImage = async () => {
 		let result = await ImagePicker.launchImageLibraryAsync({
 			mediaTypes: 'images',
@@ -51,44 +51,25 @@ function ProfileImageBottomSheet(props: Props) {
 		}
 	};
 	async function handleUpload(uri: string) {
-		const formData = new FormData();
 		const result = await compress({
 			type: 'image',
 			uri: uri,
 			compressionRate: 0.4,
 		});
 		if (!result || comError) {
-			showSnackbar({
+			return showSnackbar({
 				message: 'Failed to upload.. try again',
 				type: 'warning',
 			});
 		}
-		formData.append('profile_image', {
-			uri: result,
-			name: `user.jpg`,
-			type: 'image/jpeg',
-		} as any);
-		const data = await request({
-			url: '/users/me',
-			method: 'PUT',
-			data: formData,
-			headers: {
-				'Content-Type': 'multipart/form-data',
+		await mutateAsync(
+			{
+				image: result,
 			},
-		});
-		if (data) {
-			props.update(data);
-			showSnackbar({
-				message: 'Profile photo updated successfully',
-				type: 'success',
-			});
-			onDismiss();
-		} else {
-			showSnackbar({
-				message: 'Failed to update photo.. try again',
-				type: 'warning',
-			});
-		}
+			{
+				onSuccess: () => onDismiss(),
+			}
+		);
 	}
 	return (
 		<BottomSheet

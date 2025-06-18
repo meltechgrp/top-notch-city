@@ -1,9 +1,15 @@
 import { Text, useResolvedTheme, View } from '@/components/ui';
 import { Colors } from '@/constants/Colors';
+import { cn } from '@/lib/utils';
 import { useLayout } from '@react-native-community/hooks';
 import { LineChart } from 'react-native-gifted-charts';
 
-const AgentTable = () => {
+interface Props {
+	className?: string;
+	title: string;
+}
+
+const AgentTable = ({ className, title }: Props) => {
 	const theme = useResolvedTheme();
 	const { width, onLayout } = useLayout();
 	const Label = (val: number) => {
@@ -102,12 +108,12 @@ const AgentTable = () => {
 	];
 
 	return (
-		<View className=" my-4 mt-6 px-4">
+		<View className={cn(' my-4 mt-6 px-4', className)}>
 			<View
 				onLayout={onLayout}
 				className="flex-1 bg-background-muted rounded-xl gap-4 p-4 px-2">
 				<View className="px-2">
-					<Text className="text-xl">Properties Uploads</Text>
+					<Text className="text-xl">{title}</Text>
 				</View>
 				<View>
 					<LineChart

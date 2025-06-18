@@ -6,7 +6,7 @@ import { useStore } from '@/store';
 export function ProfileTopSection() {
 	const { me } = useStore();
 	return (
-		<View className={'px-4 py-2 mt-2 bg-background'}>
+		<View className={'px-4 py-2 mt-2 '}>
 			<View className={'flex-row items-center'}>
 				<Avatar className=" w-16 h-16">
 					<AvatarFallbackText>{fullName(me)}</AvatarFallbackText>

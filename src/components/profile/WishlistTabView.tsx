@@ -25,24 +25,19 @@ export default function WishlistTabView(props: IProps) {
 	const list = useMemo(() => data || [], [data]);
 	return (
 		<View className="flex-1 px-4 py-3">
-			{list?.length ? (
-				<VerticalProperties
-					isLoading={isLoading}
-					data={list as any}
-					onScroll={onScroll}
-					scrollElRef={scrollElRef}
-					headerHeight={headerHeight}
-					listRef={listRef}
-					disableHeader={true}
-					refetch={refetch}
-					scrollY={scrollY}
-				/>
-			) : (
-				<MiniEmptyState
-					className=" justify-start"
-					title="Your wishlist is empty!"
-				/>
-			)}
+			<VerticalProperties
+				isLoading={isLoading}
+				data={list as any}
+				onScroll={onScroll}
+				scrollElRef={scrollElRef}
+				headerHeight={headerHeight}
+				listRef={listRef}
+				disableHeader={true}
+				refetch={refetch}
+				scrollY={scrollY}
+				profileId={profileId}
+				isEmptyTitle="Your wishlist is empty!"
+			/>
 		</View>
 	);
 }

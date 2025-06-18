@@ -152,16 +152,16 @@ export async function fetchUserProperties({
 }
 export async function fetchWishlist() {
 	try {
-		const res = await Fetch(`/me`, {});
+		const res = await Fetch(`/mywhishlist`, {});
 		if (!res.ok) {
-			throw new Error('Failed to fetch properties');
+			throw new Error('Failed to fetch wishlist');
 		}
 
 		const json = (await res.json()) as Wishlist[];
 		return json;
 	} catch (error) {
 		console.log(error);
-		throw new Error('Failed to fetch properties');
+		throw new Error('Failed to fetch wishlist');
 	}
 }
 export async function fetchProperty({ id }: { id: string }) {

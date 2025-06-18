@@ -1,4 +1,4 @@
-import { BadgeCheck, CheckCheck, CircleDashed } from 'lucide-react-native';
+import { BadgeCheck, Ban, CheckCheck, CircleDashed } from 'lucide-react-native';
 import { Badge, BadgeIcon, BadgeText } from '../ui';
 
 export function PropertyStatus({ status }: { status: Property['status'] }) {
@@ -10,7 +10,28 @@ export function PropertyStatus({ status }: { status: Property['status'] }) {
 					<BadgeIcon as={CircleDashed} className="ml-2" />
 				</Badge>
 			);
-		case 'approve':
+		case 'rejected':
+			return (
+				<Badge size="lg" variant="solid" action="error">
+					<BadgeText>Rejected</BadgeText>
+					<BadgeIcon as={Ban} className="ml-2" />
+				</Badge>
+			);
+		case 'flagged':
+			return (
+				<Badge size="lg" variant="solid" action="error">
+					<BadgeText>Flagged</BadgeText>
+					<BadgeIcon as={Ban} className="ml-2" />
+				</Badge>
+			);
+		case 'expired':
+			return (
+				<Badge size="lg" variant="solid" action="error">
+					<BadgeText>Expired</BadgeText>
+					<BadgeIcon as={Ban} className="ml-2" />
+				</Badge>
+			);
+		case 'approved':
 			return (
 				<Badge size="lg" variant="solid" action="success">
 					<BadgeText>Approved</BadgeText>

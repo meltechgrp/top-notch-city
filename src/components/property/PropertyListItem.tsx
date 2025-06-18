@@ -2,7 +2,7 @@ import { cn, composeFullAddress } from '@/lib/utils';
 import { formatMoney } from '@/lib/utils';
 import { StyleProp, View, ViewStyle } from 'react-native';
 import { Icon, Text, Pressable } from '../ui';
-import { Eye, Heart, MapPin } from 'lucide-react-native';
+import { Eye, Heart, MapPin, ThumbsUp } from 'lucide-react-native';
 import { hapticFeed } from '../HapticTab';
 import { useMemo } from 'react';
 import { Colors } from '@/constants/Colors';
@@ -11,12 +11,15 @@ import PropertyCarousel from './PropertyCarousel';
 import { useLayout } from '@react-native-community/hooks';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { likeProperty } from '@/actions/property';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { PropertyStatus } from './PropertyStatus';
 
 type Props = {
 	data: Property;
 	className?: string;
 	showFacilites?: boolean;
-	isMine?: boolean;
+	profileId?: string;
+	isAdmin?: boolean;
 	columns?: number;
 	isHorizontal?: boolean;
 	style?: StyleProp<ViewStyle>;
@@ -27,11 +30,12 @@ export default function PropertyListItem(props: Props) {
 		data,
 		className,
 		showFacilites = false,
-		isMine,
+		profileId,
 		columns,
 		isHorizontal = false,
 		style,
 		onPress,
+		isAdmin,
 	} = props;
 	const { bannerHeight } = Layout;
 	const {
@@ -42,6 +46,8 @@ export default function PropertyListItem(props: Props) {
 		address,
 		interaction,
 		owner_interaction,
+		status,
+		owner,
 	} = data;
 	const { width, onLayout } = useLayout();
 	const images = useMemo(
@@ -60,6 +66,22 @@ export default function PropertyListItem(props: Props) {
 	function hnadleLike() {
 		mutate();
 	}
+	const isMine = useMemo(() => profileId === owner?.id, [profileId, owner]);
+	const Actions = () => {
+		if (isAdmin || isMine) {
+			return <PropertyStatus status={status} />;
+		} else {
+			return (
+				<Pressable onPress={hnadleLike} style={{ padding: 8 }}>
+					<FontAwesome
+						name={owner_interaction?.liked ? 'heart' : 'heart-o'}
+						size={24}
+						color={owner_interaction?.liked ? Colors.primary : 'white'}
+					/>
+				</Pressable>
+			);
+		}
+	};
 	return (
 		<Pressable
 			onLayout={onLayout}
@@ -75,29 +97,14 @@ export default function PropertyListItem(props: Props) {
 				withBackdrop={true}
 				loop={true}
 				media={images.slice(0, 5)}
-				pointerPosition={20}
+				pointerPosition={7}
 			/>
 			<View className=" absolute top-0 w-full h-full justify-between">
 				<View
 					className={cn(
-						' flex-row p-4 pb-0 bg-black/5 items-start justify-between',
-						!owner_interaction && 'justify-end'
+						' flex-row p-4 pb-0 bg-black/5 items-start justify-between'
 					)}>
-					{owner_interaction && (
-						<Pressable
-							className="flex-row gap-1 items-center"
-							onPress={hnadleLike}
-							style={{ padding: 8 }}>
-							<Icon
-								as={Heart}
-								className={cn(
-									' text-white w-6 h-6',
-									owner_interaction?.liked ? 'text-primary' : 'text-white'
-								)}
-							/>
-							<Text className="text-white font-bold">{interaction?.liked}</Text>
-						</Pressable>
-					)}
+					<Actions />
 					<View className="flex-row items-center justify-center gap-1 py-1.5 px-2.5 rounded-3xl bg-primary/60">
 						<Text
 							size={columns ? (columns == 2 ? 'md' : 'xl') : 'xl'}
@@ -108,16 +115,16 @@ export default function PropertyListItem(props: Props) {
 				</View>
 				<View
 					className={cn(
-						'pb-5 px-4 w-full bg-black/5  gap-1',
-						!address && 'pb-8'
+						'flex-row pb-5 px-4 bg-black/5 justify-between items-end',
+						!address && 'pb-6'
 					)}>
-					<Text
-						size={columns ? (columns == 2 ? 'lg' : '2xl') : '2xl'}
-						className={cn(' text-white font-bold')}
-						numberOfLines={1}>
-						{title}
-					</Text>
-					<View className="flex-row justify-between items-center">
+					<View className="flex-1   gap-1">
+						<Text
+							size={columns ? (columns == 2 ? 'lg' : '2xl') : '2xl'}
+							className={cn(' text-white font-bold')}
+							numberOfLines={1}>
+							{title}
+						</Text>
 						{address && (
 							<View className="flex-row items-center gap-1">
 								<Icon as={MapPin} size="sm" color={Colors.primary} />
@@ -128,15 +135,23 @@ export default function PropertyListItem(props: Props) {
 								</Text>
 							</View>
 						)}
-						{interaction && (
+					</View>
+					{interaction && (
+						<View className=" w-[15%] gap-2">
 							<View className="flex-row items-center gap-1">
-								<Icon as={Eye} size="md" color={'white'} />
-								<Text size={'md'} className="text-white">
+								<Icon as={Eye} size="sm" color={'white'} />
+								<Text size={'lg'} className="text-white">
 									{interaction?.viewed}
 								</Text>
 							</View>
-						)}
-					</View>
+							<View className="flex-row items-center gap-1">
+								<Icon as={ThumbsUp} size="sm" color={'white'} />
+								<Text size={'lg'} className="text-white">
+									{interaction?.liked}
+								</Text>
+							</View>
+						</View>
+					)}
 				</View>
 			</View>
 		</Pressable>

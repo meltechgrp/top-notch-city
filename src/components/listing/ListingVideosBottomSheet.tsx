@@ -103,10 +103,11 @@ function ListingVideosBottomSheet(props: Props) {
 	const ListHeader = useMemo(
 		() => (
 			<View className="flex-1 gap-2  bg-background-muted rounded-xl py-6 mb-3">
-				<View className=" flex-row gap-5 items-center justify-center">
+				<View className=" flex-row gap-5 px-4 items-center justify-center">
 					<Button
 						disabled={videos && videos?.length > 2}
 						size="xl"
+						className="flex-1"
 						onPress={pickVideos}>
 						<ButtonText>Choose Videos</ButtonText>
 						<Icon as={Video} />
@@ -114,6 +115,7 @@ function ListingVideosBottomSheet(props: Props) {
 					<Button
 						disabled={videos && videos?.length > 2}
 						size="xl"
+						className="flex-1"
 						onPress={takeVideos}
 						variant="outline">
 						<ButtonText>Take Videos</ButtonText>

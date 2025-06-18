@@ -34,17 +34,15 @@ export default function GlobalManager() {
 			const res = await Fetch('/users/me', {});
 			const data = await res.json();
 			if (data?.detail?.includes('expired')) {
-				await unsetAuthToken();
-			} else if (data?.detail == 'Not authenticated') {
-				await unsetAuthToken();
+				return await unsetAuthToken();
 			}
-			if (data) {
+			if (!data?.detail) {
 				setMe(data);
 			}
 		} catch (err: any) {
 			if (err?.detail?.includes('expired')) {
 				console.log('expired');
-				await unsetAuthToken();
+				return await unsetAuthToken();
 			}
 		}
 	}

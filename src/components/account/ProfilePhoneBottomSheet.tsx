@@ -3,50 +3,30 @@ import { View } from 'react-native';
 import BottomSheet from '../shared/BottomSheet';
 import { Button, ButtonText, Text } from '../ui';
 import { showSnackbar } from '@/lib/utils';
-import { useApiRequest } from '@/lib/api';
 import { SpinningLoader } from '../loaders/SpinningLoader';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { useState } from 'react';
 import { validatePhone } from '@/lib/schema';
 import { useStore } from '@/store';
+import { useProfileMutations } from '@/tanstack/mutations/useProfileMutations';
 
 type Props = {
 	visible: boolean;
 	onDismiss: () => void;
-	update: (data: Me) => void;
 };
 
 function ProfilePhoneBottomSheet(props: Props) {
 	const { visible, onDismiss } = props;
 	const { me } = useStore();
-	const { request, loading } = useApiRequest<Me>();
+	const { mutateAsync, isPending: loading } =
+		useProfileMutations().updatePhoneMutation;
 	const [form, setForm] = useState({
 		phone: me?.phone || '',
 	});
 	async function handleUpload() {
-		const formData = new FormData();
-		formData.append('phone', form.phone);
-		const data = await request({
-			url: '/users/me',
-			method: 'PUT',
-			data: formData,
-			headers: {
-				'Content-Type': 'multipart/form-data',
-			},
+		await mutateAsync(form.phone, {
+			onSuccess: () => onDismiss(),
 		});
-		if (data) {
-			props.update(data);
-			showSnackbar({
-				message: 'Profile phone updated successfully',
-				type: 'success',
-			});
-			onDismiss();
-		} else {
-			showSnackbar({
-				message: 'Failed to update.. try again',
-				type: 'warning',
-			});
-		}
 	}
 	return (
 		<BottomSheet

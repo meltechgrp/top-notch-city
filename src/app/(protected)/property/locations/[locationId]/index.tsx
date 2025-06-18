@@ -1,14 +1,22 @@
-import { Box, Heading, Image, Pressable, Text, View } from '@/components/ui';
-import { Animated, useWindowDimensions } from 'react-native';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useMemo, useRef } from 'react';
-import { ChevronLeftIcon, ListFilter } from 'lucide-react-native';
-import { TabView, SceneRendererProps } from 'react-native-tab-view';
+import { Box, Image, Pressable, View } from '@/components/ui';
+import { Animated } from 'react-native';
+import { Stack, useLocalSearchParams } from 'expo-router';
+import React, { useMemo, useRef, useState } from 'react';
+import { ListFilter } from 'lucide-react-native';
 import { hapticFeed } from '@/components/HapticTab';
-import CustomTabBar2 from '@/components/layouts/CustomTopBar2';
 import VerticalProperties from '@/components/property/VerticalProperties';
 import { Locations } from '..';
-const data: Locations = [
+import { fetchProperties } from '@/actions/property';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import {
+	Extrapolation,
+	interpolate,
+	runOnJS,
+	useAnimatedReaction,
+	useAnimatedStyle,
+	useSharedValue,
+} from 'react-native-reanimated';
+const locations: Locations = [
 	{
 		id: 'dhghg662389kndnc',
 		name: 'Lekki',
@@ -48,65 +56,36 @@ const data: Locations = [
 ];
 export default function PropertyLocations() {
 	const { locationId } = useLocalSearchParams() as { locationId?: string };
-	const router = useRouter();
-	const scrollY = useRef(new Animated.Value(0)).current;
-	const layout = useWindowDimensions();
-	const [index, setIndex] = React.useState(0);
-	const tabs = [
-		{
-			key: 'duplex',
-			title: 'Duplex',
-			component: () => (
-				<VerticalProperties scrollY={scrollY} category="duplex" />
-			),
-		},
-		{
-			key: 'bungalow',
-			title: 'Bungalow',
-			component: () => (
-				<VerticalProperties scrollY={scrollY} category="duplex" />
-			),
-		},
-		{
-			key: 'flat',
-			title: 'Flat',
-			component: () => (
-				<VerticalProperties scrollY={scrollY} category="duplex" />
-			),
-		},
-		{
-			key: 'mansion',
-			title: 'Mansion',
-			component: () => (
-				<VerticalProperties scrollY={scrollY} category="duplex" />
-			),
-		},
-	];
+	const scrollY = useSharedValue(0);
+	const [height, setHeight] = useState(340);
 
-	const routes = tabs.map(({ key, title }) => ({ key, title }));
-	const renderScene = ({
-		route,
-	}: SceneRendererProps & { route: { key: string } }) => {
-		const tab = tabs.find((t) => t.key === route.key);
-		return tab?.component ? tab.component() : null;
-	};
+	const { data, isLoading, fetchNextPage, refetch } = useInfiniteQuery({
+		queryKey: ['properties'],
+		queryFn: fetchProperties,
+		initialPageParam: 1,
+		getNextPageParam: (lastPage, pages) => pages.length + 1,
+	});
+
+	const propertysData = useMemo(() => {
+		return data?.pages.flat() ?? [];
+	}, [data]);
+
 	const location = useMemo(
-		() => data.find((l) => l.id === locationId),
+		() => locations.find((l) => l.id === locationId),
 		[locationId]
 	);
-	const bannerHeight = scrollY.interpolate({
-		inputRange: [0, 200],
-		outputRange: [340, 110],
-		extrapolate: 'clamp',
-	});
-	if (!location) return null;
 
+	if (!location) return null;
 	return (
 		<>
 			<Stack.Screen
 				options={{
 					statusBarStyle: 'light',
+					headerShown: true,
 					headerTransparent: true,
+					headerTitleStyle: {
+						color: 'white',
+					},
 					headerStyle: { backgroundColor: undefined },
 					headerTitle: location.name,
 					headerRight: () => (
@@ -118,10 +97,6 @@ export default function PropertyLocations() {
 							<Pressable
 								onPress={() => {
 									hapticFeed();
-									// router.push({
-									// 	pathname: '/list/[listId]/share',
-									// 	params: { listId },
-									// });
 								}}
 								style={{ padding: 8 }}>
 								<ListFilter color={'white'} />
@@ -133,8 +108,13 @@ export default function PropertyLocations() {
 			<Box className="flex-1 gap-4">
 				<View className="gap-2">
 					<Animated.View
-						style={{ height: bannerHeight }}
-						className="w-full relative rounded-b-[50px] overflow-hidden">
+						style={[
+							{
+								height: height,
+							},
+							{ width: '100%', overflow: 'hidden' },
+						]}
+						className=" w-full relative rounded-b-[50px] overflow-hidden">
 						<Image
 							source={location.banner}
 							alt={location.name}
@@ -142,19 +122,13 @@ export default function PropertyLocations() {
 						/>
 						<View className="absolute bottom-0 z-10 left-0 w-full h-full bg-black/20" />
 					</Animated.View>
-					{/* <View className="px-6 gap-2">
-						<Heading size="2xl">{location.name}</Heading>
-						<Text>Our recommended real estates in {location.name}</Text>
-					</View> */}
 				</View>
 				<View className="px-4 flex-1">
-					<TabView
-						style={{ flex: 1 }}
-						renderTabBar={(props) => <CustomTabBar2 {...props} />}
-						navigationState={{ index, routes }}
-						renderScene={renderScene}
-						onIndexChange={setIndex}
-						initialLayout={{ width: layout.width }}
+					<VerticalProperties
+						data={propertysData}
+						isLoading={isLoading}
+						refetch={refetch}
+						scrollY={scrollY}
 					/>
 				</View>
 			</Box>

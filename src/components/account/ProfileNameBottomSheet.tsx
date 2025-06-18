@@ -3,18 +3,17 @@ import { View } from 'react-native';
 import BottomSheet from '../shared/BottomSheet';
 import { Button, ButtonText, Text } from '../ui';
 import { showSnackbar } from '@/lib/utils';
-import { useApiRequest } from '@/lib/api';
 import { SpinningLoader } from '../loaders/SpinningLoader';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { useState } from 'react';
 import { Name } from '@/lib/schema';
 import { useStore } from '@/store';
 import { z } from 'zod';
+import { useProfileMutations } from '@/tanstack/mutations/useProfileMutations';
 
 type Props = {
 	visible: boolean;
 	onDismiss: () => void;
-	update: (data: Me) => void;
 };
 
 const ProfileNameSchema = z.object({
@@ -25,36 +24,22 @@ const ProfileNameSchema = z.object({
 function ProfileNameBottomSheet(props: Props) {
 	const { visible, onDismiss } = props;
 	const { me } = useStore();
-	const { request, loading } = useApiRequest<Me>();
+	const { mutateAsync, isPending: loading } =
+		useProfileMutations().updateFullNameMutation;
 	const [form, setForm] = useState({
 		first_name: me?.first_name || '',
 		last_name: me?.last_name || '',
 	});
 	async function handleUpload() {
-		const formData = new FormData();
-		formData.append('first_name', form.first_name);
-		formData.append('last_name', form.last_name);
-		const data = await request({
-			url: '/users/me',
-			method: 'PUT',
-			data: formData,
-			headers: {
-				'Content-Type': 'multipart/form-data',
+		await mutateAsync(
+			{
+				first_name: form.first_name,
+				last_name: form.last_name,
 			},
-		});
-		if (data) {
-			props.update(data);
-			showSnackbar({
-				message: 'Profile name updated successfully',
-				type: 'success',
-			});
-			onDismiss();
-		} else {
-			showSnackbar({
-				message: 'Failed to update.. try again',
-				type: 'warning',
-			});
-		}
+			{
+				onSuccess: () => onDismiss(),
+			}
+		);
 	}
 	return (
 		<BottomSheet

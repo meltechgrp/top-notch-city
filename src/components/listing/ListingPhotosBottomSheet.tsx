@@ -13,6 +13,7 @@ import { useLayout } from '@react-native-community/hooks';
 import OptionsBottomSheet from '../shared/OptionsBottomSheet';
 import { useMediaCompressor } from '@/hooks/useMediaCompressor';
 import FullHeightLoaderWrapper from '../loaders/FullHeightLoaderWrapper';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 type Props = {
 	visible: boolean;
@@ -100,10 +101,11 @@ function ListingPhotosBottomSheet(props: Props) {
 	const ListHeader = useMemo(
 		() => (
 			<View className="flex-1 gap-2  bg-background-muted rounded-xl py-6 mb-3">
-				<View className=" flex-row gap-5 items-center justify-center">
+				<View className=" flex-row px-4 gap-5 items-center justify-center">
 					<Button
 						disabled={photos && photos?.length > 15}
 						size="xl"
+						className="flex-1"
 						onPress={pickImage}>
 						<ButtonText>Choose photos</ButtonText>
 						<Icon as={Images} />
@@ -111,6 +113,7 @@ function ListingPhotosBottomSheet(props: Props) {
 					<Button
 						disabled={photos && photos?.length > 15}
 						size="xl"
+						className="flex-1"
 						onPress={takeImage}
 						variant="outline">
 						<ButtonText>Take photos</ButtonText>
@@ -166,28 +169,30 @@ function ListingPhotosBottomSheet(props: Props) {
 			<View
 				onLayout={onLayout}
 				className="flex-1 gap-2 py-4 pb-8 bg-background">
-				<FullHeightLoaderWrapper loading={loading}>
-					<FlatList
-						data={photos}
-						numColumns={4}
-						contentContainerClassName=""
-						keyExtractor={(item) => item.id!}
-						ListHeaderComponent={ListHeader}
-						ListEmptyComponent={() => (
-							<MiniEmptyState title="Pick or take photos to your property" />
-						)}
-						ItemSeparatorComponent={() => <View className=" h-4" />}
-						renderItem={RenderItem}
-						keyboardShouldPersistTaps="handled"
-					/>
-				</FullHeightLoaderWrapper>
-				{photos?.length && (
-					<View className=" px-4">
-						<Button className="h-12" onPress={onDismiss}>
-							<ButtonText>Continue</ButtonText>
-						</Button>
-					</View>
-				)}
+				<SafeAreaView edges={['bottom']} className={'flex-1'}>
+					<FullHeightLoaderWrapper loading={loading}>
+						<FlatList
+							data={photos}
+							numColumns={4}
+							contentContainerClassName=""
+							keyExtractor={(item) => item.id!}
+							ListHeaderComponent={ListHeader}
+							ListEmptyComponent={() => (
+								<MiniEmptyState title="Pick or take photos to your property" />
+							)}
+							ItemSeparatorComponent={() => <View className=" h-4" />}
+							renderItem={RenderItem}
+							keyboardShouldPersistTaps="handled"
+						/>
+					</FullHeightLoaderWrapper>
+					{photos?.length && (
+						<View className=" px-4">
+							<Button className="h-12" onPress={onDismiss}>
+								<ButtonText>Continue</ButtonText>
+							</Button>
+						</View>
+					)}
+				</SafeAreaView>
 			</View>
 			<OptionsBottomSheet
 				isOpen={openEdit}

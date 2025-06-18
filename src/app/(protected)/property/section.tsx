@@ -1,17 +1,15 @@
-import { Box, Pressable, View } from '@/components/ui';
+import { Box, Icon, Pressable, View } from '@/components/ui';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useMemo } from 'react';
 import { ChevronLeftIcon, ListFilter } from 'lucide-react-native';
 import { hapticFeed } from '@/components/HapticTab';
 import VerticalProperties from '@/components/property/VerticalProperties';
 import { useTheme } from '@/components/layouts/ThemeProvider';
-import { Colors } from '@/constants/Colors';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { fetchProperties } from '@/actions/property';
 
 export default function PropertySections() {
 	const { title } = useLocalSearchParams() as { title?: string };
-	const { theme } = useTheme();
 	const router = useRouter();
 	const { data, isLoading, fetchNextPage, refetch } = useInfiniteQuery({
 		queryKey: ['properties'],
@@ -28,13 +26,6 @@ export default function PropertySections() {
 					headerShown: true,
 					headerBackVisible: false,
 					headerTitle: title ?? 'Properties',
-					headerTitleStyle: { color: theme == 'dark' ? 'white' : 'black' },
-					headerStyle: {
-						backgroundColor:
-							theme == 'dark'
-								? Colors.light.background
-								: Colors.dark.background,
-					},
 					headerLeft: () => (
 						<Pressable
 							onPress={() => {
@@ -61,7 +52,7 @@ export default function PropertySections() {
 									// });
 								}}
 								style={{ padding: 8 }}>
-								<ListFilter color={theme == 'dark' ? 'white' : 'black'} />
+								<Icon as={ListFilter} />
 							</Pressable>
 						</View>
 					),
@@ -71,6 +62,7 @@ export default function PropertySections() {
 				<VerticalProperties
 					data={properties}
 					isLoading={isLoading}
+					className="pb-20"
 					refetch={refetch}
 					// fetchNextPage={fetchNextPage}
 				/>
