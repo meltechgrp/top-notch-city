@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ReactNode } from 'react';
 import { Modal, View, TextInput, TouchableWithoutFeedback } from 'react-native';
 import { Text, Button, ButtonText, Pressable, Icon } from '../ui';
 import { cn } from '@/lib/utils';
@@ -7,10 +7,12 @@ import { ChevronRight } from 'lucide-react-native';
 type ConfirmationModalProps = ConfirmationActionConfig &
 	TouchableWithoutFeedback['props'] & {
 		onDismiss?: () => void;
+		onDelete?: () => void;
 		confirmText?: string;
 		cancelText?: string;
-		index: number;
-		propertyId: string;
+		index?: number;
+		propertyId?: string;
+		optionalComponent?: ReactNode;
 	};
 
 export function ConfirmationModal({
@@ -26,6 +28,9 @@ export function ConfirmationModal({
 	propertyId,
 	onDismiss,
 	onPress,
+	index,
+	onDelete,
+	optionalComponent,
 }: ConfirmationModalProps) {
 	const [confirmationModal, setConfirmationModal] = useState(false);
 	const [reason, setReason] = useState('');
@@ -50,7 +55,11 @@ export function ConfirmationModal({
 		setError('');
 		setLoading(true);
 		try {
-			await onConfirm({ propertyId, reason });
+			if (!propertyId) {
+				onDelete?.();
+			} else {
+				await onConfirm({ propertyId, reason });
+			}
 			onDismiss?.();
 			onPress && onPress(e);
 			setConfirmationModal(false);
@@ -62,19 +71,28 @@ export function ConfirmationModal({
 	};
 	return (
 		<>
-			<Pressable
-				onPress={(e) => {
-					setConfirmationModal(true);
-				}}
-				className={cn(
-					'px-4 h-14 flex-row justify-between bg-background rounded-xl items-center',
-					actionText == 'Delete' ||
-						(actionText == 'Soft Delete' && 'bg-primary'),
-					className
-				)}>
-				<Text className={cn('text-base flex-1')}>{actionText}</Text>
-				<Icon as={ChevronRight} className={iconClassName} />
-			</Pressable>
+			{!optionalComponent ? (
+				<Pressable
+					onPress={(e) => {
+						setConfirmationModal(true);
+					}}
+					className={cn(
+						'px-4 h-14 flex-row justify-between rounded-xl items-center',
+						!!index && 'border-outline border-t',
+						className
+					)}>
+					<Text className={cn('text-lg flex-1', className)}>{actionText}</Text>
+					<Icon as={ChevronRight} className={iconClassName} />
+				</Pressable>
+			) : (
+				<Pressable
+					onPress={() => {
+						setConfirmationModal(true);
+					}}
+					className={className}>
+					{optionalComponent}
+				</Pressable>
+			)}
 			<Modal
 				visible={confirmationModal}
 				backdropColor="rgba(0,0,0,0.6)"

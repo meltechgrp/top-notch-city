@@ -5,10 +5,11 @@ import { ImageStyle, StyleProp, ViewProps } from 'react-native';
 import type { AnimatedProps } from 'react-native-reanimated';
 import Animated from 'react-native-reanimated';
 import { Icon, Pressable, View } from '../ui';
-import { CirclePlay, Pause } from 'lucide-react-native';
+import { CirclePlay, Pause, Trash } from 'lucide-react-native';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import { useEvent } from 'expo';
 import { useIsFocused } from '@react-navigation/native';
+import { ConfirmationModal } from '../modals/ConfirmationModal';
 
 interface Props extends AnimatedProps<ViewProps> {
 	style?: StyleProp<ImageStyle>;
@@ -16,6 +17,7 @@ interface Props extends AnimatedProps<ViewProps> {
 	rounded?: boolean;
 	source: string;
 	withBackdrop?: boolean;
+	isOwner?: boolean;
 	canPlayVideo?: boolean;
 	isVisible?: boolean;
 	nativeControls?: boolean;
@@ -33,6 +35,7 @@ export const PropertyMedia: React.FC<Props> = (props) => {
 		nativeControls = false,
 		className,
 		isVisible = true,
+		isOwner,
 		onPress,
 		...animatedViewProps
 	} = props;
@@ -112,6 +115,24 @@ export const PropertyMedia: React.FC<Props> = (props) => {
 
 			{withBackdrop && (
 				<View className="absolute w-full h-full bg-black/30 ios:z-10" />
+			)}
+			{isOwner && (
+				<View className=" absolute top-4 right-4">
+					<ConfirmationModal
+						header="Delete media"
+						className=""
+						optionalComponent={
+							<View className="bg-background-muted/80 rounded-full p-2">
+								<Icon size="xl" as={Trash} className="text-primary" />
+							</View>
+						}
+						visible
+						description="This action will delete the current media from this property"
+						onConfirm={async () => {}}
+						onDelete={() => {}}
+						actionText=""
+					/>
+				</View>
 			)}
 		</Animated.View>
 	);

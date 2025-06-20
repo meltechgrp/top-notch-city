@@ -1,5 +1,5 @@
 import withRenderVisible from '@/components/shared/withRenderOpen';
-import { FlatList, Pressable, TextInput, View } from 'react-native';
+import { FlatList, Pressable, View } from 'react-native';
 import { KeyboardDismissPressable } from '../shared/KeyboardDismissPressable';
 import BottomSheet from '../shared/BottomSheet';
 import { useEffect, useMemo, useState } from 'react';
@@ -10,6 +10,7 @@ import { fetchPlaceFromTextQuery } from '@/actions/utills';
 import { composeFullAddress } from '@/lib/utils';
 import { MiniEmptyState } from '../shared/MiniEmptyState';
 import { useApiQueryWithParams } from '@/lib/api';
+import { CustomInput } from '../shared/CustomInput';
 
 type Props = {
 	show: boolean;
@@ -78,12 +79,11 @@ function ListingAddressBottomSheet(props: Props) {
 			onDismiss={onDismiss}>
 			<KeyboardDismissPressable>
 				<View className="flex-1 px-4 gap-8 py-5 pb-8 bg-background">
-					<View className="h-14">
-						<TextInput
-							className="h-12 text-typography flex-1 px-2 bg-background-info rounded-2xl border border-outline-200"
+					<View>
+						<CustomInput
 							placeholder="Search property location..."
 							value={text}
-							onChangeText={onChangeText}
+							onUpdate={onChangeText}
 							returnKeyLabel="Search"
 							returnKeyType="search"
 						/>

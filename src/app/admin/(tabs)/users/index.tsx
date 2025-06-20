@@ -8,9 +8,10 @@ import { FlashList } from '@shopify/flash-list';
 import { useMemo, useState } from 'react';
 import { RefreshControl } from 'react-native';
 import { FilterComponent } from '@/components/admin/shared/FilterComponent';
-import { useGetApiQuery } from '@/lib/api';
 import AdminCreateButton from '@/components/admin/shared/AdminCreateButton';
 import { User2, UserCog2, UserSearch } from 'lucide-react-native';
+import { useQuery } from '@tanstack/react-query';
+import { getUsers } from '@/actions/user';
 
 const ITEMS_PER_PAGE = 50;
 
@@ -21,7 +22,10 @@ export default function Users() {
 	const [actveTab, setActiveTab] = useState('all');
 	const [search, setSearch] = useState('');
 	const [page, setPage] = useState(1);
-	const { data, loading, error, refetch } = useGetApiQuery<Me[]>('/users');
+	const { data, refetch } = useQuery({
+		queryKey: ['users'],
+		queryFn: getUsers,
+	});
 
 	const usersData = useMemo(() => {
 		return data?.slice() ?? [];

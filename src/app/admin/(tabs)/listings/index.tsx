@@ -2,22 +2,19 @@ import { Box, View } from '@/components/ui';
 import { FilterComponent } from '@/components/admin/shared/FilterComponent';
 import { useMemo, useState } from 'react';
 import { useRefreshOnFocus } from '@/hooks/useRefreshOnFocus';
-import PropertyBottomSheet from '@/components/admin/properties/PropertyBottomSheet';
 import VerticalProperties from '@/components/property/VerticalProperties';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { fetchProperties } from '@/actions/property';
+import { fetchAdminProperties } from '@/actions/property';
 import { useStore } from '@/store';
 
 export default function Properties() {
-	const [activeProperty, setActiveProperty] = useState<Property | null>(null);
-	const [propertyBottomSheet, setPropertyBottomSheet] = useState(false);
 	const [search, setSearch] = useState('');
 	const [actveTab, setActiveTab] = useState('all');
 	const { me } = useStore();
 
 	const { data, isLoading, fetchNextPage, refetch } = useInfiniteQuery({
-		queryKey: ['properties'],
-		queryFn: fetchProperties,
+		queryKey: ['admins-properties'],
+		queryFn: fetchAdminProperties,
 		initialPageParam: 1,
 		getNextPageParam: (lastPage, pages) => pages.length + 1,
 	});
@@ -41,7 +38,7 @@ export default function Properties() {
 			);
 		}
 		return filtered;
-	}, [propertysData, search]);
+	}, [propertysData, search, actveTab]);
 	const tabs = useMemo(() => {
 		const all = propertysData.length;
 		const rejected = propertysData.filter(
@@ -79,7 +76,6 @@ export default function Properties() {
 			/>
 		);
 	}, [search, setSearch, tabs, actveTab]);
-
 	useRefreshOnFocus(refetch);
 	return (
 		<>
@@ -90,20 +86,8 @@ export default function Properties() {
 						data={filteredData}
 						isLoading={isLoading}
 						refetch={refetch}
-						onPress={(data) => {
-							setActiveProperty(data);
-							setPropertyBottomSheet(true);
-						}}
 					/>
 				</View>
-				{activeProperty && me && (
-					<PropertyBottomSheet
-						visible={propertyBottomSheet}
-						property={activeProperty}
-						user={me}
-						onDismiss={() => setPropertyBottomSheet(false)}
-					/>
-				)}
 			</Box>
 		</>
 	);

@@ -10,6 +10,15 @@ export async function getMe() {
 	}
 	return data as Me;
 }
+export async function getUsers() {
+	const res = await Fetch('/users', {});
+	const data = await res.json();
+
+	if (!res.ok) {
+		throw new Error(data?.detail || 'Failed to update profile');
+	}
+	return data as Me[];
+}
 
 export async function setProfileImage(image: string) {
 	if (!image) return;
@@ -30,9 +39,9 @@ export async function setProfileImage(image: string) {
 	const data = await res.json();
 	eventBus.dispatchEvent('REFRESH_PROFILE', null);
 
-	// if (data?.detail) {
-	// 	throw new Error('Failed to update profile');
-	// }
+	if (data?.detail) {
+		throw new Error('Failed to update profile');
+	}
 
 	return data;
 }
@@ -56,9 +65,9 @@ export async function updateProfileField(
 		const data = await res.json();
 		eventBus.dispatchEvent('REFRESH_PROFILE', null);
 
-		// if (data?.detail) {
-		// 	throw new Error('Failed to update profile');
-		// }
+		if (data?.detail) {
+			throw new Error('Failed to update profile');
+		}
 
 		return data;
 	} catch (error) {

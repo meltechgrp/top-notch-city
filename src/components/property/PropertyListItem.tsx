@@ -2,17 +2,16 @@ import { cn, composeFullAddress } from '@/lib/utils';
 import { formatMoney } from '@/lib/utils';
 import { StyleProp, View, ViewStyle } from 'react-native';
 import { Icon, Text, Pressable } from '../ui';
-import { Eye, Heart, MapPin, ThumbsUp } from 'lucide-react-native';
+import { Eye, MapPin, ThumbsUp } from 'lucide-react-native';
 import { hapticFeed } from '../HapticTab';
 import { useMemo } from 'react';
 import { Colors } from '@/constants/Colors';
 import Layout from '@/constants/Layout';
 import PropertyCarousel from './PropertyCarousel';
 import { useLayout } from '@react-native-community/hooks';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { likeProperty } from '@/actions/property';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { PropertyStatus } from './PropertyStatus';
+import { PropertyLikeButton } from './PropertyLikeButton';
+import { PropertyInteractions } from './PropertyInteractions';
 
 type Props = {
 	data: Property;
@@ -38,48 +37,20 @@ export default function PropertyListItem(props: Props) {
 		isAdmin,
 	} = props;
 	const { bannerHeight } = Layout;
-	const {
-		id,
-		title,
-		price,
-		media_urls,
-		address,
-		interaction,
-		owner_interaction,
-		status,
-		owner,
-	} = data;
+	const { id, title, price, media_urls, address, interaction, status, owner } =
+		data;
 	const { width, onLayout } = useLayout();
 	const images = useMemo(
 		() => media_urls?.filter((item) => item.endsWith('.jpg')) ?? [],
 		[media_urls]
 	);
 
-	const client = useQueryClient();
-	const { mutate, isSuccess } = useMutation({
-		mutationFn: () => likeProperty({ id }),
-		onSuccess: () => {
-			client.invalidateQueries({ queryKey: ['properties'] });
-		},
-	});
-
-	function hnadleLike() {
-		mutate();
-	}
 	const isMine = useMemo(() => profileId === owner?.id, [profileId, owner]);
 	const Actions = () => {
 		if (isAdmin || isMine) {
 			return <PropertyStatus status={status} />;
 		} else {
-			return (
-				<Pressable onPress={hnadleLike} style={{ padding: 8 }}>
-					<FontAwesome
-						name={owner_interaction?.liked ? 'heart' : 'heart-o'}
-						size={24}
-						color={owner_interaction?.liked ? Colors.primary : 'white'}
-					/>
-				</Pressable>
-			);
+			return <PropertyLikeButton property={props.data} />;
 		}
 	};
 	return (
@@ -137,20 +108,10 @@ export default function PropertyListItem(props: Props) {
 						)}
 					</View>
 					{interaction && (
-						<View className=" w-[15%] gap-2">
-							<View className="flex-row items-center gap-1">
-								<Icon as={Eye} size="sm" color={'white'} />
-								<Text size={'lg'} className="text-white">
-									{interaction?.viewed}
-								</Text>
-							</View>
-							<View className="flex-row items-center gap-1">
-								<Icon as={ThumbsUp} size="sm" color={'white'} />
-								<Text size={'lg'} className="text-white">
-									{interaction?.liked}
-								</Text>
-							</View>
-						</View>
+						<PropertyInteractions
+							interaction={interaction}
+							className="w-[15%] gap-2 pr-0"
+						/>
 					)}
 				</View>
 			</View>

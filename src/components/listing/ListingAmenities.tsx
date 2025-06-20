@@ -8,22 +8,11 @@ import {
 	View,
 } from '@/components/ui';
 import { useTempStore } from '@/store';
-import {
-	Bath,
-	Bed,
-	Droplet,
-	LandPlot,
-	LucideIcon,
-	Minus,
-	ParkingCircle,
-	Plus,
-	Shirt,
-	Trees,
-	UtilityPole,
-} from 'lucide-react-native';
+import { LucideIcon, Minus, Plus } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 import { TextInput } from 'react-native';
 import React, { useCallback, useState } from 'react';
+import { Amenities } from '@/constants/Amenities';
 
 export default function ListingAmenities() {
 	const { listing, updateListing } = useTempStore();
@@ -159,7 +148,7 @@ export default function ListingAmenities() {
 				Share Details About Your Property
 			</Heading>
 			<View className="gap-8">
-				{data.map((section) => (
+				{Amenities.map((section) => (
 					<View key={section.title} className="gap-3">
 						<Text size="xl" className="font-light">
 							{section.title}
@@ -183,30 +172,3 @@ export default function ListingAmenities() {
 		</Box>
 	);
 }
-
-const data = [
-	{
-		title: 'Facilities',
-		type: 'btn',
-		data: [
-			{ label: 'Bedroom', icon: Bed, iconName: 'Bed' },
-			{ label: 'Bathroom', icon: Bath, iconName: 'Bath' },
-		],
-	},
-	{
-		title: 'Land Area',
-		type: 'num',
-		data: [{ label: 'Area', icon: LandPlot, iconName: 'LandPlot' }],
-	},
-	{
-		title: 'Essential Amenities',
-		type: 'bool',
-		data: [
-			{ label: 'Parking Area', icon: ParkingCircle, iconName: 'ParkingCircle' },
-			{ label: 'Garden', icon: Trees, iconName: 'Trees' },
-			{ label: 'Laundry Room', icon: Shirt, iconName: 'Shirt' },
-			{ label: 'Water Supply', icon: Droplet, iconName: 'Droplet' },
-			{ label: 'Electricity', icon: UtilityPole, iconName: 'UtilityPole' },
-		],
-	},
-];

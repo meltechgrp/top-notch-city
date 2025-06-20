@@ -30,7 +30,7 @@ export default function BottomSheetPlain({
 			onRequestClose={() => handleDismiss()}
 			className="m-0">
 			<View
-				className="flex-1 bg-black/50 justify-end"
+				className="flex-1 bg-black/30 justify-end"
 				onTouchEnd={() => {
 					handleDismiss();
 				}}>

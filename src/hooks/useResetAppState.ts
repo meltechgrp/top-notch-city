@@ -1,16 +1,21 @@
 import { fetchWithAuth } from '@/lib/api';
 import { storage } from '@/lib/asyncStorage';
+import { removeAuthToken } from '@/lib/secureStore';
 import { useStore, useTempStore } from '@/store';
+import { useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
 export default function useResetAppState() {
+	const queryClient = useQueryClient();
 	const resetAppState = useCallback(async () => {
-		await fetchWithAuth('/logout', {
-			method: 'POST',
-		});
+		removeAuthToken();
 		storage.clearAll();
 		useStore.getState().resetStore();
 		useTempStore.getState().resetStore();
+		queryClient.clear();
+		await fetchWithAuth('/logout', {
+			method: 'POST',
+		});
 	}, []);
 
 	return resetAppState;

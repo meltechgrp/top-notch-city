@@ -23,10 +23,12 @@ export async function updatePropertyStatus(
 
 export async function deleteProperty(propertyId: string) {
 	const res = await Fetch(`/properties/${propertyId}`, { method: 'DELETE' });
+	const data = await res.json();
+	console.log(data?.detail);
 	if (!res.ok) {
 		throw new Error('Failed to delete property');
 	}
-	return await res.json();
+	return data;
 }
 
 export async function softDeleteProperty(propertyId: string) {

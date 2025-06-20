@@ -12,6 +12,7 @@ export function usePropertyStatusMutations() {
 	const invalidate = (id: string) => {
 		queryClient.invalidateQueries({ queryKey: ['properties', id] });
 		queryClient.invalidateQueries({ queryKey: ['properties'] });
+		queryClient.invalidateQueries({ queryKey: ['admins-properties'] });
 	};
 
 	const createStatusMutation = (action: string) =>

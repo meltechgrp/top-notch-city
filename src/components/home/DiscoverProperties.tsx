@@ -5,6 +5,8 @@ import FoundHorizontalList from './FoundProperties';
 import HomeNavigation from './HomeNavigation';
 import { markersMapData } from '@/constants/DeleteLater';
 import { useRouter } from 'expo-router';
+import { useQuery } from '@tanstack/react-query';
+import { getLocationFromIP } from '@/actions/utills';
 
 type Props = {
 	className?: string;
@@ -12,6 +14,12 @@ type Props = {
 export default function DiscoverProperties(props: Props) {
 	const { className } = props;
 	const router = useRouter();
+	const { data, refetch } = useQuery({
+		queryKey: ['address'],
+		queryFn: getLocationFromIP,
+	});
+	console.log(data);
+	// setInterval(() => refetch(), 10000);
 	const mapHeight = Layout.window.height / 1.8;
 	return (
 		<View style={{ minHeight: mapHeight }} className={className}>
@@ -29,9 +37,9 @@ export default function DiscoverProperties(props: Props) {
 					height={mapHeight}
 					onMarkerPress={(data) =>
 						router.push({
-							pathname: '/(protected)/search',
+							pathname: '/(protected)/(tabs)/search',
 							params: {
-								propertyId: data.id,
+								// propertyId: data.id,
 							},
 						})
 					}

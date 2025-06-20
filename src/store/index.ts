@@ -34,6 +34,7 @@ type Actions = {
 };
 
 const initialState: State = {
+	me: undefined,
 	hasAuth: false,
 	isAdmin: false,
 	displayStyle: 'flex',
@@ -95,6 +96,7 @@ export type Listing = {
 	title?: string;
 	description?: string;
 	price?: string;
+	currency?: string;
 };
 
 type TempState = {

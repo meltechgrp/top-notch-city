@@ -1,6 +1,6 @@
 import { getAuthToken } from '@/lib/secureStore';
 import config from '@/config';
-import { getUniqueIdSync } from 'react-native-device-info';
+import { getUniqueIdSync, getIpAddress } from 'react-native-device-info';
 const MAPS_API_KEY = process.env.EXPO_PUBLIC_ANDROID_MAPS_API_KEY;
 
 export function Fetch(url: string, options: RequestInit) {
@@ -66,5 +66,36 @@ export async function fetchPlaceFromTextQuery(
 	} catch (err) {
 		console.error('Failed to fetch place:', err);
 		return [];
+	}
+}
+
+export async function getLocationFromIP() {
+	try {
+		const ipRes = await fetch('https://api64.ipify.org?format=json');
+		const ipData = await ipRes.json();
+		const ip = ipData?.ip;
+		console.log(ip);
+		if (!ip) throw new Error('IP not found');
+
+		const locationRes = await fetch(`https://ipwho.is/${ip}`);
+		const result = await locationRes.json();
+		console.log(result);
+		if (!result.success) throw new Error('Failed to get location');
+		const { longitude, latitude } = result as {
+			latitude: number;
+			longitude: number;
+			city?: string;
+			country?: string;
+		};
+		const res = await Fetch(
+			`/properties/nearby?latitude=${latitude}&longitude=${longitude}`,
+			{}
+		);
+		const data = await res.json();
+		console.log(data);
+		return data;
+	} catch (err) {
+		console.error('Location lookup error:', err);
+		return null;
 	}
 }

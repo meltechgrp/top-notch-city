@@ -1,91 +1,163 @@
 import { Icon, Pressable, View } from '@/components/ui';
-import { Bookmark, Heart, Share2 } from 'lucide-react-native';
-import { hapticFeed } from '../HapticTab';
-import { Share } from 'react-native';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { addToWishList, likeProperty } from '@/actions/property';
-import { cn } from '@/lib/utils';
+import { PropertyLikeButton } from './PropertyLikeButton';
+import { PropertyWishListButton } from './PropertyWishListButton';
+import { PropertyShareButton } from './PropertyShareButton';
+import PropertyActionsBottomSheet from './PropertyActionsBottomSheet';
+import { ConfirmationModal } from '../modals/ConfirmationModal';
+import { useState } from 'react';
+import { usePropertyStatusMutations } from '@/tanstack/mutations/usePropertyStatusMutations';
+import Entypo from '@expo/vector-icons/Entypo';
+import { Colors } from '@/constants/Colors';
+import { router } from 'expo-router';
+
+interface Props {
+	property: Property;
+	isAdmin?: boolean;
+	isOwner?: boolean;
+}
 
 export default function PropertyHeader({
-	title,
-	id,
-	interaction,
-}: {
-	title: string;
-	id: string;
-	interaction?: Owner_interaction;
-}) {
-	const client = useQueryClient();
-	const { mutate } = useMutation({
-		mutationFn: () => likeProperty({ id }),
-		onSuccess: () => {
-			client.invalidateQueries({ queryKey: ['properties', id] });
+	property,
+	isAdmin = false,
+	isOwner = false,
+}: Props) {
+	const [isActions, setIsActions] = useState(false);
+	const { mutateAsync: approve } = usePropertyStatusMutations().approveMutation;
+	const { mutateAsync: reject } = usePropertyStatusMutations().rejectMutation;
+	const { mutateAsync: permanentDelete } =
+		usePropertyStatusMutations().deleteMutation;
+	const { mutateAsync: expire } = usePropertyStatusMutations().expireMutation;
+	const { mutateAsync: flag } = usePropertyStatusMutations().flagMutation;
+	const { mutateAsync: pending } = usePropertyStatusMutations().pendingMutation;
+	const { mutateAsync: sell } = usePropertyStatusMutations().sellMutation;
+	const { mutateAsync: softDelete } =
+		usePropertyStatusMutations().softDeleteMutation;
+	const actions: ConfirmationActionConfig[] = [
+		{
+			visible: isAdmin && property.status === 'pending',
+			header: 'Property Status Update',
+			actionText: 'Approve',
+			description: 'This will approve the property. Proceed?',
+			onConfirm: approve,
 		},
-	});
-	const { mutate: mutate2 } = useMutation({
-		mutationFn: () => addToWishList({ id }),
-		onSuccess: () => {
-			client.invalidateQueries({ queryKey: ['properties', id] });
+		{
+			visible: isAdmin && property.status === 'pending',
+			header: 'Property Status Update',
+			actionText: 'Reject',
+			description: 'This will reject the property. A valid reason is required.',
+			requireReason: true,
+			onConfirm: reject,
 		},
-	});
-
-	async function onInvite() {
-		try {
-			const result = await Share.share({
-				message: `Share ${title} property to friends or family.`,
-			});
-			if (result.action === Share.sharedAction) {
-				if (result.activityType) {
-					// shared with activity type of result.activityType
-				} else {
-					// shared
-				}
-			} else if (result.action === Share.dismissedAction) {
-				// dismissed
-			}
-		} catch (error: any) {
-			alert(error.message);
-		}
-	}
-	function hnadleLike() {
-		mutate();
-	}
-	function hnadleWishList() {
-		mutate2();
-	}
-	return (
-		<View
-			style={{
-				flexDirection: 'row',
-				alignItems: 'center',
+		{
+			visible: isAdmin && property.status === 'approved',
+			header: 'Property Status Update',
+			actionText: 'Flag',
+			description:
+				'This will flag the property. Please provide a valid reason.',
+			requireReason: true,
+			onConfirm: flag,
+		},
+		{
+			visible: isAdmin && property.status === 'approved',
+			header: 'Property Status Update',
+			actionText: 'Expire',
+			description:
+				'This will expire the property. Provide a reason to proceed.',
+			requireReason: true,
+			onConfirm: expire,
+		},
+		{
+			visible:
+				isAdmin && property.status !== 'sold' && property.status !== 'pending',
+			header: 'Property Status Update',
+			actionText: 'Set Pending',
+			description: 'This will mark the property as pending again.',
+			onConfirm: pending,
+		},
+		{
+			visible: isOwner && property.status === 'approved',
+			header: 'Mark As Sold',
+			actionText: 'Mark Sold',
+			description: 'Are you sure you want to mark this property as sold?',
+			onConfirm: sell,
+		},
+		{
+			visible: !isAdmin && isOwner && property.status !== 'pending',
+			header: 'Delete Property',
+			actionText: 'Delete Property',
+			description: 'This will delete your property. Are you sure?',
+			onConfirm: softDelete,
+			className: 'text-primary',
+			iconClassName: 'text-primary',
+		},
+		{
+			visible: property.status == 'approved' && isAdmin,
+			header: 'Permanent Delete',
+			actionText: 'Delete',
+			description:
+				'This action is irreversible. Are you sure you want to permanently delete this property?',
+			onConfirm: permanentDelete,
+			className: 'text-primary',
+			iconClassName: 'text-primary',
+		},
+	];
+	const ActionButton = () => (
+		<Pressable
+			both
+			onPress={() => {
+				setIsActions(true);
 			}}
-			className="mr-2 gap-4">
-			<Pressable
-				onPress={async () => {
-					await hapticFeed(true);
-					await onInvite();
-				}}
-				style={{ padding: 8 }}>
-				<Icon as={Share2} className=" text-white w-7 h-7" />
-			</Pressable>
-			<Pressable onPress={hnadleLike} style={{ padding: 8 }}>
-				<Icon
-					as={Heart}
-					className={cn(
-						' text-white w-7 h-7',
-						interaction?.liked ? 'text-primary' : 'text-white'
-					)}
-				/>
-			</Pressable>
-			<Pressable onPress={hnadleWishList} style={{ padding: 8 }}>
-				<Icon
-					as={Bookmark}
-					className={cn(
-						' text-white w-7 h-7',
-						interaction?.added_to_wishlist ? 'text-primary' : 'text-white'
-					)}
-				/>
-			</Pressable>
-		</View>
+			className="">
+			<Entypo name="dots-three-horizontal" size={28} color={Colors.primary} />
+		</Pressable>
+	);
+	return (
+		<>
+			{isAdmin && (
+				<View className="pr-4 flex-row items-center gap-4">
+					<PropertyShareButton property={property} />
+					<PropertyLikeButton property={property} />
+					<ActionButton />
+				</View>
+			)}
+			{!isAdmin && isOwner && (
+				<View className="pr-4 flex-row items-center gap-4">
+					<PropertyShareButton property={property} />
+					<ActionButton />
+				</View>
+			)}
+			{!isAdmin && !isOwner && (
+				<View className="pr-4 flex-row items-center gap-4">
+					<PropertyShareButton property={property} />
+					<PropertyLikeButton property={property} />
+					<PropertyWishListButton property={property} />
+				</View>
+			)}
+			<PropertyActionsBottomSheet
+				isOpen={isActions}
+				onDismiss={() => setIsActions(false)}
+				withBackground={false}
+				isOnwer={isOwner}
+				propertyId={property.id}
+				options={actions.filter((action) => action.visible)}
+				OptionComponent={({ index, option, onPress }) => (
+					<ConfirmationModal
+						key={index}
+						visible={option.visible}
+						index={index}
+						header={option.header}
+						description={option.description}
+						actionText={option.actionText}
+						requireReason={option.requireReason}
+						onConfirm={option.onConfirm}
+						iconClassName={option.iconClassName}
+						propertyId={property.id}
+						className={option.className}
+						onDismiss={() => setIsActions(false)}
+						onPress={onPress}
+					/>
+				)}
+			/>
+		</>
 	);
 }

@@ -55,13 +55,13 @@ export default function CustomSelect(props: Props) {
 					setIsOpen(true);
 				}}
 				className={cn(
-					'px-4 py-2 h-[52px]  border border-outline bg-background-info rounded-full relative  flex-row',
+					'px-4 py-2 h-[52px]  border border-outline bg-background-info rounded-xl relative  flex-row',
 					{
 						' border-transparent': !!disabled,
 					}
 				)}>
 				{loading && (
-					<View className="absolute inset-0 flex-row pl-4 items-center bg-black/5 rounded-full">
+					<View className="absolute inset-0 flex-row pl-4 items-center bg-black/5 rounded-xl">
 						<ActivityIndicator size="small" color="gray" />
 					</View>
 				)}

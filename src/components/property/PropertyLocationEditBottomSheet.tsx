@@ -11,51 +11,47 @@ import { MiniEmptyState } from '../shared/MiniEmptyState';
 import { SpinningLoader } from '../loaders/SpinningLoader';
 import useGetLocation from '@/hooks/useGetLocation';
 import { getReverseGeocode } from '@/hooks/useReverseGeocode';
-import { useProfileMutations } from '@/tanstack/mutations/useProfileMutations';
 import { fetchPlaceFromTextQuery } from '@/actions/utills';
 import { CustomInput } from '../shared/CustomInput';
+import { usePropertyDataMutations } from '@/tanstack/mutations/usePropertyDataMutations';
 
 type Props = {
 	visible: boolean;
 	onDismiss: () => void;
+	property: Property;
 };
 
-function ProfileAddressBottomSheet(props: Props) {
-	const { visible, onDismiss } = props;
+function PropertyLocationEditBottomSheet(props: Props) {
+	const { visible, onDismiss, property } = props;
 	const { retryGetLocation } = useGetLocation();
 	const [text, setText] = useState('');
 	const [fetching, setFetching] = useState(false);
 	const [locating, setLocating] = useState(false);
-	const { mutateAsync, isPending: loading } =
-		useProfileMutations().updateAddressMutation;
+	const { updatePropertyLocationMutation } = usePropertyDataMutations();
 	const [locations, setLocations] = useState<GooglePlace[]>([]);
+
 	const debouncedAutocompleteSearch = useMemo(
 		() =>
-			debounce(
-				async (query: string) => {
-					if (!query || query.length < 3) {
-						setLocations([]);
-						return;
-					}
-					try {
-						setFetching(true);
-						const result = await fetchPlaceFromTextQuery(query);
-						setLocations(result);
-					} catch (error) {
-						console.error('Autocomplete error:', error);
-					} finally {
-						setFetching(false);
-					}
-				},
-				500,
-				{ leading: false, trailing: true }
-			),
+			debounce(async (query: string) => {
+				if (!query || query.length < 3) {
+					setLocations([]);
+					return;
+				}
+				try {
+					setFetching(true);
+					const result = await fetchPlaceFromTextQuery(query);
+					setLocations(result);
+				} catch (error) {
+					console.error('Autocomplete error:', error);
+				} finally {
+					setFetching(false);
+				}
+			}, 500),
 		[]
 	);
 
 	useEffect(() => {
 		return () => {
-			// Clean up debounce on unmount
 			debouncedAutocompleteSearch.cancel();
 		};
 	}, [debouncedAutocompleteSearch]);
@@ -66,62 +62,64 @@ function ProfileAddressBottomSheet(props: Props) {
 	};
 
 	async function handleAddress(item: GooglePlace) {
-		await mutateAsync(
-			[
-				{ field: 'street', value: item?.addressComponents?.street || '' },
-				{ field: 'city', value: item?.addressComponents?.city || '' },
-				{ field: 'country', value: item?.addressComponents?.country || '' },
-				{ field: 'state', value: item?.addressComponents?.state || '' },
-				{ field: 'latitude', value: item?.location?.latitude.toString() || '' },
-				{
-					field: 'longitude',
-					value: item?.location?.longitude.toString() || '',
-				},
-			],
+		await updatePropertyLocationMutation.mutateAsync(
+			{ propertyId: property.id, location: item },
 			{
-				onSuccess: () => onDismiss(),
+				onSuccess: () => {
+					showSnackbar({
+						message: 'Property location updated',
+						type: 'success',
+					});
+					onDismiss();
+				},
+				onError: () => {
+					showSnackbar({ message: 'Failed to update location', type: 'error' });
+				},
 			}
 		);
 	}
 	return (
 		<BottomSheet
-			title="Enter location"
-			withHeader={true}
+			title="Enter property location"
+			withHeader
 			withBackButton={false}
-			snapPoint={'80%'}
+			snapPoint={'70%'}
 			visible={visible}
 			onDismiss={onDismiss}>
 			<KeyboardDismissPressable>
 				<View className="flex-1 px-4 gap-8 py-5 pb-8 bg-background">
-					<View className="px-4 flex-row gap-4 items-center bg-background-info rounded-xl border border-outline-200">
+					<View className="px-4 flex-row items-center gap-4 bg-background-info rounded-xl border border-outline-200">
 						<CustomInput
 							placeholder="Search property location..."
 							value={text}
+							isBottomSheet={false}
+							className=" border-0 bg-transparent"
 							onUpdate={onChangeText}
 							returnKeyLabel="Search"
 							returnKeyType="search"
 						/>
-						<View className="w-4 h-4 items-center justify-center">
-							{loading || fetching || locating ? (
+						<View className="w-4 h-4 ml-auto items-center justify-center">
+							{fetching ||
+							locating ||
+							updatePropertyLocationMutation.isPending ? (
 								<SpinningLoader />
 							) : (
 								<Icon as={Send} />
 							)}
 						</View>
 					</View>
-
 					<View className="flex-1">
 						<FlatList
 							data={locations}
-							refreshing={loading}
+							refreshing={updatePropertyLocationMutation.isPending}
 							keyExtractor={(item) => item.placeId!}
-							contentContainerClassName="bg-background-muted py-4 flex flex-col gap-4 rounded-xl"
+							contentContainerClassName="bg-background-muted py-4 pb-8 gap-4 rounded-xl"
 							keyboardShouldPersistTaps="never"
 							keyboardDismissMode="on-drag"
 							ListHeaderComponent={() => (
 								<View className="px-4 pb-2">
 									<Text size="md" className="font-light">
-										Addresses
+										Locations
 									</Text>
 								</View>
 							)}
@@ -136,46 +134,40 @@ function ProfileAddressBottomSheet(props: Props) {
 								/>
 							)}
 							ListFooterComponent={() => (
-								<Button
-									className=" h-12 self-center rounded-xl"
-									onPress={async () => {
-										setLocating(true);
-										const location = await retryGetLocation();
-										if (!location)
-											return showSnackbar({
-												message: 'Unable to get location, try again!',
-												type: 'warning',
-											});
-										const result = await getReverseGeocode(location);
-										if (result) {
-											const { address, addressComponents } = result;
+								<View className="py-2">
+									<Button
+										className=" h-12 self-center rounded-xl"
+										onPress={async () => {
+											setLocating(true);
+											const location = await retryGetLocation();
+											if (!location)
+												return showSnackbar({
+													message: 'Unable to get location, try again!',
+													type: 'warning',
+												});
+											const result = await getReverseGeocode(location);
 											setLocating(false);
-											if (!address) {
+											if (result?.address) {
+												await handleAddress({
+													location,
+													addressComponents: result.addressComponents,
+													displayName: '',
+												});
+											} else {
 												showSnackbar({
 													message: 'Unable to get location, try again!',
 													type: 'warning',
 												});
-											} else {
-												await handleAddress({
-													location,
-													addressComponents,
-													displayName: '',
-												});
 											}
-										}
-									}}>
-									<ButtonText>Use my location</ButtonText>
-									<ButtonIcon as={MapPin} color="white" />
-								</Button>
+										}}>
+										<ButtonText>Use my location</ButtonText>
+										<ButtonIcon as={MapPin} color="white" />
+									</Button>
+								</View>
 							)}
 							renderItem={({ item }) => (
 								<Pressable
-									onPress={() =>
-										handleAddress({
-											...item,
-											displayName: '',
-										})
-									}>
+									onPress={() => handleAddress({ ...item, displayName: '' })}>
 									<View className="flex-row gap-3 p-2 px-4 bg-background-info border-b border-outline">
 										<View className="mt-2">
 											<Icon as={MapPin} className="text-primary" />
@@ -199,4 +191,4 @@ function ProfileAddressBottomSheet(props: Props) {
 	);
 }
 
-export default withRenderVisible(ProfileAddressBottomSheet);
+export default withRenderVisible(PropertyLocationEditBottomSheet);

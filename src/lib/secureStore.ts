@@ -1,6 +1,5 @@
 import eventBus from '@/lib/eventBus';
 import { MMKV } from 'react-native-mmkv';
-import * as Crypto from 'expo-crypto';
 import { storage } from '@/lib/asyncStorage';
 
 const secureStorage = new MMKV({

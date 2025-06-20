@@ -6,10 +6,11 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import React from 'react';
-import { Pressable, View } from '../ui';
+import { Icon, Pressable, Text, View } from '../ui';
 import PropertyCarousel from './PropertyCarousel';
 import { hapticFeed } from '../HapticTab';
-import { X } from 'lucide-react-native';
+import { Trash, X } from 'lucide-react-native';
+import { ConfirmationModal } from '../modals/ConfirmationModal';
 
 type Props = {
 	visible: boolean;
@@ -17,6 +18,7 @@ type Props = {
 	selectedIndex: number;
 	width: number;
 	media: string[];
+	isOwner?: boolean;
 	canPlayVideo?: boolean;
 };
 
@@ -26,6 +28,7 @@ export function PropertyModalMediaViewer({
 	selectedIndex,
 	width,
 	media,
+	isOwner = false,
 	canPlayVideo,
 }: Props) {
 	const opacity = useSharedValue(1);
@@ -62,13 +65,14 @@ export function PropertyModalMediaViewer({
 					<Animated.View
 						style={[{ width: '100%', height: '100%' }, animatedImageStyle]}>
 						<TouchableWithoutFeedback onPress={closeImage}>
-							<View className="h-full w-full items-center justify-center">
+							<View className="h-full w-full relative items-center justify-center">
 								<PropertyCarousel
 									width={width || 400}
 									factor={1}
 									media={media}
 									withPagination={false}
 									stackMode
+									isOwner={isOwner}
 									canPlayVideo={canPlayVideo}
 									selectedIndex={selectedIndex}
 								/>

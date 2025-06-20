@@ -1,13 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import {
-	BackHandler,
-	Keyboard,
-	KeyboardAvoidingView,
-	Modal,
-	Platform,
-	Pressable,
-	View,
-} from 'react-native';
+import { BackHandler, Keyboard, Modal, Pressable, View } from 'react-native';
 import {
 	BottomSheetBackdropProps,
 	BottomSheetModal,
@@ -21,7 +13,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { cn } from '@/lib/utils';
 import { CloseIcon, Heading, Icon, Text, useResolvedTheme } from '../ui';
-import { Colors } from '@/constants/Colors';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 type BottomSheetProps = Modal['props'] & {
 	withHeader?: any;
@@ -188,16 +180,19 @@ export default function BottomSheet(props: BottomSheetProps) {
 					style={{
 						flex: 1,
 					}}
+					keyboardShouldPersistTaps="handled"
 					className={cn(
 						'bg-background',
 						rounded && ' rounded-t-xl',
 						contentClassName
 					)}>
-					<KeyboardAvoidingView
-						behavior={Platform.OS === 'ios' ? 'height' : undefined}
-						style={{ flex: 1 }}>
+					<SafeAreaView
+						style={{
+							flex: 1,
+						}}
+						edges={['bottom']}>
 						{props.children}
-					</KeyboardAvoidingView>
+					</SafeAreaView>
 				</BottomSheetScrollView>
 			) : (
 				<BottomSheetView
@@ -209,11 +204,13 @@ export default function BottomSheet(props: BottomSheetProps) {
 						rounded && ' rounded-t-xl',
 						contentClassName
 					)}>
-					<KeyboardAvoidingView
-						behavior={Platform.OS === 'ios' ? 'height' : undefined}
-						style={{ flex: 1 }}>
+					<SafeAreaView
+						style={{
+							flex: 1,
+						}}
+						edges={['bottom']}>
 						{props.children}
-					</KeyboardAvoidingView>
+					</SafeAreaView>
 				</BottomSheetView>
 			)}
 		</BottomSheetModal>

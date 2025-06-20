@@ -1,119 +1,8 @@
-import { getAuthToken } from '@/lib/secureStore';
-import { Listing } from '@/store';
-import config from '@/config';
-import axios from 'axios';
 import { Fetch } from '../utills';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const API_KEY = process.env.EXPO_PUBLIC_ANDROID_MAPS_API_KEY;
 
-export function useUploadProperty() {
-	const queryClient = useQueryClient();
-
-	const mutation = useMutation({
-		mutationFn: async (listing: Listing) => {
-			const token = getAuthToken();
-			const formData = new FormData();
-
-			const {
-				photos,
-				title,
-				description,
-				price,
-				videos,
-				category,
-				subCategory,
-				facilities,
-				purpose,
-				address,
-			} = listing;
-
-			if (title) formData.append('title', title);
-			if (description) formData.append('description', description);
-			if (price) formData.append('price', price);
-			if (category) formData.append('property_category_name', category);
-			if (subCategory)
-				formData.append('property_subcategory_name', subCategory);
-			if (purpose) formData.append('purpose', purpose);
-
-			if (address) {
-				formData.append('latitude', address.location.latitude.toString());
-				formData.append('longitude', address.location.longitude.toString());
-
-				const comps = address.addressComponents;
-				if (comps.city) formData.append('city', comps.city);
-				if (comps.state) formData.append('state', comps.state);
-				if (comps.country) formData.append('country', comps.country);
-				if (comps.street) formData.append('street', comps.street);
-				if (address.placeId) formData.append('place_id', address.placeId);
-			}
-
-			photos?.forEach((item) => {
-				formData.append('media', {
-					uri: item.uri,
-					name: `image.jpg`,
-					type: 'image/jpeg',
-				} as any);
-			});
-
-			videos?.forEach((item) => {
-				formData.append('media', {
-					uri: item.uri,
-					name: `video.mp4`,
-					type: 'video/mp4',
-				} as any);
-			});
-
-			facilities?.forEach((fac) => {
-				formData.append('amenity_names', fac.label);
-				formData.append('amenity_values', fac.value.toString());
-				formData.append('amenity_icons', fac.icon);
-			});
-
-			const res = await axios.post(
-				`${config.origin}/api/properties/`,
-				formData,
-				{
-					headers: {
-						Authorization: `Bearer ${token}`,
-						'Content-Type': 'multipart/form-data',
-						Accept: 'application/json',
-					},
-				}
-			);
-
-			const result = res.data;
-
-			if (result?.detail) {
-				throw new Error('Please verify your property details');
-			}
-
-			if (result?.property_id) {
-				return result as Property;
-			}
-
-			throw new Error('Something went wrong, please try again');
-		},
-		onSuccess: () => {
-			// Invalidate `properties` query so it's refetched
-			queryClient.invalidateQueries({ queryKey: ['properties'] });
-		},
-	});
-
-	return {
-		uploading: mutation.isPending,
-		error: mutation.error?.message ?? null,
-		success: mutation.isSuccess,
-		uploadProperty: mutation.mutateAsync,
-	};
-}
-
-export async function fetchProperties({
-	pageParam,
-}: {
-	pageParam: number;
-	userId?: string;
-}) {
+export async function fetchProperties({ pageParam }: { pageParam: number }) {
 	try {
 		const res = await Fetch(`/properties`, {});
 		if (!res.ok) {
@@ -150,20 +39,29 @@ export async function fetchUserProperties({
 		throw new Error('Failed to fetch properties');
 	}
 }
-export async function fetchWishlist() {
+export async function fetchAdminProperties({
+	pageParam,
+}: {
+	pageParam: number;
+}) {
 	try {
-		const res = await Fetch(`/mywhishlist`, {});
+		const res = await Fetch(`/admin/properties`, {});
+		const json = await res.json();
 		if (!res.ok) {
-			throw new Error('Failed to fetch wishlist');
+			throw new Error('Failed to fetch properties');
 		}
 
-		const json = (await res.json()) as Wishlist[];
-		return json;
+		if (json?.detail) {
+			return [];
+		}
+		const data = json.properties as Property[];
+		return data;
 	} catch (error) {
 		console.log(error);
-		throw new Error('Failed to fetch wishlist');
+		throw new Error('Failed to fetch properties');
 	}
 }
+
 export async function fetchProperty({ id }: { id: string }) {
 	try {
 		const res = await Fetch(`/properties/${id}`, {});
@@ -176,6 +74,20 @@ export async function fetchProperty({ id }: { id: string }) {
 	} catch (error) {
 		console.log(error);
 		throw new Error('Failed to fetch property');
+	}
+}
+export async function fetchWishlist() {
+	try {
+		const res = await Fetch(`/mywhishlist`, {});
+		if (!res.ok) {
+			throw new Error('Failed to fetch wishlist');
+		}
+
+		const json = (await res.json()) as Wishlist[];
+		return json;
+	} catch (error) {
+		console.log(error);
+		throw new Error('Failed to fetch wishlist');
 	}
 }
 
@@ -234,15 +146,31 @@ export async function addToWishList({ id }: { id: string }) {
 		});
 
 		if (!res.ok) {
-			throw new Error('Failed to fetch property');
+			throw new Error('Failed to add wishlist item');
 		}
 
 		const data = await res.json();
-		console.log(data);
 		return data;
 	} catch (error) {
 		console.log(error);
-		throw new Error('Failed to fetch property');
+		throw new Error('Failed to add wishlist item');
+	}
+}
+export async function removeFromWishList({ id }: { id: string }) {
+	try {
+		const res = await Fetch(`/remove/${id}`, {
+			method: 'DELETE',
+		});
+
+		if (!res.ok) {
+			throw new Error('Failed to remove wishlist item');
+		}
+
+		const data = await res.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+		throw new Error('Failed to remove wishlist item');
 	}
 }
 export async function likeProperty({ id }: { id: string }) {
@@ -267,36 +195,11 @@ export async function likeProperty({ id }: { id: string }) {
 		throw new Error('Failed to like');
 	}
 }
-export async function approveProperty({ id }: { id: string }) {
-	try {
-		const res = await Fetch(`/properties/${id}/approve`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ property_id: id }),
-		});
 
-		if (!res.ok) {
-			throw new Error('Failed to like');
-		}
-
-		const data = await res.json();
-		console.log(data);
-		return data;
-	} catch (error) {
-		console.log(error);
-		throw new Error('Failed to like');
-	}
-}
 export async function viewProperty({ id }: { id: string }) {
 	try {
 		const res = await Fetch(`/properties/${id}/view`, {
 			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ property_id: id }),
 		});
 
 		if (!res.ok) {
@@ -321,32 +224,6 @@ export const fetchCategories = async () => {
 		}
 
 		const data = (await res.json()) as Category[];
-		return data;
-	} catch (error) {
-		console.log(error);
-		throw new Error('Failed to categories');
-	}
-};
-
-export const deleteInteractions = async () => {
-	try {
-		const res = await Fetch(`/interactions`, {});
-
-		if (!res.ok) {
-			throw new Error('Failed to categories');
-		}
-
-		const data = await res.json();
-		await Promise.all(
-			data?.map(async (item: any) => {
-				await Fetch(`/interactions/${item.id}`, {
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					method: 'DELETE',
-				});
-			})
-		);
 		return data;
 	} catch (error) {
 		console.log(error);

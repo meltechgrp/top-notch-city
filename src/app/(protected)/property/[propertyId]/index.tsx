@@ -1,7 +1,6 @@
 import {
 	Box,
 	ChevronLeftIcon,
-	Heading,
 	Icon,
 	Pressable,
 	Text,
@@ -11,20 +10,20 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useMemo } from 'react';
 import PropertyHeader from '@/components/property/PropertyHeader';
 import { usePropertyStore } from '@/store/propertyStore';
-import PropertyDetailsBottomSheet from '@/components/property/PropertyDetailsBottomSheet';
-import PropertyCarousel from '@/components/property/PropertyCarousel';
+import PropertyDetails from '@/components/property/PropertyDetails';
 import { useLayout } from '@react-native-community/hooks';
 import FullHeightLoaderWrapper from '@/components/loaders/FullHeightLoaderWrapper';
-import { composeFullAddress, formatMoney } from '@/lib/utils';
-import { Eye, Heart, MapPin } from 'lucide-react-native';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchProperty, viewProperty } from '@/actions/property';
 import { ScrollView } from 'react-native';
 import Platforms from '@/constants/Plaforms';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { PropertyHeroSection } from '@/components/property/PropertyHeroSection';
+import { useStore } from '@/store';
 
 export default function PropertyItem() {
 	const { propertyId } = useLocalSearchParams() as { propertyId: string };
+	const { me } = useStore();
 	const { updateProperty } = usePropertyStore();
 	const { width, onLayout } = useLayout();
 	const router = useRouter();
@@ -38,22 +37,24 @@ export default function PropertyItem() {
 		mutationFn: () => viewProperty({ id: propertyId }),
 		onSuccess: () => {
 			client.invalidateQueries({ queryKey: ['properties', propertyId] });
+			client.invalidateQueries({ queryKey: ['properties'] });
 		},
 	});
 	const property = useMemo(() => {
 		return data?.id ? data : null;
 	}, [propertyId, data]);
-
+	const isMine = useMemo(() => property?.owner?.id === me?.id, [property, me]);
+	const isAdmin = useMemo(() => me?.role == 'admin', [me]);
 	useEffect(() => {
 		if (property) {
 			updateProperty(property);
 		}
 	}, [property]);
-	// useEffect(() => {
-	// 	if (property) {
-	// 		mutate();
-	// 	}
-	// }, [property]);
+	useEffect(() => {
+		if (property) {
+			mutate();
+		}
+	}, [property]);
 	if (error) {
 		return (
 			<View className=" bg-background flex-1 justify-center items-center">
@@ -80,17 +81,18 @@ export default function PropertyItem() {
 							<Icon className=" w-8 h-8" as={ChevronLeftIcon} color="white" />
 						</Pressable>
 					),
-					headerRight: () => (
-						<PropertyHeader
-							interaction={property?.owner_interaction}
-							title={property?.title || ''}
-							id={propertyId}
-						/>
-					),
+					headerRight: () =>
+						property ? (
+							<PropertyHeader
+								isAdmin={isAdmin}
+								isOwner={isMine}
+								property={property}
+							/>
+						) : undefined,
 				}}
 			/>
 			{Platforms.isAndroid() && (
-				<View className=" absolute top-0 z-30 pl-4 left-0 w-full">
+				<View className=" absolute top-2 z-30 pl-4 left-0 w-full">
 					<SafeAreaView edges={['top']} className=" bg-transparent">
 						<View className="flex-row justify-between items-center flex-1">
 							<Pressable
@@ -102,11 +104,13 @@ export default function PropertyItem() {
 								className=" flex-row items-center  p-1 bg-black/20 rounded-full">
 								<Icon className=" w-7 h-7" as={ChevronLeftIcon} color="white" />
 							</Pressable>
-							<PropertyHeader
-								interaction={property?.owner_interaction}
-								title={property?.title || ''}
-								id={propertyId}
-							/>
+							{property && (
+								<PropertyHeader
+									isAdmin={isAdmin}
+									isOwner={isMine}
+									property={property}
+								/>
+							)}
 						</View>
 					</SafeAreaView>
 				</View>
@@ -115,52 +119,9 @@ export default function PropertyItem() {
 				<Box onLayout={onLayout} className="flex-1 relative">
 					<ScrollView style={{ flex: 1 }}>
 						{property && (
-							<View className="flex-1">
-								<View className=" relative">
-									<PropertyCarousel
-										width={width || 400}
-										factor={1.15}
-										withBackdrop={true}
-										loop={false}
-										media={property.media_urls}
-										pointerPosition={60}
-									/>
-									<View className=" absolute flex-row justify-between bottom-10 left-4 right-4 w-full px-1">
-										<View className="gap-2">
-											<Heading size="xl" className=" text-white">
-												{property.title}
-											</Heading>
-											<View className="self-start bg-primary p-2 rounded-xl">
-												<Text size="lg" className=" text-white">
-													{formatMoney(property.price, 'NGN', 0)}
-												</Text>
-											</View>
-											<View className="flex-row items-center mt-1 gap-2">
-												<Icon size="md" as={MapPin} className="text-primary" />
-												<Text size="md" className=" text-white">
-													{composeFullAddress(property?.address, true)}
-												</Text>
-											</View>
-										</View>
-										<View className="gap-4 pr-8">
-											<View className="flex-row gap-2 items-center">
-												<Icon as={Eye} color="white" />
-												<Text className="text-white text-lg">
-													{property?.interaction?.viewed}
-												</Text>
-											</View>
-											<View className="flex-row gap-2 items-center">
-												<Icon as={Heart} color="white" />
-												<Text className="text-white text-lg">
-													{property?.interaction?.liked}
-												</Text>
-											</View>
-										</View>
-									</View>
-								</View>
-								<PropertyDetailsBottomSheet />
-							</View>
+							<PropertyHeroSection property={property} width={width} />
 						)}
+						{property && <PropertyDetails />}
 					</ScrollView>
 				</Box>
 			</FullHeightLoaderWrapper>

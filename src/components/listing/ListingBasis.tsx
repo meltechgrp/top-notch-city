@@ -33,7 +33,7 @@ export default function ListingBasis() {
 							<Input size="md" className="my-1 h-14 rounded-xl">
 								<InputField
 									type="text"
-									placeholder="1 bedroom flat... amazon estate..."
+									placeholder="1 bedroom flat... or amazon estate..."
 									value={listing.title}
 									onChangeText={(text) =>
 										updateListing({ ...listing, title: text })
@@ -53,9 +53,9 @@ export default function ListingBasis() {
 									Property description
 								</FormControlLabelText>
 							</FormControlLabel>
-							<Textarea size="md">
+							<Textarea size="md" className=" border border-outline">
 								<TextareaInput
-									numberOfLines={10}
+									multiline
 									placeholder="Share some additional information about the property..."
 								/>
 							</Textarea>

@@ -1,15 +1,11 @@
 import { Box, View } from '@/components/ui';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useRefreshOnFocus } from '@/hooks/useRefreshOnFocus';
-import PropertyBottomSheet from '@/components/admin/properties/PropertyBottomSheet';
 import VerticalProperties from '@/components/property/VerticalProperties';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { fetchProperties } from '@/actions/property';
 
 export default function PendingProperties() {
-	const [activeProperty, setActiveProperty] = useState<Property | null>(null);
-	const [propertyBottomSheet, setPropertyBottomSheet] = useState(false);
-
 	const { data, isLoading, fetchNextPage, refetch } = useInfiniteQuery({
 		queryKey: ['properties'],
 		queryFn: fetchProperties,
@@ -30,22 +26,9 @@ export default function PendingProperties() {
 						data={propertysData}
 						isLoading={isLoading}
 						disableHeader
-						onPress={(data) => {
-							setActiveProperty(data);
-							setPropertyBottomSheet(true);
-						}}
 						refetch={refetch}
 					/>
 				</View>
-				{activeProperty && (
-					<PropertyBottomSheet
-						visible={propertyBottomSheet}
-						property={activeProperty}
-						onDismiss={() => setPropertyBottomSheet(false)}
-						onApprove={() => {}}
-						onReject={() => {}}
-					/>
-				)}
 			</Box>
 		</>
 	);

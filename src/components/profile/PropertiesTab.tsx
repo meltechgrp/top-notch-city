@@ -6,8 +6,6 @@ import { fetchUserProperties } from '@/actions/property';
 import { SharedValue } from 'react-native-reanimated';
 import { FilterComponent } from '../admin/shared/FilterComponent';
 import { useRefreshOnFocus } from '@/hooks/useRefreshOnFocus';
-import PropertyBottomSheet from '../admin/properties/PropertyBottomSheet';
-import { useStore } from '@/store';
 
 type IProps = {
 	profileId: string;
@@ -20,9 +18,6 @@ type IProps = {
 export default function PropertiesTabView(props: IProps) {
 	const { profileId, onScroll, scrollY, headerHeight, scrollElRef, listRef } =
 		props;
-	const { me } = useStore();
-	const [activeProperty, setActiveProperty] = useState<Property | null>(null);
-	const [propertyBottomSheet, setPropertyBottomSheet] = useState(false);
 	const [search, setSearch] = useState('');
 	const [actveTab, setActiveTab] = useState('all');
 	const { data, isLoading, fetchNextPage, refetch } = useInfiniteQuery({
@@ -97,20 +92,8 @@ export default function PropertiesTabView(props: IProps) {
 					scrollY={scrollY}
 					className="pb-24"
 					profileId={profileId}
-					onPress={(data) => {
-						setActiveProperty(data);
-						setPropertyBottomSheet(true);
-					}}
 				/>
 			</View>
-			{activeProperty && me && (
-				<PropertyBottomSheet
-					visible={propertyBottomSheet}
-					property={activeProperty}
-					user={me}
-					onDismiss={() => setPropertyBottomSheet(false)}
-				/>
-			)}
 		</>
 	);
 }
