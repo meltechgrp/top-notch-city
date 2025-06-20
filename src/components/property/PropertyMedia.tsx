@@ -15,7 +15,7 @@ interface Props extends AnimatedProps<ViewProps> {
 	style?: StyleProp<ImageStyle>;
 	index?: number;
 	rounded?: boolean;
-	source: string;
+	source: Media;
 	withBackdrop?: boolean;
 	isOwner?: boolean;
 	canPlayVideo?: boolean;
@@ -37,15 +37,14 @@ export const PropertyMedia: React.FC<Props> = (props) => {
 		isVisible = true,
 		isOwner,
 		onPress,
+		source,
 		...animatedViewProps
 	} = props;
 	const isFocused = useIsFocused();
-	const uri = useMemo(() => generateMediaUrl(props.source), [props.source]);
-	const isImage = uri.endsWith('.jpg');
-	const isVideo = uri.endsWith('.mp4');
+	const { uri, isImage } = useMemo(() => generateMediaUrl(source), [source]);
 	// Setup player if media is video
 	const player = useVideoPlayer(
-		isVideo && isFocused && uri ? uri : null,
+		!isImage && isFocused && uri ? uri : null,
 		(player) => {
 			try {
 				player.loop = false;
@@ -75,7 +74,7 @@ export const PropertyMedia: React.FC<Props> = (props) => {
 					/>
 				</Pressable>
 			) : null}
-			{isVisible && isVideo && player ? (
+			{isVisible && !isImage && player ? (
 				<Pressable
 					className={cn(
 						'relative w-full h-full',

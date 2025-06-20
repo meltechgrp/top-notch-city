@@ -1,14 +1,4 @@
-import {
-	Building,
-	Building2,
-	ChevronLeftIcon,
-	Home,
-	House,
-	Landmark,
-	ListFilterIcon,
-	SearchIcon,
-	XIcon,
-} from 'lucide-react-native';
+import { ListFilterIcon, SearchIcon, XIcon } from 'lucide-react-native';
 import Animated, {
 	useSharedValue,
 	useAnimatedStyle,
@@ -21,34 +11,6 @@ import { ScrollView, TextInput, TouchableOpacity } from 'react-native';
 import { useEffect } from 'react';
 import { useRouter } from 'expo-router';
 import { cn } from '@/lib/utils';
-import { Filter } from '@/app/(protected)/(tabs)/search';
-
-const data = [
-	{
-		name: 'all',
-		icon: Home,
-	},
-	{
-		name: 'duplex',
-		icon: Home,
-	},
-	{
-		name: 'apartment',
-		icon: Building,
-	},
-	{
-		name: 'bungalow',
-		icon: Landmark,
-	},
-	{
-		name: 'flat',
-		icon: Home,
-	},
-	{
-		name: 'mansion',
-		icon: Building2,
-	},
-];
 
 interface Props {
 	text: string;
@@ -57,7 +19,7 @@ interface Props {
 	textInputRef: React.RefObject<TextInput | null>;
 	setShowFilter: (show: boolean) => void;
 	setFilter: (category: string) => void;
-	filter: Filter;
+	filter: SearchFilters;
 }
 
 export function SearchHeader({
@@ -69,7 +31,6 @@ export function SearchHeader({
 	setFilter,
 	filter,
 }: Props) {
-	const router = useRouter();
 	const translateY = useSharedValue(50);
 
 	useEffect(() => {
@@ -108,13 +69,7 @@ export function SearchHeader({
 							<TouchableOpacity
 								className=" p-3 flex items-center justify-center rounded-full bg-background-muted" // consistent width
 								onPress={() => setShowFilter(true)}>
-								<Icon
-									as={ListFilterIcon}
-									className={cn(
-										'w-6 h-6',
-										filter.city.value ? 'text-primary' : undefined
-									)}
-								/>
+								<Icon as={ListFilterIcon} className={cn('w-6 h-6')} />
 							</TouchableOpacity>
 						</Animated.View>
 						{!!text && (
@@ -137,7 +92,7 @@ export function SearchHeader({
 						snapToInterval={200}
 						snapToAlignment="center"
 						decelerationRate="fast">
-						{data.map((category) => (
+						{/* {[].map((category) => (
 							<TouchableOpacity
 								key={category.name}
 								className="min-w-[120px]" // consistent width
@@ -163,7 +118,7 @@ export function SearchHeader({
 									</Text>
 								</Badge>
 							</TouchableOpacity>
-						))}
+						))} */}
 					</ScrollView>
 				</Animated.View>
 			</SafeAreaView>

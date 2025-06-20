@@ -69,33 +69,14 @@ export async function fetchPlaceFromTextQuery(
 	}
 }
 
-export async function getLocationFromIP() {
+export async function getLocationFromIP(): Promise<Property[]> {
 	try {
-		const ipRes = await fetch('https://api64.ipify.org?format=json');
-		const ipData = await ipRes.json();
-		const ip = ipData?.ip;
-		console.log(ip);
-		if (!ip) throw new Error('IP not found');
-
-		const locationRes = await fetch(`https://ipwho.is/${ip}`);
-		const result = await locationRes.json();
-		console.log(result);
-		if (!result.success) throw new Error('Failed to get location');
-		const { longitude, latitude } = result as {
-			latitude: number;
-			longitude: number;
-			city?: string;
-			country?: string;
-		};
-		const res = await Fetch(
-			`/properties/nearby?latitude=${latitude}&longitude=${longitude}`,
-			{}
-		);
+		const res = await Fetch(`/properties/nearby`, {});
 		const data = await res.json();
-		console.log(data);
+		if (data?.detail) return [];
 		return data;
 	} catch (err) {
 		console.error('Location lookup error:', err);
-		return null;
+		return [];
 	}
 }

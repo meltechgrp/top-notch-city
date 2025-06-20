@@ -150,11 +150,11 @@ function ImageGrid({ width }: { width: number }) {
 				?.slice(0, 4)
 				.map((img) => (
 					<View
-						key={img}
+						key={img.id}
 						style={{ width, height: width }}
 						className=" rounded-xl overflow-hidden">
 						<Image
-							source={{ uri: generateMediaUrl(img) }}
+							source={{ uri: generateMediaUrl(img).uri }}
 							className="w-full h-full object-cover"
 							alt="images"
 						/>

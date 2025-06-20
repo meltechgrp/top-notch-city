@@ -1,18 +1,20 @@
 import { Marker } from 'react-native-maps';
 import PropertyMedia from '@/assets/images/property.png';
-import { MarkerData } from './map';
 
 interface Props {
-	property: MarkerData;
-	onPress: (data: MarkerData) => void;
+	property: Property;
+	onPress: (data: Property) => void;
 }
 
 export function CustomPropertyMarker({ property, onPress }: Props) {
-	const { longitude, latitude } = property;
+	const { address } = property;
 	return (
 		<>
 			<Marker
-				coordinate={{ latitude: latitude, longitude: longitude }}
+				coordinate={{
+					latitude: address?.latitude,
+					longitude: address?.longitude,
+				}}
 				onPress={() => onPress(property)}
 				image={PropertyMedia}
 				anchor={{ x: 0.5, y: 0.5 }}

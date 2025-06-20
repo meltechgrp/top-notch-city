@@ -11,7 +11,7 @@ export async function updatePropertyBasicInfo(
 ) {
 	try {
 		const formData = new FormData();
-
+		console.log(data, propertyId);
 		if (data.title) formData.append('title', data.title);
 		if (data.price) formData.append('price', data.price);
 		if (data.purpose) formData.append('purpose', data.purpose);
@@ -24,14 +24,13 @@ export async function updatePropertyBasicInfo(
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'multipart/form-data',
-				Accept: 'application/json',
 			},
 			body: formData,
 		});
 
 		const json = await res.json();
-		// console.log(json?.detail);
-		// console.log(res.status);
+		console.log(json?.detail);
+		console.log(res.status);
 		if (!res.ok) {
 			throw new Error('Failed to update property');
 		}
@@ -257,7 +256,7 @@ export function useUploadProperty() {
 			}
 
 			if (result?.property_id) {
-				return result as Property;
+				return result;
 			}
 
 			throw new Error('Something went wrong, please try again');

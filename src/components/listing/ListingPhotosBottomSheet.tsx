@@ -105,7 +105,7 @@ function ListingPhotosBottomSheet(props: Props) {
 					<Button
 						disabled={photos && photos?.length > 15}
 						size="xl"
-						className="flex-1"
+						className="flex-1 items-center"
 						onPress={pickImage}>
 						<ButtonText>Choose photos</ButtonText>
 						<Icon as={Images} />

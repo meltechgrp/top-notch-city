@@ -124,7 +124,7 @@ export default function PropertyEdit() {
 							{chunk(getImages(), 3).map((row, i) => (
 								<View className={'flex-row gap-4'} key={i}>
 									{row.map((media, i) => (
-										<Pressable both key={media}>
+										<Pressable both key={media.id}>
 											<PropertyMedia
 												style={{
 													width: width > 100 ? (width - 95) / 3 : 72,
@@ -136,8 +136,8 @@ export default function PropertyEdit() {
 												canPlayVideo={false}
 												onPress={() => {
 													setImagesIndex(
-														property.media_urls.findIndex(
-															(img) => img == media
+														property.media.findIndex(
+															(img) => img.id == media.id
 														) || i
 													);
 													setIsViewer(true);
@@ -167,7 +167,7 @@ export default function PropertyEdit() {
 							{chunk(getVideos(), 3).map((row, i) => (
 								<View className={'flex-row gap-4'} key={i}>
 									{row.map((media, i) => (
-										<Pressable both key={media}>
+										<Pressable both key={media.id}>
 											<PropertyMedia
 												style={{
 													width: width > 100 ? (width - 95) / 3 : 72,
@@ -179,8 +179,8 @@ export default function PropertyEdit() {
 												canPlayVideo={false}
 												onPress={() => {
 													setImagesIndex(
-														property.media_urls.findIndex(
-															(img) => img == media
+														property.media.findIndex(
+															(img) => img.id == media.id
 														) || i
 													);
 													setIsViewer(true);
@@ -228,7 +228,7 @@ export default function PropertyEdit() {
 				setVisible={setIsViewer}
 				canPlayVideo
 				isOwner
-				media={property?.media_urls}
+				media={property?.media}
 			/>
 			<PropertyBasicEditBottomSheet
 				property={property}

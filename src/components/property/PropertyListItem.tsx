@@ -2,7 +2,7 @@ import { cn, composeFullAddress } from '@/lib/utils';
 import { formatMoney } from '@/lib/utils';
 import { StyleProp, View, ViewStyle } from 'react-native';
 import { Icon, Text, Pressable } from '../ui';
-import { Eye, MapPin, ThumbsUp } from 'lucide-react-native';
+import { MapPin } from 'lucide-react-native';
 import { hapticFeed } from '../HapticTab';
 import { useMemo } from 'react';
 import { Colors } from '@/constants/Colors';
@@ -37,12 +37,11 @@ export default function PropertyListItem(props: Props) {
 		isAdmin,
 	} = props;
 	const { bannerHeight } = Layout;
-	const { id, title, price, media_urls, address, interaction, status, owner } =
-		data;
+	const { id, title, price, media, address, interaction, status, owner } = data;
 	const { width, onLayout } = useLayout();
 	const images = useMemo(
-		() => media_urls?.filter((item) => item.endsWith('.jpg')) ?? [],
-		[media_urls]
+		() => media?.filter((item) => item.media_type == 'IMAGE') ?? [],
+		[media]
 	);
 
 	const isMine = useMemo(() => profileId === owner?.id, [profileId, owner]);

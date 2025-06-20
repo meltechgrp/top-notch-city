@@ -6,18 +6,17 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import React from 'react';
-import { Icon, Pressable, Text, View } from '../ui';
+import { Pressable, View } from '../ui';
 import PropertyCarousel from './PropertyCarousel';
 import { hapticFeed } from '../HapticTab';
-import { Trash, X } from 'lucide-react-native';
-import { ConfirmationModal } from '../modals/ConfirmationModal';
+import { X } from 'lucide-react-native';
 
 type Props = {
 	visible: boolean;
 	setVisible: (val: boolean) => void;
 	selectedIndex: number;
 	width: number;
-	media: string[];
+	media: Media[];
 	isOwner?: boolean;
 	canPlayVideo?: boolean;
 };

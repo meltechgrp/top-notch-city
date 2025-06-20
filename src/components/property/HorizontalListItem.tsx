@@ -1,27 +1,25 @@
 import { cn } from '@/lib/utils';
 import { formatMoney } from '@/lib/utils';
 import capitalize from 'lodash-es/capitalize';
-import { Pressable, View } from 'react-native';
-import { Property } from './PropertyHorizontalList';
-import { Card, Heading, Image, Text } from '../ui';
+import { Card, Heading, Image, Pressable, Text, View } from '../ui';
 import { Bath, Bed } from 'lucide-react-native';
-import { hapticFeed } from '../HapticTab';
 import { useRouter } from 'expo-router';
+import { generateMediaUrl } from '@/lib/api';
 
 type Props = {
 	data: Property;
 	className?: string;
-	isMine?: boolean;
 };
 export default function HorizontalListItem(props: Props) {
-	const { data, className, isMine } = props;
-	const { banner, name, price, id } = data;
+	const { data, className } = props;
+	const { media, price, id, title, amenities } = data;
 	const router = useRouter();
-
+	const Find = (item: string) =>
+		amenities?.find((a) => a.name == item)?.value || 0;
 	return (
 		<Pressable
+			both
 			onPress={() => {
-				hapticFeed();
 				router.push({
 					pathname: `/property/[propertyId]`,
 					params: {
@@ -35,10 +33,14 @@ export default function HorizontalListItem(props: Props) {
 					className
 				)}
 				style={{ borderRadius: 8 }}>
-				<Image source={banner} className="h-full w-32 rounded-xl" alt={name} />
+				<Image
+					source={{ uri: generateMediaUrl(media[0]).uri }}
+					className="h-full w-32 rounded-xl"
+					alt={title}
+				/>
 				<View className=" w-[120px]">
 					<Heading size="md" className=" font-medium" numberOfLines={1}>
-						{capitalize(name)}
+						{capitalize(title)}
 					</Heading>
 					<View className=" gap-1">
 						<View className="flex-row items-center gap-1">
@@ -48,14 +50,14 @@ export default function HorizontalListItem(props: Props) {
 						<View className="flex-row gap-2">
 							<View className="flex-row items-center gap-1">
 								<Bed size={14} color={'orange'} />
-								<Text className="text-sm">6</Text>
+								<Text className="text-sm">{Find('Bedroom')}</Text>
 							</View>
 							<View className="flex-row items-center gap-1">
 								<Bath size={14} color={'orange'} />
-								<Text className=" text-sm">4</Text>
+								<Text className=" text-sm">{Find('Bathroom')}</Text>
 							</View>
 						</View>
-						<Text size="lg" className="text-medium text-typography">
+						<Text size="md" className="text-medium text-typography">
 							{formatMoney(price, 'NGN', 0)}
 						</Text>
 					</View>

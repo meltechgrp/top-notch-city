@@ -129,7 +129,13 @@ export const getImageUrl = (url?: string | null) => {
 		};
 	return profileDefault;
 };
-export const generateMediaUrl = (url: string) => `${config.origin}${url}`;
+export const generateMediaUrl = (media: Media) => {
+	return {
+		uri: `${config.origin}${media.url}`,
+		isImage: media.media_type == 'IMAGE',
+		id: media.id,
+	};
+};
 export type UseApiQueryOptions = {
 	withAuth?: boolean;
 	method?: AxiosRequestConfig['method'];

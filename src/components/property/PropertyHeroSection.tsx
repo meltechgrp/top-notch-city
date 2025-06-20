@@ -18,7 +18,7 @@ export function PropertyHeroSection({ property, width }: Props) {
 					factor={1.15}
 					withBackdrop={true}
 					loop={false}
-					media={property.media_urls}
+					media={property.media}
 					pointerPosition={60}
 				/>
 				<View className=" absolute flex-row justify-between bottom-10 left-4 right-4 w-full px-1">

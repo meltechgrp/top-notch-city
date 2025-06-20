@@ -25,6 +25,13 @@ export default function SellLayout() {
 					animation: 'slide_from_right',
 				}}
 			/>
+			<Stack.Screen
+				name="success"
+				options={{
+					headerTitle: '',
+					animation: 'slide_from_right',
+				}}
+			/>
 		</Stack>
 	);
 }

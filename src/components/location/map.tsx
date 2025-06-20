@@ -7,12 +7,6 @@ import PropertyMedia from '@/assets/images/property.png';
 import { useTheme } from '../layouts/ThemeProvider';
 import { Colors } from '@/constants/Colors';
 
-export type MarkerData = {
-	name: string;
-	latitude: number;
-	longitude: number;
-	image?: any;
-};
 interface MapProps {
 	latitude?: number;
 	longitude?: number;
@@ -20,11 +14,11 @@ interface MapProps {
 	showUserLocation?: boolean;
 	scrollEnabled?: boolean;
 	showsBuildings?: boolean;
-	activeMarker?: MarkerData;
+	activeMarker?: Property[];
 	children?: ReactNode;
-	onMarkerPress?: (data: MarkerData) => void;
+	onMarkerPress?: (data: Property) => void;
 	zoomControlEnabled?: boolean;
-	markers?: MarkerData[];
+	markers?: Property[];
 	marker?: LocationData;
 	showRadius?: boolean;
 	radiusInMeters?: number;
@@ -113,7 +107,7 @@ export default function Map(props: MapProps) {
 				)}
 				{markers?.map((place) => (
 					<CustomPropertyMarker
-						key={place.name}
+						key={place.id}
 						onPress={(data) => onMarkerPress && onMarkerPress(data)}
 						property={place}
 					/>

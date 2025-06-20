@@ -11,7 +11,7 @@ import { useResolvedTheme } from '../ui';
 import Layout from '@/constants/Layout';
 
 type Props = {
-	media: string[];
+	media: Media[];
 	width: number;
 	factor?: number;
 	pointerPosition?: number;
@@ -104,9 +104,9 @@ function PropertyCarousel({
 				}
 			/>
 			{withPagination && (
-				<Pagination.Basic<string>
+				<Pagination.Basic<Media>
 					progress={progress}
-					data={media.slice(0, paginationLenght)}
+					data={media?.slice(0, paginationLenght)}
 					size={8}
 					dotStyle={{
 						borderRadius: 100,

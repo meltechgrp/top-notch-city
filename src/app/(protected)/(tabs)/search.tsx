@@ -1,103 +1,58 @@
-// import SearchAutoCompleteView from '@/components/search/SearchAutoCompleteView';
 import SearchFilterBottomSheet from '@/components/search/SearchFilterBottomSheet';
-import Map, { MarkerData } from '@/components/location/map';
+import Map from '@/components/location/map';
 import { SearchHeader } from '@/components/search/Searchheader';
 import { useSearchHistoryStorage } from '@/components/search/SearchHistory';
 import { KeyboardDismissPressable } from '@/components/shared/KeyboardDismissPressable';
-// import SearchHistoryScreen from '@/components/search/SearchHistoryScreen';
-// import SearchResultsView from '@/components/search/SearchResultsView';
 import { Box } from '@/components/ui';
-import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { router } from 'expo-router';
 import debounce from 'lodash-es/debounce';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Dimensions, Platform, TextInput } from 'react-native';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
-import { markersMapData } from '@/constants/DeleteLater';
 import PropertyBottomSheet from '@/components/location/PropertyBottomSheet';
-
-export type Filter = {
-	type: string;
-	city: {
-		value: string;
-		label: string;
-	};
-	price: {
-		min: number;
-		max: number;
-		range: number;
-	};
-	category: string;
-};
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { searchProperties } from '@/actions/search';
 
 export default function SearchScreen() {
-	const { q, propertyId } = useLocalSearchParams<{
-		q?: string;
-		propertyId?: string;
-	}>();
-
 	const { height: totalHeight } = Dimensions.get('screen');
-	const [text, setText] = useState(q || '');
-	const [typing, setTyping] = useState(false);
-	const [showResults, setShowResults] = useState(!!q);
+	const [text, setText] = useState('');
+	const [showResults, setShowResults] = useState(false);
+	const [selectedItem, setSeletedItem] = useState<Property | null>(null);
 	const [showFilter, setShowFilter] = useState(false);
-	const [selectedMarker, setSelectedMarker] = useState<MarkerData | null>(null);
-	const [filter, setFilter] = useState<Filter>({
-		type: 'all',
-		city: {
-			value: '',
-			label: '',
-		},
-		price: {
-			min: 100000,
-			max: 1000000,
-			range: 100000,
-		},
-		category: 'all',
-	});
+	const [filter, setFilter] = useState<SearchFilters>({});
+
+	const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } =
+		useInfiniteQuery({
+			queryKey: ['search', filter],
+			queryFn: ({ pageParam = 1 }) => searchProperties(filter, pageParam),
+			getNextPageParam: (lastPage) => {
+				const { page, pages } = lastPage;
+				return page < pages ? page + 1 : undefined;
+			},
+			initialPageParam: 1,
+			enabled: false,
+		});
 	const { addToList: addToSearchHistory } = useSearchHistoryStorage();
 
 	const textInputRef = useRef<TextInput>(null);
 
-	function onChangeText(text: string) {
-		setText(text);
-		setTyping(text.length > 0);
-		// setShowResults(false);
-		// if (filter.state) {
-		// 	debouncedAutocompleteSearch(text, { ...filter } as any);
-		// } else {
-		// 	debouncedAutocompleteSearch(text, {});
-		// }
+	const debouncedSearch = useRef(debounce(refetch, 500)).current;
+
+	function onChangeText(value: string) {
+		setText(value);
+		// optionally use value to update filter as well (if searching by text)
+		// setFilter({ ...filter, keyword: value })
+		debouncedSearch();
 	}
 	function onSubmit() {
 		addToSearchHistory(text);
-		router.navigate(`/search?q=${text}`);
+		refetch();
 	}
 
-	useEffect(() => {
-		if (Platform.OS == 'android') {
-			SystemNavigationBar.setNavigationColor('translucent');
-		}
-	}, []);
-	useFocusEffect(
-		useCallback(() => {
-			if (q) {
-				setText(q);
-				setTyping(false);
-				setShowResults(true);
-			} else {
-				textInputRef.current?.focus();
-			}
-		}, [q])
+	const properties = useMemo(
+		() => data?.pages.flatMap((page) => page.results) || [],
+		[data]
 	);
-	useEffect(() => {
-		if (propertyId) {
-			const property = markersMapData.find((p) => p.id === propertyId);
-			if (property) {
-				setSelectedMarker(property);
-			}
-		}
-	}, [propertyId]);
-
 	return (
 		<Box className="flex-1 relative">
 			<KeyboardDismissPressable>
@@ -127,22 +82,21 @@ export default function SearchScreen() {
 					scrollEnabled={true}
 					height={totalHeight}
 					showUserLocation={true}
-					markers={markersMapData}
-					onMarkerPress={(marker) => setSelectedMarker(marker)}
+					markers={properties}
+					onMarkerPress={(marker) => setSeletedItem(marker)}
 				/>
 
-				{selectedMarker && (
+				{selectedItem && (
 					<PropertyBottomSheet
-						visible={!!selectedMarker}
-						data={selectedMarker}
+						visible={!!selectedItem}
+						data={selectedItem}
 						onContinue={() => {
-							setSelectedMarker(null);
 							router.push({
 								pathname: '/(protected)/property/[propertyId]',
-								params: { propertyId: selectedMarker.name },
+								params: { propertyId: selectedItem.id },
 							});
 						}}
-						onDismiss={() => setSelectedMarker(null)}
+						onDismiss={() => setSeletedItem(null)}
 					/>
 				)}
 			</KeyboardDismissPressable>

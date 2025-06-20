@@ -1,4 +1,4 @@
-import { useUploadProperty } from '@/actions/property';
+import { useUploadProperty } from '@/actions/property/upload';
 import { BodyScrollView } from '@/components/layouts/BodyScrollView';
 import ListingAmenities from '@/components/listing/ListingAmenities';
 import ListingBasis from '@/components/listing/ListingBasis';
@@ -79,15 +79,14 @@ export default function SellAddScreen() {
 		updateListingStep();
 	}
 	async function uploaHandler() {
-		const data = await uploadProperty(listing);
-		if (data?.id) {
-			router.dismissTo('/listing/success');
-		} else {
-			showSnackbar({
-				message: error ?? 'Something went wrong',
-				type: 'error',
-			});
-		}
+		await uploadProperty(listing, {
+			onSuccess: () => router.dismissTo('/listing/success'),
+			onError: () =>
+				showSnackbar({
+					message: error ?? 'Something went wrong',
+					type: 'error',
+				}),
+		});
 	}
 	return (
 		<>

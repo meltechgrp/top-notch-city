@@ -32,15 +32,22 @@ type Property = {
 	status: PropertyStatus;
 	purpose: PropertyPurpose;
 	is_featured: boolean;
+	duration?: number;
 	category: string;
 	subcategory: string;
 	address: Address;
-	media_urls: string[];
+	media: Media[];
 	owner: Owner;
 	amenities: Amenity[];
 	interaction?: Interaction;
 	owner_interaction?: Owner_interaction;
 	reason_or_comment?: string;
+};
+
+type Media = {
+	id: string;
+	url: string;
+	media_type: 'IMAGE' | 'VIDEO';
 };
 
 type Owner = {
@@ -94,7 +101,7 @@ type Wishlist = {
 	category: string;
 	subcategory: string;
 	// address: Address;
-	media_urls: string[];
+	media: string[];
 };
 
 type PropertyStatus =

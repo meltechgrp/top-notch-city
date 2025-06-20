@@ -4,7 +4,6 @@ import { composeFullAddress, formatMoney } from '@/lib/utils';
 import { Dot, MapPin } from 'lucide-react-native';
 import PropertyCarousel from '@/components/property/PropertyCarousel';
 import { useLayout } from '@react-native-community/hooks';
-import { format } from 'date-fns';
 
 type Props = {
 	property: Property;
@@ -22,7 +21,7 @@ export default function PropertyListItem({ property, onPress }: Props) {
 					' items-center flex-1 bg-background-muted relative overflow-hidden rounded-xl'
 				}>
 				<PropertyCarousel
-					images={property?.media_urls ?? []}
+					media={property?.media ?? []}
 					width={width > 100 ? width - 5 : 340}
 				/>
 				<View className="flex-1 w-full p-4 gap-2">
