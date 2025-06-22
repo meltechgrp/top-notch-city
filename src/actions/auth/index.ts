@@ -1,10 +1,10 @@
-import { fetchWithAuth } from '@/lib/api';
 import {
 	AuthLoginInput,
 	AuthLoginSchema,
 	AuthSignupInput,
 	AuthSignupSchema,
 } from '@/lib/schema';
+import { Fetch } from '../utills';
 
 export async function authLogin(
 	form: AuthLoginInput
@@ -20,7 +20,7 @@ export async function authLogin(
 				},
 			};
 		}
-		const res = await fetchWithAuth('/login', {
+		const res = await Fetch('/login', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -76,7 +76,7 @@ export async function authSignup(
 		Object.entries(form).map(([key, val]) => {
 			formData.append(key, val);
 		});
-		const res = await fetchWithAuth('/register', {
+		const res = await Fetch('/register', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -121,15 +121,12 @@ export async function authOptVerify({
 	email: string;
 }): Promise<ActionResponse<AuthLoginInput>> {
 	try {
-		const res = await fetchWithAuth(
-			`/verify-email?code=${otp}&email=${email}`,
-			{
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			}
-		);
+		const res = await Fetch(`/verify-email?code=${otp}&email=${email}`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		});
 		const data = await res.json();
 		console.log(data);
 		if (data?.detail) {

@@ -118,7 +118,7 @@ export function isText(text: any) {
 
 export function composeFullAddress(address: ParsedAddress, cityOnly?: boolean) {
 	if (cityOnly) {
-		return joinWithComma(address?.city, address?.lga, address?.country);
+		return joinWithComma(address?.city, address?.state, address?.country);
 	}
 	if (!address?.street) {
 		return joinWithComma(

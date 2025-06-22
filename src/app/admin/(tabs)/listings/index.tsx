@@ -3,27 +3,28 @@ import { FilterComponent } from '@/components/admin/shared/FilterComponent';
 import { useMemo, useState } from 'react';
 import { useRefreshOnFocus } from '@/hooks/useRefreshOnFocus';
 import VerticalProperties from '@/components/property/VerticalProperties';
-import { useInfiniteQuery } from '@tanstack/react-query';
-import { fetchAdminProperties } from '@/actions/property';
 import { useStore } from '@/store';
+import { useProductQueries } from '@/tanstack/queries/useProductQueries';
 
 export default function Properties() {
 	const [search, setSearch] = useState('');
 	const [actveTab, setActiveTab] = useState('all');
 	const { me } = useStore();
+	const {
+		data,
+		refetch,
+		isLoading,
+		fetchNextPage,
+		hasNextPage,
+		isFetchingNextPage,
+	} = useProductQueries({ type: 'admin' });
 
-	const { data, isLoading, fetchNextPage, refetch } = useInfiniteQuery({
-		queryKey: ['admins-properties'],
-		queryFn: fetchAdminProperties,
-		initialPageParam: 1,
-		getNextPageParam: (lastPage, pages) => pages.length + 1,
-	});
-
-	const propertysData = useMemo(() => {
-		return data?.pages.flat() ?? [];
-	}, [data]);
+	const propertyData = useMemo(
+		() => data?.pages.flatMap((page) => page.results) || [],
+		[data]
+	);
 	const filteredData = useMemo(() => {
-		let filtered = propertysData;
+		let filtered = propertyData;
 
 		if (actveTab !== 'all') {
 			filtered = filtered.filter((u) => u.status.toLowerCase() === actveTab);
@@ -38,20 +39,20 @@ export default function Properties() {
 			);
 		}
 		return filtered;
-	}, [propertysData, search, actveTab]);
+	}, [propertyData, search, actveTab]);
 	const tabs = useMemo(() => {
-		const all = propertysData.length;
-		const rejected = propertysData.filter(
+		const all = propertyData.length;
+		const rejected = propertyData.filter(
 			(item) => item.status == 'rejected'
 		).length;
-		const approved = propertysData.filter(
+		const approved = propertyData.filter(
 			(item) => item.status === 'approved'
 		).length;
-		const pending = propertysData.filter(
+		const pending = propertyData.filter(
 			(item) => item.status === 'pending'
 		).length;
-		const sold = propertysData.filter((item) => item.status === 'sold').length;
-		const flagged = propertysData.filter(
+		const sold = propertyData.filter((item) => item.status === 'sold').length;
+		const flagged = propertyData.filter(
 			(item) => item.status === 'flagged'
 		).length;
 
@@ -63,7 +64,7 @@ export default function Properties() {
 			{ title: 'rejected', total: rejected },
 			{ title: 'flagged', total: flagged },
 		];
-	}, [propertysData]);
+	}, [propertyData]);
 	const headerComponent = useMemo(() => {
 		return (
 			<FilterComponent

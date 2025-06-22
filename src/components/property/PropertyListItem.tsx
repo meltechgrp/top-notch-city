@@ -2,8 +2,7 @@ import { cn, composeFullAddress } from '@/lib/utils';
 import { formatMoney } from '@/lib/utils';
 import { StyleProp, View, ViewStyle } from 'react-native';
 import { Icon, Text, Pressable } from '../ui';
-import { MapPin } from 'lucide-react-native';
-import { hapticFeed } from '../HapticTab';
+import { Bath, Bed, MapPin } from 'lucide-react-native';
 import { useMemo } from 'react';
 import { Colors } from '@/constants/Colors';
 import Layout from '@/constants/Layout';
@@ -52,16 +51,16 @@ export default function PropertyListItem(props: Props) {
 			return <PropertyLikeButton property={props.data} />;
 		}
 	};
+
+	const Find = (item: string) =>
+		data.amenities?.find((a) => a.name == item)?.value || 0;
 	return (
 		<Pressable
 			onLayout={onLayout}
 			key={data.id}
+			onPress={() => onPress(data)}
 			style={[{ height: bannerHeight }, style]}
-			className={cn('relative flex-1 rounded-xl', className)}
-			onPress={() => {
-				hapticFeed(true);
-				onPress(data);
-			}}>
+			className={cn('relative flex-1 rounded-xl', className)}>
 			<PropertyCarousel
 				width={width || 300}
 				withBackdrop={true}
@@ -103,6 +102,18 @@ export default function PropertyListItem(props: Props) {
 									className="text-white">
 									{composeFullAddress(address, true)}
 								</Text>
+							</View>
+						)}
+						{showFacilites && (
+							<View className="flex-row gap-4">
+								<View className="flex-row items-center gap-1">
+									<Icon as={Bed} size={'sm'} className="text-primary" />
+									<Text className="text-sm">{Find('Bedroom')}</Text>
+								</View>
+								<View className="flex-row items-center gap-1">
+									<Icon as={Bath} size={'sm'} className="text-primary" />
+									<Text className=" text-sm">{Find('Bathroom')}</Text>
+								</View>
 							</View>
 						)}
 					</View>

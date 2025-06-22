@@ -1,3 +1,11 @@
+type Result = {
+	total: number;
+	page: number;
+	per_page: number;
+	pages: number;
+	results: Property[];
+};
+
 type Category = {
 	id: string;
 	name: string;
@@ -5,7 +13,7 @@ type Category = {
 };
 
 type SubCategory = {
-	cat: Category;
+	category: Category;
 	id: string;
 	name: string;
 	slug: string;

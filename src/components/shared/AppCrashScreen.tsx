@@ -1,17 +1,15 @@
-import {Button, ButtonText, Text} from '@/components/ui';
+import { Box, Button, ButtonText, Text } from '@/components/ui';
 import { Stack } from 'expo-router';
 import { View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { reloadAppAsync } from 'expo';
 import BeachPersonWaterParasolIcon from '@/components/icons/BeachPersonWaterParasolIcon';
 
-
 export default function AppCrashScreen() {
 	return (
-		<View className="flex-1">
+		<Box className="flex-1">
 			<Stack.Screen
 				options={{
-					// statusBarStyle: 'dark',
 					headerShown: false,
 				}}
 			/>
@@ -25,7 +23,7 @@ export default function AppCrashScreen() {
 							Something went wrong!
 						</Text>
 						<Text className="text-center text-secondary-foreground mt-2 mb-6">
-							It's not you its us. Please reload the app to continue.
+							Please reload to try again!
 						</Text>
 					</View>
 
@@ -34,11 +32,12 @@ export default function AppCrashScreen() {
 							variant="solid"
 							onPress={() => {
 								reloadAppAsync();
-							}}
-						><ButtonText>Try Again</ButtonText></Button>
+							}}>
+							<ButtonText>Try Again</ButtonText>
+						</Button>
 					</View>
 				</View>
 			</SafeAreaView>
-		</View>
+		</Box>
 	);
 }

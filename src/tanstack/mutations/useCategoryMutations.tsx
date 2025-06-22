@@ -6,7 +6,7 @@ import {
 	addSubcategory,
 	editSubcategory,
 	deleteSubcategory,
-} from '@/actions/property'; // Adjust path as needed
+} from '@/actions/property/category'; // Adjust path as needed
 import { showSnackbar } from '@/lib/utils';
 
 export const useCategoryMutations = () => {
@@ -18,10 +18,7 @@ export const useCategoryMutations = () => {
 		onSuccess: () => {
 			showSnackbar({ message: 'Category added successfully', type: 'success' });
 			queryClient.invalidateQueries({
-				queryKey: ['categories'],
-			});
-			queryClient.invalidateQueries({
-				queryKey: ['subcategoriesForAllCategories'],
+				queryKey: ['allSubcategories'],
 			});
 		},
 		onError: () => {
@@ -37,10 +34,7 @@ export const useCategoryMutations = () => {
 				type: 'success',
 			});
 			queryClient.invalidateQueries({
-				queryKey: ['categories'],
-			});
-			queryClient.invalidateQueries({
-				queryKey: ['subcategoriesForAllCategories'],
+				queryKey: ['allSubcategories'],
 			});
 		},
 		onError: () => {
@@ -56,10 +50,7 @@ export const useCategoryMutations = () => {
 				type: 'success',
 			});
 			queryClient.invalidateQueries({
-				queryKey: ['categories'],
-			});
-			queryClient.invalidateQueries({
-				queryKey: ['subcategoriesForAllCategories'],
+				queryKey: ['allSubcategories'],
 			});
 		},
 		onError: () => {
@@ -76,10 +67,7 @@ export const useCategoryMutations = () => {
 				type: 'success',
 			});
 			queryClient.invalidateQueries({
-				queryKey: ['categories'],
-			});
-			queryClient.invalidateQueries({
-				queryKey: ['subcategoriesForAllCategories'],
+				queryKey: ['allSubcategories'],
 			});
 		},
 		onError: () => {
@@ -95,10 +83,7 @@ export const useCategoryMutations = () => {
 				type: 'success',
 			});
 			queryClient.invalidateQueries({
-				queryKey: ['categories'],
-			});
-			queryClient.invalidateQueries({
-				queryKey: ['subcategoriesForAllCategories'],
+				queryKey: ['allSubcategories'],
 			});
 		},
 		onError: () => {
@@ -114,10 +99,7 @@ export const useCategoryMutations = () => {
 				type: 'success',
 			});
 			queryClient.invalidateQueries({
-				queryKey: ['categories'],
-			});
-			queryClient.invalidateQueries({
-				queryKey: ['subcategoriesForAllCategories'],
+				queryKey: ['allSubcategories'],
 			});
 		},
 		onError: () => {

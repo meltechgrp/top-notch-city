@@ -29,6 +29,7 @@ interface Props {
 	isHorizontal?: boolean;
 	showsVerticalScrollIndicator?: boolean;
 	isLoading?: boolean;
+	hasNextPage?: boolean;
 	data: Property[];
 	scrollElRef?: any;
 	disableHeader?: boolean;
@@ -61,6 +62,7 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
 		headerHeight,
 		isEmptyTitle,
 		profileId,
+		hasNextPage,
 	},
 	ref
 ) {
@@ -182,9 +184,11 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
 						</>
 					) : undefined
 				}
-				keyExtractor={(item: any) => item.id.toString()}
+				keyExtractor={(item: any, index) => index.toString()}
 				estimatedItemSize={340}
-				onEndReached={() => fetchNextPage?.()}
+				onEndReached={() => {
+					if (hasNextPage && !isLoading) fetchNextPage?.();
+				}}
 				onEndReachedThreshold={20}
 				contentInsetAdjustmentBehavior="automatic"
 				ListEmptyComponent={() => (

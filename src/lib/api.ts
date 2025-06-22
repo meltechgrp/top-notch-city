@@ -1,127 +1,7 @@
 import config from '@/config';
-import { cacheStorage } from '@/lib/asyncStorage';
-import { getAuthToken } from '@/lib/secureStore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { profileDefault } from '@/store';
-import { useState, useRef, useEffect, useCallback } from 'react';
-import axios, {
-	AxiosRequestConfig,
-	AxiosResponse,
-	CancelTokenSource,
-} from 'axios';
 
-const SIX_HOURS = 2 * 60 * 60 * 1000;
-
-export type UseApiRequestProps<T> = {
-	url: string;
-	method?: AxiosRequestConfig['method'];
-	data?: AxiosRequestConfig['data'];
-	isExternal?: boolean;
-	headers?: AxiosRequestConfig['headers'];
-	withAuth?: boolean;
-	tag?: string;
-	onUploadProgress?: (progress: number) => void;
-};
-
-export function useApiRequest<T = any>() {
-	const [loading, setLoading] = useState(false);
-	const [data, setData] = useState<T | null>(null);
-	const [error, setError] = useState<string | null>(null);
-
-	const cancelSourceRef = useRef<CancelTokenSource | null>(null);
-
-	const request = useCallback(
-		async ({
-			url,
-			method = 'GET',
-			data: body,
-			headers = {},
-			withAuth = true,
-			isExternal = false,
-			tag,
-			onUploadProgress,
-		}: UseApiRequestProps<T>) => {
-			setLoading(true);
-			setError(null);
-			setData(null);
-
-			// Check cache
-			if (tag) {
-				const cachedData = await cacheStorage.get(tag);
-				if (cachedData) {
-					setData(JSON.parse(cachedData));
-					setLoading(false);
-					return JSON.parse(cachedData);
-				}
-			}
-			const source = axios.CancelToken.source();
-			cancelSourceRef.current = source;
-
-			const authToken = withAuth ? getAuthToken() : null;
-
-			try {
-				const response: AxiosResponse<T> = await axios({
-					method,
-					url: isExternal ? url : `${config.origin}/api${url}`,
-					data: body,
-					headers: {
-						...(authToken && { Authorization: `Bearer ${authToken}` }),
-						...headers,
-					},
-					cancelToken: source.token,
-					onUploadProgress:
-						method === 'POST' || method === 'PUT'
-							? (progressEvent) => {
-									const percent = Math.round(
-										(progressEvent.loaded * 100) / (progressEvent.total || 1)
-									);
-									onUploadProgress?.(percent);
-								}
-							: undefined,
-				});
-				console.log(response.data);
-				setData(response.data);
-				// Cache response if tabName is provided
-				if (tag) {
-					cacheStorage.set(tag, JSON.stringify(response.data), SIX_HOURS);
-				}
-				return response.data;
-			} catch (err: any) {
-				console.log(err, 'err');
-				if (axios.isCancel(err)) {
-					setError('Request cancelled');
-				} else {
-					setError('An error occurred');
-				}
-				return null;
-			} finally {
-				setLoading(false);
-			}
-		},
-		[]
-	);
-
-	const cancel = useCallback(() => {
-		cancelSourceRef.current?.cancel('Request cancelled by user.');
-	}, []);
-
-	useEffect(() => {
-		return () => {
-			cancel();
-		};
-	}, [cancel]);
-
-	return { request, loading, data, error, cancel };
-}
-export function fetchWithAuth(url: string, options: RequestInit) {
-	const authToken = getAuthToken();
-	return fetch(`${config.origin}/api${url}`, {
-		...options,
-		headers: {
-			...(authToken && { Authorization: `Bearer ${authToken}` }),
-			...options.headers,
-		},
-	});
-}
 export const getImageUrl = (url?: string | null) => {
 	if (url)
 		return {
@@ -136,77 +16,45 @@ export const generateMediaUrl = (media: Media) => {
 		id: media.id,
 	};
 };
-export type UseApiQueryOptions = {
-	withAuth?: boolean;
-	method?: AxiosRequestConfig['method'];
-	data?: AxiosRequestConfig['data'];
-	headers?: AxiosRequestConfig['headers'];
-	isExternal?: boolean;
+
+const SEARCH_HISTORY_KEY = 'search_history';
+
+export type SearchHistory = {
+	purpose: string;
+	country?: string;
+	state?: string;
+	city?: string;
 };
 
-type QueryState<T> = {
-	data: T | null;
-	error: string | null;
-	loading: boolean;
-	refetch: () => Promise<T>;
-};
+export async function saveSearchToHistory(search: SearchHistory) {
+	try {
+		const historyStr = await AsyncStorage.getItem(SEARCH_HISTORY_KEY);
+		const history = historyStr ? JSON.parse(historyStr) : [];
 
-export function useGetApiQuery<T = any>(
-	url: string,
-	options: UseApiQueryOptions = {},
-	tag?: string
-): QueryState<T | null> {
-	const { data, error, loading, request } = useApiRequest<T>();
+		const existingIndex = history.findIndex(
+			(item: any) =>
+				item.city === search.city &&
+				item.state === search.state &&
+				item.country === search.country &&
+				item.purpose === search.purpose
+		);
 
-	const refetch = useCallback(() => {
-		return request({
-			url,
-			method: options?.method || 'GET',
-			withAuth: options.withAuth,
-			tag,
-			...options,
-		});
-	}, [url, options.withAuth, request, tag]);
+		if (existingIndex !== -1) history.splice(existingIndex, 1);
+		history.unshift(search); // most recent first
 
-	useEffect(() => {
-		refetch();
-	}, [refetch]);
-
-	return { data, error, loading, refetch };
+		const trimmed = history.slice(0, 10); // keep last 10
+		await AsyncStorage.setItem(SEARCH_HISTORY_KEY, JSON.stringify(trimmed));
+	} catch (err) {
+		console.error('Failed to save search history:', err);
+	}
 }
 
-type QueryState2<T> = {
-	data: T | null;
-	error: Error | null;
-	loading: boolean;
-	refetch: (...args: any[]) => Promise<T>;
-};
-
-export function useApiQueryWithParams<
-	F extends (...args: any[]) => Promise<any>,
->(fn: F): QueryState2<Awaited<ReturnType<F>>> {
-	const [data, setData] = useState<Awaited<ReturnType<F>> | null>(null);
-	const [error, setError] = useState<Error | null>(null);
-	const [loading, setLoading] = useState(false);
-
-	const refetch = useCallback(
-		async (...args: Parameters<F>): Promise<Awaited<ReturnType<F>>> => {
-			setLoading(true);
-			setError(null);
-			try {
-				const result = await fn(...args);
-				setData(result);
-				return result;
-			} catch (err) {
-				const error = err instanceof Error ? err : new Error(String(err));
-				setError(error);
-				throw error;
-			} finally {
-				setLoading(false);
-			}
-		},
-		[fn]
-	);
-
-	return { data, error, loading, refetch };
+export async function getSearchHistory() {
+	try {
+		const data = await AsyncStorage.getItem(SEARCH_HISTORY_KEY);
+		return data ? JSON.parse(data) : [];
+	} catch (err) {
+		console.error('Failed to load search history:', err);
+		return [];
+	}
 }

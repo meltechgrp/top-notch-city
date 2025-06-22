@@ -13,7 +13,7 @@ type Me = {
 	wallet_balance: number;
 	is_active: boolean;
 	is_superuser: boolean;
-	role: 'user' | 'admin' | 'agent';
+	role: 'user' | 'admin' | 'agent' | 'staff' | 'staff_agent';
 	id: string;
 	created_at: string;
 	updated_at: string;

@@ -1,11 +1,10 @@
 import React, { useMemo, useState } from 'react';
 import { NativeScrollEvent, View } from 'react-native';
 import VerticalProperties from '../property/VerticalProperties';
-import { useInfiniteQuery } from '@tanstack/react-query';
-import { fetchUserProperties } from '@/actions/property';
 import { SharedValue } from 'react-native-reanimated';
 import { FilterComponent } from '../admin/shared/FilterComponent';
 import { useRefreshOnFocus } from '@/hooks/useRefreshOnFocus';
+import { useProductQueries } from '@/tanstack/queries/useProductQueries';
 
 type IProps = {
 	profileId: string;
@@ -20,15 +19,18 @@ export default function PropertiesTabView(props: IProps) {
 		props;
 	const [search, setSearch] = useState('');
 	const [actveTab, setActiveTab] = useState('all');
-	const { data, isLoading, fetchNextPage, refetch } = useInfiniteQuery({
-		queryKey: ['properties', profileId],
-		queryFn: ({ pageParam }) =>
-			fetchUserProperties({ userId: profileId, pageParam }),
-		initialPageParam: 1,
-		getNextPageParam: (lastPage, pages) => pages.length + 1,
-	});
-	const list = useMemo(() => data?.pages.flat() || [], [data]);
-
+	const {
+		data,
+		refetch,
+		isLoading,
+		fetchNextPage,
+		hasNextPage,
+		isFetchingNextPage,
+	} = useProductQueries({ type: 'user', profileId });
+	const list = useMemo(
+		() => data?.pages.flatMap((page) => page.results) || [],
+		[data]
+	);
 	const filteredData = useMemo(() => {
 		let filtered = list;
 

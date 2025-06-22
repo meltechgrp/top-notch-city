@@ -1,49 +1,50 @@
-import {
-	fetchCategories,
-	fetchSubcategoriesByCategory,
-} from '@/actions/property';
+// hooks/useCategoryQueries.ts
+import { fetchAllSubcategories } from '@/actions/property/category';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback } from 'react';
+import { useMemo } from 'react';
 
 export function useCategoryQueries() {
 	const {
-		data: categories = [],
-		refetch: refetchCategories,
-		isLoading: loading,
+		data: allSubcategories = [],
+		refetch,
+		isLoading,
 	} = useQuery({
-		queryKey: ['categories'],
-		queryFn: fetchCategories,
+		queryKey: ['allSubcategories'],
+		queryFn: fetchAllSubcategories,
 	});
 
-	const {
-		data: subcategoriesData = [],
-		refetch: refetchSubcategories,
-		isLoading: loading2,
-	} = useQuery({
-		queryKey: ['subcategoriesForAllCategories'],
-		enabled: Boolean(categories?.length),
-		queryFn: async () => {
-			const all = await Promise.all(
-				categories.map(async (cat) => {
-					try {
-						const data = await fetchSubcategoriesByCategory(cat.id);
-						return { category: cat, data: data ?? [] };
-					} catch {
-						return { category: cat, data: [] }; // Fallback to empty array
-					}
-				})
-			);
-			return all;
-		},
-	});
-	const refetch = useCallback(() => {
-		refetchCategories();
-		refetchSubcategories();
-	}, [refetchCategories, refetchSubcategories]);
+	// Unique categories extracted from subcategories
+	const categories = useMemo(() => {
+		const seen = new Map<string, Category>();
+		for (const sub of allSubcategories) {
+			if (!seen.has(sub.category?.id)) {
+				seen.set(sub.category.id, sub.category);
+			}
+		}
+		return Array.from(seen.values());
+	}, [allSubcategories]);
+
+	// Grouped subcategories for FlashList format
+	const subcategoriesData = useMemo(() => {
+		const grouped: { [key: string]: SubCategory[] } = {};
+
+		for (const sub of allSubcategories) {
+			const catId = sub.category.id;
+			if (!grouped[catId]) grouped[catId] = [];
+			grouped[catId].push(sub);
+		}
+
+		return Object.entries(grouped).map(([catId, subs]) => ({
+			category: subs[0].category,
+			data: subs,
+		}));
+	}, [allSubcategories]);
+
 	return {
 		refetch,
-		subcategoriesData,
 		categories,
-		loading: loading || loading2,
+		subcategories: allSubcategories,
+		subcategoriesData, // For FlashList
+		loading: isLoading,
 	};
 }

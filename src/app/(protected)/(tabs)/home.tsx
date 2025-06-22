@@ -1,23 +1,23 @@
-import { fetchProperties } from '@/actions/property';
 import DiscoverProperties from '@/components/home/DiscoverProperties';
-import FeaturedProperties from '@/components/home/featured';
 import TopProperties from '@/components/home/properties';
 import TopLocations from '@/components/home/topLocations';
 import BeachPersonWaterParasolIcon from '@/components/icons/BeachPersonWaterParasolIcon';
 import { Box, Text, View } from '@/components/ui';
 import eventBus from '@/lib/eventBus';
+import { useProductQueries } from '@/tanstack/queries/useProductQueries';
 import { ListRenderItem } from '@shopify/flash-list';
-import { useInfiniteQuery } from '@tanstack/react-query';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { FlatList, RefreshControl } from 'react-native';
 
 export default function HomeScreen() {
-	const { data, isLoading, fetchNextPage, refetch } = useInfiniteQuery({
-		queryKey: ['properties'],
-		queryFn: fetchProperties,
-		initialPageParam: 1,
-		getNextPageParam: (lastPage, pages) => pages.length + 1,
-	});
+	const {
+		data,
+		refetch,
+		isLoading,
+		fetchNextPage,
+		hasNextPage,
+		isFetchingNextPage,
+	} = useProductQueries({ type: 'all' });
 	const [refreshing, setRefreshing] = useState(false);
 	const feedList = React.useMemo(() => {
 		const topLocations = {
@@ -39,7 +39,10 @@ export default function HomeScreen() {
 		return [topLocations, properties, bottomPlaceHolder];
 	}, [data]);
 	type FeedList = any;
-
+	const properties = useMemo(
+		() => data?.pages.flatMap((page) => page.results) || [],
+		[data]
+	);
 	async function onRefresh() {
 		try {
 			setRefreshing(true);
@@ -57,9 +60,7 @@ export default function HomeScreen() {
 		// 	return <FeaturedProperties />;
 		// }
 		if (item.id === 'properties') {
-			return (
-				<TopProperties data={data?.pages?.flat() || []} refetch={refetch} />
-			);
+			return <TopProperties data={properties} refetch={refetch} />;
 		}
 		if (item.id === 'bottomPlaceHolder') {
 			return <View className="h-24" />;

@@ -4,17 +4,10 @@ type SearchFilters = {
 	state?: string;
 	country?: string;
 	purpose?: string;
-	min_price?: number;
-	max_price?: number;
+	min_price?: string;
+	max_price?: string;
 	category?: string;
 	sub_category?: string;
 	amenities?: string[];
-};
-
-type SearchResult = {
-	total: number;
-	page: number;
-	per_page: number;
-	pages: number;
-	results: Property[];
+	use_geo_location?: string;
 };

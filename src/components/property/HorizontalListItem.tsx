@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 import { formatMoney } from '@/lib/utils';
 import capitalize from 'lodash-es/capitalize';
-import { Card, Heading, Image, Pressable, Text, View } from '../ui';
+import { Card, Heading, Icon, Image, Pressable, Text, View } from '../ui';
 import { Bath, Bed } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { generateMediaUrl } from '@/lib/api';
@@ -47,13 +47,13 @@ export default function HorizontalListItem(props: Props) {
 							<Text className="text-sm font-medium text-gray-400">Type:</Text>
 							<Text className="text-sm font-medium text-gray-400">Duplex</Text>
 						</View>
-						<View className="flex-row gap-2">
+						<View className="flex-row gap-3">
 							<View className="flex-row items-center gap-1">
-								<Bed size={14} color={'orange'} />
+								<Icon as={Bed} size={'sm'} className="text-primary" />
 								<Text className="text-sm">{Find('Bedroom')}</Text>
 							</View>
 							<View className="flex-row items-center gap-1">
-								<Bath size={14} color={'orange'} />
+								<Icon as={Bath} size={'sm'} className="text-primary" />
 								<Text className=" text-sm">{Find('Bathroom')}</Text>
 							</View>
 						</View>

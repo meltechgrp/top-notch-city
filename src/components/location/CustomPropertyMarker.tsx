@@ -7,18 +7,17 @@ interface Props {
 }
 
 export function CustomPropertyMarker({ property, onPress }: Props) {
-	const { address } = property;
+	const { latitude, longitude } = property.address;
 	return (
 		<>
 			<Marker
 				coordinate={{
-					latitude: address?.latitude,
-					longitude: address?.longitude,
+					latitude,
+					longitude,
 				}}
 				onPress={() => onPress(property)}
 				image={PropertyMedia}
-				anchor={{ x: 0.5, y: 0.5 }}
-			/>
+				anchor={{ x: 0.5, y: 0.5 }}></Marker>
 		</>
 	);
 }

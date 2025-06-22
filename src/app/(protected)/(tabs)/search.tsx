@@ -1,105 +1,111 @@
-import SearchFilterBottomSheet from '@/components/search/SearchFilterBottomSheet';
-import Map from '@/components/location/map';
 import { SearchHeader } from '@/components/search/Searchheader';
-import { useSearchHistoryStorage } from '@/components/search/SearchHistory';
-import { KeyboardDismissPressable } from '@/components/shared/KeyboardDismissPressable';
-import { Box } from '@/components/ui';
-import { router } from 'expo-router';
-import debounce from 'lodash-es/debounce';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { Dimensions, Platform, TextInput } from 'react-native';
-import SystemNavigationBar from 'react-native-system-navigation-bar';
-import PropertyBottomSheet from '@/components/location/PropertyBottomSheet';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
-import { searchProperties } from '@/actions/search';
+import { Box, View } from '@/components/ui';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Dimensions, StyleSheet } from 'react-native';
+import SearchTabs from '@/components/search/SearchTabs';
+import PagerView from 'react-native-pager-view';
+import { SearchMapView } from '@/components/search/SearchMapView';
+import SearchListView from '@/components/search/SearchListView';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import SearchLocationBottomSheet from '@/components/search/SearchLocationBottomSheet';
+import SearchFilterBottomSheet from '@/components/search/SearchFilterBottomSheet';
+import { useProductQueries } from '@/tanstack/queries/useProductQueries';
+
+const TABS = ['Map View', 'List View'];
 
 export default function SearchScreen() {
 	const { height: totalHeight } = Dimensions.get('screen');
-	const [text, setText] = useState('');
-	const [showResults, setShowResults] = useState(false);
-	const [selectedItem, setSeletedItem] = useState<Property | null>(null);
 	const [showFilter, setShowFilter] = useState(false);
-	const [filter, setFilter] = useState<SearchFilters>({});
+	const [locationBottomSheet, setLocationBottomSheet] = useState(false);
+	const pagerRef = useRef<PagerView>(null);
+	const [currentPage, setCurrentPage] = useState(0);
+	const [filter, setFilter] = useState<SearchFilters>({
+		use_geo_location: 'true',
+	});
+	const {
+		data,
+		refetch,
+		isLoading,
+		fetchNextPage,
+		hasNextPage,
+		isFetchingNextPage,
+	} = useProductQueries({ type: 'search', filter, enabled: false });
 
-	const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } =
-		useInfiniteQuery({
-			queryKey: ['search', filter],
-			queryFn: ({ pageParam = 1 }) => searchProperties(filter, pageParam),
-			getNextPageParam: (lastPage) => {
-				const { page, pages } = lastPage;
-				return page < pages ? page + 1 : undefined;
-			},
-			initialPageParam: 1,
-			enabled: false,
-		});
-	const { addToList: addToSearchHistory } = useSearchHistoryStorage();
-
-	const textInputRef = useRef<TextInput>(null);
-
-	const debouncedSearch = useRef(debounce(refetch, 500)).current;
-
-	function onChangeText(value: string) {
-		setText(value);
-		// optionally use value to update filter as well (if searching by text)
-		// setFilter({ ...filter, keyword: value })
-		debouncedSearch();
-	}
-	function onSubmit() {
-		addToSearchHistory(text);
+	useEffect(() => {
 		refetch();
-	}
+	}, [filter]);
 
+	const onTabChange = React.useCallback((index: number) => {
+		setCurrentPage(index);
+		pagerRef.current?.setPage(index);
+	}, []);
 	const properties = useMemo(
 		() => data?.pages.flatMap((page) => page.results) || [],
 		[data]
 	);
 	return (
 		<Box className="flex-1 relative">
-			<KeyboardDismissPressable>
-				<SearchHeader
-					text={text}
-					onChangeText={onChangeText}
-					onSubmit={onSubmit}
-					textInputRef={textInputRef}
-					setShowFilter={setShowFilter}
-					filter={filter}
-					setFilter={(cat) => setFilter({ ...filter, category: cat })}
-				/>
-				<SearchFilterBottomSheet
-					show={showFilter}
-					onDismiss={() => setShowFilter(false)}
-					filter={filter}
-					onApply={setFilter}
-				/>
+			<SearchHeader
+				filter={filter}
+				setLocationBottomSheet={() => setLocationBottomSheet(true)}
+				setShowFilter={() => setShowFilter(true)}
+			/>
+			<SearchTabs activeIndex={currentPage} onTabChange={onTabChange} />
 
-				{/* {!typing && !showResults && <SearchHistoryScreen service={service} />} */}
-				{/* {showResults && <SearchResultsView filter={filter} />}
-        {typing && !!data && (
-          <SearchAutoCompleteView data={data} loading={loading} />
-        )} */}
+			<PagerView
+				initialPage={0}
+				style={StyleSheet.absoluteFill}
+				ref={pagerRef}
+				scrollEnabled={false}
+				onPageSelected={(e) => setCurrentPage(e.nativeEvent.position)}>
+				{TABS.map((tab, index) => {
+					switch (tab) {
+						case 'Map View':
+							return (
+								<View style={{ flex: 1 }} key={index}>
+									<SearchMapView
+										key={index}
+										height={totalHeight}
+										properties={properties}
+									/>
+								</View>
+							);
+						case 'List View':
+							return (
+								<View style={{ flex: 1 }} key={index}>
+									<SafeAreaView
+										style={{ flex: 1, backgroundColor: 'transparent' }}
+										edges={['top']}>
+										<SearchListView
+											key={index}
+											headerOnlyHeight={60}
+											isLoading={isLoading || isFetchingNextPage}
+											refetch={refetch}
+											hasNextPage={hasNextPage}
+											fetchNextPage={fetchNextPage}
+											properties={properties}
+										/>
+									</SafeAreaView>
+								</View>
+							);
+						default:
+							return null;
+					}
+				})}
+			</PagerView>
 
-				<Map
-					scrollEnabled={true}
-					height={totalHeight}
-					showUserLocation={true}
-					markers={properties}
-					onMarkerPress={(marker) => setSeletedItem(marker)}
-				/>
+			<SearchLocationBottomSheet
+				show={locationBottomSheet}
+				onDismiss={() => setLocationBottomSheet(false)}
+				onUpdate={setFilter}
+			/>
 
-				{selectedItem && (
-					<PropertyBottomSheet
-						visible={!!selectedItem}
-						data={selectedItem}
-						onContinue={() => {
-							router.push({
-								pathname: '/(protected)/property/[propertyId]',
-								params: { propertyId: selectedItem.id },
-							});
-						}}
-						onDismiss={() => setSeletedItem(null)}
-					/>
-				)}
-			</KeyboardDismissPressable>
+			<SearchFilterBottomSheet
+				show={showFilter}
+				onDismiss={() => setShowFilter(false)}
+				filter={filter}
+				onApply={() => {}}
+			/>
 		</Box>
 	);
 }
