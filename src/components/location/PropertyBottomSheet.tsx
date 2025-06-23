@@ -12,15 +12,8 @@ type Props = {
 export default function PropertyBottomSheet(props: Props) {
 	const { visible, onDismiss, data } = props;
 	return (
-		<BottomSheet
-			visible={visible}
-			onDismiss={onDismiss}
-			addBackground={false}
-			backdropVariant="xs"
-			plain
-			contentClassName="bg-transparent"
-			snapPoint="32%">
-			<View className=" gap-2 p-2 flex-1">
+		<BottomSheet visible={visible} onDismiss={onDismiss} plain snapPoint="35%">
+			<View className=" p-4 flex-1">
 				<PropertyListItem
 					data={data}
 					showFacilites

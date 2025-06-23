@@ -8,7 +8,14 @@ export default function HomeNavigation() {
 	return (
 		<View className="flex-row justify-end items-center px-4 gap-4">
 			<Pressable
-				onPress={() => router.push('/search')}
+				onPress={() =>
+					router.push({
+						pathname: '/search',
+						params: {
+							search: 'true',
+						},
+					})
+				}
 				className="flex-1 h-14 p-2 pl-4 flex-row bg-background-muted rounded-full items-center gap-1">
 				<Text size="md" numberOfLines={1} className="flex-1 text-typography/70">
 					Search property, city or everything...

@@ -55,7 +55,7 @@ export default function CustomSelect(props: Props) {
 					setIsOpen(true);
 				}}
 				className={cn(
-					'px-4 py-2 h-[52px]  border border-outline bg-background-info rounded-xl relative  flex-row',
+					'px-4 py-2 h-[48px]  border border-outline bg-background-info rounded-xl relative  flex-row',
 					{
 						' border-transparent': !!disabled,
 					}
@@ -84,7 +84,7 @@ export default function CustomSelect(props: Props) {
 				</View>
 				{withDropIcon && !disabled && !readonly && (
 					<View className="pl-4 justify-center">
-						<Ic as={ChevronDown} />
+						<Ic as={ChevronDown} className="text-primary" />
 					</View>
 				)}
 			</Pressable>

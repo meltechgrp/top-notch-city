@@ -11,15 +11,23 @@ export async function searchProperties(
 	if (filters?.state) query.append('state', filters.state);
 	if (filters?.country) query.append('country', filters.country);
 	if (filters?.purpose) query.append('purpose', filters.purpose);
-	if (filters?.min_price) query.append('min_price', String(filters.min_price));
-	if (filters?.max_price) query.append('max_price', String(filters.max_price));
-	if (filters?.category) query.append('category', filters.category);
+	if (filters?.min_price && filters.min_price !== 'No Min')
+		query.append('min_price', filters.min_price);
+	if (filters?.max_price && filters.max_price !== 'No Max')
+		query.append('max_price', filters.max_price);
+	if (filters?.category && filters.category !== 'any')
+		query.append('category', filters.category);
+	if (filters?.tour) query.append('virtual_tour', 'true');
 	if (filters?.sub_category) query.append('sub_category', filters.sub_category);
+	if (filters?.bedrooms && filters.bedrooms !== 'Any')
+		query.append('bedrooms', filters.bedrooms);
+	if (filters?.createdAt && filters.createdAt !== 'any')
+		query.append('created_at', filters.createdAt);
 	if (filters?.use_geo_location)
 		query.append('use_geo_location', filters.use_geo_location);
 	if (filters?.amenities?.length) {
 		filters?.amenities.forEach((amenity) =>
-			query.append('amenities[]', amenity)
+			query.append('amenities_filter', amenity)
 		);
 	}
 

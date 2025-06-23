@@ -67,7 +67,7 @@ export default function TopLocationsHorizontalList(props: Props) {
 			contentContainerClassName="gap-x-4 px-4"
 			pagingEnabled
 			showsHorizontalScrollIndicator={false}
-			snapToInterval={238 + 4}
+			snapToInterval={340 + 4}
 			snapToAlignment="center"
 			decelerationRate="fast">
 			{data.map((location) => (

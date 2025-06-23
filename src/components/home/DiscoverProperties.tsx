@@ -1,4 +1,4 @@
-import { View } from '@/components/ui';
+import { Pressable, View } from '@/components/ui';
 import Layout from '@/constants/Layout';
 import Map from '../location/map';
 import FoundHorizontalList from './FoundProperties';
@@ -29,12 +29,21 @@ export default function DiscoverProperties(props: Props) {
 				</View>
 				<Map
 					markers={data || []}
-					scrollEnabled={true}
+					scrollEnabled={false}
+					zoomControlEnabled={false}
 					showUserLocation={true}
 					height={mapHeight}
+					onDoublePress={() =>
+						router.push({
+							pathname: '/search',
+							params: {
+								search: 'true',
+							},
+						})
+					}
 					onMarkerPress={(data) =>
 						router.push({
-							pathname: '/(protected)/property/[propertyId]',
+							pathname: '/search',
 							params: {
 								propertyId: data.id,
 							},

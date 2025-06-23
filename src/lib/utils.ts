@@ -22,7 +22,12 @@ export function convertToFile(uri: string) {
 	}
 	return null;
 }
-
+export function parseFormat(value: string): string {
+	if (!isNaN(Number(value)) && value.trim() !== '') {
+		return formatMoney(Number(value), 'NGN', 0);
+	}
+	return value;
+}
 export function toNaira(amountInKobo: number) {
 	return +(amountInKobo / 100).toFixed(2);
 }

@@ -9,9 +9,11 @@ import { cn } from '@/lib/utils';
 type BottomSheetProps = Modal['props'] & {
 	doneLabel?: string;
 	withBackground?: boolean;
+	withClose?: boolean;
 };
 export default function BottomSheetPlain({
 	withBackground = true,
+	withClose = true,
 	...props
 }: BottomSheetProps) {
 	const keyboard = useKeyboard();
@@ -28,7 +30,7 @@ export default function BottomSheetPlain({
 			visible={props.visible}
 			transparent
 			onRequestClose={() => handleDismiss()}
-			className="m-0">
+			statusBarTranslucent={true}>
 			<View
 				className="flex-1 bg-black/30 justify-end"
 				onTouchEnd={() => {
@@ -51,7 +53,10 @@ export default function BottomSheetPlain({
 					]}>
 					<View
 						style={[keyboard.keyboardShown ? { height: h } : {}]}
-						className="relative overflow-hidden p-4 ios:pb-[34px] android:pb-4">
+						className={cn(
+							'relative overflow-hidden',
+							withClose && 'p-4 ios:pb-[34px] android:pb-4'
+						)}>
 						<View
 							className={cn(
 								'bg-background-muted mb-2 rounded-2xl',
@@ -59,11 +64,13 @@ export default function BottomSheetPlain({
 							)}>
 							{props.children}
 						</View>
-						<Pressable
-							onPress={handleDismiss}
-							className="bg-background-muted h-14 items-center justify-center rounded-lg">
-							<Text className="">{props.doneLabel || 'Cancel'}</Text>
-						</Pressable>
+						{withClose && (
+							<Pressable
+								onPress={handleDismiss}
+								className="bg-background-muted h-14 items-center justify-center rounded-lg">
+								<Text className="">{props.doneLabel || 'Cancel'}</Text>
+							</Pressable>
+						)}
 					</View>
 				</Animated.View>
 			</View>

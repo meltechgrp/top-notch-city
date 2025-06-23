@@ -24,6 +24,7 @@ interface MapProps {
 	showRadius?: boolean;
 	radiusInMeters?: number;
 	customMarkerImage?: any;
+	onDoublePress?: () => void;
 }
 
 const DEFAULT_LAT_DELTA = 0.2;
@@ -40,6 +41,8 @@ export default function Map(props: MapProps) {
 		radiusInMeters,
 		customMarkerImage,
 		marker,
+		onDoublePress,
+		zoomControlEnabled,
 	} = props;
 	const theme = useResolvedTheme();
 	const mapRef = useRef<MapView>(null);
@@ -60,6 +63,7 @@ export default function Map(props: MapProps) {
 				provider={Platforms.isAndroid() ? PROVIDER_GOOGLE : undefined}
 				zoomEnabled
 				loadingEnabled
+				onDoublePress={onDoublePress}
 				loadingBackgroundColor={
 					theme == 'dark' ? Colors.light.background : Colors.dark.background
 				}
@@ -70,6 +74,7 @@ export default function Map(props: MapProps) {
 				customMapStyle={
 					theme === 'dark' && Platforms.isAndroid() ? mapStyleDark : []
 				}
+				zoomControlEnabled={zoomControlEnabled}
 				compassOffset={{ x: 10, y: 50 }}
 				scrollEnabled={scrollEnabled}
 				region={{

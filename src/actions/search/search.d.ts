@@ -9,5 +9,8 @@ type SearchFilters = {
 	category?: string;
 	sub_category?: string;
 	amenities?: string[];
+	bedrooms?: string;
 	use_geo_location?: string;
+	createdAt?: string;
+	tour?: string;
 };

@@ -4,6 +4,7 @@ import {
 	AvatarImage,
 	Badge,
 	BadgeText,
+	Text,
 } from '@/components/ui';
 import { TouchableHighlight } from 'react-native';
 
@@ -21,14 +22,12 @@ export default function TopLocation({ name, image, onPress }: Location) {
 				size="md"
 				variant="solid"
 				action="muted"
-				className="flex flex-row p-2 pr-3 min-w-[150px] rounded-full items-center  gap-2">
-				<Avatar size="lg">
+				className="flex flex-row p-2 px-2 pr-5 min-w-36 rounded-full items-center  gap-4">
+				<Avatar size="md">
 					<AvatarFallbackText>{name}</AvatarFallbackText>
 					<AvatarImage source={image} />
 				</Avatar>
-				<BadgeText size="lg" className=" capitalize">
-					{name}
-				</BadgeText>
+				<Text className=" capitalize text-lg">{name}</Text>
 			</Badge>
 		</TouchableHighlight>
 	);

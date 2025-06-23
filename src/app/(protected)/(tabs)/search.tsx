@@ -10,10 +10,15 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import SearchLocationBottomSheet from '@/components/search/SearchLocationBottomSheet';
 import SearchFilterBottomSheet from '@/components/search/SearchFilterBottomSheet';
 import { useProductQueries } from '@/tanstack/queries/useProductQueries';
+import { router, useLocalSearchParams } from 'expo-router';
 
 const TABS = ['Map View', 'List View'];
 
 export default function SearchScreen() {
+	const { search, propertyId } = useLocalSearchParams() as {
+		search?: string;
+		propertyId?: string;
+	};
 	const { height: totalHeight } = Dimensions.get('screen');
 	const [showFilter, setShowFilter] = useState(false);
 	const [locationBottomSheet, setLocationBottomSheet] = useState(false);
@@ -34,7 +39,12 @@ export default function SearchScreen() {
 	useEffect(() => {
 		refetch();
 	}, [filter]);
-
+	useEffect(() => {
+		if (search) {
+			setLocationBottomSheet(true);
+			router.setParams({});
+		}
+	}, [search]);
 	const onTabChange = React.useCallback((index: number) => {
 		setCurrentPage(index);
 		pagerRef.current?.setPage(index);
@@ -67,6 +77,7 @@ export default function SearchScreen() {
 										key={index}
 										height={totalHeight}
 										properties={properties}
+										propertyId={propertyId}
 									/>
 								</View>
 							);
@@ -103,8 +114,8 @@ export default function SearchScreen() {
 			<SearchFilterBottomSheet
 				show={showFilter}
 				onDismiss={() => setShowFilter(false)}
+				onApply={setFilter}
 				filter={filter}
-				onApply={() => {}}
 			/>
 		</Box>
 	);
