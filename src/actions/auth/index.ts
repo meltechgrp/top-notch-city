@@ -150,3 +150,58 @@ export async function authOptVerify({
 		};
 	}
 }
+
+export async function sendPasswordReset({ email }: { email: string }) {
+	const res = await Fetch('/password-reset/request', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({ email }),
+	});
+	const data = await res.json();
+	console.log(data);
+	if (!res.ok) throw new Error('Failed to send password reset code');
+	if (data?.detail) {
+		throw new Error('Error occurried');
+	}
+	return true;
+}
+export async function resendVerificationCode({ email }: { email: string }) {
+	const res = await Fetch('/resend-verification-code', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({ email }),
+	});
+	const data = await res.json();
+	console.log(data);
+	if (!res.ok) throw new Error('Failed to send resend verification code');
+	if (data?.detail) {
+		throw new Error('Error occurried');
+	}
+	return true;
+}
+export async function resetPassword({
+	email,
+	code,
+	confirm_password,
+	new_password,
+}: {
+	email: string;
+	code: string;
+	new_password: string;
+	confirm_password: string;
+}) {
+	const res = await Fetch('/password-reset-confirm', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'aplication/x-www-form-urlencoded',
+		},
+		body: JSON.stringify({ email, code, new_password, confirm_password }),
+	});
+	if (!res.ok) throw new Error('Failed to send reset password');
+
+	return true;
+}

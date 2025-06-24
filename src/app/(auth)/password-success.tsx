@@ -8,7 +8,7 @@ import React, { useEffect, useRef } from 'react';
 export default function VerifySuccess() {
 	const successRef = useRef<LottieView>(null);
 	function handleSubmit() {
-		router.dismissAll();
+		router.dismissTo('/(auth)/signin');
 	}
 
 	useEffect(() => {
@@ -37,7 +37,7 @@ export default function VerifySuccess() {
 					className="w-full mt-4"
 					size="xl"
 					onPress={handleSubmit}>
-					<ButtonText>Sign In</ButtonText>
+					<ButtonText>Continue</ButtonText>
 				</Button>
 			</Box>
 		</OnboardingScreenContainer>

@@ -20,7 +20,9 @@ export async function searchProperties(
 	if (filters?.tour) query.append('virtual_tour', 'true');
 	if (filters?.sub_category) query.append('sub_category', filters.sub_category);
 	if (filters?.bedrooms && filters.bedrooms !== 'Any')
-		query.append('bedrooms', filters.bedrooms);
+		query.append('amenities_filter', 'Bedrooms');
+	if (filters?.bedrooms && filters.bedrooms !== 'Any')
+		query.append('amenities_value_filter', filters.bedrooms);
 	if (filters?.createdAt && filters.createdAt !== 'any')
 		query.append('created_at', filters.createdAt);
 	if (filters?.use_geo_location)

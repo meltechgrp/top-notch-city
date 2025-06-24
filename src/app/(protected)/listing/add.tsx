@@ -26,7 +26,8 @@ export default function SellAddScreen() {
 		error,
 		success,
 	} = useUploadProperty();
-	const { listing, updateListing, updateListingStep } = useTempStore();
+	const { listing, updateListing, updateListingStep, resetListing } =
+		useTempStore();
 
 	const Steps = useMemo(() => {
 		switch (listing.step) {
@@ -80,7 +81,10 @@ export default function SellAddScreen() {
 	}
 	async function uploaHandler() {
 		await uploadProperty(listing, {
-			onSuccess: () => router.dismissTo('/listing/success'),
+			onSuccess: () => {
+				resetListing();
+				router.dismissTo('/listing/success');
+			},
 			onError: () =>
 				showSnackbar({
 					message: error ?? 'Something went wrong',

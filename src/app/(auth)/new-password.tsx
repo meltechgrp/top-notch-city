@@ -1,5 +1,5 @@
 import OnboardingScreenContainer from '@/components/onboarding/OnboardingScreenContainer';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import {
 	FormControl,
 	FormControlError,
@@ -16,21 +16,18 @@ import {
 	Box,
 	InputIcon,
 } from '@/components/ui';
-import * as z from 'zod';
 import React from 'react';
-import { Lock, User } from 'lucide-react-native';
+import { Lock } from 'lucide-react-native';
 import { AlertCircleIcon } from '@/components/ui/icon';
-
-const formSchema = z.object({
-	email: z.string().email({
-		message: 'Please enter a valid email address',
-	}),
-	password: z.string().min(8, {
-		message: 'Password must be at least 8 characters long',
-	}),
-});
+import { useAuthMutations } from '@/tanstack/mutations/useAuthMutations';
+import { showSnackbar } from '@/lib/utils';
 
 export default function NewPassword() {
+	const { email, code } = useLocalSearchParams() as {
+		email: string;
+		code: string;
+	};
+	const { mutateAsync, isPending } = useAuthMutations().resetPasswordMutation;
 	const [isInvalid, setIsInvalid] = React.useState({
 		password2: false,
 		password: false,
@@ -39,16 +36,41 @@ export default function NewPassword() {
 		password2: '',
 		password: '',
 	});
-	const handleSubmit = () => {
-		router.dismissTo('/password-success');
-		// if (form.password.length < 8) {
-		// 	setIsInvalid({ ...isInvalid, password: true });
-		// } else if (form.password2.length < 5) {
-		// 	setIsInvalid({ ...isInvalid, password2: true });
-		// } else {
-		// 	setIsInvalid({ password2: false, password: false });
-		// }
+	const handleSubmit = async () => {
+		if (form.password.length < 8) {
+			setIsInvalid({ ...isInvalid, password: true });
+		} else if (form.password2.length < 5) {
+			setIsInvalid({ ...isInvalid, password2: true });
+		} else {
+			setIsInvalid({ password2: false, password: false });
+		}
+		try {
+			await mutateAsync(
+				{
+					email,
+					code,
+					confirm_password: form.password2,
+					new_password: form.password,
+				},
+				{
+					onSuccess: () => {
+						showSnackbar({
+							message: 'Password reset code sent to your email.',
+							type: 'success',
+						});
+						router.dismissTo('/password-success');
+					},
+					onError: () => {
+						showSnackbar({
+							message: 'Please try again!',
+							type: 'warning',
+						});
+					},
+				}
+			);
+		} catch (error) {}
 	};
+	console.log(email, code);
 	return (
 		<OnboardingScreenContainer allowBack={false}>
 			<Box className="w-[98%] bg-background-muted/90 max-w-[26rem] gap-6 mt-4 mx-auto rounded-xl p-6">

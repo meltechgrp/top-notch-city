@@ -16,11 +16,13 @@ import {
 	Pressable,
 	Button,
 	ButtonText,
+	Icon,
 } from '@/components/ui';
 import { Check, ChevronRight } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Platform } from 'react-native';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
+import { Colors } from '@/constants/Colors';
 
 export default function OnboardingScreen() {
 	const [activeIndex, setActiveIndex] = React.useState(0);
@@ -40,11 +42,8 @@ export default function OnboardingScreen() {
 		}, [hasAuth])
 	);
 	return (
-		<View className="flex-1">
-			<TabView
-				activeTab={activeIndex}
-				scrollEnabled={false}
-				onTabSelected={setActiveIndex}>
+		<View className="flex-1 bg-background">
+			<TabView activeTab={activeIndex} onTabSelected={setActiveIndex}>
 				<PageOne
 					key={1}
 					setActiveIndex={setActiveIndex}
@@ -61,28 +60,6 @@ export default function OnboardingScreen() {
 					activeIndex={activeIndex}
 				/>
 			</TabView>
-		</View>
-	);
-}
-
-function PageDots({
-	activeIndex,
-	length,
-}: {
-	activeIndex: number;
-	length: number;
-}) {
-	return (
-		<View className="flex-row items-center justify-center">
-			{Array.from({ length }).map((_, i) => (
-				<View
-					key={i}
-					className={cn(
-						'w-2 h-2 rounded-full mr-2',
-						activeIndex === i ? 'bg-white' : 'bg-gray-500'
-					)}
-				/>
-			))}
 		</View>
 	);
 }
@@ -114,7 +91,7 @@ function CircleCurve({ step }: { step: number }) {
 		<Svg width={size} height={size} style={{ position: 'absolute' }}>
 			{/* Background Border */}
 			<Circle
-				stroke="black"
+				stroke="gray"
 				fill="none"
 				cx={size / 2}
 				cy={size / 2}
@@ -124,7 +101,7 @@ function CircleCurve({ step }: { step: number }) {
 
 			{/* Animated Foreground Arc */}
 			<AnimatedCircle
-				stroke="white"
+				stroke={Colors.primary}
 				fill="none"
 				cx={size / 2}
 				cy={size / 2}
@@ -176,19 +153,11 @@ function PageOne({
 									Home
 								</Text>
 							</Text>
-							<View className="relative justify-center items-center">
-								{/* Animated Half Circle */}
-								<CircleCurve step={activeIndex} />
 
-								{/* Pressable Button */}
-								<Pressable
-									onPress={() => {
-										setActiveIndex(1);
-									}}
-									className="bg-white w-12 h-12 rounded-full justify-center items-center m-1">
-									<ChevronRight color={'#FF4C00'} />
-								</Pressable>
-							</View>
+							<NextIcon
+								setActiveIndex={setActiveIndex}
+								activeIndex={activeIndex}
+							/>
 						</View>
 						<View className="flex-row justify-between items-center gap-16">
 							<View className=" w-[60%]">
@@ -196,7 +165,6 @@ function PageOne({
 									Explore thousands of properties for sale and rent
 								</Text>
 							</View>
-							<PageDots length={3} activeIndex={activeIndex} />
 						</View>
 					</View>
 				</View>
@@ -243,19 +211,10 @@ function PageTwo({
 									you interested in
 								</Text>
 							</View>
-							<View className="relative justify-center items-center">
-								{/* Animated Half Circle */}
-								<CircleCurve step={activeIndex} />
-
-								{/* Pressable Button */}
-								<Pressable
-									onPress={() => {
-										setActiveIndex(2);
-									}}
-									className="bg-white w-12 h-12 rounded-full justify-center items-center m-1">
-									<ChevronRight color={'#FF4C00'} />
-								</Pressable>
-							</View>
+							<NextIcon
+								setActiveIndex={setActiveIndex}
+								activeIndex={activeIndex}
+							/>
 						</View>
 						<View className="flex-row justify-between items-center gap-16">
 							<View className=" w-[70%]">
@@ -264,7 +223,6 @@ function PageTwo({
 									what you’re looking for.
 								</Text>
 							</View>
-							<PageDots length={3} activeIndex={activeIndex} />
 						</View>
 					</View>
 				</View>
@@ -296,19 +254,12 @@ function PageThree({
 								</Text>
 							</Text>
 						</View>
-						<View className="relative justify-center items-center">
-							{/* Animated Half Circle */}
-							<CircleCurve step={activeIndex} />
 
-							{/* Pressable Button */}
-							<Pressable
-								onPress={() => {
-									setActiveIndex(1);
-								}}
-								className="bg-white w-12 h-12 rounded-full justify-center items-center m-1">
-								<Check color={'#FF4C00'} />
-							</Pressable>
-						</View>
+						<NextIcon
+							setActiveIndex={setActiveIndex}
+							activeIndex={activeIndex}
+							disable
+						/>
 					</View>
 					<View className="mb-6">
 						<Text className=" text-white text-base">
@@ -328,5 +279,31 @@ function PageThree({
 				</View>
 			</SafeAreaView>
 		</ImageBackground>
+	);
+}
+
+function NextIcon({
+	activeIndex,
+	setActiveIndex,
+	disable,
+}: {
+	activeIndex: number;
+	setActiveIndex: (val: number) => void;
+	disable?: boolean;
+}) {
+	return (
+		<View className="relative justify-center items-center">
+			{/* Animated Half Circle */}
+			<CircleCurve step={activeIndex} />
+
+			{/* Pressable Button */}
+			<Pressable
+				onPress={() => {
+					!disable && setActiveIndex(activeIndex + 1);
+				}}
+				className="bg-background-muted w-12 h-12 rounded-full justify-center items-center m-1">
+				<Icon as={ChevronRight} className=" text-primary w-10 h-10" />
+			</Pressable>
+		</View>
 	);
 }

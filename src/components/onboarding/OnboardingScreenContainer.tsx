@@ -2,7 +2,7 @@ import ScreenContianer from '@/components/shared/ScreenContianer';
 import Platforms from '@/constants/Plaforms';
 import { router } from 'expo-router';
 import { Pressable, ScrollView, View } from 'react-native';
-import { Box, Image, ImageBackground } from '../ui';
+import { Box, Image, ImageBackground, Text } from '../ui';
 import { ChevronLeft } from 'lucide-react-native';
 import { useTheme } from '../layouts/ThemeProvider';
 
@@ -13,6 +13,7 @@ type Props = {
 	edges?: Array<'top' | 'bottom' | 'left' | 'right'>;
 	onBack?: () => void;
 	showHeader?: boolean;
+	skip?: boolean;
 };
 
 export default function OnboardingScreenContainer(props: Props) {
@@ -22,6 +23,7 @@ export default function OnboardingScreenContainer(props: Props) {
 		withScroll = true,
 		showHeader = true,
 		edges = ['top', 'bottom'],
+		skip = false,
 	} = props;
 	const { theme } = useTheme();
 
@@ -65,6 +67,13 @@ export default function OnboardingScreenContainer(props: Props) {
 											className=" w-[135px] h-[48px] object-cover"
 										/>
 									</View>
+								)}
+								{skip && (
+									<Pressable
+										onPress={() => router.push('/home')}
+										className="ml-auto">
+										<Text size="md">Skip</Text>
+									</Pressable>
 								)}
 							</View>
 							<ScrollView

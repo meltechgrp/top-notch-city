@@ -81,7 +81,7 @@ export default function SignIn() {
 		}
 	}
 	return (
-		<OnboardingScreenContainer onBack={onBack}>
+		<OnboardingScreenContainer skip={true} onBack={onBack}>
 			<Box className="w-[98%] bg-background-muted/90 max-w-[26rem] gap-6 mt-4 mx-auto rounded-xl p-6">
 				<View className=" gap-2">
 					<Text className=" text-3xl text-primary font-semibold font-heading text-center">

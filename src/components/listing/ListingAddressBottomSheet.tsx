@@ -9,7 +9,6 @@ import { MapPin } from 'lucide-react-native';
 import { fetchPlaceFromTextQuery } from '@/actions/utills';
 import { composeFullAddress } from '@/lib/utils';
 import { MiniEmptyState } from '../shared/MiniEmptyState';
-import { useApiQueryWithParams } from '@/lib/api';
 import { CustomInput } from '../shared/CustomInput';
 
 type Props = {
@@ -26,8 +25,6 @@ function ListingAddressBottomSheet(props: Props) {
 	const [locations, setLocations] = useState<GooglePlace[]>([]);
 	const [typing, setTyping] = useState(false);
 
-	const { refetch, loading } = useApiQueryWithParams(fetchPlaceFromTextQuery);
-
 	const debouncedAutocompleteSearch = useMemo(
 		() =>
 			debounce(
@@ -37,7 +34,7 @@ function ListingAddressBottomSheet(props: Props) {
 						return;
 					}
 					try {
-						const result = await refetch(query);
+						const result = await fetchPlaceFromTextQuery(query);
 						setLocations(result);
 					} catch (error) {
 						console.error('Autocomplete error:', error);
@@ -46,7 +43,7 @@ function ListingAddressBottomSheet(props: Props) {
 				500,
 				{ leading: false, trailing: true }
 			),
-		[refetch]
+		[]
 	);
 
 	useEffect(() => {
@@ -92,7 +89,7 @@ function ListingAddressBottomSheet(props: Props) {
 					<View className="flex-1">
 						<FlatList
 							data={locations}
-							refreshing={loading}
+							refreshing={typing}
 							keyExtractor={(item) => item.placeId!}
 							contentContainerClassName="bg-background-muted p-4 rounded-xl"
 							keyboardShouldPersistTaps="never"

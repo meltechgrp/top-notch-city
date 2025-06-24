@@ -49,9 +49,9 @@ export default function TabView(props: Props) {
 		<Carousel
 			ref={carouselRef}
 			width={Layout.window.width}
+			loop={false}
 			height={totalHeight}
 			data={filteredChildren}
-			mode={mode as any}
 			onProgressChange={progress}
 			defaultIndex={activeTab}
 			scrollAnimationDuration={scrollAnimationDuration}

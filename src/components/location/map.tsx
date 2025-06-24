@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useMemo, useRef } from 'react';
+import React, { ReactNode, useMemo, useRef } from 'react';
 import MapView, { Circle, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import Layout from '@/constants/Layout';
 import { CustomPropertyMarker } from './CustomPropertyMarker';
@@ -6,7 +6,6 @@ import Platforms from '@/constants/Plaforms';
 import PropertyMedia from '@/assets/images/property.png';
 import { Colors } from '@/constants/Colors';
 import { useResolvedTheme } from '../ui';
-import useGetLocation from '@/hooks/useGetLocation';
 
 interface MapProps {
 	latitude?: number;
@@ -93,7 +92,7 @@ export default function Map(props: MapProps) {
 						anchor={{ x: 0.5, y: 0.5 }}
 					/>
 				)}
-				{!current && latitude && longitude && (
+				{/* {!current && latitude && longitude && (
 					<Marker
 						coordinate={{
 							latitude: latitude,
@@ -102,7 +101,7 @@ export default function Map(props: MapProps) {
 						// image={customMarkerImage || PropertyMedia}
 						anchor={{ x: 0.5, y: 0.5 }}
 					/>
-				)}
+				)} */}
 				{latitude && longitude && showRadius && (
 					<Circle
 						center={{ latitude, longitude }}
