@@ -42,7 +42,7 @@ export default function OnboardingScreenContainer(props: Props) {
 	return (
 		<Box className="flex-1 mx-auto w-full">
 			<ImageBackground
-				source={require('@/assets/images/landing/auth-banner.png')}
+				source={require('@/assets/images/landing/home.png')}
 				className="flex-1 bg-cover w-full md:max-w-[1400px]">
 				<View
 					className={`flex-1 ${theme === 'dark' ? 'bg-black/30' : 'bg-black/15'}`}>
@@ -62,9 +62,10 @@ export default function OnboardingScreenContainer(props: Props) {
 								{showHeader && (
 									<View className=" flex-1 items-center ">
 										<Image
-											source={require('@/assets/images/landing/logo-white.png')}
+											source={require('@/assets/images/landing/full-logo-white.png')}
 											alt="Logo"
-											className=" w-[135px] h-[48px] object-cover"
+											resizeMode="contain"
+											className=" w-[150px] h-[48px] object-cover"
 										/>
 									</View>
 								)}
@@ -72,7 +73,7 @@ export default function OnboardingScreenContainer(props: Props) {
 									<Pressable
 										onPress={() => router.push('/home')}
 										className="ml-auto">
-										<Text size="md">Skip</Text>
+										<Text size="lg">Skip</Text>
 									</Pressable>
 								)}
 							</View>

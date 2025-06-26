@@ -1,20 +1,19 @@
 import { Alert, View } from 'react-native';
 import { Button, ButtonText, Icon, Text } from '@/components/ui';
 import { showSnackbar } from '@/lib/utils';
-import { useApiRequest } from '@/lib/api';
 import { SpinningLoader } from '@/components/loaders/SpinningLoader';
 import { TriangleAlert } from 'lucide-react-native';
 import { useStore } from '@/store';
 import { useNavigationContainerRef, useRouter } from 'expo-router';
 import useResetAppState from '@/hooks/useResetAppState';
 import { CommonActions } from '@react-navigation/native';
+import { Fetch } from '@/actions/utills';
 
 export default function DeleteAccount() {
 	const { me } = useStore();
 	const router = useRouter();
 	const resetAppState = useResetAppState();
 	const navigation = useNavigationContainerRef();
-	const { request, loading } = useApiRequest<Me>();
 	async function handleDelete() {
 		if (!me?.id) {
 			return showSnackbar({
@@ -23,8 +22,7 @@ export default function DeleteAccount() {
 			});
 		}
 
-		const data = await request({
-			url: `/users/me/${me.id}`,
+		const data = await Fetch(`/users/me/${me.id}`, {
 			method: 'DELETE',
 		});
 		await resetAppState();
@@ -106,7 +104,7 @@ export default function DeleteAccount() {
 			</View>
 			<View className="flex-row gap-4">
 				<Button className="h-11 flex-1" onPress={onDelete}>
-					{loading && <SpinningLoader />}
+					{/* {loading && <SpinningLoader />} */}
 					<ButtonText className=" text-white">Delete</ButtonText>
 				</Button>
 			</View>
@@ -114,7 +112,7 @@ export default function DeleteAccount() {
 				<Button
 					className="h-11 flex-1 bg-background-muted"
 					onPress={() => router.back()}>
-					{loading && <SpinningLoader />}
+					{/* {loading && <SpinningLoader />} */}
 					<ButtonText className=" text-white">Cancel</ButtonText>
 				</Button>
 			</View>

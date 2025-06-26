@@ -22,15 +22,9 @@ export default function SettingsScreen() {
 			CommonActions.reset({
 				routes: [
 					{
-						name: '(auth)',
+						name: '(onboarding)',
 						state: {
 							routes: [{ name: 'onboarding' }],
-						},
-					},
-					{
-						name: '(auth)',
-						state: {
-							routes: [{ name: 'signin' }],
 						},
 					},
 				],

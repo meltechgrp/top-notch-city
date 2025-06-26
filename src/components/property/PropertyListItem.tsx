@@ -45,11 +45,11 @@ export default function PropertyListItem(props: Props) {
 
 	const isMine = useMemo(() => profileId === owner?.id, [profileId, owner]);
 	const Actions = () => {
-		if (isAdmin || isMine) {
-			return <PropertyStatus status={status} />;
-		} else {
-			return <PropertyLikeButton property={props.data} />;
-		}
+		// if (isAdmin || isMine) {
+		// 	return <PropertyStatus status={status} />;
+		// } else {
+		return <PropertyLikeButton property={props.data} />;
+		// }
 	};
 
 	const Find = (item: string) =>

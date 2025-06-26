@@ -1,5 +1,8 @@
 import OnboardingScreenContainer from '@/components/onboarding/OnboardingScreenContainer';
 import { useRouter } from 'expo-router';
+import * as Google from 'expo-auth-session/providers/google';
+import * as Facebook from 'expo-auth-session/providers/facebook';
+import * as WebBrowser from 'expo-web-browser';
 import {
 	FormControl,
 	FormControlError,
@@ -18,21 +21,34 @@ import {
 	InputIcon,
 	Icon,
 } from '@/components/ui';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AlertCircleIcon, Loader, Lock, Mail } from 'lucide-react-native';
 import { hapticFeed } from '@/components/HapticTab';
-import { authLogin } from '@/actions/auth';
+import { authLogin, loginWithSocial } from '@/actions/auth';
 import { AuthLoginInput } from '@/lib/schema';
 import { showSnackbar } from '@/lib/utils';
 import { saveAuthToken } from '@/lib/secureStore';
 import { useStore } from '@/store';
 import { SpinningLoader } from '@/components/loaders/SpinningLoader';
 import eventBus from '@/lib/eventBus';
+import GoogleIcon from '@/components/icons/GoogleIcon';
+import { Divider } from '@/components/ui/divider';
+import FacebookIcon from '@/components/icons/FacebookIcon';
+
+WebBrowser.maybeCompleteAuthSession();
 
 export default function SignIn() {
 	const router = useRouter();
 	const [loading, setLoading] = useState(false);
 	const [errors, setErrors] = useState<Partial<AuthLoginInput> | null>();
+	const [request, response, promptAsync] = Google.useAuthRequest({
+		androidClientId: process.env.EXPO_PUBLIC_GOOGLE_AUTH_KEY,
+		iosClientId: process.env.EXPO_PUBLIC_APPLE_AUTH_KEY,
+	});
+
+	const [request2, facebookRes, facebookAsync] = Facebook.useAuthRequest({
+		clientId: '990600566300859',
+	});
 	const [form, setForm] = React.useState({
 		email: '',
 		password: '',
@@ -73,6 +89,69 @@ export default function SignIn() {
 			setLoading(false);
 		}
 	};
+	const handlePressAsync = async () => {
+		const result = await facebookAsync();
+		if (result.type !== 'success') {
+			alert('Uh oh, something went wrong');
+			return;
+		}
+	};
+	useEffect(() => {
+		if (
+			facebookRes &&
+			facebookRes.type === 'success' &&
+			facebookRes.authentication
+		) {
+			(async () => {
+				const userInfoResponse = await fetch(
+					`https://graph.facebook.com/me?access_token=${facebookRes.authentication?.accessToken}&fields=id,name,picture.type(large)`
+				);
+				const userInfo = await userInfoResponse.json();
+				console.log(userInfo);
+			})();
+		}
+	}, [facebookRes]);
+	useEffect(() => {
+		handleEffect();
+	}, [response]);
+
+	async function handleEffect() {
+		if (response?.type === 'success') {
+			getUserInfo(response.authentication?.accessToken);
+		}
+	}
+
+	const getUserInfo = async (token?: string) => {
+		if (!token) return;
+		try {
+			const response = await fetch(
+				'https://www.googleapis.com/userinfo/v2/me',
+				{
+					headers: { Authorization: `Bearer ${token}` },
+				}
+			);
+
+			const user = await response.json();
+			const res = await loginWithSocial({
+				email: user?.email,
+				first_name: user?.family_name,
+				last_name: user?.given_name,
+			});
+			if (res) {
+				if (res?.access_token) {
+					saveAuthToken(res.access_token);
+				}
+				useStore.setState((s) => ({
+					...s,
+					hasAuth: true,
+				}));
+				eventBus.dispatchEvent('REFRESH_PROFILE', null);
+				router.push('/home');
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	};
 	function onBack() {
 		if (router.canGoBack()) {
 			router.back();
@@ -90,6 +169,33 @@ export default function SignIn() {
 					<Text className=" text-center px-6">
 						Create an account or log in to explore our app
 					</Text>
+				</View>
+				<View className="flex-row gap-4">
+					<Button
+						variant="outline"
+						className="flex-1 bg-background mt-4 gap-2"
+						size="xl"
+						onPress={() => {
+							promptAsync();
+						}}>
+						<Icon as={GoogleIcon} />
+						<ButtonText>Google</ButtonText>
+					</Button>
+					<Button
+						variant="outline"
+						className="flex-1 bg-background mt-4 gap-2"
+						size="xl"
+						onPress={() => {
+							handlePressAsync();
+						}}>
+						<Icon as={FacebookIcon} />
+						<ButtonText>Facebook</ButtonText>
+					</Button>
+				</View>
+				<View className=" flex-row gap-3 items-center">
+					<Divider className="flex-1" />
+					<Text size="sm">OR</Text>
+					<Divider className="flex-1" />
 				</View>
 				<View>
 					<FormControl size="lg" isInvalid={!!errors?.email}>

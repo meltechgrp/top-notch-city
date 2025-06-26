@@ -194,14 +194,41 @@ export async function resetPassword({
 	new_password: string;
 	confirm_password: string;
 }) {
-	const res = await Fetch('/password-reset-confirm', {
+	const res = await Fetch('/password-reset/confirm', {
 		method: 'POST',
 		headers: {
-			'Content-Type': 'aplication/x-www-form-urlencoded',
+			'Content-Type': 'application/json',
 		},
 		body: JSON.stringify({ email, code, new_password, confirm_password }),
 	});
+	const data = await res.json();
+	console.log(data);
 	if (!res.ok) throw new Error('Failed to send reset password');
-
-	return true;
+	return data;
+}
+export async function loginWithSocial({
+	email,
+	first_name,
+	last_name,
+}: {
+	email: string;
+	last_name: string;
+	first_name: string;
+}) {
+	try {
+		const res = await Fetch('/social-login', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ email, last_name, first_name }),
+		});
+		const data = await await res.json();
+		console.log(data);
+		if (!res.ok) throw new Error('Failed to login');
+		return data;
+	} catch (error) {
+		console.log(error);
+		throw new Error('Failed to login');
+	}
 }

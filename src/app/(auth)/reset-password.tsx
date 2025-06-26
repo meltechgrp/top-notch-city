@@ -187,6 +187,7 @@ export default function ResetPassword() {
 
 			<BottomSheet
 				plain
+				snapPoint={['700']}
 				visible={codeSheetVisible}
 				onDismiss={() => setCodeSheetVisible(false)}>
 				<KeyboardDismissPressable>
