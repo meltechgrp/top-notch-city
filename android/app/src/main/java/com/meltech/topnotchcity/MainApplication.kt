@@ -55,7 +55,7 @@ class MainApplication : Application(), ReactApplication {
     }
     ApplicationLifecycleDispatcher.onApplicationCreate(this)
     registerActivityLifecycleCallbacks(lifecycleCallbacks) 
-  }
+    }
 
   override fun onConfigurationChanged(newConfig: Configuration) {
     super.onConfigurationChanged(newConfig)
@@ -89,4 +89,4 @@ class MainApplication : Application(), ReactApplication {
     unregisterActivityLifecycleCallbacks(lifecycleCallbacks)
   }
   
-}
+  }

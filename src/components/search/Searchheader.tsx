@@ -1,4 +1,4 @@
-import { ListFilterIcon, SearchIcon } from 'lucide-react-native';
+import { ListFilterIcon, Mic, SearchIcon } from 'lucide-react-native';
 import Animated, {
 	useSharedValue,
 	useAnimatedStyle,
@@ -14,11 +14,13 @@ import { cn, composeFullAddress } from '@/lib/utils';
 interface Props {
 	setLocationBottomSheet: () => void;
 	setShowFilter: () => void;
+	setActivateVoice: () => void;
 	filter: SearchFilters;
 }
 
 export function SearchHeader({
 	setShowFilter,
+	setActivateVoice,
 	setLocationBottomSheet,
 	filter,
 }: Props) {
@@ -42,7 +44,7 @@ export function SearchHeader({
 					<View className=" w-full android:pt-2 ">
 						<View className="flex-row items-center gap-x-4 px-4 w-full">
 							<Animated.View
-								className={'flex-1 flex-row gap-4'}
+								className={'flex-1 flex-row gap-3'}
 								style={animatedStyle}>
 								<Pressable
 									onPress={setLocationBottomSheet}
@@ -56,6 +58,11 @@ export function SearchHeader({
 										<Icon as={SearchIcon} color="white" />
 									</View>
 								</Pressable>
+								<TouchableOpacity
+									className=" p-3 flex items-center justify-center rounded-full bg-background-muted" // consistent width
+									onPress={setActivateVoice}>
+									<Icon as={Mic} className={cn('w-6 h-6')} />
+								</TouchableOpacity>
 								<TouchableOpacity
 									className=" p-3 flex items-center justify-center rounded-full bg-background-muted" // consistent width
 									onPress={setShowFilter}>

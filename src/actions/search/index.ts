@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import { Fetch } from '../utills';
 
 export async function searchProperties(
@@ -24,7 +25,10 @@ export async function searchProperties(
 	if (filters?.bedrooms && filters.bedrooms !== 'Any')
 		query.append('amenities_value_filter', filters.bedrooms);
 	if (filters?.createdAt && filters.createdAt !== 'any')
-		query.append('created_at', filters.createdAt);
+		query.append(
+			'created_at',
+			format(new Date(filters.createdAt), 'yyyy-MM-dd')
+		);
 	if (filters?.use_geo_location)
 		query.append('use_geo_location', filters.use_geo_location);
 	if (filters?.amenities?.length) {

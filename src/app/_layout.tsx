@@ -1,15 +1,7 @@
 import './global.css';
-import React, {
-	ReactNode,
-	useCallback,
-	useEffect,
-	useMemo,
-	useState,
-} from 'react';
-import { GluestackUIProvider, Image, View } from '@/components/ui';
+import React, { useEffect } from 'react';
+import { GluestackUIProvider } from '@/components/ui';
 import 'react-native-reanimated';
-import { Asset } from 'expo-asset';
-import Constants from 'expo-constants';
 import { ErrorBoundaryProps, Slot } from 'expo-router';
 import AppCrashScreen from '@/components/shared/AppCrashScreen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -19,8 +11,6 @@ import * as SplashScreen from 'expo-splash-screen';
 import GlobalManager from '@/components/shared/GlobalManager';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { useReactQueryDevTools } from '@dev-plugins/react-query';
-import { Animated, StyleSheet } from 'react-native';
-import logo from '@/assets/images/icon.png';
 
 const query = new QueryClient();
 

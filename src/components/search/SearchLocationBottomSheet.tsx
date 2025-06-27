@@ -72,7 +72,7 @@ function SearchLocationBottomSheet({ show, onDismiss, onUpdate }: Props) {
 			state: item?.state,
 			city: item?.city,
 			country: item?.country,
-			purpose,
+			purpose: item?.purpose || purpose,
 			use_geo_location: 'false',
 		};
 

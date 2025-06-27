@@ -49,13 +49,13 @@ function SearchFilterBottomSheet({
 	const [filter, setFilter] = useState({ ...initialFilter });
 	const { subcategories } = useCategoryQueries();
 	function handleApply() {
-		onApply(filter);
+		onApply({ ...filter, use_geo_location: filter?.state ? 'false' : 'true' });
 		onDismiss();
 	}
 
 	function handleReset() {
 		setFilter({
-			use_geo_location: 'true',
+			use_geo_location: filter?.state ? 'false' : 'true',
 		});
 		onApply({});
 	}

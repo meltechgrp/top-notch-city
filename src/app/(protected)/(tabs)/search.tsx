@@ -11,6 +11,7 @@ import SearchLocationBottomSheet from '@/components/search/SearchLocationBottomS
 import SearchFilterBottomSheet from '@/components/search/SearchFilterBottomSheet';
 import { useProductQueries } from '@/tanstack/queries/useProductQueries';
 import { router, useLocalSearchParams } from 'expo-router';
+import { VoiceModal } from '@/components/search/VoiceModal';
 
 const TABS = ['Map View', 'List View'];
 
@@ -21,6 +22,7 @@ export default function SearchScreen() {
 	};
 	const { height: totalHeight } = Dimensions.get('screen');
 	const [showFilter, setShowFilter] = useState(false);
+	const [activateVoice, setActivateVoice] = useState(false);
 	const [locationBottomSheet, setLocationBottomSheet] = useState(false);
 	const pagerRef = useRef<PagerView>(null);
 	const [currentPage, setCurrentPage] = useState(0);
@@ -59,6 +61,7 @@ export default function SearchScreen() {
 				filter={filter}
 				setLocationBottomSheet={() => setLocationBottomSheet(true)}
 				setShowFilter={() => setShowFilter(true)}
+				setActivateVoice={() => setActivateVoice(true)}
 			/>
 			<SearchTabs activeIndex={currentPage} onTabChange={onTabChange} />
 
@@ -110,7 +113,11 @@ export default function SearchScreen() {
 				onDismiss={() => setLocationBottomSheet(false)}
 				onUpdate={setFilter}
 			/>
-
+			<VoiceModal
+				visible={activateVoice}
+				onClose={() => setActivateVoice(false)}
+				uploadUrl="/properties/search/voice"
+			/>
 			<SearchFilterBottomSheet
 				show={showFilter}
 				onDismiss={() => setShowFilter(false)}

@@ -1,4 +1,4 @@
-import { fetchWithAuth } from '@/lib/api';
+import { Fetch } from '@/actions/utills';
 import { storage } from '@/lib/asyncStorage';
 import { removeAuthToken } from '@/lib/secureStore';
 import { useStore, useTempStore } from '@/store';
@@ -13,7 +13,7 @@ export default function useResetAppState() {
 		useStore.getState().resetStore();
 		useTempStore.getState().resetStore();
 		queryClient.clear();
-		await fetchWithAuth('/logout', {
+		await Fetch('/logout', {
 			method: 'POST',
 		});
 	}, []);

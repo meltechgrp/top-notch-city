@@ -9,7 +9,7 @@
 		"scheme": "topnotch-city",
 		"newArchEnabled": true,
 		"ios": {
-			"supportsTablet": false,
+			"supportsTablet": true,
 			"bundleIdentifier": "com.meltech.topnotchcity",
 			"infoPlist": {
 				"NSLocationWhenInUseUsageDescription": "Allow $(PRODUCT_NAME) to access to your location to track your current position.",
@@ -84,7 +84,14 @@
 					"image": "./src/assets/images/icon.png",
 					"resizeMode": "contain"
 				}
-			]
+			],
+			[
+				"expo-audio",
+				{
+					"microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
+				}
+			],
+			"@react-native-voice/voice"
 		],
 		"experiments": {
 			"typedRoutes": true
