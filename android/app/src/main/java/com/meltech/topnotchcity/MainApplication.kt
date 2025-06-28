@@ -54,8 +54,7 @@ class MainApplication : Application(), ReactApplication {
       load()
     }
     ApplicationLifecycleDispatcher.onApplicationCreate(this)
-    registerActivityLifecycleCallbacks(lifecycleCallbacks) 
-    }
+    registerActivityLifecycleCallbacks(lifecycleCallbacks) }
 
   override fun onConfigurationChanged(newConfig: Configuration) {
     super.onConfigurationChanged(newConfig)
