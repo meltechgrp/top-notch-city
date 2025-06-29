@@ -13,21 +13,23 @@ import {
 } from '../ui';
 import BottomSheet from '../shared/BottomSheet';
 import { CircleHelp, NotebookPen, SendHorizonal, X } from 'lucide-react-native';
+import { useStore } from '@/store';
+import { fullName } from '@/lib/utils';
 
 type Props = {
 	visible: boolean;
 	onDismiss: () => void;
 	onSelect?: (member: any) => void;
+	me: Me
 };
 export default function ConnectionsListSelectBottomSheet(props: Props) {
-	const { onDismiss, visible, onSelect } = props;
+	const { onDismiss, visible, onSelect, me } = props;
 	return (
 		<BottomSheet
 			visible={visible}
-			addBackground={false}
 			onDismiss={onDismiss}
 			plain
-			snapPoint="80%">
+			snapPoint={['55%', '64%']}>
 			<LinearGradient
 				colors={['#F16000', '#ddd']}
 				locations={[0.3, 0.6]}
@@ -73,7 +75,7 @@ export default function ConnectionsListSelectBottomSheet(props: Props) {
 					</View>
 					<View className="mt-16 gap-3">
 						<Heading size="4xl" className=" text-gray-200">
-							Hi Humphrey
+							Hi {fullName(me)}
 						</Heading>
 						<Heading size="4xl" className=" text-white">
 							How can we help?

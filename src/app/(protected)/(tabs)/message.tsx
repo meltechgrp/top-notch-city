@@ -18,41 +18,6 @@ export default function MessageScreen() {
 	const router = useRouter();
 	const [loading, setLoading] = React.useState(false);
 	const [refreshing, setRefreshing] = React.useState(false);
-	const data = [
-		{
-			id: 'hbhdjbjhde',
-			firstName: 'John',
-			lastName: 'Daniels',
-			message:
-				'This is a test message, This is a long test message for testing',
-			createdAt: new Date(Date.now()),
-			unreadCount: 1,
-		},
-		{
-			id: 'dnnmkedk',
-			firstName: 'Mark',
-			lastName: 'Jacobs',
-			message: 'Listed property for sale, details below',
-			createdAt: new Date(Date.now()),
-			unreadCount: 4,
-		},
-		{
-			id: 'djkkede',
-			firstName: 'Humphrey',
-			lastName: 'Mike',
-			message: 'How is the family today?',
-			createdAt: new Date(Date.now()),
-			unreadCount: 9,
-		},
-		{
-			id: 'jjjjjhjkjk',
-			firstName: 'Anita',
-			lastName: 'Smith',
-			message: 'How is the weather over there',
-			createdAt: new Date(Date.now()),
-			unreadCount: 5,
-		},
-	];
 	async function refetch() {}
 	const onNewChat = () => {
 		setFriendsModal(true);
@@ -72,7 +37,7 @@ export default function MessageScreen() {
 			setFriendsModal(true);
 		}
 	}, [chat]);
-	const isEmpty = false;
+	const isEmpty = true;
 	return (
 		<>
 			<Box className="flex-1">
@@ -86,12 +51,12 @@ export default function MessageScreen() {
 					}>
 					<View className="flex-1">
 						<FlashList
-							data={data}
+							data={[]}
 							refreshControl={
 								<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
 							}
 							ListFooterComponent={<View className="h-16"></View>}
-							keyExtractor={(item) => item.id}
+							// keyExtractor={(item) => item.id}
 							renderItem={({ item }) => (
 								<MessageListItem chat={item} me={me as any} />
 							)}
@@ -100,8 +65,8 @@ export default function MessageScreen() {
 					</View>
 				</EmptyStateWrapper>
 			</Box>
-			<CreateButton onPress={onNewChat} />
-			{friendsModal && (
+			{me && <CreateButton onPress={onNewChat} />}
+			{me && friendsModal && (
 				<StartChatBottomSheet
 					visible={friendsModal}
 					onDismiss={() => setFriendsModal(false)}
@@ -113,6 +78,7 @@ export default function MessageScreen() {
 							},
 						});
 					}}
+					me={me}
 				/>
 			)}
 		</>

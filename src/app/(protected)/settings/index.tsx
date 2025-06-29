@@ -1,8 +1,7 @@
 import * as React from 'react';
 
 import { Alert, View } from 'react-native';
-import { router, useNavigationContainerRef } from 'expo-router';
-import { CommonActions } from '@react-navigation/native';
+import { router } from 'expo-router';
 import SettingsItemList from '@/components/settings/SettingsItemList';
 import { BodyScrollView } from '@/components/layouts/BodyScrollView';
 import useResetAppState from '@/hooks/useResetAppState';
@@ -12,24 +11,12 @@ import LogoutAlertDialog from '@/components/shared/LogoutAlertDialog';
 
 export default function SettingsScreen() {
 	const resetAppState = useResetAppState();
-	const navigation = useNavigationContainerRef();
 	const [openLogoutAlertDialog, setOpenLogoutAlertDialog] =
 		React.useState(false);
 
 	function logout() {
 		resetAppState();
-		navigation?.dispatch(
-			CommonActions.reset({
-				routes: [
-					{
-						name: '(onboarding)',
-						state: {
-							routes: [{ name: 'onboarding' }],
-						},
-					},
-				],
-			})
-		);
+		router.dismissTo('/(protected)/(tabs)/home');
 	}
 	async function onLogout() {
 		Alert.alert(

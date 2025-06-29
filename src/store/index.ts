@@ -19,7 +19,6 @@ export const profileDefault = require('@/assets/images/Avatar.png');
 type State = {
 	hasAuth: boolean;
 	isAdmin: boolean;
-	displayStyle: 'flex' | 'grid';
 	me?: Me;
 	isOnboarded: boolean;
 };
@@ -28,7 +27,6 @@ type Actions = {
 	resetStore: () => void;
 	getDeviceId: () => string;
 	setIsAdmin: (isAdmin: boolean) => void;
-	setDisplayStyle: (displayStyle: 'flex' | 'grid') => void;
 	setIsOnboarded: (isOnboarded: boolean) => void;
 	updateProfile: (data: Me) => void;
 };
@@ -37,7 +35,6 @@ const initialState: State = {
 	me: undefined,
 	hasAuth: false,
 	isAdmin: false,
-	displayStyle: 'flex',
 	isOnboarded: false,
 };
 
@@ -55,9 +52,12 @@ export const useStore = create<StateAndActions>(
 				set((state) => ({ ...state, isAdmin }));
 			},
 			getDeviceId: getUniqueIdSync,
-			resetStore: () => set(initialState),
-			setDisplayStyle: (displayStyle) => {
-				set((state) => ({ ...state, displayStyle }));
+			resetStore: () => {
+				const isOnboarded = get().isOnboarded
+				set((state) => ({
+					...initialState,
+					isOnboarded: isOnboarded,
+				}));
 			},
 			setIsOnboarded(isOnboarded) {
 				set((state) => ({ ...state, isOnboarded }));

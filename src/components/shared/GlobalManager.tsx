@@ -6,6 +6,7 @@ import { getAuthToken, removeAuthToken } from '@/lib/secureStore';
 import { useStore, useTempStore } from '@/store';
 import { router } from 'expo-router';
 import React, { useEffect } from 'react';
+import SignInSheet from '../onboarding/SignInBottomSheet';
 
 export default function GlobalManager() {
 	const fullScreenLoading = useTempStore((s) => s.fullScreenLoading);
@@ -97,6 +98,7 @@ export default function GlobalManager() {
 				onDismiss={() => updateFullScreenLoading(false)}
 				dismissOnBack={false}
 			/>
+			{/* <SignInSheet /> */}
 		</>
 	);
 }
