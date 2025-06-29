@@ -42,3 +42,10 @@ type ConfirmationActionConfig = {
 	className?: string;
 	iconClassName?: string;
 };
+
+type AuthModalProps = {
+	visible: boolean;
+	onDismiss: () => void;
+	onLoginSuccess?: () => void;
+	onRegisterSuccess?: () => void;
+}

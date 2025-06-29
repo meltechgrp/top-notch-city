@@ -1,15 +1,15 @@
 import withRenderVisible from '@/components/shared/withRenderOpen';
 import { View } from 'react-native';
-import BottomSheet from '../shared/BottomSheet';
-import { Button, ButtonText } from '../ui';
+import BottomSheet from '../../shared/BottomSheet';
+import { Button, ButtonText } from '../../ui';
 import { showSnackbar } from '@/lib/utils';
-import { SpinningLoader } from '../loaders/SpinningLoader';
+import { SpinningLoader } from '../../loaders/SpinningLoader';
 import { useState, useMemo } from 'react';
 import { z } from 'zod';
-import OptionsBottomSheet from '../shared/OptionsBottomSheet';
+import OptionsBottomSheet from '../../shared/OptionsBottomSheet';
 import { useCategoryQueries } from '@/tanstack/queries/useCategoryQueries';
-import { CustomInput } from '../shared/CustomInput';
-import CustomSelect from '../shared/CustomSelect';
+import { CustomInput } from '../../custom/CustomInput';
+import CustomSelect from '../../custom/CustomSelect';
 import { usePropertyDataMutations } from '@/tanstack/mutations/usePropertyDataMutations';
 
 const PropertyBasicEditSchema = z.object({

@@ -8,7 +8,7 @@ import {
 import { useAudioRecorder, AudioModule, RecordingPresets } from 'expo-audio';
 import { cn } from '@/lib/utils';
 import { Fetch } from '@/actions/utills';
-import { Text, View } from '../ui';
+import { Text, View } from '@/components/ui';
 
 interface VoiceModalProps {
 	visible: boolean;

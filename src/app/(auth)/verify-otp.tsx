@@ -10,7 +10,7 @@ import {
 	Icon,
 } from '@/components/ui';
 import React from 'react';
-import OTPInput from '@/components/shared/OTPInput';
+import OTPInput from '@/components/custom/OTPInput';
 import { useLocalSearchParams } from 'expo-router';
 import { hapticFeed } from '@/components/HapticTab';
 import { authOptVerify } from '@/actions/auth';

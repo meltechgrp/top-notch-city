@@ -9,7 +9,7 @@ import { MapPin } from 'lucide-react-native';
 import { fetchPlaceFromTextQuery } from '@/actions/utills';
 import { composeFullAddress } from '@/lib/utils';
 import { MiniEmptyState } from '../shared/MiniEmptyState';
-import { CustomInput } from '../shared/CustomInput';
+import { CustomInput } from '../custom/CustomInput';
 
 type Props = {
 	show: boolean;

@@ -6,7 +6,7 @@ import { getAuthToken, removeAuthToken } from '@/lib/secureStore';
 import { useStore, useTempStore } from '@/store';
 import { router } from 'expo-router';
 import React, { useEffect } from 'react';
-import SignInSheet from '../onboarding/SignInBottomSheet';
+import PinAuthorizationtBottomSheet from '../modals/auth/PinAuthorizationtBottomSheet';
 
 export default function GlobalManager() {
 	const fullScreenLoading = useTempStore((s) => s.fullScreenLoading);
@@ -14,6 +14,8 @@ export default function GlobalManager() {
 	const updateFullScreenLoading = useTempStore(
 		(s) => s.updateFullScreenLoading
 	);
+  const pinVerifyRequest = useTempStore((s) => s.pinVerifyRequest)
+  const setPinVerifyRequest = useTempStore((s) => s.setPinVerifyRequest)
 	const hasAuth = useStore((s) => s.hasAuth);
 	const [snackBars, setSnackBars] = React.useState<Array<SnackBarOption>>([]);
 	const [activeSnackBar, setActiveSnackBar] =
@@ -98,7 +100,22 @@ export default function GlobalManager() {
 				onDismiss={() => updateFullScreenLoading(false)}
 				dismissOnBack={false}
 			/>
-			{/* <SignInSheet /> */}
+
+      {!!pinVerifyRequest && (
+        <PinAuthorizationtBottomSheet
+          visible={!!pinVerifyRequest}
+          onDismiss={() => setPinVerifyRequest(undefined)}
+          onAuthorize={() => {
+            pinVerifyRequest?.callback()
+            setPinVerifyRequest(undefined)
+          }}
+          title="Enter your PIN to proceed"
+          description={
+            pinVerifyRequest?.description ||
+            'Enter your 4-digit PIN code to release payment'
+          }
+        />
+      )}
 		</>
 	);
 }

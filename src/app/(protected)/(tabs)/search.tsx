@@ -7,11 +7,11 @@ import PagerView from 'react-native-pager-view';
 import { SearchMapView } from '@/components/search/SearchMapView';
 import SearchListView from '@/components/search/SearchListView';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import SearchLocationBottomSheet from '@/components/search/SearchLocationBottomSheet';
-import SearchFilterBottomSheet from '@/components/search/SearchFilterBottomSheet';
+import SearchLocationBottomSheet from '@/components/modals/search/SearchLocationBottomSheet';
+import SearchFilterBottomSheet from '@/components/modals/search/SearchFilterBottomSheet';
 import { useProductQueries } from '@/tanstack/queries/useProductQueries';
 import { router, useLocalSearchParams } from 'expo-router';
-import { VoiceModal } from '@/components/search/VoiceModal';
+import { VoiceModal } from '@/components/modals/search/VoiceModal';
 
 const TABS = ['Map View', 'List View'];
 

@@ -1,4 +1,4 @@
-import { AnimatedHeaderTitle } from '@/components/shared/AnimatedHeaderTitle';
+import { AnimatedHeaderTitle } from '@/components/custom/AnimatedHeaderTitle';
 import AppCrashScreen from '@/components/shared/AppCrashScreen';
 import headerLeft from '@/components/shared/headerLeft';
 import { Pressable, Text, useResolvedTheme, View } from '@/components/ui';

@@ -33,11 +33,11 @@ import eventBus from '@/lib/eventBus';
 import GoogleIcon from '@/components/icons/GoogleIcon';
 import { Divider } from '@/components/ui/divider';
 import FacebookIcon from '@/components/icons/FacebookIcon';
-import BottomSheet from '../shared/BottomSheet';
+import BottomSheet from '../../shared/BottomSheet';
 
 WebBrowser.maybeCompleteAuthSession();
 
-export default function SignInSheet({ visible, onDismiss }: { visible: boolean; onDismiss: () => void }) {
+export default function SignInBottomSheet({ visible, onDismiss }: AuthModalProps) {
   const router = useRouter();
 	const [loading, setLoading] = useState(false);
 	const [errors, setErrors] = useState<Partial<AuthLoginInput> | null>();

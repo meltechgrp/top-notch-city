@@ -5,18 +5,18 @@ import { composeFullAddress, formatMoney, fullName } from '@/lib/utils';
 import { capitalize, chunk } from 'lodash-es';
 import { PropertyStatus } from '@/components/property/PropertyStatus';
 import { useState } from 'react';
-import { PropertyModalMediaViewer } from '@/components/property/PropertyModalMediaViewer';
+import { PropertyModalMediaViewer } from '@/components/modals/property/PropertyModalMediaViewer';
 import { useLayout } from '@react-native-community/hooks';
 import { PropertyMedia } from '@/components/property/PropertyMedia';
 import { format } from 'date-fns';
 import { usePropertyStore } from '@/store/propertyStore';
 import { BodyScrollView } from '@/components/layouts/BodyScrollView';
 import { Edit, Plus } from 'lucide-react-native';
-import PropertyBasicEditBottomSheet from '@/components/property/PropertyBasicEditBottomSheet';
-import PropertyDescriptionEditBottomSheet from '@/components/property/PropertyDescriptionEditBottomSheet';
-import PropertyLocationEditBottomSheet from '@/components/property/PropertyLocationEditBottomSheet';
-import PropertyMediaBottomSheet from '@/components/property/PropertyMediaBottomSheet';
-import PropertyAmenitiesBottomSheet from '@/components/property/PropertyAmenitiesBottomSheet';
+import PropertyBasicEditBottomSheet from '@/components/modals/property/PropertyBasicEditBottomSheet';
+import PropertyDescriptionEditBottomSheet from '@/components/modals/property/PropertyDescriptionEditBottomSheet';
+import PropertyLocationEditBottomSheet from '@/components/modals/property/PropertyLocationEditBottomSheet';
+import PropertyMediaBottomSheet from '@/components/modals/property/PropertyMediaBottomSheet';
+import PropertyAmenitiesBottomSheet from '@/components/modals/property/PropertyAmenitiesBottomSheet';
 
 export default function PropertyEdit() {
 	const { details: property, getImages, getVideos } = usePropertyStore();

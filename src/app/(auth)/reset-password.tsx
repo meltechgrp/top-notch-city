@@ -24,7 +24,7 @@ import { showSnackbar } from '@/lib/utils';
 import { SpinningLoader } from '@/components/loaders/SpinningLoader';
 import { hapticFeed } from '@/components/HapticTab';
 import BottomSheetPlain from '@/components/shared/BottomSheetPlain';
-import OTPInput from '@/components/shared/OTPInput';
+import OTPInput from '@/components/custom/OTPInput';
 import { useAuthMutations } from '@/tanstack/mutations/useAuthMutations';
 import BottomSheet from '@/components/shared/BottomSheet';
 import { KeyboardDismissPressable } from '@/components/shared/KeyboardDismissPressable';

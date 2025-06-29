@@ -1,7 +1,7 @@
 import { MessageListItem } from '@/components/contents/MessageListItem';
 import SmartphoneChatIcon from '@/components/icons/SmartphoneChatIcon';
 import StartChatBottomSheet from '@/components/modals/StartChatBottomSheet';
-import CreateButton from '@/components/shared/CreateButton';
+import CreateButton from '@/components/custom/CreateButton';
 import EmptyStateWrapper from '@/components/shared/EmptyStateWrapper';
 import { Box, View } from '@/components/ui';
 import { useRefreshOnFocus } from '@/hooks/useRefreshOnFocus';

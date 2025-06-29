@@ -2,7 +2,7 @@ import { Icon, Pressable, View } from '@/components/ui';
 import { PropertyLikeButton } from './PropertyLikeButton';
 import { PropertyWishListButton } from './PropertyWishListButton';
 import { PropertyShareButton } from './PropertyShareButton';
-import PropertyActionsBottomSheet from './PropertyActionsBottomSheet';
+import PropertyActionsBottomSheet from '../modals/property/PropertyActionsBottomSheet';
 import { ConfirmationModal } from '../modals/ConfirmationModal';
 import { useState } from 'react';
 import { usePropertyStatusMutations } from '@/tanstack/mutations/usePropertyStatusMutations';

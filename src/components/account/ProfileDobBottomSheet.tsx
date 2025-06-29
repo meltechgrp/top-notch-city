@@ -6,7 +6,7 @@ import { showSnackbar } from '@/lib/utils';
 import { SpinningLoader } from '../loaders/SpinningLoader';
 import { useState } from 'react';
 import { useStore } from '@/store';
-import DatePicker from '../shared/DatePicker';
+import DatePicker from '../custom/DatePicker';
 import { format } from 'date-fns';
 import { useProfileMutations } from '@/tanstack/mutations/useProfileMutations';
 import { SafeAreaView } from 'react-native-safe-area-context';

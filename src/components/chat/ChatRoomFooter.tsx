@@ -1,5 +1,5 @@
 import { ChatRoomMessageProps } from '@/components/chat/ChatRoomMessage';
-import Editor, { EditorComponentRefHandle } from '@/components/shared/Editor';
+import Editor, { EditorComponentRefHandle } from '@/components/custom/Editor';
 import { useStore } from '@/store';
 import React, { useMemo as useCallback } from 'react';
 import { TextInput, View } from 'react-native';

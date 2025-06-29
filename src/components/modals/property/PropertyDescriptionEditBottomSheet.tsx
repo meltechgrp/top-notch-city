@@ -1,13 +1,13 @@
 import withRenderVisible from '@/components/shared/withRenderOpen';
 import { View } from 'react-native';
-import BottomSheet from '../shared/BottomSheet';
-import { Button, ButtonText, Text } from '../ui';
-import { SpinningLoader } from '../loaders/SpinningLoader';
+import BottomSheet from '../../shared/BottomSheet';
+import { Button, ButtonText, Text } from '../../ui';
+import { SpinningLoader } from '../../loaders/SpinningLoader';
 import { showSnackbar } from '@/lib/utils';
 import { useState } from 'react';
 import { z } from 'zod';
 import { usePropertyDataMutations } from '@/tanstack/mutations/usePropertyDataMutations';
-import { CustomInput } from '../shared/CustomInput';
+import { CustomInput } from '../../custom/CustomInput';
 
 const DescriptionSchema = z.object({
 	description: z.string().min(1, 'Description cannot be empty'),

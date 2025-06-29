@@ -100,6 +100,25 @@ export type Listing = {
 };
 
 type TempState = {
+  pin?: string
+  pinVerifyRequest?: {
+    callback: () => void
+    buttonTitle: string
+    description?: string
+  }
+
+  pinSetupOptions?: {
+    onSuccessRoute?: string
+    onSuccessRouteParams?: any
+    reenter?: boolean
+  }
+  setPinSetupOptions: (args: {
+    onSuccessRoute?: string
+    onSuccessRouteParams?: any
+    reenter?: boolean
+  }) => void
+  setPinVerifyRequest: (pinVerifyRequest: TempState['pinVerifyRequest']) => void
+  clearPinSetupOptions: () => void
 	fullScreenLoading: boolean;
 	listing: Listing;
 	kyc?: Partial<UpdateUserInput>;
@@ -111,7 +130,8 @@ type TempState = {
 	updateListingStep: () => void;
 };
 const initialTempState = {
-	fullScreenLoading: false,
+  fullScreenLoading: false,
+  pin: '',
 	listing: {
 		step: 1,
 		totalSteps: 7,
@@ -122,10 +142,18 @@ export const useTempStore = create<TempState>((set, get) => ({
 	...initialTempState,
 	updateFullScreenLoading: (fullScreenLoading: boolean) =>
 		set((state) => ({ ...state, fullScreenLoading })),
+  setPinVerifyRequest: (pinVerifyRequest: TempState['pinVerifyRequest']) =>
+    set((state) => ({ ...state, pinVerifyRequest })),
 	resetStore: () => set(initialTempState),
 	resetKyc: () => set((state) => ({ ...state, kyc0: undefined })),
 	resetListing: () =>
 		set((state) => ({ ...state, listing: initialTempState.listing })),
+  setPinSetupOptions: (args) => {
+    set((state) => ({ ...state, pinSetupOptions: args }))
+  },
+  clearPinSetupOptions: () => {
+    set((state) => ({ ...state, pinSetupOptions: undefined }))
+  },
 	updateListing: (data) =>
 		set((state) => ({ ...state, listing: { ...state.listing, ...data } })),
 	updateListingStep: () =>
@@ -147,6 +175,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
 	isProfileOpen: false,
 	toggleProfile: (val: boolean) =>
 		set((state) => ({ ...state, isProfileOpen: val })),
+  setPinVerifyRequest: (pinVerifyRequest: TempState['pinVerifyRequest']) =>
+    set((state) => ({ ...state, pinVerifyRequest })),
 	getOppositeUser: (currentUserId) => {
 		if (!currentUserId) return;
 		const chat = get().chat;

@@ -1,16 +1,16 @@
 import withRenderVisible from '@/components/shared/withRenderOpen';
 import { FlatList, Pressable, View } from 'react-native';
-import { KeyboardDismissPressable } from '../shared/KeyboardDismissPressable';
-import BottomSheet from '../shared/BottomSheet';
+import { KeyboardDismissPressable } from '@/components/shared/KeyboardDismissPressable';
+import BottomSheet from '@/components/shared/BottomSheet';
 import { useEffect, useMemo, useState } from 'react';
-import { Button, ButtonIcon, ButtonText, Heading, Icon, Text } from '../ui';
+import { Button, ButtonIcon, ButtonText, Heading, Icon, Text } from '@/components/ui';
 import { debounce } from 'lodash-es';
 import { History, MapPin, Send } from 'lucide-react-native';
 import { fetchPlaceFromTextQuery } from '@/actions/utills';
 import { cn, composeFullAddress, showSnackbar } from '@/lib/utils';
-import { MiniEmptyState } from '../shared/MiniEmptyState';
-import { CustomInput } from '../shared/CustomInput';
-import { SpinningLoader } from '../loaders/SpinningLoader';
+import { MiniEmptyState } from '@/components/shared/MiniEmptyState';
+import { CustomInput } from '@/components/custom/CustomInput';
+import { SpinningLoader } from '@/components/loaders/SpinningLoader';
 import useGetLocation from '@/hooks/useGetLocation';
 import { getReverseGeocode } from '@/hooks/useReverseGeocode';
 import {

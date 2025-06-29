@@ -12,7 +12,7 @@ import {
 	View,
 } from '../ui';
 import { useEffect, useMemo, useState } from 'react';
-import BottomSheetPlain from './BottomSheetPlain';
+import BottomSheetPlain from '../shared/BottomSheetPlain';
 import { Colors } from '@/constants/Colors';
 import { cn, formatMoney, parseFormat } from '@/lib/utils';
 import { ChevronDown } from 'lucide-react-native';

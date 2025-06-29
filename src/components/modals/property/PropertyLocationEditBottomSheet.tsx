@@ -1,18 +1,18 @@
 import withRenderVisible from '@/components/shared/withRenderOpen';
 import { FlatList, Pressable, View } from 'react-native';
-import { KeyboardDismissPressable } from '../shared/KeyboardDismissPressable';
-import BottomSheet from '../shared/BottomSheet';
+import { KeyboardDismissPressable } from '../../shared/KeyboardDismissPressable';
+import BottomSheet from '../../shared/BottomSheet';
 import { useEffect, useMemo, useState } from 'react';
-import { Button, ButtonIcon, ButtonText, Icon, Text } from '../ui';
+import { Button, ButtonIcon, ButtonText, Icon, Text } from '../../ui';
 import { debounce } from 'lodash-es';
 import { MapPin, Send } from 'lucide-react-native';
 import { composeFullAddress, showSnackbar } from '@/lib/utils';
-import { MiniEmptyState } from '../shared/MiniEmptyState';
-import { SpinningLoader } from '../loaders/SpinningLoader';
+import { MiniEmptyState } from '../../shared/MiniEmptyState';
+import { SpinningLoader } from '../../loaders/SpinningLoader';
 import useGetLocation from '@/hooks/useGetLocation';
 import { getReverseGeocode } from '@/hooks/useReverseGeocode';
 import { fetchPlaceFromTextQuery } from '@/actions/utills';
-import { CustomInput } from '../shared/CustomInput';
+import { CustomInput } from '../../custom/CustomInput';
 import { usePropertyDataMutations } from '@/tanstack/mutations/usePropertyDataMutations';
 
 type Props = {

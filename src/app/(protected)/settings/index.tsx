@@ -7,7 +7,7 @@ import { BodyScrollView } from '@/components/layouts/BodyScrollView';
 import useResetAppState from '@/hooks/useResetAppState';
 import { Icon, Pressable, Text } from '@/components/ui';
 import { LogOut } from 'lucide-react-native';
-import LogoutAlertDialog from '@/components/shared/LogoutAlertDialog';
+import LogoutAlertDialog from '@/components/modals/LogoutAlertDialog';
 
 export default function SettingsScreen() {
 	const resetAppState = useResetAppState();

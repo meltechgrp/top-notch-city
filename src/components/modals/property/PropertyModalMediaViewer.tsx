@@ -6,9 +6,9 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import React from 'react';
-import { Pressable, View } from '../ui';
-import PropertyCarousel from './PropertyCarousel';
-import { hapticFeed } from '../HapticTab';
+import { Pressable, View } from '../../ui';
+import PropertyCarousel from '../../property/PropertyCarousel';
+import { hapticFeed } from '../../HapticTab';
 import { X } from 'lucide-react-native';
 
 type Props = {

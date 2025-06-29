@@ -13,7 +13,7 @@ import useGetLocation from '@/hooks/useGetLocation';
 import { getReverseGeocode } from '@/hooks/useReverseGeocode';
 import { useProfileMutations } from '@/tanstack/mutations/useProfileMutations';
 import { fetchPlaceFromTextQuery } from '@/actions/utills';
-import { CustomInput } from '../shared/CustomInput';
+import { CustomInput } from '../custom/CustomInput';
 
 type Props = {
 	visible: boolean;

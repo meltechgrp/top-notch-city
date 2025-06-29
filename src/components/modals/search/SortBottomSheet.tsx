@@ -2,7 +2,7 @@ import BottomSheetTwo from '@/components/shared/BottomSheetTwo';
 
 import { useState } from 'react';
 import { Pressable, View } from 'react-native';
-import { Button, ButtonText, Radio, Text } from '../ui';
+import { Button, ButtonText, Radio, Text } from '@/components/ui';
 
 type SortBottomSheetProps = {
 	selected: OptionType;

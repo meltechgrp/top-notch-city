@@ -11,7 +11,7 @@ import {
 import { Colors } from '@/constants/Colors';
 import { useCallback, useMemo, useState } from 'react';
 import withRenderVisible from '@/components/shared/withRenderOpen';
-import BottomSheet from '../shared/BottomSheet';
+import BottomSheet from '../../shared/BottomSheet';
 import { usePropertyDataMutations } from '@/tanstack/mutations/usePropertyDataMutations';
 import { showSnackbar } from '@/lib/utils';
 import { LucideIcon, Minus, Plus } from 'lucide-react-native';
