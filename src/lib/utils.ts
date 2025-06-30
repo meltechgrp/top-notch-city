@@ -4,6 +4,7 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
 import eventBus from './eventBus';
+import { useEffect, useState } from 'react';
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -121,8 +122,16 @@ export function isText(text: any) {
 	);
 }
 
-export function composeFullAddress(address: ParsedAddress, cityOnly?: boolean) {
-	if (cityOnly) {
+
+export const FindAmenity = (item: string, data?: Property['amenities']) => {
+	return data?.find((a) => a.name == item)?.value || 0
+}
+
+export function composeFullAddress(address: ParsedAddress, cityOnly?: boolean, type: 'long' | 'short' = 'short') {
+	if (cityOnly && type === 'short') {
+		return joinWithComma(address?.state, address?.country);
+	}
+	else if (cityOnly && type === 'long') {
 		return joinWithComma(address?.city, address?.state, address?.country);
 	}
 	if (!address?.street) {
@@ -221,4 +230,82 @@ export function parseInternalLink(url: string) {
 	} catch {
 		return null;
 	}
+}
+
+export function getTimeAgoLabel(createdAt: string | Date): string {
+  const createdDate = new Date(createdAt);
+  const now = new Date();
+  const diffMs = now.getTime() - createdDate.getTime();
+
+  const seconds = Math.floor(diffMs / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  const months = Math.floor(days / 30);
+  const years = Math.floor(days / 365);
+
+  if (hours < 24) {
+    return `added ${hours} hour${hours !== 1 ? 's' : ''} ago`;
+  } else if (days < 30) {
+    return `added ${days} day${days !== 1 ? 's' : ''} ago`;
+  } else if (days < 365) {
+    return `added ${months} month${months !== 1 ? 's' : ''} ago`;
+  } else {
+    return `added ${years} year${years !== 1 ? 's' : ''} ago`;
+  }
+}
+
+export function formatDateDistance(date: string) {
+  const seconds = Math.floor(
+    (new Date().getTime() - new Date(date).getTime()) / 1000
+  )
+  let interval = Math.floor(seconds / 31536000)
+  if (interval > 1) {
+    return `${interval}y ago`
+  }
+
+  interval = Math.floor(seconds / 86400)
+  if (interval >= 1) {
+    return `${interval}d ago`
+  }
+  interval = Math.floor(seconds / 3600)
+  if (interval >= 1) {
+    return `${interval}h ago`
+  }
+  interval = Math.floor(seconds / 60)
+  if (interval >= 1) {
+    return `${interval}m ago`
+  }
+  return `${Math.floor(seconds)}s ago`
+}
+
+
+
+export function useTimeAgo(date: string) {
+  const [timeAgo, setTimeAgo] = useState(() => formatDateDistance(date));
+
+  useEffect(() => {
+    function getIntervalMs(label: string) {
+      if (label.includes('s')) return 1000;          // update every second
+      if (label.includes('m')) return 60 * 1000;     // update every minute
+      if (label.includes('h')) return 60 * 60 * 1000; // update every hour
+      return 60 * 60 * 1000;                         // default: hourly
+    }
+
+    const update = () => {
+      const newTimeAgo = formatDateDistance(date);
+      setTimeAgo(newTimeAgo);
+      return getIntervalMs(newTimeAgo);
+    };
+
+    let intervalMs = update();
+
+    const intervalId = setInterval(() => {
+      intervalMs = update();
+    }, intervalMs);
+
+    return () => clearInterval(intervalId);
+  }, [date]);
+
+  return timeAgo;
 }

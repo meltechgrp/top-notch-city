@@ -113,7 +113,7 @@ export const PropertyMedia: React.FC<Props> = (props) => {
 			) : null}
 
 			{withBackdrop && (
-				<View className="absolute w-full h-full bg-black/30 ios:z-10" />
+				<View className="absolute w-full h-full bg-black/50 ios:z-10" />
 			)}
 			{isOwner && (
 				<View className=" absolute top-4 right-4">

@@ -28,8 +28,9 @@ export default function ConnectionsListSelectBottomSheet(props: Props) {
 		<BottomSheet
 			visible={visible}
 			onDismiss={onDismiss}
+			addBackground={false}
 			plain
-			snapPoint={['55%', '64%']}>
+			snapPoint={['60%', '75%']}>
 			<LinearGradient
 				colors={['#F16000', '#ddd']}
 				locations={[0.3, 0.6]}
@@ -73,11 +74,11 @@ export default function ConnectionsListSelectBottomSheet(props: Props) {
 							</Pressable>
 						</View>
 					</View>
-					<View className="mt-16 gap-3">
-						<Heading size="4xl" className=" text-gray-200">
-							Hi {fullName(me)}
+					<View className="mt-12 gap-3">
+						<Heading size="3xl" className=" text-gray-200">
+							Hi {me.first_name}
 						</Heading>
-						<Heading size="4xl" className=" text-white">
+						<Heading size="3xl" className=" text-white">
 							How can we help?
 						</Heading>
 					</View>

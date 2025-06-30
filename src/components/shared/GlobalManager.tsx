@@ -7,6 +7,7 @@ import { useStore, useTempStore } from '@/store';
 import { router } from 'expo-router';
 import React, { useEffect } from 'react';
 import PinAuthorizationtBottomSheet from '../modals/auth/PinAuthorizationtBottomSheet';
+import AuthModals from '../globals/AuthModals';
 
 export default function GlobalManager() {
 	const fullScreenLoading = useTempStore((s) => s.fullScreenLoading);
@@ -35,12 +36,11 @@ export default function GlobalManager() {
 	async function updateMe() {
 		try {
 			const res = await Fetch('/users/me', {});
-			const data = await res.json();
-			if (data?.detail?.includes('expired')) {
+			if (res?.detail?.includes('expired')) {
 				return await unsetAuthToken();
 			}
-			if (!data?.detail) {
-				setMe(data);
+			if (!res?.detail) {
+				setMe(res);
 			}
 		} catch (err: any) {
 			if (err?.detail?.includes('expired')) {
@@ -116,6 +116,7 @@ export default function GlobalManager() {
           }
         />
       )}
+	  <AuthModals />
 		</>
 	);
 }

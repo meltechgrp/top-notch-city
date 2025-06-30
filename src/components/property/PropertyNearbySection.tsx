@@ -26,7 +26,7 @@ const NearbyCategory = ({
 	longitude: number;
 }) => {
 	const { data, isLoading } = useQuery({
-		queryKey: [type],
+		queryKey: [type, latitude, latitude],
 		queryFn: () => fetchNearbySection({ type, latitude, longitude }),
 	});
 	const places = useMemo<Place[]>(() => {
@@ -62,9 +62,9 @@ const NearbyCategory = ({
 		<View className="flex-1 py-2">
 			<ScrollView className="flex-1 pb-12">
 				<View className="flex-1 gap-2">
-					{places.map((item) => (
+					{places.map((item, i) => (
 						<View
-							key={item.name}
+							key={item.vicinity + i}
 							className="p-4 py-2 bg-background-muted min-h-16 flex-row items-center gap-2 rounded-xl">
 							<Icon
 								as={categoryIcons[type as keyof typeof categoryIcons]}

@@ -25,17 +25,14 @@ export async function updatePropertyBasicInfo(
 			headers: {
 				'Content-Type': 'multipart/form-data',
 			},
-			body: formData,
+			data: formData,
 		});
 
-		const json = await res.json();
-		console.log(json?.detail);
-		console.log(res.status);
-		if (!res.ok) {
+		if (res?.detail) {
 			throw new Error('Failed to update property');
 		}
 
-		return json;
+		return res;
 	} catch (error) {
 		console.error('Property update failed:', error);
 		throw error;
@@ -55,14 +52,13 @@ export async function updatePropertyDescription(
 			headers: {
 				'Content-Type': 'multipart/form-data',
 			},
-			body: formData,
+			data: formData,
 		});
 
-		const json = await res.json();
-		if (!res.ok)
-			throw new Error(json?.message || 'Failed to update description');
+		if (res?.detail)
+			throw new Error('Failed to update description');
 
-		return json;
+		return res;
 	} catch (error) {
 		console.error('Update description failed:', error);
 		throw error;

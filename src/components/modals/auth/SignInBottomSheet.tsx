@@ -1,261 +1,225 @@
-import { useRouter } from 'expo-router';
-import * as Google from 'expo-auth-session/providers/google';
-import * as Facebook from 'expo-auth-session/providers/facebook';
-import * as WebBrowser from 'expo-web-browser';
-import {
-    FormControl,
-    FormControlError,
-    FormControlErrorText,
-    FormControlErrorIcon,
-    FormControlLabel,
-    FormControlLabelText,
-    Input,
-    InputField,
-    Button,
-    ButtonText,
-    Text,
-    View,
-    Pressable,
-    Box,
-    InputIcon,
-    Icon,
-} from '@/components/ui';
-import React, { useEffect, useState } from 'react';
-import { AlertCircleIcon, Lock, Mail } from 'lucide-react-native';
-import { hapticFeed } from '@/components/HapticTab';
-import { authLogin, loginWithSocial } from '@/actions/auth';
-import { AuthLoginInput } from '@/lib/schema';
-import { showSnackbar } from '@/lib/utils';
-import { saveAuthToken } from '@/lib/secureStore';
-import { useStore } from '@/store';
-import { SpinningLoader } from '@/components/loaders/SpinningLoader';
-import eventBus from '@/lib/eventBus';
-import GoogleIcon from '@/components/icons/GoogleIcon';
-import { Divider } from '@/components/ui/divider';
-import FacebookIcon from '@/components/icons/FacebookIcon';
-import BottomSheet from '../../shared/BottomSheet';
+
+import * as Google from "expo-auth-session/providers/google";
+import * as Facebook from "expo-auth-session/providers/facebook";
+import * as WebBrowser from "expo-web-browser";
+import * as AppleAuthentication from "expo-apple-authentication";
+
+import { Button, ButtonText, Text, View, Box, Icon, Pressable } from "@/components/ui";
+
+import React, { useCallback, useEffect, useState } from "react";
+import { hapticFeed } from "@/components/HapticTab";
+import { loginWithSocial } from "@/actions/auth";
+import { showSnackbar } from "@/lib/utils";
+import { saveAuthToken } from "@/lib/secureStore";
+import { useStore } from "@/store";
+import { SpinningLoader } from "@/components/loaders/SpinningLoader";
+import eventBus from "@/lib/eventBus";
+import GoogleIcon from "@/components/icons/GoogleIcon";
+import FacebookIcon from "@/components/icons/FacebookIcon";
+import BottomSheet from "../../shared/BottomSheet";
+import { Divider } from "@/components/ui/divider";
+import { CustomInput } from "@/components/custom/CustomInput";
+
+
+export default function SignInBottomSheet({
+  visible,
+  onDismiss,
+  onLoginSuccess
+}: AuthModalProps) {
+  const [isAppleAvailable, setIsAppleAvailable] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
+
+  const [googleRequest, googleResponse, googlePromptAsync] =
+    Google.useAuthRequest({
+      androidClientId: process.env.EXPO_PUBLIC_GOOGLE_AUTH_KEY,
+      iosClientId: process.env.EXPO_PUBLIC_APPLE_AUTH_KEY,
+    });
+
+  const [fbRequest, fbResponse, fbPromptAsync] = Facebook.useAuthRequest({
+    clientId: "990600566300859",
+  });
 
 WebBrowser.maybeCompleteAuthSession();
+  // 🔑 Basic email sign-in
+  const handleEmailSubmit = useCallback(async () => {
+    hapticFeed();
+    setLoading(true);
+    try {
+       await handleSocialLogin({ email });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }, [email]);
 
-export default function SignInBottomSheet({ visible, onDismiss }: AuthModalProps) {
-  const router = useRouter();
-	const [loading, setLoading] = useState(false);
-	const [errors, setErrors] = useState<Partial<AuthLoginInput> | null>();
-	const [request, response, promptAsync] = Google.useAuthRequest({
-		androidClientId: process.env.EXPO_PUBLIC_GOOGLE_AUTH_KEY,
-		iosClientId: process.env.EXPO_PUBLIC_APPLE_AUTH_KEY,
-	});
+  // ✅ Social handler (common logic)
+  const handleSocialLogin = useCallback(
+    async (socialData: {
+      email: string;
+      first_name?: string;
+      last_name?: string;
+    }) => {
+      try {
+        const res = await loginWithSocial(socialData);
+        if (res?.access_token) {
+          saveAuthToken(res.access_token);
+          useStore.setState((s) => ({ ...s, hasAuth: true }));
+          eventBus.dispatchEvent("REFRESH_PROFILE", null);
+          onDismiss?.()
+          onLoginSuccess?.();
+        }
+      } catch (error) {
+        console.error(error);
+		showSnackbar({
+		  message: "Error occurred during. Please try again.",
+		  type: "error",
+		});
+      }
+    },
+    []
+  );
 
-	const [request2, facebookRes, facebookAsync] = Facebook.useAuthRequest({
-		clientId: '990600566300859',
-	});
-	const [form, setForm] = React.useState({
-		email: '',
-		password: '',
-	});
-	const handleSubmit = async () => {
-		hapticFeed();
-		setLoading(true);
-		try {
-			const state = await authLogin(form);
-			setErrors(null);
+  // ✅ Google response handler
+  useEffect(() => {
+    if (googleResponse?.type === "success") {
+      getGoogleUserInfo(googleResponse.authentication?.accessToken);
+    }
+  }, [googleResponse]);
 
-			if (state?.fieldError) {
-				setErrors(state.fieldError);
-			} else if (state?.formError) {
-				showSnackbar({
-					message: state.formError,
-					type: 'error',
-				});
-			} else if (state?.data) {
-				const { email, message, access_token } = state.data as {
-					access_token: string;
-					message: string;
-					email: string;
-				};
-				if (access_token) {
-					saveAuthToken(access_token);
-				}
-				useStore.setState((s) => ({
-					...s,
-					hasAuth: true,
-				}));
-				eventBus.dispatchEvent('REFRESH_PROFILE', null);
-				router.push('/home');
-			}
-		} catch (error) {
-			console.error(error);
-		} finally {
-			setLoading(false);
-		}
-	};
-	const handlePressAsync = async () => {
-		const result = await facebookAsync();
-		if (result.type !== 'success') {
-			alert('Uh oh, something went wrong');
-			return;
-		}
-	};
-	useEffect(() => {
-		if (
-			facebookRes &&
-			facebookRes.type === 'success' &&
-			facebookRes.authentication
-		) {
-			(async () => {
-				const userInfoResponse = await fetch(
-					`https://graph.facebook.com/me?access_token=${facebookRes.authentication?.accessToken}&fields=id,name,picture.type(large)`
-				);
-				const userInfo = await userInfoResponse.json();
-				console.log(userInfo);
-			})();
-		}
-	}, [facebookRes]);
-	useEffect(() => {
-		handleEffect();
-	}, [response]);
+  const getGoogleUserInfo = async (token?: string) => {
+    if (!token) return;
+    const response = await fetch("https://www.googleapis.com/userinfo/v2/me", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const user = await response.json();
+    await handleSocialLogin({
+      email: user?.email,
+      first_name: user?.family_name,
+      last_name: user?.given_name,
+    });
+  };
 
-	async function handleEffect() {
-		if (response?.type === 'success') {
-			getUserInfo(response.authentication?.accessToken);
-		}
-	}
+  // ✅ Facebook response handler
+  useEffect(() => {
+    if (fbResponse?.type === "success" && fbResponse.authentication) {
+      (async () => {
+        const userInfoResponse = await fetch(
+          `https://graph.facebook.com/me?access_token=${fbResponse.authentication?.accessToken}&fields=id,name,email,picture.type(large)`
+        );
+        const userInfo = await userInfoResponse.json();
+        console.log(userInfo); // Or map fields if needed
+      })();
+    }
+  }, [fbResponse]);
 
-	const getUserInfo = async (token?: string) => {
-		if (!token) return;
-		try {
-			const response = await fetch(
-				'https://www.googleapis.com/userinfo/v2/me',
-				{
-					headers: { Authorization: `Bearer ${token}` },
-				}
-			);
+  // ✅ Apple sign-in
+  const handleAppleSignIn = async () => {
+    try {
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
 
-			const user = await response.json();
-			const res = await loginWithSocial({
-				email: user?.email,
-				first_name: user?.family_name,
-				last_name: user?.given_name,
-			});
-			if (res) {
-				if (res?.access_token) {
-					saveAuthToken(res.access_token);
-				}
-				useStore.setState((s) => ({
-					...s,
-					hasAuth: true,
-				}));
-				eventBus.dispatchEvent('REFRESH_PROFILE', null);
-				router.push('/home');
-			}
-		} catch (error) {
-			console.log(error);
-		}
-	};
+      console.log("Apple credential:", credential);
+      if (!credential.email) {
+        showSnackbar({
+          message: "Error occuried. Please try again.",
+          type: "error",
+        });
+        return;
+      }
+
+      await handleSocialLogin({
+        email: credential.email,
+        first_name: credential.fullName?.givenName ?? undefined,
+        last_name: credential.fullName?.familyName ?? undefined,
+      });
+    } catch (error: any) {
+      if (error.code === "ERR_CANCELED") {
+        console.log("User cancelled Apple Sign-In.");
+      } else {
+        console.error(error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    AppleAuthentication.isAvailableAsync().then(setIsAppleAvailable);
+  }, []);
 
   return (
-    <BottomSheet visible={visible} onDismiss={onDismiss} snapPoint={['55%', '64%']} plain>
-      <Box className="w-[98%] bg-background-muted/90 max-w-[26rem] gap-6 mt-4 mx-auto rounded-xl p-6">
-				<View className=" gap-2">
-					<Text className=" text-3xl text-primary font-semibold font-heading text-center">
-						Welcome Back
-					</Text>
-					<Text className=" text-center px-6">
-						Create an account or log in to explore our app
-					</Text>
-				</View>
-				<View className="flex-row gap-4">
-					<Button
-						variant="outline"
-						className="flex-1 bg-background mt-4 gap-2"
-						size="xl"
-						onPress={() => {
-							promptAsync();
-						}}>
-						<Icon as={GoogleIcon} />
-						<ButtonText>Google</ButtonText>
-					</Button>
-					<Button
-						variant="outline"
-						className="flex-1 bg-background mt-4 gap-2"
-						size="xl"
-						onPress={() => {
-							handlePressAsync();
-						}}>
-						<Icon as={FacebookIcon} />
-						<ButtonText>Facebook</ButtonText>
-					</Button>
-				</View>
-				<View className=" flex-row gap-3 items-center">
-					<Divider className="flex-1" />
-					<Text size="sm">OR</Text>
-					<Divider className="flex-1" />
-				</View>
-				<View>
-					<FormControl size="lg" isInvalid={!!errors?.email}>
-						<FormControlLabel>
-							<FormControlLabelText className="font-light">
-								Email
-							</FormControlLabelText>
-						</FormControlLabel>
-						<Input className="my-1  rounded-xl px-4 h-12">
-							<InputIcon as={Mail} />
-							<InputField
-								type="text"
-								placeholder="Email"
-								value={form.email}
-								onChangeText={(text) => setForm({ ...form, email: text })}
-							/>
-						</Input>
-						<FormControlError>
-							<FormControlErrorIcon as={AlertCircleIcon} />
-							<FormControlErrorText>{errors?.email}</FormControlErrorText>
-						</FormControlError>
-					</FormControl>
-					<FormControl size="md" isInvalid={!!errors?.password}>
-						<FormControlLabel>
-							<FormControlLabelText className="font-light">
-								Password
-							</FormControlLabelText>
-						</FormControlLabel>
-						<Input className="my-1 rounded-xl px-4 h-12">
-							<InputIcon size="sm" as={Lock} />
-							<InputField
-								type="password"
-								placeholder="Password"
-								value={form.password}
-								onChangeText={(text) => setForm({ ...form, password: text })}
-							/>
-						</Input>
-						<FormControlError>
-							<FormControlErrorIcon as={AlertCircleIcon} />
-							<FormControlErrorText>{errors?.password}</FormControlErrorText>
-						</FormControlError>
-					</FormControl>
-					<View className="items-end mt-2">
-						<Pressable onPress={() => router.push('/(auth)/reset-password')}>
-							<Text className=" text-primary font-medium">
-								Forgot Password ?
-							</Text>
-						</Pressable>
-					</View>
-				</View>
+    <BottomSheet
+      visible={visible}
+      withScroll
+      withHeader
+      rounded={false}
+      onDismiss={onDismiss}
+      title="Sign In or Sign Up"
+      snapPoint={["54%", '60%']}
+    >
+      <Box className=" gap-6 flex-1 p-6 pt-3">
+        <CustomInput
+          className="bg-background-muted"
+          value={email}
+          onUpdate={setEmail}
+          placeholder="Email address"
+        />
 
-				<Button
-					variant="solid"
-					className="w-full mt-4 gap-2"
-					size="xl"
-					onPress={handleSubmit}>
-					{loading && <SpinningLoader />}
-					<ButtonText>Submit</ButtonText>
-				</Button>
-				<View className=" flex-row justify-center gap-2 mt-4">
-					<Text>Don’t have an account?</Text>
-					<Pressable onPress={() => router.push('/signup')}>
-						<Text className=" text-primary font-medium">Sign Up</Text>
-					</Pressable>
-				</View>
-			</Box>
+        <Button
+          className="w-full mt-2 gap-2"
+          size="xl"
+          onPress={handleEmailSubmit}
+        >
+          {loading && <SpinningLoader />}
+          <ButtonText>Continue</ButtonText>
+        </Button>
+
+        <View className="flex-row my-3 gap-3 items-center">
+          <Divider className="flex-1" />
+          <Text size="xs">OR</Text>
+          <Divider className="flex-1" />
+        </View>
+
+        <View className="gap-4">
+
+          {isAppleAvailable && (
+            <AppleAuthentication.AppleAuthenticationButton
+              buttonType={
+                AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN
+              }
+              buttonStyle={
+                AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
+              }
+              cornerRadius={5}
+              style={{ width: "100%", height: 44, marginTop: 16 }}
+              onPress={handleAppleSignIn}
+            />
+          )}
+          <Button
+            className="flex-1 h-14 bg-background-muted mt-4 gap-2"
+            onPress={() => googlePromptAsync()}
+          >
+            <Icon as={GoogleIcon} />
+            <ButtonText>Continue with Google</ButtonText>
+          </Button>
+
+          <Button
+            className="flex-1 h-14 bg-background-muted mt-4 gap-2"
+            onPress={() => fbPromptAsync()}
+          >
+            <Icon as={FacebookIcon} />
+            <ButtonText>Continue with Facebook</ButtonText>
+          </Button>
+
+		 <Pressable className="mx-auto mt-4">
+			<Text underline size="lg">Skip</Text>
+		 </Pressable>
+        </View>
+      </Box>
     </BottomSheet>
   );
 }

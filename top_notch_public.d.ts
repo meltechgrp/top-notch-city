@@ -45,7 +45,7 @@ type ConfirmationActionConfig = {
 
 type AuthModalProps = {
 	visible: boolean;
-	onDismiss: () => void;
+	onDismiss?: () => void;
 	onLoginSuccess?: () => void;
 	onRegisterSuccess?: () => void;
 }

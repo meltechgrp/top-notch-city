@@ -1,7 +1,6 @@
 import { TextInput, View } from 'react-native';
 import { Button, ButtonText, Text } from '@/components/ui';
 import { showSnackbar } from '@/lib/utils';
-import { useApiRequest } from '@/lib/api';
 import { useState } from 'react';
 import { validatePassword } from '@/lib/schema';
 import { z } from 'zod';
@@ -14,7 +13,6 @@ const ProfileNameSchema = z.object({
 });
 
 export default function ChangePassword() {
-	const { request, loading } = useApiRequest<Me>();
 	const [form, setForm] = useState({
 		current: '',
 		new: '',
@@ -27,25 +25,25 @@ export default function ChangePassword() {
 				type: 'warning',
 			});
 		}
-		const data = await request({
-			url: '/users/me/change-password',
-			method: 'PUT',
-			data: {
-				current_password: form.current,
-				new_password: form.new,
-			},
-		});
-		if (data) {
-			showSnackbar({
-				message: 'Profile name updated successfully',
-				type: 'success',
-			});
-		} else {
-			showSnackbar({
-				message: 'Failed to update.. try again',
-				type: 'warning',
-			});
-		}
+		// const data = await request({
+		// 	url: '/users/me/change-password',
+		// 	method: 'PUT',
+		// 	data: {
+		// 		current_password: form.current,
+		// 		new_password: form.new,
+		// 	},
+		// });
+		// if (data) {
+		// 	showSnackbar({
+		// 		message: 'Profile name updated successfully',
+		// 		type: 'success',
+		// 	});
+		// } else {
+		// 	showSnackbar({
+		// 		message: 'Failed to update.. try again',
+		// 		type: 'warning',
+		// 	});
+		// }
 	}
 	return (
 		<View className="flex-1 gap-4 p-4 pb-8 bg-background">
@@ -97,7 +95,7 @@ export default function ChangePassword() {
 						}
 						await handleUpload();
 					}}>
-					{loading && <SpinningLoader />}
+					{/* {loading && <SpinningLoader />} */}
 					<ButtonText className=" text-white">Update</ButtonText>
 				</Button>
 			</View>

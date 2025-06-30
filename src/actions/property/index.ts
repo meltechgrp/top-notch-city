@@ -6,11 +6,11 @@ export async function fetchProperty({ id }: { id: string }) {
 	try {
 		const res = await Fetch(`/properties/${id}`, {});
 
-		if (!res.ok) {
+		if (res?.detail) {
 			throw new Error('Failed to fetch property');
 		}
 
-		return (await res.json()) as Property;
+		return res as Property;
 	} catch (error) {
 		console.log(error);
 		throw new Error('Failed to fetch property');
@@ -19,12 +19,11 @@ export async function fetchProperty({ id }: { id: string }) {
 export async function fetchWishlist() {
 	try {
 		const res = await Fetch(`/mywhishlist`, {});
-		if (!res.ok) {
+		if (res?.detail) {
 			throw new Error('Failed to fetch wishlist');
 		}
 
-		const json = (await res.json()) as Wishlist[];
-		return json;
+		return res as Wishlist[];
 	} catch (error) {
 		console.log(error);
 		throw new Error('Failed to fetch wishlist');
@@ -64,7 +63,7 @@ export async function fetchNearbySection({
 			}),
 		});
 
-		if (!res.ok) {
+		if (!res?.ok) {
 			throw new Error('Failed to fetch');
 		}
 
@@ -82,15 +81,14 @@ export async function addToWishList({ id }: { id: string }) {
 			headers: {
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify({ property_id: id }),
+			data: JSON.stringify({ property_id: id }),
 		});
 
-		if (!res.ok) {
+		if (res?.detail) {
 			throw new Error('Failed to add wishlist item');
 		}
 
-		const data = await res.json();
-		return data;
+		return res;
 	} catch (error) {
 		console.log(error);
 		throw new Error('Failed to add wishlist item');
@@ -102,12 +100,10 @@ export async function removeFromWishList({ id }: { id: string }) {
 			method: 'DELETE',
 		});
 
-		if (!res.ok) {
+		if (res?.detail) {
 			throw new Error('Failed to remove wishlist item');
 		}
-
-		const data = await res.json();
-		return data;
+		return res;
 	} catch (error) {
 		console.log(error);
 		throw new Error('Failed to remove wishlist item');
@@ -120,16 +116,9 @@ export async function likeProperty({ id }: { id: string }) {
 			headers: {
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify({ property_id: id }),
+			data: JSON.stringify({ property_id: id }),
 		});
-
-		if (!res.ok) {
-			throw new Error('Failed to like');
-		}
-
-		const data = await res.json();
-		console.log(data);
-		return data;
+		return res;
 	} catch (error) {
 		console.log(error);
 		throw new Error('Failed to like');
@@ -141,14 +130,7 @@ export async function viewProperty({ id }: { id: string }) {
 		const res = await Fetch(`/properties/${id}/view`, {
 			method: 'POST',
 		});
-
-		if (!res.ok) {
-			throw new Error('Failed to view');
-		}
-
-		const data = await res.json();
-		console.log(data);
-		return data;
+		return res;
 	} catch (error) {
 		console.log(error);
 		throw new Error('Failed to view');

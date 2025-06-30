@@ -65,6 +65,12 @@ export default function ProfileScreensLayout() {
 					title: 'Account',
 				}}
 			/>
+			<Stack.Screen
+				name="wishlist"
+				options={{
+					title: 'Wishlist',
+				}}
+			/>
 		</Stack>
 	);
 }

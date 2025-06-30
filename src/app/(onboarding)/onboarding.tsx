@@ -14,6 +14,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Platform } from 'react-native';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
+import { openSignInModal } from '@/components/globals/AuthModals';
 
 export default function OnboardingScreen() {
 	const [activeIndex, setActiveIndex] = React.useState(0);
@@ -27,6 +28,9 @@ export default function OnboardingScreen() {
 	}, []);
 	function skipHandler() {
 		setIsOnboarded(true);
+			  openSignInModal({
+				visible: true,
+			  });
 		router.push('/home');
 	}
 	useFocusEffect(
@@ -120,11 +124,11 @@ function PageOne({
 					<View className=" gap-4">
 						<View className="flex-row justify-between items-center">
 							<Text
-								size="5xl"
+								size="4xl"
 								className="font-bold font-heading w-[60%] text-white">
 								Find Your Dream{' '}
 								<Text
-									size="5xl"
+									size="4xl"
 									className="text-[#FF4C00] font-bold font-heading">
 									Home
 								</Text>
@@ -175,24 +179,24 @@ function PageTwo({
 						<View className="flex-row justify-between items-center">
 							<View className="">
 								<View className=" flex-row gap-1">
-									<Text size="5xl" className="font-bold text-white">
+									<Text size="4xl" className="font-bold text-white">
 										Which{' '}
 									</Text>
-									<Text size="5xl" className="font-bold text-primary">
+									<Text size="4xl" className="font-bold text-primary">
 										location
 									</Text>
-									<Text size="5xl" className="font-bold text-white">
+									<Text size="4xl" className="font-bold text-white">
 										are
 									</Text>
 								</View>
-								<Text size="5xl" className="font-bold text-white">
+								<Text size="4xl" className="font-bold text-white">
 									you interested in
 								</Text>
 							</View>
 						</View>
 						<View className="flex-row justify-between items-center gap-16">
 							<View className=" w-[75%]">
-								<Text className=" text-white text-base">
+								<Text className=" text-white text-sm">
 									Filter by location, price, or property type to find exactly
 									what you’re looking for.
 								</Text>
@@ -227,16 +231,16 @@ function PageThree({
 					<View className="flex-1 items-end "></View>
 					<View className=" gap-4 flex-row mb-2">
 						<View className="flex-1">
-							<Text size="5xl" className="font-bold w-[70%] text-white">
+							<Text size="4xl" className="font-bold w-[70%] text-white">
 								Connect with Trusted{' '}
-								<Text size="5xl" className="text-[#FF4C00] font-bold">
+								<Text size="4xl" className="text-[#FF4C00] font-bold">
 									Agents
 								</Text>
 							</Text>
 						</View>
 					</View>
 					<View className="mb-6  w-[70%]">
-						<Text className=" text-white text-base">
+						<Text className=" text-white text-sm">
 							Get personalized assistance from verified and experienced real
 							estate professionals.
 						</Text>

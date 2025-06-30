@@ -16,6 +16,7 @@ export function PropertyWishListButton({ property, className }: Props) {
 	function invalidate() {
 		client.invalidateQueries({ queryKey: ['properties', property.id] });
 		client.invalidateQueries({ queryKey: ['properties'] });
+		client.invalidateQueries({ queryKey: ['wishlist'] });
 	}
 	const isAdded = useMemo(
 		() => !!property.owner_interaction?.added_to_wishlist,

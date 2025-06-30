@@ -64,12 +64,12 @@ export default function SettingsScreen() {
 						/>
 					</View>
 					<View className="bg-background-muted pl-4 rounded-xl">
-						<SettingsItemList
+						{/* <SettingsItemList
 							onPress={() =>
 								router.push('/(protected)/settings/change-password')
 							}
 							title="Change Password"
-						/>
+						/> */}
 						<SettingsItemList
 							title="Delete My Account"
 							withBorder={false}

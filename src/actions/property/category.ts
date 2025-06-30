@@ -2,11 +2,8 @@ import { Fetch } from '../utills';
 
 export const fetchAllSubcategories = async (): Promise<SubCategory[]> => {
 	try {
-		const res = await Fetch(`/categories/subcategories/`, {});
-		if (!res.ok) throw new Error('Failed to fetch subcategories');
-
-		const data = (await res.json()) as SubCategory[];
-		return data;
+		const res = await Fetch(`/categories/subcategories`, {});
+		return res as SubCategory[];
 	} catch (error) {
 		console.log(error);
 		throw new Error('Failed to fetch subcategories');
@@ -20,10 +17,10 @@ export const addCategory = async ({ name }: { name: string }) => {
 			headers: {
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify({ name }),
+			data: JSON.stringify({ name }),
 		});
 
-		if (!res.ok) throw new Error('Failed to add category');
+		if (!res?.detail) throw new Error('Failed to add category');
 		return await res.json();
 	} catch (error) {
 		console.error(error);
@@ -45,10 +42,10 @@ export const editCategory = async ({
 			headers: {
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify(data),
+			data: JSON.stringify(data),
 		});
 
-		if (!res.ok) throw new Error('Failed to edit category');
+		if (!res?.detail) throw new Error('Failed to edit category');
 		return await res.json();
 	} catch (error) {
 		console.error(error);
@@ -61,7 +58,7 @@ export const deleteCategory = async ({ id }: { id: string }) => {
 			method: 'DELETE',
 		});
 
-		if (!res.ok) throw new Error('Failed to delete category');
+		if (!res?.detail) throw new Error('Failed to delete category');
 		return true;
 	} catch (error) {
 		console.error(error);
@@ -84,10 +81,10 @@ export const addSubcategory = async ({
 			headers: {
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify(data),
+			data: JSON.stringify(data),
 		});
 
-		if (!res.ok) throw new Error('Failed to add subcategory');
+		if (!res?.detail) throw new Error('Failed to add subcategory');
 		return await res.json();
 	} catch (error) {
 		console.error(error);
@@ -110,10 +107,10 @@ export const editSubcategory = async ({
 			headers: {
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify(data),
+			data: JSON.stringify(data),
 		});
 
-		if (!res.ok) throw new Error('Failed to edit subcategory');
+		if (!res?.detail) throw new Error('Failed to edit subcategory');
 		return await res.json();
 	} catch (error) {
 		console.error(error);
@@ -133,10 +130,10 @@ export const deleteSubcategory = async ({
 			headers: {
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify({ category_id: categoryId }),
+			data: JSON.stringify({ category_id: categoryId }),
 		});
 
-		if (!res.ok) throw new Error('Failed to delete subcategory');
+		if (!res?.detail) throw new Error('Failed to delete subcategory');
 		return true;
 	} catch (error) {
 		console.error(error);

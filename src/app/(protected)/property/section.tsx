@@ -4,21 +4,14 @@ import React, { useMemo } from 'react';
 import { ChevronLeftIcon, ListFilter } from 'lucide-react-native';
 import { hapticFeed } from '@/components/HapticTab';
 import VerticalProperties from '@/components/property/VerticalProperties';
-import { useTheme } from '@/components/layouts/ThemeProvider';
-import { useInfiniteQuery } from '@tanstack/react-query';
-import { fetchProperties } from '@/actions/property';
+import { useProductQueries } from '@/tanstack/queries/useProductQueries';
 
 export default function PropertySections() {
 	const { title } = useLocalSearchParams() as { title?: string };
 	const router = useRouter();
-	const { data, isLoading, fetchNextPage, refetch } = useInfiniteQuery({
-		queryKey: ['properties'],
-		queryFn: fetchProperties,
-		initialPageParam: 1,
-		getNextPageParam: (lastPage, pages) => pages.length + 1,
-	});
+	const { data, isLoading, fetchNextPage, refetch } = useProductQueries({type: 'all'});
 
-	const properties = useMemo(() => data?.pages.flat() || [], [data]);
+	const properties = useMemo(() => data?.pages.flatMap((page)=> page?.results) || [], [data]);
 	return (
 		<>
 			<Stack.Screen
@@ -64,7 +57,7 @@ export default function PropertySections() {
 					isLoading={isLoading}
 					className="pb-20"
 					refetch={refetch}
-					// fetchNextPage={fetchNextPage}
+					fetchNextPage={fetchNextPage}
 				/>
 			</Box>
 		</>

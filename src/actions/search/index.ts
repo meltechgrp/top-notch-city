@@ -8,7 +8,7 @@ export async function searchProperties(
 ): Promise<Result> {
 	const query = new URLSearchParams();
 	if (filters?.keyword) query.append('title', filters.keyword);
-	if (filters?.city) query.append('city', filters.city);
+	// if (filters?.city) query.append('city', filters.city);
 	if (filters?.state) query.append('state', filters.state);
 	if (filters?.country) query.append('country', filters.country);
 	if (filters?.purpose) query.append('purpose', filters.purpose);
@@ -42,12 +42,10 @@ export async function searchProperties(
 	query.append('sort_by', 'created_at');
 	query.append('sort_order', 'desc');
 	const path = `/properties/search/?${query.toString()}`;
-	console.log(path);
 	try {
 		const res = await Fetch(path, {});
-		const data = await res.json();
-		if (!data?.results) throw new Error('property not found');
-		return data;
+		if (!res?.results) throw new Error('property not found');
+		return res;
 	} catch (error) {
 		console.error('Search error:', error);
 		throw error;

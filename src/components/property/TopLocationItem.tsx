@@ -3,19 +3,18 @@ import { TouchableHighlight, useWindowDimensions, View } from 'react-native';
 import { Card, Image, Text } from '../ui';
 import { MapPin } from 'lucide-react-native';
 import { hapticFeed } from '../HapticTab';
-import { Locations } from '@/app/(protected)/property/locations';
 import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
 
 type Props = {
-	data: Locations[0];
+	data: TopLocation;
 	className?: string;
 };
 export default function TopLocationItem(props: Props) {
 	const router = useRouter();
 	const { width } = useWindowDimensions();
 	const { data, className } = props;
-	const { banner, name, properties, id } = data;
+	const { state, photo_url, property_count } = data;
 	const newWidth = useMemo(() => width / 2 - 24, [width]);
 	return (
 		<TouchableHighlight
@@ -26,14 +25,14 @@ export default function TopLocationItem(props: Props) {
 				router.push({
 					pathname: `/property/locations/[locationId]`,
 					params: {
-						locationId: id,
+						locationId: state,
 					},
 				});
 			}}>
 			<Card className=" bg-background-muted flex-1 p-2 pb-4 relative overflow-hidden rounded-xl">
 				<View className="flex-1">
 					<Image
-						source={banner}
+						source={{uri: photo_url}}
 						alt="banner"
 						className="w-full h-[11rem] rounded-xl object-cover"
 					/>
@@ -44,11 +43,11 @@ export default function TopLocationItem(props: Props) {
 						<Text
 							numberOfLines={1}
 							className=" text-sm font-medium font-heading">
-							{name}
+							{state}
 						</Text>
 					</View>
 					<Text size="xs" className="px-4">
-						({properties}) Properties
+						({property_count}) Properties
 					</Text>
 				</View>
 			</Card>

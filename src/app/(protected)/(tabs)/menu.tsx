@@ -30,6 +30,7 @@ import NotificationBarButton from '@/components/notifications/NotificationBarBut
 import { useStore } from '@/store';
 import { BodyScrollView } from '@/components/layouts/BodyScrollView';
 import { getImageUrl } from '@/lib/api';
+import { openSignInModal } from '@/components/globals/AuthModals';
 
 export default function More() {
 	const me = useStore((v) => v.me);
@@ -79,15 +80,27 @@ export default function More() {
 							: 'bg-background-muted/60'
 					)}>
 					<Pressable
-						disabled={!me?.id}
 						onPress={() => {
-							router.push({
-								pathname: '/(protected)/profile/[user]',
+							if(!me?.id) {
+								openSignInModal({
+									visible: true,
+									onLoginSuccess: () => {
+										router.push({
+											pathname: '/(protected)/profile/[user]/account',
+											params: {
+												user: me?.id!,
+											},
+										});
+									},
+								})
+							} else {
+								router.push({
+								pathname: '/(protected)/profile/[user]/account',
 								params: {
 									user: me?.id!,
-									ref: pathname,
 								},
 							});
+						}
 						}}
 						className={'flex-row items-center'}>
 						<Avatar className=" w-14 h-14">
@@ -97,10 +110,10 @@ export default function More() {
 						</Avatar>
 						<View className="flex-1 pl-3">
 							<Text className="text-base text-typography font-medium">
-								{fullName(me)}
+								{me ? fullName(me) : "Sign in to view profile"}
 							</Text>
 							<Text className="text-sm text-typography/80">
-								View profile record and engagements
+								{me ? me?.email : "Account details"}
 							</Text>
 						</View>
 						<Icon as={ChevronRight} className="" />
@@ -111,27 +124,52 @@ export default function More() {
 						Menu
 					</Text>
 					<View className="flex-1 mt-2">
-						<MenuListItem
+						{me && me?.role != 'user' && <MenuListItem
 							title="Dashboard"
-							description="View admin dashboard"
+							description={me.role == 'admin' ? "View admin dashboard" : "View your dashboard"}
 							onPress={() => {
+								if(!me?.id) {
+										router.push({
+											pathname: '/(protected)/profile/[user]',
+											params: {
+												user: me?.id,
+											},
+										});
+							} else if (me?.role === 'admin') {
 								router.dismissTo({
 									pathname: '/admin',
-									params: {
-										user: 'hghjhgjhj',
-										ref: pathname,
-									},
 								});
+						}
 							}}
 							icon={LayoutDashboard}
 							iconColor="gray-500"
 							className=" py-2 pb-3"
-						/>
-						<Divider className=" h-[0.3px] bg-background-info mb-4" />
+						/>}
+						{me && me?.role != 'user' && <Divider className=" h-[0.3px] bg-background-info mb-4" />}
 						<MenuListItem
 							title="Wishlist"
 							description="View all your saved properties"
-							onPress={() => {}}
+							onPress={() => {
+							if(!me?.id) {
+								openSignInModal({
+									visible: true,
+									onLoginSuccess: () => {
+										router.push({
+											pathname: '/(protected)/profile/[user]/wishlist',
+											params: {
+												user: me?.id!,
+											},
+										});
+									},
+								})
+							} else {
+								router.push({
+								pathname: '/(protected)/profile/[user]/wishlist',
+								params: {
+									user: me?.id!,
+								},
+							});
+						}}}
 							icon={Heart}
 							iconColor="primary"
 							className=" py-2 pb-3"

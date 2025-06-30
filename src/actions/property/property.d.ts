@@ -4,6 +4,7 @@ type Result = {
 	per_page: number;
 	pages: number;
 	results: Property[];
+	user_location?: LocationData
 };
 
 type Category = {
@@ -41,8 +42,8 @@ type Property = {
 	purpose: PropertyPurpose;
 	is_featured: boolean;
 	duration?: number;
-	category: string;
-	subcategory: string;
+	category: Category;
+	subcategory: SubCategory;
 	address: Address;
 	media: Media[];
 	owner: Owner;
@@ -122,3 +123,10 @@ type PropertyStatus =
 
 type PropertyPurpose = 'rent' | 'sell';
 type Currency = 'ngn' | 'usd';
+
+
+type TopLocation = {
+	state: string
+	property_count: number
+	photo_url: string
+}

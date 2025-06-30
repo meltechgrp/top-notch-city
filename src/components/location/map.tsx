@@ -26,7 +26,7 @@ interface MapProps {
 	onDoublePress?: () => void;
 }
 
-const DEFAULT_LAT_DELTA = 0.2;
+const DEFAULT_LAT_DELTA = 0.1;
 const DEFAULT_LONG_DELTA = 0.1;
 export default function Map(props: MapProps) {
 	const {
@@ -48,8 +48,8 @@ export default function Map(props: MapProps) {
 	const current = markers ? markers[1] : null;
 	const { latitude, longitude } = useMemo(
 		() => ({
-			latitude: current?.address?.latitude || lat || 4.8156,
-			longitude: current?.address?.longitude || long || 7.0498,
+			latitude:  lat || 4.8156,
+			longitude: long || 7.0498,
 		}),
 		[lat, long, current]
 	);

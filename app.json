@@ -10,6 +10,7 @@
 		"newArchEnabled": true,
 		"ios": {
 			"supportsTablet": true,
+    "usesAppleSignIn": true,
 			"bundleIdentifier": "com.meltech.topnotchcity",
 			"infoPlist": {
 				"NSLocationWhenInUseUsageDescription": "Allow $(PRODUCT_NAME) to access to your location to track your current position.",
@@ -39,6 +40,7 @@
 		"plugins": [
 			"expo-router",
 			"react-native-compressor",
+			"expo-apple-authentication",
 			[
 				"expo-video",
 				{

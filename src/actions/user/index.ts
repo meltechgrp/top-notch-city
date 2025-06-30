@@ -3,21 +3,18 @@ import { Fetch } from '../utills';
 
 export async function getMe() {
 	const res = await Fetch('/users/me', {});
-	const data = await res.json();
 
-	if (!res.ok) {
-		throw new Error(data?.detail || 'Failed to update profile');
+	if (res?.detail) {
+		throw new Error('Failed to update profile');
 	}
-	return data as Me;
+	return res as Me;
 }
 export async function getUsers() {
 	const res = await Fetch('/users', {});
-	const data = await res.json();
-
-	if (!res.ok) {
-		throw new Error(data?.detail || 'Failed to update profile');
+	if (res?.detail) {
+		throw new Error( 'Failed to update profile');
 	}
-	return data as Me[];
+	return res as Me[];
 }
 
 export async function setProfileImage(image: string) {
@@ -34,16 +31,15 @@ export async function setProfileImage(image: string) {
 		headers: {
 			'Content-Type': 'multipart/form-data',
 		},
-		body: formData,
+		data: formData,
 	});
-	const data = await res.json();
 	eventBus.dispatchEvent('REFRESH_PROFILE', null);
 
-	if (data?.detail) {
+	if (res?.detail) {
 		throw new Error('Failed to update profile');
 	}
 
-	return data;
+	return res;
 }
 
 export async function updateProfileField(
@@ -60,16 +56,15 @@ export async function updateProfileField(
 			headers: {
 				'Content-Type': 'multipart/form-data',
 			},
-			body: formData,
+			data: formData,
 		});
-		const data = await res.json();
 		eventBus.dispatchEvent('REFRESH_PROFILE', null);
 
-		if (data?.detail) {
+		if (res?.detail) {
 			throw new Error('Failed to update profile');
 		}
 
-		return data;
+		return res;
 	} catch (error) {
 		throw error;
 	}

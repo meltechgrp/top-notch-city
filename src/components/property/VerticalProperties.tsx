@@ -1,18 +1,16 @@
 import { View } from '@/components/ui';
 import { RefreshControl } from 'react-native-gesture-handler';
-import DisplayStyle from '../layouts/DisplayStyle';
-import { Animated, NativeScrollEvent } from 'react-native';
+import {  NativeScrollEvent } from 'react-native';
 import React, {
 	forwardRef,
 	useCallback,
 	useImperativeHandle,
-	useMemo,
 	useState,
 } from 'react';
 import PropertyListItem from './PropertyListItem';
 import { MiniEmptyState } from '../shared/MiniEmptyState';
 import { useRouter } from 'expo-router';
-import { SharedValue, useAnimatedScrollHandler } from 'react-native-reanimated';
+import { useAnimatedScrollHandler } from 'react-native-reanimated';
 import { AnimatedFlashList } from '../shared/AnimatedFlashList';
 import FullHeightLoaderWrapper from '../loaders/FullHeightLoaderWrapper';
 
@@ -30,6 +28,7 @@ interface Props {
 	showsVerticalScrollIndicator?: boolean;
 	isLoading?: boolean;
 	hasNextPage?: boolean;
+	showStatus?: boolean;
 	data: Property[];
 	scrollElRef?: any;
 	disableHeader?: boolean;
@@ -61,14 +60,12 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
 		scrollElRef,
 		headerHeight,
 		isEmptyTitle,
-		profileId,
 		hasNextPage,
+		showStatus = false
 	},
 	ref
 ) {
 	const router = useRouter();
-	const [numColumns, setNumColumns] = useState(1);
-	const layoutAnim = new Animated.Value(0);
 	const [refreshing, setRefreshing] = useState(false);
 
 	const onScrollToTop = useCallback(() => {
@@ -92,38 +89,10 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
 		}
 	}
 
-	const toggleView = useCallback(() => {
-		Animated.timing(layoutAnim, {
-			toValue: numColumns === 1 ? 1 : 0,
-			duration: 300,
-			useNativeDriver: false,
-		}).start(() => {
-			setNumColumns(numColumns === 1 ? 2 : 1);
-		});
-	}, [numColumns]);
-
-	const headerComponent = useMemo(() => {
-		return (
-			<>
-				{data?.length > 0 && (
-					<DisplayStyle
-						toggleView={toggleView}
-						numColumns={numColumns}
-						total={data.length}
-						disableCount={disableCount}
-					/>
-				)}
-			</>
-		);
-	}, [toggleView, numColumns, data.length, disableCount]);
 	const renderItem = useCallback(
 		({ item, index }: { item: any; index: number }) => {
 			return (
 				<PropertyListItem
-					style={{
-						marginRight: (index + 1) % numColumns === 0 ? 0 : 4,
-						marginLeft: index % numColumns === 0 ? 0 : 4,
-					}}
 					onPress={(data) => {
 						if (onPress) return onPress(data);
 						router.push({
@@ -133,15 +102,13 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
 							},
 						});
 					}}
-					isAdmin={isAdmin}
-					profileId={profileId}
+					showStatus={showStatus}
 					isHorizontal={isHorizontal}
-					columns={numColumns}
 					data={item}
 				/>
 			);
 		},
-		[numColumns]
+		[]
 	);
 	const scrollHandler = useAnimatedScrollHandler({
 		onScroll: (event) => {
@@ -155,9 +122,7 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
 		<FullHeightLoaderWrapper loading={isLoading || false}>
 			<AnimatedFlashList
 				data={data}
-				extraData={numColumns}
 				renderItem={renderItem}
-				numColumns={!isHorizontal ? numColumns : undefined}
 				scrollEnabled={scrollEnabled}
 				horizontal={isHorizontal}
 				refreshing={refreshing}
@@ -167,7 +132,7 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
 				contentContainerClassName={className}
 				ref={scrollElRef}
 				ItemSeparatorComponent={() => (
-					<View className={numColumns == 1 ? 'h-5' : 'h-3'} />
+					<View className={'h-5'} />
 				)}
 				scrollEventThrottle={16}
 				refreshControl={
@@ -180,7 +145,6 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
 					!isHorizontal && !disableHeader ? (
 						<>
 							{headerTopComponent}
-							{headerComponent}
 						</>
 					) : undefined
 				}

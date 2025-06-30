@@ -86,14 +86,13 @@ export const VoiceModal: React.FC<VoiceModalProps> = ({
 				headers: {
 					'Content-Type': 'multipart/form-data',
 				},
-				body: formData,
+				data: formData,
 			});
-			const data = await res.json();
-			console.log(data);
-			if (!res.ok) {
+			console.log(res);
+			if (res?.detail) {
 				throw new Error('Failed to send');
 			}
-			return data;
+			return res;
 		} catch (err: any) {
 			console.log('[Upload Error]', err);
 			setError('Failed to upload audio');

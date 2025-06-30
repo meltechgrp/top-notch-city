@@ -10,11 +10,11 @@ export async function updatePropertyStatus(
 		headers: {
 			'Content-Type': 'application/json',
 		},
-		body: JSON.stringify(
+		data: JSON.stringify(
 			reason ? (reason == 'reject' ? { reason } : { comment: reason }) : {}
 		),
 	});
-	if (!res.ok) {
+	if (res?.detail) {
 		throw new Error(`Failed to ${action} property`);
 	}
 	const data = await res.json();
@@ -23,20 +23,18 @@ export async function updatePropertyStatus(
 
 export async function deleteProperty(propertyId: string) {
 	const res = await Fetch(`/properties/${propertyId}`, { method: 'DELETE' });
-	const data = await res.json();
-	console.log(data?.detail);
-	if (!res.ok) {
+	if (res?.detail) {
 		throw new Error('Failed to delete property');
 	}
-	return data;
+	return res;
 }
 
 export async function softDeleteProperty(propertyId: string) {
 	const res = await Fetch(`/properties/${propertyId}/soft`, {
 		method: 'DELETE',
 	});
-	if (!res.ok) {
+	if (res?.detail) {
 		throw new Error('Failed to soft delete property');
 	}
-	return await res.json();
+	return await res
 }

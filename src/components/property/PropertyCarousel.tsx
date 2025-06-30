@@ -9,6 +9,7 @@ import { PropertyMedia } from './PropertyMedia';
 import { Colors } from '@/constants/Colors';
 import { useResolvedTheme } from '../ui';
 import Layout from '@/constants/Layout';
+import eventBus from '@/lib/eventBus';
 
 type Props = {
 	media: Media[];
@@ -26,6 +27,7 @@ type Props = {
 	canPlayVideo?: boolean;
 	setSelectedIndex?: (val: number) => void;
 	selectedIndex?: number;
+	paginationsize?: number;
 };
 
 function PropertyCarousel({
@@ -33,6 +35,7 @@ function PropertyCarousel({
 	width,
 	factor,
 	pointerPosition = 10,
+	paginationsize = 8,
 	withBackdrop,
 	loop = false,
 	scrollAnimationDuration = 800,
@@ -46,6 +49,7 @@ function PropertyCarousel({
 	isOwner,
 }: Props) {
 	const { bannerHeight } = Layout;
+	const [enabledCarousel, setEnabledCarousel] = React.useState(false)
 	const theme = useResolvedTheme();
 	const progress = useSharedValue<number>(0);
 	const baseOptions = {
@@ -61,12 +65,27 @@ function PropertyCarousel({
 			animated: true,
 		});
 	};
+	React.useEffect(() => {
+			eventBus.addEventListener('LIST-SCROLL', (state: boolean)=> {
+				setEnabledCarousel(state)
+			});
+	
+			return () => {
+				eventBus.removeEventListener(
+					'LIST-SCROLL',
+					(state: boolean)=> {
+				setEnabledCarousel(true)
+			}
+				);
+			};
+		}, []);
 	return (
 		<View className="relative rounded-xl overflow-hidden">
 			<Carousel
 				ref={ref}
 				{...baseOptions}
 				loop={loop}
+				enabled={enabledCarousel}
 				autoPlay={autoPlay}
 				autoPlayInterval={2000}
 				scrollAnimationDuration={scrollAnimationDuration}
@@ -107,7 +126,7 @@ function PropertyCarousel({
 				<Pagination.Basic<Media>
 					progress={progress}
 					data={media?.slice(0, paginationLenght)}
-					size={8}
+					size={paginationsize}
 					dotStyle={{
 						borderRadius: 100,
 						backgroundColor:

@@ -143,7 +143,6 @@ function SearchLocationBottomSheet({ show, onDismiss, onUpdate }: Props) {
 			snapPoint={'90%'}
 			visible={show}
 			onDismiss={onDismiss}>
-			<KeyboardDismissPressable>
 				<View className="flex-1 px-4 gap-8 py-5 pb-8 bg-background">
 					{/* Input + Purpose Selector */}
 					<View className="gap-3">
@@ -243,7 +242,6 @@ function SearchLocationBottomSheet({ show, onDismiss, onUpdate }: Props) {
 						/>
 					</View>
 				</View>
-			</KeyboardDismissPressable>
 		</BottomSheet>
 	);
 }

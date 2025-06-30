@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import { BackHandler, Keyboard, Modal, Pressable, View } from 'react-native';
+import { BackHandler, Keyboard, Modal, Platform, Pressable, View } from 'react-native';
 import {
 	BottomSheetBackdropProps,
 	BottomSheetModal,
@@ -14,6 +14,8 @@ import Animated, {
 import { cn } from '@/lib/utils';
 import { CloseIcon, Heading, Icon, Text, useResolvedTheme } from '../ui';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { KeyboardDismissPressable } from './KeyboardDismissPressable';
+import { Colors } from '@/constants/Colors';
 
 type BottomSheetProps = Modal['props'] & {
 	withHeader?: any;
@@ -43,7 +45,7 @@ export default function BottomSheet(props: BottomSheetProps) {
 		HeaderRightComponent,
 		withCloseButton = true,
 		addBackground = true,
-		rounded = true,
+		rounded = false,
 		enableOverDrag = true,
 		plain,
 		enableDynamicSizing = false,
@@ -56,14 +58,12 @@ export default function BottomSheet(props: BottomSheetProps) {
 		onAnimate,
 	} = props;
 	const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-	const theme = useResolvedTheme();
-
 	// variables
 	const snapPoints = useMemo(
 		() => (Array.isArray(snapPoint) ? snapPoint : [snapPoint]),
 		[snapPoint]
 	);
-
+	const theme = useResolvedTheme()
 	// callbacks
 	const handlePresentModalPress = useCallback(() => {
 		Keyboard.dismiss();
@@ -127,17 +127,15 @@ export default function BottomSheet(props: BottomSheetProps) {
 			android_keyboardInputMode={android_keyboardInputMode}
 			backdropComponent={renderBackdrop}
 			enableBlurKeyboardOnGesture
-			keyboardBehavior={'interactive'}
+      keyboardBehavior={Platform.OS === 'ios' ? 'extend' : 'interactive'}
 			keyboardBlurBehavior="restore"
 			enableDynamicSizing={enableDynamicSizing}
-			backgroundComponent={null}
 			onAnimate={onAnimate}
 			enableOverDrag={enableOverDrag}
 			enableDismissOnClose={enableClose}
 			enablePanDownToClose={enableClose}
-			style={{
-				flex: 1,
-			}}
+			backgroundComponent={null}
+      style={{ backgroundColor: addBackground ? theme == 'dark' ? "black" : 'white' : "transparent", borderTopLeftRadius: 20, borderTopRightRadius: 20, flex: 1 }}
 			handleComponent={() =>
 				plain ? null : (
 					<View
@@ -174,7 +172,8 @@ export default function BottomSheet(props: BottomSheetProps) {
 						</View>
 					</View>
 				)
-			}>
+			}
+			>
 			{withScroll ? (
 				<BottomSheetScrollView
 					style={{
@@ -198,21 +197,27 @@ export default function BottomSheet(props: BottomSheetProps) {
 				<BottomSheetView
 					style={{
 						flex: 1,
+						flexGrow: 1,
+						height: '100%',
 					}}
 					className={cn(
-						'bg-background',
+						addBackground ? 'bg-background' : "bg-transparent",
 						rounded && ' rounded-t-xl',
 						contentClassName
-					)}>
+					)}
+					>
+						<KeyboardDismissPressable>
+
 					<SafeAreaView
 						style={{
 							flex: 1,
 						}}
-						edges={['bottom']}>
+						edges={addBackground ? ['bottom'] : []}>
 						{props.children}
 					</SafeAreaView>
+						</KeyboardDismissPressable>
 				</BottomSheetView>
-			)}
+			 )}
 		</BottomSheetModal>
 	);
 }

@@ -17,7 +17,6 @@ export default function PropertyBottomSheet(props: Props) {
 				<PropertyListItem
 					data={data}
 					showFacilites
-					profileId=""
 					onPress={() => {
 						router.push({
 							pathname: '/(protected)/property/[propertyId]',

@@ -1,22 +1,18 @@
 import { useEffect, useState } from 'react';
 import eventBus from '@/lib/eventBus';
 import SignInBottomSheet from '../modals/auth/SignInBottomSheet';
-import NewPasswordBottomSheet from '../modals/auth/NewPasswordBottomSheet';
 import VerifyOtpBottomSheet from '../modals/auth/VerifyOptBottomSheet';
-import ResetPasswordBottomSheet from '../modals/auth/ResetPassword';
 import SignUpBottomSheet from '../modals/auth/SignupBottomSheet';
 
 export default function AuthModals() {
   const [signIn, setSignIn] = useState<AuthModalProps | null>(null);
   const [signUp, setSignUp] = useState<AuthModalProps | null>(null);
-  const [resetPassword, setResetPassword] = useState<AuthModalProps | null>(null);
   const [emailVerification, setEmailVerification] = useState<AuthModalProps | null>(null);
 
   useEffect(() => {
-    eventBus.addEventListener('openSignIn', setSignIn);
-    eventBus.addEventListener('openSignUp', setSignUp);
-    eventBus.addEventListener('openResetPassword', setResetPassword);
-    eventBus.addEventListener('openEmailVerification', setEmailVerification);
+    eventBus.addEventListener('openSignInModal', setSignIn);
+    eventBus.addEventListener('openSignUpModal', setSignUp);
+    eventBus.addEventListener('openEmailVerificationModal', setEmailVerification);
   }, []);
 
   return (
@@ -39,24 +35,6 @@ export default function AuthModals() {
           }}
         />
       )}
-      {!!resetPassword && (
-        <ResetPasswordBottomSheet
-          {...resetPassword}
-          onDismiss={() => {
-            resetPassword.onDismiss?.();
-            setResetPassword(null);
-          }}
-        />
-      )}
-      {!!resetPassword && (
-        <NewPasswordBottomSheet
-          {...resetPassword}
-          onDismiss={() => {
-            resetPassword.onDismiss?.();
-            setResetPassword(null);
-          }}
-        />
-      )}
       {!!emailVerification && (
         <VerifyOtpBottomSheet
           {...emailVerification}
@@ -71,25 +49,25 @@ export default function AuthModals() {
 }
 
 
-export function openSignIn(props: AuthModalProps) {
-  eventBus.dispatchEvent('openSignIn', props);
+export function openSignInModal(props: AuthModalProps) {
+  eventBus.dispatchEvent('openSignInModal', props);
 }
 
-export function openSignUp(props: AuthModalProps) {
-  eventBus.dispatchEvent('openSignUp', props);
+export function openSignUpModal(props: AuthModalProps) {
+  eventBus.dispatchEvent('openSignUpModal', props);
 }
 
-export function openResetPassword(props: AuthModalProps) {
-  eventBus.dispatchEvent('openResetPassword', props);
+export function openResetPasswordModal(props: AuthModalProps) {
+  eventBus.dispatchEvent('openResetPasswordModal', props);
 }
 
-export function openEmailVerification(props: AuthModalProps) {
-  eventBus.dispatchEvent('openEmailVerification', props);
+export function openEmailVerificationModal(props: AuthModalProps) {
+  eventBus.dispatchEvent('openEmailVerificationModal', props);
 }
 
 export function closeAuthModals() {
-  eventBus.dispatchEvent('openSignIn', null);
-  eventBus.dispatchEvent('openSignUp', null);
-  eventBus.dispatchEvent('openResetPassword', null);
-  eventBus.dispatchEvent('openEmailVerification', null);
+  eventBus.dispatchEvent('openSignInModal', null);
+  eventBus.dispatchEvent('openSignUpModal', null);
+  eventBus.dispatchEvent('openResetPasswordModal', null);
+  eventBus.dispatchEvent('openEmailVerificationModal', null);
 }

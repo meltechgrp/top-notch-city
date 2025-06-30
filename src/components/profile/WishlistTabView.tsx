@@ -4,7 +4,6 @@ import VerticalProperties from '../property/VerticalProperties';
 import { useQuery } from '@tanstack/react-query';
 import { fetchWishlist } from '@/actions/property';
 import { SharedValue } from 'react-native-reanimated';
-import { MiniEmptyState } from '../shared/MiniEmptyState';
 
 type IProps = {
 	profileId: string;

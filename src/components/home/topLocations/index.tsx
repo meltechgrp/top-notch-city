@@ -7,6 +7,7 @@ export default function TopLocations() {
 		<SectionHeaderWithRef
 			title="Top Locations"
 			subTitle="Explore"
+			className=''
 			onSeeAllPress={() => {
 				router.push('/(protected)/property/locations');
 			}}>

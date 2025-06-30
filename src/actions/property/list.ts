@@ -4,10 +4,8 @@ import { Fetch } from '../utills';
 export async function fetchProperties({ pageParam }: { pageParam: number }) {
 	try {
 		const res = await Fetch(`/properties?page=${pageParam}`, {});
-		if (!res.ok) throw new Error('Failed to fetch properties');
-
-		const json = (await res.json()) as Result;
-		return json;
+		if (res?.detail) throw new Error('Failed to fetch properties');
+		return res as Result;
 	} catch (error) {
 		console.error(error);
 		throw new Error('Failed to fetch properties');
@@ -24,10 +22,8 @@ export async function fetchUserProperties({
 }) {
 	try {
 		const res = await Fetch(`/user/${userId}?page=${pageParam}`, {});
-		if (!res.ok) throw new Error('Failed to fetch user properties');
-
-		const json = (await res.json()) as Result;
-		return json;
+		if (res?.detail) throw new Error('Failed to fetch user properties');
+		return res as Result;
 	} catch (error) {
 		console.error(error);
 		throw new Error('Failed to fetch user properties');
@@ -41,11 +37,9 @@ export async function fetchAdminProperties({
 	pageParam: number;
 }) {
 	try {
-		const res = await Fetch(`/admin/properties?page=${pageParam}`, {});
-		if (!res.ok) throw new Error('Failed to fetch admin properties');
-
-		const json = (await res.json()) as Result;
-		return json;
+		const res = await Fetch(`/admin/properties?page=${pageParam}`, {})
+		if (res?.detail) throw new Error('Failed to fetch admin properties');
+		return res as Result;
 	} catch (error) {
 		console.error(error);
 		throw new Error('Failed to fetch admin properties');
