@@ -29,16 +29,16 @@ export default function TopLocationsHorizontalList(props: Props) {
 		queryKey: ['locations'],
 		queryFn: fetchTopLocations
 	})
-	
+	const {onRefresh} = useRefresh(refetch)
 	const locations = useMemo(()=> data || [], [data])
 
 	useEffect(() => {
-		eventBus.addEventListener('PROPERTY_HORIZONTAL_LIST_REFRESH', refetch);
+		eventBus.addEventListener('PROPERTY_HORIZONTAL_LIST_REFRESH', onRefresh);
 
 		return () => {
 			eventBus.removeEventListener(
 				'PROPERTY_HORIZONTAL_LIST_REFRESH',
-				refetch
+				onRefresh
 			);
 		};
 	}, []);
@@ -46,7 +46,7 @@ export default function TopLocationsHorizontalList(props: Props) {
 	return (
 		<ScrollView
 			horizontal
-			contentContainerClassName="gap-x-4 px-4 bg-background-muted py-6"
+			contentContainerClassName="gap-x-4 px-4 "
 			pagingEnabled
 			showsHorizontalScrollIndicator={false}
 			snapToInterval={340 + 4}

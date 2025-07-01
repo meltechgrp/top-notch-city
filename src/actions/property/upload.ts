@@ -11,7 +11,6 @@ export async function updatePropertyBasicInfo(
 ) {
 	try {
 		const formData = new FormData();
-		console.log(data, propertyId);
 		if (data.title) formData.append('title', data.title);
 		if (data.price) formData.append('price', data.price);
 		if (data.purpose) formData.append('purpose', data.purpose);

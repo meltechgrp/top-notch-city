@@ -56,6 +56,10 @@ export default function ListingBasis() {
 							<Textarea size="md" className=" border border-outline">
 								<TextareaInput
 									multiline
+									value={listing.description}
+									onChangeText={(text) =>
+										updateListing({ ...listing, description: text })
+									}
 									placeholder="Share some additional information about the property..."
 								/>
 							</Textarea>

@@ -22,7 +22,6 @@ export default function DiscoverProperties(props: Props) {
 				() => data?.pages.flatMap((page) => page.results) || [],
 				[data]
 			);
-			const location  = useMemo(()=> data?.pages[0].user_location,[data])
 	const mapHeight = Layout.window.height / 1.8;
 	return (
 		<View style={{ minHeight: mapHeight }} className={className}>
@@ -35,15 +34,10 @@ export default function DiscoverProperties(props: Props) {
 				</View>
 				<Map
 					markers={properties || []}
-					latitude={location?.latitude}
-					longitude={location?.longitude}
 					height={mapHeight}
 					onDoublePress={() =>
 						router.push({
 							pathname: '/search',
-							params: {
-								search: 'true',
-							},
 						})
 					}
 					onMarkerPress={(data) =>

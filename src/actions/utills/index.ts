@@ -82,14 +82,3 @@ export async function fetchPlaceFromTextQuery(
     return [];
   }
 }
-
-export async function getLocationFromIP(): Promise<Property[]> {
-  try {
-    const res = await Fetch(`/properties/nearby`, {});
-    if (res?.detail) return [];
-    return res;
-  } catch (err) {
-    console.error("Location lookup error:", err);
-    return [];
-  }
-}

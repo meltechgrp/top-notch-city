@@ -1,6 +1,15 @@
 import eventBus from '@/lib/eventBus';
 import { Fetch } from '../utills';
 
+type UserResult = {
+    total: number;
+    page: number;
+    per_page: number;
+    pages: number;
+    results: Me[];
+    user_location?: LocationData;
+}
+
 export async function getMe() {
 	const res = await Fetch('/users/me', {});
 
@@ -9,12 +18,12 @@ export async function getMe() {
 	}
 	return res as Me;
 }
-export async function getUsers() {
-	const res = await Fetch('/users', {});
+export async function getUsers({ pageParam }: { pageParam: number }) {
+	const res = await Fetch(`/users?page=${pageParam}`, {});
 	if (res?.detail) {
 		throw new Error( 'Failed to update profile');
 	}
-	return res as Me[];
+	return res as UserResult;
 }
 
 export async function setProfileImage(image: string) {

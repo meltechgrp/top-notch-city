@@ -14,8 +14,8 @@ export default function SectionHeaderWithRef(props: Props) {
 	const { title, onSeeAllPress, children, style, subTitle, className } = props;
 	return (
 		<View style={[style]} className={cn("my-4 bg-transparent", className)}>
-			<View className="flex-row justify-between py-2 mb-3 px-4 items-center">
-				<Heading className="text-2xl font-bold text-typography/80">
+			<View className="flex-row justify-between py-2 mb-1 px-4 items-center">
+				<Heading className="text-xl font-bold text-typography/80">
 					{title}
 				</Heading>
 				{onSeeAllPress && (

@@ -1,12 +1,10 @@
 import {
-	Avatar,
-	AvatarFallbackText,
-	AvatarImage,
+	Image,
 	Text,
 	View,
 } from '@/components/ui';
 import React from 'react';
-import { TouchableHighlight } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 
 type Props = {
 	location: TopLocation
@@ -17,18 +15,25 @@ type Props = {
 export default function TopLocation({ location: {state, property_count, photo_url }, onPress }: Props) {
 
 	return (
-		<TouchableHighlight onPress={onPress} className="rounded-2xl min-w-40 pr-4 bg-background">
-			<View
-				className=" p-2 items-center flex-row gap-4">
-				<Avatar size="lg">
-					<AvatarFallbackText>{state} {state}</AvatarFallbackText>
-					<AvatarImage source={{uri: photo_url}} />
-				</Avatar>
-				<View className='flex-row gap-2'>
-					<Text className=" capitalize text-lg">{state}</Text>
-					<Text className=" text-center text-xl">({property_count})</Text>
-				</View>
-			</View>
-		</TouchableHighlight>
+		<TouchableOpacity
+              key={state}
+			  onPress={onPress}
+              className="relative rounded-lg w-[245px] md:w-[260px] lg:w-[310px] overflow-hidden h-48 flex-1"
+            >
+              <Image
+                source={{ uri: photo_url }}
+                className="w-full h-48"
+                alt={state}
+                resizeMode="cover"
+              />
+              <View className="absolute inset-0 bg-black/40 to-transparent flex justify-end p-4">
+                <Text className="text-white text-2xl font-bold">
+                  {state}
+                </Text>
+                <Text className="text-gray-200 text-base">
+                  {property_count} Properties
+                </Text>
+              </View>
+            </TouchableOpacity>
 	);
 }

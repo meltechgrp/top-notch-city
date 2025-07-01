@@ -1,13 +1,11 @@
 import { Box, Button, Text, View } from '@/components/ui';
-import { RefreshControl } from 'react-native';
 import React, { useMemo } from 'react';
-import { hapticFeed } from '@/components/HapticTab';
-import { BodyScrollView } from '@/components/layouts/BodyScrollView';
 import { FlashList } from '@shopify/flash-list';
-import { useRefresh } from '@react-native-community/hooks';
 import TopLocationItem from '@/components/property/TopLocationItem';
 import { useQuery } from '@tanstack/react-query';
 import { fetchTopLocations } from '@/actions/property/locations';
+import { useRefresh } from '@react-native-community/hooks';
+import { RefreshControl } from 'react-native';
 
 export type Locations = {
 	id: string;
@@ -22,12 +20,13 @@ export default function PropertySections() {
 		queryFn: fetchTopLocations
 	})
 	
+		const { onRefresh } = useRefresh(refetch);
 	const locations = useMemo(()=> data || [], [data])
 	return (
 		<>
 			<Box className="flex-1 px-4">
 				<FlashList
-					data={data}
+					data={locations}
 					renderItem={({ item }) => <TopLocationItem data={item} />}
 					numColumns={2}
 					horizontal={false}
@@ -35,9 +34,9 @@ export default function PropertySections() {
 					contentContainerStyle={{
 						paddingTop: 8,
 					}}
-					// refreshControl={
-					// 	<RefreshControl refreshing={isFetching} onRefresh={onRefresh} />
-					// }
+					refreshControl={
+						<RefreshControl refreshing={isFetching} onRefresh={onRefresh} />
+					}
 					estimatedItemSize={200}
 					ListHeaderComponent={() => (
 						<View className=" my-4 items-center">

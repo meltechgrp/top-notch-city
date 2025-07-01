@@ -17,8 +17,7 @@ export async function updatePropertyStatus(
 	if (res?.detail) {
 		throw new Error(`Failed to ${action} property`);
 	}
-	const data = await res.json();
-	return data;
+	return res;
 }
 
 export async function deleteProperty(propertyId: string) {

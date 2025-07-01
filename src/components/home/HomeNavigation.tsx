@@ -11,9 +11,6 @@ export default function HomeNavigation() {
 				onPress={() =>
 					router.push({
 						pathname: '/search',
-						params: {
-							search: 'true',
-						},
 					})
 				}
 				className="flex-1 h-14 p-2 pl-4 flex-row bg-background-muted rounded-full items-center gap-1">

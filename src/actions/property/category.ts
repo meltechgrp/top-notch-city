@@ -2,7 +2,7 @@ import { Fetch } from '../utills';
 
 export const fetchAllSubcategories = async (): Promise<SubCategory[]> => {
 	try {
-		const res = await Fetch(`/categories/subcategories`, {});
+		const res = await Fetch(`/categories/subcategories/`, {});
 		return res as SubCategory[];
 	} catch (error) {
 		console.log(error);

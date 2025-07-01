@@ -28,10 +28,6 @@ export default function FoundHorizontalList(props: Props) {
 		};
 	}, []);
 
-	if (!data?.length) {
-		return null;
-	}
-
 	return (
 		<View>
 			<ScrollView
@@ -42,7 +38,7 @@ export default function FoundHorizontalList(props: Props) {
 				snapToInterval={238 + 4}
 				snapToAlignment="center"
 				decelerationRate="fast">
-				{data.map((property) => (
+				{data?.map((property) => (
 					<HorizontalListItem key={property.id} data={property} />
 				))}
 			</ScrollView>

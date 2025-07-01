@@ -14,7 +14,7 @@ export function PropertyTitle({
         <View className="bg-gray-500/80 rounded-md self-start py-1 px-2">
           <Text className="text-base">To Rent</Text>
         </View>
-        <Text className="text-2xl font-bold">
+        <Text className="text-2xl text-white font-bold">
           {FindAmenity("Bedroom", amenities)} Bedroom {subcategory.name}
         </Text>
       </View>
@@ -25,7 +25,7 @@ export function PropertyTitle({
         <View className="bg-gray-500/80 rounded-md self-start py-1 px-2">
           <Text className=" text-base">For Sale</Text>
         </View>
-        <Text className="text-2xl font-bold">
+        <Text className="text-2xl text-white font-bold">
           {FindAmenity("Bedroom", amenities)} Bedroom {subcategory.name}
         </Text>
       </View>

@@ -1,4 +1,4 @@
-import React, { ReactNode, useMemo, useRef } from 'react';
+import React, { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import MapView, { Circle, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import Layout from '@/constants/Layout';
 import { CustomPropertyMarker } from './CustomPropertyMarker';
@@ -6,6 +6,7 @@ import Platforms from '@/constants/Plaforms';
 import PropertyMedia from '@/assets/images/property.png';
 import { Colors } from '@/constants/Colors';
 import { useResolvedTheme } from '../ui';
+import { getRegionForMarkers } from '@/lib/utils';
 
 interface MapProps {
 	latitude?: number;
@@ -26,8 +27,8 @@ interface MapProps {
 	onDoublePress?: () => void;
 }
 
-const DEFAULT_LAT_DELTA = 0.1;
-const DEFAULT_LONG_DELTA = 0.1;
+const DEFAULT_LAT_DELTA = 0.4;
+const DEFAULT_LONG_DELTA = 0.4;
 export default function Map(props: MapProps) {
 	const {
 		latitude: lat,
@@ -44,16 +45,29 @@ export default function Map(props: MapProps) {
 		zoomControlEnabled,
 	} = props;
 	const theme = useResolvedTheme();
-	const mapRef = useRef<MapView>(null);
-	const current = markers ? markers[1] : null;
-	const { latitude, longitude } = useMemo(
-		() => ({
-			latitude:  lat || 4.8156,
-			longitude: long || 7.0498,
-		}),
-		[lat, long, current]
-	);
+  const [location, setLocation] = useState({
+    latitude: lat || 4.8156,
+    longitude: long || 7.0498,
+  });
 
+	const mapRef = useRef<MapView>(null);
+ useEffect(() => {
+  (async () => {
+    if (markers && markers.length > 0) {
+      const region = getRegionForMarkers(markers.map(m => ({
+        latitude: m.address.latitude,
+        longitude: m.address.longitude,
+      })));
+
+      setLocation({
+        latitude: region.latitude,
+        longitude: region.longitude,
+      });
+
+      mapRef.current?.animateToRegion(region, 1000);
+    }
+  })();
+}, [markers]);
 	return (
 		<>
 			<MapView
@@ -79,8 +93,7 @@ export default function Map(props: MapProps) {
 				region={{
 					latitudeDelta: DEFAULT_LAT_DELTA,
 					longitudeDelta: DEFAULT_LONG_DELTA,
-					latitude,
-					longitude,
+        ...location,
 				}}>
 				{marker && (
 					<Marker
@@ -102,9 +115,9 @@ export default function Map(props: MapProps) {
 						anchor={{ x: 0.5, y: 0.5 }}
 					/>
 				)} */}
-				{latitude && longitude && showRadius && (
+				{location && showRadius && (
 					<Circle
-						center={{ latitude, longitude }}
+						center={{ ...location }}
 						radius={radiusInMeters || 5000} // default 5km
 						fillColor="rgba(0, 0, 0, 0.1)"
 						strokeColor="rgba(241, 96, 0, 0.6)"

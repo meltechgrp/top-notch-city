@@ -30,25 +30,25 @@ export default function PropertySections() {
 							<ChevronLeftIcon size={26} strokeWidth={3} color={'white'} />
 						</Pressable>
 					),
-					headerRight: () => (
-						<View
-							style={{
-								flexDirection: 'row',
-								alignItems: 'center',
-							}}>
-							<Pressable
-								onPress={() => {
-									hapticFeed();
-									// router.push({
-									// 	pathname: '/list/[listId]/share',
-									// 	params: { listId },
-									// });
-								}}
-								style={{ padding: 8 }}>
-								<Icon as={ListFilter} />
-							</Pressable>
-						</View>
-					),
+					// headerRight: () => (
+					// 	<View
+					// 		style={{
+					// 			flexDirection: 'row',
+					// 			alignItems: 'center',
+					// 		}}>
+					// 		<Pressable
+					// 			onPress={() => {
+					// 				hapticFeed();
+					// 				// router.push({
+					// 				// 	pathname: '/list/[listId]/share',
+					// 				// 	params: { listId },
+					// 				// });
+					// 			}}
+					// 			style={{ padding: 8 }}>
+					// 			<Icon as={ListFilter} />
+					// 		</Pressable>
+					// 	</View>
+					// ),
 				}}
 			/>
 			<Box className="flex-1 px-4">
