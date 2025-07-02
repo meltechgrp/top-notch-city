@@ -19,11 +19,9 @@ import { ScrollView } from "react-native";
 import Platforms from "@/constants/Plaforms";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { PropertyHeroSection } from "@/components/property/PropertyHeroSection";
-import { useStore } from "@/store";
 
 export default function PropertyItem() {
   const { propertyId } = useLocalSearchParams() as { propertyId: string };
-  const { me } = useStore();
   const { updateProperty } = usePropertyStore();
   const { width, onLayout } = useLayout();
   const router = useRouter();
@@ -43,8 +41,6 @@ export default function PropertyItem() {
   const property = useMemo(() => {
     return data?.id ? data : null;
   }, [propertyId, data]);
-  const isMine = useMemo(() => property?.owner?.id === me?.id, [property, me]);
-  const isAdmin = useMemo(() => me?.role == "admin", [me]);
   useEffect(() => {
     if (property) {
       updateProperty(property);
