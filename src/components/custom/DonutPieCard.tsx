@@ -1,7 +1,8 @@
 import React from "react";
-import { View, Text } from "@/components/ui";
+import { View, Text, useResolvedTheme } from "@/components/ui";
 import { PieChart } from "react-native-gifted-charts";
 import { cn } from "@/lib/utils"; // if you're using class merging utility like clsx or cn()
+import { Colors } from "@/constants/Colors";
 
 interface PieInput {
   value?: number;
@@ -14,8 +15,8 @@ interface Props {
 }
 
 const predefinedColors = [
-  { color: "#009FFF", gradientCenterColor: "#006DFF" },
-  { color: "#93FCF8", gradientCenterColor: "#3BE9DE" },
+  { color: Colors.primary, gradientCenterColor: Colors.primary },
+  { color: "#6b7280", gradientCenterColor: "#6b7280" },
   { color: "#BDB2FA", gradientCenterColor: "#8F80F3" },
   { color: "#FFA5BA", gradientCenterColor: "#FF7F97" },
   { color: "#6CFF6C", gradientCenterColor: "#3FBF3F" },
@@ -24,6 +25,7 @@ const predefinedColors = [
 
 export default function DonutPieChart({ title = "Performance", data }: Props) {
   const maxValue = Math.max(...data.map((item) => item.value || 0));
+  const theme = useResolvedTheme();
 
   const pieData = data.map((item, index) => {
     const { color, gradientCenterColor } =
@@ -71,7 +73,11 @@ export default function DonutPieChart({ title = "Performance", data }: Props) {
             sectionAutoFocus
             radius={90}
             innerRadius={60}
-            innerCircleColor={"#232B5D"}
+            innerCircleColor={
+              theme == "light"
+                ? Colors.dark.background
+                : Colors.light.background
+            }
             centerLabelComponent={() => (
               <View className="items-center justify-center">
                 <Text className=" text-xl font-bold">
