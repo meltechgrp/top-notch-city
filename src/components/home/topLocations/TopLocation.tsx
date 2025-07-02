@@ -1,39 +1,48 @@
-import {
-	Image,
-	Text,
-	View,
-} from '@/components/ui';
-import React from 'react';
-import { TouchableOpacity } from 'react-native';
+import { hapticFeed } from "@/components/HapticTab";
+import { Image, Text, View } from "@/components/ui";
+import { cn } from "@/lib/utils";
+import { router } from "expo-router";
+import React from "react";
+import { TouchableOpacity } from "react-native";
 
 type Props = {
-	location: TopLocation
-	onPress: () => void;
+  location: TopLocation;
+  clasName?: string;
 };
 
-
-export default function TopLocation({ location: {state, property_count, photo_url }, onPress }: Props) {
-
-	return (
-		<TouchableOpacity
-              key={state}
-			  onPress={onPress}
-              className="relative rounded-lg w-[245px] md:w-[260px] lg:w-[310px] overflow-hidden h-48 flex-1"
-            >
-              <Image
-                source={{ uri: photo_url }}
-                className="w-full h-48"
-                alt={state}
-                resizeMode="cover"
-              />
-              <View className="absolute inset-0 bg-black/40 to-transparent flex justify-end p-4">
-                <Text className="text-white text-2xl font-bold">
-                  {state}
-                </Text>
-                <Text className="text-gray-200 text-base">
-                  {property_count} Properties
-                </Text>
-              </View>
-            </TouchableOpacity>
-	);
+export default function TopLocation({
+  location: { state, property_count, photo_url },
+  clasName,
+}: Props) {
+  return (
+    <TouchableOpacity
+      key={state}
+      onPress={() => {
+        hapticFeed();
+        router.push({
+          pathname: `/property/locations/[locationId]`,
+          params: {
+            locationId: state,
+          },
+        });
+      }}
+      className={cn(
+        "relative rounded-lg w-[245px] overflow-hidden h-48 flex-1",
+        clasName
+      )}
+    >
+      <Image
+        source={{ uri: photo_url }}
+        className="w-full h-full"
+        alt={state}
+        resizeMode="cover"
+      />
+      <View className="absolute inset-0 bg-black/40 to-transparent flex justify-end p-4">
+        <Text className="text-white text-2xl font-bold">{state}</Text>
+        <Text className="text-gray-200 text-base">
+          {property_count} Properties
+        </Text>
+      </View>
+    </TouchableOpacity>
+  );
 }
