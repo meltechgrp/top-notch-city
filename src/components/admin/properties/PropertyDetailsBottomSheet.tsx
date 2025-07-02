@@ -3,7 +3,6 @@ import {
   Badge,
   BadgeText,
   Button,
-  ButtonText,
   Heading,
   Icon,
   Pressable,

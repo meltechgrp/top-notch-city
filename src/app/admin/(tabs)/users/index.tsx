@@ -13,8 +13,6 @@ import { User2, UserCog2, UserSearch } from "lucide-react-native";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { getUsers } from "@/actions/user";
 
-const ITEMS_PER_PAGE = 50;
-
 export default function Users() {
   const [refreshing, setRefreshing] = useState(false);
   const [activeUser, setActiveUser] = useState<Me | null>(null);
@@ -39,6 +37,7 @@ export default function Users() {
     // Filter by role
     if (actveTab !== "all") {
       if (actveTab == "verified") filtered = filtered.filter((u) => u.verified);
+      if (actveTab == "pending") filtered = filtered.filter((u) => !u.verified);
       else filtered = filtered.filter((u) => u.role.toLowerCase() === actveTab);
     }
 
@@ -59,11 +58,13 @@ export default function Users() {
   const tabs = useMemo(() => {
     const all = usersData.length;
     const verified = usersData.filter((user) => user.verified).length;
+    const pending = usersData.filter((user) => !user.verified).length;
     const agents = usersData.filter((user) => user.role === "agent").length;
     const admins = usersData.filter((user) => user.role === "admin").length;
 
     return [
       { title: "all", total: all },
+      { title: "pending", total: pending },
       { title: "verified", total: verified },
       { title: "agents", total: agents },
       { title: "admin", total: admins },
