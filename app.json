@@ -13,7 +13,7 @@
     "usesAppleSignIn": true,
 			"bundleIdentifier": "com.meltech.topnotchcity",
 			"infoPlist": {
-				"NSLocationWhenInUseUsageDescription": "Allow $(PRODUCT_NAME) to access to your location to track your current position.",
+				"NSLocationWhenInUseUsageDescription": "Allow $(PRODUCT_NAME) to access your location to show nearby properties and map search.",
 				"ITSAppUsesNonExemptEncryption": false
 			}
 		},
@@ -42,6 +42,12 @@
 			"react-native-compressor",
 			"expo-apple-authentication",
 			[
+			  "expo-local-authentication",
+			  {
+				"faceIDPermission": "Allow $(PRODUCT_NAME) to use Face ID for secure login."
+			  }
+			],
+			[
 				"expo-video",
 				{
 					"supportsBackgroundPlayback": true,
@@ -51,7 +57,7 @@
 			[
 				"expo-location",
 				{
-					"locationAlwaysAndWhenInUsePermission": "For current location, allow $(PRODUCT_NAME) to access your location."
+					"locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to access your location for map search and nearby properties."
 				}
 			],
 			"expo-secure-store",
@@ -77,7 +83,7 @@
 			[
 				"expo-image-picker",
 				{
-					"photosPermission": "Allow $(PRODUCT_NAME) to access your photos for property upload and profile."
+					"photosPermission": "Allow $(PRODUCT_NAME) to access your photos to upload property images or update your profile."
 				}
 			],
 			[
@@ -90,7 +96,7 @@
 			[
 				"expo-audio",
 				{
-					"microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
+					"microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone for voice search and audio messages."
 				}
 			],
 			"@react-native-voice/voice"

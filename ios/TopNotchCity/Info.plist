@@ -58,19 +58,19 @@
     <key>NSCameraUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to access your camera</string>
     <key>NSFaceIDUsageDescription</key>
-    <string>Allow $(PRODUCT_NAME) to access your Face ID biometric data.</string>
+    <string>Allow $(PRODUCT_NAME) to use Face ID for secure login.</string>
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>For current location, allow $(PRODUCT_NAME) to access your location.</string>
+    <string>Allow $(PRODUCT_NAME) to access your location for map search and nearby properties.</string>
     <key>NSLocationAlwaysUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to access your location</string>
     <key>NSLocationWhenInUseUsageDescription</key>
-    <string>Allow $(PRODUCT_NAME) to access to your location to track your current position.</string>
+    <string>Allow $(PRODUCT_NAME) to access your location to show nearby properties and map search.</string>
     <key>NSMicrophoneUsageDescription</key>
-    <string>Allow $(PRODUCT_NAME) to access your microphone.</string>
+    <string>Allow $(PRODUCT_NAME) to access your microphone for voice search and audio messages.</string>
     <key>NSMotionUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to access your device motion</string>
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>Allow $(PRODUCT_NAME) to access your photos for property upload and profile.</string>
+    <string>Allow $(PRODUCT_NAME) to access your photos to upload property images or update your profile.</string>
     <key>NSSpeechRecognitionUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to securely recognize user speech</string>
     <key>NSUserActivityTypes</key>

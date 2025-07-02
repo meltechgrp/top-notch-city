@@ -53,7 +53,7 @@ export default function TopLocationsHorizontalList(props: Props) {
       decelerationRate="fast"
     >
       {locations.map((location) => (
-        <TopLocation location={location} />
+        <TopLocation key={location.state} location={location} />
       ))}
     </ScrollView>
   );
