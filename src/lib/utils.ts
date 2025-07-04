@@ -474,3 +474,11 @@ export function fillLast6Months(data?: MonthlyData[]) {
 
   return filled;
 }
+
+export function deduplicate<T>(arr: T[], key: keyof T) {
+  const map = new Map();
+  arr.forEach((v) => {
+    map.set(v[key], v);
+  });
+  return Array.from(map.values());
+}

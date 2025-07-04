@@ -1,19 +1,21 @@
-import AskSetupUpPinComponent from "@/components/onboarding/AskSetupUpPinComponent";
-import { Box } from "@/components/ui";
+import { View, ActivityIndicator } from "react-native";
+import { useLocalAuth } from "@/hooks/useLocalAuth";
+import { useEffect } from "react";
 
 export default function AdminScreen() {
-  function onNextPress() {
-    // router.replace({ pathname: "/account/pin-setup", params: { type } });
-  }
-  function onSkipPress() {}
-  return (
-    <>
-      <Box className="flex-1"></Box>
+  const { loading, authenticate } = useLocalAuth({
+    onSuccessRoute: "/admin/(tabs)/dashboard",
+    onFailRoute: "/menu", // fallback if auth fails
+  });
 
-      <AskSetupUpPinComponent
-        onNextPress={onNextPress}
-        onSkipPress={onSkipPress}
-      />
-    </>
-  );
+  useEffect(() => {
+    authenticate();
+  }, []);
+  if (loading) {
+    return (
+      <View className="flex-1 items-center justify-center bg-background">
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 }

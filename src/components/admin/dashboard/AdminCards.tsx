@@ -21,7 +21,7 @@ export default function AdminCards({ data }: Props) {
             onPress={() => router.push("/admin/users")}
           />
           <DashboardCard
-            title="Properties"
+            title="Uploads"
             icon={House}
             total={data?.totalProperties}
             data={data?.totalUploadsLast6Months}

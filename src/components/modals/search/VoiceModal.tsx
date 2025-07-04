@@ -1,146 +1,165 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
-	Modal,
-	TouchableOpacity,
-	ActivityIndicator,
-	Alert,
-} from 'react-native';
-import { useAudioRecorder, AudioModule, RecordingPresets } from 'expo-audio';
-import { cn } from '@/lib/utils';
-import { Fetch } from '@/actions/utills';
-import { Text, View } from '@/components/ui';
+  Modal,
+  TouchableOpacity,
+  ActivityIndicator,
+  Alert,
+} from "react-native";
+import { useAudioRecorder, AudioModule, RecordingPresets } from "expo-audio";
+import { cn } from "@/lib/utils";
+import { Text, View } from "@/components/ui";
+import { voiceSearchProperties } from "@/actions/search";
+import { Fetch } from "@/actions/utills";
 
 interface VoiceModalProps {
-	visible: boolean;
-	onClose: () => void;
-	title?: string;
-	uploadUrl?: string;
+  visible: boolean;
+  onClose: () => void;
+  title?: string;
+  onUpload: (data: Property[]) => void;
 }
 
 export const VoiceModal: React.FC<VoiceModalProps> = ({
-	visible,
-	onClose,
-	title = 'Speak now',
-	uploadUrl,
+  visible,
+  onClose,
+  title = "Speak now",
+  onUpload,
 }) => {
-	const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
-	const [isRecording, setIsRecording] = useState(false);
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState<string | null>(null);
+  const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
+  const [isRecording, setIsRecording] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-	useEffect(() => {
-		const initPermissions = async () => {
-			const status = await AudioModule.requestRecordingPermissionsAsync();
-			if (!status.granted) {
-				Alert.alert('Permission required', 'Microphone access is needed');
-			}
-		};
-		initPermissions();
-	}, []);
+  useEffect(() => {
+    const initPermissions = async () => {
+      const status = await AudioModule.requestRecordingPermissionsAsync();
+      if (!status.granted) {
+        Alert.alert("Permission required", "Microphone access is needed");
+      }
+    };
+    initPermissions();
+  }, []);
 
-	const startRecording = async () => {
-		try {
-			setError(null);
-			setIsRecording(true);
+  const startRecording = async () => {
+    try {
+      setError(null);
+      setIsRecording(true);
 
-			await audioRecorder.prepareToRecordAsync({
-				extension: '.wav',
-			});
-			audioRecorder.record();
-		} catch (err: any) {
-			console.log('[Start Error]', err);
-			setError(err.message || 'Recording failed');
-			setIsRecording(false);
-		}
-	};
+      await audioRecorder.prepareToRecordAsync({
+        extension: ".wav",
+      });
+      audioRecorder.record();
+    } catch (err: any) {
+      console.log("[Start Error]", err);
+      setError(err.message || "Recording failed");
+      setIsRecording(false);
+    }
+  };
 
-	const stopRecording = async () => {
-		try {
-			await audioRecorder.stop();
-			setIsRecording(false);
+  const stopRecording = async () => {
+    try {
+      await audioRecorder.stop();
 
-			const uri = audioRecorder.uri;
-			console.log(uri);
+      const uri = audioRecorder.uri;
+      setIsRecording(false);
+      if (uri) {
+        await uploadRecording(uri);
+      }
+    } catch (err: any) {
+      console.log("[Stop Error]", err);
+      setError(err.message || "Failed to stop recording");
+    }
+  };
 
-			if (uri && uploadUrl) {
-				await uploadRecording(uri);
-			}
-		} catch (err: any) {
-			console.log('[Stop Error]', err);
-			setError(err.message || 'Failed to stop recording');
-		}
-	};
+  const uploadRecording = async (uri: string) => {
+    try {
+      setLoading(true);
+      const formData = new FormData();
+      formData.append("voice_file", {
+        uri,
+        name: "audio.wav",
+        type: "audio/wav",
+      } as any);
 
-	const uploadRecording = async (uri: string) => {
-		try {
-			setLoading(true);
-			const formData = new FormData();
-			formData.append('voice_file', {
-				uri,
-				name: 'audio.wav',
-				type: 'audio/wav',
-			} as any);
+      const res = await Fetch("/properties/search/voice", {
+        method: "POST",
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        data: formData,
+      });
+      if (res?.detail) {
+        throw new Error("Failed to send");
+      }
+      onClose();
+      return onUpload(res.results.results);
+    } catch (err: any) {
+      console.log("[Upload Error]", err);
+      setError("Failed to upload audio");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-			const res = await Fetch(uploadUrl!, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'multipart/form-data',
-				},
-				data: formData,
-			});
-			console.log(res);
-			if (res?.detail) {
-				throw new Error('Failed to send');
-			}
-			return res;
-		} catch (err: any) {
-			console.log('[Upload Error]', err);
-			setError('Failed to upload audio');
-		} finally {
-			setLoading(false);
-		}
-	};
+  //   const uploadRecording = async (uri: string) => {
+  //     try {
+  //       setLoading(true);
 
-	return (
-		<Modal visible={visible} transparent animationType="slide">
-			<View className="flex-1 justify-center items-center bg-black/60">
-				<View className="bg-background-muted p-6 rounded-2xl w-11/12 items-center">
-					<Text className="text-2xl font-semibold text-center mb-2">
-						{title}
-					</Text>
-					<Text className="text-sm mb-8 font-semibold text-center">
-						Example: Properties around port harcourt..
-					</Text>
+  //       const res = await voiceSearchProperties(uri);
+  //       if (res) {
+  //         const properties = res.results || [];
+  //         console.log(properties);
+  //         onUpload(properties);
+  //       }
+  //     } catch (err: any) {
+  //       console.log("[Upload Error]", err);
+  //       setError("Failed to upload audio");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-					{(loading || isRecording) && (
-						<ActivityIndicator size="large" color="#4B9CD3" />
-					)}
+  return (
+    <Modal visible={visible} transparent animationType="slide">
+      <View className="flex-1 justify-center items-center bg-black/60">
+        <View className="bg-background-muted p-6 rounded-2xl w-11/12 items-center">
+          <Text className="text-2xl font-semibold text-center mb-2">
+            {title}
+          </Text>
+          <Text className="text-sm mb-8 font-semibold text-center">
+            Example: Properties around port harcourt..
+          </Text>
 
-					{error && <Text className="text-red-500 text-sm mb-2">{error}</Text>}
+          {(loading || isRecording) && (
+            <ActivityIndicator size="large" color="#4B9CD3" />
+          )}
 
-					<View className="flex-row gap-4 mt-2">
-						<TouchableOpacity
-							className={cn(
-								'px-6 py-3 rounded-xl',
-								isRecording ? 'bg-primary' : 'bg-gray-500'
-							)}
-							onPress={isRecording ? stopRecording : startRecording}>
-							<Text className="text-white text-lg">
-								{isRecording ? 'Done' : '🎤 Start'}
-							</Text>
-						</TouchableOpacity>
+          {error && <Text className="text-red-500 text-sm mb-2">{error}</Text>}
 
-						<TouchableOpacity
-							className="bg-gray-300 px-8 py-3 rounded-xl"
-							onPress={() => {
-								if (isRecording) stopRecording();
-								onClose();
-							}}>
-							<Text className="text-gray-800 text-lg">Close</Text>
-						</TouchableOpacity>
-					</View>
-				</View>
-			</View>
-		</Modal>
-	);
+          <View className="flex-row gap-4 mt-2">
+            <TouchableOpacity
+              className={cn(
+                "px-6 py-3 rounded-xl",
+                isRecording ? "bg-primary" : "bg-gray-500"
+              )}
+              onPress={isRecording ? stopRecording : startRecording}
+            >
+              <Text className="text-white text-lg">
+                {isRecording ? "Done" : "🎤 Start"}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              className="bg-gray-300 px-8 py-3 rounded-xl"
+              onPress={() => {
+                if (isRecording) stopRecording();
+                onClose();
+              }}
+            >
+              <Text className="text-gray-800 text-lg">Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
 };

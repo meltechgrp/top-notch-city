@@ -28,7 +28,7 @@ export function DashboardCard({ title, total, data, icon, ...props }: Props) {
         <Heading size="xl">{total || 0}</Heading>
       </View>
       <View className="flex-row justify-between px-4 items-center">
-        <Text className=" text-xl font-medium">{title}</Text>
+        <Text className=" text-lg font-medium">{title}</Text>
         <View
           className={cn(
             "flex-row gap-1 p-2 py-1 bg-background items-center rounded-xl"

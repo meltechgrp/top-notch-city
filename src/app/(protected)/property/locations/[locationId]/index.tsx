@@ -10,8 +10,8 @@ export default function PropertyLocations() {
   const { locationId } = useLocalSearchParams() as { locationId?: string };
   const [showFilter, setShowFilter] = useState(false);
   const { data, isLoading, fetchNextPage, refetch } = useProductQueries({
-    type: "location",
-    location: locationId,
+    type: "state",
+    state: locationId,
   });
 
   const propertysData = useMemo(() => {
