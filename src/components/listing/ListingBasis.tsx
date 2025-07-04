@@ -1,95 +1,81 @@
-import {
-	AlertCircleIcon,
-	Box,
-	Heading,
-	View,
-	FormControl,
-	FormControlError,
-	FormControlErrorText,
-	FormControlErrorIcon,
-	FormControlLabel,
-	FormControlLabelText,
-	Textarea,
-	TextareaInput,
-} from '@/components/ui';
-import { useLayout } from '@react-native-community/hooks';
-import { Input, InputField } from '@/components/ui/input';
-import { useTempStore } from '@/store';
-import { TextInput } from 'react-native';
+import { Box, Heading, View, Text } from "@/components/ui";
+import { useTempStore } from "@/store";
+import CustomSelect from "../custom/CustomSelect";
+import OptionsBottomSheet from "../shared/OptionsBottomSheet";
+import { CustomInput } from "../custom/CustomInput";
 
 export default function ListingBasis() {
-	const { onLayout, height } = useLayout();
-	const { listing, updateListing } = useTempStore();
-	return (
-		<>
-			<Box onLayout={onLayout} className="flex-1 px-4">
-				<View className=" py-6 gap-8">
-					<Heading size="xl">Give your property a unique descriptions</Heading>
-					<View className="gap-6">
-						<FormControl isInvalid={false} size="lg" isRequired={false}>
-							<FormControlLabel>
-								<FormControlLabelText>Property title</FormControlLabelText>
-							</FormControlLabel>
-							<Input size="md" className="my-1 h-14 rounded-xl">
-								<InputField
-									type="text"
-									placeholder="1 bedroom flat... or amazon estate..."
-									value={listing.title}
-									onChangeText={(text) =>
-										updateListing({ ...listing, title: text })
-									}
-								/>
-							</Input>
-							<FormControlError>
-								<FormControlErrorIcon as={AlertCircleIcon} />
-								<FormControlErrorText>
-									Atleast 6 characters are required.
-								</FormControlErrorText>
-							</FormControlError>
-						</FormControl>
-						<FormControl isInvalid={false} size="lg" isRequired={false}>
-							<FormControlLabel>
-								<FormControlLabelText>
-									Property description
-								</FormControlLabelText>
-							</FormControlLabel>
-							<Textarea size="md" className=" border border-outline">
-								<TextareaInput
-									multiline
-									value={listing.description}
-									onChangeText={(text) =>
-										updateListing({ ...listing, description: text })
-									}
-									placeholder="Share some additional information about the property..."
-								/>
-							</Textarea>
-							<FormControlError>
-								<FormControlErrorIcon as={AlertCircleIcon} />
-								<FormControlErrorText>
-									Atleast 6 characters are required.
-								</FormControlErrorText>
-							</FormControlError>
-						</FormControl>
-						<FormControl isInvalid={false} size="lg" isRequired={false}>
-							<FormControlLabel>
-								<FormControlLabelText>Property price</FormControlLabelText>
-							</FormControlLabel>
-							<TextInput
-								onChangeText={(val) =>
-									updateListing({
-										...listing,
-										price: val,
-									})
-								}
-								value={listing.price}
-								placeholder="Property price"
-								keyboardType="numeric"
-								className=" h-14 border text-typography border-outline data-[focus=true]:border-primary px-4 rounded-xl"
-							/>
-						</FormControl>
-					</View>
-				</View>
-			</Box>
-		</>
-	);
+  const { listing, updateListing } = useTempStore();
+  return (
+    <>
+      <Box className="flex-1 px-4">
+        <View className=" py-6 gap-8">
+          <Heading size="xl">Give your property a unique pricing</Heading>
+          <View className="gap-6">
+            <View className="gap-2">
+              <Text className="text-base font-medium">
+                Price <Text className="text-primary">*</Text>
+              </Text>
+              <CustomInput
+                isBottomSheet={false}
+                keyboardType="numeric"
+                placeholder="Enter price"
+                value={listing.price}
+                onUpdate={(val) => updateListing({ ...listing, price: val })}
+              />
+            </View>
+
+            {/* Currency */}
+            <View className="gap-2">
+              <Text className="text-base font-medium">
+                Currency <Text className="text-primary">*</Text>
+              </Text>
+              <CustomSelect
+                withDropIcon
+                label="Currency"
+                BottomSheet={OptionsBottomSheet}
+                value={listing.currency}
+                valueParser={(value: any) =>
+                  value?.toUpperCase() || "Select Currency"
+                }
+                onChange={(val) =>
+                  updateListing({ ...listing, currency: val.value })
+                }
+                options={[
+                  { label: "NGN", value: "ngn" },
+                  { label: "USD", value: "usd" },
+                ]}
+              />
+            </View>
+            {/* Duration */}
+            {listing.purpose == "rent" && (
+              <View className="gap-2">
+                <Text className="text-base font-medium">
+                  Duration <Text className="text-primary">*</Text>
+                </Text>
+                <CustomSelect
+                  withDropIcon
+                  label="Duration"
+                  BottomSheet={OptionsBottomSheet}
+                  value={listing.duration}
+                  valueParser={(value: any) => value || "Select Duration"}
+                  onChange={(val) =>
+                    updateListing({ ...listing, duration: val.value })
+                  }
+                  options={[
+                    { label: "Monthly", value: "Monthly" },
+                    { label: "3 Months", value: "3 Months" },
+                    { label: "6 Months", value: "6 Months" },
+                    { label: "Yearly", value: "Yearly" },
+                    { label: "2 Years", value: "2 Years" },
+                    { label: "3 Years", value: "3 Years" },
+                  ]}
+                />
+              </View>
+            )}
+          </View>
+        </View>
+      </Box>
+    </>
+  );
 }

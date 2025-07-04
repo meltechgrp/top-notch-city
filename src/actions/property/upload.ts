@@ -177,7 +177,6 @@ export function useUploadProperty() {
 
       const {
         photos,
-        title,
         description,
         price,
         videos,
@@ -188,7 +187,7 @@ export function useUploadProperty() {
         address,
       } = listing;
 
-      if (title) formData.append("title", title);
+      formData.append("title", "property");
       if (description) formData.append("description", description);
       if (price) formData.append("price", price);
       if (category) formData.append("property_category_name", category);

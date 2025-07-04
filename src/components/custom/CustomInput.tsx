@@ -27,6 +27,7 @@ interface Props {
   returnKeyType?: ReturnKeyTypeOptions;
   errorMesssage?: string;
   className?: string;
+  inputClassName?: string;
   returnKeyLabel?: string;
   numberOfLines?: number;
   height?: number;
@@ -48,10 +49,11 @@ export function CustomInput({
   className,
   returnKeyLabel,
   height,
+  inputClassName,
 }: Props) {
   return (
     <FormControl
-      className="py-px"
+      className={cn("py-px min-h-20", !title && "min-h-14", className)}
       isInvalid={isInvalid}
       size="lg"
       isRequired={isRequired}
@@ -67,8 +69,16 @@ export function CustomInput({
             size="md"
             className={cn(
               "my-1 bg-background-muted h-14 rounded-xl",
-              className
+              multiline && "px-1 pt-6",
+              inputClassName
             )}
+            style={
+              multiline
+                ? {
+                    height: height || 120,
+                  }
+                : {}
+            }
           >
             <InputField
               type="text"
@@ -84,8 +94,7 @@ export function CustomInput({
                 multiline
                   ? {
                       height: height || 120,
-                      textAlignVertical: "top", // 👈 This is the key
-                      padding: 10,
+                      textAlignVertical: "top",
                     }
                   : {}
               }

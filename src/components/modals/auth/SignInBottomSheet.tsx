@@ -1,10 +1,17 @@
-
 import * as Google from "expo-auth-session/providers/google";
 import * as Facebook from "expo-auth-session/providers/facebook";
 import * as WebBrowser from "expo-web-browser";
 import * as AppleAuthentication from "expo-apple-authentication";
 
-import { Button, ButtonText, Text, View, Box, Icon, Pressable } from "@/components/ui";
+import {
+  Button,
+  ButtonText,
+  Text,
+  View,
+  Box,
+  Icon,
+  Pressable,
+} from "@/components/ui";
 
 import React, { useCallback, useEffect, useState } from "react";
 import { hapticFeed } from "@/components/HapticTab";
@@ -20,11 +27,10 @@ import BottomSheet from "../../shared/BottomSheet";
 import { Divider } from "@/components/ui/divider";
 import { CustomInput } from "@/components/custom/CustomInput";
 
-
 export default function SignInBottomSheet({
   visible,
   onDismiss,
-  onLoginSuccess
+  onLoginSuccess,
 }: AuthModalProps) {
   const [isAppleAvailable, setIsAppleAvailable] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -40,13 +46,13 @@ export default function SignInBottomSheet({
     clientId: "990600566300859",
   });
 
-WebBrowser.maybeCompleteAuthSession();
+  WebBrowser.maybeCompleteAuthSession();
   // 🔑 Basic email sign-in
   const handleEmailSubmit = useCallback(async () => {
     hapticFeed();
     setLoading(true);
     try {
-       await handleSocialLogin({ email });
+      await handleSocialLogin({ email });
     } catch (error) {
       console.error(error);
     } finally {
@@ -67,15 +73,15 @@ WebBrowser.maybeCompleteAuthSession();
           saveAuthToken(res.access_token);
           useStore.setState((s) => ({ ...s, hasAuth: true }));
           eventBus.dispatchEvent("REFRESH_PROFILE", null);
-          onDismiss?.()
+          onDismiss?.();
           onLoginSuccess?.();
         }
       } catch (error) {
         console.error(error);
-		showSnackbar({
-		  message: "Error occurred during. Please try again.",
-		  type: "error",
-		});
+        showSnackbar({
+          message: "Error occurred during. Please try again.",
+          type: "error",
+        });
       }
     },
     []
@@ -159,7 +165,7 @@ WebBrowser.maybeCompleteAuthSession();
       rounded={false}
       onDismiss={onDismiss}
       title="Sign In or Sign Up"
-      snapPoint={["54%", '60%']}
+      snapPoint={["54%", "60%"]}
     >
       <Box className=" gap-6 flex-1 p-6 pt-3">
         <CustomInput
@@ -185,7 +191,6 @@ WebBrowser.maybeCompleteAuthSession();
         </View>
 
         <View className="gap-4">
-
           {isAppleAvailable && (
             <AppleAuthentication.AppleAuthenticationButton
               buttonType={
@@ -215,9 +220,11 @@ WebBrowser.maybeCompleteAuthSession();
             <ButtonText>Continue with Facebook</ButtonText>
           </Button>
 
-		 <Pressable className="mx-auto mt-4">
-			<Text underline size="lg">Skip</Text>
-		 </Pressable>
+          <Pressable both onPress={onDismiss} className="mx-auto mt-4">
+            <Text underline size="lg">
+              Skip
+            </Text>
+          </Pressable>
         </View>
       </Box>
     </BottomSheet>

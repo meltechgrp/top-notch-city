@@ -57,7 +57,7 @@ export default function More() {
   }
   return (
     <>
-      <Stack.Screen
+      {/* <Stack.Screen
         options={{
           headerRight: () => (
             <View
@@ -71,7 +71,7 @@ export default function More() {
             </View>
           ),
         }}
-      />
+      /> */}
       <BodyScrollView withBackground={true}>
         <View
           className={cn(
@@ -197,7 +197,7 @@ export default function More() {
               iconColor="gray-500"
               className=" py-2 pb-3"
             />
-            <Divider className=" h-[0.3px] bg-background-info mb-4" />
+            {/* <Divider className=" h-[0.3px] bg-background-info mb-4" />
             <MenuListItem
               title="Write a review"
               description="Let's improve the app"
@@ -205,8 +205,8 @@ export default function More() {
               icon={NotebookText}
               className="py-2"
               iconColor="yellow-600"
-            />
-            <Divider className=" h-[0.3px] bg-background-info mb-4" />
+            /> */}
+            {/* <Divider className=" h-[0.3px] bg-background-info mb-4" />
             <MenuListItem
               title="Invite friends"
               description={`Invite your friends to join ${config.appName} app`}
@@ -214,7 +214,7 @@ export default function More() {
               className=" py-2 pb-3"
               iconColor="primary"
               onPress={onInvite}
-            />
+            /> */}
             <Divider className=" h-[0.3px] bg-background-info mb-4" />
             <MenuListItem
               title="Become an Agent"
