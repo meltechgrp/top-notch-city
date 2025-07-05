@@ -136,16 +136,16 @@ export default function More() {
                     : "View your dashboard"
                 }
                 onPress={() => {
-                  if (!me?.id) {
-                    router.push({
-                      pathname: "/(protected)/profile/[user]",
-                      params: {
-                        user: me?.id,
-                      },
-                    });
-                  } else if (me?.role === "admin") {
+                  if (me?.role === "admin") {
                     router.dismissTo({
                       pathname: "/admin",
+                    });
+                  } else if (me?.role == "agent") {
+                    router.push({
+                      pathname: "/(protected)/agent/[agentId]",
+                      params: {
+                        agentId: me?.id,
+                      },
                     });
                   }
                 }}
@@ -215,19 +215,32 @@ export default function More() {
               iconColor="primary"
               onPress={onInvite}
             /> */}
-            <Divider className=" h-[0.3px] bg-background-info mb-4" />
-            <MenuListItem
-              title="Become an Agent"
-              description={`Join us as an agent to earn more`}
-              icon={Sparkle}
-              className="py-2"
-              iconColor="gray-600"
-              onPress={() => {
-                // router.push('/account/invite-friends');
-              }}
-            />
-            <Divider className=" h-[0.3px] bg-background-info mb-4" />
-            <MenuListItem
+            {(!me || me?.role !== "admin") && (
+              <Divider className=" h-[0.3px] bg-background-info mb-4" />
+            )}
+            {(!me || me?.role !== "admin") && (
+              <MenuListItem
+                title="Become an Agent"
+                description={`Join us as an agent to earn more`}
+                icon={Sparkle}
+                className="py-2"
+                iconColor="gray-600"
+                onPress={() => {
+                  if (!me?.id) {
+                    openSignInModal({
+                      visible: true,
+                      onLoginSuccess: () => {
+                        router.push("/agent/form");
+                      },
+                    });
+                  } else {
+                    router.push("/agent/form");
+                  }
+                }}
+              />
+            )}
+            {/* <Divider className=" h-[0.3px] bg-background-info mb-4" /> */}
+            {/* <MenuListItem
               title="Help and Support"
               description="Get help and support"
               onPress={() => {
@@ -236,7 +249,7 @@ export default function More() {
               icon={HelpCircle}
               className="py-2"
               iconColor="yellow-600"
-            />
+            /> */}
           </View>
         </View>
       </BodyScrollView>

@@ -1,18 +1,17 @@
 import { AnimatedHeaderTitle } from "@/components/custom/AnimatedHeaderTitle";
 import AppCrashScreen from "@/components/shared/AppCrashScreen";
 import headerLeft from "@/components/shared/headerLeft";
-import { Pressable, Text, useResolvedTheme, View } from "@/components/ui";
+import { useResolvedTheme } from "@/components/ui";
 import { Colors } from "@/constants/Colors";
-import { ErrorBoundaryProps, Stack, useRouter } from "expo-router";
+import { ErrorBoundaryProps, Stack } from "expo-router";
 
 export const unstable_settings = {
   // Ensure any route can link back to `/`
   initialRouteName: "index",
 };
 
-export default function ProfileScreensLayout() {
+export default function AgentScreensLayout() {
   const theme = useResolvedTheme();
-  const router = useRouter();
   return (
     <Stack
       screenOptions={{
@@ -36,15 +35,22 @@ export default function ProfileScreensLayout() {
       }}
     >
       <Stack.Screen
-        name="account"
-        options={{
-          title: "Account",
+        name="[agentId]/index"
+        options={({ route }) => {
+          const params = route.params as any;
+          const title = params?.title ?? "Dashboard";
+
+          return {
+            headerTitle: () => (
+              <AnimatedHeaderTitle defaultTitle="Dashboard" title={title} />
+            ),
+          };
         }}
       />
       <Stack.Screen
-        name="wishlist"
+        name="form"
         options={{
-          title: "Wishlist",
+          title: "Agent Application",
         }}
       />
     </Stack>
