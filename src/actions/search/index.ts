@@ -40,7 +40,7 @@ export async function searchProperties(
   query.append("page", String(page));
   query.append("per_page", String(perPage));
   query.append("sort_by", "created_at");
-  query.append("radius_km", "100");
+  query.append("radius_km", "50");
   query.append("sort_order", "desc");
   const path = `/properties/search/?${query.toString()}`;
   try {

@@ -31,6 +31,7 @@ interface Props {
   returnKeyLabel?: string;
   numberOfLines?: number;
   height?: number;
+  type?: any;
 }
 
 export function CustomInput({
@@ -49,11 +50,16 @@ export function CustomInput({
   className,
   returnKeyLabel,
   height,
+  type = "text",
   inputClassName,
 }: Props) {
   return (
     <FormControl
-      className={cn("py-px min-h-20", !title && "min-h-14", className)}
+      className={cn(
+        "py-px min-h-20 rounded-xl",
+        !title && "min-h-14",
+        className
+      )}
       isInvalid={isInvalid}
       size="lg"
       isRequired={isRequired}
@@ -81,7 +87,7 @@ export function CustomInput({
             }
           >
             <InputField
-              type="text"
+              type={type}
               placeholder={placeholder}
               value={value}
               keyboardType={keyboardType}
@@ -106,6 +112,7 @@ export function CustomInput({
               " border border-outline text-typography px-4 h-14 rounded-xl",
               className
             )}
+            textContentType={type}
             value={value}
             returnKeyType={returnKeyType}
             onChangeText={onUpdate}

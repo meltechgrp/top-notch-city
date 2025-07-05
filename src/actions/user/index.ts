@@ -1,5 +1,6 @@
 import eventBus from "@/lib/eventBus";
 import { Fetch } from "../utills";
+import config from "@/config";
 
 type UserResult = {
   total: number;
@@ -91,4 +92,21 @@ export async function verifyEmail({ user_id }: { user_id: string }) {
     throw new Error("Failed to update profile");
   }
   return res as { message: string };
+}
+export async function deleteUser({ user_id }: { user_id: string }) {
+  try {
+    console.log(user_id);
+    const res = await Fetch(`/users/${user_id}`, {
+      method: "DELETE",
+    });
+    // const data = await res.json();
+    console.log(res);
+    if (res?.detail) {
+      throw new Error("Failed to DELETE profile");
+    }
+    return res as { message: string };
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to DELETE profile");
+  }
 }

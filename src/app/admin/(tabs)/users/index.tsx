@@ -10,7 +10,7 @@ import { RefreshControl } from "react-native";
 import { FilterComponent } from "@/components/admin/shared/FilterComponent";
 import AdminCreateButton from "@/components/admin/shared/AdminCreateButton";
 import { User2, UserCog2, UserSearch } from "lucide-react-native";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { getUsers } from "@/actions/user";
 
 export default function Users() {

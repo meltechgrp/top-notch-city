@@ -6,28 +6,27 @@ const MAPS_API_KEY = process.env.EXPO_PUBLIC_ANDROID_MAPS_API_KEY;
 
 export async function Fetch(url: string, options: AxiosRequestConfig = {}) {
   try {
-	const authToken = getAuthToken();
-  const deviceId = getUniqueIdSync();
-  const res = await axios({
-    baseURL: `${config.origin}/api`,
-    url,
-    method: options.method || "GET",
-    headers: {
-      ...(authToken && { Authorization: `Bearer ${authToken}` }),
-      "X-DID": deviceId,
-      ...options.headers,
-    },
-    data: options.data,
-  });
-  console.log("Fetch URL:", url, "Response:", res.status, res.statusText);
-  if (res.status >= 400) {
-    throw new Error(`HTTP error! status: ${res.status}`);
-  }
-  return res.data;
+    const authToken = getAuthToken();
+    const deviceId = getUniqueIdSync();
+    const res = await axios({
+      baseURL: `${config.origin}/api`,
+      url,
+      method: options.method || "GET",
+      headers: {
+        ...(authToken && { Authorization: `Bearer ${authToken}` }),
+        "X-DID": deviceId,
+        ...options.headers,
+      },
+      data: options.data,
+    });
+    console.log("Fetch URL:", url, "Response:", res.status, res.statusText);
+    if (res.status >= 400) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+    return res.data;
   } catch (error) {
-	console.error("Fetch error:", error);
-	throw error;
-	
+    console.error("Fetch error:", error);
+    throw error;
   }
 }
 

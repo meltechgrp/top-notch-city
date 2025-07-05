@@ -11,11 +11,12 @@ import {
   Box,
   Icon,
   Pressable,
+  useResolvedTheme,
 } from "@/components/ui";
 
 import React, { useCallback, useEffect, useState } from "react";
 import { hapticFeed } from "@/components/HapticTab";
-import { loginWithSocial } from "@/actions/auth";
+import { authLogin, loginWithSocial } from "@/actions/auth";
 import { showSnackbar } from "@/lib/utils";
 import { saveAuthToken } from "@/lib/secureStore";
 import { useStore } from "@/store";
@@ -26,6 +27,7 @@ import FacebookIcon from "@/components/icons/FacebookIcon";
 import BottomSheet from "../../shared/BottomSheet";
 import { Divider } from "@/components/ui/divider";
 import { CustomInput } from "@/components/custom/CustomInput";
+import { openSignUpModal } from "@/components/globals/AuthModals";
 
 export default function SignInBottomSheet({
   visible,
@@ -33,8 +35,12 @@ export default function SignInBottomSheet({
   onLoginSuccess,
 }: AuthModalProps) {
   const [isAppleAvailable, setIsAppleAvailable] = useState(false);
+  const theme = useResolvedTheme();
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState("");
+  const [form, setForm] = React.useState({
+    email: "",
+    password: "",
+  });
 
   const [googleRequest, googleResponse, googlePromptAsync] =
     Google.useAuthRequest({
@@ -48,17 +54,39 @@ export default function SignInBottomSheet({
 
   WebBrowser.maybeCompleteAuthSession();
   // 🔑 Basic email sign-in
-  const handleEmailSubmit = useCallback(async () => {
+  const handleSubmit = async () => {
     hapticFeed();
     setLoading(true);
     try {
-      await handleSocialLogin({ email });
+      const state = await authLogin(form);
+      if (state?.formError) {
+        showSnackbar({
+          message: state.formError,
+          type: "error",
+        });
+      } else if (state?.data) {
+        const { email, message, access_token } = state.data as {
+          access_token: string;
+          message: string;
+          email: string;
+        };
+        if (access_token) {
+          saveAuthToken(access_token);
+        }
+        useStore.setState((s) => ({
+          ...s,
+          hasAuth: true,
+        }));
+        eventBus.dispatchEvent("REFRESH_PROFILE", null);
+        onDismiss?.();
+        onLoginSuccess?.();
+      }
     } catch (error) {
       console.error(error);
     } finally {
       setLoading(false);
     }
-  }, [email]);
+  };
 
   // ✅ Social handler (common logic)
   const handleSocialLogin = useCallback(
@@ -133,7 +161,7 @@ export default function SignInBottomSheet({
       console.log("Apple credential:", credential);
       if (!credential.email) {
         showSnackbar({
-          message: "Error occuried. Please try again.",
+          message: "We are unable to get ur credentials. Please try again.",
           type: "error",
         });
         return;
@@ -164,27 +192,29 @@ export default function SignInBottomSheet({
       withHeader
       rounded={false}
       onDismiss={onDismiss}
-      title="Sign In or Sign Up"
-      snapPoint={["54%", "60%"]}
+      title="Sign In"
+      snapPoint={["80%"]}
     >
       <Box className=" gap-6 flex-1 p-6 pt-3">
         <CustomInput
           className="bg-background-muted"
-          value={email}
-          onUpdate={setEmail}
+          value={form.email}
+          onUpdate={(text) => setForm({ ...form, email: text })}
           placeholder="Email address"
         />
+        <CustomInput
+          className="bg-background-muted"
+          value={form.password}
+          onUpdate={(text) => setForm({ ...form, password: text })}
+          placeholder="Password"
+        />
 
-        <Button
-          className="w-full mt-2 gap-2"
-          size="xl"
-          onPress={handleEmailSubmit}
-        >
+        <Button className="w-full mt-2 gap-2" size="xl" onPress={handleSubmit}>
           {loading && <SpinningLoader />}
           <ButtonText>Continue</ButtonText>
         </Button>
 
-        <View className="flex-row my-3 gap-3 items-center">
+        <View className="flex-row mt-2 gap-3 items-center">
           <Divider className="flex-1" />
           <Text size="xs">OR</Text>
           <Divider className="flex-1" />
@@ -194,10 +224,12 @@ export default function SignInBottomSheet({
           {isAppleAvailable && (
             <AppleAuthentication.AppleAuthenticationButton
               buttonType={
-                AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN
+                AppleAuthentication.AppleAuthenticationButtonType.CONTINUE
               }
               buttonStyle={
-                AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
+                theme == "dark"
+                  ? AppleAuthentication.AppleAuthenticationButtonStyle.WHITE
+                  : AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
               }
               cornerRadius={5}
               style={{ width: "100%", height: 44, marginTop: 16 }}
@@ -220,11 +252,17 @@ export default function SignInBottomSheet({
             <ButtonText>Continue with Facebook</ButtonText>
           </Button>
 
-          <Pressable both onPress={onDismiss} className="mx-auto mt-4">
-            <Text underline size="lg">
-              Skip
-            </Text>
-          </Pressable>
+          <View className=" flex-row justify-center gap-2 mt-4">
+            <Text>Don’t have an account?</Text>
+            <Pressable
+              onPress={() => {
+                onDismiss?.();
+                openSignUpModal({ visible: true });
+              }}
+            >
+              <Text className=" text-primary font-medium">Sign Up</Text>
+            </Pressable>
+          </View>
         </View>
       </Box>
     </BottomSheet>

@@ -51,7 +51,6 @@
 		"@gorhom/bottom-sheet": "^5.1.4",
 		"@legendapp/motion": "^2.4.0",
 		"@microsoft/react-native-clarity": "^4.3.0",
-		"@openspacelabs/react-native-zoomable-view": "^2.4.2",
 		"@react-native-async-storage/async-storage": "2.1.2",
 		"@react-native-community/hooks": "^100.1.0",
 		"@react-native-voice/voice": "^3.2.4",

@@ -1,44 +1,42 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation } from "@tanstack/react-query";
 import {
-	authLogin,
-	authSignup,
-	authOptVerify,
-	sendPasswordReset,
-	resendVerificationCode,
-	resetPassword,
-} from '@/actions/auth';
+  authLogin,
+  authSignup,
+  authOptVerify,
+  resendVerificationCode,
+} from "@/actions/auth";
 
 export function useAuthMutations() {
-	const loginMutation = useMutation({
-		mutationFn: authLogin,
-	});
+  const loginMutation = useMutation({
+    mutationFn: authLogin,
+  });
 
-	const signupMutation = useMutation({
-		mutationFn: authSignup,
-	});
+  const signupMutation = useMutation({
+    mutationFn: authSignup,
+  });
 
-	const otpVerifyMutation = useMutation({
-		mutationFn: authOptVerify,
-	});
+  const otpVerifyMutation = useMutation({
+    mutationFn: authOptVerify,
+  });
 
-	const resendVerificationMutation = useMutation({
-		mutationFn: resendVerificationCode,
-	});
+  const resendVerificationMutation = useMutation({
+    mutationFn: resendVerificationCode,
+  });
 
-	const sendPasswordResetMutation = useMutation({
-		mutationFn: sendPasswordReset,
-	});
+  // const sendPasswordResetMutation = useMutation({
+  // 	mutationFn: sendPasswordReset,
+  // });
 
-	const resetPasswordMutation = useMutation({
-		mutationFn: resetPassword,
-	});
+  // const resetPasswordMutation = useMutation({
+  // 	mutationFn: resetPassword,
+  // });
 
-	return {
-		loginMutation,
-		signupMutation,
-		otpVerifyMutation,
-		resendVerificationMutation,
-		sendPasswordResetMutation,
-		resetPasswordMutation,
-	};
+  return {
+    loginMutation,
+    signupMutation,
+    otpVerifyMutation,
+    resendVerificationMutation,
+    // sendPasswordResetMutation,
+    // resetPasswordMutation,
+  };
 }

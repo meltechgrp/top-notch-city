@@ -1,85 +1,189 @@
 import {
-	AuthLoginInput,
-	validateEmail,
-} from '@/lib/schema';
-import { Fetch } from '../utills';
+  AuthLoginInput,
+  AuthLoginSchema,
+  AuthSignupInput,
+  AuthSignupSchema,
+  validateEmail,
+} from "@/lib/schema";
+import { Fetch } from "../utills";
+import config from "@/config";
 
 export async function authOptVerify({
-	otp,
-	email,
+  otp,
+  email,
 }: {
-	otp: string;
-	email: string;
+  otp: string;
+  email: string;
 }): Promise<ActionResponse<AuthLoginInput>> {
-	try {
-		const data = await Fetch(`/verify-email?code=${otp}&email=${email}`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		});
-		if (data?.detail) {
-			return {
-				formError: 'Please verify your OTP code',
-			};
-		}
-		if (data?.message == 'Email verified successfully.') {
-			return {
-				data: data.message,
-			};
-		} else {
-			return {
-				formError: data.message ?? 'Please verify your OTP code',
-			};
-		}
-	} catch (error) {
-		console.log(error);
-		return {
-			formError: 'Something went wrong try ',
-		};
-	}
+  try {
+    const data = await Fetch(`/verify-email?code=${otp}&email=${email}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (data?.detail) {
+      return {
+        formError: "Please verify your OTP code",
+      };
+    }
+    if (data?.message == "Email verified successfully.") {
+      return {
+        data: data.message,
+      };
+    } else {
+      return {
+        formError: data.message ?? "Please verify your OTP code",
+      };
+    }
+  } catch (error) {
+    console.log(error);
+    return {
+      formError: "Something went wrong try ",
+    };
+  }
 }
 
 export async function resendVerificationCode({ email }: { email: string }) {
-	const data = await Fetch('/resend-verification-code', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-		},
-		data: JSON.stringify({ email }),
-	});
-	if (data?.detail) {
-		throw new Error('Error occurried');
-	}
-	return true;
+  const data = await Fetch("/resend-verification-code", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: JSON.stringify({ email }),
+  });
+  if (data?.detail) {
+    throw new Error("Error occurried");
+  }
+  return true;
 }
 export async function loginWithSocial({
-	email,
-	first_name,
-	last_name,
+  email,
+  first_name,
+  last_name,
 }: {
-	email: string;
-	last_name?: string;
-	first_name?: string;
+  email: string;
+  last_name?: string;
+  first_name?: string;
 }) {
-	try {
-		const parsed = validateEmail.safeParse(email);
-		if (!parsed.success) {
-			 throw new Error('Please enter a valid email address');
-		}
-		const data = await Fetch('/social-login', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			data: JSON.stringify({ email, last_name, first_name }),
-		});
-		if (data?.detail) {
-			throw new Error('Please check your details');
-		}
-		return data;
-	} catch (error) {
-		console.log(error);
-		throw new Error('Failed to login');
-	}
+  try {
+    const parsed = validateEmail.safeParse(email);
+    if (!parsed.success) {
+      throw new Error("Please enter a valid email address");
+    }
+    const data = await Fetch("/social-login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: JSON.stringify({ email, last_name, first_name }),
+    });
+    if (data?.detail) {
+      throw new Error("Please check your details");
+    }
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to login");
+  }
+}
+
+export async function authSignup(
+  form: AuthSignupInput
+): Promise<ActionResponse<AuthSignupInput>> {
+  try {
+    const parsed = AuthSignupSchema.safeParse(form);
+    if (!parsed.success) {
+      const err = parsed.error.flatten();
+      return {
+        fieldError: {
+          email: err.fieldErrors.email?.[0],
+          password: err.fieldErrors.password?.[0],
+          first_name: err.fieldErrors.first_name?.[0],
+          last_name: err.fieldErrors.last_name?.[0],
+          comfirmPassword: err.fieldErrors.comfirmPassword?.[0],
+        },
+      };
+    }
+    const { email, password, comfirmPassword, first_name, last_name } = form;
+    if (password !== comfirmPassword) {
+      return {
+        formError: "Passwords do not match!",
+      };
+    }
+    const res = await fetch(`${config.origin}/api/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        first_name,
+        last_name,
+        password,
+      }),
+    });
+    const data = await res.json();
+    console.log(data);
+    if (data.detail) {
+      data.detail?.map((item: any) => {
+        console.log(item);
+      });
+      return {
+        formError: "Please check your details",
+      };
+    } else {
+      return {
+        data: {
+          message: data?.message ?? "Registration successful",
+          access_token: data?.access_token,
+        },
+      };
+    }
+  } catch (error) {
+    console.log(error);
+    return {
+      formError: "Something went wrong try ",
+    };
+  }
+}
+
+export async function authLogin(
+  form: AuthLoginInput
+): Promise<ActionResponse<AuthLoginInput>> {
+  try {
+    const parsed = AuthLoginSchema.safeParse(form);
+    if (!parsed.success) {
+      const err = parsed.error.flatten().fieldErrors;
+      return {
+        formError: err.email?.[0] || err.password?.[0],
+      };
+    }
+    const data = await fetch(`${config.origin}/api/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(form),
+    });
+    const res = await data.json();
+    console.log(res);
+    if (res.detail) {
+      return {
+        formError: "Incorrect Email or Password",
+      };
+    } else {
+      return {
+        data: {
+          message: res?.message ?? "Registration successful",
+          access_token: res?.access_token,
+        },
+      };
+    }
+  } catch (error) {
+    console.log(error, "here");
+    return {
+      formError: "Something went wrong try ",
+    };
+  }
 }

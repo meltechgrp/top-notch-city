@@ -18,6 +18,7 @@ export const validatePhone = z.string().min(10, {
 });
 export const AuthLoginSchema = z.object({
   email: validateEmail,
+  password: validatePassword,
 });
 export type AuthLoginInput = z.infer<typeof AuthLoginSchema>;
 
