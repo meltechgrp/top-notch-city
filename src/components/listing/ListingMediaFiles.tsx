@@ -1,5 +1,5 @@
 import { Avatar, Box, Heading, Icon, Text, View } from "@/components/ui";
-import { cn, compressImage } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { Images } from "lucide-react-native";
 import { useState } from "react";
 import { TouchableOpacity } from "react-native";

@@ -1,122 +1,105 @@
-import { Fetch } from '@/actions/utills';
-import GlobalFullScreenLoader from '@/components/loaders/GlobalFullScreenLoader';
-import SnackBar from '@/components/shared/SnackBar';
-import eventBus from '@/lib/eventBus';
-import { getAuthToken, removeAuthToken } from '@/lib/secureStore';
-import { useStore, useTempStore } from '@/store';
-import { router } from 'expo-router';
-import React, { useEffect } from 'react';
-import PinAuthorizationtBottomSheet from '../modals/auth/PinAuthorizationtBottomSheet';
-import AuthModals from '../globals/AuthModals';
+import { Fetch } from "@/actions/utills";
+import GlobalFullScreenLoader from "@/components/loaders/GlobalFullScreenLoader";
+import SnackBar from "@/components/shared/SnackBar";
+import eventBus from "@/lib/eventBus";
+import { getAuthToken, removeAuthToken } from "@/lib/secureStore";
+import { useStore, useTempStore } from "@/store";
+import { router } from "expo-router";
+import React, { useEffect } from "react";
+import AuthModals from "../globals/AuthModals";
 
 export default function GlobalManager() {
-	const fullScreenLoading = useTempStore((s) => s.fullScreenLoading);
-	const setMe = useStore((s) => s.updateProfile);
-	const updateFullScreenLoading = useTempStore(
-		(s) => s.updateFullScreenLoading
-	);
-  const pinVerifyRequest = useTempStore((s) => s.pinVerifyRequest)
-  const setPinVerifyRequest = useTempStore((s) => s.setPinVerifyRequest)
-	const hasAuth = useStore((s) => s.hasAuth);
-	const [snackBars, setSnackBars] = React.useState<Array<SnackBarOption>>([]);
-	const [activeSnackBar, setActiveSnackBar] =
-		React.useState<SnackBarOption | null>(null);
+  const fullScreenLoading = useTempStore((s) => s.fullScreenLoading);
+  const setMe = useStore((s) => s.updateProfile);
+  const updateFullScreenLoading = useTempStore(
+    (s) => s.updateFullScreenLoading
+  );
+  const pinVerifyRequest = useTempStore((s) => s.pinVerifyRequest);
+  const setPinVerifyRequest = useTempStore((s) => s.setPinVerifyRequest);
+  const hasAuth = useStore((s) => s.hasAuth);
+  const [snackBars, setSnackBars] = React.useState<Array<SnackBarOption>>([]);
+  const [activeSnackBar, setActiveSnackBar] =
+    React.useState<SnackBarOption | null>(null);
 
-	async function unsetAuthToken() {
-		useStore.getState().resetStore();
-		useTempStore.getState().resetStore();
-		removeAuthToken();
-		router.replace({
-			pathname: '/(auth)/signin',
-			params: {
-				allowBack: 'false',
-			},
-		});
-	}
-	async function updateMe() {
-		try {
-			const res = await Fetch('/users/me', {});
-			if (res?.detail?.includes('expired')) {
-				return await unsetAuthToken();
-			}
-			if (!res?.detail) {
-				setMe(res);
-			}
-		} catch (err: any) {
-			if (err?.detail?.includes('expired')) {
-				console.log('expired');
-				return await unsetAuthToken();
-			}
-		}
-	}
+  async function unsetAuthToken() {
+    useStore.getState().resetStore();
+    useTempStore.getState().resetStore();
+    removeAuthToken();
+    router.replace({
+      pathname: "/home",
+      params: {
+        allowBack: "false",
+      },
+    });
+  }
+  async function updateMe() {
+    try {
+      const res = await Fetch("/users/me", {});
+      if (res?.detail?.includes("expired")) {
+        return await unsetAuthToken();
+      }
+      if (!res?.detail) {
+        setMe(res);
+      }
+    } catch (err: any) {
+      if (err?.detail?.includes("expired")) {
+        console.log("expired");
+        return await unsetAuthToken();
+      }
+    }
+  }
 
-	function addSnackBar(snackBar: SnackBarOption) {
-		if (activeSnackBar) {
-			setSnackBars([snackBar, ...snackBars]);
-		} else {
-			setActiveSnackBar(snackBar);
-		}
-	}
-	function removeSnackBar() {
-		const newSnackBar = snackBars[0];
-		setSnackBars((v) => (v.length > 1 ? v.slice(1) : []));
-		setActiveSnackBar(null);
-		if (newSnackBar) {
-			setActiveSnackBar(newSnackBar);
-		}
-	}
+  function addSnackBar(snackBar: SnackBarOption) {
+    if (activeSnackBar) {
+      setSnackBars([snackBar, ...snackBars]);
+    } else {
+      setActiveSnackBar(snackBar);
+    }
+  }
+  function removeSnackBar() {
+    const newSnackBar = snackBars[0];
+    setSnackBars((v) => (v.length > 1 ? v.slice(1) : []));
+    setActiveSnackBar(null);
+    if (newSnackBar) {
+      setActiveSnackBar(newSnackBar);
+    }
+  }
 
-	React.useEffect(() => {
-		eventBus.addEventListener('addSnackBar', addSnackBar);
-		eventBus.addEventListener('REFRESH_PROFILE', updateMe);
+  React.useEffect(() => {
+    eventBus.addEventListener("addSnackBar", addSnackBar);
+    eventBus.addEventListener("REFRESH_PROFILE", updateMe);
 
-		return () => {
-			eventBus.removeEventListener('addSnackBar', addSnackBar);
-			eventBus.removeEventListener('REFRESH_PROFILE', updateMe);
-		};
-	}, []);
-	useEffect(() => {
-		if (hasAuth && !getAuthToken()) {
-			unsetAuthToken();
-		}
-	}, [hasAuth]);
-	useEffect(() => {
-		updateMe();
-	}, []);
-	return (
-		<>
-			{!!activeSnackBar && (
-				<SnackBar
-					type={activeSnackBar.type}
-					onClose={removeSnackBar}
-					text={activeSnackBar.message}
-					duration={activeSnackBar.duration}
-					icon={activeSnackBar.icon}
-					backdrop={activeSnackBar.backdrop}
-				/>
-			)}
-			<GlobalFullScreenLoader
-				visible={fullScreenLoading}
-				onDismiss={() => updateFullScreenLoading(false)}
-				dismissOnBack={false}
-			/>
-
-      {!!pinVerifyRequest && (
-        <PinAuthorizationtBottomSheet
-          visible={!!pinVerifyRequest}
-          onDismiss={() => setPinVerifyRequest(undefined)}
-          onAuthorize={() => {
-            pinVerifyRequest?.callback()
-            setPinVerifyRequest(undefined)
-          }}
-          title="Enter your PIN to proceed"
-          description={
-            pinVerifyRequest?.description ||
-            'Enter your 4-digit PIN code to release payment'
-          }
+    return () => {
+      eventBus.removeEventListener("addSnackBar", addSnackBar);
+      eventBus.removeEventListener("REFRESH_PROFILE", updateMe);
+    };
+  }, []);
+  useEffect(() => {
+    if (hasAuth && !getAuthToken()) {
+      unsetAuthToken();
+    }
+  }, [hasAuth]);
+  useEffect(() => {
+    updateMe();
+  }, []);
+  return (
+    <>
+      {!!activeSnackBar && (
+        <SnackBar
+          type={activeSnackBar.type}
+          onClose={removeSnackBar}
+          text={activeSnackBar.message}
+          duration={activeSnackBar.duration}
+          icon={activeSnackBar.icon}
+          backdrop={activeSnackBar.backdrop}
         />
       )}
-	  <AuthModals />
-		</>
-	);
+      <GlobalFullScreenLoader
+        visible={fullScreenLoading}
+        onDismiss={() => updateFullScreenLoading(false)}
+        dismissOnBack={false}
+      />
+      <AuthModals />
+    </>
+  );
 }
