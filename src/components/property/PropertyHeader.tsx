@@ -1,23 +1,39 @@
-import { Icon, Pressable, View } from "@/components/ui";
-import { PropertyLikeButton } from "./PropertyLikeButton";
-import { PropertyWishListButton } from "./PropertyWishListButton";
-import { PropertyShareButton } from "./PropertyShareButton";
+import { Icon, Pressable, useResolvedTheme, View } from "@/components/ui";
+import PropertyLikeButton from "./PropertyLikeButton";
+import PropertyWishListButton from "./PropertyWishListButton";
+import PropertyShareButton from "./PropertyShareButton";
 import { usePropertyActions } from "@/hooks/usePropertyActions";
 import { router } from "expo-router";
 import { Edit } from "lucide-react-native";
+import { cn } from "@/lib/utils";
 
 interface Props {
   property: Property;
+  hasScrolledToDetails?: boolean;
 }
 
-export default function PropertyHeader({ property }: Props) {
+export default function PropertyHeader({
+  property,
+  hasScrolledToDetails,
+}: Props) {
+  const theme = useResolvedTheme();
   const { isAdmin, isOwner } = usePropertyActions({ property });
   return (
     <>
       {isAdmin && (
         <View className="pr-4 flex-row items-center gap-4">
-          <PropertyShareButton property={property} />
-          <PropertyLikeButton property={property} />
+          <PropertyShareButton
+            hasScrolledToDetails={hasScrolledToDetails}
+            property={property}
+          />
+          <PropertyLikeButton
+            hasScrolledToDetails={hasScrolledToDetails}
+            property={property}
+          />
+          <PropertyWishListButton
+            hasScrolledToDetails={hasScrolledToDetails}
+            property={property}
+          />
         </View>
       )}
       {!isAdmin && isOwner && (
@@ -37,7 +53,14 @@ export default function PropertyHeader({ property }: Props) {
               "px-4 h-14 flex-row border-outline border-b justify-between rounded-xl items-center"
             }
           >
-            <Icon size="xl" as={Edit} />
+            <Icon
+              size="xl"
+              as={Edit}
+              className={cn(
+                " text-white w-7 h-7",
+                hasScrolledToDetails && theme == "light" && "text-black"
+              )}
+            />
           </Pressable>
         </View>
       )}

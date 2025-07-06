@@ -1,4 +1,4 @@
-import { Box, Heading, HStack, Icon, Image, Text, View } from "@/components/ui";
+import { Box, Heading, Icon, Image, Text, View } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import { useTempStore } from "@/store";
 import { useLayout } from "@react-native-community/hooks";
@@ -31,7 +31,7 @@ export default function ListingPurpose() {
             listing.purpose below, and we’ll guide you through a seamless
             process tailored to your needs.
           </Text>
-          <HStack className="py-4 gap-5">
+          <View className="py-4 flex-row gap-5">
             <TouchableOpacity
               className="flex-1"
               onPress={() => {
@@ -92,7 +92,7 @@ export default function ListingPurpose() {
                 </Text>
               </View>
             </TouchableOpacity>
-          </HStack>
+          </View>
         </View>
       </Box>
     </>

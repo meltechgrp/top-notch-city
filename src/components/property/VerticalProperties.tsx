@@ -103,6 +103,7 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
               },
             });
           }}
+          isList={true}
           showStatus={showStatus}
           isHorizontal={isHorizontal}
           data={item}
@@ -119,6 +120,7 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
       }
     },
   });
+
   return (
     <FullHeightLoaderWrapper loading={isLoading || false}>
       <AnimatedFlashList

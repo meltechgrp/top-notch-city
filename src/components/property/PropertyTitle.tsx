@@ -14,7 +14,7 @@ export function PropertyTitle({
     return (
       <View className="mb-2 gap-1">
         <View className="bg-gray-500/80 rounded-md self-start py-1 px-2">
-          <Text className={cn("text-base", smallView && "text-sm")}>
+          <Text className={cn("text-base text-white", smallView && "text-sm")}>
             To Rent
           </Text>
         </View>
@@ -32,7 +32,7 @@ export function PropertyTitle({
     return (
       <View className="gap-1">
         <View className="bg-gray-500/80 rounded-md self-start py-1 px-2">
-          <Text className={cn("text-base", smallView && "text-sm")}>
+          <Text className={cn("text-base text-white", smallView && "text-sm")}>
             For Sale
           </Text>
         </View>

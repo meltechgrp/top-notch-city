@@ -1,8 +1,6 @@
-import { format, isThisYear, isToday, subDays, subMonths } from "date-fns";
-import { Linking } from "react-native";
+import { format, subDays, subMonths } from "date-fns";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { ImageManipulator, SaveFormat } from "expo-image-manipulator";
 import eventBus from "./eventBus";
 import { useEffect, useState } from "react";
 
