@@ -1,5 +1,4 @@
 import { cn, composeFullAddress, useTimeAgo } from "@/lib/utils";
-import { formatMoney } from "@/lib/utils";
 import { StyleProp, View, ViewStyle } from "react-native";
 import { Icon, Text, Pressable } from "../ui";
 import { MapPin } from "lucide-react-native";

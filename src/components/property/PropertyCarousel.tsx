@@ -11,7 +11,7 @@ import { useSharedValue } from "react-native-reanimated";
 import { Dimensions } from "react-native";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
-const INTERACTIVE_ZONE_WIDTH = SCREEN_WIDTH / 2.2;
+const INTERACTIVE_ZONE_WIDTH = SCREEN_WIDTH / 2.8;
 
 type Props = {
   media: Media[];
@@ -74,7 +74,7 @@ function PropertyCarousel({
       {/* center zone */}
       {isList && (
         <View
-          className="absolute left-1/2 h-full z-10"
+          className="absolute left-1/2 bg-background/0 h-full z-20"
           style={{
             width: INTERACTIVE_ZONE_WIDTH,
             transform: [{ translateX: -(INTERACTIVE_ZONE_WIDTH / 2) }],

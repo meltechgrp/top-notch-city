@@ -60,7 +60,7 @@ const NearbyCategory = ({
   };
   return (
     <View className="flex-1 py-2">
-      <ScrollView className="flex-1 pb-12">
+      <ScrollView scrollEnabled={false} className="flex-1 pb-12">
         <View className="flex-1 gap-2">
           {places.map((item, i) => (
             <View

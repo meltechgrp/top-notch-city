@@ -27,7 +27,6 @@ import FacebookIcon from "@/components/icons/FacebookIcon";
 import BottomSheet from "../../shared/BottomSheet";
 import { Divider } from "@/components/ui/divider";
 import { CustomInput } from "@/components/custom/CustomInput";
-import { openSignUpModal } from "@/components/globals/AuthModals";
 
 export default function SignInBottomSheet({
   visible,
@@ -257,7 +256,7 @@ export default function SignInBottomSheet({
             <Pressable
               onPress={() => {
                 onDismiss?.();
-                openSignUpModal({ visible: true });
+                eventBus.dispatchEvent("openSignUpModal", { visible: true });
               }}
             >
               <Text className=" text-primary font-medium">Sign Up</Text>
