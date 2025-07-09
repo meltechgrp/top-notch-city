@@ -1,4 +1,4 @@
-import { Listing, UploadedFile } from "@/store";
+import { Listing } from "@/store";
 import { Fetch } from "../utills";
 import { getAuthToken } from "@/lib/secureStore";
 import config from "@/config";

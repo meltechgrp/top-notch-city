@@ -14,7 +14,6 @@ export * from "./input";
 export * from "./pressable";
 export * from "./radio";
 export * from "./select";
-export * from "./slider";
 export * from "./switch";
 export * from "./text";
 export * from "./view";

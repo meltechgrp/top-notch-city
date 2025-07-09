@@ -1,8 +1,6 @@
-import { cn, FindAmenity } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { formatMoney } from "@/lib/utils";
-import capitalize from "lodash-es/capitalize";
-import { Heading, Icon, Image, Pressable, Text, View } from "../ui";
-import { Bath, Bed } from "lucide-react-native";
+import { Image, Pressable, Text, View } from "../ui";
 import { useRouter } from "expo-router";
 import { generateMediaUrl } from "@/lib/api";
 import { PropertyTitle } from "./PropertyTitle";
@@ -37,6 +35,7 @@ export default function HorizontalListItem(props: Props) {
         <Image
           source={{ uri: generateMediaUrl(media[0]).uri }}
           className="h-full w-32 rounded-xl"
+          style={{ width: 128, borderRadius: 8 }}
           alt={title}
         />
         <View className=" w-[120px] gap-1">

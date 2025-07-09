@@ -20,25 +20,13 @@ export default function PropertyHeader({
   const { isAdmin, isOwner } = usePropertyActions({ property });
   return (
     <>
-      {isAdmin && (
-        <View className="pr-4 flex-row items-center gap-4">
-          <PropertyShareButton
-            hasScrolledToDetails={hasScrolledToDetails}
-            property={property}
-          />
+      {isAdmin || isOwner ? (
+        <View className="pr-4 flex-row items-center gap-2">
+          <PropertyShareButton property={property} />
           <PropertyLikeButton
             hasScrolledToDetails={hasScrolledToDetails}
             property={property}
           />
-          <PropertyWishListButton
-            hasScrolledToDetails={hasScrolledToDetails}
-            property={property}
-          />
-        </View>
-      )}
-      {!isAdmin && isOwner && (
-        <View className="pr-4 flex-row items-center gap-2">
-          <PropertyShareButton property={property} />
           <Pressable
             both
             onPress={() =>
@@ -63,12 +51,20 @@ export default function PropertyHeader({
             />
           </Pressable>
         </View>
-      )}
-      {!isAdmin && !isOwner && (
+      ) : (
         <View className="pr-4 flex-row items-center gap-4">
-          <PropertyShareButton property={property} />
-          <PropertyLikeButton property={property} />
-          <PropertyWishListButton property={property} />
+          <PropertyShareButton
+            hasScrolledToDetails={hasScrolledToDetails}
+            property={property}
+          />
+          <PropertyLikeButton
+            hasScrolledToDetails={hasScrolledToDetails}
+            property={property}
+          />
+          <PropertyWishListButton
+            hasScrolledToDetails={hasScrolledToDetails}
+            property={property}
+          />
         </View>
       )}
     </>

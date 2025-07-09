@@ -2,7 +2,6 @@ import withRenderVisible from "@/components/shared/withRenderOpen";
 import { FlatList, ImageBackground, Pressable, View } from "react-native";
 import BottomSheet from "../shared/BottomSheet";
 import { Button, ButtonText, Icon, Text } from "../ui";
-import { UploadedFile } from "@/store";
 import * as ImagePicker from "expo-image-picker";
 import { cn, showSnackbar } from "@/lib/utils";
 import { Camera, Images, MoreHorizontal } from "lucide-react-native";
@@ -13,7 +12,6 @@ import { useLayout } from "@react-native-community/hooks";
 import OptionsBottomSheet from "../shared/OptionsBottomSheet";
 import { useMediaCompressor } from "@/hooks/useMediaCompressor";
 import FullHeightLoaderWrapper from "../loaders/FullHeightLoaderWrapper";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 type Props = {
   visible: boolean;
@@ -21,9 +19,19 @@ type Props = {
   deleteFile: (id: number) => void;
   onUpdate: (data: UploadedFile[]) => void;
   photos?: UploadedFile[];
+  multiple?: boolean;
+  withDescription?: boolean;
 };
 function ListingPhotosBottomSheet(props: Props) {
-  const { visible, onDismiss, onUpdate, deleteFile, photos } = props;
+  const {
+    visible,
+    onDismiss,
+    onUpdate,
+    deleteFile,
+    photos,
+    multiple = true,
+    withDescription = true,
+  } = props;
   const [openEdit, setOpenEdit] = useState(false);
   const [selected, setSelected] = useState<number | undefined>();
   const { width, onLayout } = useLayout();
@@ -34,9 +42,9 @@ function ListingPhotosBottomSheet(props: Props) {
     setLoading(true);
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
-      selectionLimit: 15,
-      orderedSelection: true,
-      allowsMultipleSelection: true,
+      selectionLimit: multiple ? 15 : 1,
+      orderedSelection: multiple,
+      allowsMultipleSelection: multiple,
       aspect: [4, 3],
     });
     if (!result.canceled) {
@@ -45,6 +53,8 @@ function ListingPhotosBottomSheet(props: Props) {
           uri: img.uri,
         }))
       );
+    } else {
+      setLoading(false);
     }
   };
   const takeImage = async () => {
@@ -59,8 +69,9 @@ function ListingPhotosBottomSheet(props: Props) {
     let result = await ImagePicker.launchCameraAsync({
       mediaTypes: ["images"],
       cameraType: ImagePicker.CameraType.back,
-      selectionLimit: 15,
-      allowsMultipleSelection: true,
+      selectionLimit: multiple ? 15 : undefined,
+      orderedSelection: multiple,
+      allowsMultipleSelection: multiple,
       aspect: [4, 3],
     });
 
@@ -70,6 +81,8 @@ function ListingPhotosBottomSheet(props: Props) {
           uri: img.uri,
         }))
       );
+    } else {
+      setLoading(false);
     }
   };
 
@@ -122,9 +135,11 @@ function ListingPhotosBottomSheet(props: Props) {
             <Icon as={Camera} className="text-primary" />
           </Button>
         </View>
-        <Text className=" font-light text-center">
-          Select any one to be the cover photo
-        </Text>
+        {withDescription && (
+          <Text className=" font-light text-center">
+            Select any one to be the cover photo
+          </Text>
+        )}
       </View>
     ),
     [takeImage, pickImage]
@@ -176,30 +191,28 @@ function ListingPhotosBottomSheet(props: Props) {
         onLayout={onLayout}
         className="flex-1 gap-2 py-4 pb-8 bg-background"
       >
-        <SafeAreaView edges={["bottom"]} className={"flex-1"}>
-          <FullHeightLoaderWrapper loading={loading}>
-            <FlatList
-              data={photos}
-              numColumns={4}
-              contentContainerClassName=""
-              keyExtractor={(item) => item.id!}
-              ListHeaderComponent={ListHeader}
-              ListEmptyComponent={() => (
-                <MiniEmptyState title="Pick or take photos to your property" />
-              )}
-              ItemSeparatorComponent={() => <View className=" h-4" />}
-              renderItem={RenderItem}
-              keyboardShouldPersistTaps="handled"
-            />
-          </FullHeightLoaderWrapper>
-          {photos?.length && (
-            <View className=" px-4">
-              <Button className="h-12" onPress={onDismiss}>
-                <ButtonText>Continue</ButtonText>
-              </Button>
-            </View>
-          )}
-        </SafeAreaView>
+        <FullHeightLoaderWrapper loading={loading}>
+          <FlatList
+            data={photos}
+            numColumns={4}
+            contentContainerClassName=""
+            keyExtractor={(item) => item.id!}
+            ListHeaderComponent={ListHeader}
+            ListEmptyComponent={() => (
+              <MiniEmptyState title="Pick or take photos to your property" />
+            )}
+            ItemSeparatorComponent={() => <View className=" h-4" />}
+            renderItem={RenderItem}
+            keyboardShouldPersistTaps="handled"
+          />
+        </FullHeightLoaderWrapper>
+        {photos?.length && (
+          <View className=" px-4">
+            <Button className="h-12" onPress={onDismiss}>
+              <ButtonText>Continue</ButtonText>
+            </Button>
+          </View>
+        )}
       </View>
       <OptionsBottomSheet
         isOpen={openEdit}

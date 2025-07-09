@@ -20,9 +20,9 @@ export async function Fetch(url: string, options: AxiosRequestConfig = {}) {
       data: options.data,
     });
     console.log("Fetch URL:", url, "Response:", res.status, res.statusText);
-    if (res.status >= 400) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
+    // if (res.status >= 400) {
+    //   throw new Error(`HTTP error! status: ${res.status}`);
+    // }
     return res.data;
   } catch (error) {
     console.error("Fetch error:", error);

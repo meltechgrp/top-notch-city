@@ -37,8 +37,9 @@ export default function Users() {
     // Filter by role
     if (actveTab !== "all") {
       if (actveTab == "verified") filtered = filtered.filter((u) => u.verified);
-      if (actveTab == "pending") filtered = filtered.filter((u) => !u.verified);
-      else filtered = filtered.filter((u) => u.role.toLowerCase() === actveTab);
+      else if (actveTab == "pending")
+        filtered = filtered.filter((u) => !u.verified);
+      else filtered = filtered.filter((u) => u.role === actveTab);
     }
 
     // Search by name or email
@@ -61,13 +62,15 @@ export default function Users() {
     const pending = usersData.filter((user) => !user.verified).length;
     const agents = usersData.filter((user) => user.role === "agent").length;
     const admins = usersData.filter((user) => user.role === "admin").length;
+    const users = usersData.filter((user) => user.role === "user").length;
 
     return [
       { title: "all", total: all },
       { title: "pending", total: pending },
       { title: "verified", total: verified },
-      { title: "agents", total: agents },
+      { title: "agent", total: agents },
       { title: "admin", total: admins },
+      { title: "user", total: users },
     ];
   }, [usersData]);
   async function onRefresh() {

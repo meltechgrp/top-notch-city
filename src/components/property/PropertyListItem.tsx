@@ -19,12 +19,14 @@ type Props = {
   showFacilites?: boolean;
   showStatus?: boolean;
   isList?: boolean;
+  rounded?: boolean;
   isHorizontal?: boolean;
   style?: StyleProp<ViewStyle>;
   onPress: (data: Props["data"]) => void;
 };
 export default function PropertyListItem(props: Props) {
-  const { data, className, style, onPress, showStatus, isList } = props;
+  const { data, className, style, onPress, showStatus, rounded, isList } =
+    props;
   const me = useStore((s) => s.me);
   const { bannerHeight } = Layout;
   const { price, media, address, interaction, status, owner } = data;
@@ -58,6 +60,7 @@ export default function PropertyListItem(props: Props) {
         width={width || 300}
         withBackdrop={true}
         loop={true}
+        rounded={rounded}
         isList={isList}
         paginationsize={6}
         media={images.slice(0, 5)}

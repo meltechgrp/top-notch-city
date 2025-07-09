@@ -15,13 +15,13 @@ export function PropertyTitle({
       <View className="mb-2 gap-1">
         <View className="bg-gray-500/80 rounded-md self-start py-1 px-2">
           <Text className={cn("text-base text-white", smallView && "text-sm")}>
-            To Rent
+            For Rent
           </Text>
         </View>
         <Text
           className={cn(
             "text-2xl text-white font-bold",
-            smallView && "text-lg"
+            smallView && "text-sm"
           )}
         >
           {FindAmenity("Bedroom", amenities)} Bedroom {subcategory?.name}

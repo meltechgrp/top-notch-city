@@ -37,17 +37,13 @@ function ProfileEmailBottomSheet(props: Props) {
       onDismiss={onDismiss}
     >
       <View className="flex-1 gap-4 p-4 pb-8 bg-background">
-        <View className=" gap-4">
-          <View className="gap-1">
-            <CustomInput
-              title="Email Address"
-              className=" border border-outline text-typography px-4 h-12 rounded-xl"
-              value={form.email}
-              onUpdate={(val) => setForm({ ...form, email: val })}
-              placeholder="Email address"
-            />
-          </View>
-        </View>
+        <CustomInput
+          title="Email Address"
+          className=" "
+          value={form.email}
+          onUpdate={(val) => setForm({ ...form, email: val })}
+          placeholder="Email address"
+        />
         <View className="flex-row gap-4">
           <Button
             className="h-11 flex-1"

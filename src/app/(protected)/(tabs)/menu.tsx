@@ -140,13 +140,6 @@ export default function More() {
                     router.dismissTo({
                       pathname: "/admin",
                     });
-                  } else if (me?.role == "agent") {
-                    router.push({
-                      pathname: "/(protected)/agent/[agentId]",
-                      params: {
-                        agentId: me?.id,
-                      },
-                    });
                   }
                 }}
                 icon={LayoutDashboard}
@@ -230,11 +223,11 @@ export default function More() {
                     openSignInModal({
                       visible: true,
                       onLoginSuccess: () => {
-                        router.push("/agent/form");
+                        router.push("/forms/agent");
                       },
                     });
                   } else {
-                    router.push("/agent/form");
+                    router.push("/forms/agent");
                   }
                 }}
               />

@@ -22,8 +22,8 @@ export function DashboardCard({ title, total, data, icon, ...props }: Props) {
       className="flex-1 h-28 py-4 justify-between rounded-xl bg-background-muted"
     >
       <View className=" gap-4 px-4 flex-row justify-between items-center">
-        <View className=" p-2 self-start rounded-full bg-background">
-          <Icon size="md" as={icon} className="text-primary" />
+        <View className=" p-2 self-start rounded-full bg-gray-500">
+          <Icon size="xl" as={icon} className="text-typography" />
         </View>
         <Heading size="xl">{total || 0}</Heading>
       </View>

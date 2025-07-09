@@ -8,6 +8,7 @@ import {
   FormControlErrorIcon,
   FormControlErrorText,
   View,
+  Text,
 } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
@@ -54,22 +55,19 @@ export function CustomInput({
   inputClassName,
 }: Props) {
   return (
-    <FormControl
+    <View
       className={cn(
-        "py-px min-h-20 rounded-xl",
+        "py-px min-h-20 gap-2 rounded-xl",
         !title && "min-h-14",
         className
       )}
-      isInvalid={isInvalid}
-      size="lg"
-      isRequired={isRequired}
     >
       {title && (
-        <FormControlLabel>
-          <FormControlLabelText>{title}</FormControlLabelText>
-        </FormControlLabel>
+        <View>
+          <Text>{title}</Text>
+        </View>
       )}
-      <View>
+      <View className="">
         {!isBottomSheet ? (
           <Input
             size="md"
@@ -110,7 +108,7 @@ export function CustomInput({
           <BottomSheetTextInput
             className={cn(
               " border border-outline text-typography px-4 h-14 rounded-xl",
-              className
+              inputClassName
             )}
             textContentType={type}
             value={value}
@@ -133,12 +131,6 @@ export function CustomInput({
           />
         )}
       </View>
-      {errorMesssage && (
-        <FormControlError>
-          <FormControlErrorIcon as={AlertCircleIcon} />
-          <FormControlErrorText>{errorMesssage}</FormControlErrorText>
-        </FormControlError>
-      )}
-    </FormControl>
+    </View>
   );
 }

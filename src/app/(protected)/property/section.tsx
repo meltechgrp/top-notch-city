@@ -5,6 +5,8 @@ import { ListFilter } from "lucide-react-native";
 import VerticalProperties from "@/components/property/VerticalProperties";
 import { useProductQueries } from "@/tanstack/queries/useProductQueries";
 import SearchFilterBottomSheet from "@/components/modals/search/SearchFilterBottomSheet";
+import { useFilteredProperties } from "@/hooks/useFilteredProperties";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function PropertySections() {
   const { title } = useLocalSearchParams() as { title?: string };
@@ -12,11 +14,14 @@ export default function PropertySections() {
   const { data, isLoading, fetchNextPage, refetch } = useProductQueries({
     type: "all",
   });
+  const [filter, setFilter] = useState<SearchFilters>({});
 
   const properties = useMemo(
     () => data?.pages.flatMap((page) => page?.results) || [],
     [data]
   );
+
+  const filtered = useFilteredProperties(properties, filter);
   return (
     <>
       <Stack.Screen
@@ -47,19 +52,22 @@ export default function PropertySections() {
         }}
       />
       <Box className="flex-1 px-4">
-        <VerticalProperties
-          data={properties}
-          isLoading={isLoading}
-          className="pb-20"
-          refetch={refetch}
-          fetchNextPage={fetchNextPage}
-        />
+        <SafeAreaView edges={["bottom"]} className="flex-1">
+          <VerticalProperties
+            data={filtered}
+            isLoading={isLoading}
+            className="pb-20 pt-4"
+            refetch={refetch}
+            fetchNextPage={fetchNextPage}
+          />
+        </SafeAreaView>
       </Box>
       <SearchFilterBottomSheet
         show={showFilter}
         onDismiss={() => setShowFilter(false)}
-        onApply={() => {}}
-        filter={{}}
+        onApply={setFilter}
+        filter={filter}
+        properies={properties}
       />
     </>
   );

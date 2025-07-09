@@ -23,6 +23,7 @@ type Props = {
   autoPlay?: boolean;
   paginationLenght?: number;
   scrollAnimationDuration?: number;
+  rounded?: boolean;
   stackMode?: boolean;
   isOwner?: boolean;
   withPagination?: boolean;
@@ -51,6 +52,7 @@ function PropertyCarousel({
   selectedIndex,
   isOwner,
   isList = false,
+  rounded,
 }: Props) {
   const { bannerHeight } = Layout;
   const theme = useResolvedTheme();
@@ -104,6 +106,7 @@ function PropertyCarousel({
               source={props.item}
               isOwner={isOwner}
               isVisible
+              rounded={rounded}
               canPlayVideo={canPlayVideo}
               {...props}
             />

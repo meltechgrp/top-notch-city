@@ -33,7 +33,7 @@ export default function SellScreen() {
     if (isAgent) {
       router.push("/listing/add");
     } else if (isUser) {
-      router.push("/agent/form"); // Example: route to become an agent
+      router.push("/forms/agent"); // Example: route to become an agent
     }
   }
 
@@ -116,8 +116,7 @@ export default function SellScreen() {
     <>
       <Stack.Screen
         options={{
-          headerShown: false,
-          headerTransparent: true,
+          headerShown: true,
         }}
       />
       <Box onLayout={onLayout} className="flex-1">
@@ -126,12 +125,12 @@ export default function SellScreen() {
             style={{
               height: height / 2.2,
             }}
-            className="flex-1 rounded-b-3xl overflow-hidden"
+            className="flex-1 p-4 mt-4 overflow-hidden"
           >
             <Image
               source={require("@/assets/images/landing/agent.png")}
               alt="sell banner"
-              className={`object-cover object-bottom rounded-b-3xl min-h-32 w-full flex-1`}
+              className={`object-cover object-bottom rounded-3xl min-h-32 w-full flex-1`}
             />
           </View>
 

@@ -42,7 +42,6 @@ function ProfilePhoneBottomSheet(props: Props) {
             <Text size="sm" className="font-light px-2"></Text>
             <CustomInput
               title="Phone Number"
-              className=" border border-outline text-typography px-4 h-12 rounded-xl"
               value={form.phone}
               onUpdate={(val) => setForm({ ...form, phone: val })}
               placeholder="Phone Number"

@@ -27,7 +27,7 @@ export default function TopLocation({
         });
       }}
       className={cn(
-        "relative rounded-lg w-[245px] overflow-hidden h-48 flex-1",
+        "relative rounded-lg w-[165px] overflow-hidden h-32 flex-1",
         clasName
       )}
     >
@@ -38,7 +38,7 @@ export default function TopLocation({
         resizeMode="cover"
       />
       <View className="absolute inset-0 bg-black/40 to-transparent flex justify-end p-4">
-        <Text className="text-white text-2xl font-bold">{state}</Text>
+        <Text className="text-white text-xl font-bold">{state}</Text>
         <Text className="text-gray-200 text-base">
           {property_count} Properties
         </Text>

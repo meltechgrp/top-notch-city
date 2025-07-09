@@ -42,8 +42,8 @@ type Property = {
   purpose: PropertyPurpose;
   is_featured: boolean;
   duration?: number;
-  category: string | Category;
-  subcategory: string | SubCategory;
+  category: Category;
+  subcategory: SubCategory;
   address: Address;
   media: Media[];
   owner: Owner;

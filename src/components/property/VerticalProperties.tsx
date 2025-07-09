@@ -13,7 +13,7 @@ import { useRouter } from "expo-router";
 import { useAnimatedScrollHandler } from "react-native-reanimated";
 import { AnimatedFlashList } from "../shared/AnimatedFlashList";
 import FullHeightLoaderWrapper from "../loaders/FullHeightLoaderWrapper";
-import { cn } from "@/lib/utils";
+import { cn, deduplicate } from "@/lib/utils";
 
 interface Props {
   category?: string;
@@ -107,10 +107,11 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
           showStatus={showStatus}
           isHorizontal={isHorizontal}
           data={item}
+          rounded={true}
         />
       );
     },
-    []
+    [onPress, router, showStatus, isHorizontal]
   );
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -124,14 +125,13 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
   return (
     <FullHeightLoaderWrapper loading={isLoading || false}>
       <AnimatedFlashList
-        data={data}
+        data={deduplicate(data, "id")}
         renderItem={renderItem}
         scrollEnabled={scrollEnabled}
         horizontal={isHorizontal}
         refreshing={refreshing}
         showsVerticalScrollIndicator={showsVerticalScrollIndicator}
         onScroll={scrollHandler}
-        removeClippedSubviews
         className={"flex-1"}
         contentContainerClassName={cn("", className)}
         ref={scrollElRef}
@@ -148,12 +148,12 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
             <>{headerTopComponent}</>
           ) : undefined
         }
-        keyExtractor={(item: any, index) => index.toString()}
+        keyExtractor={(item: any, index) => item.id}
         estimatedItemSize={340}
         onEndReached={() => {
           if (hasNextPage && !isLoading) fetchNextPage?.();
         }}
-        onEndReachedThreshold={20}
+        onEndReachedThreshold={0.2}
         contentInsetAdjustmentBehavior="automatic"
         ListEmptyComponent={() => (
           <MiniEmptyState
@@ -161,6 +161,10 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
             title={isEmptyTitle || "No property found"}
           />
         )}
+        viewabilityConfig={{
+          itemVisiblePercentThreshold: 50,
+        }}
+        removeClippedSubviews={false}
       />
     </FullHeightLoaderWrapper>
   );

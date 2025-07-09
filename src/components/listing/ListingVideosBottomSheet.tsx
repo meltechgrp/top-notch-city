@@ -2,7 +2,6 @@ import withRenderVisible from "@/components/shared/withRenderOpen";
 import { FlatList, Pressable, View } from "react-native";
 import BottomSheet from "../shared/BottomSheet";
 import { Button, ButtonText, Icon, Text } from "../ui";
-import { UploadedFile } from "@/store";
 import * as ImagePicker from "expo-image-picker";
 import { Camera, MoreHorizontal, Video } from "lucide-react-native";
 import { uniqueId } from "lodash-es";

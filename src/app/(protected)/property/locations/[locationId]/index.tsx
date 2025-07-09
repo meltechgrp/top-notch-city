@@ -5,10 +5,12 @@ import { ListFilter } from "lucide-react-native";
 import VerticalProperties from "@/components/property/VerticalProperties";
 import { useProductQueries } from "@/tanstack/queries/useProductQueries";
 import SearchFilterBottomSheet from "@/components/modals/search/SearchFilterBottomSheet";
+import { useFilteredProperties } from "@/hooks/useFilteredProperties";
 
 export default function PropertyLocations() {
   const { locationId } = useLocalSearchParams() as { locationId?: string };
   const [showFilter, setShowFilter] = useState(false);
+  const [filter, setFilter] = useState<SearchFilters>({});
   const { data, isLoading, fetchNextPage, refetch } = useProductQueries({
     type: "state",
     state: locationId,
@@ -18,6 +20,7 @@ export default function PropertyLocations() {
     return data?.pages.flatMap((page) => page.results) ?? [];
   }, [data]);
 
+  const filtered = useFilteredProperties(propertysData, filter);
   return (
     <>
       <Stack.Screen
@@ -50,9 +53,10 @@ export default function PropertyLocations() {
       <Box className="flex-1 gap-4">
         <View className="px-4 flex-1">
           <VerticalProperties
-            data={propertysData}
+            data={filtered}
             isLoading={isLoading}
             refetch={refetch}
+            className="pt-4 pb-20"
           />
         </View>
       </Box>
@@ -60,8 +64,9 @@ export default function PropertyLocations() {
       <SearchFilterBottomSheet
         show={showFilter}
         onDismiss={() => setShowFilter(false)}
-        onApply={() => {}}
-        filter={{}}
+        onApply={setFilter}
+        filter={filter}
+        properies={propertysData}
       />
     </>
   );

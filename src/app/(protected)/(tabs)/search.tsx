@@ -12,13 +12,12 @@ import SearchFilterBottomSheet from "@/components/modals/search/SearchFilterBott
 import { useProductQueries } from "@/tanstack/queries/useProductQueries";
 import { router, useLocalSearchParams } from "expo-router";
 import { VoiceModal } from "@/components/modals/search/VoiceModal";
-import { deduplicate } from "@/lib/utils";
+import { useFilteredProperties } from "@/hooks/useFilteredProperties";
 
 const TABS = ["Map View", "List View"];
 
 export default function SearchScreen() {
-  const { search, propertyId } = useLocalSearchParams() as {
-    search?: string;
+  const { propertyId } = useLocalSearchParams() as {
     propertyId?: string;
   };
   const { height: totalHeight } = Dimensions.get("screen");
@@ -28,7 +27,8 @@ export default function SearchScreen() {
   const [locationBottomSheet, setLocationBottomSheet] = useState(false);
   const pagerRef = useRef<PagerView>(null);
   const [currentPage, setCurrentPage] = useState(0);
-  const [filter, setFilter] = useState<SearchFilters>({
+  const [filter, setFilter] = useState<SearchFilters>({});
+  const [search, setSearch] = useState<SearchFilters>({
     use_geo_location: "true",
   });
   const {
@@ -38,27 +38,25 @@ export default function SearchScreen() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useProductQueries({ type: "search", filter, enabled: false });
+  } = useProductQueries({ type: "search", filter: search, enabled: false });
 
   useEffect(() => {
     refetch();
-  }, [filter]);
-  useEffect(() => {
-    if (search) {
-      setLocationBottomSheet(true);
-      router.setParams({});
-    }
   }, [search]);
+
   const onTabChange = React.useCallback((index: number) => {
     setCurrentPage(index);
     pagerRef.current?.setPage(index);
   }, []);
+
   const properties = useMemo(() => {
     if (audioProperties?.length) {
       return audioProperties;
     }
     return data?.pages.flatMap((page) => page.results) || [];
   }, [data, audioProperties]);
+
+  const filtered = useFilteredProperties(properties, filter);
   return (
     <Box className="flex-1 relative">
       <SearchHeader
@@ -84,7 +82,7 @@ export default function SearchScreen() {
                   <SearchMapView
                     key={index}
                     height={totalHeight}
-                    properties={properties}
+                    properties={filtered}
                     propertyId={propertyId}
                   />
                 </View>
@@ -103,7 +101,7 @@ export default function SearchScreen() {
                       refetch={refetch}
                       hasNextPage={hasNextPage}
                       fetchNextPage={fetchNextPage}
-                      properties={properties}
+                      properties={filtered}
                     />
                   </SafeAreaView>
                 </View>
@@ -117,7 +115,7 @@ export default function SearchScreen() {
       <SearchLocationBottomSheet
         show={locationBottomSheet}
         onDismiss={() => setLocationBottomSheet(false)}
-        onUpdate={setFilter}
+        onUpdate={setSearch}
       />
       <VoiceModal
         visible={activateVoice}
@@ -129,6 +127,8 @@ export default function SearchScreen() {
         onDismiss={() => setShowFilter(false)}
         onApply={setFilter}
         filter={filter}
+        properies={properties}
+        showPurpose={false}
       />
     </Box>
   );

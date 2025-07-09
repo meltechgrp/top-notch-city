@@ -17,7 +17,7 @@ export function RoleSwitchPill() {
   if (role !== "agent" && role !== "admin") return null;
 
   // ✅ Allowed main tabs
-  const MAIN_TABS = ["/home", "/message", "/search", "/menu"];
+  const MAIN_TABS = ["/home", "/message", "/menu"];
 
   const isMainTab = MAIN_TABS.includes(pathname);
 

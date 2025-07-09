@@ -1,255 +1,252 @@
-import withRenderVisible from '@/components/shared/withRenderOpen';
-import { useState } from 'react';
-import { View, ScrollView, Switch } from 'react-native';
-import { Text, Pressable, Button, ButtonText } from '@/components/ui';
-import { KeyboardDismissPressable } from '@/components/shared/KeyboardDismissPressable';
-import BottomSheet from '@/components/shared/BottomSheet';
-import { cn } from '@/lib/utils';
-import CustomSelect from '@/components/custom/CustomSelect';
-import OptionsBottomSheet from '@/components/shared/OptionsBottomSheet';
-import RangePicker from '@/components/custom/RangePicker';
-import { useCategoryQueries } from '@/tanstack/queries/useCategoryQueries';
-import { Amenities } from '@/constants/Amenities';
-import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
-const now = new Date();
-
-const publishOptions = [
-	{ label: 'Any', value: 'any' },
-	{
-		label: '24 hrs',
-		value: new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString(),
-	},
-	{
-		label: '3 days',
-		value: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-	},
-	{
-		label: '7 days',
-		value: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-	},
-	{
-		label: '1 month',
-		value: new Date(new Date().setMonth(now.getMonth() - 1)).toISOString(),
-	},
-];
+import withRenderVisible from "@/components/shared/withRenderOpen";
+import { useState } from "react";
+import { View, Switch } from "react-native";
+import { Text, Button, ButtonText, Pressable, Heading } from "@/components/ui";
+import BottomSheet from "@/components/shared/BottomSheet";
+import CustomSelect from "@/components/custom/CustomSelect";
+import OptionsBottomSheet from "@/components/shared/OptionsBottomSheet";
+import { CustomSlider } from "@/components/custom/CustomSlider";
+import { useFilterOptions } from "@/hooks/useFilteredProperties";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import Platforms from "@/constants/Plaforms";
+import { cn } from "@/lib/utils";
 
 type Props = {
-	show: boolean;
-	onDismiss: () => void;
-	onApply: (data: SearchFilters) => void;
-	filter: SearchFilters;
+  show: boolean;
+  onDismiss: () => void;
+  onApply: (data: SearchFilters) => void;
+  filter: SearchFilters;
+  properies: Property[];
+  showPurpose?: boolean;
 };
 
 function SearchFilterBottomSheet({
-	show,
-	onDismiss,
-	onApply,
-	filter: initialFilter,
+  show,
+  onDismiss,
+  onApply,
+  filter: initialFilter,
+  properies,
+  showPurpose = true,
 }: Props) {
-	const [filter, setFilter] = useState({ ...initialFilter });
-	const { subcategories } = useCategoryQueries();
-	function handleApply() {
-		onApply({ ...filter, use_geo_location: filter?.state ? 'false' : 'true' });
-		onDismiss();
-	}
+  const [filter, setFilter] = useState({ ...initialFilter });
+  const {
+    minBedrooms,
+    minPrice,
+    maxBedrooms,
+    maxPrice,
+    booleanAmenities,
+    subcategories,
+    maxBathrooms,
+    minBathrooms,
+  } = useFilterOptions(properies);
+  function handleApply() {
+    onApply(filter);
+    onDismiss();
+  }
 
-	function handleReset() {
-		setFilter({
-			use_geo_location: filter?.state ? 'false' : 'true',
-		});
-		onApply({});
-	}
-	const purposes = [
-		{ label: 'Rent', value: 'rent' },
-		{ label: 'Buy', value: 'sell' },
-	];
-	return (
-		<BottomSheet
-			title="Filter"
-			withHeader
-			rounded={false}
-			withBackButton={false}
-			snapPoint={['60%', '70%']}
-			visible={show}
-			withScroll
-			onDismiss={onDismiss}>
-			<KeyboardDismissPressable>
-				<ScrollView className="flex-1">
-					<View className="flex-1 px-4 gap-4 py-5 pb-8 bg-background">
-						<View className="gap-1.5">
-							<Text className="text-sm">Listing Type</Text>
-							<CustomSelect
-								title="Listing Type"
-								withDropIcon
-								label="🤔 I'm looking to..."
-								BottomSheet={OptionsBottomSheet}
-								value={filter.purpose}
-								valueParser={(value) =>
-									purposes.find((item) => item.value == value)?.label ||
-									`🤔 I'm looking to...`
-								}
-								onChange={(val) =>
-									setFilter({ ...filter, purpose: val?.value })
-								}
-								options={purposes}
-							/>
-						</View>
-						<View className="gap-1.5">
-							<Text className="text-sm">Price range (₦)</Text>
-							<RangePicker
-								title="Price range"
-								value={filter.min_price}
-								value2={filter.max_price}
-								double
-								format
-								options={['No Min', '100000', '200000', '500000', '1000000']}
-								options2={['No Max', '100000', '200000', '500000', '1000000']}
-								onChange={(min, max) => {
-									setFilter((prev) => ({
-										...prev,
-										min_price: min,
-										max_price: max,
-									}));
-								}}
-							/>
-						</View>
-						<View className="gap-1.5">
-							<Text className="text-sm">Bedrooms</Text>
-							<RangePicker
-								title="Bedroooms"
-								value={filter.bedrooms}
-								options={['Any', '1', '2', '3', '4', '5', '6']}
-								onChange={(min) => setFilter({ ...filter, bedrooms: min })}
-							/>
-						</View>
-						<View className="gap-1.5">
-							<Text className="text-sm mb-2">Category</Text>
-							<CustomSelect
-								withDropIcon={true}
-								BottomSheet={OptionsBottomSheet}
-								value={filter.sub_category}
-								label="types"
-								placeHolder="Select a category"
-								valueParser={(value: any) => value}
-								onChange={(value) => {
-									setFilter({
-										...filter,
-										sub_category: value.value,
-									});
-								}}
-								options={subcategories.map(({ name }) => ({
-									label: name,
-									value: name?.trim(),
-								}))}
-							/>
-						</View>
+  function handleReset() {
+    setFilter({});
+    onApply({});
+    onDismiss();
+  }
 
-						<View className="gap-1.5">
-							<Text className="text-sm">Published Within</Text>
-							<BottomSheetScrollView
-								horizontal
-								showsHorizontalScrollIndicator={false}
-								contentContainerClassName="gap-x-4 px-4">
-								{publishOptions.map(({ label, value }) => {
-									const isSelected =
-										filter.createdAt === value ||
-										(label === 'Any' && !filter.createdAt);
-									return (
-										<Pressable
-											key={label}
-											onPress={() => setFilter({ ...filter, createdAt: value })}
-											className={cn(
-												'px-5 items-center justify-center h-10 bg-background-muted rounded-xl border border-outline',
-												isSelected
-													? 'bg-primary'
-													: 'bg-background-muted border-outline'
-											)}>
-											<Text
-												className={
-													filter.createdAt === value
-														? 'text-white'
-														: 'text-typography'
-												}>
-												{label}
-											</Text>
-										</Pressable>
-									);
-								})}
-							</BottomSheetScrollView>
-						</View>
+  const options = [
+    { label: "Rent", value: "rent" },
+    { label: "Buy", value: "sell" },
+  ];
+  return (
+    <BottomSheet
+      title="Filter"
+      withHeader
+      rounded={false}
+      withBackButton={false}
+      snapPoint={["70%"]}
+      visible={show}
+      withScroll={Platforms.isAndroid()}
+      onDismiss={onDismiss}
+    >
+      <View className="flex-1 relative">
+        <BottomSheetScrollView
+          className="flex-1"
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingBottom: Platforms.isIOS() ? 80 : 0, // enough space for buttons!
+          }}
+        >
+          <View className="flex-1 px-4 gap-4 py-5 pb-8 bg-background">
+            {showPurpose && (
+              <View className="gap-2">
+                <Text className="text-sm">Listing Type</Text>
+                <View className="flex-row py-0.5 h-14 rounded-xl gap-5">
+                  {options.map(({ label, value }) => (
+                    <Pressable
+                      both
+                      key={label}
+                      onPress={() => setFilter({ ...filter, purpose: value })}
+                      className={cn(
+                        "px-10 rounded-xl py-1 bg-background-muted flex-row gap-1 items-center",
+                        filter.purpose === value && "bg-primary"
+                      )}
+                    >
+                      <Heading
+                        className={cn(
+                          "text-base",
+                          filter.purpose === value && "text-white"
+                        )}
+                      >
+                        {label}
+                      </Heading>
+                    </Pressable>
+                  ))}
+                </View>
+              </View>
+            )}
+            <View className="gap-1">
+              <Text className="text-base">Price range (₦)</Text>
+              <CustomSlider
+                onValueChange={(max_price) =>
+                  setFilter({ ...filter, max_price: max_price.toString() })
+                }
+                progress={Number(filter.max_price || 0)}
+                minimumValue={minPrice}
+                maximumValue={maxPrice > 0 ? maxPrice : 1000000}
+                steps={10}
+                isMoney
+              />
+            </View>
+            <View className="gap-1">
+              <Text className="text-base">Bedrooms</Text>
+              <CustomSlider
+                onValueChange={(min) =>
+                  setFilter({ ...filter, bedrooms: min.toString() })
+                }
+                progress={Number(filter.bedrooms || 0)}
+                minimumValue={minBedrooms}
+                maximumValue={maxBedrooms > 0 ? maxBedrooms : 10}
+              />
+            </View>
+            <View className="gap-1">
+              <Text className="text-base">Bathrooms</Text>
+              <CustomSlider
+                onValueChange={(min) =>
+                  setFilter({ ...filter, bathrooms: min.toString() })
+                }
+                progress={Number(filter.bathrooms || 0)}
+                minimumValue={minBathrooms}
+                maximumValue={maxBathrooms > 0 ? maxBathrooms : 10}
+              />
+            </View>
+            {subcategories?.length > 0 && (
+              <View className="gap-1.5">
+                <Text className="text-base mb-2">Category</Text>
+                <CustomSelect
+                  withDropIcon={true}
+                  BottomSheet={OptionsBottomSheet}
+                  value={filter.sub_category}
+                  label="types"
+                  placeHolder="Select a category"
+                  valueParser={(value: any) => value}
+                  onChange={(value) => {
+                    setFilter({
+                      ...filter,
+                      sub_category: value.value,
+                    });
+                  }}
+                  options={subcategories.map((name) => ({
+                    label: name,
+                    value: name?.trim(),
+                  }))}
+                />
+              </View>
+            )}
+            {booleanAmenities?.length > 0 && (
+              <View className="gap-1.5">
+                <Text className="text-base">Amenities</Text>
+                <View className="gap-y-3 bg-background-muted rounded-xl p-4">
+                  {booleanAmenities.map((label) => {
+                    const isSelected = filter.amenities?.includes(label);
 
-						<View className="gap-1.5">
-							<Text className="text-sm">Amenities</Text>
-							<View className="gap-y-3 bg-background-muted rounded-xl p-4">
-								{Amenities[2].data.map(({ label }) => {
-									const isSelected = filter.amenities?.includes(label);
+                    return (
+                      <View
+                        key={label}
+                        className="flex-row items-center justify-between border-b border-outline/20 pb-2"
+                      >
+                        <Text className="text-base text-typography">
+                          {label}
+                        </Text>
+                        <Switch
+                          value={isSelected}
+                          onValueChange={(val) => {
+                            let updatedAmenities = filter.amenities || [];
 
-									return (
-										<View
-											key={label}
-											className="flex-row items-center justify-between border-b border-outline/20 pb-2">
-											<Text className="text-base text-typography">{label}</Text>
-											<Switch
-												value={isSelected}
-												onValueChange={(val) => {
-													let updatedAmenities = filter.amenities || [];
+                            if (val) {
+                              updatedAmenities = [...updatedAmenities, label];
+                            } else {
+                              updatedAmenities = updatedAmenities.filter(
+                                (item) => item !== label
+                              );
+                            }
 
-													if (val) {
-														updatedAmenities = [...updatedAmenities, label];
-													} else {
-														updatedAmenities = updatedAmenities.filter(
-															(item) => item !== label
-														);
-													}
+                            setFilter({
+                              ...filter,
+                              amenities: updatedAmenities,
+                            });
+                          }}
+                        />
+                      </View>
+                    );
+                  })}
+                </View>
+              </View>
+            )}
 
-													setFilter({ ...filter, amenities: updatedAmenities });
-												}}
-											/>
-										</View>
-									);
-								})}
-							</View>
-						</View>
-
-						<View className="gap-1.5">
-							<Text className="text-sm">Others</Text>
-							<View className="gap-y-3 bg-background-muted rounded-xl p-4">
-								<View className="flex-row justify-between items-center">
-									<Text>3D Tour</Text>
-									<Switch
-										value={filter?.tour === 'yes'}
-										onValueChange={(val) =>
-											setFilter({
-												...filter,
-												tour: val ? 'yes' : undefined,
-											})
-										}
-									/>
-								</View>
-							</View>
-						</View>
-
-						<View className="flex-row gap-4 px-4 mt-6 justify-center items-center">
-							<Button
-								onPress={handleReset}
-								className="h-14 flex-1"
-								size="xl"
-								variant="outline">
-								<ButtonText>Reset</ButtonText>
-							</Button>
-							<Button
-								onPress={handleApply}
-								className="h-14 flex-1"
-								size="xl"
-								variant="solid">
-								<ButtonText>Apply</ButtonText>
-							</Button>
-						</View>
-					</View>
-				</ScrollView>
-			</KeyboardDismissPressable>
-		</BottomSheet>
-	);
+            {/* <View className="gap-1.5">
+              <Text className="text-sm">Others</Text>
+              <View className="gap-y-3 bg-background-muted rounded-xl p-4">
+                <View className="flex-row justify-between items-center">
+                  <Text>3D Tour</Text>
+                  <Switch
+                    value={filter?.tour === "yes"}
+                    onValueChange={(val) =>
+                      setFilter({
+                        ...filter,
+                        tour: val ? "yes" : undefined,
+                      })
+                    }
+                  />
+                </View>
+              </View>
+            </View> */}
+          </View>
+        </BottomSheetScrollView>
+        <View
+          className={cn(
+            " absolute bottom-0 left-0 w-full",
+            Platforms.isAndroid() && "relative"
+          )}
+        >
+          <View className="flex-row bg-background gap-4 px-4 pt-4 android:pb-2 justify-center items-center">
+            <Button
+              onPress={handleReset}
+              className="h-12 flex-1"
+              size="xl"
+              variant="outline"
+            >
+              <ButtonText>Reset</ButtonText>
+            </Button>
+            <Button
+              onPress={handleApply}
+              className="h-12 flex-1"
+              size="xl"
+              variant="solid"
+            >
+              <ButtonText>Apply</ButtonText>
+            </Button>
+          </View>
+        </View>
+      </View>
+    </BottomSheet>
+  );
 }
 
 export default withRenderVisible(SearchFilterBottomSheet);
