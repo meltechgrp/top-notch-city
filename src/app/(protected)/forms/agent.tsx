@@ -160,7 +160,7 @@ export default function AgentFormScreen() {
                 onPress={() => setPhotosBottomSheet(true)}
               >
                 <View className=" gap-4 flex-1 px-4 py-2 flex-row  items-center">
-                  <Text className="text-sm font-light">Upload photo</Text>
+                  <Text className="text-sm font-light">Upload photo *</Text>
                   {form.photo[0]?.uri && (
                     <Image
                       className=" w-12 h-12 rounded-full ml-auto"

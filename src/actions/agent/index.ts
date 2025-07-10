@@ -62,6 +62,10 @@ export async function getAgentApplications() {
   const res = await Fetch("/admin/agent/applications");
   return res as AgentReview[];
 }
+export async function getMyApplications() {
+  const res = await Fetch("/agent/me");
+  return res as AgentReview[];
+}
 export async function acceptApplication({
   application_id,
 }: {

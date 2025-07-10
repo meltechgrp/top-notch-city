@@ -1,45 +1,13 @@
 import * as React from "react";
 
-import { Alert, View } from "react-native";
+import { View } from "react-native";
 import { router } from "expo-router";
 import SettingsItemList from "@/components/settings/SettingsItemList";
 import { BodyScrollView } from "@/components/layouts/BodyScrollView";
-import useResetAppState from "@/hooks/useResetAppState";
-import { Icon, Pressable, Text } from "@/components/ui";
-import { LogOut } from "lucide-react-native";
-import LogoutAlertDialog from "@/components/modals/LogoutAlertDialog";
 import { useStore } from "@/store";
 
 export default function SettingsScreen() {
-  const resetAppState = useResetAppState();
   const hasAuth = useStore((s) => s.hasAuth);
-  const [openLogoutAlertDialog, setOpenLogoutAlertDialog] =
-    React.useState(false);
-
-  function logout() {
-    resetAppState();
-    router.dismissTo("/(protected)/(tabs)/home");
-  }
-  async function onLogout() {
-    Alert.alert(
-      "Logout",
-      "Are you sure you want to logout?",
-      [
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-        {
-          text: "Logout",
-          style: "destructive",
-          onPress: () => {
-            logout();
-          },
-        },
-      ],
-      {}
-    );
-  }
   return (
     <>
       <BodyScrollView withBackground={true}>
@@ -83,22 +51,8 @@ export default function SettingsScreen() {
               />
             )}
           </View>
-
-          {hasAuth && (
-            <Pressable
-              onPress={onLogout}
-              className="bg-background-muted h-14 mt-8 rounded-xl px-4 flex-row justify-center items-center gap-2"
-            >
-              <Text size="lg">Sign Out</Text>
-              <Icon size="md" as={LogOut} className="text-primary" />
-            </Pressable>
-          )}
         </View>
       </BodyScrollView>
-      <LogoutAlertDialog
-        setOpenLogoutAlertDialog={setOpenLogoutAlertDialog}
-        openLogoutAlertDialog={openLogoutAlertDialog}
-      />
     </>
   );
 }

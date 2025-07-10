@@ -10,13 +10,14 @@ import {
   View,
 } from "@/components/ui";
 import { Stack, usePathname, useRouter } from "expo-router";
-import { Share } from "react-native";
-import React from "react";
+import { Alert, Share } from "react-native";
+import React, { useMemo } from "react";
 import {
   ChevronRight,
   Heart,
   HelpCircle,
   LayoutDashboard,
+  LogOut,
   NotebookText,
   Settings,
   Share2,
@@ -31,12 +32,49 @@ import { useStore } from "@/store";
 import { BodyScrollView } from "@/components/layouts/BodyScrollView";
 import { getImageUrl } from "@/lib/api";
 import { openSignInModal } from "@/components/globals/AuthModals";
+import LogoutAlertDialog from "@/components/modals/LogoutAlertDialog";
+import useResetAppState from "@/hooks/useResetAppState";
+import { useQuery } from "@tanstack/react-query";
+import { getMyApplications } from "@/actions/agent";
 
 export default function More() {
-  const me = useStore((v) => v.me);
+  const resetAppState = useResetAppState();
+  const { me, hasAuth } = useStore();
   const router = useRouter();
+  const { data } = useQuery({
+    queryKey: ["applications"],
+    queryFn: getMyApplications,
+  });
   const pathname = usePathname();
   const theme = useResolvedTheme();
+
+  const [openLogoutAlertDialog, setOpenLogoutAlertDialog] =
+    React.useState(false);
+
+  function logout() {
+    resetAppState();
+    router.dismissTo("/(protected)/(tabs)/home");
+  }
+  async function onLogout() {
+    Alert.alert(
+      "Logout",
+      "Are you sure you want to logout?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Logout",
+          style: "destructive",
+          onPress: () => {
+            logout();
+          },
+        },
+      ],
+      {}
+    );
+  }
   async function onInvite() {
     try {
       const result = await Share.share({
@@ -55,6 +93,10 @@ export default function More() {
       alert(error.message);
     }
   }
+  const isAgent = useMemo(
+    () => data?.some((ap) => ap.status == "approved" || ap.status == "pending"),
+    [data]
+  );
   return (
     <>
       {/* <Stack.Screen
@@ -190,7 +232,7 @@ export default function More() {
               iconColor="gray-500"
               className=" py-2 pb-3"
             />
-            {/* <Divider className=" h-[0.3px] bg-background-info mb-4" />
+            <Divider className=" h-[0.3px] bg-background-info mb-4" />
             <MenuListItem
               title="Write a review"
               description="Let's improve the app"
@@ -198,8 +240,8 @@ export default function More() {
               icon={NotebookText}
               className="py-2"
               iconColor="yellow-600"
-            /> */}
-            {/* <Divider className=" h-[0.3px] bg-background-info mb-4" />
+            />
+            <Divider className=" h-[0.3px] bg-background-info mb-4" />
             <MenuListItem
               title="Invite friends"
               description={`Invite your friends to join ${config.appName} app`}
@@ -207,11 +249,11 @@ export default function More() {
               className=" py-2 pb-3"
               iconColor="primary"
               onPress={onInvite}
-            /> */}
-            {(!me || me?.role !== "admin") && (
+            />
+            {(!isAgent || me?.role !== "admin") && (
               <Divider className=" h-[0.3px] bg-background-info mb-4" />
             )}
-            {(!me || me?.role !== "admin") && (
+            {!isAgent && me?.role !== "admin" && (
               <MenuListItem
                 title="Become an Agent"
                 description={`Join us as an agent to earn more`}
@@ -232,8 +274,8 @@ export default function More() {
                 }}
               />
             )}
-            {/* <Divider className=" h-[0.3px] bg-background-info mb-4" /> */}
-            {/* <MenuListItem
+            <Divider className=" h-[0.3px] bg-background-info mb-4" />
+            <MenuListItem
               title="Help and Support"
               description="Get help and support"
               onPress={() => {
@@ -242,9 +284,24 @@ export default function More() {
               icon={HelpCircle}
               className="py-2"
               iconColor="yellow-600"
-            /> */}
+            />
+
+            {hasAuth && (
+              <Pressable
+                onPress={onLogout}
+                className="bg-background-muted h-14 mt-8 rounded-xl px-4 flex-row justify-center items-center gap-2"
+              >
+                <Text size="lg">Sign Out</Text>
+                <Icon size="md" as={LogOut} className="text-primary" />
+              </Pressable>
+            )}
           </View>
         </View>
+
+        <LogoutAlertDialog
+          setOpenLogoutAlertDialog={setOpenLogoutAlertDialog}
+          openLogoutAlertDialog={openLogoutAlertDialog}
+        />
       </BodyScrollView>
     </>
   );

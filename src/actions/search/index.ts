@@ -29,8 +29,8 @@ export async function searchProperties(
       "created_at",
       format(new Date(filters.createdAt), "yyyy-MM-dd")
     );
-  // if (filters?.use_geo_location)
-  //   query.append("use_geo_location", filters.use_geo_location);
+  if (filters?.use_geo_location)
+    query.append("use_geo_location", filters.use_geo_location);
   if (filters?.amenities?.length) {
     filters?.amenities.forEach((amenity) =>
       query.append("amenities_filter", amenity)
@@ -40,7 +40,7 @@ export async function searchProperties(
   query.append("page", String(page));
   query.append("per_page", String(perPage));
   query.append("sort_by", "created_at");
-  query.append("radius_km", "100");
+  query.append("radius_km", "50");
   query.append("sort_order", "desc");
   const path = `/properties/search/?${query.toString()}`;
   try {

@@ -48,9 +48,16 @@ export default function AgentScreensLayout() {
         }}
       />
       <Stack.Screen
-        name="form"
+        name="agent"
         options={{
           title: "Agent Application",
+        }}
+      />
+      <Stack.Screen
+        name="success"
+        options={{
+          title: "",
+          headerShown: false,
         }}
       />
     </Stack>
