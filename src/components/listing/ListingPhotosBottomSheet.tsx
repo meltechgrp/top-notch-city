@@ -206,7 +206,7 @@ function ListingPhotosBottomSheet(props: Props) {
             keyboardShouldPersistTaps="handled"
           />
         </FullHeightLoaderWrapper>
-        {photos?.length && (
+        {photos && photos?.length > 0 && (
           <View className=" px-4">
             <Button className="h-12" onPress={onDismiss}>
               <ButtonText>Continue</ButtonText>

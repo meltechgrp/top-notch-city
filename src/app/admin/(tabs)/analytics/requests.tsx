@@ -6,7 +6,6 @@ import { useQuery } from "@tanstack/react-query";
 import { getAgentApplications } from "@/actions/agent";
 import { format } from "date-fns";
 import ApplicationBottomSheet from "@/components/modals/agent/ApplicationBottomSheet";
-import { composeFullAddress } from "@/lib/utils";
 import { useRefresh } from "@react-native-community/hooks";
 import RequestListItem from "@/components/admin/request/RequestListItem";
 

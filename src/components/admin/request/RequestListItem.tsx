@@ -63,8 +63,8 @@ export default function RequestListItem({ request, onPress }: Props) {
                 request.status === "pending"
                   ? "bg-primary text-white"
                   : request.status === "approved"
-                    ? "bg-gray-500 text-green-500"
-                    : "bg-red-100 text-red-800"
+                    ? "bg-green-500 text-white"
+                    : "bg-red-500 text-white"
               }`}
             >
               {request.status.toUpperCase()}

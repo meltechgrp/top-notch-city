@@ -94,7 +94,7 @@ export default function More() {
     }
   }
   const isAgent = useMemo(
-    () => data?.some((ap) => ap.status == "approved" || ap.status == "pending"),
+    () => data?.some((ap) => ap.status == "approved"),
     [data]
   );
   return (

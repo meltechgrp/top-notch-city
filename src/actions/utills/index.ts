@@ -2,6 +2,7 @@ import { getAuthToken } from "@/lib/secureStore";
 import config from "@/config";
 import axios, { AxiosRequestConfig } from "axios";
 import { getUniqueIdSync } from "react-native-device-info";
+import { useEffect, useRef } from "react";
 const MAPS_API_KEY = process.env.EXPO_PUBLIC_ANDROID_MAPS_API_KEY;
 
 export async function Fetch(url: string, options: AxiosRequestConfig = {}) {
@@ -28,6 +29,76 @@ export async function Fetch(url: string, options: AxiosRequestConfig = {}) {
     console.error("Fetch error:", error);
     throw error;
   }
+}
+
+export function useWebSocket(endpoint = "/ws") {
+  const ws = useRef<WebSocket | null>(null);
+  const reconnectAttempts = useRef(0);
+  const reconnectTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const connect = async () => {
+    const token = getAuthToken();
+    const deviceId = getUniqueIdSync();
+    const wsUrl = `wss://app.topnotchcity.com${endpoint}?token=${token}&deviceId=${deviceId}`;
+
+    console.log("🔌 Connecting to:", wsUrl);
+
+    const socket = new WebSocket(wsUrl);
+
+    socket.onopen = () => {
+      console.log("✅ WebSocket connected");
+      reconnectAttempts.current = 0;
+    };
+
+    socket.onmessage = (event) => {
+      console.log("📨 Message:", event.data);
+      // handle your message here
+    };
+
+    socket.onerror = (error) => {
+      console.error("❌ WebSocket error:", error);
+    };
+
+    socket.onclose = (event) => {
+      console.log("🚪 WebSocket closed:", event.reason);
+      attemptReconnect();
+    };
+
+    ws.current = socket;
+  };
+
+  const attemptReconnect = () => {
+    const maxAttempts = 10;
+    if (reconnectAttempts.current < maxAttempts) {
+      const timeout = Math.min(1000 * 2 ** reconnectAttempts.current, 30000); // exponential backoff, max 30s
+      console.log(`🔄 Attempting reconnect in ${timeout / 1000}s...`);
+      reconnectTimeout.current = setTimeout(() => {
+        reconnectAttempts.current += 1;
+        connect();
+      }, timeout);
+    } else {
+      console.warn("❌ Max reconnect attempts reached.");
+    }
+  };
+
+  useEffect(() => {
+    connect();
+
+    return () => {
+      reconnectTimeout.current && clearTimeout(reconnectTimeout.current);
+      ws.current?.close();
+    };
+  }, [endpoint]);
+
+  const sendMessage = (msg: any) => {
+    if (ws.current?.readyState === WebSocket.OPEN) {
+      ws.current.send(JSON.stringify(msg));
+    } else {
+      console.warn("⚠️ WebSocket is not open, message not sent.");
+    }
+  };
+
+  return { sendMessage };
 }
 
 export async function fetchPlaceFromTextQuery(
