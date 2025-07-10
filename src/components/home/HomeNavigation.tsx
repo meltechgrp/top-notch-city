@@ -23,7 +23,7 @@ export default function HomeNavigation() {
           <Icon as={Search} color="white" />
         </View>
       </Pressable>
-      {/* <NotificationBarButton /> */}
+      <NotificationBarButton />
     </View>
   );
 }

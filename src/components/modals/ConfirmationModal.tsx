@@ -53,8 +53,8 @@ export function ConfirmationModal({
     }
 
     setError("");
-    setLoading(true);
     try {
+      setLoading(true);
       if (!propertyId) {
         onDelete?.();
       } else {

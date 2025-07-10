@@ -45,7 +45,6 @@ export default function More() {
     queryKey: ["applications"],
     queryFn: getMyApplications,
   });
-  const pathname = usePathname();
   const theme = useResolvedTheme();
 
   const [openLogoutAlertDialog, setOpenLogoutAlertDialog] =

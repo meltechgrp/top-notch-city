@@ -109,7 +109,7 @@ export function formatDateDistance(date: string) {
     return `${interval}d ago`;
   }
   interval = Math.floor(seconds / 3600);
-  if (interval >= 1) {
+  if (interval > 1) {
     return `${interval}h ago`;
   }
   interval = Math.floor(seconds / 60);
