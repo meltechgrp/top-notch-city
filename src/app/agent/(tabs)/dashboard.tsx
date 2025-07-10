@@ -1,43 +1,42 @@
-import { fetchAdminDashboardStats } from "@/actions/dashboard/admin";
-import AdminCards from "@/components/admin/dashboard/AdminCards";
+import { fetchAgentDashboardStats } from "@/actions/dashboard/admin";
 import MainLayout from "@/components/admin/shared/MainLayout";
+import AgentCards from "@/components/agent/dashboard/AgentCards";
 import BarChartCard from "@/components/custom/BarChartCard";
-import DonutPieChart from "@/components/custom/DonutPieCard";
+import LineChartCard from "@/components/custom/LineChartCard";
 import { BodyScrollView } from "@/components/layouts/BodyScrollView";
-import { fillLast6Months } from "@/lib/utils";
+import { fillLast6Months, fillMissingTimeSeries } from "@/lib/utils";
 import { useRefresh } from "@react-native-community/hooks";
 import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 
 export default function Dashboard() {
   const { data, refetch, isFetching, isLoading } = useQuery({
-    queryKey: ["admin-dashboard"],
-    queryFn: fetchAdminDashboardStats,
+    queryKey: ["agent-dashboard"],
+    queryFn: fetchAgentDashboardStats,
   });
+
+  const views = useMemo(
+    () =>
+      fillMissingTimeSeries(data?.propertyViewsLast30Days || [], {
+        dateKey: "date",
+        valueKey: "views",
+      }),
+    [data]
+  );
   const { onRefresh } = useRefresh(refetch);
   return (
-    <MainLayout>
+    <MainLayout isAgent>
       <BodyScrollView
         refreshing={isFetching || isLoading}
         onRefresh={onRefresh}
         className="flex-1 gap-1 pt-4 pb-8"
       >
-        <AdminCards data={data} />
-        <DonutPieChart
-          title="User Distribution"
-          data={[
-            { value: data?.totalNormalUsers, label: "users" },
-            { value: data?.totalAdmin, label: "admins" },
-            { value: data?.totalAgents, label: "agents" },
-            { value: 0, label: "admin agents" },
-          ]}
-        />
+        <AgentCards data={data} />
+
+        <LineChartCard title="Property Views" data={views} />
         <BarChartCard
-          title="User Stats"
-          data={fillLast6Months(data?.totalUsersWithinLast6Months)}
-        />
-        <BarChartCard
-          title="Devices Stats"
-          data={fillLast6Months(data?.totalDevicesLast6Months)}
+          title="Property Uploads"
+          data={fillLast6Months(data?.propertiesPerMonthLast6Months)}
         />
       </BodyScrollView>
     </MainLayout>

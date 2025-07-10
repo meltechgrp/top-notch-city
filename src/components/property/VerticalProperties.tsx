@@ -3,6 +3,7 @@ import { RefreshControl } from "react-native-gesture-handler";
 import { NativeScrollEvent } from "react-native";
 import React, {
   forwardRef,
+  ReactNode,
   useCallback,
   useImperativeHandle,
   useState,
@@ -38,6 +39,7 @@ interface Props {
   headerTopComponent?: any;
   headerHeight?: number;
   listRef?: any;
+  ListEmptyComponent?: ReactNode;
   onPress?: (data: Props["data"][0]) => void;
 }
 const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
@@ -63,6 +65,7 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
     isEmptyTitle,
     hasNextPage,
     showStatus = false,
+    ListEmptyComponent,
   },
   ref
 ) {
@@ -156,10 +159,16 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
         onEndReachedThreshold={0.2}
         contentInsetAdjustmentBehavior="automatic"
         ListEmptyComponent={() => (
-          <MiniEmptyState
-            className=" mt-10"
-            title={isEmptyTitle || "No property found"}
-          />
+          <>
+            {ListEmptyComponent ? (
+              ListEmptyComponent
+            ) : (
+              <MiniEmptyState
+                className=" mt-10"
+                title={isEmptyTitle || "No property found"}
+              />
+            )}
+          </>
         )}
         viewabilityConfig={{
           itemVisiblePercentThreshold: 50,

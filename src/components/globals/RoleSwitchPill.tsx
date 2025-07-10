@@ -9,7 +9,7 @@ import Platforms from "@/constants/Plaforms";
 export function RoleSwitchPill() {
   const pathname = usePathname();
   const router = useRouter();
-  const { me } = useStore();
+  const { me, setSavedPath } = useStore();
 
   const role = useMemo(() => me?.role, [me]);
 
@@ -55,6 +55,7 @@ export function RoleSwitchPill() {
   }
 
   function handleSwitch() {
+    setSavedPath(targetPath);
     router.dismissTo(targetPath as any);
   }
 

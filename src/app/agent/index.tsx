@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 export default function AdminScreen() {
   const { loading, authenticate } = useLocalAuth({
-    onSuccessRoute: "/admin/(tabs)/dashboard",
+    onSuccessRoute: "/agent/(tabs)/dashboard",
     onFailRoute: "/menu", // fallback if auth fails
   });
 

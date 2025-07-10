@@ -15,7 +15,7 @@ export default function ListingPurpose() {
           style={{
             height: height / 2.5,
           }}
-          className="flex-1 min-h-50 rounded-3xl overflow-hidden"
+          className=" min-h-32 rounded-3xl overflow-hidden"
         >
           <Image
             source={require("@/assets/images/vectors/bookshelf.jpg")}
@@ -24,13 +24,15 @@ export default function ListingPurpose() {
           />
         </View>
         <View className=" py-6 gap-4">
-          <Heading size="xl">What Would You Like to Do Today?</Heading>
-          <Text size="sm" className=" font-light mb-4">
-            Ready to make a move? Choose whether you want to sell your property
-            for a great deal or rent it out for steady income. Select an
-            listing.purpose below, and we’ll guide you through a seamless
-            process tailored to your needs.
-          </Text>
+          <View className=" bg-background-muted p-4 rounded-xl gap-3">
+            <Heading size="xl">What Would You Like to Do Today?</Heading>
+            <Text size="sm" className=" font-light mb-4">
+              Ready to make a move? Choose whether you want to sell your
+              property for a great deal or rent it out for steady income. Select
+              an listing.purpose below, and we’ll guide you through a seamless
+              process tailored to your needs.
+            </Text>
+          </View>
           <View className="py-4 flex-row gap-5">
             <TouchableOpacity
               className="flex-1"

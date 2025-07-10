@@ -1,58 +1,67 @@
-import * as React from 'react';
+import * as React from "react";
 
-import { View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { cn } from '@/lib/utils';
-import MainLogo from '@/assets/images/icon.png';
-import NotificationBarButton from '@/components/notifications/NotificationBarButton';
-import { Avatar, AvatarImage, Icon, Pressable, Text } from '@/components/ui';
-import { Home } from 'lucide-react-native';
-import { useRouter } from 'expo-router';
+import { View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { cn } from "@/lib/utils";
+import MainLogo from "@/assets/images/icon.png";
+import NotificationBarButton from "@/components/notifications/NotificationBarButton";
+import { Avatar, AvatarImage, Icon, Pressable, Text } from "@/components/ui";
+import { Home } from "lucide-react-native";
+import { useRouter } from "expo-router";
 
-type Props = View['props'] & {
-	topbarClassName?: string;
+type Props = View["props"] & {
+  topbarClassName?: string;
+  isAgent?: boolean;
+  rightHeaderComponent?: React.ReactNode;
 };
 export default function MainLayout(props: Props) {
-	const { children, style, topbarClassName } = props;
-	const router = useRouter();
+  const {
+    children,
+    style,
+    topbarClassName,
+    isAgent = false,
+    rightHeaderComponent,
+  } = props;
+  const router = useRouter();
 
-	return (
-		<View className="flex-1 bg-background">
-			<SafeAreaView
-				edges={['top']}
-				style={{ flex: 1 }}
-				className=" bg-transparent">
-				<View style={style} className="flex-1">
-					<View
-						className={cn(
-							'w-full bg-background border-b border-outline h-[64px]',
-							topbarClassName
-						)}>
-						<View className="flex-row py-3 pt-2 pl-4 gap-2 items-center">
-							<Avatar size="sm">
-								<AvatarImage source={MainLogo} />
-							</Avatar>
-							<View className="flex-1">
-								<Text size="xl">Top-Notch Admin</Text>
-							</View>
-							<View
-								style={{
-									flexDirection: 'row',
-									alignItems: 'center',
-								}}
-								className=" px-4">
-								<Pressable onPress={() => router.dismissTo('/home')}>
-									<Icon size="xl" as={Home} />
-								</Pressable>
-								<NotificationBarButton className=" bg-transparent rounded-none" />
-							</View>
-						</View>
-					</View>
-					<View className={cn('flex-1 relative', props.className)}>
-						{children}
-					</View>
-				</View>
-			</SafeAreaView>
-		</View>
-	);
+  return (
+    <View className="flex-1 bg-background">
+      <SafeAreaView
+        edges={["top"]}
+        style={{ flex: 1 }}
+        className=" bg-transparent"
+      >
+        <View style={style} className="flex-1">
+          <View
+            className={cn(
+              "w-full bg-background border-b border-outline h-[64px]",
+              topbarClassName
+            )}
+          >
+            <View className="flex-row h-14 pt-3 pl-4 gap-2 items-center">
+              <Avatar size="sm">
+                <AvatarImage source={MainLogo} />
+              </Avatar>
+              <View className="flex-1">
+                <Text size="xl">Top-Notch {isAgent ? "Agent" : "Admin"}</Text>
+              </View>
+              <View className=" px-4 flex-row ">
+                {rightHeaderComponent ? (
+                  rightHeaderComponent
+                ) : (
+                  <Pressable onPress={() => router.dismissTo("/home")}>
+                    <Icon size="xl" as={Home} />
+                  </Pressable>
+                )}
+                {/* <NotificationBarButton className=" bg-transparent rounded-none" /> */}
+              </View>
+            </View>
+          </View>
+          <View className={cn("flex-1 relative", props.className)}>
+            {children}
+          </View>
+        </View>
+      </SafeAreaView>
+    </View>
+  );
 }

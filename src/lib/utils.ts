@@ -320,3 +320,13 @@ export function deduplicate<T>(arr: T[], key: keyof T) {
   });
   return Array.from(map.values());
 }
+
+// Format number with commas
+export function formatNumber(num?: string) {
+  return num?.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+// Remove commas from formatted number
+export function unformatNumber(str: string) {
+  return str.replace(/,/g, "");
+}

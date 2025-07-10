@@ -44,13 +44,6 @@ export default function PropertysLayout() {
         }}
       />
       <Stack.Screen
-        name="[propertyId]/edit"
-        options={{
-          headerShown: true,
-          title: "Edit",
-        }}
-      />
-      <Stack.Screen
         name="[propertyId]/3d-view"
         options={{
           headerShown: true,

@@ -17,10 +17,10 @@ export default function PropertyHeader({
   hasScrolledToDetails,
 }: Props) {
   const theme = useResolvedTheme();
-  const { isAdmin, isOwner } = usePropertyActions({ property });
+  const { isAdmin, isOwner, isAgent } = usePropertyActions({ property });
   return (
     <>
-      {isAdmin || isOwner ? (
+      {isAgent ? (
         <View className="pr-4 flex-row items-center gap-2">
           <PropertyShareButton property={property} />
           <PropertyLikeButton
@@ -31,7 +31,7 @@ export default function PropertyHeader({
             both
             onPress={() =>
               router.push({
-                pathname: "/property/[propertyId]/edit",
+                pathname: "/agent/property/[propertyId]/edit",
                 params: {
                   propertyId: property.id,
                 },

@@ -3,7 +3,6 @@ import {
   BadgeText,
   Heading,
   Icon,
-  Image,
   Pressable,
   Text,
   View,
@@ -13,6 +12,7 @@ import { useTempStore } from "@/store";
 import { capitalize, chunk } from "lodash-es";
 import { Check } from "lucide-react-native";
 import { composeFullAddress, formatMoney } from "@/lib/utils";
+import { Image } from "react-native";
 
 export default function ListingResult() {
   const { listing: property } = useTempStore();
@@ -77,7 +77,7 @@ export default function ListingResult() {
                         width: width > 100 ? (width - 100) / 4 : 72,
                         height: width > 100 ? (width - 100) / 4 : 72,
                       }}
-                      className={" bg-background-muted"}
+                      className={" bg-background-muted rounded-xl"}
                       source={{ uri: media.uri }}
                       alt="image"
                     />

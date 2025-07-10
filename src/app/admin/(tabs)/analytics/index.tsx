@@ -1,6 +1,4 @@
 import { fetchAdminDashboardStats } from "@/actions/dashboard/admin";
-import AgentTable from "@/components/admin/dashboard/AgentTable";
-import ViewsTable from "@/components/admin/dashboard/ViewsTable";
 import AnalyticCards from "@/components/admin/listings/AnalyticCards";
 import BarChartCard from "@/components/custom/BarChartCard";
 import LineChartCard from "@/components/custom/LineChartCard";

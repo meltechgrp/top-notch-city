@@ -3,6 +3,7 @@ import { useTempStore } from "@/store";
 import CustomSelect from "../custom/CustomSelect";
 import OptionsBottomSheet from "../shared/OptionsBottomSheet";
 import { CustomInput } from "../custom/CustomInput";
+import { formatNumber, unformatNumber } from "@/lib/utils";
 
 export default function ListingBasis() {
   const { listing, updateListing } = useTempStore();
@@ -20,8 +21,10 @@ export default function ListingBasis() {
                 isBottomSheet={false}
                 keyboardType="numeric"
                 placeholder="Enter price"
-                value={listing.price}
-                onUpdate={(val) => updateListing({ ...listing, price: val })}
+                value={formatNumber(listing.price)}
+                onUpdate={(val) =>
+                  updateListing({ ...listing, price: unformatNumber(val) })
+                }
               />
             </View>
 

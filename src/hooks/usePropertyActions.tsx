@@ -19,6 +19,7 @@ export function usePropertyActions({ property }: { property: Property }) {
     () => property?.owner?.id === user?.id,
     [property, user]
   );
+  const isAgent = useMemo(() => user?.role == "agent", [user]);
   const isAdmin = useMemo(() => user?.role == "admin", [user]);
 
   const actions: ConfirmationActionConfig[] = [
@@ -90,5 +91,5 @@ export function usePropertyActions({ property }: { property: Property }) {
       iconClassName: "text-primary",
     },
   ];
-  return { actions, isAdmin, isOwner };
+  return { actions, isAdmin, isOwner, isAgent };
 }
