@@ -16,27 +16,24 @@ type Props = {
 
 export default function NotificationBarButton({ className }: Props) {
   const { me } = useStore();
-  const { data, isFetching, isLoading, refetch } = useQuery({
+  const { data, refetch } = useQuery({
     queryKey: ["notifications"],
     queryFn: () => getNotifications({ id: me?.id }),
   });
-  const unseenNotificationsCount = useMemo(() => data?.length, [data]);
-
-  useFocusEffect(
-    useCallback(() => {
-      refetch();
-    }, [])
+  const unseenNotificationsCount = useMemo(
+    () => data?.filter((item) => !item.is_read).length,
+    [data]
   );
-  const pathname = usePathname();
+  const getNewNoti = useCallback(() => {
+    refetch();
+  }, []);
+  useFocusEffect(getNewNoti);
   return (
     <Button
       onPress={() => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         router.push({
           pathname: "/notification",
-          params: {
-            ref: pathname,
-          },
         });
       }}
       action="secondary"

@@ -38,20 +38,16 @@ export function MenuListItem(props: MenuListItemProps) {
       <View style={[style]} className={cn("flex-row items-center", className)}>
         <View
           className={cn(
-            "w-10 h-10 rounded-full items-center justify-center",
-            iconBgColor ? `bg-${iconBgColor}` : "bg-background-info"
+            "w-10 h-10 rounded-full items-center justify-center bg-gray-600"
           )}
         >
-          <Icon
-            as={icon}
-            className={cn("text-typography", iconColor && `text-${iconColor}`)}
-          />
+          <Icon as={icon} className={cn("text-white")} />
         </View>
         <View className="flex-1 pl-3">
           <Text className="text-lg font-medium">{title}</Text>
           {/* <Text className="text-sm text-typography/80">{description}</Text> */}
         </View>
-        {withArrow && <Icon as={ChevronRight} />}
+        {withArrow && <Icon as={ChevronRight} className="text-primary" />}
       </View>
     </TouchableOpacity>
   );

@@ -3,16 +3,19 @@ import eventBus from "@/lib/eventBus";
 import SignInBottomSheet from "../modals/auth/SignInBottomSheet";
 import VerifyOtpBottomSheet from "../modals/auth/VerifyOptBottomSheet";
 import SignUpBottomSheet from "../modals/auth/SignupBottomSheet";
+import EnquiriesFormBottomSheet from "../modals/EnquiriesBottomSheet";
 
 export default function AuthModals() {
   const [signIn, setSignIn] = useState<AuthModalProps | null>(null);
   const [signUp, setSignUp] = useState<AuthModalProps | null>(null);
+  const [enquiry, setEnquiry] = useState<AuthModalProps | null>(null);
   const [emailVerification, setEmailVerification] =
     useState<AuthModalProps | null>(null);
 
   useEffect(() => {
     eventBus.addEventListener("openSignInModal", setSignIn);
     eventBus.addEventListener("openSignUpModal", setSignUp);
+    eventBus.addEventListener("openEnquiryModal", setEnquiry);
     eventBus.addEventListener(
       "openEmailVerificationModal",
       setEmailVerification
@@ -48,6 +51,15 @@ export default function AuthModals() {
           }}
         />
       )}
+      {!!enquiry && (
+        <EnquiriesFormBottomSheet
+          {...enquiry}
+          onDismiss={() => {
+            enquiry.onDismiss?.();
+            setEnquiry(null);
+          }}
+        />
+      )}
     </>
   );
 }
@@ -66,4 +78,7 @@ export function openResetPasswordModal(props: AuthModalProps) {
 
 export function openEmailVerificationModal(props: AuthModalProps) {
   eventBus.dispatchEvent("openEmailVerificationModal", props);
+}
+export function openEnquiryModal(props: AuthModalProps) {
+  eventBus.dispatchEvent("openEnquiryModal", props);
 }

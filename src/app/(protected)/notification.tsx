@@ -51,6 +51,17 @@ export default function NotificationScreen() {
   // 	}
   // 	return null;
   // };
+
+  useEffect(() => {
+    eventBus.addEventListener("PROPERTY_HORIZONTAL_LIST_REFRESH", onRefresh);
+
+    return () => {
+      eventBus.removeEventListener(
+        "PROPERTY_HORIZONTAL_LIST_REFRESH",
+        onRefresh
+      );
+    };
+  }, []);
   return (
     <Box className="flex-1">
       <View className="py-6 flex-1">

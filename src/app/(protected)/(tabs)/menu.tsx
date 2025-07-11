@@ -98,7 +98,7 @@ export default function More() {
   );
   return (
     <>
-      {/* <Stack.Screen
+      <Stack.Screen
         options={{
           headerRight: () => (
             <View
@@ -112,11 +112,11 @@ export default function More() {
             </View>
           ),
         }}
-      /> */}
+      />
       <BodyScrollView withBackground={true}>
         <View
           className={cn(
-            "px-4 py-2 mt-2",
+            "px-4 py-2.5 mt-2",
             theme == "dark"
               ? "bg-background-muted/95"
               : "bg-background-muted/60"
@@ -128,19 +128,7 @@ export default function More() {
                 openSignInModal({
                   visible: true,
                   onLoginSuccess: () => {
-                    router.push({
-                      pathname: "/(protected)/profile/[user]/account",
-                      params: {
-                        user: me?.id!,
-                      },
-                    });
-                  },
-                });
-              } else {
-                router.push({
-                  pathname: "/(protected)/profile/[user]/account",
-                  params: {
-                    user: me?.id!,
+                    router.reload();
                   },
                 });
               }
@@ -153,21 +141,56 @@ export default function More() {
               <AvatarImage source={getImageUrl(me?.profile_image)} />
             </Avatar>
             <View className="flex-1 pl-3">
-              <Text className="text-base text-typography font-medium">
+              <Text className="text-lg text-typography font-medium">
                 {me ? fullName(me) : "Sign in to view profile"}
               </Text>
               <Text className="text-sm text-typography/80">
                 {me ? me?.email : "Account details"}
               </Text>
             </View>
-            <Icon as={ChevronRight} className="" />
           </Pressable>
         </View>
         <View className="pt-8 flex-1 px-4">
-          <Text className="text-sm text-typography/80 uppercase px-4 mb-2">
+          <Text className="text-base text-typography/80 uppercase px-4 mb-2">
             Menu
           </Text>
           <View className="flex-1 mt-2">
+            {me && (
+              <MenuListItem
+                title="Account"
+                description={
+                  me.role == "admin"
+                    ? "View admin dashboard"
+                    : "View your dashboard"
+                }
+                onPress={() => {
+                  if (!me?.id) {
+                    openSignInModal({
+                      visible: true,
+                      onLoginSuccess: () => {
+                        router.push({
+                          pathname: "/(protected)/profile/[user]/account",
+                          params: {
+                            user: me?.id!,
+                          },
+                        });
+                      },
+                    });
+                  } else {
+                    router.push({
+                      pathname: "/(protected)/profile/[user]/account",
+                      params: {
+                        user: me?.id!,
+                      },
+                    });
+                  }
+                }}
+                icon={LayoutDashboard}
+                iconColor="gray-500"
+                className=" py-2 pb-3"
+              />
+            )}
+            {me && <Divider className=" h-[0.3px] bg-background-info mb-4" />}
             {me && me?.role != "user" && (
               <MenuListItem
                 title="Dashboard"
@@ -178,9 +201,9 @@ export default function More() {
                 }
                 onPress={() => {
                   if (me?.role === "admin") {
-                    router.dismissTo({
-                      pathname: "/admin",
-                    });
+                    router.dismissTo("/admin");
+                  } else {
+                    router.dismissTo("/agent");
                   }
                 }}
                 icon={LayoutDashboard}
@@ -233,9 +256,9 @@ export default function More() {
             />
             <Divider className=" h-[0.3px] bg-background-info mb-4" />
             <MenuListItem
-              title="Write a review"
+              title="Send a report/review"
               description="Let's improve the app"
-              onPress={() => {}}
+              onPress={() => router.push("/report")}
               icon={NotebookText}
               className="py-2"
               iconColor="yellow-600"

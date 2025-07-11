@@ -27,6 +27,7 @@ import { Divider } from "../ui/divider";
 import PropertyMapSection from "./PropertyMapSection";
 import PropertyNearbySection from "./PropertyNearbySection";
 import { FindAmenity } from "@/lib/utils";
+import { openEnquiryModal } from "../globals/AuthModals";
 
 const PropertyDetailsBottomSheet = () => {
   const { details: property, getImages, getVideos } = usePropertyStore();
@@ -63,25 +64,22 @@ const PropertyDetailsBottomSheet = () => {
         </View>
         <View className=" pt-2 flex-1 gap-6 pb-20">
           <View className=" flex-row gap-4 px-4">
-            <Pressable className="flex-row flex-1 bg-gray-600 gap-2 p-4 py-5 rounded-xl items-center justify-between">
+            <Pressable
+              both
+              onPress={() => {
+                openEnquiryModal({
+                  visible: true,
+                });
+              }}
+              className="flex-row flex-1 bg-gray-600 gap-2 p-4 py-5 rounded-xl items-center justify-between"
+            >
               <Icon size="xl" as={BookCheck} className="text-primary" />
               <Text size="md" className=" mr-auto text-white">
                 Book a visit
               </Text>
               <Icon as={ChevronRight} color="white" />
             </Pressable>
-            <Pressable
-              // onPress={() => {
-              // 	onDismiss();
-              // 	router.push({
-              // 		pathname: '/(protected)/property/[propertyId]/booking',
-              // 		params: {
-              // 			propertyId: property.id,
-              // 		},
-              // 	});
-              // }}
-              className="flex-row flex-1 gap-2 bg-primary p-4 py-5 rounded-xl items-center justify-between"
-            >
+            <Pressable className="flex-row flex-1 gap-2 bg-primary p-4 py-5 rounded-xl items-center justify-between">
               <Icon size="xl" as={MessageCircle} className="text-white" />
               <Text size="md" className=" mr-auto text-white">
                 Chat Agent

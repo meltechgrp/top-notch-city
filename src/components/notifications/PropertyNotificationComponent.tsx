@@ -1,23 +1,41 @@
 import { router } from "expo-router";
 import React from "react";
 import { Pressable, View } from "react-native";
-import { Avatar, AvatarBadge, AvatarImage, Icon, Text } from "../ui";
-import { format } from "date-fns";
+import { Avatar, AvatarBadge, AvatarImage, Text } from "../ui";
 import logo from "@/assets/images/icon.png";
-import { ChevronRight } from "lucide-react-native";
 import NotificationItemWrapper from "./NotificationItemWrapper";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { deleteNotification, markAsRead } from "@/actions/notification";
 
 export default function PropertyAcceptedNotificationComponent({
   data,
 }: {
   data: UserNotification;
 }) {
-  const { title, message, created_at, is_read } = data;
+  const { title, message, is_read, id } = data;
+  const query = useQueryClient();
+  function invalidate() {
+    query.invalidateQueries({
+      queryKey: ["notifications"],
+    });
+  }
+  const { mutateAsync } = useMutation({
+    mutationFn: markAsRead,
+    onSuccess: invalidate,
+  });
+  const { mutateAsync: mutateAsync2 } = useMutation({
+    mutationFn: deleteNotification,
+    onSuccess: invalidate,
+  });
   return (
     <NotificationItemWrapper
       isRead={is_read}
-      onRead={() => {}}
-      onDelete={() => console.log("deleted")}
+      onRead={async () =>
+        await mutateAsync({
+          id,
+        })
+      }
+      onDelete={async () => await mutateAsync2({ id })}
     >
       <Pressable
         // onPress={() =>
@@ -26,30 +44,21 @@ export default function PropertyAcceptedNotificationComponent({
         // 		params: { propertyId: data.propertyId },
         // 	})
         // }
-        className="p-4 rounded-2xl min-h-28 bg-background-info "
+        className="p-4 rounded-2xl min-h-20 bg-background-info "
       >
-        <View className="flex-1 gap-1">
-          <View className="flex-1 border-b gap-1 pb-1 border-outline">
-            <View className="flex-row gap-2 items-start">
-              <Avatar size="xs" className="ios:mt-[2px]">
-                <AvatarImage source={logo} />
-                {!is_read && (
-                  <AvatarBadge
-                    className="bg-primary -top-2.5 -right-1.5"
-                    size="md"
-                  />
-                )}
-              </Avatar>
-              <Text size="lg" numberOfLines={1} className="">
-                {title}
-              </Text>
-            </View>
-            <Text className="text-sm font-light">{message}</Text>
+        <View className="flex-1 gap-1 justify-center">
+          <View className="flex-row gap-2 items-start">
+            <Avatar size="xs" className="ios:mt-[2px]">
+              <AvatarImage source={logo} />
+              {!is_read && (
+                <AvatarBadge className="bg-primary -top-2 -right-1" size="md" />
+              )}
+            </Avatar>
+            <Text size="lg" numberOfLines={1} className="">
+              {title}
+            </Text>
           </View>
-          <View className="flex-row items-center justify-between gap-2">
-            <Text size="sm">{format(new Date(created_at), "dd MMM yyyy")}</Text>
-            {/* <Icon as={ChevronRight} className="text-primary" /> */}
-          </View>
+          <Text className="text-sm font-light">{message}</Text>
         </View>
       </Pressable>
     </NotificationItemWrapper>
