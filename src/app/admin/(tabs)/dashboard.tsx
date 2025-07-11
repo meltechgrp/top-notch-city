@@ -28,7 +28,7 @@ export default function Dashboard() {
             { value: data?.totalNormalUsers, label: "users" },
             { value: data?.totalAdmin, label: "admins" },
             { value: data?.totalAgents, label: "agents" },
-            { value: 0, label: "admin agents" },
+            { value: data?.totalAdminAgent, label: "admin agents" },
           ]}
         />
         <BarChartCard

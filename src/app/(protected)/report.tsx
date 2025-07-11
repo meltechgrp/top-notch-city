@@ -1,16 +1,35 @@
+import { sendEquiry } from "@/actions/equiry";
 import { CustomInput } from "@/components/custom/CustomInput";
+import CustomSelect from "@/components/custom/CustomSelect";
 import { BodyScrollView } from "@/components/layouts/BodyScrollView";
+import { SpinningLoader } from "@/components/loaders/SpinningLoader";
+import OptionsBottomSheet from "@/components/shared/OptionsBottomSheet";
 import { Button, ButtonText, Text } from "@/components/ui";
+import { showSnackbar } from "@/lib/utils";
+import { useMutation } from "@tanstack/react-query";
 import React, { useState } from "react";
-import { View, ScrollView } from "react-native";
+import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const ReportReviewScreen = () => {
-  const [formData, setFormData] = useState({
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: sendEquiry,
+    onSuccess: () =>
+      showSnackbar({
+        message: "Message sent successfully",
+        type: "success",
+      }),
+    onError: (err) =>
+      showSnackbar({
+        message: err.message,
+        type: "error",
+      }),
+  });
+  const [formData, setFormData] = useState<Enquiry>({
     full_name: "",
     email: "",
     message: "",
-    type: "",
+    type: "enquiry",
   });
 
   const handleUpdate = (field: keyof typeof formData) => (value: string) => {
@@ -20,20 +39,16 @@ const ReportReviewScreen = () => {
     }));
   };
 
-  const handleSubmit = () => {
-    const submission = {
-      ...formData,
-      submitted_at: new Date().toISOString(),
-    };
-    console.log("User submission:", submission);
+  const handleSubmit = async () => {
+    await mutateAsync({ form: formData });
   };
 
+  const types = ["sell", "enquiry", "general", "visit", "offer"];
   return (
     <BodyScrollView withBackground className="px-4 android:py-8">
-      <SafeAreaView edges={["top", "bottom"]} className="flex-1">
+      <SafeAreaView edges={["bottom"]} className="flex-1">
         <View className="gap-6">
           <View>
-            <Text className="text-2xl font-bold">Contact Admin</Text>
             <Text className="text-sm mt-1">
               Use the form below to send a message, report an issue, submit a
               review, or make an enquiry about a property or agent. We’re here
@@ -63,14 +78,25 @@ const ReportReviewScreen = () => {
             placeholder="Your message (review/report/enquiry)"
             multiline
           />
-          <CustomInput
-            isBottomSheet={false}
-            title="Type"
-            value={formData.type}
-            onUpdate={handleUpdate("type")}
-            placeholder="Type of report (e.g. 'review', 'complaint', 'question')"
-          />
-          <Button onPress={handleSubmit}>
+          <View className="gap-2">
+            <Text className="text-base font-medium">
+              Category <Text className="text-primary">*</Text>
+            </Text>
+            <CustomSelect
+              withDropIcon
+              label="Duration"
+              BottomSheet={OptionsBottomSheet}
+              value={formData.type}
+              valueParser={(value: any) => value || "Select Duration"}
+              onChange={(val) => setFormData({ ...formData, type: val.value })}
+              options={types.map((item) => ({
+                label: item.toUpperCase(),
+                value: item,
+              }))}
+            />
+          </View>
+          <Button size="xl" onPress={handleSubmit}>
+            {isPending && <SpinningLoader />}
             <ButtonText>Send</ButtonText>
           </Button>
         </View>

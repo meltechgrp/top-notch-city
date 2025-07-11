@@ -12,6 +12,7 @@ interface AdminDashboardStats {
   totalReports: number;
   totalAdmin: number;
   totalAgents: number;
+  totalAdminAgent: number;
   totalNormalUsers: number;
 
   totalUploadsLast6Months: Stat[];
@@ -32,11 +33,13 @@ interface AdminDashboardStats {
 
 interface AgentDashboardStats {
   totalProperties: number;
-  totalSold: number;
-  totalPropertyViews: number;
-  propertyViewsLast30Days: {
+  totalViews: number;
+  totalLikes: number;
+  totalBookings: number;
+  totalViewsPerDay: {
     date: string;
     views: number;
   }[];
-  propertiesPerMonthLast6Months: Stat[];
+  totalUploadedPropertiesPerMonth: Stat[];
+  totalBookingsPerMonth: Stat[];
 }

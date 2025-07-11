@@ -39,6 +39,13 @@ export default function ProtectedRoutesLayout() {
           headerShown: true,
         }}
       />
+      <Stack.Screen
+        name="report"
+        options={{
+          headerTitle: "Contact Admin",
+          headerShown: true,
+        }}
+      />
     </Stack>
   );
 }

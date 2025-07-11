@@ -17,7 +17,7 @@ export default function Dashboard() {
 
   const views = useMemo(
     () =>
-      fillMissingTimeSeries(data?.propertyViewsLast30Days || [], {
+      fillMissingTimeSeries(data?.totalViewsPerDay || [], {
         dateKey: "date",
         valueKey: "views",
       }),
@@ -36,7 +36,11 @@ export default function Dashboard() {
         <LineChartCard title="Property Views" data={views} />
         <BarChartCard
           title="Property Uploads"
-          data={fillLast6Months(data?.propertiesPerMonthLast6Months)}
+          data={fillLast6Months(data?.totalUploadedPropertiesPerMonth)}
+        />
+        <BarChartCard
+          title="Bookings"
+          data={fillLast6Months(data?.totalBookingsPerMonth)}
         />
       </BodyScrollView>
     </MainLayout>

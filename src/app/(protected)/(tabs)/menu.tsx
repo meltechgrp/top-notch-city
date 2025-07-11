@@ -272,10 +272,10 @@ export default function More() {
               iconColor="primary"
               onPress={onInvite}
             />
-            {(!isAgent || me?.role !== "admin") && (
+            {(!isAgent || me?.role == "user") && (
               <Divider className=" h-[0.3px] bg-background-info mb-4" />
             )}
-            {!isAgent && me?.role !== "admin" && (
+            {!isAgent && me?.role == "user" && (
               <MenuListItem
                 title="Become an Agent"
                 description={`Join us as an agent to earn more`}

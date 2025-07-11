@@ -50,3 +50,12 @@ type UploadedFile = {
   uri: string;
   id: string;
 };
+
+type Enquiry = {
+  full_name: string;
+  email: string;
+  message: string;
+  type: "sell" | "enquiry" | "general" | "visit" | "offer";
+  address?: string;
+  property_id?: string;
+};

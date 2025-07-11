@@ -69,6 +69,7 @@ const PropertyDetailsBottomSheet = () => {
               onPress={() => {
                 openEnquiryModal({
                   visible: true,
+                  id: property?.id,
                 });
               }}
               className="flex-row flex-1 bg-gray-600 gap-2 p-4 py-5 rounded-xl items-center justify-between"

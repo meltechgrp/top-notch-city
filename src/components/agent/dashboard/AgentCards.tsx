@@ -24,7 +24,7 @@ export default function AgentCards({ data }: Props) {
             title="Views"
             showDirection={false}
             icon={Eye}
-            total={data?.totalPropertyViews}
+            total={data?.totalViews}
           />
         </View>
         <View className="flex-row gap-4">
@@ -32,13 +32,13 @@ export default function AgentCards({ data }: Props) {
             title="Bookings"
             showDirection={false}
             icon={ScrollText}
-            total={0}
+            total={data?.totalBookings}
           />
           <DashboardCard
             title="Likes"
             showDirection={false}
             icon={Heart}
-            total={0}
+            total={data?.totalLikes}
           />
         </View>
       </View>
