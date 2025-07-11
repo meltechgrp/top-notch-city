@@ -9,11 +9,10 @@ import {
   useResolvedTheme,
   View,
 } from "@/components/ui";
-import { Stack, usePathname, useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { Alert, Share } from "react-native";
 import React, { useMemo } from "react";
 import {
-  ChevronRight,
   Heart,
   HelpCircle,
   LayoutDashboard,
@@ -41,10 +40,10 @@ export default function More() {
   const resetAppState = useResetAppState();
   const { me, hasAuth } = useStore();
   const router = useRouter();
-  const { data } = useQuery({
-    queryKey: ["applications"],
-    queryFn: getMyApplications,
-  });
+  // const { data } = useQuery({
+  //   queryKey: ["applications"],
+  //   queryFn: getMyApplications,
+  // });
   const theme = useResolvedTheme();
 
   const [openLogoutAlertDialog, setOpenLogoutAlertDialog] =
@@ -92,10 +91,11 @@ export default function More() {
       alert(error.message);
     }
   }
-  const isAgent = useMemo(
-    () => data?.some((ap) => ap.status == "approved"),
-    [data]
-  );
+  const isAgent = false;
+  //   useMemo(
+  //   () => data?.some((ap) => ap.status == "approved"),
+  //   [data]
+  // );
   return (
     <>
       <Stack.Screen
@@ -193,7 +193,7 @@ export default function More() {
             {me && <Divider className=" h-[0.3px] bg-background-info mb-4" />}
             {me && me?.role != "user" && (
               <MenuListItem
-                title="Dashboard"
+                title={me.role == "admin" ? "Dashboard" : "Analytics"}
                 description={
                   me.role == "admin"
                     ? "View admin dashboard"
@@ -203,7 +203,7 @@ export default function More() {
                   if (me?.role === "admin") {
                     router.dismissTo("/admin");
                   } else {
-                    router.dismissTo("/agent");
+                    router.push("/dashboard");
                   }
                 }}
                 icon={LayoutDashboard}

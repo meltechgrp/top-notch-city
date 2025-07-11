@@ -40,6 +40,13 @@ export default function ProtectedRoutesLayout() {
         }}
       />
       <Stack.Screen
+        name="dashboard"
+        options={{
+          headerTitle: "Analytics",
+          headerShown: true,
+        }}
+      />
+      <Stack.Screen
         name="report"
         options={{
           headerTitle: "Contact Admin",

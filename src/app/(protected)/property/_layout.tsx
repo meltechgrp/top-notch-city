@@ -24,6 +24,8 @@ export default function PropertysLayout() {
       <Stack.Screen
         name="[propertyId]/index"
         options={{
+          headerTransparent: true,
+          headerShown: false,
           headerTitleStyle: { color: "white", fontSize: 20 },
           gestureEnabled: true,
           fullScreenGestureEnabled: true,
@@ -69,6 +71,22 @@ export default function PropertysLayout() {
         options={{
           headerShown: true,
           title: "Top Properties",
+        }}
+      />
+      <Stack.Screen
+        name="add"
+        options={{
+          headerShown: true,
+          headerTitle: "",
+          animation: "slide_from_right",
+        }}
+      />
+      <Stack.Screen
+        name="success"
+        options={{
+          headerShown: true,
+          headerTitle: "",
+          animation: "slide_from_right",
         }}
       />
       <Stack.Screen

@@ -115,7 +115,7 @@ export default function SellAddScreen() {
   async function uploaHandler() {
     await uploadProperty(listing, {
       onSuccess: () => {
-        router.dismissTo("/agent/property/success");
+        router.dismissTo("/property/success");
         resetListing();
       },
       onError: () =>

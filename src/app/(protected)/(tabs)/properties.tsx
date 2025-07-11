@@ -97,7 +97,7 @@ export default function PropertiesScreen() {
     }
 
     if (isAgent) {
-      router.push("/agent/property/add");
+      router.push("/property/add");
     }
   }
   const { onLayout, height } = useLayout();
@@ -105,6 +105,7 @@ export default function PropertiesScreen() {
     <>
       <MainLayout
         isAgent
+        showNotification={false}
         onLayout={onLayout}
         className="pt-4 px-2"
         rightHeaderComponent={
@@ -127,7 +128,7 @@ export default function PropertiesScreen() {
           }
           onPress={(data) => {
             router.push({
-              pathname: "/agent/property/[propertyId]",
+              pathname: "/property/[propertyId]",
               params: {
                 propertyId: data.id,
               },

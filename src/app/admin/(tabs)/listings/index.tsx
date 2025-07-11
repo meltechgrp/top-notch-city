@@ -38,8 +38,8 @@ export default function Properties() {
       filtered = filtered.filter(
         (u) =>
           regex.test(u.title) ||
-          regex.test(u.category) ||
-          regex.test(u.subcategory)
+          regex.test(u.category.name) ||
+          regex.test(u.subcategory.name)
       );
     }
     return filtered;
@@ -89,11 +89,13 @@ export default function Properties() {
           <VerticalProperties
             headerTopComponent={headerComponent}
             data={filteredData}
-            isLoading={isLoading}
+            showStatus
+            isLoading={isLoading || isFetchingNextPage}
             onPress={(data) => {
               setActiveProperty(data);
               setPropertyBottomSheet(true);
             }}
+            fetchNextPage={fetchNextPage}
             refetch={refetch}
           />
         </View>

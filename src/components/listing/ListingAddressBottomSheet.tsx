@@ -5,7 +5,7 @@ import BottomSheet from "../shared/BottomSheet";
 import { useEffect, useMemo, useState } from "react";
 import { Icon, Text } from "../ui";
 import { debounce } from "lodash-es";
-import { MapPin, Send } from "lucide-react-native";
+import { MapPin } from "lucide-react-native";
 import { fetchPlaceFromTextQuery } from "@/actions/utills";
 import { composeFullAddress } from "@/lib/utils";
 import { MiniEmptyState } from "../shared/MiniEmptyState";
@@ -49,7 +49,6 @@ function ListingAddressBottomSheet(props: Props) {
       ),
     []
   );
-
   useEffect(() => {
     return () => {
       // Clean up debounce on unmount

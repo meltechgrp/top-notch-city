@@ -12,6 +12,7 @@ import { useRouter } from "expo-router";
 type Props = View["props"] & {
   topbarClassName?: string;
   isAgent?: boolean;
+  showNotification?: boolean;
   rightHeaderComponent?: React.ReactNode;
 };
 export default function MainLayout(props: Props) {
@@ -21,6 +22,7 @@ export default function MainLayout(props: Props) {
     topbarClassName,
     isAgent = false,
     rightHeaderComponent,
+    showNotification = true,
   } = props;
   const router = useRouter();
 
@@ -43,9 +45,9 @@ export default function MainLayout(props: Props) {
                 <AvatarImage source={MainLogo} />
               </Avatar>
               <View className="flex-1">
-                <Text size="xl">Top-Notch {isAgent ? "Agent" : "Admin"}</Text>
+                <Text size="xl">Top-Notch {isAgent ? "" : "Admin"}</Text>
               </View>
-              <View className=" px-4 flex-row ">
+              <View className=" px-4 flex-row items-center">
                 {rightHeaderComponent ? (
                   rightHeaderComponent
                 ) : (
@@ -53,7 +55,12 @@ export default function MainLayout(props: Props) {
                     <Icon size="xl" as={Home} />
                   </Pressable>
                 )}
-                {/* <NotificationBarButton className=" bg-transparent rounded-none" /> */}
+                {showNotification && (
+                  <NotificationBarButton
+                    isAdmin
+                    className=" bg-transparent rounded-none"
+                  />
+                )}
               </View>
             </View>
           </View>

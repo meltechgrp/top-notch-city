@@ -31,7 +31,7 @@ export default function ListingSuccess() {
             variant="outline"
             className="flex-1 h-12 mt-4"
             size="md"
-            onPress={() => router.dismissTo("/agent/property/add")}
+            onPress={() => router.dismissTo("/property/add")}
           >
             <ButtonText>Upload again</ButtonText>
           </Button>
@@ -39,7 +39,7 @@ export default function ListingSuccess() {
             variant="solid"
             className="flex-1 h-12 mt-4"
             size="md"
-            onPress={() => router.dismissTo("/agent/properties")}
+            onPress={() => router.dismissTo("/properties")}
           >
             <ButtonText>My Properties</ButtonText>
           </Button>

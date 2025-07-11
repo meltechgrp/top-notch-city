@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import React from "react";
+import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import { HapticTab } from "@/components/HapticTab";
 import TabBarBackground from "@/components/TabBarBackground";
@@ -12,12 +12,15 @@ import {
 } from "lucide-react-native";
 import { Colors } from "@/constants/Colors";
 import { useResolvedTheme } from "@/components/ui";
+import { useStore } from "@/store";
 
 export const unstable_settings = {
   initialRouteName: "home",
 };
 export default function TabLayout() {
   const theme = useResolvedTheme();
+  const { me } = useStore();
+  const isAgent = useMemo(() => me?.role == "agent", [me]);
   return (
     <Tabs
       screenOptions={{
@@ -62,6 +65,14 @@ export default function TabLayout() {
         options={{
           title: "Explore",
           tabBarIcon: ({ color }) => <Search size={24} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="properties"
+        options={{
+          title: "Properties",
+          tabBarIcon: ({ color }) => <Plus size={24} color={color} />,
+          href: isAgent ? "/(protected)/(tabs)/properties" : null,
         }}
       />
       <Tabs.Screen

@@ -15,7 +15,7 @@ export default function ListingPurpose() {
           style={{
             height: height / 2.5,
           }}
-          className=" min-h-32 rounded-3xl overflow-hidden"
+          className=" min-h-52 rounded-3xl overflow-hidden"
         >
           <Image
             source={require("@/assets/images/vectors/bookshelf.jpg")}

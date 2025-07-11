@@ -198,7 +198,6 @@ export function useUploadProperty() {
       if (address) {
         formData.append("latitude", address.location.latitude.toString());
         formData.append("longitude", address.location.longitude.toString());
-
         const comps = address.addressComponents;
         if (comps.city) formData.append("city", comps.city);
         if (comps.state) formData.append("state", comps.state);

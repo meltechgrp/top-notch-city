@@ -25,24 +25,22 @@ export default function Dashboard() {
   );
   const { onRefresh } = useRefresh(refetch);
   return (
-    <MainLayout isAgent>
-      <BodyScrollView
-        refreshing={isFetching || isLoading}
-        onRefresh={onRefresh}
-        className="flex-1 gap-1 pt-4 pb-8"
-      >
-        <AgentCards data={data} />
+    <BodyScrollView
+      refreshing={isFetching || isLoading}
+      onRefresh={onRefresh}
+      className="flex-1 gap-1 pt-4 pb-8"
+    >
+      <AgentCards data={data} />
 
-        <LineChartCard title="Property Views" data={views} />
-        <BarChartCard
-          title="Property Uploads"
-          data={fillLast6Months(data?.totalUploadedPropertiesPerMonth)}
-        />
-        <BarChartCard
-          title="Bookings"
-          data={fillLast6Months(data?.totalBookingsPerMonth)}
-        />
-      </BodyScrollView>
-    </MainLayout>
+      <LineChartCard title="Property Views" data={views} />
+      <BarChartCard
+        title="Property Uploads"
+        data={fillLast6Months(data?.totalUploadedPropertiesPerMonth)}
+      />
+      <BarChartCard
+        title="Bookings"
+        data={fillLast6Months(data?.totalBookingsPerMonth)}
+      />
+    </BodyScrollView>
   );
 }

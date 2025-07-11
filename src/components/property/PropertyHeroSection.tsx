@@ -13,8 +13,8 @@ interface Props {
 
 export function PropertyHeroSection({ property, width }: Props) {
   return (
-    <View className="flex-1">
-      <View className=" relative">
+    <View className="flex-1 bg-background">
+      <View className=" relative bg-blue-500 flex-1">
         <PropertyCarousel
           width={width || 400}
           factor={1.15}

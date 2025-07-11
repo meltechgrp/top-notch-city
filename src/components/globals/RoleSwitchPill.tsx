@@ -24,7 +24,9 @@ export function RoleSwitchPill() {
   // ✅ Allowed agent/admin tab root screens only
   const segments = pathname.split("/").filter(Boolean);
   const isAdminTabsRoot =
-    pathname.startsWith("/admin/") && segments.length === 2;
+    pathname.startsWith("/admin/") &&
+    segments.length === 2 &&
+    !pathname.startsWith("/admin/notification");
   const isAgentTabsRoot =
     pathname.startsWith("/agent/") && segments.length === 2;
 

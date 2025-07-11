@@ -32,6 +32,7 @@ type Props = {
   selectedIndex?: number;
   paginationsize?: number;
   isList?: boolean;
+  enabled?: boolean;
 };
 
 function PropertyCarousel({
@@ -53,6 +54,7 @@ function PropertyCarousel({
   isOwner,
   isList = false,
   rounded,
+  enabled = true,
 }: Props) {
   const { bannerHeight } = Layout;
   const theme = useResolvedTheme();
@@ -72,7 +74,10 @@ function PropertyCarousel({
   };
 
   return (
-    <View className="relative w-full flex-row items-center justify-center">
+    <View
+      style={{ height: baseOptions.height }}
+      className="relative bg-background w-full flex-row items-center justify-center"
+    >
       {/* center zone */}
       {isList && (
         <View
@@ -88,6 +93,7 @@ function PropertyCarousel({
           ref={carouselRef}
           {...baseOptions}
           loop={loop}
+          enabled={enabled}
           autoPlay={autoPlay}
           autoPlayInterval={2000}
           scrollAnimationDuration={scrollAnimationDuration}

@@ -3,6 +3,7 @@ import {
   fetchProperties,
   fetchUserProperties,
   fetchAdminProperties,
+  fetchPendingProperties,
 } from "@/actions/property/list";
 import { searchProperties } from "@/actions/search";
 import { fetchLocationProperties } from "@/actions/property/locations";
@@ -18,7 +19,7 @@ export function useProductQueries({
   state,
   audioUrl,
 }: {
-  type: "all" | "user" | "admin" | "search" | "state";
+  type: "all" | "user" | "admin" | "search" | "state" | "pending";
   profileId?: string;
   filter?: SearchFilters;
   enabled?: boolean;
@@ -31,6 +32,18 @@ export function useProductQueries({
       return useInfiniteQuery({
         queryKey: ["properties"],
         queryFn: ({ pageParam = 1 }) => fetchProperties({ pageParam }),
+        initialPageParam: 1,
+        getNextPageParam: (lastPage) => {
+          const { page, pages } = lastPage;
+          return page < pages ? page + 1 : undefined;
+        },
+        enabled,
+      });
+    }
+    case "pending": {
+      return useInfiniteQuery({
+        queryKey: ["pending-properties"],
+        queryFn: ({ pageParam = 1 }) => fetchPendingProperties({ pageParam }),
         initialPageParam: 1,
         getNextPageParam: (lastPage) => {
           const { page, pages } = lastPage;

@@ -21,12 +21,24 @@ type Props = {
   isList?: boolean;
   rounded?: boolean;
   isHorizontal?: boolean;
+  withPagination?: boolean;
+  enabled?: boolean;
   style?: StyleProp<ViewStyle>;
   onPress: (data: Props["data"]) => void;
 };
 export default function PropertyListItem(props: Props) {
-  const { data, className, style, onPress, showStatus, rounded, isList } =
-    props;
+  const {
+    data,
+    className,
+    isHorizontal,
+    style,
+    onPress,
+    showStatus,
+    rounded,
+    isList,
+    enabled,
+    withPagination,
+  } = props;
   const me = useStore((s) => s.me);
   const { bannerHeight } = Layout;
   const { price, media, address, interaction, status, owner } = data;
@@ -54,14 +66,20 @@ export default function PropertyListItem(props: Props) {
       key={data.id}
       onPress={() => onPress(data)}
       style={[{ height: bannerHeight }, style]}
-      className={cn("relative flex-1 rounded-xl", className)}
+      className={cn(
+        "relative flex-1 rounded-xl",
+        isHorizontal && "w-80",
+        className
+      )}
     >
       <PropertyCarousel
         width={width || 300}
         withBackdrop={true}
         loop={true}
+        withPagination={withPagination}
         rounded={rounded}
         isList={isList}
+        enabled={enabled}
         paginationsize={6}
         media={images.slice(0, 5)}
         pointerPosition={6}

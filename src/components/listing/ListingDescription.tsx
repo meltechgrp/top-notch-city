@@ -17,7 +17,7 @@ export default function ListingDescription() {
         </View>
         <CustomInput
           isBottomSheet={false}
-          height={400}
+          height={200}
           placeholder="Enter property description"
           value={listing.description}
           onUpdate={(val) => updateListing({ ...listing, description: val })}

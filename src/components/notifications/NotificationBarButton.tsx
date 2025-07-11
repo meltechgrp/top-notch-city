@@ -12,9 +12,10 @@ import { getNotifications } from "@/actions/notification";
 
 type Props = {
   className?: string;
+  isAdmin?: boolean;
 };
 
-export default function NotificationBarButton({ className }: Props) {
+export default function NotificationBarButton({ className, isAdmin }: Props) {
   const { me } = useStore();
   const { data, refetch } = useQuery({
     queryKey: ["notifications"],
@@ -33,7 +34,7 @@ export default function NotificationBarButton({ className }: Props) {
       onPress={() => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         router.push({
-          pathname: "/notification",
+          pathname: isAdmin ? "/admin/notification" : "/notification",
         });
       }}
       action="secondary"
