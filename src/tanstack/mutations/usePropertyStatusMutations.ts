@@ -13,6 +13,7 @@ export function usePropertyStatusMutations() {
     queryClient.invalidateQueries({ queryKey: ["properties", id] });
     queryClient.invalidateQueries({ queryKey: ["properties"] });
     queryClient.invalidateQueries({ queryKey: ["admins-properties"] });
+    queryClient.invalidateQueries({ queryKey: ["pending"] });
   };
 
   const createStatusMutation = (action: string) =>
