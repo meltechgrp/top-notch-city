@@ -27,8 +27,7 @@
         "EXPO_PUBLIC_API_URL": "https://app.topnotchcity.com",
         "EXPO_PUBLIC_GOOGLE_AUTH_KEY": "198305892260-fglesbrqe6gthlphrb8pg4hlmjcthubm.apps.googleusercontent.com",
         "EXPO_PUBLIC_APPLE_AUTH_KEY": "198305892260-dqv5gtvj30hjofofa2spt2nrub7m4teb.apps.googleusercontent.com"
-      },
-      "install": "bun install"
+      }
     }
   },
   "submit": {
