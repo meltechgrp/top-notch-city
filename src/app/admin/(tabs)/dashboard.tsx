@@ -43,26 +43,28 @@ export default function Dashboard() {
       >
         <AdminCards data={data} />
 
-        <View className=" h-60 pl-4 mt-6">
-          <ScrollView horizontal contentContainerClassName="gap-4">
-            {propertyData.map((item) => (
-              <PropertyListItem
-                onPress={(data) => {
-                  setActiveProperty(data);
-                  setPropertyBottomSheet(true);
-                }}
-                key={item.id}
-                enabled={false}
-                isList={true}
-                showStatus
-                withPagination={false}
-                isHorizontal={true}
-                data={item}
-                rounded={true}
-              />
-            ))}
-          </ScrollView>
-        </View>
+        {propertyData?.length > 0 && (
+          <View className=" h-60 pl-4 mt-6">
+            <ScrollView horizontal contentContainerClassName="gap-4">
+              {propertyData.map((item) => (
+                <PropertyListItem
+                  onPress={(data) => {
+                    setActiveProperty(data);
+                    setPropertyBottomSheet(true);
+                  }}
+                  key={item.id}
+                  enabled={false}
+                  isList={true}
+                  showStatus
+                  withPagination={false}
+                  isHorizontal={true}
+                  data={item}
+                  rounded={true}
+                />
+              ))}
+            </ScrollView>
+          </View>
+        )}
         <DonutPieChart
           title="User Distribution"
           data={[
