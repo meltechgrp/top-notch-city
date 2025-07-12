@@ -44,7 +44,7 @@ export default function PropertyAcceptedNotificationComponent({
         // 		params: { propertyId: data.propertyId },
         // 	})
         // }
-        className="p-4 rounded-2xl min-h-20 bg-background-info "
+        className="p-4 rounded-2xl min-h-[6rem] mb-1 bg-background-info "
       >
         <View className="flex-1 gap-1 justify-center">
           <View className="flex-row gap-2 items-start">
@@ -54,11 +54,15 @@ export default function PropertyAcceptedNotificationComponent({
                 <AvatarBadge className="bg-primary -top-2 -right-1" size="md" />
               )}
             </Avatar>
-            <Text size="lg" numberOfLines={1} className="">
-              {title}
-            </Text>
+            <View className="gap-1 pr-1 flex-1">
+              <Text size="md" numberOfLines={1} className="">
+                {title}
+              </Text>
+              <Text numberOfLines={2} className="text-sm font-light">
+                {message}
+              </Text>
+            </View>
           </View>
-          <Text className="text-sm font-light">{message}</Text>
         </View>
       </Pressable>
     </NotificationItemWrapper>

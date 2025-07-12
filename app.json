@@ -1,115 +1,124 @@
 {
-	"expo": {
-		"name": "TopNotch City",
-		"slug": "topnotch-city",
-		"version": "1.0.0",
-		"orientation": "portrait",
-		"icon": "./src/assets/images/icon.png",
-		"userInterfaceStyle": "automatic",
-		"scheme": "topnotch-city",
-		"newArchEnabled": true,
-		"ios": {
-			"supportsTablet": true,
-    "usesAppleSignIn": true,
-			"bundleIdentifier": "com.meltech.topnotchcity",
-			"infoPlist": {
-				"NSLocationWhenInUseUsageDescription": "Allow $(PRODUCT_NAME) to access your location to show nearby properties and map search.",
-				"ITSAppUsesNonExemptEncryption": false
-			}
-		},
-		"android": {
-			"edgeToEdgeEnabled": true,
-			"googleServicesFile": "./google-services.json",
-			"package": "com.meltech.topnotchcity",
-			"permissions": [
-				"android.permission.ACCESS_FINE_LOCATION",
-				"android.permission.ACCESS_COARSE_LOCATION",
-				"android.permission.RECORD_AUDIO"
-			],
-			"softwareKeyboardLayoutMode": "resize",
-			"config": {
-				"googleMaps": {
-					"apiKey": "AIzaSyCZr5BAkbblLJwpyn8Exu6ZfH01ge0Bp4Y"
-				}
-			}
-		},
-		"web": {
-			"bundler": "metro",
-			"output": "static"
-		},
-		"plugins": [
-			"expo-router",
-			"react-native-compressor",
-			"expo-apple-authentication",
-			[
-			  "expo-local-authentication",
-			  {
-				"faceIDPermission": "Allow $(PRODUCT_NAME) to use Face ID for secure login."
-			  }
-			],
-			[
-				"expo-video",
-				{
-					"supportsBackgroundPlayback": true,
-					"supportsPictureInPicture": true
-				}
-			],
-			[
-				"expo-location",
-				{
-					"locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to access your location for map search and nearby properties."
-				}
-			],
-			"expo-secure-store",
-			[
-				"expo-web-browser",
-				{
-					"experimentalLauncherActivity": true
-				}
-			],
-			[
-				"expo-font",
-				{
-					"fonts": [
-						"./src/assets/fonts/Satoshi-Black.otf",
-						"./src/assets/fonts/Satoshi-Bold.otf",
-						"./src/assets/fonts/Satoshi-Medium.otf",
-						"./src/assets/fonts/Satoshi-Regular.otf",
-						"./src/assets/fonts/Satoshi-Italic.otf",
-						"./src/assets/fonts/Satoshi-Light.otf"
-					]
-				}
-			],
-			[
-				"expo-image-picker",
-				{
-					"photosPermission": "Allow $(PRODUCT_NAME) to access your photos to upload property images or update your profile."
-				}
-			],
-			[
-				"expo-splash-screen",
-				{
-					"image": "./src/assets/images/icon.png",
-					"resizeMode": "contain"
-				}
-			],
-			[
-				"expo-audio",
-				{
-					"microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone for voice search and audio messages."
-				}
-			],
-			"@react-native-voice/voice"
-		],
-		"experiments": {
-			"typedRoutes": true
-		},
-		"extra": {
-			"router": {},
-			"eas": {
-				"projectId": "d21cedf2-e98d-42e9-bf8b-6d52e1a7ef20"
-			}
-		},
-		"owner": "meltechnologies"
-	}
+  "expo": {
+    "name": "Top-Notch City",
+    "slug": "topnotch-city",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./src/assets/images/icon.png",
+    "userInterfaceStyle": "automatic",
+    "scheme": "topnotch-city",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "usesAppleSignIn": true,
+      "bundleIdentifier": "com.meltech.topnotchcity",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Allow $(PRODUCT_NAME) to access your location to show nearby properties and map search.",
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "edgeToEdgeEnabled": true,
+      "googleServicesFile": "./google-services.json",
+      "package": "com.meltech.topnotchcity",
+      "permissions": [
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "softwareKeyboardLayoutMode": "resize",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyCZr5BAkbblLJwpyn8Exu6ZfH01ge0Bp4Y"
+        }
+      }
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static"
+    },
+    "plugins": [
+      "expo-router",
+      "react-native-compressor",
+      "expo-apple-authentication",
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Allow $(PRODUCT_NAME) to use Face ID for secure login."
+        }
+      ],
+      [
+        "expo-video",
+        {
+          "supportsBackgroundPlayback": true,
+          "supportsPictureInPicture": true
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to access your location for map search and nearby properties."
+        }
+      ],
+      "expo-secure-store",
+      [
+        "expo-web-browser",
+        {
+          "experimentalLauncherActivity": true
+        }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./src/assets/fonts/Satoshi-Black.otf",
+            "./src/assets/fonts/Satoshi-Bold.otf",
+            "./src/assets/fonts/Satoshi-Medium.otf",
+            "./src/assets/fonts/Satoshi-Regular.otf",
+            "./src/assets/fonts/Satoshi-Italic.otf",
+            "./src/assets/fonts/Satoshi-Light.otf"
+          ]
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos to upload property images or update your profile."
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./src/assets/images/icon.png",
+          "resizeMode": "contain"
+        }
+      ],
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone for voice search and audio messages."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./src/assets/images/notification.png",
+          "color": "#ffffff",
+          "defaultChannel": "default",
+          "enableBackgroundRemoteNotifications": false
+        }
+      ],
+      "@react-native-voice/voice"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "d21cedf2-e98d-42e9-bf8b-6d52e1a7ef20"
+      }
+    },
+    "owner": "meltechnologies"
+  }
 }

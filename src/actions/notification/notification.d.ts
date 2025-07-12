@@ -1,12 +1,14 @@
 type UserNotification = {
-  id: string; // UUID of the notification
-  title: string; // Title text
-  message: string; // Notification message
-  type: "info" | "success" | "error" | string; // Type of notification
-  user_id: string; // User UUID
-  is_read: boolean; // Read status
-  created_at: string; // ISO timestamp
-  updated_at: string; // ISO timestamp
+  id: string;
+  title: string;
+  message: string;
+  type: NotificationType;
+  user_id: string;
+  is_read: boolean;
+  created_at: string;
+  updated_at: string;
 };
 
 type UserNotifications = UserNotification[];
+
+type NotificationType = "info" | "success" | "error" | string;

@@ -75,10 +75,13 @@ function PropertyDetailsBottomSheet(props: PropertyBottomSheetProps) {
               <Text className="text-sm">Status:</Text>
               <PropertyStatus status={property.status} />
             </View>
-            <InfoRow label="Category" value={capitalize(property.category)} />
+            <InfoRow
+              label="Category"
+              value={capitalize(property.category.name)}
+            />
             <InfoRow
               label="Subcategory"
-              value={capitalize(property.subcategory)}
+              value={capitalize(property.subcategory.name)}
             />
             <InfoRow
               label="Address"
