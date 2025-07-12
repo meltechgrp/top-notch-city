@@ -93,8 +93,7 @@ function ListingPhotosBottomSheet(props: Props) {
           await compress({
             type: "image",
             uri: file.uri,
-            compressionRate: 0.4,
-            maxWidth: 720,
+            compressionRate: 0.2,
           })
       )
     );

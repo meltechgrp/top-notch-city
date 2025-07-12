@@ -153,12 +153,12 @@ function SearchLocationBottomSheet({ show, onDismiss, onUpdate }: Props) {
       <View className="flex-1 px-4 gap-8 py-2 pb-8 bg-background">
         {/* Input + Purpose Selector */}
         <View className="gap-3">
-          <View className="px-4 flex-row gap-4 items-center bg-background-info rounded-xl border border-outline-200">
+          <View className="px-4 pl-2 flex-row gap-4 items-center bg-background-info rounded-xl border border-outline-200">
             <CustomInput
               placeholder="Search property location..."
               value={text}
-              className=" border-0 px-1 "
-              inputClassName="flex-1"
+              className=" flex-1"
+              inputClassName="border-0"
               onUpdate={onChangeText}
               returnKeyLabel="Done"
               returnKeyType="done"

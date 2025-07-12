@@ -37,6 +37,7 @@ const Image = React.forwardRef<
       ref={ref}
       className={imageStyle({ size, class: className })}
       {...props}
+      source={props.source} // ensure stable
       style={[
         { flex: 1, width: "100%" },
         rounded && { borderRadius: 10 },
@@ -44,6 +45,7 @@ const Image = React.forwardRef<
       ]}
       // Optional blur placeholder while loading
       placeholder={{ blurhash }}
+      cachePolicy={"memory-disk"}
       contentFit={props.contentFit || "cover"}
       transition={props.transition || 800}
     />

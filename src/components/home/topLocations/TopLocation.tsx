@@ -31,12 +31,7 @@ export default function TopLocation({
         clasName
       )}
     >
-      <Image
-        source={{ uri: photo_url }}
-        className="w-full h-full"
-        alt={state}
-        resizeMode="cover"
-      />
+      <Image source={photo_url} className="w-full h-full" alt={state} />
       <View className="absolute inset-0 bg-black/40 to-transparent flex justify-end p-4">
         <Text className="text-white text-xl font-bold">{state}</Text>
         <Text className="text-gray-200 text-base">
