@@ -13,8 +13,7 @@
     "deploy": "npx expo export -p web && eas deploy --prod",
     "lint": "eslint \"**/*.{js,jsx,ts,tsx}\" && prettier -c \"**/*.{js,jsx,ts,tsx,json}\"",
     "format": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix && prettier \"**/*.{js,jsx,ts,tsx,json}\" --write",
-    "gen": "graphql-codegen",
-    "postinstall": "bun install"
+    "gen": "graphql-codegen"
   },
   "jest": {
     "preset": "jest-expo"
