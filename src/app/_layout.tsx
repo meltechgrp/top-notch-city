@@ -140,9 +140,9 @@ export async function registerForPushNotificationsAsync() {
     "REQUESTED_FOR_PUSH_NOTIFICATION_PERMISSION"
   );
 
-  if (hasRequested === "True") {
-    return;
-  }
+  // if (hasRequested === "True") {
+  //   return;
+  // }
 
   const { status: existingStatus } = await Notifications.getPermissionsAsync();
   let finalStatus = existingStatus;

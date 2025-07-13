@@ -151,8 +151,9 @@ export async function fetchPlaceFromTextQuery(
 
 export async function updatePushNotificationToken(token: string) {
   try {
-    const res = await Fetch(`/notifications/save-token/?push_token=${token}`, {
+    const res = await Fetch(`/notifications/save-token/`, {
       method: "POST",
+      data: { push_token: token },
     });
     console.log(res);
   } catch (error) {

@@ -46,7 +46,7 @@ export default function NotificationItemWrapper({
   const RightAction = () => {
     const pressHandler = () => {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      handleSwipeDelete();
+      onDelete();
       reanimatedRef.current?.close();
     };
     return (
