@@ -15,6 +15,7 @@ import * as Clarity from "@microsoft/react-native-clarity";
 import { RoleSwitchPill } from "@/components/globals/RoleSwitchPill";
 import { Linking, Platform } from "react-native";
 import { cacheStorage } from "@/lib/asyncStorage";
+import { defaultNotificationHandler } from "@/lib/notification";
 import * as Notifications from "expo-notifications";
 import { useStore } from "@/store";
 import Constants from "expo-constants";
@@ -108,6 +109,16 @@ function useMountPushNotificationToken() {
   }, [hasAuth]);
 }
 
+export function useHandleNotification() {
+  useEffect(() => {
+    if (Platform.OS !== "web") {
+      Notifications.setNotificationHandler({
+        handleNotification: defaultNotificationHandler,
+      });
+    }
+  }, []);
+}
+
 function useNotificationObserver() {
   useEffect(() => {
     const subscription = Notifications.addNotificationResponseReceivedListener(
@@ -140,9 +151,9 @@ export async function registerForPushNotificationsAsync() {
     "REQUESTED_FOR_PUSH_NOTIFICATION_PERMISSION"
   );
 
-  // if (hasRequested === "True") {
-  //   return;
-  // }
+  if (hasRequested === "True") {
+    return;
+  }
 
   const { status: existingStatus } = await Notifications.getPermissionsAsync();
   let finalStatus = existingStatus;

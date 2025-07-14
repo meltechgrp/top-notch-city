@@ -65,16 +65,14 @@ function handleNotificationResponseByType(
   }
 }
 
-// export async function defaultNotificationHandler(
-//   notification: ExpoNotifications.Notification
-// ) {
-//   const isNewMessageNoty =
-//     notification.request.content.data.notificationType ===
-//     NotificationType.NewChatMessage
-
-//   return {
-//     shouldShowAlert: true,
-//     shouldPlaySound: isNewMessageNoty ? true : false,
-//     shouldSetBadge: false,
-//   }
-// }
+export async function defaultNotificationHandler(
+  notification: ExpoNotifications.Notification
+) {
+  return {
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: false,
+  };
+}
