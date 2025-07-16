@@ -8,7 +8,6 @@ const MAPS_API_KEY = process.env.EXPO_PUBLIC_ANDROID_MAPS_API_KEY;
 export async function Fetch(url: string, options: AxiosRequestConfig = {}) {
   const authToken = getAuthToken();
   const deviceId = getUniqueIdSync();
-  console.log(deviceId);
   const res = await axios({
     baseURL: `${config.origin}/api`,
     url,
@@ -20,7 +19,7 @@ export async function Fetch(url: string, options: AxiosRequestConfig = {}) {
     },
     data: options.data,
   });
-  console.log("Fetch URL:", url, "Response:", res.status, res.statusText);
+  // console.log("Fetch URL:", url, "Response:", res.status, res.statusText);
   // if (res.status >= 400) {
   //   throw new Error(`HTTP error! status: ${res.status}`);
   // }
@@ -155,7 +154,7 @@ export async function updatePushNotificationToken(token: string) {
       method: "POST",
       data: { push_token: token },
     });
-    console.log(res);
+    return res;
   } catch (error) {
     console.log(error);
   }

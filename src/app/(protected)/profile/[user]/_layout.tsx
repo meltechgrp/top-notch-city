@@ -36,6 +36,12 @@ export default function ProfileScreensLayout() {
       }}
     >
       <Stack.Screen
+        name="index"
+        options={{
+          title: "Profile",
+        }}
+      />
+      <Stack.Screen
         name="account"
         options={{
           title: "Account",

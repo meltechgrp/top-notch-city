@@ -3,7 +3,7 @@ import { Stack, useLocalSearchParams } from "expo-router";
 import React, { useMemo, useState } from "react";
 import { ListFilter } from "lucide-react-native";
 import VerticalProperties from "@/components/property/VerticalProperties";
-import { useProductQueries } from "@/tanstack/queries/useProductQueries";
+import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import SearchFilterBottomSheet from "@/components/modals/search/SearchFilterBottomSheet";
 import { useFilteredProperties } from "@/hooks/useFilteredProperties";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -11,7 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function PropertySections() {
   const { title } = useLocalSearchParams() as { title?: string };
   const [showFilter, setShowFilter] = useState(false);
-  const { data, isLoading, fetchNextPage, refetch } = useProductQueries({
+  const { data, isLoading, fetchNextPage, refetch } = useInfinityQueries({
     type: "all",
   });
   const [filter, setFilter] = useState<SearchFilters>({});

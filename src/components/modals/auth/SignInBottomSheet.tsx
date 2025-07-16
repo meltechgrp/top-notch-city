@@ -43,9 +43,11 @@ export default function SignInBottomSheet({
 
   const [googleRequest, googleResponse, googlePromptAsync] =
     Google.useAuthRequest({
-      androidClientId: process.env.EXPO_PUBLIC_GOOGLE_AUTH_KEY,
+      androidClientId:
+        "198305892260-c8eiep3tnnp29enadh4bvqb7vm0804cs.apps.googleusercontent.com",
       iosClientId: process.env.EXPO_PUBLIC_APPLE_AUTH_KEY,
     });
+  console.log(googleRequest?.redirectUri);
 
   const [fbRequest, fbResponse, fbPromptAsync] = Facebook.useAuthRequest({
     clientId: "990600566300859",

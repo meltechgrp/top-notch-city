@@ -36,6 +36,7 @@
         <data android:scheme="exp+top-notch-city"/>
         <data android:scheme="topnotch-city"/>
         <data android:scheme="exp+topnotch-city"/>
+        <data android:scheme="com.meltech.topnotchcity"/>
       </intent-filter>
     </activity>
     <activity android:name=".BrowserLauncherActivity" android:theme="@style/Theme.App.SplashScreen" android:exported="true">

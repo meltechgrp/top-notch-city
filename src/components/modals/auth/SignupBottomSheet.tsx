@@ -10,7 +10,6 @@ import eventBus from "@/lib/eventBus";
 import BottomSheet from "@/components/shared/BottomSheet";
 import { authSignup } from "@/actions/auth";
 import { CustomInput } from "@/components/custom/CustomInput";
-import { openEmailVerificationModal } from "@/components/globals/AuthModals";
 
 export default function SignUpBottomSheet({
   visible,
@@ -61,7 +60,7 @@ export default function SignUpBottomSheet({
           hasAuth: true,
         }));
         eventBus.dispatchEvent("REFRESH_PROFILE", null);
-        openEmailVerificationModal({ visible: true });
+        eventBus.dispatchEvent("openSignUpModal", { visible: true });
         onDismiss?.();
       }
     } catch (error) {

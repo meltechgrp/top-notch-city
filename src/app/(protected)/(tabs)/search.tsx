@@ -9,7 +9,7 @@ import SearchListView from "@/components/search/SearchListView";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SearchLocationBottomSheet from "@/components/modals/search/SearchLocationBottomSheet";
 import SearchFilterBottomSheet from "@/components/modals/search/SearchFilterBottomSheet";
-import { useProductQueries } from "@/tanstack/queries/useProductQueries";
+import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import { router, useLocalSearchParams } from "expo-router";
 import { VoiceModal } from "@/components/modals/search/VoiceModal";
 import { useFilteredProperties } from "@/hooks/useFilteredProperties";
@@ -38,7 +38,7 @@ export default function SearchScreen() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useProductQueries({ type: "search", filter: search, enabled: false });
+  } = useInfinityQueries({ type: "search", filter: search, enabled: false });
 
   useEffect(() => {
     refetch();

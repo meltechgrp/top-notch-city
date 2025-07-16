@@ -9,7 +9,7 @@ import PropertyListItem from "@/components/property/PropertyListItem";
 import { View } from "@/components/ui";
 import { fillLast6Months } from "@/lib/utils";
 import { useStore } from "@/store";
-import { useProductQueries } from "@/tanstack/queries/useProductQueries";
+import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import { useRefresh } from "@react-native-community/hooks";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
@@ -23,7 +23,7 @@ export default function Dashboard() {
     queryKey: ["admin-dashboard"],
     queryFn: fetchAdminDashboardStats,
   });
-  const { data: pending, refetch: refetch2 } = useProductQueries({
+  const { data: pending, refetch: refetch2 } = useInfinityQueries({
     type: "pending",
   });
   const { onRefresh } = useRefresh(async () => {

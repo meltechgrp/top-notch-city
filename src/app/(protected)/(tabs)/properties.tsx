@@ -15,7 +15,7 @@ import {
 } from "@/components/ui";
 import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
 import { useStore } from "@/store";
-import { useProductQueries } from "@/tanstack/queries/useProductQueries";
+import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import { useLayout } from "@react-native-community/hooks";
 import { Stack, useRouter } from "expo-router";
 import { MoveRight, Plus } from "lucide-react-native";
@@ -34,7 +34,7 @@ export default function PropertiesScreen() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useProductQueries({ type: "user", profileId: me?.id });
+  } = useInfinityQueries({ type: "user", profileId: me?.id });
   const list = useMemo(
     () => data?.pages.flatMap((page) => page.results) || [],
     [data]

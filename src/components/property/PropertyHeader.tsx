@@ -31,7 +31,7 @@ export default function PropertyHeader({
             both
             onPress={() =>
               router.push({
-                pathname: "/agent/property/[propertyId]/edit",
+                pathname: "/property/[propertyId]/edit",
                 params: {
                   propertyId: property.id,
                 },

@@ -3,7 +3,7 @@ import TopProperties from "@/components/home/properties";
 import TopLocations from "@/components/home/topLocations";
 import { Box, View } from "@/components/ui";
 import eventBus from "@/lib/eventBus";
-import { useProductQueries } from "@/tanstack/queries/useProductQueries";
+import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import React, { useMemo, useState } from "react";
 import { Dimensions, Platform, RefreshControl } from "react-native";
 import Animated, {
@@ -17,7 +17,7 @@ const { width, height } = Dimensions.get("window");
 const MAP_HEIGHT = height / 1.8;
 
 export default function HomeScreen() {
-  const { data, refetch } = useProductQueries({ type: "all" });
+  const { data, refetch } = useInfinityQueries({ type: "all" });
   const scrollY = useSharedValue(0);
   const [refreshing, setRefreshing] = useState(false);
 

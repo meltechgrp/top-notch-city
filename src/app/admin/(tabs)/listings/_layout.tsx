@@ -5,7 +5,7 @@ import NotificationBadge from "@/components/notifications/NotificationBadge";
 import { useResolvedTheme } from "@/components/ui";
 import { Colors } from "@/constants/Colors";
 import Layout from "@/constants/Layout";
-import { useProductQueries } from "@/tanstack/queries/useProductQueries";
+import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import { useMemo } from "react";
 
 export const unstable_settings = {
@@ -14,7 +14,7 @@ export const unstable_settings = {
 
 export default function ListingLayoutsComponent() {
   const theme = useResolvedTheme();
-  const { data: pending } = useProductQueries({ type: "pending" });
+  const { data: pending } = useInfinityQueries({ type: "pending" });
   const propertyData = useMemo(
     () => pending?.pages.flatMap((page) => page.results) || [],
     [pending]

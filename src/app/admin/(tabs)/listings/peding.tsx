@@ -1,7 +1,7 @@
 import { Box, View } from "@/components/ui";
 import { useMemo, useState } from "react";
 import VerticalProperties from "@/components/property/VerticalProperties";
-import { useProductQueries } from "@/tanstack/queries/useProductQueries";
+import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import PropertyDetailsBottomSheet from "@/components/admin/properties/PropertyDetailsBottomSheet";
 import { useStore } from "@/store";
 
@@ -15,7 +15,7 @@ export default function PendingProperties() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useProductQueries({ type: "pending" });
+  } = useInfinityQueries({ type: "pending" });
   const { me } = useStore();
   const propertyData = useMemo(
     () => data?.pages.flatMap((page) => page.results) || [],

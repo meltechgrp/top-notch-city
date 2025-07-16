@@ -1,5 +1,5 @@
 import "./global.css";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { GluestackUIProvider } from "@/components/ui";
 import "react-native-reanimated";
 import { ErrorBoundaryProps, router, Slot } from "expo-router";
@@ -105,6 +105,14 @@ function useMountPushNotificationToken() {
             console.error("Error registering for push notifications:", error);
           });
       }, 30000);
+
+      const notificationListener =
+        Notifications.addNotificationReceivedListener((notification) => {
+          console.log(notification);
+        });
+      return () => {
+        notificationListener.remove();
+      };
     }
   }, [hasAuth]);
 }
@@ -180,7 +188,6 @@ export async function registerForPushNotificationsAsync() {
   token = await Notifications.getExpoPushTokenAsync({
     projectId: Constants.expoConfig?.extra?.eas?.projectId,
   });
-  console.log(token);
   updatePushNotificationToken(token.data);
 
   return token?.data;

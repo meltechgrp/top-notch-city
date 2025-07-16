@@ -4,6 +4,14 @@ import config from "@/config";
 import { format } from "date-fns";
 import { Fetch } from "../utills";
 
+type AgentResult = {
+  total: number;
+  page: number;
+  per_page: number;
+  pages: number;
+  results: AgentReview[];
+};
+
 export async function uploadAgentForm(form: AgentFormData) {
   try {
     const data = new FormData();
@@ -58,9 +66,13 @@ export async function uploadAgentForm(form: AgentFormData) {
   }
 }
 
-export async function getAgentApplications() {
-  const res = await Fetch("/admin/agent/applications");
-  return res as AgentReview[];
+export async function getAgentApplications({
+  pageParam,
+}: {
+  pageParam: number;
+}) {
+  const res = await Fetch(`/admin/agent/applications?page=${pageParam}`);
+  return res as AgentResult;
 }
 export async function getMyApplications() {
   try {

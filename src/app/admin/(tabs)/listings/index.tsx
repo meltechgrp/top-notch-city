@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
 import VerticalProperties from "@/components/property/VerticalProperties";
 import { useStore } from "@/store";
-import { useProductQueries } from "@/tanstack/queries/useProductQueries";
+import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import PropertyDetailsBottomSheet from "@/components/admin/properties/PropertyDetailsBottomSheet";
 
 export default function Properties() {
@@ -21,7 +21,7 @@ export default function Properties() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useProductQueries({ type: "admin" });
+  } = useInfinityQueries({ type: "admin" });
 
   const propertyData = useMemo(
     () => data?.pages.flatMap((page) => page.results) || [],

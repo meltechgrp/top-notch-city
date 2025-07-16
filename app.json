@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./src/assets/images/icon.png",
     "userInterfaceStyle": "automatic",
-    "scheme": "topnotch-city",
+    "scheme": "com.meltech.topnotchcity",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,

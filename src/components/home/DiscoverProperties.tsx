@@ -3,7 +3,7 @@ import Map from "../location/map";
 import FoundHorizontalList from "./FoundProperties";
 import HomeNavigation from "./HomeNavigation";
 import { useRouter } from "expo-router";
-import { useProductQueries } from "@/tanstack/queries/useProductQueries";
+import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import { memo, useMemo } from "react";
 
 type Props = {
@@ -13,7 +13,7 @@ type Props = {
 const DiscoverProperties = (props: Props) => {
   const { className, mapHeight } = props;
   const router = useRouter();
-  const { data, refetch } = useProductQueries({
+  const { data, refetch } = useInfinityQueries({
     type: "search",
     filter: { use_geo_location: "true" },
     key: "nearby",

@@ -1,8 +1,7 @@
 import { useMemo, useState } from "react";
 import { Box, Text, View } from "@/components/ui";
-import { Pressable, RefreshControl, SectionList } from "react-native";
-import { useRouter } from "expo-router";
-import { useQuery } from "@tanstack/react-query";
+import { RefreshControl, SectionList } from "react-native";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { getAgentApplications } from "@/actions/agent";
 import { format } from "date-fns";
 import ApplicationBottomSheet from "@/components/modals/agent/ApplicationBottomSheet";
@@ -12,13 +11,20 @@ import RequestListItem from "@/components/admin/request/RequestListItem";
 export default function Requests() {
   const [applicationBottomSheet, setApplicationBottomSheet] = useState(false);
   const [application, setApplication] = useState<AgentReview | null>(null);
-  const { data, isLoading, refetch } = useQuery({
-    queryKey: ["agent-applications"],
-    queryFn: getAgentApplications,
+  const { data, isLoading, refetch } = useInfiniteQuery({
+    queryKey: ["applications"],
+    queryFn: ({ pageParam = 1 }) => getAgentApplications({ pageParam }),
+    getNextPageParam: (lastPage) => {
+      const { page, pages } = lastPage;
+      return page < pages ? page + 1 : undefined;
+    },
+    initialPageParam: 1,
   });
-  const router = useRouter();
   const { onRefresh, isRefreshing } = useRefresh(refetch);
-  const applications = useMemo(() => data || [], [data]);
+  const applications = useMemo(
+    () => data?.pages.flatMap((item) => item.results) || [],
+    [data]
+  );
   const sections = useMemo(() => {
     if (!applications.length) return [];
 

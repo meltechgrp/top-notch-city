@@ -10,7 +10,7 @@ import { fetchLocationProperties } from "@/actions/property/locations";
 
 const perPage = 20; // default per page value, adjust if needed
 
-export function useProductQueries({
+export function useInfinityQueries({
   type,
   profileId,
   filter,

@@ -16,7 +16,7 @@ export default function RequestListItem({ request, onPress }: Props) {
     mutationFn: deleteApplication,
     onSuccess: () => {
       query.invalidateQueries({
-        queryKey: ["agent-applications"],
+        queryKey: ["applications"],
       });
     },
   });

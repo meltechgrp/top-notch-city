@@ -29,7 +29,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>topnotch-city</string>
+          <string>com.meltech.topnotchcity</string>
           <string>com.meltech.topnotchcity</string>
         </array>
       </dict>
