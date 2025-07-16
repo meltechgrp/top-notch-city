@@ -20,7 +20,7 @@ export default function PropertyHeader({
   const { isAdmin, isOwner, isAgent } = usePropertyActions({ property });
   return (
     <>
-      {isAgent ? (
+      {isAgent && isOwner ? (
         <View className="pr-4 flex-row items-center gap-2">
           <PropertyShareButton property={property} />
           <PropertyLikeButton

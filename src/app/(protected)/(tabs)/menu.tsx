@@ -116,7 +116,7 @@ export default function More() {
       <BodyScrollView withBackground={true}>
         <View
           className={cn(
-            "px-4 py-2.5 mt-2",
+            "px-4 py-2.5 mt-2 to-50%",
             theme == "dark"
               ? "bg-background-muted/95"
               : "bg-background-muted/60"
@@ -128,7 +128,7 @@ export default function More() {
                 openSignInModal({
                   visible: true,
                   onLoginSuccess: () => {
-                    router.reload();
+                    console.log("logged in");
                   },
                 });
               }

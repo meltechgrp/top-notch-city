@@ -43,8 +43,7 @@ export default function SignInBottomSheet({
 
   const [googleRequest, googleResponse, googlePromptAsync] =
     Google.useAuthRequest({
-      androidClientId:
-        "198305892260-c8eiep3tnnp29enadh4bvqb7vm0804cs.apps.googleusercontent.com",
+      androidClientId: process.env.EXPO_PUBLIC_APPLE_AUTH_KEY,
       iosClientId: process.env.EXPO_PUBLIC_APPLE_AUTH_KEY,
     });
   console.log(googleRequest?.redirectUri);
@@ -97,6 +96,7 @@ export default function SignInBottomSheet({
       last_name?: string;
     }) => {
       try {
+        console.log(socialData);
         const res = await loginWithSocial(socialData);
         if (res?.access_token) {
           saveAuthToken(res.access_token);
@@ -194,7 +194,7 @@ export default function SignInBottomSheet({
       rounded={false}
       onDismiss={onDismiss}
       title="Sign In"
-      snapPoint={["80%"]}
+      snapPoint={["60%"]}
     >
       <Box className=" gap-6 flex-1 p-6 pt-3">
         <CustomInput
@@ -222,21 +222,6 @@ export default function SignInBottomSheet({
         </View>
 
         <View className="gap-4">
-          {isAppleAvailable && (
-            <AppleAuthentication.AppleAuthenticationButton
-              buttonType={
-                AppleAuthentication.AppleAuthenticationButtonType.CONTINUE
-              }
-              buttonStyle={
-                theme == "dark"
-                  ? AppleAuthentication.AppleAuthenticationButtonStyle.WHITE
-                  : AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
-              }
-              cornerRadius={5}
-              style={{ width: "100%", height: 44, marginTop: 16 }}
-              onPress={handleAppleSignIn}
-            />
-          )}
           <Button
             className="flex-1 h-14 bg-background-muted mt-4 gap-2"
             onPress={() => googlePromptAsync()}
@@ -245,13 +230,13 @@ export default function SignInBottomSheet({
             <ButtonText>Continue with Google</ButtonText>
           </Button>
 
-          <Button
+          {/* <Button
             className="flex-1 h-14 bg-background-muted mt-4 gap-2"
             onPress={() => fbPromptAsync()}
           >
             <Icon as={FacebookIcon} />
             <ButtonText>Continue with Facebook</ButtonText>
-          </Button>
+          </Button> */}
 
           <View className=" flex-row justify-center gap-2 mt-4">
             <Text>Don’t have an account?</Text>

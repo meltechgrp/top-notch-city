@@ -59,3 +59,15 @@ type Enquiry = {
   address?: string;
   property_id?: string;
 };
+
+type EnquiryList = {
+  id: string;
+  type: "sell" | "enquiry" | "general" | "visit" | "offer";
+  full_name: string;
+  address: string;
+  email: string;
+  message: string;
+  user_id: string;
+  property_id: string;
+  created_at: string; // or you can use Date if you parse it
+};

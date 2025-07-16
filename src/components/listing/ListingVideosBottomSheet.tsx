@@ -12,7 +12,7 @@ import { MiniEmptyState } from "../shared/MiniEmptyState";
 import OptionsBottomSheet from "../shared/OptionsBottomSheet";
 import { useLayout } from "@react-native-community/hooks";
 import { useMediaCompressor } from "@/hooks/useMediaCompressor";
-import { showSnackbar } from "@/lib/utils";
+import { cn, showSnackbar } from "@/lib/utils";
 
 type Props = {
   visible: boolean;
@@ -39,7 +39,6 @@ function ListingVideosBottomSheet(props: Props) {
       allowsEditing: true,
       videoMaxDuration: 1200,
     });
-    setLoading(false);
     if (!result.canceled) {
       await handleUpload(
         result.assets.map((vid) => ({
@@ -47,6 +46,7 @@ function ListingVideosBottomSheet(props: Props) {
         }))
       );
     }
+    setLoading(false);
   };
   const takeVideos = async () => {
     const permitted = await ImagePicker.getCameraPermissionsAsync();
@@ -66,7 +66,6 @@ function ListingVideosBottomSheet(props: Props) {
       videoMaxDuration: 1200,
     });
 
-    setLoading(false);
     if (!result.canceled) {
       await handleUpload(
         result.assets.map((vid) => ({
@@ -74,6 +73,7 @@ function ListingVideosBottomSheet(props: Props) {
         }))
       );
     }
+    setLoading(false);
   };
 
   async function handleUpload(data: { uri: string }[]) {
@@ -202,10 +202,14 @@ export function VideoScreen({
   index,
   width,
   setOpenEdit,
+  size,
+  rounded = false,
 }: {
   uri: string;
   index: number;
   width: number;
+  size?: number;
+  rounded?: boolean;
   setSelected: (id: number) => void;
   setOpenEdit: (id: boolean) => void;
 }) {
@@ -215,28 +219,35 @@ export function VideoScreen({
     player.play();
   });
   return (
-    <View className=" overflow-hidden p-2 relative">
+    <View
+      className={cn(
+        " overflow-hidden p-2 relative",
+        rounded && "rounded-xl p-0"
+      )}
+    >
       <VideoView
         style={{
-          width: width / 2.2,
-          height: 120,
+          width: size || width / 2.2,
+          height: size || 120,
         }}
         contentFit="cover"
         nativeControls={false}
         className="flex-1 mx-auto"
         player={player}
       />
-      <View className=" absolute top-3 right-3">
-        <Pressable
-          onPress={() => {
-            setSelected(index + 1);
-            setOpenEdit(true);
-          }}
-          className=" self-end p-1.5 rounded-full bg-black/50 backdrop-blur-md"
-        >
-          <Icon as={MoreHorizontal} className=" text-primary" />
-        </Pressable>
-      </View>
+      {!rounded && (
+        <View className=" absolute top-3 right-3">
+          <Pressable
+            onPress={() => {
+              setSelected(index + 1);
+              setOpenEdit(true);
+            }}
+            className=" self-end p-1.5 rounded-full bg-black/50 backdrop-blur-md"
+          >
+            <Icon as={MoreHorizontal} className=" text-primary" />
+          </Pressable>
+        </View>
+      )}
     </View>
   );
 }

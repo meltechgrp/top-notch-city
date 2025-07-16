@@ -13,13 +13,14 @@ import { capitalize, chunk } from "lodash-es";
 import { Check } from "lucide-react-native";
 import { composeFullAddress, formatMoney } from "@/lib/utils";
 import { Image } from "react-native";
+import { VideoScreen } from "./ListingVideosBottomSheet";
 
 export default function ListingResult() {
   const { listing: property } = useTempStore();
   const { width, onLayout } = useLayout();
   return (
     <>
-      <View onLayout={onLayout} className="gap-y-4 flex-1 mt-4 px-4">
+      <View onLayout={onLayout} className="gap-y-4 pb-80 flex-1 mt-4 px-4">
         <View className=" rounded-2xl bg-background-muted p-4">
           <View className="flex-row justify-between">
             <Heading size="md" className="mb-3">
@@ -55,36 +56,52 @@ export default function ListingResult() {
             />
           </View>
         </View>
+        <View className="bg-background-muted min-h-32 rounded-2xl p-4 shadow-sm">
+          <Heading size="md" className="mb-3">
+            Media
+          </Heading>
+          <View className="flex-wrap gap-4">
+            {chunk(
+              [...(property?.photos || []), ...(property?.videos || [])],
+              4
+            ).map((row, i) => (
+              <View className={"flex-row gap-4"} key={i}>
+                {row.map((media, i) => (
+                  <Pressable key={media.id}>
+                    {media.uri.includes(".jpg") ? (
+                      <Image
+                        style={{
+                          width: width > 100 ? (width - 100) / 4 : 72,
+                          height: width > 100 ? (width - 100) / 4 : 72,
+                        }}
+                        className={" bg-background-muted rounded-xl"}
+                        source={{ uri: media.uri }}
+                        alt="image"
+                      />
+                    ) : (
+                      <VideoScreen
+                        uri={media.uri}
+                        width={0}
+                        size={width > 100 ? (width - 100) / 4 : 72}
+                        setSelected={() => {}}
+                        setOpenEdit={() => {}}
+                        index={i}
+                        rounded
+                      />
+                    )}
+                  </Pressable>
+                ))}
+              </View>
+            ))}
+          </View>
+        </View>
+
         <View className="bg-background-muted rounded-2xl p-4 shadow-sm">
           <Heading size="md" className="mb-3">
             Description
           </Heading>
           <View className=" min-h-20">
             <Text numberOfLines={5}>{property?.description || "N/A"}</Text>
-          </View>
-        </View>
-        <View className="bg-background-muted min-h-32 rounded-2xl p-4 shadow-sm">
-          <Heading size="md" className="mb-3">
-            Media
-          </Heading>
-          <View className="flex-wrap gap-4">
-            {chunk(property?.photos, 4).map((row, i) => (
-              <View className={"flex-row gap-4"} key={i}>
-                {row.map((media, i) => (
-                  <Pressable key={media.id}>
-                    <Image
-                      style={{
-                        width: width > 100 ? (width - 100) / 4 : 72,
-                        height: width > 100 ? (width - 100) / 4 : 72,
-                      }}
-                      className={" bg-background-muted rounded-xl"}
-                      source={{ uri: media.uri }}
-                      alt="image"
-                    />
-                  </Pressable>
-                ))}
-              </View>
-            ))}
           </View>
         </View>
         {property?.facilities && (
