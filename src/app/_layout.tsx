@@ -111,7 +111,11 @@ function useMountPushNotificationToken() {
 
       const notificationListener =
         Notifications.addNotificationReceivedListener((notification) => {
-          console.log(notification, "test");
+          console.log(
+            notification.request.content,
+            notification.request.trigger,
+            "test"
+          );
           showBounceNotification({
             title: notification.request.content.title || "New Notification",
             description: notification.request.content.body || undefined,

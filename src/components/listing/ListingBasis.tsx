@@ -4,6 +4,7 @@ import CustomSelect from "../custom/CustomSelect";
 import OptionsBottomSheet from "../shared/OptionsBottomSheet";
 import { CustomInput } from "../custom/CustomInput";
 import { formatNumber, unformatNumber } from "@/lib/utils";
+import { Durations } from "@/constants/Amenities";
 
 export default function ListingBasis() {
   const { listing, updateListing } = useTempStore();
@@ -61,18 +62,14 @@ export default function ListingBasis() {
                   label="Duration"
                   BottomSheet={OptionsBottomSheet}
                   value={listing.duration}
-                  valueParser={(value: any) => value || "Select Duration"}
+                  valueParser={(value: any) =>
+                    Durations.find((item) => item.value == value)?.label ||
+                    "Select Duration"
+                  }
                   onChange={(val) =>
                     updateListing({ ...listing, duration: val.value })
                   }
-                  options={[
-                    { label: "Monthly", value: "Monthly" },
-                    { label: "3 Months", value: "3 Months" },
-                    { label: "6 Months", value: "6 Months" },
-                    { label: "Yearly", value: "Yearly" },
-                    { label: "2 Years", value: "2 Years" },
-                    { label: "3 Years", value: "3 Years" },
-                  ]}
+                  options={Durations}
                 />
               </View>
             )}

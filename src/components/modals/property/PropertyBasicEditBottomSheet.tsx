@@ -11,6 +11,7 @@ import { useCategoryQueries } from "@/tanstack/queries/useCategoryQueries";
 import { CustomInput } from "../../custom/CustomInput";
 import CustomSelect from "../../custom/CustomSelect";
 import { usePropertyDataMutations } from "@/tanstack/mutations/usePropertyDataMutations";
+import { Durations } from "@/constants/Amenities";
 
 const PropertyBasicEditSchema = z.object({
   price: z.string().min(1),
@@ -18,6 +19,7 @@ const PropertyBasicEditSchema = z.object({
   purpose: z.string().min(1),
   category: z.string().min(1),
   subcategory: z.string().min(1),
+  duration: z.string().optional(),
 });
 
 type Props = {
@@ -37,6 +39,7 @@ function PropertyBasicEditBottomSheet(props: Props) {
     purpose: property?.purpose || "",
     category: property?.category || "",
     subcategory: property?.subcategory || "",
+    duration: property?.duration || "",
   });
 
   const availableSubcategories = useMemo(() => {
@@ -77,6 +80,7 @@ function PropertyBasicEditBottomSheet(props: Props) {
       purpose: property?.purpose || "",
       category: property?.category || "",
       subcategory: property?.subcategory || "",
+      duration: property?.duration || "",
     });
     onDismiss();
   }
@@ -118,10 +122,26 @@ function PropertyBasicEditBottomSheet(props: Props) {
             valueParser={(value: any) => value || "Select Purpose"}
             onChange={(val) => onUpdate(val?.value, "purpose")}
             options={[
-              { label: "Sell", value: "Sell" },
-              { label: "Rent", value: "Rent" },
+              { label: "Sell", value: "sell" },
+              { label: "Rent", value: "rent" },
             ]}
           />
+          {form.purpose == "rent" && (
+            <View className="gap-2">
+              <CustomSelect
+                withDropIcon
+                label="Duration"
+                BottomSheet={OptionsBottomSheet}
+                value={form.duration}
+                valueParser={(value: any) =>
+                  Durations.find((item) => item.value == value)?.label ||
+                  "Select Duration"
+                }
+                onChange={(val) => onUpdate(val.value, "duration")}
+                options={Durations}
+              />
+            </View>
+          )}
           <CustomSelect
             withDropIcon
             label="Category"

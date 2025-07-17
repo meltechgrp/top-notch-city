@@ -11,8 +11,10 @@ export async function updatePropertyBasicInfo(
 ) {
   try {
     const formData = new FormData();
+    console.log(data);
     if (data.price) formData.append("price", data.price);
     if (data.purpose) formData.append("purpose", data.purpose);
+    if (data.duration) formData.append("duration", data.duration);
     if (data.category) formData.append("property_category_name", data.category);
     if (data.subCategory)
       formData.append("property_subcategory_name", data.subCategory);
@@ -185,11 +187,13 @@ export function useUploadProperty() {
         facilities,
         purpose,
         address,
+        duration,
       } = listing;
 
       formData.append("title", "property");
       if (description) formData.append("description", description);
       if (price) formData.append("price", price);
+      if (duration) formData.append("duration", duration);
       if (category) formData.append("property_category_name", category);
       if (subCategory)
         formData.append("property_subcategory_name", subCategory);

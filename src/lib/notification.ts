@@ -28,7 +28,6 @@ export function pushNotificationResponseHandler(
     handleNotificationResponseByType(response, isAppStart);
     return;
   } else {
-    // prevent app from possibly staying stuck on splash screen
     if (isAppStart) {
       router.replace("/home");
     }

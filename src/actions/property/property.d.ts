@@ -41,7 +41,7 @@ type Property = {
   status: PropertyStatus;
   purpose: PropertyPurpose;
   is_featured: boolean;
-  duration?: number;
+  duration?: string;
   category: Category;
   subcategory: SubCategory;
   address: Address;
