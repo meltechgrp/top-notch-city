@@ -5,7 +5,6 @@ import { router } from "expo-router";
 import SettingsItemList from "@/components/settings/SettingsItemList";
 import { BodyScrollView } from "@/components/layouts/BodyScrollView";
 import { useStore } from "@/store";
-import { registerForPushNotificationsAsync } from "@/app/_layout";
 
 export default function SettingsScreen() {
   const hasAuth = useStore((s) => s.hasAuth);
@@ -17,7 +16,16 @@ export default function SettingsScreen() {
             <SettingsItemList
               title="Notifcations"
               onPress={async () => {
-                await registerForPushNotificationsAsync();
+                // showBounceNotification({
+                //   title: "Hello",
+                //   description: "i am here",
+                //   theme,
+                // });
+                // showErrorAlert({
+                //   title: "Hello",
+                //   description: "i am here",
+                //   alertType: "success",
+                // });
                 // router.push('/settings/email-address');
               }}
             />

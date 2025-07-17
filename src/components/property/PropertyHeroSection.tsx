@@ -14,13 +14,13 @@ interface Props {
 export function PropertyHeroSection({ property, width }: Props) {
   return (
     <View className="flex-1 bg-background">
-      <View className=" relative bg-blue-500 flex-1">
+      <View className=" relative flex-1">
         <PropertyCarousel
           width={width || 400}
           factor={1.15}
           withBackdrop={true}
           loop={false}
-          media={property.media}
+          media={property.media.filter((item) => item.media_type == "IMAGE")}
           pointerPosition={30}
         />
         <View className=" absolute flex-row justify-between bottom-16 left-4 right-4 w-full px-1">

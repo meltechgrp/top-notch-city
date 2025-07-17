@@ -26,9 +26,11 @@ export default function OnboardingScreen() {
     }
   }, []);
   function skipHandler() {
-    openSignInModal({
-      visible: true,
-    });
+    setTimeout(() => {
+      openSignInModal({
+        visible: true,
+      });
+    }, 3000);
     router.push("/home");
   }
   useFocusEffect(

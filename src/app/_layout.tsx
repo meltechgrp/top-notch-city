@@ -1,5 +1,5 @@
 import "./global.css";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { GluestackUIProvider } from "@/components/ui";
 import "react-native-reanimated";
 import { ErrorBoundaryProps, router, Slot } from "expo-router";
@@ -15,12 +15,13 @@ import * as Clarity from "@microsoft/react-native-clarity";
 import { RoleSwitchPill } from "@/components/globals/RoleSwitchPill";
 import { Linking, Platform } from "react-native";
 import { cacheStorage } from "@/lib/asyncStorage";
-import { defaultNotificationHandler } from "@/lib/notification";
+import { NotifierWrapper } from "react-native-notifier";
 import * as Notifications from "expo-notifications";
 import { useStore } from "@/store";
 import Constants from "expo-constants";
 import { updatePushNotificationToken } from "@/actions/utills";
 import { pushNotificationResponseHandler } from "@/lib/notification";
+import { showBounceNotification } from "@/components/custom/CustomNotification";
 
 const query = new QueryClient();
 
@@ -69,13 +70,15 @@ export default function RootLayout() {
       <QueryClientProvider client={query}>
         <ThemeProvider>
           <GestureHandlerRootView style={{ flex: 1 }}>
-            <GluestackUIProvider>
-              <BottomSheetModalProvider>
-                <Slot />
-                <RoleSwitchPill />
-                <GlobalManager />
-              </BottomSheetModalProvider>
-            </GluestackUIProvider>
+            <NotifierWrapper>
+              <GluestackUIProvider>
+                <BottomSheetModalProvider>
+                  <Slot />
+                  <RoleSwitchPill />
+                  <GlobalManager />
+                </BottomSheetModalProvider>
+              </GluestackUIProvider>
+            </NotifierWrapper>
           </GestureHandlerRootView>
         </ThemeProvider>
       </QueryClientProvider>
@@ -108,7 +111,11 @@ function useMountPushNotificationToken() {
 
       const notificationListener =
         Notifications.addNotificationReceivedListener((notification) => {
-          console.log(notification);
+          console.log(notification, "test");
+          showBounceNotification({
+            title: notification.request.content.title || "New Notification",
+            description: notification.request.content.body || undefined,
+          });
         });
       return () => {
         notificationListener.remove();
@@ -121,7 +128,12 @@ export function useHandleNotification() {
   useEffect(() => {
     if (Platform.OS !== "web") {
       Notifications.setNotificationHandler({
-        handleNotification: defaultNotificationHandler,
+        handleNotification: async () => ({
+          shouldShowBanner: true,
+          shouldShowList: true,
+          shouldPlaySound: false,
+          shouldSetBadge: false,
+        }),
       });
     }
   }, []);

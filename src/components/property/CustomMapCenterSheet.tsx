@@ -1,33 +1,33 @@
-import React, { useCallback, useState } from 'react';
-import Map from '../location/map';
-import Layout from '@/constants/Layout';
-import { Modal, Pressable, View } from 'react-native';
-import { Icon, useResolvedTheme } from '../ui';
-import { X } from 'lucide-react-native';
-import { WebView } from 'react-native-webview';
-import { usePropertyStore } from '@/store/propertyStore';
-import { Colors } from '@/constants/Colors';
+import React, { useCallback, useState } from "react";
+import Map from "../location/map";
+import Layout from "@/constants/Layout";
+import { Modal, Pressable, View } from "react-native";
+import { Icon, useResolvedTheme } from "../ui";
+import { X } from "lucide-react-native";
+import { WebView } from "react-native-webview";
+import { usePropertyStore } from "@/store/propertyStore";
+import { Colors } from "@/constants/Colors";
 
 type CustomCenterSheetProps = {
-	type?: 'map' | 'street';
+  type?: "map" | "street";
 };
 
 const MapApiKey = process.env.EXPO_PUBLIC_ANDROID_MAPS_API_KEY;
 
 export function CustomCenterSheet({ type }: CustomCenterSheetProps) {
-	const [open, setOpen] = useState(false);
-	const theme = useResolvedTheme();
-	const { details } = usePropertyStore();
-	if (!details) return null;
-	function handleDismiss() {
-		setOpen(false);
-	}
-	const { longitude, latitude } = details.address;
-	const MODAL_WIDTH = Math.round(Layout.window.width * 0.85);
-	const MODAL_HEIGHT = Math.round(Layout.window.height * 0.7);
-	const MINI_HEIGHT = Math.round(Layout.window.height * 0.3);
-	const MINI_WIDTH = Math.round(Layout.window.width);
-	const streetView = `<!DOCTYPE html>
+  const [open, setOpen] = useState(false);
+  const theme = useResolvedTheme();
+  const { details } = usePropertyStore();
+  if (!details) return null;
+  function handleDismiss() {
+    setOpen(false);
+  }
+  const { longitude, latitude } = details.address;
+  const MODAL_WIDTH = Math.round(Layout.window.width * 0.85);
+  const MODAL_HEIGHT = Math.round(Layout.window.height * 0.7);
+  const MINI_HEIGHT = Math.round(Layout.window.height * 0.3);
+  const MINI_WIDTH = Math.round(Layout.window.width);
+  const streetView = `<!DOCTYPE html>
 <html>
   <head>
     <title>Custom Street View</title>
@@ -93,94 +93,100 @@ export function CustomCenterSheet({ type }: CustomCenterSheetProps) {
   </body>
 </html>
 `;
-	return (
-		<>
-			<Pressable
-				onPress={() => setOpen(true)}
-				style={{ height: MINI_HEIGHT }}
-				className="flex-1 bg-background-muted relative overflow-hidden">
-				{type == 'map' ? (
-					<Map
-						height={MINI_HEIGHT}
-						latitude={latitude}
-						longitude={longitude}
-						scrollEnabled={false}
-						showRadius
-						radiusInMeters={2000}
-					/>
-				) : (
-					<WebView
-						source={{ html: streetView }}
-						style={{
-							flex: 1,
-							backgroundColor:
-								theme == 'light'
-									? Colors.dark.background
-									: Colors.light.background,
-						}}
-						originWhitelist={['*']}
-						javaScriptEnabled
-						scrollEnabled={false}
-						className="bg-background-muted"
-						domStorageEnabled
-						containerStyle={{
-							backgroundColor:
-								theme == 'light'
-									? Colors.dark.background
-									: Colors.light.background,
-						}}
-						startInLoadingState
-					/>
-				)}
-				{type == 'street' && (
-					<View className=" absolute z-10 top-0 w-full h-full bg-black/20" />
-				)}
-			</Pressable>
+  return (
+    <>
+      <Pressable
+        onPress={() => setOpen(true)}
+        style={{ height: MINI_HEIGHT }}
+        className="flex-1 bg-background-muted relative overflow-hidden"
+      >
+        {type == "map" ? (
+          <Map
+            height={MINI_HEIGHT}
+            latitude={latitude}
+            longitude={longitude}
+            scrollEnabled={false}
+            showRadius
+            radiusInMeters={500}
+            delta={0.02}
+          />
+        ) : (
+          <WebView
+            source={{ html: streetView }}
+            style={{
+              flex: 1,
+              backgroundColor:
+                theme == "light"
+                  ? Colors.dark.background
+                  : Colors.light.background,
+            }}
+            originWhitelist={["*"]}
+            javaScriptEnabled
+            scrollEnabled={false}
+            className="bg-background-muted"
+            domStorageEnabled
+            containerStyle={{
+              backgroundColor:
+                theme == "light"
+                  ? Colors.dark.background
+                  : Colors.light.background,
+            }}
+            startInLoadingState
+          />
+        )}
+        {type == "street" && (
+          <View className=" absolute z-10 top-0 w-full h-full bg-black/20" />
+        )}
+      </Pressable>
 
-			<Modal
-				animationType="fade"
-				visible={open}
-				transparent
-				onRequestClose={handleDismiss}>
-				<View
-					className="flex-1 items-center justify-center bg-black/30"
-					onTouchEnd={handleDismiss}>
-					<View
-						style={{
-							width: MODAL_WIDTH,
-							height: MODAL_HEIGHT,
-						}}
-						className="bg-background-muted rounded-2xl overflow-hidden relative"
-						onTouchEnd={(ev) => ev.stopPropagation()} // prevent dismiss
-					>
-						{type == 'map' ? (
-							<Map
-								latitude={latitude}
-								longitude={longitude}
-								height={MODAL_HEIGHT}
-								scrollEnabled={true}
-								showRadius
-								radiusInMeters={5000}
-							/>
-						) : (
-							<WebView
-								source={{ html: streetView }}
-								style={{ flex: 1 }}
-								originWhitelist={['*']}
-								javaScriptEnabled
-								domStorageEnabled
-								startInLoadingState
-							/>
-						)}
+      <Modal
+        animationType="fade"
+        visible={open}
+        transparent
+        onRequestClose={handleDismiss}
+      >
+        <View
+          className="flex-1 items-center justify-center bg-black/30"
+          onTouchEnd={handleDismiss}
+        >
+          <View
+            style={{
+              width: MODAL_WIDTH,
+              height: MODAL_HEIGHT,
+            }}
+            className="bg-background-muted rounded-2xl overflow-hidden relative"
+            onTouchEnd={(ev) => ev.stopPropagation()} // prevent dismiss
+          >
+            {type == "map" ? (
+              <Map
+                latitude={latitude}
+                longitude={longitude}
+                height={MODAL_HEIGHT}
+                scrollEnabled={true}
+                showRadius
+                radiusInMeters={600}
+                delta={0.02}
+              />
+            ) : (
+              <WebView
+                source={{ html: streetView }}
+                style={{ flex: 1 }}
+                originWhitelist={["*"]}
+                javaScriptEnabled
+                domStorageEnabled
+                startInLoadingState
+              />
+            )}
 
-						<Pressable
-							onPress={handleDismiss}
-							className="absolute top-3 right-3 bg-background-muted p-2 rounded-full items-center justify-center z-10">
-							<Icon as={X} />
-						</Pressable>
-					</View>
-				</View>
-			</Modal>
-		</>
-	);
+            <Pressable
+              onPress={handleDismiss}
+              className="absolute top-3 right-3 bg-background-muted p-2 rounded-full items-center justify-center z-10"
+            >
+              <Icon as={X} />
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+    </>
+  );
 }

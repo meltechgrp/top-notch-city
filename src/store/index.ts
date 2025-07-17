@@ -3,6 +3,7 @@ import { createJSONStorage, persist, PersistOptions } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getUniqueIdSync } from "react-native-device-info";
 import { UpdateUserInput } from "@/lib/schema";
+import { useResolvedTheme } from "@/components/ui";
 
 export type Profile = {
   firstName?: string;

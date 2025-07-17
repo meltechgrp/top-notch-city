@@ -75,6 +75,9 @@ export default function ListingLocation() {
               {...listing.address?.location}
               height={height / 1.3}
               marker={coords}
+              showRadius
+              radiusInMeters={100}
+              delta={0.01}
             />
             <View className=" px-4 py-2 absolute bottom-4 w-full">
               <Button

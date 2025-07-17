@@ -45,12 +45,12 @@ function handleNotificationResponseByType(
   const notificationType = notificationData?.type as NotificationType;
 
   const navigateTo = (href: Parameters<typeof router.push>[0]) => {
-    if (isAppStart) {
-      router.push("/home");
-      router.push(href);
-    } else {
-      router.navigate(href);
-    }
+    // if (isAppStart) {
+    router.push("/home");
+    //   router.push(href);
+    // } else {
+    //   router.navigate(href);
+    // }
   };
 
   switch (notificationType) {

@@ -43,7 +43,6 @@ export const PropertyMedia: React.FC<Props> = (props) => {
   const isFocused = useIsFocused();
   const { uri, isImage } = useMemo(() => generateMediaUrl(source), [source]);
   // Setup player if media is video
-  console.log(source.media_type, uri, isImage);
   const player = useVideoPlayer(
     !isImage && isFocused && uri ? uri : null,
     (player) => {
