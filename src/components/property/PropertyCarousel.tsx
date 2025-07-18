@@ -108,6 +108,9 @@ function PropertyCarousel({
           data={media}
           renderItem={(props) => (
             <PropertyMedia
+              style={
+                props.item.media_type == "VIDEO" ? { height: 400, flex: 1 } : {}
+              }
               withBackdrop={withBackdrop}
               source={props.item}
               isOwner={isOwner}

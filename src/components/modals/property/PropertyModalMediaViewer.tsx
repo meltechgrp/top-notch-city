@@ -18,6 +18,8 @@ type Props = {
   width: number;
   media: Media[];
   isOwner?: boolean;
+  enabled?: boolean;
+  stackMode?: boolean;
   canPlayVideo?: boolean;
 };
 
@@ -29,6 +31,8 @@ export function PropertyModalMediaViewer({
   media,
   isOwner = false,
   canPlayVideo,
+  enabled,
+  stackMode = true,
 }: Props) {
   const opacity = useSharedValue(1);
   const translateY = useSharedValue(0);
@@ -51,16 +55,16 @@ export function PropertyModalMediaViewer({
   }));
 
   const animatedBackdrop = useAnimatedStyle(() => ({
-    backgroundColor: `rgba(0,0,0,0.8)`,
+    backgroundColor: `rgba(0,0,0,1)`,
   }));
   return (
     <Modal
       visible={visible}
       onRequestClose={closeModal}
       animationType="fade"
-      transparent
+      // transparent
     >
-      <Animated.View className="flex-1 relative" style={animatedBackdrop}>
+      <Animated.View className="flex-1 relative bg-background-muted">
         <View className="flex-1 items-center justify-center">
           <Animated.View
             style={[{ width: "100%", height: "100%" }, animatedImageStyle]}
@@ -71,8 +75,9 @@ export function PropertyModalMediaViewer({
                   width={width || 400}
                   factor={1}
                   media={media}
+                  enabled={enabled}
                   withPagination={false}
-                  stackMode
+                  stackMode={stackMode}
                   isOwner={isOwner}
                   canPlayVideo={canPlayVideo}
                   selectedIndex={selectedIndex}

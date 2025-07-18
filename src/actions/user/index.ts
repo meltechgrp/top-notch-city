@@ -99,7 +99,6 @@ export async function deleteUser({ user_id }: { user_id: string }) {
     const res = await Fetch(`/users/${user_id}`, {
       method: "DELETE",
     });
-    // const data = await res.json();
     console.log(res);
     if (res?.detail) {
       throw new Error("Failed to DELETE profile");

@@ -29,17 +29,17 @@ export default function Images() {
           contentContainerClassName="py-4"
           renderItem={({ item, index }) => (
             <PropertyMedia
-              style={{ height: 250 }}
+              style={{ flex: 1, height: 250 }}
               rounded
               className={" bg-background-muted"}
               source={item}
-              // canPlayVideo
+              canPlayVideo={false}
               nativeControls
               onPress={() => handleOpen(index)}
             />
           )}
           ListFooterComponent={() => <View className=" h-16" />}
-          ItemSeparatorComponent={() => <View className="h-4" />}
+          ItemSeparatorComponent={() => <View className="h-6" />}
           estimatedItemSize={230}
           keyExtractor={(item) => item.id}
         />
@@ -48,6 +48,8 @@ export default function Images() {
         width={width}
         media={videos}
         visible={visible}
+        stackMode={false}
+        enabled={false}
         setVisible={setVisible}
         selectedIndex={selectedIndex}
       />

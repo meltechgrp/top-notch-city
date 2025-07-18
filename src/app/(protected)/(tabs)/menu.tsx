@@ -10,7 +10,7 @@ import {
   View,
 } from "@/components/ui";
 import { Stack, useRouter } from "expo-router";
-import { Alert, Share } from "react-native";
+import { Alert, Platform, Share } from "react-native";
 import React, { useMemo } from "react";
 import {
   Heart,
@@ -35,6 +35,8 @@ import LogoutAlertDialog from "@/components/modals/LogoutAlertDialog";
 import useResetAppState from "@/hooks/useResetAppState";
 import { useQuery } from "@tanstack/react-query";
 import { getMyApplications } from "@/actions/agent";
+import * as Linking from "expo-linking";
+// import * as FileSystem from "expo-file-system";
 
 export default function More() {
   const resetAppState = useResetAppState();
@@ -75,18 +77,40 @@ export default function More() {
   }
   async function onInvite() {
     try {
+      const message =
+        `🏘️ Invite your friends to join *TopNotch City Estate*.\n\n` +
+        `Discover amazing apartments and real estate opportunities near you.\n\n` +
+        `👉 Tap here to join: ${Linking.createURL("/home")}`;
+
+      // Optionally prepare an image for sharing
+      // const imageUrl = "https://yourdomain.com/invite-banner.jpg"; // <-- replace with your image URL
+      // const imageName = FileSystem.documentDirectory + "invite-banner.jpg";
+
+      // Download image locally
+      // const download = await FileSystem.downloadAsync(imageUrl, imageName);
+
+      // Share with image if supported
+      // if (Platform.OS !== "web" && (await Sharing.isAvailableAsync())) {
+      //   await Sharing.shareAsync(download.uri, {
+      //     mimeType: "image/jpeg",
+      //     dialogTitle: "Invite to TopNotch City Estate",
+      //   });
+      // } else {
+      // Fallback to basic text sharing
       const result = await Share.share({
-        message: "Invite your friends to join TopNotch City Estate.",
+        title: "Join TopNotch City Estate",
+        message,
+        url: Linking.createURL("/invite"),
       });
+
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
-          // shared with activity type of result.activityType
-        } else {
-          // shared
+          // shared with activity type
         }
       } else if (result.action === Share.dismissedAction) {
         // dismissed
       }
+      // }
     } catch (error: any) {
       alert(error.message);
     }

@@ -1,6 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
   <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
   <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+  <uses-permission android:name="android.permission.CAMERA"/>
   <uses-permission android:name="android.permission.INTERNET"/>
   <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
@@ -16,6 +17,17 @@
       <category android:name="android.intent.category.BROWSABLE"/>
       <data android:scheme="https"/>
     </intent>
+    <package android:name="com.instagram.android"/>
+    <package android:name="com.facebook.katana"/>
+    <package android:name="com.whatsapp"/>
+    <package android:name="com.twitter.android"/>
+    <package android:name="org.telegram.messenger"/>
+    <package android:name="com.zhiliaoapp.musically"/>
+    <package android:name="com.whatsapp.w4b"/>
+    <package android:name="com.facebook.lite"/>
+    <package android:name="com.instagram.lite"/>
+    <package android:name="com.facebook.orca"/>
+    <package android:name="com.google.android.apps.messaging"/>
   </queries>
   <application android:name=".MainApplication" android:label="@string/app_name" android:icon="@mipmap/ic_launcher" android:allowBackup="true" android:theme="@style/AppTheme" android:supportsRtl="true" android:fullBackupContent="@xml/secure_store_backup_rules" android:dataExtractionRules="@xml/secure_store_data_extraction_rules">
     <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyCZr5BAkbblLJwpyn8Exu6ZfH01ge0Bp4Y"/>
@@ -37,6 +49,12 @@
         <data android:scheme="topnotch-city"/>
         <data android:scheme="exp+topnotch-city"/>
         <data android:scheme="com.meltech.topnotchcity"/>
+      </intent-filter>
+      <intent-filter android:autoVerify="true" data-generated="true">
+        <action android:name="android.intent.action.VIEW"/>
+        <data android:scheme="https" android:host="topnotchcity.com" android:pathPrefix="/"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
+        <category android:name="android.intent.category.DEFAULT"/>
       </intent-filter>
     </activity>
     <activity android:name=".BrowserLauncherActivity" android:theme="@style/Theme.App.SplashScreen" android:exported="true">

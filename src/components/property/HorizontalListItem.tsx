@@ -17,6 +17,7 @@ export default function HorizontalListItem(props: Props) {
     <Pressable
       both
       onPress={() => {
+        console.log("hello");
         router.push({
           pathname: `/property/[propertyId]`,
           params: {
@@ -24,27 +25,24 @@ export default function HorizontalListItem(props: Props) {
           },
         });
       }}
+      className={cn(
+        "relative flex-row h-[110px] bg-background-muted/80 rounded-xl p-2 gap-4 overflow-hidden active:scale-[0.95]",
+        className
+      )}
+      style={{ borderRadius: 8 }}
     >
-      <View
-        className={cn(
-          "relative flex-row h-[110px] bg-background-muted/80 rounded-xl p-2 gap-4 overflow-hidden active:scale-[0.95]",
-          className
-        )}
-        style={{ borderRadius: 8 }}
-      >
-        <Image
-          source={{ uri: generateMediaUrl(media[0]).uri }}
-          className="h-full w-32 rounded-xl"
-          style={{ width: 128, borderRadius: 8 }}
-          alt={title}
-        />
-        <View className=" w-[120px] gap-1">
-          <PropertyTitle property={data} smallView />
-          <View className=" gap-1">
-            <Text size="md" className="text-medium text-typography">
-              {formatMoney(price, "NGN", 0)}
-            </Text>
-          </View>
+      <Image
+        source={{ uri: generateMediaUrl(media[0]).uri }}
+        className="h-full w-32 rounded-xl"
+        style={{ width: 128, borderRadius: 8 }}
+        alt={title}
+      />
+      <View className=" w-[120px] gap-1">
+        <PropertyTitle property={data} smallView />
+        <View className=" gap-1">
+          <Text size="md" className="text-medium text-typography">
+            {formatMoney(price, "NGN", 0)}
+          </Text>
         </View>
       </View>
     </Pressable>

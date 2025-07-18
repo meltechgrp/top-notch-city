@@ -1,8 +1,10 @@
 "use client";
 import React from "react";
-import { Image as ExpoImage } from "expo-image";
+import { Image as ExpoImage, ImageSource, useImage } from "expo-image";
 import { tva } from "@gluestack-ui/nativewind-utils/tva";
 import type { VariantProps } from "@gluestack-ui/nativewind-utils";
+import { View } from "@/components/ui/view";
+import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 
 const imageStyle = tva({
   base: "max-w-full flex-1",
@@ -26,31 +28,59 @@ type ImageProps = VariantProps<typeof imageStyle> &
   React.ComponentProps<typeof ExpoImage> & {
     className?: string;
     rounded?: boolean;
+    cacheKey?: string;
   };
 
 const Image = React.forwardRef<
   React.ComponentRef<typeof ExpoImage>,
   ImageProps
->(({ size = "md", className, rounded, style, ...props }, ref) => {
-  return (
-    <ExpoImage
-      ref={ref}
-      className={imageStyle({ size, class: className })}
-      {...props}
-      source={props.source} // ensure stable
-      style={[
-        { flex: 1, width: "100%" },
-        rounded && { borderRadius: 10 },
-        style,
-      ]}
-      // Optional blur placeholder while loading
-      placeholder={{ blurhash }}
-      cachePolicy={"memory-disk"}
-      contentFit={props.contentFit || "cover"}
-      transition={props.transition || 800}
-    />
-  );
-});
+>(
+  (
+    { size = "md", className, rounded, source, cacheKey, style, ...props },
+    ref
+  ) => {
+    if (!source) return null;
+    const image = useImage(source as ImageSource, {
+      maxWidth: 800,
+      onError(error, retry) {
+        console.error("Loading failed:", error.message);
+      },
+    });
+
+    // if (!image) {
+    //   return (
+    //     <View
+    //       style={[
+    //         { flex: 1, width: "100%" },
+    //         rounded && { borderRadius: 10 },
+    //         style,
+    //       ]}
+    //       className="flex-1 justify-center items-center"
+    //     >
+    //       <SpinningLoader />
+    //     </View>
+    //   );
+    // }
+    return (
+      <ExpoImage
+        ref={ref}
+        className={imageStyle({ size, class: className })}
+        {...props}
+        source={image} // ensure stable
+        style={[
+          { flex: 1, width: "100%" },
+          rounded && { borderRadius: 10 },
+          style,
+        ]}
+        // Optional blur placeholder while loading
+        placeholder={{ blurhash }}
+        cachePolicy={"memory-disk"}
+        contentFit={props.contentFit || "cover"}
+        transition={props.transition || 800}
+      />
+    );
+  }
+);
 
 Image.displayName = "Image";
 export { Image };

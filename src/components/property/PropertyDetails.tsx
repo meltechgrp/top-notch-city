@@ -154,19 +154,22 @@ function ImageGrid({ width }: { width: number }) {
     <View className=" flex-row gap-3">
       {getImages()
         ?.slice(0, 4)
-        .map((img) => (
-          <View
-            key={img.id}
-            style={{ width, height: width }}
-            className=" rounded-xl overflow-hidden"
-          >
-            <Image
-              source={{ uri: generateMediaUrl(img).uri }}
-              className="w-full h-full object-cover"
-              alt="images"
-            />
-          </View>
-        ))}
+        .map((img) => {
+          const { uri, id } = generateMediaUrl(img);
+          return (
+            <View
+              key={img.id}
+              style={{ width, height: width }}
+              className=" rounded-xl overflow-hidden"
+            >
+              <Image
+                source={{ uri, cacheKey: id }}
+                className="w-full h-full object-cover"
+                alt="images"
+              />
+            </View>
+          );
+        })}
       {getImages()?.length > 4 && (
         <View
           style={{ width: width + 3, height: width + 3 }}

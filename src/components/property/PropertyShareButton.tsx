@@ -1,8 +1,9 @@
 import { Share2 } from "lucide-react-native";
 import { Icon, Pressable, useResolvedTheme } from "../ui";
 import { Share } from "react-native";
-import { cn } from "@/lib/utils";
+import { cn, FindAmenity } from "@/lib/utils";
 import { memo } from "react";
+import { onInvite } from "@/actions/share";
 
 interface Props {
   property: Property;
@@ -11,29 +12,16 @@ interface Props {
 
 const PropertyShareButton = ({ property, hasScrolledToDetails }: Props) => {
   const theme = useResolvedTheme();
-  async function onInvite() {
-    try {
-      const result = await Share.share({
-        message: `Share ${property.title} property to friends or family.`,
-      });
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-          // shared with activity type of result.activityType
-        } else {
-          // shared
-        }
-      } else if (result.action === Share.dismissedAction) {
-        // dismissed
-      }
-    } catch (error: any) {
-      alert(error.message);
-    }
-  }
   return (
     <Pressable
       both
       onPress={async () => {
-        await onInvite();
+        await onInvite({
+          title: `${FindAmenity("Bedroom", property.amenities)} Bedroom ${property.subcategory?.name}`,
+          imageUrl: property.media.find((item) => item.media_type == "IMAGE")
+            ?.url!,
+          link: property.id,
+        });
       }}
       style={{ padding: 8 }}
     >

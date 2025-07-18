@@ -4,6 +4,7 @@
     "slug": "topnotch-city",
     "version": "1.0.0",
     "orientation": "portrait",
+    "deepLinking": true,
     "icon": "./src/assets/images/icon.png",
     "userInterfaceStyle": "automatic",
     "scheme": "com.meltech.topnotchcity",
@@ -14,7 +15,21 @@
       "bundleIdentifier": "com.meltech.topnotchcity",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "Allow $(PRODUCT_NAME) to access your location to show nearby properties and map search.",
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "LSApplicationQueriesSchemes": [
+          "fb",
+          "facebook",
+          "instagram",
+          "whatsapp",
+          "message",
+          "tg",
+          "twitter",
+          "tiktok",
+          "fb-messenger"
+        ],
+        "associatedDomains": [
+          "applinks:topnotchcity.com"
+        ]
       }
     },
     "android": {
@@ -24,9 +39,27 @@
       "permissions": [
         "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.ACCESS_COARSE_LOCATION",
-        "android.permission.RECORD_AUDIO"
+        "android.permission.RECORD_AUDIO",
+        "android.permission.CAMERA"
       ],
       "softwareKeyboardLayoutMode": "resize",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "topnotchcity.com",
+              "pathPrefix": "/"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ],
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyCZr5BAkbblLJwpyn8Exu6ZfH01ge0Bp4Y"
@@ -37,6 +70,7 @@
       "bundler": "metro",
       "output": "static"
     },
+    "jsEngine": "hermes",
     "plugins": [
       "expo-router",
       "react-native-compressor",
@@ -46,6 +80,22 @@
         {
           "faceIDPermission": "Allow $(PRODUCT_NAME) to use Face ID for secure login."
         }
+      ],
+      [
+        "./plugins/withAndroidQueries.js",
+        [
+          "com.instagram.android",
+          "com.facebook.katana",
+          "com.whatsapp",
+          "com.twitter.android",
+          "org.telegram.messenger",
+          "com.zhiliaoapp.musically",
+          "com.whatsapp.w4b",
+          "com.facebook.lite",
+          "com.instagram.lite",
+          "com.facebook.orca",
+          "com.google.android.apps.messaging"
+        ]
       ],
       [
         "expo-video",
@@ -83,7 +133,9 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos to upload property images or update your profile."
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos to upload property images or update your profile.",
+          "cameraPermission": "To take photos and videos, allow $(PRODUCT_NAME) to access your camera.",
+          "microphonePermission": "To record videos, allow $(PRODUCT_NAME) to access your microphone."
         }
       ],
       [
@@ -96,7 +148,7 @@
       [
         "expo-audio",
         {
-          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone for voice search and audio messages."
+          "microphonePermission": "To record audio, allow $(PRODUCT_NAME) to access your microphone."
         }
       ],
       [

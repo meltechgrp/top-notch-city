@@ -44,6 +44,18 @@
     <string>1</string>
     <key>ITSAppUsesNonExemptEncryption</key>
     <false/>
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+      <string>fb</string>
+      <string>facebook</string>
+      <string>instagram</string>
+      <string>whatsapp</string>
+      <string>message</string>
+      <string>tg</string>
+      <string>twitter</string>
+      <string>tiktok</string>
+      <string>fb-messenger</string>
+    </array>
     <key>LSMinimumSystemVersion</key>
     <string>12.0</string>
     <key>LSRequiresIPhoneOS</key>
@@ -56,7 +68,7 @@
       <true/>
     </dict>
     <key>NSCameraUsageDescription</key>
-    <string>Allow $(PRODUCT_NAME) to access your camera</string>
+    <string>To take photos and videos, allow $(PRODUCT_NAME) to access your camera.</string>
     <key>NSFaceIDUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to use Face ID for secure login.</string>
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
@@ -66,7 +78,7 @@
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to access your location to show nearby properties and map search.</string>
     <key>NSMicrophoneUsageDescription</key>
-    <string>Allow $(PRODUCT_NAME) to access your microphone for voice search and audio messages.</string>
+    <string>To record videos, allow $(PRODUCT_NAME) to access your microphone.</string>
     <key>NSMotionUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to access your device motion</string>
     <key>NSPhotoLibraryUsageDescription</key>
@@ -116,5 +128,9 @@
     <string>Automatic</string>
     <key>UIViewControllerBasedStatusBarAppearance</key>
     <true/>
+    <key>associatedDomains</key>
+    <array>
+      <string>applinks:topnotchcity.com</string>
+    </array>
   </dict>
 </plist>

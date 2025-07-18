@@ -1,0 +1,27 @@
+{
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "diffEditor.codeLens": true,
+  "editor.wordWrapColumn": 200,
+  "editor.wordWrap": "on",
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "java.configuration.updateBuildConfiguration": "disabled",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "[ignore]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "liveServer.settings.port": 5501,
+  "[dotenv]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "[properties]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "java.compile.nullAnalysis.mode": "disabled",
+  "[shellscript]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  }
+}
