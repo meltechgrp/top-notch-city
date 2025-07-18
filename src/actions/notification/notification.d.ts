@@ -7,6 +7,8 @@ type UserNotification = {
   is_read: boolean;
   created_at: string;
   updated_at: string;
+  entity_type: string;
+  entity_id: string;
 };
 
 type UserNotifications = UserNotification[];

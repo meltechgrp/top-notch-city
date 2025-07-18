@@ -1,15 +1,16 @@
 import { router } from "expo-router";
 import React, { useMemo } from "react";
 import { Pressable, View } from "react-native";
-import { Avatar, AvatarBadge, AvatarImage, Text } from "../ui";
+import { Avatar, AvatarBadge, AvatarImage, Icon, Text } from "../ui";
+import { format } from "date-fns";
 import logo from "@/assets/images/icon.png";
 import NotificationItemWrapper from "./NotificationItemWrapper";
+import { cn } from "@/lib/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteNotification, markAsRead } from "@/actions/notification";
-import { format } from "date-fns";
 import { useStore } from "@/store";
 
-export default function PropertyAcceptedNotificationComponent({
+export default function EnquiryNotificationComponent({
   data,
 }: {
   data: UserNotification;
@@ -48,36 +49,40 @@ export default function PropertyAcceptedNotificationComponent({
           });
           isAdmin
             ? router.push({
-                pathname: "/admin/(tabs)/listings/peding",
-                params: { propertyId: data.entity_id },
+                pathname: "/admin/(tabs)/analytics/reports",
+                params: { enquiryId: data.entity_id },
               })
-            : router.push({
-                pathname: "/(protected)/property/[propertyId]",
-                params: { propertyId: data.entity_id },
-              });
+            : undefined;
         }}
-        className="p-4 rounded-2xl border-l border-gray-500 min-h-[6rem] bg-background-info "
+        className={cn(
+          "p-4 min-h-[6rem] border-l border-primary rounded-2xl bg-background-info "
+        )}
       >
-        <View className="flex-1 gap-1 justify-center">
-          <View className="flex-row gap-2 items-start">
-            <Avatar size="xs" className="ios:mt-[2px]">
-              <AvatarImage source={logo} />
-              {!is_read && (
-                <AvatarBadge className="bg-primary -top-2 -right-1" size="md" />
-              )}
-            </Avatar>
-            <View className="gap-1 pr-1 flex-row justify-between flex-1">
-              <Text size="md" numberOfLines={1} className="">
-                {title}
-              </Text>
-              <Text size="sm">
-                {format(new Date(data.created_at), "hh:mm")}
-              </Text>
+        <View className="flex-1 gap-1">
+          <View className="flex-1 gap-1">
+            <View className="flex-row gap-4 items-start">
+              <Avatar size="xs" className="ios:mt-[2px]">
+                <AvatarImage source={logo} />
+                {!is_read && (
+                  <AvatarBadge
+                    className="bg-primary -top-2.5 -right-1.5"
+                    size="md"
+                  />
+                )}
+              </Avatar>
+              <View className="flex-row flex-1 justify-between">
+                <Text size="md" numberOfLines={1} className="">
+                  {data.title}
+                </Text>
+                <Text size="sm">
+                  {format(new Date(data.created_at), "hh:mm")}
+                </Text>
+              </View>
             </View>
+            <Text numberOfLines={2} className="text-sm font-light">
+              {data.message}
+            </Text>
           </View>
-          <Text numberOfLines={2} className="text-sm font-light">
-            {message}
-          </Text>
         </View>
       </Pressable>
     </NotificationItemWrapper>

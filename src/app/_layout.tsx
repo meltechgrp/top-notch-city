@@ -135,7 +135,7 @@ export function useHandleNotification() {
         handleNotification: async () => ({
           shouldShowBanner: true,
           shouldShowList: true,
-          shouldPlaySound: false,
+          shouldPlaySound: true,
           shouldSetBadge: false,
         }),
       });

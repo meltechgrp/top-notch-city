@@ -9,7 +9,7 @@ import { deleteNotification, markAsRead } from "@/actions/notification";
 import { format } from "date-fns";
 import { useStore } from "@/store";
 
-export default function PropertyAcceptedNotificationComponent({
+export default function ApplicationNotificationComponent({
   data,
 }: {
   data: UserNotification;
@@ -48,15 +48,12 @@ export default function PropertyAcceptedNotificationComponent({
           });
           isAdmin
             ? router.push({
-                pathname: "/admin/(tabs)/listings/peding",
-                params: { propertyId: data.entity_id },
+                pathname: "/admin/(tabs)/analytics/requests",
+                params: { applicationId: data.entity_id },
               })
-            : router.push({
-                pathname: "/(protected)/property/[propertyId]",
-                params: { propertyId: data.entity_id },
-              });
+            : undefined;
         }}
-        className="p-4 rounded-2xl border-l border-gray-500 min-h-[6rem] bg-background-info "
+        className="p-4 rounded-2xl border-l border-red-500 min-h-[6rem] bg-background-info "
       >
         <View className="flex-1 gap-1 justify-center">
           <View className="flex-row gap-2 items-start">

@@ -70,14 +70,14 @@ export default function AdminTabLayout() {
       <Tabs.Screen
         name="listings"
         options={{
-          title: "Listings",
+          title: "Properties",
           tabBarIcon: ({ color }) => <List size={24} color={color} />,
         }}
       />
       <Tabs.Screen
         name="analytics"
         options={{
-          title: "Analytics",
+          title: "Requests",
           tabBarIcon: ({ color }) => (
             <ChartNoAxesColumn size={24} color={color} />
           ),

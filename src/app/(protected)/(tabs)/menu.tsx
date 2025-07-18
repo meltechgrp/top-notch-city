@@ -256,7 +256,7 @@ export default function More() {
             />
             <Divider className=" h-[0.3px] bg-background-info mb-4" />
             <MenuListItem
-              title="Send a report/review"
+              title="Send us a message/enquiry"
               description="Let's improve the app"
               onPress={() => router.push("/report")}
               icon={NotebookText}
@@ -272,9 +272,7 @@ export default function More() {
               iconColor="primary"
               onPress={onInvite}
             />
-            {(!isAgent || me?.role == "user") && (
-              <Divider className=" h-[0.3px] bg-background-info mb-4" />
-            )}
+            <Divider className=" h-[0.3px] bg-background-info mb-4" />
             {!isAgent && me?.role == "user" && (
               <MenuListItem
                 title="Become an Agent"
@@ -296,7 +294,9 @@ export default function More() {
                 }}
               />
             )}
-            <Divider className=" h-[0.3px] bg-background-info mb-4" />
+            {!isAgent && me?.role == "user" && (
+              <Divider className=" h-[0.3px] bg-background-info mb-4" />
+            )}
             <MenuListItem
               title="Help and Support"
               description="Get help and support"

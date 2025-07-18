@@ -44,13 +44,7 @@ export default function ListingLayoutsComponent() {
         <MaterialTopTabs.Screen
           name="index"
           options={{
-            title: "Listings",
-          }}
-        />
-        <MaterialTopTabs.Screen
-          name="category"
-          options={{
-            title: "Category List",
+            title: "Properties",
           }}
         />
         <MaterialTopTabs.Screen
@@ -64,6 +58,12 @@ export default function ListingLayoutsComponent() {
                 count={propertyData.length}
               />
             ),
+          }}
+        />
+        <MaterialTopTabs.Screen
+          name="category"
+          options={{
+            title: "Category List",
           }}
         />
       </MaterialTopTabs>

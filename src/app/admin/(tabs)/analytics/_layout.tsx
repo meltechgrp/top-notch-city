@@ -14,7 +14,7 @@ export default function AnalyticsLayoutsComponent() {
   return (
     <MainLayout>
       <MaterialTopTabs
-        initialRouteName="index"
+        initialRouteName="requests"
         tabBar={(props) => <CustomTopBar {...props} />}
         screenOptions={{
           swipeEnabled: false,
@@ -34,21 +34,21 @@ export default function AnalyticsLayoutsComponent() {
         }}
       >
         <MaterialTopTabs.Screen
-          name="index"
-          options={{
-            title: "Overview",
-          }}
-        />
-        <MaterialTopTabs.Screen
           name="requests"
           options={{
-            title: "Requests",
+            title: "Applications",
           }}
         />
         <MaterialTopTabs.Screen
           name="reports"
           options={{
-            title: "Reports",
+            title: "Enquires",
+          }}
+        />
+        <MaterialTopTabs.Screen
+          name="index"
+          options={{
+            title: "Overview",
           }}
         />
       </MaterialTopTabs>

@@ -35,19 +35,6 @@ export default function AgentScreensLayout() {
       }}
     >
       <Stack.Screen
-        name="[agentId]/index"
-        options={({ route }) => {
-          const params = route.params as any;
-          const title = params?.title ?? "Dashboard";
-
-          return {
-            headerTitle: () => (
-              <AnimatedHeaderTitle defaultTitle="Dashboard" title={title} />
-            ),
-          };
-        }}
-      />
-      <Stack.Screen
         name="agent"
         options={{
           title: "Agent Application",

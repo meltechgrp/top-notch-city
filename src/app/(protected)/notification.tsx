@@ -1,5 +1,8 @@
 import { getNotifications } from "@/actions/notification";
 import PushNotificationsIllustration from "@/components/icons/PushNotificationsIllustration";
+import ApplicationNotificationComponent from "@/components/notifications/ApplicationNotificationComponent";
+import DefaultNotificationComponent from "@/components/notifications/DefaultNotificationComponent";
+import EnquiryNotificationComponent from "@/components/notifications/EnquiryNotificationcomponent";
 import PropertyNotificationComponent from "@/components/notifications/PropertyNotificationComponent";
 import EmptyStateWrapper from "@/components/shared/EmptyStateWrapper";
 import { Box, Heading, Text } from "@/components/ui";
@@ -40,17 +43,19 @@ export default function NotificationScreen() {
       );
   }, [data]);
   const { onRefresh } = useRefresh(refetch);
-  // const renderItem = (item: any) => {
-  // 	switch (item.__typename) {
-  // 		case 'PropertytAcceptedNotification':
-  // 			return <PropertyNotificationComponent data={item as any} />;
-  // 		case 'PropertyListedNotification':
-  // 			return <PropertyListedNotificationComponent data={item as any} />;
-  // 		default:
-  // 			break;
-  // 	}
-  // 	return null;
-  // };
+  const RenderItem = ({ item }: { item: UserNotification }) => {
+    switch (item.entity_type) {
+      case "property":
+        return <PropertyNotificationComponent data={item} />;
+      case "enquiry":
+        return <EnquiryNotificationComponent data={item} />;
+      case "application":
+        return <ApplicationNotificationComponent data={item} />;
+      default:
+        return <DefaultNotificationComponent data={item} />;
+    }
+    return null;
+  };
 
   useEffect(() => {
     eventBus.addEventListener("PROPERTY_HORIZONTAL_LIST_REFRESH", onRefresh);
@@ -88,10 +93,7 @@ export default function NotificationScreen() {
         >
           <SectionList
             refreshControl={
-              <RefreshControl
-                refreshing={isFetching || isLoading}
-                onRefresh={onRefresh}
-              />
+              <RefreshControl refreshing={isFetching} onRefresh={onRefresh} />
             }
             contentContainerClassName="px-4"
             showsVerticalScrollIndicator={false}
@@ -105,10 +107,8 @@ export default function NotificationScreen() {
             ItemSeparatorComponent={() => <View className="h-3" />}
             SectionSeparatorComponent={() => <View className="h-1" />}
             sections={sections}
-            keyExtractor={(item, index) => (item as any)?.id || (index as any)}
-            renderItem={({ item }) => (
-              <PropertyNotificationComponent data={item} />
-            )}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => <RenderItem item={item} />}
           />
         </EmptyStateWrapper>
       </View>
