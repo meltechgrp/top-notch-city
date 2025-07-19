@@ -10,16 +10,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import SearchLocationBottomSheet from "@/components/modals/search/SearchLocationBottomSheet";
 import SearchFilterBottomSheet from "@/components/modals/search/SearchFilterBottomSheet";
 import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
-import { router, useLocalSearchParams } from "expo-router";
 import { VoiceModal } from "@/components/modals/search/VoiceModal";
 import { useFilteredProperties } from "@/hooks/useFilteredProperties";
 
 const TABS = ["Map View", "List View"];
 
 export default function SearchScreen() {
-  const { propertyId } = useLocalSearchParams() as {
-    propertyId?: string;
-  };
   const { height: totalHeight } = Dimensions.get("screen");
   const [showFilter, setShowFilter] = useState(false);
   const [activateVoice, setActivateVoice] = useState(false);
@@ -83,7 +79,6 @@ export default function SearchScreen() {
                     key={index}
                     height={totalHeight}
                     properties={filtered}
-                    propertyId={propertyId}
                   />
                 </View>
               );

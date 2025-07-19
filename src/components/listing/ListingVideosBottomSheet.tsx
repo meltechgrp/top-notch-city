@@ -13,6 +13,7 @@ import OptionsBottomSheet from "../shared/OptionsBottomSheet";
 import { useLayout } from "@react-native-community/hooks";
 import { useMediaCompressor } from "@/hooks/useMediaCompressor";
 import { cn, showSnackbar } from "@/lib/utils";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
 
 type Props = {
   visible: boolean;
@@ -30,23 +31,24 @@ function ListingVideosBottomSheet(props: Props) {
 
   const { width, onLayout } = useLayout();
   const pickVideos = async () => {
-    setLoading(true);
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["videos"],
       aspect: [4, 3],
       quality: 1,
-      videoQuality: ImagePicker.UIImagePickerControllerQualityType.Low,
+      // videoQuality: ImagePicker.UIImagePickerControllerQualityType.Low,
       allowsEditing: true,
-      videoMaxDuration: 1200,
+      // videoMaxDuration: 1200,
     });
     if (!result.canceled) {
+      setLoading(true);
       await handleUpload(
         result.assets.map((vid) => ({
           uri: vid.uri,
         }))
       );
+    } else {
+      setLoading(false);
     }
-    setLoading(false);
   };
   const takeVideos = async () => {
     const permitted = await ImagePicker.getCameraPermissionsAsync();
@@ -56,24 +58,25 @@ function ListingVideosBottomSheet(props: Props) {
     ) {
       return await ImagePicker.requestCameraPermissionsAsync();
     }
-    setLoading(true);
     let result = await ImagePicker.launchCameraAsync({
       mediaTypes: ["videos"],
       aspect: [4, 3],
       quality: 0.6,
       cameraType: ImagePicker.CameraType.back,
       allowsEditing: true,
-      videoMaxDuration: 1200,
+      // videoMaxDuration: 1200,
     });
 
     if (!result.canceled) {
+      setLoading(true);
       await handleUpload(
         result.assets.map((vid) => ({
           uri: vid.uri,
         }))
       );
+    } else {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   async function handleUpload(data: { uri: string }[]) {
@@ -91,9 +94,9 @@ function ListingVideosBottomSheet(props: Props) {
       .map((item) => ({ uri: item, id: uniqueId() }));
     setLoading(false);
     if (compressed.length == 0) {
-      return showSnackbar({
-        message: "Failed to upload.. try again",
-        type: "warning",
+      return showErrorAlert({
+        title: "Failed to upload.. try again",
+        alertType: "warn",
       });
     } else {
       onUpdate(compressed);
@@ -109,7 +112,7 @@ function ListingVideosBottomSheet(props: Props) {
             className="flex-1"
             onPress={pickVideos}
           >
-            <ButtonText>Choose Videos</ButtonText>
+            <ButtonText size="md">Choose Videos</ButtonText>
             <Icon as={Video} />
           </Button>
           <Button
@@ -119,7 +122,7 @@ function ListingVideosBottomSheet(props: Props) {
             onPress={takeVideos}
             variant="outline"
           >
-            <ButtonText>Take Videos</ButtonText>
+            <ButtonText size="md">Take Videos</ButtonText>
             <Icon as={Camera} className="text-primary" />
           </Button>
         </View>

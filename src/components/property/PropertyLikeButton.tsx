@@ -5,6 +5,8 @@ import { likeProperty } from "@/actions/property";
 import { Colors } from "@/constants/Colors";
 import { cn } from "@/lib/utils";
 import { memo } from "react";
+import { useStore } from "@/store";
+import { openSignInModal } from "@/components/globals/AuthModals";
 
 interface Props {
   property: Property;
@@ -19,6 +21,7 @@ const PropertyLikeButton = ({
 }: Props) => {
   const client = useQueryClient();
   const theme = useResolvedTheme();
+  const { hasAuth } = useStore();
   const { mutate, isSuccess } = useMutation({
     mutationFn: () => likeProperty({ id: property.id }),
     onSuccess: () => {
@@ -28,6 +31,12 @@ const PropertyLikeButton = ({
   });
 
   function hnadleLike() {
+    if (!hasAuth) {
+      return openSignInModal({
+        visible: true,
+        onLoginSuccess: () => mutate(),
+      });
+    }
     mutate();
   }
   return (

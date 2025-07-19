@@ -8,7 +8,7 @@ import { useStore } from "@/store";
 const videoSource = require("@/assets/images/splash-video.mp4");
 
 export default function SplashScreen() {
-  const { hasAuth, savedPath } = useStore();
+  const { hasAuth } = useStore();
   const player = useVideoPlayer(videoSource, (player) => {
     // Remove looping so it ends
     player.loop = false;
@@ -20,9 +20,6 @@ export default function SplashScreen() {
     if (!player) return;
     const onEnded = () => {
       if (hasAuth) {
-        if (savedPath) {
-          return router.dismissTo(savedPath as any);
-        }
         router.replace("/home");
       } else {
         router.replace("/onboarding");

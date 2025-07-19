@@ -12,7 +12,7 @@ import ListingResult from "@/components/listing/ListingResult";
 import FullHeightLoaderWrapper from "@/components/loaders/FullHeightLoaderWrapper";
 import headerLeft from "@/components/shared/headerLeft";
 import { Box, Button, ButtonText } from "@/components/ui";
-import { showSnackbar } from "@/lib/utils";
+import { cn, showSnackbar } from "@/lib/utils";
 import { useTempStore } from "@/store";
 import { useLayout } from "@react-native-community/hooks";
 import { Stack, useRouter } from "expo-router";
@@ -147,15 +147,21 @@ export default function SellAddScreen() {
         <FullHeightLoaderWrapper className="flex-1" loading={loading}>
           <SafeAreaView edges={["bottom"]} className="flex-1">
             <BodyScrollView
-              className="flex-1  min-h-96"
-              contentContainerClassName="pb-28"
+              className={cn(
+                "flex-1  min-h-96",
+                listing.step == 8 && "min-h-[34rem]"
+              )}
+              contentContainerClassName={cn(
+                "pb-28",
+                listing.step == 8 && "pb-48"
+              )}
             >
               <Animated.View
                 entering={FadeInRight.duration(800)}
                 exiting={FadeOutLeft.duration(800)}
                 key={listing.step}
                 style={{ height }}
-                className={"flex-1 min-h-96"}
+                className={cn("flex-1 min-h-96")}
               >
                 {Steps}
               </Animated.View>

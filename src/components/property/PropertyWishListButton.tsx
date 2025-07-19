@@ -5,6 +5,8 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { memo, useMemo } from "react";
 import { Colors } from "@/constants/Colors";
 import { cn } from "@/lib/utils";
+import { useStore } from "@/store";
+import { openSignInModal } from "@/components/globals/AuthModals";
 
 interface Props {
   property: Property;
@@ -19,6 +21,7 @@ const PropertyWishListButton = ({
 }: Props) => {
   const client = useQueryClient();
   const theme = useResolvedTheme();
+  const { hasAuth } = useStore();
   function invalidate() {
     client.invalidateQueries({ queryKey: ["properties", property.id] });
     client.invalidateQueries({ queryKey: ["properties"] });
@@ -37,6 +40,12 @@ const PropertyWishListButton = ({
     onSuccess: () => invalidate(),
   });
   function hnadleWishList() {
+    if (!hasAuth) {
+      return openSignInModal({
+        visible: true,
+        onLoginSuccess: () => mutate(),
+      });
+    }
     if (isAdded) {
       mutate();
     } else {

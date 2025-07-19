@@ -53,7 +53,7 @@ export function SearchHeader({
                   className="h-12 bg-background-muted flex-1 rounded-full flex-row items-center px-2 py-1"
                 >
                   <Text numberOfLines={1} className="flex-1 px-2">
-                    {filter?.city && filter?.state
+                    {filter?.state
                       ? composeFullAddress(filter, true)
                       : "Search a city..."}
                   </Text>

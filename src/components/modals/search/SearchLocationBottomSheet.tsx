@@ -74,6 +74,7 @@ function SearchLocationBottomSheet({ show, onDismiss, onUpdate }: Props) {
   };
 
   const handleSelect = async (item: SearchFilters) => {
+    setTyping(false);
     const newSearch = {
       state: item?.state,
       city: item?.city,

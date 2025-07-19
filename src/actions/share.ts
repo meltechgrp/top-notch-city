@@ -1,3 +1,4 @@
+import config from "@/config";
 import { generateMediaUrl } from "@/lib/api";
 import { Share } from "react-native";
 
@@ -12,23 +13,21 @@ export async function onInvite(property: {
 
 ${property.title}
 
-📱 View in app: topnotchcity://property/${encodeURIComponent(property.link)}
+📱 View in app: ${config.websiteUrl}/property/${property.link}
 
-🌐 View online: ${property.link}
-
-🖼️ Image: ${property.imageUrl}
-
-Download the app: https://topnotchcity.com/app
+Download the app: ${config.websiteUrl} 
 `;
 
-    const result = await Share.share({
-      message,
-      url: generateMediaUrl({
-        url: property.imageUrl,
-        id: "",
-        media_type: "IMAGE",
-      }).uri, // Helps with preview on some platforms
-    });
+    const result = await Share.share(
+      {
+        title: property.title,
+        message,
+        url: `${config.websiteUrl}/property/${property.link}`,
+      },
+      {
+        dialogTitle: property.title,
+      }
+    );
 
     if (result.action === Share.sharedAction) {
       if (result.activityType) {

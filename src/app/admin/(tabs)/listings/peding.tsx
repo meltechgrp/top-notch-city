@@ -30,6 +30,7 @@ export default function PendingProperties() {
             isLoading={isLoading || isFetchingNextPage}
             disableHeader
             showStatus
+            className="pb-40"
             refetch={refetch}
             onPress={(data) => {
               setActiveProperty(data);

@@ -3,8 +3,6 @@ import React from "react";
 import { Image as ExpoImage, ImageSource, useImage } from "expo-image";
 import { tva } from "@gluestack-ui/nativewind-utils/tva";
 import type { VariantProps } from "@gluestack-ui/nativewind-utils";
-import { View } from "@/components/ui/view";
-import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 
 const imageStyle = tva({
   base: "max-w-full flex-1",

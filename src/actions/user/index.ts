@@ -1,6 +1,5 @@
 import eventBus from "@/lib/eventBus";
 import { Fetch } from "../utills";
-import config from "@/config";
 
 type UserResult = {
   total: number;
@@ -15,7 +14,15 @@ export async function getMe() {
   const res = await Fetch("/users/me", {});
 
   if (res?.detail) {
-    throw new Error("Failed to update profile");
+    throw new Error("Failed to get profile");
+  }
+  return res as Me;
+}
+export async function getUser(id: string) {
+  const res = await Fetch(`/users/${id}`, {});
+
+  if (res?.detail) {
+    throw new Error("Failed to get user profile");
   }
   return res as Me;
 }

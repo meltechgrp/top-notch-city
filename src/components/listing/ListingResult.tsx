@@ -60,39 +60,52 @@ export default function ListingResult() {
           <Heading size="md" className="mb-3">
             Media
           </Heading>
-          <View className="flex-wrap gap-4">
-            {chunk(
-              [...(property?.photos || []), ...(property?.videos || [])],
-              4
-            ).map((row, i) => (
-              <View className={"flex-row gap-4"} key={i}>
-                {row.map((media, i) => (
-                  <Pressable key={media.id}>
-                    {media.uri.includes(".jpg") ? (
-                      <Image
-                        style={{
-                          width: width > 100 ? (width - 100) / 4 : 72,
-                          height: width > 100 ? (width - 100) / 4 : 72,
-                        }}
-                        className={" bg-background-muted rounded-xl"}
-                        source={{ uri: media.uri }}
-                        alt="image"
-                      />
-                    ) : (
-                      <VideoScreen
-                        uri={media.uri}
-                        width={0}
-                        size={width > 100 ? (width - 100) / 4 : 72}
-                        setSelected={() => {}}
-                        setOpenEdit={() => {}}
-                        index={i}
-                        rounded
-                      />
-                    )}
-                  </Pressable>
-                ))}
-              </View>
-            ))}
+          <View className="flex-row gap-4">
+            {[...(property?.photos || []), ...(property?.videos || [])]
+              .slice(0, 3)
+              .map((media, i) => (
+                <Pressable key={media.id}>
+                  {media.uri.includes(".jpg") ? (
+                    <Image
+                      style={{
+                        width: width > 100 ? (width - 100) / 4 : 72,
+                        height: width > 100 ? (width - 100) / 4 : 72,
+                      }}
+                      className={" bg-background-muted rounded-xl"}
+                      source={{ uri: media.uri }}
+                      alt="image"
+                    />
+                  ) : (
+                    <VideoScreen
+                      uri={media.uri}
+                      width={0}
+                      size={width > 100 ? (width - 100) / 4 : 72}
+                      setSelected={() => {}}
+                      setOpenEdit={() => {}}
+                      index={i}
+                      rounded
+                    />
+                  )}
+                </Pressable>
+              ))}
+
+            <View
+              style={{
+                width: width > 100 ? (width - 100) / 4 : 72,
+                height: width > 100 ? (width - 100) / 4 : 72,
+              }}
+              className={
+                " bg-background rounded-xl justify-center items-center"
+              }
+            >
+              <Text>
+                +
+                {
+                  [...(property?.photos || []), ...(property?.videos || [])]
+                    .length
+                }
+              </Text>
+            </View>
           </View>
         </View>
 

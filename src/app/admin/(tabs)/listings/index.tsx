@@ -91,6 +91,7 @@ export default function Properties() {
             data={filteredData}
             showStatus
             isLoading={isLoading || isFetchingNextPage}
+            className="pb-40"
             onPress={(data) => {
               setActiveProperty(data);
               setPropertyBottomSheet(true);

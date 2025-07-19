@@ -80,7 +80,7 @@ export default function More() {
       const message =
         `🏘️ Invite your friends to join *TopNotch City Estate*.\n\n` +
         `Discover amazing apartments and real estate opportunities near you.\n\n` +
-        `👉 Tap here to join: ${Linking.createURL("/home")}`;
+        `👉 Tap here to join: ${config.websiteUrl}/home `;
 
       // Optionally prepare an image for sharing
       // const imageUrl = "https://yourdomain.com/invite-banner.jpg"; // <-- replace with your image URL
@@ -100,7 +100,6 @@ export default function More() {
       const result = await Share.share({
         title: "Join TopNotch City Estate",
         message,
-        url: Linking.createURL("/invite"),
       });
 
       if (result.action === Share.sharedAction) {
@@ -155,6 +154,8 @@ export default function More() {
                     console.log("logged in");
                   },
                 });
+              } else if (me.role == "agent") {
+                router.push("/profile");
               }
             }}
             className={"flex-row items-center"}

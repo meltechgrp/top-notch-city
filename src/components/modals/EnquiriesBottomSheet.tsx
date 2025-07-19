@@ -5,8 +5,8 @@ import { CustomInput } from "../custom/CustomInput";
 import { Button, ButtonText } from "../ui";
 import { useMutation } from "@tanstack/react-query";
 import { sendEquiry } from "@/actions/equiry";
-import { showSnackbar } from "@/lib/utils";
 import { SpinningLoader } from "../loaders/SpinningLoader";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
 
 type Props = {
   visible: boolean;
@@ -19,18 +19,17 @@ const EnquiriesFormBottomSheet: React.FC<Props> = ({
   onDismiss,
   id,
 }) => {
-  console.log(id);
   const { mutateAsync, isPending } = useMutation({
     mutationFn: sendEquiry,
     onSuccess: () =>
-      showSnackbar({
-        message: "Message sent successfully",
-        type: "success",
+      showErrorAlert({
+        title: "Message sent successfully",
+        alertType: "success",
       }),
     onError: (err) =>
-      showSnackbar({
-        message: err.message,
-        type: "error",
+      showErrorAlert({
+        title: "Something went wrong, try again!",
+        alertType: "error",
       }),
   });
   const [formData, setFormData] = useState<Enquiry>({
@@ -50,6 +49,11 @@ const EnquiriesFormBottomSheet: React.FC<Props> = ({
   };
 
   const handleSubmit = async () => {
+    if (!formData.full_name || !formData.email || !formData.message)
+      return showErrorAlert({
+        title: "Please fill up all fields",
+        alertType: "warn",
+      });
     await mutateAsync({ form: formData });
     onDismiss();
   };

@@ -113,6 +113,7 @@ export default function Users() {
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
+          contentContainerClassName="pb-40"
           ListEmptyComponent={<MiniEmptyState title="No user found" />}
           ItemSeparatorComponent={() => <View className="h-2" />}
           renderItem={({ item }) => (

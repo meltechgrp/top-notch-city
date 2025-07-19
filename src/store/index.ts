@@ -22,7 +22,6 @@ type State = {
   isAdmin: boolean;
   me?: Me;
   isOnboarded: boolean;
-  savedPath?: string;
 };
 
 type Actions = {
@@ -31,8 +30,6 @@ type Actions = {
   setIsAdmin: (isAdmin: boolean) => void;
   setIsOnboarded: (isOnboarded: boolean) => void;
   updateProfile: (data: Me) => void;
-  setSavedPath: (path: string) => void;
-  removetSavedPath: () => void;
 };
 
 const initialState: State = {
@@ -65,12 +62,6 @@ export const useStore = create<StateAndActions>(
       },
       setIsOnboarded(isOnboarded) {
         set((state) => ({ ...state, isOnboarded }));
-      },
-      setSavedPath(path) {
-        set((state) => ({ ...state, savedPath: path }));
-      },
-      removetSavedPath() {
-        set((state) => ({ ...state, savedPath: undefined }));
       },
       updateProfile: (data) =>
         set((state) => ({ ...state, me: { ...state.me, ...data } })),

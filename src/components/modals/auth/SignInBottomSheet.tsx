@@ -46,7 +46,6 @@ export default function SignInBottomSheet({
       androidClientId: process.env.EXPO_PUBLIC_APPLE_AUTH_KEY,
       iosClientId: process.env.EXPO_PUBLIC_APPLE_AUTH_KEY,
     });
-  console.log(googleRequest?.redirectUri);
 
   const [fbRequest, fbResponse, fbPromptAsync] = Facebook.useAuthRequest({
     clientId: "990600566300859",

@@ -3,10 +3,12 @@ import GlobalFullScreenLoader from "@/components/loaders/GlobalFullScreenLoader"
 import SnackBar from "@/components/shared/SnackBar";
 import eventBus from "@/lib/eventBus";
 import { getAuthToken, removeAuthToken } from "@/lib/secureStore";
+import { getUniqueIdSync } from "react-native-device-info";
 import { useStore, useTempStore } from "@/store";
 import { router } from "expo-router";
 import React, { useEffect } from "react";
 import AuthModals from "../globals/AuthModals";
+import config from "@/config";
 
 export default function GlobalManager() {
   const fullScreenLoading = useTempStore((s) => s.fullScreenLoading);
@@ -25,24 +27,35 @@ export default function GlobalManager() {
     useStore.getState().resetStore();
     useTempStore.getState().resetStore();
     removeAuthToken();
-    router.replace({
-      pathname: "/home",
-      params: {
-        allowBack: "false",
-      },
-    });
   }
   async function updateMe() {
     try {
-      const res = await Fetch("/users/me", {});
-      if (res?.detail?.includes("expired")) {
+      const authToken = getAuthToken();
+      const deviceId = getUniqueIdSync();
+      const resp = await fetch(`${config.origin}/api/users/me`, {
+        headers: {
+          ...(authToken && { Authorization: `Bearer ${authToken}` }),
+          "X-DID": deviceId,
+        },
+      });
+      if (resp.status >= 400) {
+        return await unsetAuthToken();
+      }
+      const res = await resp.json();
+      if (
+        res?.detail?.includes("expired") ||
+        res?.detail?.includes("Not authenticated")
+      ) {
         return await unsetAuthToken();
       }
       if (!res?.detail) {
         setMe(res);
       }
     } catch (err: any) {
-      if (err?.detail?.includes("expired")) {
+      if (
+        err?.detail?.includes("expired") ||
+        err?.detail?.includes("Not authenticated")
+      ) {
         console.log("expired");
         return await unsetAuthToken();
       }

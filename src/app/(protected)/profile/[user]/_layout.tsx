@@ -1,9 +1,17 @@
 import { AnimatedHeaderTitle } from "@/components/custom/AnimatedHeaderTitle";
 import AppCrashScreen from "@/components/shared/AppCrashScreen";
 import headerLeft from "@/components/shared/headerLeft";
-import { Pressable, Text, useResolvedTheme, View } from "@/components/ui";
+import { Icon, Pressable, Text, useResolvedTheme, View } from "@/components/ui";
 import { Colors } from "@/constants/Colors";
-import { ErrorBoundaryProps, Stack, useRouter } from "expo-router";
+import { useStore } from "@/store";
+import {
+  ErrorBoundaryProps,
+  Stack,
+  useLocalSearchParams,
+  useRouter,
+} from "expo-router";
+import { MoreHorizontal, Share2 } from "lucide-react-native";
+import { useMemo } from "react";
 
 export const unstable_settings = {
   // Ensure any route can link back to `/`
@@ -13,6 +21,9 @@ export const unstable_settings = {
 export default function ProfileScreensLayout() {
   const theme = useResolvedTheme();
   const router = useRouter();
+  const { me } = useStore();
+  const { user } = useLocalSearchParams() as { user: string };
+  const isOwner = useMemo(() => me?.id == user, [user, me]);
   return (
     <Stack
       screenOptions={{
@@ -37,8 +48,40 @@ export default function ProfileScreensLayout() {
     >
       <Stack.Screen
         name="index"
-        options={{
-          title: "Profile",
+        options={({ route }) => {
+          const params = route.params as any;
+          const title = params?.title ?? "Profile";
+
+          return {
+            headerTitle: () => (
+              <AnimatedHeaderTitle defaultTitle="Profile" title={title} />
+            ),
+            headerRight: () => (
+              <View className="flex-row gap-3 items-center">
+                <Pressable
+                  onPress={() => {
+                    router.push("/(protected)/profile/[user]/account");
+                  }}
+                >
+                  <Icon size="lg" as={Share2} />
+                </Pressable>
+                {isOwner && (
+                  <Pressable
+                    className=" bg-gray-500 rounded-xl p-1 px-1.5"
+                    onPress={() => {
+                      router.push("/(protected)/profile/[user]/account");
+                    }}
+                  >
+                    <Icon
+                      size="xl"
+                      as={MoreHorizontal}
+                      className="text-white"
+                    />
+                  </Pressable>
+                )}
+              </View>
+            ),
+          };
         }}
       />
       <Stack.Screen

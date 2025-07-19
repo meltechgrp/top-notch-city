@@ -120,7 +120,7 @@ function ListingPhotosBottomSheet(props: Props) {
             className="flex-1 items-center"
             onPress={pickImage}
           >
-            <ButtonText size="lg">Choose photos</ButtonText>
+            <ButtonText size="md">Choose photos</ButtonText>
             <Icon as={Images} />
           </Button>
           <Button
@@ -130,7 +130,7 @@ function ListingPhotosBottomSheet(props: Props) {
             onPress={takeImage}
             variant="outline"
           >
-            <ButtonText size="lg">Take photos</ButtonText>
+            <ButtonText size="md">Take photos</ButtonText>
             <Icon as={Camera} className="text-primary" />
           </Button>
         </View>

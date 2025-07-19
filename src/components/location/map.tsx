@@ -28,8 +28,8 @@ interface MapProps {
   delta?: number;
 }
 
-const DEFAULT_LAT_DELTA = 0.4;
-const DEFAULT_LONG_DELTA = 0.4;
+const DEFAULT_LAT_DELTA = 0.1;
+const DEFAULT_LONG_DELTA = 0.1;
 export default function Map(props: MapProps) {
   const {
     latitude: lat,
