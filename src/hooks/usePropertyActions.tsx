@@ -24,7 +24,7 @@ export function usePropertyActions({ property }: { property: Property }) {
 
   const actions: ConfirmationActionConfig[] = [
     {
-      visible: isAdmin && property.status === "pending",
+      visible: isAdmin && property.status !== "approved",
       header: "Mark as Approved",
       actionText: "Approve",
       description: "This will approve the property. Proceed?",
@@ -39,7 +39,7 @@ export function usePropertyActions({ property }: { property: Property }) {
       onConfirm: reject,
     },
     {
-      visible: isAdmin && property.status === "approved",
+      visible: isAdmin && property.status !== "pending",
       header: "Mark as Flagged",
       actionText: "Flag",
       description:
@@ -48,7 +48,7 @@ export function usePropertyActions({ property }: { property: Property }) {
       onConfirm: flag,
     },
     {
-      visible: isAdmin && property.status === "approved",
+      visible: isAdmin && property.status !== "pending",
       header: "Mark as Expired",
       actionText: "Expire",
       description:
@@ -81,7 +81,7 @@ export function usePropertyActions({ property }: { property: Property }) {
       iconClassName: "text-primary",
     },
     {
-      visible: property.status == "approved" && isAdmin,
+      visible: isAdmin,
       header: "Permanent Delete",
       actionText: "Delete",
       description:

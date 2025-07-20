@@ -9,6 +9,13 @@ type UserResult = {
   results: Me[];
   user_location?: LocationData;
 };
+type ActivityResult = {
+  total: number;
+  page: number;
+  per_page: number;
+  pages: number;
+  results: Activity[];
+};
 
 export async function getMe() {
   const res = await Fetch("/users/me", {});
@@ -25,6 +32,20 @@ export async function getUser(id: string) {
     throw new Error("Failed to get user profile");
   }
   return res as Me;
+}
+export async function getUserActivities({
+  userId,
+  pageParam,
+}: {
+  userId: string;
+  pageParam: number;
+}) {
+  const res = await Fetch(`/audit-logs/user/${userId}?page=${pageParam}`, {});
+
+  if (res?.detail) {
+    throw new Error("Failed to get user profile");
+  }
+  return res as ActivityResult;
 }
 export async function getUsers({ pageParam }: { pageParam: number }) {
   const res = await Fetch(`/users?page=${pageParam}`, {});

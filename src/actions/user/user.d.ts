@@ -32,3 +32,15 @@ type Me = {
     id: string;
   };
 };
+
+type Activity = {
+  id: string;
+  full_name: string;
+  target_name: string;
+  action: string;
+  created_at: string;
+  user_id: string;
+  target_id: string;
+  object_type: string;
+  description: string;
+};

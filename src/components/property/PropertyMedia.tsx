@@ -106,8 +106,8 @@ const PropertyMedia: React.FC<Props> = (props) => {
           <VideoView
             style={[style, { backgroundColor: "transparent" }]}
             player={player}
-            contentFit="cover"
-            surfaceType="textureView"
+            contentFit="contain"
+            allowsFullscreen
             nativeControls={false}
             className={cn("w-full h-full", rounded && "rounded-xl")}
           />

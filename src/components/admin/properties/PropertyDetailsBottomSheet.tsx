@@ -118,6 +118,10 @@ function PropertyDetailsBottomSheet(props: PropertyBottomSheetProps) {
                         width: width > 100 ? (width - 100) / 4 : 72,
                         height: width > 100 ? (width - 100) / 4 : 72,
                       }}
+                      imageStyle={{
+                        width: width > 100 ? (width - 100) / 4 : 72,
+                        height: width > 100 ? (width - 100) / 4 : 72,
+                      }}
                       rounded
                       className={" bg-background-muted"}
                       source={media}

@@ -26,7 +26,7 @@ import ProfileAddressBottomSheet from "@/components/account/ProfileAddressBottom
 import { useQuery } from "@tanstack/react-query";
 import { getMe } from "@/actions/user";
 
-export default function Account() {
+export default function UserAccount() {
   const { me, updateProfile } = useStore();
   const [refetching, setRefetching] = useState(false);
   const [imageBottomSheet, setImageBottomSheet] = useState(false);

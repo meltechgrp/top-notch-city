@@ -12,6 +12,8 @@ import AdminCreateButton from "@/components/admin/shared/AdminCreateButton";
 import { User2, UserCog2, UserSearch } from "lucide-react-native";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { getUsers } from "@/actions/user";
+import { router } from "expo-router";
+import MainLayout from "@/components/admin/shared/MainLayout";
 
 export default function Users() {
   const [refreshing, setRefreshing] = useState(false);
@@ -102,40 +104,44 @@ export default function Users() {
   function handleButtonPress(val: string) {}
   useRefreshOnFocus(refetch);
   return (
-    <Box className=" flex-1 px-2 pt-2">
-      <View className="flex-1">
-        <FlashList
-          data={filteredData}
-          keyExtractor={(item) => item.id}
-          estimatedItemSize={200}
-          keyboardDismissMode="on-drag"
-          onScroll={() => eventBus.dispatchEvent("SWIPEABLE_OPEN", null)}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          contentContainerClassName="pb-40"
-          ListEmptyComponent={<MiniEmptyState title="No user found" />}
-          ItemSeparatorComponent={() => <View className="h-2" />}
-          renderItem={({ item }) => (
-            <UserListItem
-              user={item}
-              onPress={(user) => {
-                setActiveUser(user);
-                setUserBottomSheet(true);
-              }}
-            />
-          )}
-          ListHeaderComponent={headerComponent}
-        />
-      </View>
-      {activeUser && (
-        <UserDetailsBottomSheet
-          visible={userBottomSheet}
-          user={activeUser}
-          onDismiss={() => setUserBottomSheet(false)}
-        />
-      )}
-      <AdminCreateButton buttons={BUTTONS} onPress={handleButtonPress} />
-    </Box>
+    <MainLayout>
+      <Box className=" flex-1 px-2 pt-2">
+        <View className="flex-1">
+          <FlashList
+            data={filteredData}
+            keyExtractor={(item) => item.id}
+            estimatedItemSize={200}
+            keyboardDismissMode="on-drag"
+            onScroll={() => eventBus.dispatchEvent("SWIPEABLE_OPEN", null)}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            contentContainerClassName="pb-40"
+            ListEmptyComponent={<MiniEmptyState title="No user found" />}
+            ItemSeparatorComponent={() => <View className="h-2" />}
+            renderItem={({ item }) => (
+              <UserListItem
+                user={item}
+                onPress={(user) => {
+                  router.push({
+                    pathname: "/admin/users/[userId]",
+                    params: { userId: user.id },
+                  });
+                }}
+              />
+            )}
+            ListHeaderComponent={headerComponent}
+          />
+        </View>
+        {activeUser && (
+          <UserDetailsBottomSheet
+            visible={userBottomSheet}
+            user={activeUser}
+            onDismiss={() => setUserBottomSheet(false)}
+          />
+        )}
+        <AdminCreateButton buttons={BUTTONS} onPress={handleButtonPress} />
+      </Box>
+    </MainLayout>
   );
 }

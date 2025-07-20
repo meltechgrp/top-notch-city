@@ -14,6 +14,7 @@ type Props = View["props"] & {
   isAgent?: boolean;
   showNotification?: boolean;
   rightHeaderComponent?: React.ReactNode;
+  leftHeaderComponent?: React.ReactNode;
 };
 export default function MainLayout(props: Props) {
   const {
@@ -23,6 +24,7 @@ export default function MainLayout(props: Props) {
     isAgent = false,
     rightHeaderComponent,
     showNotification = true,
+    leftHeaderComponent,
   } = props;
   const router = useRouter();
 
@@ -41,12 +43,18 @@ export default function MainLayout(props: Props) {
             )}
           >
             <View className="flex-row h-14 pt-3 pl-4 gap-2 items-center">
-              <Avatar size="sm">
-                <AvatarImage source={MainLogo} />
-              </Avatar>
-              <View className="flex-1">
-                <Text size="xl">Top-Notch {isAgent ? "" : "Admin"}</Text>
-              </View>
+              {leftHeaderComponent ? (
+                leftHeaderComponent
+              ) : (
+                <View className="flex-row gap-2 flex-1 items-center">
+                  <Avatar size="sm">
+                    <AvatarImage source={MainLogo} />
+                  </Avatar>
+                  <View className="flex-1">
+                    <Text size="xl">Top-Notch {isAgent ? "" : "Admin"}</Text>
+                  </View>
+                </View>
+              )}
               <View className=" px-4 flex-row items-center">
                 {rightHeaderComponent ? (
                   rightHeaderComponent

@@ -1,14 +1,23 @@
-import MainLayout from '@/components/admin/shared/MainLayout';
-import { Slot } from 'expo-router';
+import { Stack } from "expo-router";
 
 export const unstable_settings = {
-	initialRouteName: 'index',
+  initialRouteName: "index",
 };
 
 export default function UserLayoutsComponent() {
-	return (
-		<MainLayout>
-			<Slot />
-		</MainLayout>
-	);
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen
+        name="index"
+        options={{
+          headerTitle: "",
+          headerShown: false,
+        }}
+      />
+    </Stack>
+  );
 }
