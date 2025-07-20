@@ -99,32 +99,39 @@ export const updatePropertyLocation = async ({
 export async function updatePropertyMedia({
   propertyId,
   data,
+  type,
 }: {
   propertyId: string;
   data: UploadedFile[];
+  type: "image" | "video";
 }) {
   const token = getAuthToken();
   const formData = new FormData();
 
   data.forEach((item, index) => {
-    formData.append("media", {
-      uri: item.uri,
-      name: `property-photo-${index}.jpg`,
-      type: "image/jpeg",
-    } as any);
+    type == "image"
+      ? formData.append("media_files", {
+          uri: item.uri,
+          name: `image.jpg`,
+          type: "image/jpeg",
+        } as any)
+      : formData.append("media_files", {
+          uri: item.uri,
+          name: `video.mp4`,
+          type: "video/mp4",
+        } as any);
   });
-
-  const res = await axios.put(
-    `${config.origin}/api/properties/${propertyId}`,
+  const res = await axios.post(
+    `${config.origin}/api/properties/${propertyId}/media/`,
     formData,
     {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data",
+        Accept: "application/json",
       },
     }
   );
-
   if (!res.data?.property_id) {
     throw new Error("Failed to update photos");
   }

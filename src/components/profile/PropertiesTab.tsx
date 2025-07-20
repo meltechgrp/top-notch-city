@@ -10,12 +10,20 @@ type IProps = {
   onScroll?: (e: NativeScrollEvent) => any;
   headerHeight: number;
   scrollElRef: any;
+  refetch: any;
   listRef: any;
   scrollY?: SharedValue<number>;
 };
 export default function PropertiesTabView(props: IProps) {
-  const { profileId, onScroll, scrollY, headerHeight, scrollElRef, listRef } =
-    props;
+  const {
+    profileId,
+    onScroll,
+    scrollY,
+    headerHeight,
+    refetch: reload,
+    scrollElRef,
+    listRef,
+  } = props;
   const {
     data,
     refetch,
@@ -40,7 +48,10 @@ export default function PropertiesTabView(props: IProps) {
           scrollElRef={scrollElRef}
           headerHeight={headerHeight}
           listRef={listRef}
-          refetch={refetch}
+          refetch={async () => {
+            await refetch();
+            await reload();
+          }}
           scrollY={scrollY}
           fetchNextPage={fetchNextPage}
           hasNextPage={hasNextPage}

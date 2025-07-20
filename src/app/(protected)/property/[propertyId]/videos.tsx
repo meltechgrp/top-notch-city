@@ -1,5 +1,5 @@
 import { hapticFeed } from "@/components/HapticTab";
-import { PropertyMedia } from "@/components/property/PropertyMedia";
+import PropertyMedia from "@/components/property/PropertyMedia";
 import { PropertyModalMediaViewer } from "@/components/modals/property/PropertyModalMediaViewer";
 import { Box, View } from "@/components/ui";
 import { usePropertyStore } from "@/store/propertyStore";
@@ -20,7 +20,6 @@ export default function Images() {
     setSelectedIndex(index);
     setVisible(true);
   };
-
   return (
     <>
       <Box onLayout={onLayout} className="flex-1 px-4">

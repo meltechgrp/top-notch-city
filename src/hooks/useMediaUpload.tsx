@@ -37,7 +37,7 @@ export function useMediaUpload({
       .filter((item) => item !== null)
       .map((item) => ({
         uri: item!,
-        id: uniqueId(),
+        id: uniqueId("media"),
       }));
 
     setLoading(false);

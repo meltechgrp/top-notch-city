@@ -3,7 +3,7 @@ import Carousel, {
   ICarouselInstance,
   Pagination,
 } from "react-native-reanimated-carousel";
-import { PropertyMedia } from "./PropertyMedia";
+import PropertyMedia from "./PropertyMedia";
 import { Colors } from "@/constants/Colors";
 import { useResolvedTheme, View } from "../ui";
 import Layout from "@/constants/Layout";

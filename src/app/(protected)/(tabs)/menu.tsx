@@ -155,7 +155,10 @@ export default function More() {
                   },
                 });
               } else if (me.role == "agent") {
-                router.push("/profile");
+                router.push({
+                  pathname: "/profile/[user]",
+                  params: { user: me.id },
+                });
               }
             }}
             className={"flex-row items-center"}

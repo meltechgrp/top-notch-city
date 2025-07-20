@@ -15,7 +15,7 @@ import BottomSheet from "@/components/shared/BottomSheet";
 import { PropertyStatus } from "@/components/property/PropertyStatus";
 import { useState } from "react";
 import { useLayout } from "@react-native-community/hooks";
-import { PropertyMedia } from "@/components/property/PropertyMedia";
+import PropertyMedia from "@/components/property/PropertyMedia";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 import { format } from "date-fns";
 import { Check, MoreHorizontal } from "lucide-react-native";

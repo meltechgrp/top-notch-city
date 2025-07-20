@@ -1,5 +1,5 @@
 import { hapticFeed } from "@/components/HapticTab";
-import { PropertyMedia } from "@/components/property/PropertyMedia";
+import PropertyMedia from "@/components/property/PropertyMedia";
 import { PropertyModalMediaViewer } from "@/components/modals/property/PropertyModalMediaViewer";
 import { Box, View } from "@/components/ui";
 import { usePropertyStore } from "@/store/propertyStore";

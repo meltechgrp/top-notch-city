@@ -17,19 +17,17 @@ const AgentRating = ({ total, average = 5, size = 17 }: AgentRatingProps) => {
         <Star key={i} size={size} color="#F16000F0" fill="#F16000F0" />
       );
     } else if (average >= i - 0.5) {
-      stars.push(
-        <StarHalf key={i} size={size} color="#F16000F0" fill="#F16000F0" />
-      );
-    } else {
       stars.push(<Star key={i} size={size} color="#F16000F0" />);
+    } else {
+      stars.push(<Star key={i} size={size} color="#ccc" />);
     }
   }
 
   return (
     <View className="flex-row items-center gap-1 mt-2">
       <View className="flex-row space-x-0.5">{stars}</View>
-      <View className="flex-row gap-1">
-        <Text className="text-sm font-light">{average.toFixed(1)}</Text>
+      <View className="flex-row gap-1 items-center">
+        <Text className="text-base font-light">{average.toFixed(1)}</Text>
         {total > 0 && <Text className="text-sm font-light">({total})</Text>}
       </View>
     </View>

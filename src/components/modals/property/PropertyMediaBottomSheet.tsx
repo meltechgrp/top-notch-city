@@ -12,6 +12,9 @@ import FullHeightLoaderWrapper from "../../loaders/FullHeightLoaderWrapper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useMediaUpload } from "@/hooks/useMediaUpload";
 import { usePropertyDataMutations } from "@/tanstack/mutations/usePropertyDataMutations";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
+import { SpinningLoader } from "@/components/loaders/SpinningLoader";
+import { VideoScreen } from "@/components/listing/ListingVideosBottomSheet";
 
 type Props = {
   visible: boolean;
@@ -30,33 +33,39 @@ function PropertyMediaBottomSheet(props: Props) {
   const [openEdit, setOpenEdit] = useState(false);
   const [selected, setSelected] = useState<string | undefined>();
   const { width, onLayout } = useLayout();
-  const { updatePropertyMediaMutation } = usePropertyDataMutations();
+  const { mutateAsync, isPending } =
+    usePropertyDataMutations().updatePropertyMediaMutation;
+  const max = type == "image" ? Max_Photos_lenght : Max_Videos_lenght;
   const currentCount = useMemo(() => {
-    const max = type == "image" ? Max_Photos_lenght : Max_Videos_lenght;
-    return max - previousLenght - photos?.length;
-  }, [photos, previousLenght, type]);
+    return previousLenght + photos?.length;
+  }, [photos, previousLenght, type, max]);
   const { loading, pickMedia, takeMedia } = useMediaUpload({
     type: type,
-    onSuccess: (media) => setPhotos(media),
+    onSuccess: (media) => setPhotos([...photos, ...media]),
     maxSelection: currentCount,
   });
 
   async function handleUpload() {
-    await updatePropertyMediaMutation.mutateAsync(
+    await mutateAsync(
       {
         propertyId: property.id,
         data: photos,
+        type: type,
       },
       {
         onSuccess: () => {
-          showSnackbar({
-            message: "Property updated successfully",
-            type: "success",
+          showErrorAlert({
+            title: "Property updated successfully",
+            alertType: "success",
           });
+          setPhotos([]);
           onDismiss();
         },
-        onError: () => {
-          showSnackbar({ message: "Failed to update property", type: "error" });
+        onError: (err) => {
+          showErrorAlert({
+            title: "Failed to update property",
+            alertType: "error",
+          });
         },
       }
     );
@@ -66,35 +75,35 @@ function PropertyMediaBottomSheet(props: Props) {
       <View className="flex-1 gap-2  bg-background-muted rounded-xl py-6 mb-3">
         <View className=" flex-row px-4 gap-5 items-center justify-center">
           <Button
-            disabled={photos && photos?.length > 15}
+            disabled={currentCount >= max}
             size="xl"
             className="flex-1"
-            isDisabled={currentCount < 2}
+            isDisabled={currentCount >= max}
             onPress={pickMedia}
           >
-            <ButtonText>
+            <ButtonText numberOfLines={1} size="md">
               Choose {type == "image" ? "photos" : "videos"}
             </ButtonText>
             {type == "image" ? <Icon as={Images} /> : <Icon as={Video} />}
           </Button>
           <Button
-            disabled={photos && photos?.length > 15}
+            disabled={currentCount >= max}
             size="xl"
             className="flex-1"
-            isDisabled={currentCount < 2}
+            isDisabled={currentCount >= max}
             onPress={takeMedia}
             variant="outline"
           >
-            <ButtonText>
+            <ButtonText size="md" numberOfLines={1}>
               Take {type == "image" ? "photos" : "videos"}
             </ButtonText>
             <Icon as={Camera} className="text-primary" />
           </Button>
         </View>
-        <Text className=" font-light text-center">
-          {currentCount < 2
-            ? "You have reached you limit. Max is 15"
-            : "Pick from your phone galary or take new ones to upload"}
+        <Text className=" text-sm font-light text-center">
+          {currentCount >= max
+            ? `You have reached you limit. Max is ${type == "image" ? 15 : 3}`
+            : `Pick or take new ${type == "image" ? "photos" : "videos"} to upload`}
         </Text>
       </View>
     ),
@@ -112,36 +121,53 @@ function PropertyMediaBottomSheet(props: Props) {
         setSelected(item.id);
         setOpenEdit(true);
       }}
-      style={{ maxWidth: width / 4 }}
+      style={{ maxWidth: type == "image" ? width / 4 : width / 2 }}
       className={cn("flex-1 h-24 px-2")}
     >
-      <ImageBackground
-        alt="images"
-        className={cn("w-full h-full flex-1 p-1 rounded-xl overflow-hidden")}
-        source={{ uri: item.uri }}
-      >
-        <View className=" flex-1 justify-between">
-          <Pressable
-            onPress={() => {
-              setSelected(item.id);
-              setOpenEdit(true);
-            }}
-            className=" self-end p-1.5 rounded-full bg-black/50 backdrop-blur-md"
-          >
-            <Icon as={MoreHorizontal} className=" text-primary" />
-          </Pressable>
-        </View>
-      </ImageBackground>
+      {type == "image" ? (
+        <ImageBackground
+          alt="images"
+          className={cn("w-full h-full flex-1 p-1 rounded-xl overflow-hidden")}
+          source={{ uri: item.uri }}
+        >
+          <View className=" flex-1 justify-between">
+            <Pressable
+              onPress={() => {
+                setSelected(item.id);
+                setOpenEdit(true);
+              }}
+              className=" self-end p-1.5 rounded-full bg-black/50 backdrop-blur-md"
+            >
+              <Icon as={MoreHorizontal} className=" text-primary" />
+            </Pressable>
+          </View>
+        </ImageBackground>
+      ) : (
+        <VideoScreen
+          index={index}
+          width={width}
+          uri={item.uri}
+          setSelected={(val) => setSelected(item.id)}
+          setOpenEdit={setOpenEdit}
+        />
+      )}
     </Pressable>
   );
   return (
     <BottomSheet
-      title="Add photos to your property"
+      title={
+        type == "image"
+          ? "Add photos to your property"
+          : "Add videos to your property"
+      }
       withHeader={true}
       withBackButton={false}
       snapPoint={"90%"}
       visible={visible}
-      onDismiss={onDismiss}
+      onDismiss={() => {
+        setPhotos([]);
+        onDismiss();
+      }}
     >
       <View
         onLayout={onLayout}
@@ -163,9 +189,14 @@ function PropertyMediaBottomSheet(props: Props) {
               keyboardShouldPersistTaps="handled"
             />
           </FullHeightLoaderWrapper>
-          {photos?.length && (
+          {photos?.length > 0 && (
             <View className=" px-4">
-              <Button className="h-12" onPress={handleUpload}>
+              <Button
+                disabled={isPending}
+                className="h-12"
+                onPress={handleUpload}
+              >
+                {isPending && <SpinningLoader />}
                 <ButtonText>Upload</ButtonText>
               </Button>
             </View>
@@ -183,7 +214,7 @@ function PropertyMediaBottomSheet(props: Props) {
         value={{ label: "Set", value: "delete" }}
         options={[
           {
-            label: "Delete Photo",
+            label: type == "image" ? "Delete Photo" : "Delete video",
             value: "delete",
           },
         ]}

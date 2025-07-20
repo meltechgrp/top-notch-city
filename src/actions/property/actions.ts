@@ -29,6 +29,13 @@ export async function deleteProperty(propertyId: string) {
   }
   return res;
 }
+export async function deletePropertyMedia(mediaId: string, propertyId: string) {
+  const res = await Fetch(`/properties/media/${mediaId}`, { method: "DELETE" });
+  if (res?.detail) {
+    throw new Error("Failed to delete property media");
+  }
+  return res;
+}
 
 export async function softDeleteProperty(propertyId: string) {
   const res = await Fetch(`/properties/${propertyId}/soft`, {

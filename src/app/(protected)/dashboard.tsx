@@ -1,5 +1,4 @@
 import { fetchAgentDashboardStats } from "@/actions/dashboard/admin";
-import MainLayout from "@/components/admin/shared/MainLayout";
 import AgentCards from "@/components/agent/dashboard/AgentCards";
 import BarChartCard from "@/components/custom/BarChartCard";
 import LineChartCard from "@/components/custom/LineChartCard";

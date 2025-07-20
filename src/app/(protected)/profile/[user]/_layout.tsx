@@ -2,6 +2,7 @@ import { AnimatedHeaderTitle } from "@/components/custom/AnimatedHeaderTitle";
 import AppCrashScreen from "@/components/shared/AppCrashScreen";
 import headerLeft from "@/components/shared/headerLeft";
 import { Icon, Pressable, Text, useResolvedTheme, View } from "@/components/ui";
+import config from "@/config";
 import { Colors } from "@/constants/Colors";
 import { useStore } from "@/store";
 import {
@@ -12,6 +13,7 @@ import {
 } from "expo-router";
 import { MoreHorizontal, Share2 } from "lucide-react-native";
 import { useMemo } from "react";
+import { Share } from "react-native";
 
 export const unstable_settings = {
   // Ensure any route can link back to `/`
@@ -24,6 +26,31 @@ export default function ProfileScreensLayout() {
   const { me } = useStore();
   const { user } = useLocalSearchParams() as { user: string };
   const isOwner = useMemo(() => me?.id == user, [user, me]);
+
+  async function onInvite() {
+    try {
+      const message =
+        `📣 *Check out my profile on TopNotch City Estate!*\n\n` +
+        `Looking for your dream apartment or real estate deals? View my listings and let's get started.\n\n` +
+        `👉 Tap here to view my profile: ${config.websiteUrl}/profile/${user}\n\n` +
+        `Download the app for the best experience and updates.`;
+
+      const result = await Share.share({
+        title: "Visit My Profile on TopNotch City Estate",
+        message,
+      });
+
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error: any) {
+      alert(error.message);
+    }
+  }
   return (
     <Stack
       screenOptions={{
@@ -58,14 +85,10 @@ export default function ProfileScreensLayout() {
             ),
             headerRight: () => (
               <View className="flex-row gap-3 items-center">
-                <Pressable
-                  onPress={() => {
-                    router.push("/(protected)/profile/[user]/account");
-                  }}
-                >
-                  <Icon size="lg" as={Share2} />
+                <Pressable onPress={onInvite}>
+                  <Icon size="xl" as={Share2} />
                 </Pressable>
-                {isOwner && (
+                {/* {isOwner && (
                   <Pressable
                     className=" bg-gray-500 rounded-xl p-1 px-1.5"
                     onPress={() => {
@@ -78,7 +101,7 @@ export default function ProfileScreensLayout() {
                       className="text-white"
                     />
                   </Pressable>
-                )}
+                )} */}
               </View>
             ),
           };

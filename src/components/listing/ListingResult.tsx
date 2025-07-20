@@ -65,7 +65,7 @@ export default function ListingResult() {
               .slice(0, 3)
               .map((media, i) => (
                 <Pressable key={media.id}>
-                  {media.uri.includes(".jpg") ? (
+                  {media.uri.includes(".jpg") || media.uri.includes(".jpeg") ? (
                     <Image
                       style={{
                         width: width > 100 ? (width - 100) / 4 : 72,

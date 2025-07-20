@@ -1,6 +1,6 @@
 import { generateMediaUrl } from "@/lib/api";
 import { cn } from "@/lib/utils";
-import React, { useMemo } from "react";
+import React, { memo, useMemo } from "react";
 import { ImageStyle, StyleProp, ViewProps } from "react-native";
 import type { AnimatedProps } from "react-native-reanimated";
 import Animated from "react-native-reanimated";
@@ -9,9 +9,13 @@ import { CirclePlay, Pause, Trash } from "lucide-react-native";
 import { useVideoPlayer, VideoView } from "expo-video";
 import { useEvent } from "expo";
 import { ConfirmationModal } from "../modals/ConfirmationModal";
+import { usePropertyDataMutations } from "@/tanstack/mutations/usePropertyDataMutations";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
+import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 
 interface Props extends AnimatedProps<ViewProps> {
   style?: StyleProp<ImageStyle>;
+  imageStyle?: StyleProp<ImageStyle>;
   index?: number;
   rounded?: boolean;
   source: Media;
@@ -20,10 +24,12 @@ interface Props extends AnimatedProps<ViewProps> {
   canPlayVideo?: boolean;
   isVisible?: boolean;
   nativeControls?: boolean;
+  isSmallView?: boolean;
+  propertyId?: string;
   onPress?: (val: string) => void;
 }
 
-export const PropertyMedia: React.FC<Props> = (props) => {
+const PropertyMedia: React.FC<Props> = (props) => {
   const {
     style,
     index = 0,
@@ -37,12 +43,17 @@ export const PropertyMedia: React.FC<Props> = (props) => {
     isOwner,
     onPress,
     source,
+    imageStyle,
+    isSmallView,
+    propertyId,
     ...animatedViewProps
   } = props;
   const { uri, isImage, id } = useMemo(
     () => generateMediaUrl(source),
     [source]
   );
+  const { mutateAsync, isPending } =
+    usePropertyDataMutations().deletePropertyMediaMutation;
   // Setup player if media is video
   const player =
     !isImage && uri
@@ -61,7 +72,11 @@ export const PropertyMedia: React.FC<Props> = (props) => {
         isPlaying: player.playing,
       }).isPlaying
     : false;
-
+  const status = player
+    ? useEvent(player, "statusChange", {
+        status: player.status,
+      }).status
+    : false;
   return (
     <Animated.View
       testID={testID}
@@ -76,6 +91,7 @@ export const PropertyMedia: React.FC<Props> = (props) => {
             cacheKey={id}
             contentFit="cover"
             transition={500}
+            style={imageStyle}
           />
         </Pressable>
       ) : null}
@@ -98,7 +114,7 @@ export const PropertyMedia: React.FC<Props> = (props) => {
           {/* ▶️ Play icon overlay */}
           <Pressable
             onPress={() => {
-              if (!canPlayVideo) return onPress?.(uri);
+              if (!canPlayVideo || status == "loading") return onPress?.(uri);
               if (isPlaying) {
                 player.pause();
               } else {
@@ -112,7 +128,19 @@ export const PropertyMedia: React.FC<Props> = (props) => {
               {isPlaying ? (
                 <Icon as={Pause} className=" text-primary w-10 h-10" />
               ) : (
-                <Icon as={CirclePlay} className=" text-primary w-10 h-10" />
+                <>
+                  {status !== "loading" ? (
+                    <Icon
+                      as={CirclePlay}
+                      className={cn(
+                        " text-primary w-10 h-10",
+                        isSmallView && "w-7 h-7"
+                      )}
+                    />
+                  ) : (
+                    <SpinningLoader />
+                  )}
+                </>
               )}
             </View>
             {/* )} */}
@@ -129,19 +157,44 @@ export const PropertyMedia: React.FC<Props> = (props) => {
         />
       )}
       {isOwner && (
-        <View className=" absolute top-4 right-4">
+        <View className=" absolute top-1 right-1">
           <ConfirmationModal
             header="Delete media"
             className=""
             optionalComponent={
-              <View className="bg-background-muted/80 rounded-full p-2">
-                <Icon size="xl" as={Trash} className="text-primary" />
+              <View className="bg-background-muted/80 rounded-full p-1.5">
+                {isPending ? (
+                  <SpinningLoader />
+                ) : (
+                  <Icon size="xl" as={Trash} className="text-primary" />
+                )}
               </View>
             }
             visible
-            description="This action will delete the current media from this property"
+            description="This action will delete this property media file"
+            onDelete={async () => {
+              await mutateAsync(
+                {
+                  propertyId: propertyId!,
+                  mediaId: source.id,
+                },
+                {
+                  onSuccess: () => {
+                    showErrorAlert({
+                      title: "Media deleted successfuly",
+                      alertType: "success",
+                    });
+                  },
+                  onError: () => {
+                    showErrorAlert({
+                      title: "Error occuried!, try again.",
+                      alertType: "error",
+                    });
+                  },
+                }
+              );
+            }}
             onConfirm={async () => {}}
-            onDelete={() => {}}
             actionText=""
           />
         </View>
@@ -149,3 +202,5 @@ export const PropertyMedia: React.FC<Props> = (props) => {
     </Animated.View>
   );
 };
+
+export default memo(PropertyMedia);

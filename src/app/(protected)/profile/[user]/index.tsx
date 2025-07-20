@@ -11,7 +11,6 @@ import Animated, {
 import PagerView from "react-native-pager-view";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Box, Text, View } from "@/components/ui";
-import { useStore } from "@/store";
 import { ProfileTopSection } from "@/components/profile/ProfileTopSection";
 import ProfileTabHeaderSection from "@/components/profile/ProfileTabHeaderSection";
 import PropertiesTabView from "@/components/profile/PropertiesTab";
@@ -19,16 +18,17 @@ import BeachPersonWaterParasolSingleColorIcon from "@/components/icons/BeachPers
 import ReviewsTabView from "@/components/profile/ReviewsTab";
 import { useQuery } from "@tanstack/react-query";
 import { getUser } from "@/actions/user";
+import FullHeightLoaderWrapper from "@/components/loaders/FullHeightLoaderWrapper";
 
 const TABS = ["Properties", "Reviews"];
 export default function ProfileScreen() {
   const router = useRouter();
   const { user } = useLocalSearchParams() as { user: string };
+  console.log(user);
   const { data, refetch, isLoading, isFetching } = useQuery({
     queryKey: ["user", user],
     queryFn: () => getUser(user),
   });
-  const userId = user;
   const userData = useMemo(() => data || null, [data]);
   const pagerRef = useRef<PagerView>(null);
   const [currentPage, setCurrentPage] = useState(0);
@@ -94,77 +94,82 @@ export default function ProfileScreen() {
     },
     [currentPage, headerOnlyHeight, userData]
   );
-  if (!userData) return <EmptyProfile />;
+  if (!isLoading && !userData) return <EmptyProfile />;
   return (
     <>
-      <Box className="flex-1">
-        <Animated.View
-          style={[
-            headerTranslateY,
-            {
-              zIndex: 10,
-              position: "absolute",
-              width: "100%",
-            },
-          ]}
-          pointerEvents="box-none"
-        >
-          <View onLayout={onHeaderLayout} pointerEvents="box-none">
-            <ProfileTopSection />
-          </View>
-          <View onLayout={onTabBarLayout} className=" bg-background">
-            <ProfileTabHeaderSection
-              activeIndex={currentPage}
-              onTabChange={onTabChange}
-              profile={userData}
-            />
-          </View>
-        </Animated.View>
+      <FullHeightLoaderWrapper loading={isLoading}>
+        <Box className="flex-1">
+          <Animated.View
+            style={[
+              headerTranslateY,
+              {
+                zIndex: 10,
+                position: "absolute",
+                width: "100%",
+              },
+            ]}
+            pointerEvents="box-none"
+          >
+            <View onLayout={onHeaderLayout} pointerEvents="box-none">
+              {userData && <ProfileTopSection userData={userData} />}
+            </View>
+            <View onLayout={onTabBarLayout} className=" bg-background">
+              {userData && (
+                <ProfileTabHeaderSection
+                  activeIndex={currentPage}
+                  onTabChange={onTabChange}
+                  profile={userData}
+                />
+              )}
+            </View>
+          </Animated.View>
 
-        <PagerView
-          style={{ flex: 1 }}
-          initialPage={0}
-          ref={pagerRef}
-          onPageSelected={(e) => setCurrentPage(e.nativeEvent.position)}
-        >
-          {TABS.map((tab, index) => {
-            switch (tab) {
-              case "Properties":
-                return (
-                  <View style={{ flex: 1 }} key={index}>
-                    {userId && currentPage === index ? (
-                      <PropertiesTabView
-                        key={index}
-                        listRef={scrollRefs[index]}
-                        profileId={userId}
-                        scrollElRef={scrollRefs[index]}
-                        headerHeight={fullHeaderHeight}
-                        scrollY={scrollYs[index]}
-                      />
-                    ) : null}
-                  </View>
-                );
-              case "Reviews":
-                return (
-                  <View style={{ flex: 1 }} key={index}>
-                    {userId && currentPage === index ? (
-                      <ReviewsTabView
-                        key={index}
-                        listRef={scrollRefs[index]}
-                        profileId={userId}
-                        scrollElRef={scrollRefs[index]}
-                        headerHeight={fullHeaderHeight}
-                        scrollY={scrollYs[index]}
-                      />
-                    ) : null}
-                  </View>
-                );
-              default:
-                return null;
-            }
-          })}
-        </PagerView>
-      </Box>
+          <PagerView
+            style={{ flex: 1 }}
+            initialPage={0}
+            ref={pagerRef}
+            onPageSelected={(e) => setCurrentPage(e.nativeEvent.position)}
+          >
+            {TABS.map((tab, index) => {
+              switch (tab) {
+                case "Properties":
+                  return (
+                    <View style={{ flex: 1 }} key={index}>
+                      {user && currentPage === index ? (
+                        <PropertiesTabView
+                          key={index}
+                          refetch={refetch}
+                          listRef={scrollRefs[index]}
+                          profileId={user}
+                          scrollElRef={scrollRefs[index]}
+                          headerHeight={fullHeaderHeight}
+                          scrollY={scrollYs[index]}
+                        />
+                      ) : null}
+                    </View>
+                  );
+                case "Reviews":
+                  return (
+                    <View style={{ flex: 1 }} key={index}>
+                      {user && currentPage === index ? (
+                        <ReviewsTabView
+                          key={index}
+                          listRef={scrollRefs[index]}
+                          profileId={user}
+                          scrollElRef={scrollRefs[index]}
+                          headerHeight={fullHeaderHeight}
+                          scrollY={scrollYs[index]}
+                        />
+                      ) : null}
+                    </View>
+                  );
+                default:
+                  return null;
+              }
+            })}
+          </PagerView>
+        </Box>
+      </FullHeightLoaderWrapper>
     </>
   );
 }

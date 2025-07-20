@@ -36,7 +36,7 @@ function UserDetailsBottomSheet(props: UserDetailsBottomSheetProps) {
   });
   const router = useRouter();
   return (
-    <BottomSheet onDismiss={onDismiss} visible={visible} snapPoint={["60%"]}>
+    <BottomSheet onDismiss={onDismiss} visible={visible} snapPoint={["44%"]}>
       <View className="flex-1 gap-y-2 pb-8 px-4">
         <View className="flex-row gap-4 pb-2 justify-between items-center">
           <Avatar className=" w-14 h-14">
@@ -99,7 +99,7 @@ function UserDetailsBottomSheet(props: UserDetailsBottomSheetProps) {
           </View>
         </View>
         <View className="w-full h-[1px] bg-outline" />
-        <View className="gap-4 flex-1 mt-4">
+        {/* <View className="gap-4 flex-1 mt-4">
           <View className="flex-row gap-4">
             <Pressable className="flex-1 h-20 gap-2 justify-center items-center rounded-xl bg-background-muted">
               <Heading size="xl" className="text-primary">
@@ -140,23 +140,7 @@ function UserDetailsBottomSheet(props: UserDetailsBottomSheetProps) {
               <Text className=" text-md">Messages</Text>
             </Pressable>
           </View>
-        </View>
-        <View>
-          <Button
-            className="h-12 gap-1"
-            onPress={() =>
-              router.push({
-                pathname: "/profile/[user]",
-                params: {
-                  user: user.id,
-                },
-              })
-            }
-          >
-            <ButtonText>View Profile</ButtonText>
-            <Icon as={ChevronRight} color="white" />
-          </Button>
-        </View>
+        </View> */}
       </View>
     </BottomSheet>
   );

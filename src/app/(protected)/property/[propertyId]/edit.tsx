@@ -7,7 +7,7 @@ import { PropertyStatus } from "@/components/property/PropertyStatus";
 import { useState } from "react";
 import { PropertyModalMediaViewer } from "@/components/modals/property/PropertyModalMediaViewer";
 import { useLayout } from "@react-native-community/hooks";
-import { PropertyMedia } from "@/components/property/PropertyMedia";
+import PropertyMedia from "@/components/property/PropertyMedia";
 import { format } from "date-fns";
 import { usePropertyStore } from "@/store/propertyStore";
 import { BodyScrollView } from "@/components/layouts/BodyScrollView";
@@ -112,7 +112,7 @@ export default function PropertyEdit() {
             <View className="flex-row justify-between mb-4">
               <View>
                 <Heading size="md">Photos</Heading>
-                <Text size="sm">Click on photos to delete</Text>
+                <Text size="sm">Click on a photo to view</Text>
               </View>
               <Pressable
                 onPress={() => setPhotosBottomSheet(true)}
@@ -130,13 +130,19 @@ export default function PropertyEdit() {
                     <Pressable both key={media.id}>
                       <PropertyMedia
                         style={{
-                          width: width > 100 ? (width - 95) / 3 : 72,
-                          height: width > 100 ? (width - 95) / 3 : 72,
+                          width: width > 100 ? (width - 90) / 3 : 72,
+                          height: width > 100 ? (width - 90) / 3 : 72,
+                          flex: 1,
                         }}
+                        imageStyle={{
+                          width: width > 100 ? (width - 90) / 3 : 72,
+                          height: width > 100 ? (width - 90) / 3 : 72,
+                        }}
+                        isOwner
                         rounded
+                        propertyId={property.id}
                         className={" bg-background-muted"}
                         source={media}
-                        canPlayVideo={false}
                         onPress={() => {
                           setImagesIndex(
                             property.media.findIndex(
@@ -156,7 +162,7 @@ export default function PropertyEdit() {
             <View className="flex-row justify-between mb-4">
               <View>
                 <Heading size="md">Videos</Heading>
-                <Text size="sm">Click on videos to delete</Text>
+                <Text size="sm">Click on a video to view</Text>
               </View>
               <Pressable
                 onPress={() => setVideoBottomSheet(true)}
@@ -178,8 +184,11 @@ export default function PropertyEdit() {
                           height: width > 100 ? (width - 95) / 3 : 72,
                         }}
                         rounded
+                        isOwner
+                        propertyId={property.id}
                         className={" bg-background-muted"}
                         source={media}
+                        isSmallView
                         canPlayVideo={false}
                         onPress={() => {
                           setImagesIndex(
@@ -213,7 +222,7 @@ export default function PropertyEdit() {
                 {property.amenities.map((a) => (
                   <View
                     key={a.name}
-                    className="flex-row gap-2 bg-background p-2 px-4 rounded-xl"
+                    className="flex-row w-[45%] justify-between items-center gap-2 bg-background p-2 px-4 rounded-xl"
                   >
                     <Text>{a.name}</Text>
                     {parseInt(a.value) > 0 ? (
@@ -235,7 +244,6 @@ export default function PropertyEdit() {
         visible={isViewer}
         setVisible={setIsViewer}
         canPlayVideo
-        isOwner
         media={property?.media}
       />
       <PropertyBasicEditBottomSheet

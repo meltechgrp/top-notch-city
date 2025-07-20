@@ -1,5 +1,11 @@
 import {
+  Avatar,
+  AvatarBadge,
+  AvatarFallbackText,
+  AvatarImage,
   Box,
+  Button,
+  ButtonText,
   Heading,
   Icon,
   Image,
@@ -26,7 +32,7 @@ import { usePropertyStore } from "@/store/propertyStore";
 import { Divider } from "../ui/divider";
 import PropertyMapSection from "./PropertyMapSection";
 import PropertyNearbySection from "./PropertyNearbySection";
-import { FindAmenity } from "@/lib/utils";
+import { FindAmenity, fullName } from "@/lib/utils";
 import { openEnquiryModal } from "../globals/AuthModals";
 
 const PropertyDetailsBottomSheet = () => {
@@ -141,6 +147,34 @@ const PropertyDetailsBottomSheet = () => {
             <Divider />
 
             <PropertyNearbySection />
+            <View className="bg-background-muted p-4 rounded-xl gap-4">
+              <Pressable className={"flex-row items-center "}>
+                <Avatar className=" w-14 h-14">
+                  <AvatarFallbackText>
+                    {fullName(property?.owner)}
+                  </AvatarFallbackText>
+                </Avatar>
+                <View className="flex-1 pl-3">
+                  <Text className="text-lg text-typography font-medium">
+                    {fullName(property?.owner)}
+                  </Text>
+                </View>
+              </Pressable>
+              <Button
+                className="h-12 gap-1"
+                onPress={() =>
+                  router.push({
+                    pathname: "/profile/[user]",
+                    params: {
+                      user: property?.owner.id!,
+                    },
+                  })
+                }
+              >
+                <ButtonText>Agent Profile</ButtonText>
+                <Icon as={ChevronRight} color="white" />
+              </Button>
+            </View>
           </View>
         </View>
       </Box>

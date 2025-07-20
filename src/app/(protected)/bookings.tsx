@@ -12,47 +12,47 @@ import RequestListItem from "@/components/admin/request/RequestListItem";
 export default function Bookings() {
   const [applicationBottomSheet, setApplicationBottomSheet] = useState(false);
   const [application, setApplication] = useState<AgentReview | null>(null);
-  const { data, isLoading, refetch } = useQuery({
-    queryKey: ["agent-applications"],
-    queryFn: getAgentApplications,
-  });
-  const router = useRouter();
-  const { onRefresh, isRefreshing } = useRefresh(refetch);
-  const applications = useMemo(() => data || [], [data]);
-  const sections = useMemo(() => {
-    if (!applications.length) return [];
+  // const { data, isLoading, refetch } = useQuery({
+  //   queryKey: ["agent-applications"],
+  //   queryFn: ({})=> getAgentApplications({pageParam}),
+  // });
+  // const router = useRouter();
+  // const { onRefresh, isRefreshing } = useRefresh(refetch);
+  // const applications = useMemo(() => data || [], [data]);
+  // const sections = useMemo(() => {
+  //   if (!applications.length) return [];
 
-    // Group by submission date
-    const groups: { [date: string]: AgentReview[] } = {};
+  // Group by submission date
+  const groups: { [date: string]: AgentReview[] } = {};
 
-    applications.forEach((item) => {
-      const dateKey = format(new Date(item.created_at), "yyyy-MM-dd");
-      if (!groups[dateKey]) groups[dateKey] = [];
-      groups[dateKey].push(item);
-    });
+  // applications.forEach((item) => {
+  //   const dateKey = format(new Date(item.created_at), "yyyy-MM-dd");
+  //   if (!groups[dateKey]) groups[dateKey] = [];
+  //   groups[dateKey].push(item);
+  // });
 
-    // Convert to array of { title, data }
-    return Object.entries(groups)
-      .map(([dateKey, items]) => ({
-        title: format(new Date(dateKey), "MMMM d, yyyy"),
-        data: items,
-      }))
-      .sort(
-        (a, b) => new Date(b.title).getTime() - new Date(a.title).getTime()
-      );
-  }, [applications]);
+  // Convert to array of { title, data }
+  //   return Object.entries(groups)
+  //     .map(([dateKey, items]) => ({
+  //       title: format(new Date(dateKey), "MMMM d, yyyy"),
+  //       data: items,
+  //     }))
+  //     .sort(
+  //       (a, b) => new Date(b.title).getTime() - new Date(a.title).getTime()
+  //     );
+  // }, [applications]);
 
   return (
     <Box className="flex-1 px-4 py-6">
       <Text className="text-xl font-bold mb-4">Agent Applications</Text>
 
       <SectionList
-        sections={sections}
+        sections={[]}
         contentContainerClassName="pb-40"
         keyExtractor={(item) => item.id}
-        refreshControl={
-          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
-        }
+        // refreshControl={
+        //   <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+        // }
         renderItem={({ item }) => (
           <RequestListItem
             request={item}

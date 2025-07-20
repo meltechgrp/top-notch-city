@@ -17,7 +17,6 @@ export function useInfinityQueries({
   enabled = true,
   key,
   state,
-  audioUrl,
 }: {
   type: "all" | "user" | "admin" | "search" | "state" | "pending";
   profileId?: string;
