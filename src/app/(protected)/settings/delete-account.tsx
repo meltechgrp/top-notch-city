@@ -1,62 +1,36 @@
 import { Alert, View } from "react-native";
 import { Button, ButtonText, Icon, Text } from "@/components/ui";
-import { showSnackbar } from "@/lib/utils";
 import { TriangleAlert } from "lucide-react-native";
 import { useStore } from "@/store";
-import { useNavigationContainerRef, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import useResetAppState from "@/hooks/useResetAppState";
-import { CommonActions } from "@react-navigation/native";
-import { Fetch } from "@/actions/utills";
+import { useMutation } from "@tanstack/react-query";
+import { deleteUser } from "@/actions/user";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
+import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 
 export default function DeleteAccount() {
   const { me } = useStore();
   const router = useRouter();
   const resetAppState = useResetAppState();
-  const navigation = useNavigationContainerRef();
-  async function handleDelete() {
-    if (!me?.id) {
-      return showSnackbar({
-        message: "Account id not found",
-        type: "info",
-      });
-    }
-
-    const data = await Fetch(`/users/me/${me.id}`, {
-      method: "DELETE",
-    });
-    await resetAppState();
-    if (data) {
-      showSnackbar({
-        message: "Profile name updated successfully",
-        type: "success",
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: deleteUser,
+    onSuccess: async () => {
+      showErrorAlert({
+        title: "Account deleted successfully",
+        alertType: "success",
       });
 
-      navigation?.dispatch(
-        CommonActions.reset({
-          routes: [
-            {
-              name: "(auth)",
-              state: {
-                routes: [{ name: "onboarding" }],
-              },
-            },
-            {
-              name: "(auth)",
-              state: {
-                routes: [{ name: "signin" }],
-              },
-            },
-          ],
-        })
-      );
-    } else {
-      showSnackbar({
-        message: "Failed to update.. try again",
-        type: "warning",
+      await resetAppState();
+      router.dismissTo("/onboarding");
+    },
+    onError: () => {
+      showErrorAlert({
+        title: "Failed to delete account.. try again",
+        alertType: "error",
       });
-    }
-  }
-
+    },
+  });
   async function onDelete() {
     Alert.alert(
       "Delete Account",
@@ -70,7 +44,15 @@ export default function DeleteAccount() {
           text: "Logout",
           style: "destructive",
           onPress: async () => {
-            handleDelete();
+            if (!me) {
+              return showErrorAlert({
+                title: "Account not found",
+                alertType: "warn",
+              });
+            }
+            await mutateAsync({
+              user_id: me?.id,
+            });
           },
         },
       ],
@@ -103,7 +85,7 @@ export default function DeleteAccount() {
       </View>
       <View className="flex-row gap-4">
         <Button className="h-11 flex-1" onPress={onDelete}>
-          {/* {loading && <SpinningLoader />} */}
+          {isPending && <SpinningLoader />}
           <ButtonText className=" text-white">Delete</ButtonText>
         </Button>
       </View>
@@ -112,7 +94,6 @@ export default function DeleteAccount() {
           className="h-11 flex-1 bg-background-muted"
           onPress={() => router.back()}
         >
-          {/* {loading && <SpinningLoader />} */}
           <ButtonText className=" text-white">Cancel</ButtonText>
         </Button>
       </View>
