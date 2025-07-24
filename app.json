@@ -10,7 +10,7 @@
     "scheme": "com.meltech.topnotchcity",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "usesAppleSignIn": true,
       "bundleIdentifier": "com.meltech.topnotchcity",
       "infoPlist": {

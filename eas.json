@@ -8,24 +8,19 @@
       "developmentClient": true,
       "distribution": "internal",
       "channel": "development",
-      "autoIncrement": true,
-      "android": {
-        "buildType": "apk"
-      }
+      "autoIncrement": true
     },
     "preview": {
       "distribution": "internal"
     },
     "production": {
-      "android": {
-        "buildType": "apk"
-      },
+      "autoIncrement": true,
       "env": {
         "EXPO_PUBLIC_ANDROID_MAPS_API_KEY": "AIzaSyA0KuQDKgwN92uPKBr17IIFX0ve4rVoszA",
         "EXPO_OS": "android",
         "EXPO_PUBLIC_WEBSITE_URL": "https://topnotchcity.com",
         "EXPO_PUBLIC_API_URL": "https://app.topnotchcity.com",
-        "EXPO_PUBLIC_GOOGLE_AUTH_KEY": "198305892260-fglesbrqe6gthlphrb8pg4hlmjcthubm.apps.googleusercontent.com",
+        "EXPO_PUBLIC_GOOGLE_AUTH_KEY": "198305892260-dqv5gtvj30hjofofa2spt2nrub7m4teb.apps.googleusercontent.com",
         "EXPO_PUBLIC_APPLE_AUTH_KEY": "198305892260-dqv5gtvj30hjofofa2spt2nrub7m4teb.apps.googleusercontent.com"
       }
     }
