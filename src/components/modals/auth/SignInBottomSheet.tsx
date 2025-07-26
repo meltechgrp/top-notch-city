@@ -193,7 +193,7 @@ export default function SignInBottomSheet({
       rounded={false}
       onDismiss={onDismiss}
       title="Sign In"
-      snapPoint={["60%"]}
+      snapPoint={["65%"]}
     >
       <Box className=" gap-6 flex-1 p-6 pt-3">
         <CustomInput
@@ -208,7 +208,18 @@ export default function SignInBottomSheet({
           onUpdate={(text) => setForm({ ...form, password: text })}
           placeholder="Password"
         />
-
+        <View className=" items-end">
+          <Pressable
+            onPress={() => {
+              onDismiss?.();
+              eventBus.dispatchEvent("openResetPasswordModal", {
+                visible: true,
+              });
+            }}
+          >
+            <Text className="text-sm text-primary">Forgotten Password?</Text>
+          </Pressable>
+        </View>
         <Button className="w-full mt-2 gap-2" size="xl" onPress={handleSubmit}>
           {loading && <SpinningLoader />}
           <ButtonText>Continue</ButtonText>

@@ -4,6 +4,8 @@ import {
   authSignup,
   authOptVerify,
   resendVerificationCode,
+  sendPasswordReset,
+  resetPassword,
 } from "@/actions/auth";
 
 export function useAuthMutations() {
@@ -23,20 +25,20 @@ export function useAuthMutations() {
     mutationFn: resendVerificationCode,
   });
 
-  // const sendPasswordResetMutation = useMutation({
-  // 	mutationFn: sendPasswordReset,
-  // });
+  const sendPasswordResetMutation = useMutation({
+    mutationFn: sendPasswordReset,
+  });
 
-  // const resetPasswordMutation = useMutation({
-  // 	mutationFn: resetPassword,
-  // });
+  const resetPasswordMutation = useMutation({
+    mutationFn: resetPassword,
+  });
 
   return {
     loginMutation,
     signupMutation,
     otpVerifyMutation,
     resendVerificationMutation,
-    // sendPasswordResetMutation,
-    // resetPasswordMutation,
+    sendPasswordResetMutation,
+    resetPasswordMutation,
   };
 }

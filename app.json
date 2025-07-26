@@ -141,7 +141,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./src/assets/images/icon.png",
+          "image": "./src/assets/images/splash.png",
           "resizeMode": "contain"
         }
       ],

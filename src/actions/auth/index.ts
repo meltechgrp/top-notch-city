@@ -187,3 +187,42 @@ export async function authLogin(
     };
   }
 }
+export async function sendPasswordReset({ email }: { email: string }) {
+  const res = await Fetch("/password-reset/request", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: JSON.stringify({ email }),
+  });
+  console.log(res);
+  if (res?.detail) {
+    throw new Error("Error occurried");
+  }
+  return true;
+}
+export async function resetPassword({
+  email,
+  code,
+  confirm_password,
+  new_password,
+}: {
+  email: string;
+  code: string;
+  new_password: string;
+  confirm_password: string;
+}) {
+  const res = await Fetch("/password-reset/confirm", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: { email: email.toLowerCase(), code, new_password, confirm_password },
+  });
+  console.log(res);
+
+  if (res?.detail) {
+    throw new Error("Error occurried");
+  }
+  return res;
+}
