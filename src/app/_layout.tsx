@@ -42,24 +42,54 @@ export default function RootLayout() {
 
   useMountPushNotificationToken();
   useNotificationObserver();
-  useEffect(function linkingWorkaround() {
-    Linking.addEventListener("url", ({ url }) => {
+  useEffect(() => {
+    const handleDeepLink = ({ url }: { url: string }) => {
       console.log(`Deep link: ${url}`);
+
       let pathToNavigate: string | undefined;
 
-      if (url.startsWith("exp://") || url.startsWith("exp+topnotch-city://")) {
-        pathToNavigate = url.split("--")[1];
-      } else if (url.startsWith("https://topnotch-city.com")) {
-        const path = url.split("topnotch-city.com")[1];
-        console.log(`Deep link: ${path}`);
-        pathToNavigate = path;
-      } else pathToNavigate = url.split("://")[1];
+      try {
+        const parsedUrl = new URL(url);
 
-      if (pathToNavigate) {
-        pathToNavigate = `/(protected)/${pathToNavigate}`;
-        router.push(pathToNavigate as any);
+        // Handle exp:// or custom scheme
+        if (
+          parsedUrl.protocol === "exp:" ||
+          parsedUrl.protocol === "exp+topnotchcity:"
+        ) {
+          const deepPath = parsedUrl.pathname.split("--")[1]; // only if using `--`
+          pathToNavigate = deepPath ?? parsedUrl.pathname.slice(1); // fallback
+        }
+
+        // Handle website links
+        else if (
+          parsedUrl.hostname === "topnotchcity.com" ||
+          parsedUrl.hostname === "www.topnotchcity.com"
+        ) {
+          pathToNavigate = parsedUrl.pathname.slice(1); // remove leading "/"
+        }
+
+        // Fallback: remove scheme manually
+        else {
+          const parts = url.split("://");
+          if (parts.length > 1) {
+            pathToNavigate = parts[1];
+          }
+        }
+
+        if (pathToNavigate) {
+          pathToNavigate = `/(protected)/${pathToNavigate}`;
+          router.push(pathToNavigate as any);
+        }
+      } catch (e) {
+        console.warn("Failed to handle deep link:", e);
       }
-    });
+    };
+
+    const subscription = Linking.addEventListener("url", handleDeepLink);
+
+    return () => {
+      subscription.remove(); // Clean up on unmount
+    };
   }, []);
   useEffect(() => {
     SplashScreen.hide();

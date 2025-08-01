@@ -171,7 +171,7 @@ const PropertyDetailsBottomSheet = () => {
                   })
                 }
               >
-                <ButtonText>Agent Profile</ButtonText>
+                <ButtonText>Agent Portfolio</ButtonText>
                 <Icon as={ChevronRight} color="white" />
               </Button>
             </View>

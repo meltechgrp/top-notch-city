@@ -141,7 +141,7 @@ export default function PropertiesScreen() {
             <View className="flex-1 gap-8">
               <View
                 style={{
-                  height: height / 2.2,
+                  height: height / 1.5,
                 }}
                 className="flex-1 min-h-32 rounded-3xl overflow-hidden"
               >

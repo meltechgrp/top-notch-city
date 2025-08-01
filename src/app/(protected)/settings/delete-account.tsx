@@ -12,7 +12,7 @@ import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 export default function DeleteAccount() {
   const { me } = useStore();
   const router = useRouter();
-  const resetAppState = useResetAppState();
+  const resetAppState = useResetAppState(true);
   const { mutateAsync, isPending } = useMutation({
     mutationFn: deleteUser,
     onSuccess: async () => {
@@ -41,7 +41,7 @@ export default function DeleteAccount() {
           style: "cancel",
         },
         {
-          text: "Logout",
+          text: "Delete",
           style: "destructive",
           onPress: async () => {
             if (!me) {

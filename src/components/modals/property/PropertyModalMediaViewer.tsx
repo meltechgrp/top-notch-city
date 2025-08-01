@@ -10,6 +10,7 @@ import { Pressable, View } from "../../ui";
 import PropertyCarousel from "../../property/PropertyCarousel";
 import { hapticFeed } from "../../HapticTab";
 import { X } from "lucide-react-native";
+import { ImageContentFit } from "expo-image";
 
 type Props = {
   visible: boolean;
@@ -21,6 +22,7 @@ type Props = {
   enabled?: boolean;
   stackMode?: boolean;
   canPlayVideo?: boolean;
+  contentFit?: ImageContentFit;
 };
 
 export function PropertyModalMediaViewer({
@@ -33,6 +35,7 @@ export function PropertyModalMediaViewer({
   canPlayVideo,
   enabled,
   stackMode = true,
+  contentFit,
 }: Props) {
   const opacity = useSharedValue(1);
   const translateY = useSharedValue(0);
@@ -76,6 +79,7 @@ export function PropertyModalMediaViewer({
                   factor={1}
                   media={media}
                   enabled={enabled}
+                  contentFit={contentFit}
                   withPagination={false}
                   stackMode={stackMode}
                   isOwner={isOwner}

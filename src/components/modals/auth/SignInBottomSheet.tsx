@@ -237,7 +237,9 @@ export default function SignInBottomSheet({
             onPress={() => googlePromptAsync()}
           >
             <Icon as={GoogleIcon} />
-            <ButtonText>Continue with Google</ButtonText>
+            <ButtonText className=" text-typography">
+              Continue with Google
+            </ButtonText>
           </Button>
 
           {/* <Button

@@ -9,6 +9,7 @@ import { useResolvedTheme, View } from "../ui";
 import Layout from "@/constants/Layout";
 import { useSharedValue } from "react-native-reanimated";
 import { Dimensions } from "react-native";
+import { ImageContentFit } from "expo-image";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const INTERACTIVE_ZONE_WIDTH = SCREEN_WIDTH / 2.8;
@@ -33,6 +34,7 @@ type Props = {
   paginationsize?: number;
   isList?: boolean;
   enabled?: boolean;
+  contentFit?: ImageContentFit;
 };
 
 function PropertyCarousel({
@@ -54,6 +56,7 @@ function PropertyCarousel({
   isOwner,
   isList = false,
   rounded,
+  contentFit,
   enabled = true,
 }: Props) {
   const { bannerHeight } = Layout;
@@ -108,13 +111,12 @@ function PropertyCarousel({
           data={media}
           renderItem={(props) => (
             <PropertyMedia
-              style={
-                props.item.media_type == "VIDEO" ? { height: 400, flex: 1 } : {}
-              }
+              // style={{ height: 500, flex: 1 }}
               withBackdrop={withBackdrop}
               source={props.item}
               isOwner={isOwner}
               isVisible
+              contentFit={contentFit}
               rounded={rounded}
               canPlayVideo={canPlayVideo}
               {...props}

@@ -59,9 +59,9 @@ export default function SignUpBottomSheet({
           ...s,
           hasAuth: true,
         }));
-        eventBus.dispatchEvent("REFRESH_PROFILE", null);
-        eventBus.dispatchEvent("openSignUpModal", { visible: true });
         onDismiss?.();
+        eventBus.dispatchEvent("REFRESH_PROFILE", null);
+        eventBus.dispatchEvent("openEmailVerificationModal", { visible: true });
       }
     } catch (error) {
       console.error(error);

@@ -12,6 +12,7 @@ import { ConfirmationModal } from "../modals/ConfirmationModal";
 import { usePropertyDataMutations } from "@/tanstack/mutations/usePropertyDataMutations";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
+import { ImageContentFit } from "expo-image";
 
 interface Props extends AnimatedProps<ViewProps> {
   style?: StyleProp<ImageStyle>;
@@ -26,6 +27,7 @@ interface Props extends AnimatedProps<ViewProps> {
   nativeControls?: boolean;
   isSmallView?: boolean;
   propertyId?: string;
+  contentFit?: ImageContentFit;
   onPress?: (val: string) => void;
 }
 
@@ -46,6 +48,7 @@ const PropertyMedia: React.FC<Props> = (props) => {
     imageStyle,
     isSmallView,
     propertyId,
+    contentFit = "cover",
     ...animatedViewProps
   } = props;
   const { uri, isImage, id } = useMemo(
@@ -89,7 +92,7 @@ const PropertyMedia: React.FC<Props> = (props) => {
             rounded={rounded}
             source={{ uri, cacheKey: id }}
             cacheKey={id}
-            contentFit="cover"
+            contentFit={contentFit}
             transition={500}
             style={imageStyle}
           />

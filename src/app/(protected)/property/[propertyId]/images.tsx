@@ -25,11 +25,19 @@ export default function Images() {
       <Box onLayout={onLayout} className="flex-1 px-4">
         <FlashList
           data={images}
+          numColumns={2}
           renderItem={({ item, index }) => (
-            <View style={{ height: 250, flex: 1 }}>
+            <View
+              style={{
+                height: 180,
+                flex: 1,
+                marginRight: index % 2 == 0 ? 12 : 0,
+              }}
+            >
               <PropertyMedia
                 rounded
                 source={item}
+                contentFit="fill"
                 onPress={() => handleOpen(index)}
               />
             </View>
@@ -45,6 +53,7 @@ export default function Images() {
         width={width}
         media={images}
         visible={visible}
+        contentFit="fill"
         setVisible={setVisible}
         selectedIndex={selectedIndex}
       />

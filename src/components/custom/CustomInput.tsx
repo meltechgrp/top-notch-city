@@ -1,18 +1,13 @@
 import {
-  FormControl,
-  FormControlLabel,
-  FormControlLabelText,
   Input,
   InputField,
-  FormControlError,
-  FormControlErrorIcon,
-  FormControlErrorText,
   View,
   Text,
+  useResolvedTheme,
 } from "@/components/ui";
+import { Colors } from "@/constants/Colors";
 import { cn } from "@/lib/utils";
 import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
-import { AlertCircleIcon } from "lucide-react-native";
 import { KeyboardTypeOptions, ReturnKeyTypeOptions } from "react-native";
 
 interface Props {
@@ -54,6 +49,7 @@ export function CustomInput({
   type = "text",
   inputClassName,
 }: Props) {
+  const theme = useResolvedTheme();
   return (
     <View
       className={cn(
@@ -94,14 +90,15 @@ export function CustomInput({
               returnKeyLabel={returnKeyLabel}
               onChangeText={onUpdate}
               returnKeyType={returnKeyType}
-              style={
+              style={[
                 multiline
                   ? {
                       height: height || 120,
                       textAlignVertical: "top",
                     }
-                  : {}
-              }
+                  : {},
+                { color: Colors[theme].text },
+              ]}
             />
           </Input>
         ) : (
@@ -115,15 +112,16 @@ export function CustomInput({
             returnKeyType={returnKeyType}
             onChangeText={onUpdate}
             multiline={multiline}
-            style={
+            style={[
               multiline
                 ? {
                     height: height || 120,
                     textAlignVertical: "top", // 👈 This is the key
                     padding: 10,
                   }
-                : {}
-            }
+                : {},
+              { color: Colors[theme].text },
+            ]}
             keyboardType={keyboardType}
             returnKeyLabel={returnKeyLabel}
             numberOfLines={numberOfLines}

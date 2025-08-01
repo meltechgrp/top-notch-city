@@ -19,10 +19,10 @@ export default function AppCrashScreen() {
             <View className="items-center mb-8">
               <BeachPersonWaterParasolIcon width={64} height={64} />
             </View>
-            <Text className="text-center text-foreground text-2xl font-semibold">
+            <Text className="text-center text-typography text-2xl font-semibold">
               Something went wrong!
             </Text>
-            <Text className="text-center text-foreground mt-2 mb-6">
+            <Text className="text-center text-typography mt-2 mb-6">
               Please reload to try again!
             </Text>
           </View>

@@ -36,7 +36,10 @@ export default function SplashScreen() {
   return (
     <View style={styles.container}>
       <VideoView
-        style={StyleSheet.absoluteFill}
+        style={{
+          width: 250,
+          height: 300,
+        }}
         player={player}
         nativeControls={false}
       />
