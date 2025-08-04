@@ -1,7 +1,7 @@
 import * as Google from "expo-auth-session/providers/google";
-import * as Facebook from "expo-auth-session/providers/facebook";
+// import * as Facebook from "expo-auth-session/providers/facebook";
 import * as WebBrowser from "expo-web-browser";
-import * as AppleAuthentication from "expo-apple-authentication";
+// import * as AppleAuthentication from "expo-apple-authentication";
 
 import {
   Button,
@@ -11,7 +11,7 @@ import {
   Box,
   Icon,
   Pressable,
-  useResolvedTheme,
+  // useResolvedTheme,
 } from "@/components/ui";
 
 import React, { useCallback, useEffect, useState } from "react";
@@ -23,7 +23,7 @@ import { useStore } from "@/store";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import eventBus from "@/lib/eventBus";
 import GoogleIcon from "@/components/icons/GoogleIcon";
-import FacebookIcon from "@/components/icons/FacebookIcon";
+// import FacebookIcon from "@/components/icons/FacebookIcon";
 import BottomSheet from "../../shared/BottomSheet";
 import { Divider } from "@/components/ui/divider";
 import { CustomInput } from "@/components/custom/CustomInput";
@@ -33,8 +33,8 @@ export default function SignInBottomSheet({
   onDismiss,
   onLoginSuccess,
 }: AuthModalProps) {
-  const [isAppleAvailable, setIsAppleAvailable] = useState(false);
-  const theme = useResolvedTheme();
+  // const [isAppleAvailable, setIsAppleAvailable] = useState(false);
+  // const theme = useResolvedTheme();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = React.useState({
     email: "",
@@ -47,9 +47,9 @@ export default function SignInBottomSheet({
       iosClientId: process.env.EXPO_PUBLIC_APPLE_AUTH_KEY,
     });
 
-  const [fbRequest, fbResponse, fbPromptAsync] = Facebook.useAuthRequest({
-    clientId: "990600566300859",
-  });
+  // const [fbRequest, fbResponse, fbPromptAsync] = Facebook.useAuthRequest({
+  //   clientId: "990600566300859",
+  // });
 
   WebBrowser.maybeCompleteAuthSession();
   // 🔑 Basic email sign-in
@@ -136,54 +136,54 @@ export default function SignInBottomSheet({
   };
 
   // ✅ Facebook response handler
-  useEffect(() => {
-    if (fbResponse?.type === "success" && fbResponse.authentication) {
-      (async () => {
-        const userInfoResponse = await fetch(
-          `https://graph.facebook.com/me?access_token=${fbResponse.authentication?.accessToken}&fields=id,name,email,picture.type(large)`
-        );
-        const userInfo = await userInfoResponse.json();
-        console.log(userInfo); // Or map fields if needed
-      })();
-    }
-  }, [fbResponse]);
+  // useEffect(() => {
+  //   if (fbResponse?.type === "success" && fbResponse.authentication) {
+  //     (async () => {
+  //       const userInfoResponse = await fetch(
+  //         `https://graph.facebook.com/me?access_token=${fbResponse.authentication?.accessToken}&fields=id,name,email,picture.type(large)`
+  //       );
+  //       const userInfo = await userInfoResponse.json();
+  //       console.log(userInfo); // Or map fields if needed
+  //     })();
+  //   }
+  // }, [fbResponse]);
 
   // ✅ Apple sign-in
-  const handleAppleSignIn = async () => {
-    try {
-      const credential = await AppleAuthentication.signInAsync({
-        requestedScopes: [
-          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
-          AppleAuthentication.AppleAuthenticationScope.EMAIL,
-        ],
-      });
+  // const handleAppleSignIn = async () => {
+  //   try {
+  //     const credential = await AppleAuthentication.signInAsync({
+  //       requestedScopes: [
+  //         AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+  //         AppleAuthentication.AppleAuthenticationScope.EMAIL,
+  //       ],
+  //     });
 
-      console.log("Apple credential:", credential);
-      if (!credential.email) {
-        showSnackbar({
-          message: "We are unable to get ur credentials. Please try again.",
-          type: "error",
-        });
-        return;
-      }
+  //     console.log("Apple credential:", credential);
+  //     if (!credential.email) {
+  //       showSnackbar({
+  //         message: "We are unable to get ur credentials. Please try again.",
+  //         type: "error",
+  //       });
+  //       return;
+  //     }
 
-      await handleSocialLogin({
-        email: credential.email,
-        first_name: credential.fullName?.givenName ?? undefined,
-        last_name: credential.fullName?.familyName ?? undefined,
-      });
-    } catch (error: any) {
-      if (error.code === "ERR_CANCELED") {
-        console.log("User cancelled Apple Sign-In.");
-      } else {
-        console.error(error);
-      }
-    }
-  };
+  //     await handleSocialLogin({
+  //       email: credential.email,
+  //       first_name: credential.fullName?.givenName ?? undefined,
+  //       last_name: credential.fullName?.familyName ?? undefined,
+  //     });
+  //   } catch (error: any) {
+  //     if (error.code === "ERR_CANCELED") {
+  //       console.log("User cancelled Apple Sign-In.");
+  //     } else {
+  //       console.error(error);
+  //     }
+  //   }
+  // };
 
-  useEffect(() => {
-    AppleAuthentication.isAvailableAsync().then(setIsAppleAvailable);
-  }, []);
+  // useEffect(() => {
+  //   AppleAuthentication.isAvailableAsync().then(setIsAppleAvailable);
+  // }, []);
 
   return (
     <BottomSheet

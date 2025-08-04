@@ -52,6 +52,9 @@
               "scheme": "https",
               "host": "topnotchcity.com",
               "pathPrefix": "/"
+            },
+            {
+              "scheme": "com.meltech.topnotchcity"
             }
           ],
           "category": [

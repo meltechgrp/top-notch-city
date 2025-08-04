@@ -1,25 +1,5 @@
-import { router } from "expo-router";
-import {
-  FormControl,
-  FormControlError,
-  FormControlErrorText,
-  FormControlErrorIcon,
-  FormControlLabel,
-  FormControlLabelText,
-  Input,
-  InputField,
-  Button,
-  ButtonText,
-  Text,
-  View,
-  Box,
-  InputIcon,
-} from "@/components/ui";
+import { Button, ButtonText, Text, View, Box } from "@/components/ui";
 import React, { useEffect, useRef, useState } from "react";
-import { AlertCircleIcon, Mail } from "lucide-react-native";
-import { removeAuthToken } from "@/lib/secureStore";
-import { useStore, useTempStore } from "@/store";
-import { showSnackbar } from "@/lib/utils";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import { hapticFeed } from "@/components/HapticTab";
 import { useAuthMutations } from "@/tanstack/mutations/useAuthMutations";

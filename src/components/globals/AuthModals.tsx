@@ -45,6 +45,7 @@ export default function AuthModals() {
           {...signUp}
           onDismiss={() => {
             signUp.onDismiss?.();
+            setEmailVerification({ visible: true });
             setSignUp(null);
           }}
         />

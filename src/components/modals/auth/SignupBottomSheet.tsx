@@ -29,7 +29,13 @@ export default function SignUpBottomSheet({
     setLoading(true);
     try {
       const state = await authSignup(form);
-      if (state?.formError) {
+      if (state?.fieldError) {
+        const message = Object.values(state.fieldError).filter(Boolean)[0];
+        showSnackbar({
+          message,
+          type: "error",
+        });
+      } else if (state?.formError) {
         showSnackbar({
           message: state.formError,
           type: "error",
@@ -59,9 +65,8 @@ export default function SignUpBottomSheet({
           ...s,
           hasAuth: true,
         }));
-        onDismiss?.();
         eventBus.dispatchEvent("REFRESH_PROFILE", null);
-        eventBus.dispatchEvent("openEmailVerificationModal", { visible: true });
+        onDismiss?.();
       }
     } catch (error) {
       console.error(error);

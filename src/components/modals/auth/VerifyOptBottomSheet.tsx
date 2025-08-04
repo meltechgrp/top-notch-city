@@ -1,4 +1,3 @@
-import { router } from "expo-router";
 import {
   Button,
   ButtonText,
@@ -10,7 +9,6 @@ import {
 } from "@/components/ui";
 import React from "react";
 import OTPInput from "@/components/custom/OTPInput";
-import { useLocalSearchParams } from "expo-router";
 import { hapticFeed } from "@/components/HapticTab";
 import { authOptVerify } from "@/actions/auth";
 import { useTempStore } from "@/store";
@@ -42,7 +40,8 @@ export default function VerifyOtpBottomSheet({
           message: state.formError,
           type: "error",
         });
-      } else if (state?.data) {
+      } else {
+        onDismiss?.();
       }
     } catch (error) {
       console.error(error);

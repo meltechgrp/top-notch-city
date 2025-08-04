@@ -44,44 +44,45 @@ export default function RootLayout() {
   useNotificationObserver();
   useEffect(() => {
     const handleDeepLink = ({ url }: { url: string }) => {
-      console.log(`Deep link: ${url}`);
+      console.log(`🔗 Received deep link: ${url}`);
 
       let pathToNavigate: string | undefined;
 
       try {
         const parsedUrl = new URL(url);
 
-        // Handle exp:// or custom scheme
-        if (
-          parsedUrl.protocol === "exp:" ||
-          parsedUrl.protocol === "exp+topnotchcity:"
-        ) {
-          const deepPath = parsedUrl.pathname.split("--")[1]; // only if using `--`
-          pathToNavigate = deepPath ?? parsedUrl.pathname.slice(1); // fallback
+        // 1️⃣ Handle known schemes (expo, custom)
+        const knownSchemes = ["exp:", "expo:", "com.meltech.topnotchcity:"];
+
+        if (knownSchemes.includes(parsedUrl.protocol)) {
+          const segments = parsedUrl.pathname.split("/").filter(Boolean);
+          pathToNavigate = segments.join("/");
         }
 
-        // Handle website links
+        // 2️⃣ Handle web links
         else if (
-          parsedUrl.hostname === "topnotchcity.com" ||
-          parsedUrl.hostname === "www.topnotchcity.com"
+          ["topnotchcity.com", "www.topnotchcity.com"].includes(
+            parsedUrl.hostname
+          )
         ) {
           pathToNavigate = parsedUrl.pathname.slice(1); // remove leading "/"
         }
 
-        // Fallback: remove scheme manually
+        // 3️⃣ Fallback: try manually removing scheme
         else {
           const parts = url.split("://");
           if (parts.length > 1) {
-            pathToNavigate = parts[1];
+            const rest = parts[1].split("/").filter(Boolean);
+            pathToNavigate = rest.join("/");
           }
         }
 
+        // 4️⃣ Final routing
         if (pathToNavigate) {
-          pathToNavigate = `/(protected)/${pathToNavigate}`;
-          router.push(pathToNavigate as any);
+          router.push(`/(protected)/${pathToNavigate}` as any);
         }
       } catch (e) {
-        console.warn("Failed to handle deep link:", e);
+        console.warn("⚠️ Failed to handle deep link:", e);
       }
     };
 
@@ -91,6 +92,7 @@ export default function RootLayout() {
       subscription.remove(); // Clean up on unmount
     };
   }, []);
+
   useEffect(() => {
     SplashScreen.hide();
   }, []);
