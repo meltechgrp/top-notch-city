@@ -78,7 +78,7 @@ export default function Map(props: MapProps) {
         ref={mapRef}
         style={{ width: "100%", height: height || Layout.window.height }}
         provider={Platforms.isAndroid() ? PROVIDER_GOOGLE : undefined}
-        zoomEnabled
+        zoomEnabled={Platforms.isAndroid()}
         loadingEnabled
         onDoublePress={onDoublePress}
         loadingBackgroundColor={

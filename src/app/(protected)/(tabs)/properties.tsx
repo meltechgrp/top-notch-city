@@ -121,7 +121,7 @@ export default function PropertiesScreen() {
       >
         <VerticalProperties
           isLoading={isLoading}
-          data={filteredData}
+          data={[]}
           showStatus={true}
           headerTopComponent={
             filteredData.length > 0 ? headerComponent : undefined
@@ -134,17 +134,12 @@ export default function PropertiesScreen() {
               },
             });
           }}
-          refetch={refetch}
+          refetch={async () => {}}
           fetchNextPage={fetchNextPage}
           className="pb-24"
           ListEmptyComponent={
             <View className="flex-1 gap-8">
-              <View
-                style={{
-                  height: height / 1.5,
-                }}
-                className="flex-1 min-h-32 rounded-3xl overflow-hidden"
-              >
+              <View className="flex-1 min-h-96 rounded-3xl overflow-hidden">
                 <Image
                   source={require("@/assets/images/landing/agent.png")}
                   alt="sell banner"

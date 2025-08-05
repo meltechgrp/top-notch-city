@@ -72,7 +72,6 @@ export default function TabLayout() {
         options={{
           title: "Properties",
           tabBarIcon: ({ color }) => <Plus size={24} color={color} />,
-          href: isAgent ? "/(protected)/(tabs)/properties" : null,
         }}
       />
       <Tabs.Screen

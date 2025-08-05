@@ -9,6 +9,15 @@ export const fetchAllSubcategories = async (): Promise<SubCategory[]> => {
     throw new Error("Failed to fetch subcategories");
   }
 };
+export const fetchAllCategories = async (): Promise<Category[]> => {
+  try {
+    const res = await Fetch(`/categories/`, {});
+    return res as Category[];
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to fetch categories");
+  }
+};
 
 export const addCategory = async ({ name }: { name: string }) => {
   try {
