@@ -2,134 +2,74 @@ import withRenderVisible from "@/components/shared/withRenderOpen";
 import { FlatList, Pressable, View } from "react-native";
 import BottomSheet from "../shared/BottomSheet";
 import { Button, ButtonText, Icon, Text } from "../ui";
-import * as ImagePicker from "expo-image-picker";
 import { Camera, MoreHorizontal, Video } from "lucide-react-native";
-import { uniqueId } from "lodash-es";
 import { useVideoPlayer, VideoView } from "expo-video";
 import { useMemo, useState } from "react";
 import FullHeightLoaderWrapper from "../loaders/FullHeightLoaderWrapper";
 import { MiniEmptyState } from "../shared/MiniEmptyState";
 import OptionsBottomSheet from "../shared/OptionsBottomSheet";
 import { useLayout } from "@react-native-community/hooks";
-import { useMediaCompressor } from "@/hooks/useMediaCompressor";
-import { cn, showSnackbar } from "@/lib/utils";
-import { showErrorAlert } from "@/components/custom/CustomNotification";
+import { cn } from "@/lib/utils";
+import { useMediaUpload } from "@/hooks/useMediaUpload";
+
+const MAX = 4;
 
 type Props = {
   visible: boolean;
   onDismiss: () => void;
   deleteFile: (id: number) => void;
   onUpdate: (data: UploadedFile[]) => void;
+  deleteAllFile: () => void;
   videos?: UploadedFile[];
 };
 function ListingVideosBottomSheet(props: Props) {
-  const { visible, onDismiss, onUpdate, deleteFile, videos } = props;
+  const { visible, onDismiss, onUpdate, deleteFile, videos, deleteAllFile } =
+    props;
   const [openEdit, setOpenEdit] = useState(false);
   const [selected, setSelected] = useState<number | undefined>();
-  const [loading, setLoading] = useState(false);
-  const { compress } = useMediaCompressor();
 
+  const currentCount = useMemo(() => {
+    return videos?.length || 0;
+  }, [videos]);
+
+  const { loading, pickMedia, takeMedia } = useMediaUpload({
+    type: "video",
+    onSuccess: onUpdate,
+    maxSelection: 16 - currentCount,
+  });
   const { width, onLayout } = useLayout();
-  const pickVideos = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["videos"],
-      aspect: [4, 3],
-      quality: 1,
-      // videoQuality: ImagePicker.UIImagePickerControllerQualityType.Low,
-      allowsEditing: true,
-      // videoMaxDuration: 1200,
-    });
-    if (!result.canceled) {
-      setLoading(true);
-      await handleUpload(
-        result.assets.map((vid) => ({
-          uri: vid.uri,
-        }))
-      );
-    } else {
-      setLoading(false);
-    }
-  };
-  const takeVideos = async () => {
-    const permitted = await ImagePicker.getCameraPermissionsAsync();
-    if (
-      permitted.status == ImagePicker.PermissionStatus.DENIED ||
-      permitted.status == ImagePicker.PermissionStatus.UNDETERMINED
-    ) {
-      return await ImagePicker.requestCameraPermissionsAsync();
-    }
-    let result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ["videos"],
-      aspect: [4, 3],
-      quality: 0.6,
-      cameraType: ImagePicker.CameraType.back,
-      allowsEditing: true,
-      // videoMaxDuration: 1200,
-    });
-
-    if (!result.canceled) {
-      setLoading(true);
-      await handleUpload(
-        result.assets.map((vid) => ({
-          uri: vid.uri,
-        }))
-      );
-    } else {
-      setLoading(false);
-    }
-  };
-
-  async function handleUpload(data: { uri: string }[]) {
-    const result = await Promise.all(
-      data.map(
-        async (file) =>
-          await compress({
-            type: "video",
-            uri: file.uri,
-          })
-      )
-    );
-    const compressed = result
-      .filter((item) => item !== null)
-      .map((item) => ({ uri: item, id: uniqueId() }));
-    setLoading(false);
-    if (compressed.length == 0) {
-      return showErrorAlert({
-        title: "Failed to upload.. try again",
-        alertType: "warn",
-      });
-    } else {
-      onUpdate(compressed);
-    }
-  }
   const ListHeader = useMemo(
     () => (
       <View className="flex-1 gap-2  bg-background-muted rounded-xl py-6 mb-3">
         <View className=" flex-row gap-5 px-4 items-center justify-center">
           <Button
-            disabled={videos && videos?.length > 2}
+            disabled={currentCount >= MAX}
+            isDisabled={currentCount >= MAX}
             size="lg"
             className="flex-1"
-            onPress={pickVideos}
+            onPress={pickMedia}
           >
-            <ButtonText size="md">Choose Videos</ButtonText>
+            <ButtonText size="sm">Choose Videos</ButtonText>
             <Icon as={Video} />
           </Button>
           <Button
-            disabled={videos && videos?.length > 2}
+            disabled={currentCount >= MAX}
+            isDisabled={currentCount >= MAX}
             size="lg"
             className="flex-1"
-            onPress={takeVideos}
+            onPress={takeMedia}
             variant="outline"
           >
-            <ButtonText size="md">Take Videos</ButtonText>
+            <ButtonText size="sm">Take Videos</ButtonText>
             <Icon as={Camera} className="text-primary" />
           </Button>
         </View>
-        <Text className=" font-light text-center">Maximum is 3 videos</Text>
+        {currentCount >= MAX && (
+          <Text className=" font-light text-center">Maximum is 4 videos</Text>
+        )}
       </View>
     ),
-    [takeVideos, pickVideos]
+    [takeMedia, pickMedia]
   );
   return (
     <>
@@ -167,13 +107,26 @@ function ListingVideosBottomSheet(props: Props) {
               )}
               keyboardShouldPersistTaps="handled"
             />
-            {videos?.length && (
-              <View className=" px-4">
-                <Button className="h-12" onPress={onDismiss}>
-                  <ButtonText>Continue</ButtonText>
-                </Button>
-              </View>
-            )}
+            <View className=" flex-row gap-6 px-4 mt-auto">
+              {currentCount > 1 && (
+                <View className="flex-1">
+                  <Button
+                    className="h-12"
+                    variant="outline"
+                    onPress={deleteAllFile}
+                  >
+                    <ButtonText>Remove All</ButtonText>
+                  </Button>
+                </View>
+              )}
+              {currentCount > 0 && (
+                <View className="flex-1">
+                  <Button className="h-12" onPress={onDismiss}>
+                    <ButtonText>Continue</ButtonText>
+                  </Button>
+                </View>
+              )}
+            </View>
           </FullHeightLoaderWrapper>
         </View>
       </BottomSheet>

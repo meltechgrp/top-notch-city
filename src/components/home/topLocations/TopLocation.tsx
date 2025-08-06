@@ -35,7 +35,7 @@ export default function TopLocation({
       <Image source={photo_url} className="w-full h-full" alt={state} />
       <View className="absolute inset-0 bg-black/50 gap-1 to-transparent flex justify-end p-4">
         <View className=" flex-row gap-2 items-center">
-          <View className="">
+          <View className="max-w-[70%]">
             <Text numberOfLines={1} className="text-white text-base font-bold">
               {state}
             </Text>

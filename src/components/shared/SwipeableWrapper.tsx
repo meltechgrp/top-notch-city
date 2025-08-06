@@ -22,6 +22,7 @@ type Props = {
   rightAction?: () => void;
   leftAction?: () => void;
   withBorder?: boolean;
+  rightText?: string;
 };
 
 export default function SwipeableWrapper({
@@ -29,6 +30,7 @@ export default function SwipeableWrapper({
   rightAction,
   leftAction,
   withBorder,
+  rightText = "Edit",
 }: Props) {
   const height = useSharedValue(1);
   const opacity = useSharedValue(1);
@@ -57,7 +59,7 @@ export default function SwipeableWrapper({
           onPress={pressHandler}
         >
           <Icon as={Edit} className="text-white" />
-          <Text className="text-white">Edit</Text>
+          <Text className="text-white">{rightText}</Text>
         </RectButton>
       </Animated.View>
     );

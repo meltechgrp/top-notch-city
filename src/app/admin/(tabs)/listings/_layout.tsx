@@ -37,7 +37,7 @@ export default function ListingLayoutsComponent() {
             flexDirection: "row",
             alignItems: "center",
             // Use the width of the screen divided by the number of tabs
-            width: Layout.window.width / 3,
+            width: Layout.window.width / 2,
           },
         }}
       >
@@ -58,12 +58,6 @@ export default function ListingLayoutsComponent() {
                 count={propertyData.length}
               />
             ),
-          }}
-        />
-        <MaterialTopTabs.Screen
-          name="category"
-          options={{
-            title: "Category List",
           }}
         />
       </MaterialTopTabs>

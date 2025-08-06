@@ -20,7 +20,7 @@ export default function ListingResult() {
   const { width, onLayout } = useLayout();
   return (
     <>
-      <View onLayout={onLayout} className="gap-y-4 pb-80 flex-1 mt-4 px-4">
+      <View onLayout={onLayout} className="gap-y-4 flex-1 mt-4 px-4">
         <View className=" rounded-2xl bg-background-muted p-4">
           <View className="flex-row justify-between">
             <Heading size="md" className="mb-3">

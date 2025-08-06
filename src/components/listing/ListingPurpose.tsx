@@ -5,18 +5,13 @@ import { useLayout } from "@react-native-community/hooks";
 import { KeyRound, RectangleEllipsis } from "lucide-react-native";
 import { TouchableOpacity } from "react-native";
 
-export default function ListingPurpose() {
+export default function ListingPurpose({ title }: { title?: string }) {
   const { onLayout, height } = useLayout();
   const { listing, updateListing, updateListingStep } = useTempStore();
   return (
     <>
       <Box onLayout={onLayout} className="flex-1 py-6 px-4">
-        <View
-          style={{
-            height: height / 2.5,
-          }}
-          className=" min-h-52 rounded-3xl overflow-hidden"
-        >
+        <View className=" min-h-96 rounded-3xl overflow-hidden">
           <Image
             source={require("@/assets/images/vectors/bookshelf.jpg")}
             alt="sell banner"
@@ -25,7 +20,9 @@ export default function ListingPurpose() {
         </View>
         <View className=" py-6 gap-4">
           <View className=" bg-background-muted p-4 rounded-xl gap-3">
-            <Heading size="xl">What Would You Like to Do Today?</Heading>
+            <Heading size="xl" className=" capitalize">
+              {title || "What Would You Like to Do Today?"}
+            </Heading>
             <Text size="sm" className=" font-light mb-4">
               Ready to make a move? Choose whether you want to sell your
               property for a great deal or rent it out for steady income. Select

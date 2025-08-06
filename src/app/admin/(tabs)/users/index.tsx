@@ -128,6 +128,10 @@ export default function Users() {
                     params: { userId: user.id },
                   });
                 }}
+                onLongPress={(user) => {
+                  setActiveUser(user);
+                  setUserBottomSheet(true);
+                }}
               />
             )}
             ListHeaderComponent={headerComponent}

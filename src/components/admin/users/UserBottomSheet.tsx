@@ -7,20 +7,16 @@ import {
   AvatarFallbackText,
   AvatarImage,
   Button,
-  ButtonText,
   Heading,
-  Icon,
-  Pressable,
   Text,
 } from "@/components/ui";
 import { getImageUrl } from "@/lib/api";
 import withRenderVisible from "@/components/shared/withRenderOpen";
-import { ChevronRight } from "lucide-react-native";
-import { useRouter } from "expo-router";
 import { capitalize } from "lodash-es";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { verifyEmail } from "@/actions/user";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
 
 type UserDetailsBottomSheetProps = {
   visible: boolean;
@@ -34,7 +30,6 @@ function UserDetailsBottomSheet(props: UserDetailsBottomSheetProps) {
   const { mutateAsync, isPending } = useMutation({
     mutationFn: verifyEmail,
   });
-  const router = useRouter();
   return (
     <BottomSheet onDismiss={onDismiss} visible={visible} snapPoint={["44%"]}>
       <View className="flex-1 gap-y-2 pb-8 px-4">
@@ -61,12 +56,17 @@ function UserDetailsBottomSheet(props: UserDetailsBottomSheetProps) {
                       if (data?.message) {
                         onDismiss();
                         queryClient.invalidateQueries({ queryKey: ["users"] });
-                        showSnackbar({
-                          message: data.message,
-                          type: "info",
-                          backdrop: false,
+                        showErrorAlert({
+                          title: data.message,
+                          alertType: "success",
                         });
                       }
+                    },
+                    onError: () => {
+                      showErrorAlert({
+                        title: "Something went wrong. Try again!",
+                        alertType: "error",
+                      });
                     },
                   }
                 );
@@ -99,48 +99,6 @@ function UserDetailsBottomSheet(props: UserDetailsBottomSheetProps) {
           </View>
         </View>
         <View className="w-full h-[1px] bg-outline" />
-        {/* <View className="gap-4 flex-1 mt-4">
-          <View className="flex-row gap-4">
-            <Pressable className="flex-1 h-20 gap-2 justify-center items-center rounded-xl bg-background-muted">
-              <Heading size="xl" className="text-primary">
-                0
-              </Heading>
-              <Text className=" text-md">Uploaded</Text>
-            </Pressable>
-            <Pressable className="flex-1 h-20 gap-2 justify-center items-center rounded-xl bg-background-muted">
-              <Heading size="xl" className="text-primary">
-                0
-              </Heading>
-              <Text className=" text-md">Views</Text>
-            </Pressable>
-            <Pressable className="flex-1 h-20 gap-2 justify-center items-center rounded-xl bg-background-muted">
-              <Heading size="xl" className="text-primary">
-                0
-              </Heading>
-              <Text className=" text-md">Saved</Text>
-            </Pressable>
-          </View>
-          <View className="flex-row gap-4">
-            <Pressable className="flex-1 h-20 gap-2 justify-center items-center rounded-xl bg-background-muted">
-              <Heading size="xl" className="text-primary">
-                0
-              </Heading>
-              <Text className=" text-md">Sold</Text>
-            </Pressable>
-            <Pressable className="flex-1 h-20 gap-2 justify-center items-center rounded-xl bg-background-muted">
-              <Heading size="xl" className="text-primary">
-                0
-              </Heading>
-              <Text className=" text-md">Reports</Text>
-            </Pressable>
-            <Pressable className="flex-1 h-20 gap-2 justify-center items-center rounded-xl bg-background-muted">
-              <Heading size="xl" className="text-primary">
-                0
-              </Heading>
-              <Text className=" text-md">Messages</Text>
-            </Pressable>
-          </View>
-        </View> */}
       </View>
     </BottomSheet>
   );

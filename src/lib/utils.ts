@@ -73,7 +73,13 @@ export function composeFullAddress(
   if (cityOnly && type === "short") {
     return joinWithComma(address?.state, address?.country);
   } else if (cityOnly && type === "long") {
-    return joinWithComma(address?.city, address?.state, address?.country);
+    return joinWithComma(
+      address?.street,
+      address?.city,
+      address?.lga,
+      address?.state,
+      address?.country
+    );
   }
   if (!address?.street) {
     return joinWithComma(

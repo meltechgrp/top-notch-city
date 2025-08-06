@@ -15,18 +15,15 @@ import ListingAddressBottomSheet from "./ListingAddressBottomSheet";
 import { Pressable } from "react-native";
 import { Loader, MapPin, Search } from "lucide-react-native";
 import { useTempStore } from "@/store";
-import { useLayout } from "@react-native-community/hooks";
 import { showSnackbar } from "@/lib/utils";
 import useGetLocation from "@/hooks/useGetLocation";
 import { getReverseGeocode } from "@/hooks/useReverseGeocode";
 
-export default function ListingLocation() {
+export default function ListingLocation({ height }: { height: number }) {
   const { location, retryGetLocation } = useGetLocation();
   const { listing, updateListing } = useTempStore();
   const [loading, setLoading] = useState(false);
   const [showBottomSheet, setShowBottomSheet] = useState(false);
-  const { height, onLayout } = useLayout();
-
   const coords = useMemo(() => {
     if (listing?.address?.location) {
       return listing?.address?.location;
@@ -41,7 +38,7 @@ export default function ListingLocation() {
   }, [location, listing?.address?.location]);
   return (
     <>
-      <Box onLayout={onLayout} className="flex-1 ">
+      <Box className="flex-1 ">
         <KeyboardDismissPressable>
           <View className=" py-6 gap-4 px-4">
             <Heading size="md">Where is your property Located</Heading>
@@ -73,7 +70,7 @@ export default function ListingLocation() {
             <Map
               showUserLocation={false}
               {...listing.address?.location}
-              height={height / 1.3}
+              height={height / 2.5}
               marker={coords}
               showRadius
               radiusInMeters={100}

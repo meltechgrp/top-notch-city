@@ -11,14 +11,23 @@ import { useTempStore } from "@/store";
 import { LucideIcon, Minus, Plus } from "lucide-react-native";
 import { Colors } from "@/constants/Colors";
 import { TextInput } from "react-native";
-import React, { useCallback, useState } from "react";
-import { Amenities } from "@/constants/Amenities";
+import React, { useCallback, useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { fetchAllAmenities } from "@/actions/property/amenity";
+import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
 
 export default function ListingAmenities() {
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["amenities"],
+    queryFn: fetchAllAmenities,
+  });
   const { listing, updateListing } = useTempStore();
-
+  const amenities = useMemo(
+    () => data?.filter((item) => item.type == listing?.category) || [],
+    [data, listing?.category]
+  );
   const updateFacilities = useCallback(
-    (label: string, iconName: string, value: string | number | boolean) => {
+    (label: string, value: string | number | boolean) => {
       const prev = listing.facilities ?? [];
       const existing = prev.find((fac) => fac.label === label);
       let updated;
@@ -26,7 +35,7 @@ export default function ListingAmenities() {
       if (value === false || value === 0 || value === "") {
         updated = prev.filter((fac) => fac.label !== label);
       } else if (!existing) {
-        updated = [...prev, { label, icon: iconName, value }];
+        updated = [...prev, { label, value }];
       } else {
         updated = prev.map((fac) =>
           fac.label === label ? { ...fac, value } : fac
@@ -49,7 +58,6 @@ export default function ListingAmenities() {
     onCommitChange,
   }: {
     label: string;
-    iconName: string;
     value: string;
     onCommitChange: (val: string) => void;
   }) => {
@@ -70,27 +78,15 @@ export default function ListingAmenities() {
     );
   };
   const Layout = useCallback(
-    ({
-      type,
-      item,
-    }: {
-      type: string;
-      item: { label: string; icon: LucideIcon; iconName: string };
-    }) => {
-      const value = getFacilityValue(item.label);
+    ({ type, name }: { name: string; type: string }) => {
+      const value = getFacilityValue(name);
 
       switch (type) {
         case "btn":
           return (
             <View className="flex-row items-center gap-3">
               <Pressable
-                onPress={() =>
-                  updateFacilities(
-                    item.label,
-                    item.iconName,
-                    Math.max(0, value - 1)
-                  )
-                }
+                onPress={() => updateFacilities(name, Math.max(0, value - 1))}
               >
                 <View className="p-2 border border-outline-100 rounded-full">
                   <Icon as={Minus} />
@@ -98,9 +94,7 @@ export default function ListingAmenities() {
               </Pressable>
               <Text size="lg">{value}</Text>
               <Pressable
-                onPress={() =>
-                  updateFacilities(item.label, item.iconName, Number(value) + 1)
-                }
+                onPress={() => updateFacilities(name, Number(value) + 1)}
               >
                 <View className="p-2 border border-outline-100 rounded-full">
                   <Icon as={Plus} />
@@ -112,12 +106,9 @@ export default function ListingAmenities() {
         case "num":
           return (
             <MemoizedNumberInput
-              label={item.label}
-              iconName={item.iconName}
+              label={name}
               value={String(value || "")}
-              onCommitChange={(val) =>
-                updateFacilities(item.label, item.iconName, val)
-              }
+              onCommitChange={(val) => updateFacilities(name, val)}
             />
           );
 
@@ -126,9 +117,7 @@ export default function ListingAmenities() {
             <Switch
               size="md"
               value={!!value}
-              onToggle={() =>
-                updateFacilities(item.label, item.iconName, !value)
-              }
+              onToggle={() => updateFacilities(name, !value)}
               trackColor={{
                 false: "#d4d5d4",
                 true: Colors.primary,
@@ -144,6 +133,7 @@ export default function ListingAmenities() {
     },
     [getFacilityValue, updateFacilities]
   );
+  useRefreshOnFocus(refetch);
   return (
     <Box className="py-2 flex-1 px-4 gap-4">
       <View className="gap-1">
@@ -155,27 +145,21 @@ export default function ListingAmenities() {
         </Text>
       </View>
       <View className="gap-4">
-        {Amenities.map((section) => (
-          <View key={section.title} className="">
-            <View className="gap-4">
-              {section.data.map((item) => (
-                <View
-                  key={item.label}
-                  className="gap-2 py-3 px-4 flex-row justify-between items-center rounded-2xl bg-background-muted"
-                >
-                  <View className="flex-row gap-3 items-center">
-                    <Icon as={item.icon} className="text-primary w-4 h-4" />
-                    <Text size="md">
-                      {item.label}{" "}
-                      <Text className="text-primary">
-                        {section.type == "btn" && "*"}
-                      </Text>
-                    </Text>
-                  </View>
-                  <Layout type={section.type} item={item} />
-                </View>
-              ))}
+        {amenities.map((item) => (
+          <View
+            key={item.id}
+            className="gap-2 py-3 px-4 flex-row justify-between items-center rounded-2xl bg-background-muted"
+          >
+            <View className="flex-row gap-3 items-center">
+              {/* <Icon as={item.icon} className="text-primary w-4 h-4" /> */}
+              <Text size="md" className=" capitalize">
+                {item.name}
+              </Text>
             </View>
+            <Layout
+              type={item.name.includes("room") ? "btn" : "bool"}
+              name={item.name}
+            />
           </View>
         ))}
       </View>

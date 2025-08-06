@@ -129,3 +129,9 @@ type TopLocation = {
   property_count: number;
   photo_url: string;
 };
+
+type AmenityLabel = {
+  name: string;
+  type: string;
+  id: string;
+};

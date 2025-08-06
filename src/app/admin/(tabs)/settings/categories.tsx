@@ -20,7 +20,7 @@ type FlatItem = {
   categoryId?: string;
 };
 
-export default function Categories() {
+export default function CategoriesScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [showBottomSheet, setShowBottomSheet] = useState(false);
 
@@ -110,7 +110,7 @@ export default function Categories() {
         >
           <FlashList
             data={flatData}
-            keyExtractor={(item) => `${item.type}-${item.id}`}
+            keyExtractor={(item) => item.id}
             renderItem={({ item }) => {
               if (item.type === "category") {
                 return (

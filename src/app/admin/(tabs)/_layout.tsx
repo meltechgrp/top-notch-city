@@ -1,5 +1,5 @@
-import { Tabs } from "expo-router";
-import React from "react";
+import { Tabs, usePathname } from "expo-router";
+import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import { HapticTab } from "@/components/HapticTab";
 import TabBarBackground from "@/components/TabBarBackground";
@@ -19,6 +19,8 @@ export const unstable_settings = {
 };
 export default function AdminTabLayout() {
   const theme = useResolvedTheme();
+  const pathanme = usePathname();
+  const hide = useMemo(() => pathanme.includes("/admin/settings/"), [pathanme]);
   return (
     <Tabs
       screenOptions={{
@@ -28,18 +30,21 @@ export default function AdminTabLayout() {
         headerTitleAlign: "center",
         tabBarHideOnKeyboard: true,
         tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: "absolute",
-          },
-          default: {
-            backgroundColor:
-              theme == "dark"
-                ? Colors.light.background
-                : Colors.dark.background,
-          },
-        }),
+        tabBarStyle: [
+          Platform.select({
+            ios: {
+              // Use a transparent background on iOS to show the blur effect
+              position: "absolute",
+            },
+            default: {
+              backgroundColor:
+                theme == "dark"
+                  ? Colors.light.background
+                  : Colors.dark.background,
+            },
+          }),
+          { display: hide ? "none" : "flex" },
+        ],
         headerStyle: {
           backgroundColor:
             theme == "dark" ? Colors.light.background : Colors.dark.background,
@@ -87,7 +92,6 @@ export default function AdminTabLayout() {
         name="settings"
         options={{
           title: "Settings",
-          href: null,
           tabBarIcon: ({ color }) => <Settings2 size={24} color={color} />,
         }}
       />

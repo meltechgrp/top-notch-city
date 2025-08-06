@@ -37,14 +37,12 @@ export default function SettingsLayout() {
         name="theme"
         options={{
           headerTitle: "Themes",
-          animation: "fade_from_bottom",
         }}
       />
       <Stack.Screen
         name="delete-account"
         options={{
           headerTitle: "Delete Account",
-          animation: "fade_from_bottom",
         }}
       />
     </Stack>

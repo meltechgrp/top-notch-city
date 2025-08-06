@@ -4,29 +4,41 @@ import {
   AvatarFallbackText,
   AvatarImage,
   Icon,
+  Pressable,
   Text,
   View,
 } from "@/components/ui";
 import SwipeableWrapper from "@/components/shared/SwipeableWrapper";
-import { Pressable } from "react-native";
 import { ChevronRight } from "lucide-react-native";
 import { getImageUrl } from "@/lib/api";
 import { fullName } from "@/lib/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteUser } from "@/actions/user";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
 
 type Props = {
   user: Me;
   onPress: (user: Props["user"]) => void;
+  onLongPress: (user: Props["user"]) => void;
 };
 
-export default function UserListItem({ user, onPress }: Props) {
+export default function UserListItem({ user, onPress, onLongPress }: Props) {
   const query = useQueryClient();
   const { mutateAsync, isPending } = useMutation({
     mutationFn: deleteUser,
     onSuccess: () => {
       query.invalidateQueries({
         queryKey: ["users"],
+      });
+      showErrorAlert({
+        title: "User and all related data deleted successfully.",
+        alertType: "success",
+      });
+    },
+    onError: () => {
+      showErrorAlert({
+        title: "Something went wrong. Try again!",
+        alertType: "error",
       });
     },
   });
@@ -38,9 +50,11 @@ export default function UserListItem({ user, onPress }: Props) {
             user_id: user?.id,
           })
         }
-        rightAction={() => {}}
+        rightText="Verify"
+        rightAction={() => onLongPress(user)}
       >
         <Pressable
+          both
           onPress={() => onPress(user)}
           className={
             "flex-row items-center px-4 py-3 bg-background-muted rounded-xl"

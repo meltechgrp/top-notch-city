@@ -2,146 +2,77 @@ import withRenderVisible from "@/components/shared/withRenderOpen";
 import { FlatList, ImageBackground, Pressable, View } from "react-native";
 import BottomSheet from "../shared/BottomSheet";
 import { Button, ButtonText, Icon, Text } from "../ui";
-import * as ImagePicker from "expo-image-picker";
-import { cn, showSnackbar } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { Camera, Images, MoreHorizontal } from "lucide-react-native";
-import { uniqueId } from "lodash-es";
 import { MiniEmptyState } from "../shared/MiniEmptyState";
 import { useMemo, useState } from "react";
 import { useLayout } from "@react-native-community/hooks";
 import OptionsBottomSheet from "../shared/OptionsBottomSheet";
-import { useMediaCompressor } from "@/hooks/useMediaCompressor";
 import FullHeightLoaderWrapper from "../loaders/FullHeightLoaderWrapper";
+import { useMediaUpload } from "@/hooks/useMediaUpload";
+
+const MAX = 15;
 
 type Props = {
   visible: boolean;
   onDismiss: () => void;
   deleteFile: (id: number) => void;
+  deleteAllFile: () => void;
   onUpdate: (data: UploadedFile[]) => void;
   photos?: UploadedFile[];
   multiple?: boolean;
   withDescription?: boolean;
 };
 function ListingPhotosBottomSheet(props: Props) {
-  const {
-    visible,
-    onDismiss,
-    onUpdate,
-    deleteFile,
-    photos,
-    multiple = true,
-    withDescription = true,
-  } = props;
+  const { visible, onDismiss, onUpdate, deleteFile, photos, deleteAllFile } =
+    props;
   const [openEdit, setOpenEdit] = useState(false);
   const [selected, setSelected] = useState<number | undefined>();
   const { width, onLayout } = useLayout();
-  const [loading, setLoading] = useState(false);
-  const { compress } = useMediaCompressor();
-  const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-    setLoading(true);
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      selectionLimit: multiple ? 15 : 1,
-      orderedSelection: multiple,
-      allowsMultipleSelection: multiple,
-      aspect: [4, 3],
-    });
-    if (!result.canceled) {
-      await handleUpload(
-        result.assets.map((img) => ({
-          uri: img.uri,
-        }))
-      );
-    } else {
-      setLoading(false);
-    }
-  };
-  const takeImage = async () => {
-    const permitted = await ImagePicker.getCameraPermissionsAsync();
-    if (
-      permitted.status == ImagePicker.PermissionStatus.DENIED ||
-      permitted.status == ImagePicker.PermissionStatus.UNDETERMINED
-    ) {
-      return await ImagePicker.requestCameraPermissionsAsync();
-    }
-    setLoading(true);
-    let result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ["images"],
-      cameraType: ImagePicker.CameraType.back,
-      selectionLimit: multiple ? 15 : undefined,
-      orderedSelection: multiple,
-      allowsMultipleSelection: multiple,
-      aspect: [4, 3],
-    });
+  const currentCount = useMemo(() => {
+    return photos?.length || 0;
+  }, [photos]);
 
-    if (!result.canceled) {
-      await handleUpload(
-        result.assets.map((img) => ({
-          uri: img.uri,
-        }))
-      );
-    } else {
-      setLoading(false);
-    }
-  };
+  const { loading, pickMedia, takeMedia } = useMediaUpload({
+    type: "image",
+    onSuccess: onUpdate,
+    maxSelection: 16 - currentCount,
+  });
 
-  async function handleUpload(data: { uri: string }[]) {
-    const result = await Promise.all(
-      data.map(
-        async (file) =>
-          await compress({
-            type: "image",
-            uri: file.uri,
-            compressionRate: 0.2,
-          })
-      )
-    );
-    const compressed = result
-      .filter((item) => item !== null)
-      .map((item) => ({ uri: item, id: uniqueId() }));
-    setLoading(false);
-    if (compressed.length == 0) {
-      return showSnackbar({
-        message: "Failed to upload.. try again",
-        type: "warning",
-      });
-    } else {
-      onUpdate(compressed);
-    }
-  }
   const ListHeader = useMemo(
     () => (
       <View className="flex-1 gap-2  bg-background-muted rounded-xl py-6 mb-3">
         <View className=" flex-row flex-1 px-4 gap-5 items-center justify-center">
           <Button
-            disabled={photos && photos?.length > 15}
+            disabled={currentCount >= MAX}
+            isDisabled={currentCount >= MAX}
             size="xl"
             className="flex-1 items-center"
-            onPress={pickImage}
+            onPress={pickMedia}
           >
-            <ButtonText size="md">Choose photos</ButtonText>
+            <ButtonText size="sm">Choose photos</ButtonText>
             <Icon as={Images} />
           </Button>
           <Button
-            disabled={photos && photos?.length > 15}
+            disabled={currentCount >= MAX}
+            isDisabled={currentCount >= MAX}
             size="xl"
             className="flex-1  items-center"
-            onPress={takeImage}
+            onPress={takeMedia}
             variant="outline"
           >
-            <ButtonText size="md">Take photos</ButtonText>
+            <ButtonText size="sm">Take photos</ButtonText>
             <Icon as={Camera} className="text-primary" />
           </Button>
         </View>
-        {withDescription && (
+        {currentCount >= MAX && (
           <Text className=" font-light text-center">
-            Select any one to be the cover photo
+            Maximum number of property photos is 15
           </Text>
         )}
       </View>
     ),
-    [takeImage, pickImage]
+    [takeMedia, pickMedia]
   );
   const RenderItem = ({
     item,
@@ -161,7 +92,8 @@ function ListingPhotosBottomSheet(props: Props) {
       <ImageBackground
         alt="images"
         className={cn("w-full h-full flex-1 p-1 rounded-xl overflow-hidden")}
-        source={{ uri: item.uri }}
+        source={{ uri: item.uri, cache: "force-cache" }}
+        resizeMode="cover"
       >
         <View className=" flex-1 justify-between">
           <Pressable
@@ -205,13 +137,26 @@ function ListingPhotosBottomSheet(props: Props) {
             keyboardShouldPersistTaps="handled"
           />
         </FullHeightLoaderWrapper>
-        {photos && photos?.length > 0 && (
-          <View className=" px-4">
-            <Button className="h-12" onPress={onDismiss}>
-              <ButtonText>Continue</ButtonText>
-            </Button>
-          </View>
-        )}
+        <View className=" flex-row gap-6 px-4 mt-auto">
+          {currentCount > 3 && (
+            <View className="flex-1">
+              <Button
+                className="h-12"
+                variant="outline"
+                onPress={deleteAllFile}
+              >
+                <ButtonText>Remove All</ButtonText>
+              </Button>
+            </View>
+          )}
+          {currentCount > 0 && (
+            <View className="flex-1">
+              <Button className="h-12" onPress={onDismiss}>
+                <ButtonText>Continue</ButtonText>
+              </Button>
+            </View>
+          )}
+        </View>
       </View>
       <OptionsBottomSheet
         isOpen={openEdit}

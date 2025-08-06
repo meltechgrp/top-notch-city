@@ -1,4 +1,5 @@
 import { useUploadProperty } from "@/actions/property/upload";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { BodyScrollView } from "@/components/layouts/BodyScrollView";
 import ListingAmenities from "@/components/listing/ListingAmenities";
 import ListingBasis from "@/components/listing/ListingBasis";
@@ -12,7 +13,6 @@ import ListingResult from "@/components/listing/ListingResult";
 import FullHeightLoaderWrapper from "@/components/loaders/FullHeightLoaderWrapper";
 import headerLeft from "@/components/shared/headerLeft";
 import { Box, Button, ButtonText } from "@/components/ui";
-import { cn, showSnackbar } from "@/lib/utils";
 import { useTempStore } from "@/store";
 import { useLayout } from "@react-native-community/hooks";
 import { Stack, useRouter } from "expo-router";
@@ -43,7 +43,7 @@ export default function SellAddScreen() {
       case 4:
         return <ListingDescription />;
       case 5:
-        return <ListingLocation />;
+        return <ListingLocation height={height} />;
       case 6:
         return <ListingMediaFiles />;
       case 7:
@@ -58,55 +58,48 @@ export default function SellAddScreen() {
     if (back) {
       return updateListing({ ...listing, step });
     } else if (listing.step == 1 && !listing?.purpose) {
-      return showSnackbar({
-        message: "Please pick your purpose",
-        type: "warning",
+      return showErrorAlert({
+        title: "Please pick your purpose",
+        alertType: "warn",
       });
     } else if (listing.step == 2 && !listing?.subCategory) {
-      return showSnackbar({
-        message: "Please select a category",
-        type: "warning",
+      return showErrorAlert({
+        title: "Please select a category",
+        alertType: "warn",
       });
-    } else if (listing.step == 3) {
-      if (!listing.facilities?.find((item) => item.label == "Bedroom")) {
-        return showSnackbar({
-          message: "Please enter number of bedrooms",
-          type: "warning",
-        });
-      }
     } else if (listing.step == 4 && !listing.description) {
-      return showSnackbar({
-        message: "Please enter property description",
-        type: "warning",
+      return showErrorAlert({
+        title: "Please enter property description",
+        alertType: "warn",
       });
     } else if (listing.step == 5 && !listing?.address?.displayName) {
-      return showSnackbar({
-        message: "Please enter property location!",
-        type: "warning",
+      return showErrorAlert({
+        title: "Please enter property location!",
+        alertType: "warn",
       });
     } else if (listing.step == 6) {
       if (listing?.photos && listing?.photos?.length < 3)
-        return showSnackbar({
-          message: "Select at least 3 images",
-          type: "info",
+        return showErrorAlert({
+          title: "Select at least 3 images",
+          alertType: "warn",
         });
       else if (!listing?.photos?.length)
-        return showSnackbar({
-          message: "Add some images to proceed!",
-          type: "warning",
+        return showErrorAlert({
+          title: "Add some images to proceed!",
+          alertType: "warn",
         });
     }
     if (listing.step == 7) {
       if (!listing?.price) {
-        return showSnackbar({
-          message: "Please enter property price!",
-          type: "warning",
+        return showErrorAlert({
+          title: "Please enter property price!",
+          alertType: "warn",
         });
       }
       if (listing.purpose == "rent" && !listing?.duration) {
-        return showSnackbar({
-          message: "Please enter rentage duration",
-          type: "warning",
+        return showErrorAlert({
+          title: "Please enter rentage duration",
+          alertType: "warn",
         });
       }
     }
@@ -119,9 +112,9 @@ export default function SellAddScreen() {
         resetListing();
       },
       onError: () =>
-        showSnackbar({
-          message: error ?? "Something went wrong",
-          type: "error",
+        showErrorAlert({
+          title: error ?? "Something went wrong",
+          alertType: "error",
         }),
     });
   }
@@ -146,26 +139,16 @@ export default function SellAddScreen() {
       <Box onLayout={onLayout} className="flex-1">
         <FullHeightLoaderWrapper className="flex-1" loading={loading}>
           <SafeAreaView edges={["bottom"]} className="flex-1">
-            <BodyScrollView
-              className={cn(
-                "flex-1  min-h-96",
-                listing.step == 8 && "min-h-[34rem]"
-              )}
-              contentContainerClassName={cn(
-                "pb-28",
-                listing.step == 8 && "pb-48"
-              )}
+            <Animated.View
+              entering={FadeInRight.duration(800)}
+              exiting={FadeOutLeft.duration(800)}
+              key={listing.step}
+              style={{ height, flex: 1 }}
             >
-              <Animated.View
-                entering={FadeInRight.duration(800)}
-                exiting={FadeOutLeft.duration(800)}
-                key={listing.step}
-                style={{ height }}
-                className={cn("flex-1 min-h-96")}
-              >
+              <BodyScrollView contentContainerClassName="pb-12">
                 {Steps}
-              </Animated.View>
-            </BodyScrollView>
+              </BodyScrollView>
+            </Animated.View>
             <ListingBottomNavigation
               step={listing.step}
               uploaHandler={uploaHandler}

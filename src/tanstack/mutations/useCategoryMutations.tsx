@@ -6,8 +6,8 @@ import {
   addSubcategory,
   editSubcategory,
   deleteSubcategory,
-} from "@/actions/property/category"; // Adjust path as needed
-import { showSnackbar } from "@/lib/utils";
+} from "@/actions/property/category";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
 
 export const useCategoryMutations = () => {
   const queryClient = useQueryClient();
@@ -23,39 +23,48 @@ export const useCategoryMutations = () => {
   const addCategoryMutation = useMutation({
     mutationFn: addCategory,
     onSuccess: () => {
-      showSnackbar({ message: "Category added successfully", type: "success" });
+      showErrorAlert({
+        title: "Category added successfully",
+        alertType: "success",
+      });
       invalidate();
     },
     onError: () => {
-      showSnackbar({ message: "Failed to add category", type: "error" });
+      showErrorAlert({ title: "Failed to add category", alertType: "error" });
     },
   });
 
   const editCategoryMutation = useMutation({
     mutationFn: editCategory,
     onSuccess: () => {
-      showSnackbar({
-        message: "Category updated successfully",
-        type: "success",
+      showErrorAlert({
+        title: "Category updated successfully",
+        alertType: "success",
       });
       invalidate();
     },
     onError: () => {
-      showSnackbar({ message: "Failed to update category", type: "error" });
+      showErrorAlert({
+        title: "Failed to update category",
+        alertType: "error",
+      });
     },
   });
 
   const deleteCategoryMutation = useMutation({
     mutationFn: deleteCategory,
     onSuccess: () => {
-      showSnackbar({
-        message: "Category deleted successfully",
-        type: "success",
+      showErrorAlert({
+        title: "Category deleted successfully",
+        alertType: "success",
       });
       invalidate();
     },
     onError: () => {
-      showSnackbar({ message: "Failed to delete category", type: "error" });
+      showErrorAlert({
+        title: "Failed to delete category",
+        alertType: "error",
+      });
     },
   });
 
@@ -63,42 +72,51 @@ export const useCategoryMutations = () => {
   const addSubcategoryMutation = useMutation({
     mutationFn: addSubcategory,
     onSuccess: () => {
-      showSnackbar({
-        message: "Subcategory added successfully",
-        type: "success",
+      showErrorAlert({
+        title: "Subcategory added successfully",
+        alertType: "success",
       });
       invalidate();
     },
     onError: () => {
-      showSnackbar({ message: "Failed to add subcategory", type: "error" });
+      showErrorAlert({
+        title: "Failed to add subcategory",
+        alertType: "error",
+      });
     },
   });
 
   const editSubcategoryMutation = useMutation({
     mutationFn: editSubcategory,
     onSuccess: () => {
-      showSnackbar({
-        message: "Subcategory updated successfully",
-        type: "success",
+      showErrorAlert({
+        title: "Subcategory updated successfully",
+        alertType: "success",
       });
       invalidate();
     },
     onError: () => {
-      showSnackbar({ message: "Failed to update subcategory", type: "error" });
+      showErrorAlert({
+        title: "Failed to update subcategory",
+        alertType: "error",
+      });
     },
   });
 
   const deleteSubcategoryMutation = useMutation({
     mutationFn: deleteSubcategory,
     onSuccess: () => {
-      showSnackbar({
-        message: "Subcategory deleted successfully",
-        type: "success",
+      showErrorAlert({
+        title: "Subcategory deleted successfully",
+        alertType: "success",
       });
       invalidate();
     },
     onError: () => {
-      showSnackbar({ message: "Failed to delete subcategory", type: "error" });
+      showErrorAlert({
+        title: "Failed to delete subcategory",
+        alertType: "error",
+      });
     },
   });
 

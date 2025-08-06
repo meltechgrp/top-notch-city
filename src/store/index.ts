@@ -82,7 +82,6 @@ export type Listing = {
   facilities?: {
     label: string;
     value: any;
-    icon: string;
   }[];
   photos?: UploadedFile[];
   videos?: UploadedFile[];

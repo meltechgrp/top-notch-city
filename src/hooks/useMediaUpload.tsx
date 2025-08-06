@@ -82,15 +82,13 @@ export function useMediaUpload({
     ) {
       await ImagePicker.requestCameraPermissionsAsync();
     }
-    setLoading(true);
     const result = await ImagePicker.launchCameraAsync({
       mediaTypes: type === "image" ? ["images"] : ["videos"],
       cameraType: ImagePicker.CameraType.back,
-      quality: type === "video" ? 0.6 : undefined,
       aspect: [4, 3],
-      allowsEditing: true,
       videoMaxDuration: 1200,
     });
+    setLoading(true);
     if (!result.canceled) {
       await compressor(result.assets.map((asset) => ({ uri: asset.uri })));
     } else {

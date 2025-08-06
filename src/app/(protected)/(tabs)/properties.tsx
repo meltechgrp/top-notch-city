@@ -121,7 +121,7 @@ export default function PropertiesScreen() {
       >
         <VerticalProperties
           isLoading={isLoading}
-          data={[]}
+          data={filteredData}
           showStatus={true}
           headerTopComponent={
             filteredData.length > 0 ? headerComponent : undefined

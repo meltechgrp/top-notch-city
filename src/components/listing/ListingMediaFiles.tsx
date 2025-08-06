@@ -90,6 +90,7 @@ export default function ListingMediaFiles() {
             let newData = listing.photos?.filter((_, i) => i + 1 != id);
             updateListing({ ...listing, photos: newData });
           }}
+          deleteAllFile={() => updateListing({ ...listing, photos: [] })}
           onUpdate={async (data) => {
             let combined = [...(listing.photos ?? []), ...data];
             updateListing({ ...listing, photos: combined });
@@ -100,6 +101,7 @@ export default function ListingMediaFiles() {
             let newData = listing.videos?.filter((_, i) => i + 1 != id);
             updateListing({ ...listing, videos: newData });
           }}
+          deleteAllFile={() => updateListing({ ...listing, videos: [] })}
           onUpdate={async (data) => {
             let combined = [...(listing.videos ?? []), ...data];
             updateListing({ ...listing, videos: combined });

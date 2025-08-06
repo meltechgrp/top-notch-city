@@ -176,6 +176,111 @@ export async function updatePropertyFacilities({
   return res.data;
 }
 
+export function useUpdateProperty() {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: async ({
+      listing,
+      propertyId,
+    }: {
+      listing: Listing;
+      propertyId: string;
+    }) => {
+      const token = getAuthToken();
+      const formData = new FormData();
+
+      const {
+        photos,
+        description,
+        price,
+        videos,
+        category,
+        subCategory,
+        facilities,
+        purpose,
+        address,
+        duration,
+      } = listing;
+
+      formData.append("title", "property");
+      if (description) formData.append("description", description);
+      if (price) formData.append("price", price);
+      if (duration) formData.append("duration", duration);
+      if (category) formData.append("property_category_name", category);
+      if (subCategory)
+        formData.append("property_subcategory_name", subCategory);
+      if (purpose) formData.append("purpose", purpose);
+
+      if (address) {
+        formData.append("latitude", address.location.latitude.toString());
+        formData.append("longitude", address.location.longitude.toString());
+        const comps = address.addressComponents;
+        if (comps.city) formData.append("city", comps.city);
+        if (comps.state) formData.append("state", comps.state);
+        if (comps.country) formData.append("country", comps.country);
+        if (comps.street) formData.append("street", comps.street);
+        if (address.placeId) formData.append("place_id", address.placeId);
+      }
+
+      photos?.forEach((item) => {
+        formData.append("media", {
+          uri: item.uri,
+          name: `image.jpg`,
+          type: "image/jpeg",
+        } as any);
+      });
+
+      videos?.forEach((item) => {
+        formData.append("media", {
+          uri: item.uri,
+          name: `video.mp4`,
+          type: "video/mp4",
+        } as any);
+      });
+
+      facilities?.forEach((fac) => {
+        formData.append("amenity_names", fac.label);
+        formData.append("amenity_values", fac.value.toString());
+      });
+
+      const res = await axios.put(
+        `${config.origin}/api/properties/${propertyId}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+            Accept: "application/json",
+          },
+        }
+      );
+
+      const result = res.data;
+      console.log(result);
+      if (result?.detail) {
+        throw new Error("Please verify your property details");
+      }
+
+      if (result?.property_id) {
+        return result;
+      }
+
+      throw new Error("Something went wrong, please try again");
+    },
+    onSuccess: () => {
+      // Invalidate `properties` query so it's refetched
+      queryClient.invalidateQueries({ queryKey: ["properties"] });
+    },
+  });
+
+  return {
+    loading: mutation.isPending,
+    error: mutation.error?.message ?? null,
+    success: mutation.isSuccess,
+    updateProperty: mutation.mutateAsync,
+  };
+}
 export function useUploadProperty() {
   const queryClient = useQueryClient();
 
@@ -236,7 +341,6 @@ export function useUploadProperty() {
       facilities?.forEach((fac) => {
         formData.append("amenity_names", fac.label);
         formData.append("amenity_values", fac.value.toString());
-        formData.append("amenity_icons", fac.icon);
       });
 
       const res = await axios.post(

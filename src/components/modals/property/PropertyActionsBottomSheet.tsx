@@ -3,8 +3,7 @@ import { TouchableWithoutFeedback, View } from "react-native";
 import BottomSheetPlain from "@/components/shared/BottomSheetPlain";
 import { FlashList } from "@shopify/flash-list";
 import { Heading, Icon, Pressable, Text } from "@/components/ui";
-import { router } from "expo-router";
-import { ChevronRight } from "lucide-react-native";
+
 type OptionProps = {
   option: ConfirmationActionConfig;
   index: number;

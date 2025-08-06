@@ -65,7 +65,6 @@ export default function SignUpBottomSheet({
           ...s,
           hasAuth: true,
         }));
-        eventBus.dispatchEvent("REFRESH_PROFILE", null);
         onDismiss?.();
       }
     } catch (error) {
