@@ -1,5 +1,6 @@
 import { cn, FindAmenity } from "@/lib/utils";
 import { Text, View } from "../ui";
+import { Amenities } from "@/constants/Amenities";
 
 interface Props {
   property: Property;

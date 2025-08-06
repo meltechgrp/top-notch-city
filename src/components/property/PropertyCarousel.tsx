@@ -111,7 +111,7 @@ function PropertyCarousel({
           data={media}
           renderItem={(props) => (
             <PropertyMedia
-              // style={{ height: 500, flex: 1 }}
+              style={{ height: 500, flex: 1 }}
               withBackdrop={withBackdrop}
               source={props.item}
               isOwner={isOwner}

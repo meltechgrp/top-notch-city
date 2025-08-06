@@ -112,7 +112,7 @@ const PropertyNearbySection = () => {
       <Heading size="lg">Nearby</Heading>
       <View>
         <TabView
-          style={{ height: 380 }}
+          style={{ height: 450 }}
           navigationState={{ index, routes }}
           renderScene={renderScene}
           onIndexChange={setIndex}

@@ -65,6 +65,7 @@ export default function SignUpBottomSheet({
           ...s,
           hasAuth: true,
         }));
+        eventBus.dispatchEvent("openEmailVerificationModal", { visible: true });
         onDismiss?.();
       }
     } catch (error) {
