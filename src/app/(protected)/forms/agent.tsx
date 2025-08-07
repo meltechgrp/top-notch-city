@@ -5,38 +5,31 @@ import {
   Pressable,
   TouchableOpacity,
 } from "react-native";
-import { View, Text, Box, Image } from "@/components/ui";
+import { View, Text, Box, Image, Icon } from "@/components/ui";
 import { Link, useRouter } from "expo-router";
 import { CustomInput } from "@/components/custom/CustomInput";
 import { BodyScrollView } from "@/components/layouts/BodyScrollView";
-import ListingPhotosBottomSheet from "@/components/listing/ListingPhotosBottomSheet";
 import DatePicker from "@/components/custom/DatePicker";
 import { useMutation } from "@tanstack/react-query";
 import { uploadAgentForm } from "@/actions/agent";
-import { showSnackbar } from "@/lib/utils";
 import { z } from "zod";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
+import ProfileImageBottomSheet from "@/components/agent/ProfileImageBottomSheet";
+import { profileDefault } from "@/store";
+import { Edit } from "lucide-react-native";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
 
 const AgentFormSchema = z.object({
-  firstname: z.string().min(1, "First name is required"),
-  lastname: z.string().min(1, "Last name is required"),
   phone: z.string().min(1, "Phone number is required"),
-  nin: z.string().min(1, "NIN is required"),
+  // nin: z.string().min(1, "NIN is required"),
   birthdate: z.date({
     required_error: "Birthdate is required",
     invalid_type_error: "Birthdate must be a valid date",
   }),
   country: z.string().min(1, "Country is required"),
   state: z.string().min(1, "State is required"),
-  city: z.string().min(1, "City is required"),
-  photo: z
-    .array(
-      z.object({
-        uri: z.string(),
-        id: z.string(),
-      })
-    )
-    .min(1, "At least one photo is required"),
+  city: z.string().optional(),
+  photo: z.string().min(1, "At least one photo is required"),
 });
 
 const minimumAge = new Date(Date.now() - 1000 * 60 * 60 * 24 * 365 * 13);
@@ -47,15 +40,13 @@ export default function AgentFormScreen() {
   });
   const [photosBottomSheet, setPhotosBottomSheet] = useState(false);
   const [form, setForm] = useState<AgentFormData>({
-    firstname: "",
-    lastname: "",
     phone: "",
-    nin: "",
+    // nin: "",
     birthdate: null,
     country: "",
     state: "",
     city: "",
-    photo: [],
+    photo: "",
   });
 
   async function handleForm() {
@@ -76,16 +67,16 @@ export default function AgentFormScreen() {
       if (err instanceof z.ZodError) {
         // ✅ Use showSnackbar for each error combined
         const messages = err.errors[0].message;
-        showSnackbar({
-          message: messages,
-          type: "error",
+        showErrorAlert({
+          title: messages,
+          alertType: "error",
           duration: 2000,
         });
       } else {
         console.error(err);
-        showSnackbar({
-          message: "Something went wrong during upload.",
-          type: "error",
+        showErrorAlert({
+          title: "Something went wrong during upload.",
+          alertType: "error",
         });
       }
     }
@@ -95,36 +86,36 @@ export default function AgentFormScreen() {
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
       >
         <BodyScrollView withBackground className="flex-1 px-4 py-6">
           <View className="gap-6">
-            <Text className="text-xl font-semibold">
-              📋 Agent Submission Form
-            </Text>
-            <Text className="text-sm font-light">
+            <Text className="text-sm font-light text-center">
               Fill out the required information below to register an agent
               profile.
             </Text>
 
             {/* Personal Information */}
             <View className="gap-4 mt-4">
-              <Text className="text-base font-medium">Personal Details</Text>
-
+              <TouchableOpacity
+                className=" mx-auto w-40 h-40 mb-4 relative"
+                onPress={() => setPhotosBottomSheet(true)}
+              >
+                <Image
+                  style={{ borderRadius: 100 }}
+                  source={form?.photo || profileDefault}
+                  alt="image"
+                />
+                <View className=" absolute bottom-0 right-2">
+                  <Icon size="sm" as={Edit} />
+                </View>
+              </TouchableOpacity>
               <CustomInput
                 isBottomSheet={false}
                 className=""
-                value={form.firstname}
-                onUpdate={(text) => setForm({ ...form, firstname: text })}
-                placeholder="First Name *"
-              />
-
-              <CustomInput
-                isBottomSheet={false}
-                className=""
-                value={form.lastname}
-                onUpdate={(text) => setForm({ ...form, lastname: text })}
-                placeholder="Last Name *"
+                value={form.phone}
+                onUpdate={(text) => setForm({ ...form, phone: text })}
+                placeholder="Phone Number *"
+                keyboardType="phone-pad"
               />
               <DatePicker
                 label=""
@@ -138,44 +129,19 @@ export default function AgentFormScreen() {
                 maximumDate={minimumAge}
                 startDate={minimumAge}
               />
-              <CustomInput
-                isBottomSheet={false}
-                className=""
-                value={form.phone}
-                onUpdate={(text) => setForm({ ...form, phone: text })}
-                placeholder="Phone Number *"
-                keyboardType="phone-pad"
-              />
 
-              <CustomInput
+              {/* <CustomInput
                 isBottomSheet={false}
                 className=""
                 value={form.nin}
                 onUpdate={(text) => setForm({ ...form, nin: text })}
                 placeholder="National ID Number (NIN) *"
                 keyboardType="numeric"
-              />
-              <TouchableOpacity
-                className=" h-16 bg-background-muted rounded-2xl  border border-outline"
-                onPress={() => setPhotosBottomSheet(true)}
-              >
-                <View className=" gap-4 flex-1 px-4 py-2 flex-row  items-center">
-                  <Text className="text-sm font-light">Upload photo *</Text>
-                  {form.photo[0]?.uri && (
-                    <Image
-                      className=" w-12 h-12 rounded-full ml-auto"
-                      source={{ uri: form.photo[0]?.uri }}
-                      alt="image"
-                    />
-                  )}
-                </View>
-              </TouchableOpacity>
+              /> */}
             </View>
 
             {/* Location Information */}
             <View className="gap-4 mt-6">
-              <Text className="text-base font-medium">Location</Text>
-
               <CustomInput
                 isBottomSheet={false}
                 className=""
@@ -197,7 +163,7 @@ export default function AgentFormScreen() {
                 className=""
                 value={form.city}
                 onUpdate={(text) => setForm({ ...form, city: text })}
-                placeholder="City *"
+                placeholder="City"
               />
             </View>
 
@@ -205,7 +171,11 @@ export default function AgentFormScreen() {
             <View className="mt-8 items-center">
               <Text className="text-sm text-center">
                 By submitting this form, you agree to our{" "}
-                <Link href="/home" className="text-primary underline">
+                <Link
+                  href="https://topnotchcity.com/terms"
+                  target="_blank"
+                  className="text-primary underline"
+                >
                   Terms & Conditions
                 </Link>
                 .
@@ -227,20 +197,10 @@ export default function AgentFormScreen() {
         </BodyScrollView>
       </KeyboardAvoidingView>
 
-      <ListingPhotosBottomSheet
+      <ProfileImageBottomSheet
         visible={photosBottomSheet}
-        photos={form.photo}
-        multiple={false}
-        withDescription={false}
+        onSave={(file) => setForm({ ...form, photo: file[0].uri })}
         onDismiss={() => setPhotosBottomSheet(false)}
-        deleteFile={(id) => {
-          let newData = form.photo?.filter((_, i) => i + 1 != id);
-          setForm({ ...form, photo: newData });
-        }}
-        onUpdate={async (data) => {
-          let combined = [...(form.photo ?? []), ...data];
-          setForm({ ...form, photo: combined });
-        }}
       />
     </Box>
   );

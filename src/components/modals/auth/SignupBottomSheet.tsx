@@ -14,6 +14,7 @@ import { CustomInput } from "@/components/custom/CustomInput";
 export default function SignUpBottomSheet({
   visible,
   onDismiss,
+  isAgentRequest,
 }: AuthModalProps) {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = React.useState<AuthSignupInput>({
@@ -65,7 +66,10 @@ export default function SignUpBottomSheet({
           ...s,
           hasAuth: true,
         }));
-        eventBus.dispatchEvent("openEmailVerificationModal", { visible: true });
+        eventBus.dispatchEvent("openEmailVerificationModal", {
+          visible: true,
+          isAgentRequest: isAgentRequest,
+        });
         onDismiss?.();
       }
     } catch (error) {

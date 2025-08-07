@@ -15,10 +15,12 @@ import { useTempStore } from "@/store";
 import { showSnackbar } from "@/lib/utils";
 import { Loader } from "lucide-react-native";
 import BottomSheet from "@/components/shared/BottomSheet";
+import { router } from "expo-router";
 
 export default function VerifyOtpBottomSheet({
   visible,
   onDismiss,
+  isAgentRequest,
 }: AuthModalProps) {
   const [otp, setOtp] = React.useState("");
   const email = useTempStore((s) => s.kyc?.email);
@@ -41,6 +43,9 @@ export default function VerifyOtpBottomSheet({
           type: "error",
         });
       } else {
+        if (isAgentRequest) {
+          router.push("/forms/agent");
+        }
         onDismiss?.();
       }
     } catch (error) {

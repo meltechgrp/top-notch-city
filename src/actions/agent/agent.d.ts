@@ -1,13 +1,11 @@
 interface AgentFormData {
-  firstname: string;
-  lastname: string;
   phone: string;
-  nin: string;
+  // nin: string;
   birthdate: Date | null;
   country: string;
   state: string;
-  city: string;
-  photo: UploadedFile[];
+  city?: string;
+  photo: string;
 }
 interface AgentReview {
   id: string;

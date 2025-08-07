@@ -7,17 +7,16 @@ import { useAmenityMutations } from "@/tanstack/mutations/useAmenityMutation";
 
 type Props = {
   item: AmenityLabel;
-  categoryId: string;
 };
 
-export default function AmenityItem({ item, categoryId }: Props) {
+export default function AmenityItem({ item }: Props) {
   const [amenityBottomSheet, setAmenityBottomSheet] = useState(false);
   const { mutateAsync: editAmenity, isPending: loading2 } =
     useAmenityMutations().editAmenityMutation;
   const { mutateAsync: deleteAmenity, isPending: loading } =
     useAmenityMutations().deleteAmenityMutation;
 
-  async function editHandler(data: { name: string; type: string }) {
+  async function editHandler(data: Omit<AmenityLabel, "id">) {
     await editAmenity(
       {
         id: item.id,
@@ -57,7 +56,7 @@ export default function AmenityItem({ item, categoryId }: Props) {
         onSubmit={editHandler}
         loading={loading || loading2}
         type="edit"
-        value={{ ...item, type: categoryId }}
+        value={item}
       />
     </>
   );

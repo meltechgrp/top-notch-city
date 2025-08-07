@@ -28,8 +28,8 @@ export function PropertyHeroSection({ property, width }: Props) {
             <PropertyTitle property={property} />
             <PropertyPrice property={property} className="self-start" />
             <View className="flex-row items-center mt-1 gap-2">
-              <Icon size="md" as={MapPin} className="text-primary" />
-              <Text size="md" className=" text-white">
+              <Icon size="sm" as={MapPin} className="text-primary" />
+              <Text size="sm" className=" text-white">
                 {composeFullAddress(property?.address, true, "long")}
               </Text>
             </View>

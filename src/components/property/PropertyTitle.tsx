@@ -20,12 +20,10 @@ export function PropertyTitle({
           </Text>
         </View>
         <Text
-          className={cn(
-            "text-2xl text-white font-bold",
-            smallView && "text-sm"
-          )}
+          className={cn("text-xl text-white font-bold", smallView && "text-sm")}
         >
-          {FindAmenity("Bedroom", amenities)} Bedroom {subcategory?.name}
+          {FindAmenity("Bedroom", amenities)} Bedroom{" "}
+          {subcategory?.name || (subcategory as any)}
         </Text>
       </View>
     );
@@ -38,12 +36,10 @@ export function PropertyTitle({
           </Text>
         </View>
         <Text
-          className={cn(
-            "text-2xl text-white font-bold",
-            smallView && "text-sm"
-          )}
+          className={cn("text-xl text-white font-bold", smallView && "text-sm")}
         >
-          {FindAmenity("Bedroom", amenities)} Bedroom {subcategory?.name}
+          {FindAmenity("Bedroom", amenities)} Bedroom{" "}
+          {subcategory?.name || (subcategory as any)}
         </Text>
       </View>
     );

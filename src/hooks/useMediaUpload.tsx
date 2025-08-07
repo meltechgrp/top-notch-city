@@ -6,7 +6,7 @@ import { useMediaCompressor } from "./useMediaCompressor";
 
 type MediaType = "image" | "video";
 
-type UploadResult = { uri: string; id: string }[];
+export type UploadResult = { uri: string; id: string }[];
 
 type UseMediaUploadOptions = {
   onSuccess: (media: UploadResult) => void;

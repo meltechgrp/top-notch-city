@@ -13,9 +13,11 @@ export const fetchAllAmenities = async (): Promise<AmenityLabel[]> => {
 export const addAmenity = async ({
   name,
   type,
+  category,
 }: {
   name: string;
   type: string;
+  category: string;
 }) => {
   try {
     const res = await Fetch(`/amenity-labels/`, {
@@ -23,7 +25,7 @@ export const addAmenity = async ({
       headers: {
         "Content-Type": "application/json",
       },
-      data: { name, type },
+      data: { name, type, category },
     });
 
     if (res?.detail) throw new Error("Failed to add amenity");
@@ -41,6 +43,7 @@ export const editAmenity = async ({
   data: {
     name: string;
     type: string;
+    category: string;
   };
 }) => {
   try {

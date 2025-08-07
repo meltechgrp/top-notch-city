@@ -12,10 +12,11 @@ import { useEffect, useMemo, useState } from "react";
 import { RefreshControl } from "react-native";
 
 type FlatItem = {
-  type: "category" | "subcategory";
+  key: "category" | "subcategory";
   id: string;
   name: string;
-  categoryId: string;
+  category: string;
+  type: string;
 };
 
 export default function AmenitiesScreen() {
@@ -34,10 +35,10 @@ export default function AmenitiesScreen() {
 
     const grouped = data.reduce<Record<string, AmenityLabel[]>>(
       (acc, amenity) => {
-        if (!acc[amenity.type]) {
-          acc[amenity.type] = [];
+        if (!acc[amenity.category]) {
+          acc[amenity.category] = [];
         }
-        acc[amenity.type].push(amenity);
+        acc[amenity.category].push(amenity);
         return acc;
       },
       {}
@@ -45,20 +46,22 @@ export default function AmenitiesScreen() {
 
     return Object.entries(grouped).flatMap(([typeName, items]) => [
       {
-        type: "category",
+        key: "category",
         id: typeName, // Using type name as the category ID
         name: typeName,
       },
       ...items.map((item) => ({
-        type: "subcategory",
-        id: item.id,
-        name: item.name,
-        categoryId: typeName,
+        key: "subcategory",
+        ...item,
       })),
     ]);
   }, [data]) as FlatItem[];
 
-  const handleCreateCategory = async (data: { name: string; type: string }) => {
+  const handleCreateCategory = async (data: {
+    name: string;
+    type: string;
+    category: string;
+  }) => {
     await mutateAsync(data);
     refetch();
   };
@@ -101,7 +104,7 @@ export default function AmenitiesScreen() {
             data={flatAmenities}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => {
-              if (item.type === "category") {
+              if (item.key === "category") {
                 return (
                   <View
                     className={
@@ -117,8 +120,8 @@ export default function AmenitiesScreen() {
                 );
               }
 
-              if (item.type === "subcategory") {
-                return <AmenityItem item={item} categoryId={item.categoryId} />;
+              if (item.key === "subcategory") {
+                return <AmenityItem item={item} />;
               }
 
               return null;

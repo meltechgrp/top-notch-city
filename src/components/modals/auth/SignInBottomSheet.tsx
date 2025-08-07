@@ -27,15 +27,19 @@ import GoogleIcon from "@/components/icons/GoogleIcon";
 import BottomSheet from "../../shared/BottomSheet";
 import { Divider } from "@/components/ui/divider";
 import { CustomInput } from "@/components/custom/CustomInput";
+import { getMe } from "@/actions/user";
+import { router } from "expo-router";
 
 export default function SignInBottomSheet({
   visible,
   onDismiss,
   onLoginSuccess,
+  isAgentRequest = false,
 }: AuthModalProps) {
   // const [isAppleAvailable, setIsAppleAvailable] = useState(false);
   // const theme = useResolvedTheme();
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(false);
   const [form, setForm] = React.useState({
     email: "",
     password: "",
@@ -71,17 +75,26 @@ export default function SignInBottomSheet({
         };
         if (access_token) {
           saveAuthToken(access_token);
+          const me = await getMe();
+          if (me) {
+            useStore.setState((s) => ({
+              ...s,
+              me: me,
+              hasAuth: true,
+            }));
+            if (isAgentRequest && me.role == "user") {
+              router.push("/forms/agent");
+            }
+          }
         }
-        useStore.setState((s) => ({
-          ...s,
-          hasAuth: true,
-        }));
-        eventBus.dispatchEvent("REFRESH_PROFILE", null);
         onDismiss?.();
-        onLoginSuccess?.();
       }
     } catch (error) {
       console.error(error);
+      showSnackbar({
+        message: "Something went wrong. Try again",
+        type: "error",
+      });
     } finally {
       setLoading(false);
     }
@@ -96,20 +109,31 @@ export default function SignInBottomSheet({
     }) => {
       try {
         console.log(socialData);
+        setFetching(true);
         const res = await loginWithSocial(socialData);
         if (res?.access_token) {
           saveAuthToken(res.access_token);
-          useStore.setState((s) => ({ ...s, hasAuth: true }));
-          eventBus.dispatchEvent("REFRESH_PROFILE", null);
-          onDismiss?.();
-          onLoginSuccess?.();
+          const me = await getMe();
+          if (me) {
+            useStore.setState((s) => ({
+              ...s,
+              me: me,
+              hasAuth: true,
+            }));
+            if (isAgentRequest && me.role == "user") {
+              router.push("/forms/agent");
+            }
+          }
         }
+        onDismiss?.();
       } catch (error) {
         console.error(error);
         showSnackbar({
           message: "Error occurred during. Please try again.",
           type: "error",
         });
+      } finally {
+        setFetching(false);
       }
     },
     []
@@ -236,7 +260,7 @@ export default function SignInBottomSheet({
             className="flex-1 h-14 bg-background-muted mt-4 gap-2"
             onPress={() => googlePromptAsync()}
           >
-            <Icon as={GoogleIcon} />
+            {fetching ? <SpinningLoader /> : <Icon as={GoogleIcon} />}
             <ButtonText className=" text-typography">
               Continue with Google
             </ButtonText>
@@ -255,7 +279,10 @@ export default function SignInBottomSheet({
             <Pressable
               onPress={() => {
                 onDismiss?.();
-                eventBus.dispatchEvent("openSignUpModal", { visible: true });
+                eventBus.dispatchEvent("openSignUpModal", {
+                  visible: true,
+                  isAgentRequest: isAgentRequest,
+                });
               }}
             >
               <Text className=" text-primary font-medium">Sign Up</Text>

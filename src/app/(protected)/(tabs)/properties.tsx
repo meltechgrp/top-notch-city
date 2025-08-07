@@ -24,7 +24,8 @@ import { useMemo, useState } from "react";
 export default function PropertiesScreen() {
   const router = useRouter();
   const { me, hasAuth } = useStore();
-  const isAgent = useMemo(() => me?.role === "agent", [me]);
+  const [ctaVisible, setCtaVisible] = useState(false);
+  const [ctaType, setCtaType] = useState<"agent" | "admin" | "user">("user");
   const [search, setSearch] = useState("");
   const [actveTab, setActiveTab] = useState("all");
   const {
@@ -93,12 +94,24 @@ export default function PropertiesScreen() {
   useRefreshOnFocus(refetch);
   function handleGetStarted() {
     if (!hasAuth) {
-      return openSignInModal({ visible: true });
+      // Not logged in — show CTA to become an agent
+      setCtaType("user");
+      return setCtaVisible(true);
     }
 
-    if (isAgent) {
-      router.push("/property/add");
+    if (me?.role === "agent") {
+      return router.push("/property/add");
     }
+
+    if (me?.role === "admin") {
+      // Show warning modal
+      setCtaType("admin");
+      return setCtaVisible(true);
+    }
+
+    // For any other role, show CTA to become an agent
+    setCtaType("agent");
+    setCtaVisible(true);
   }
   const { onLayout, height } = useLayout();
   return (
@@ -109,14 +122,18 @@ export default function PropertiesScreen() {
         onLayout={onLayout}
         className="pt-4 px-2"
         rightHeaderComponent={
-          <Pressable
-            onPress={handleGetStarted}
-            both
-            className="flex-row items-center gap-1 p-1.5 px-3 rounded-xl bg-primary"
-          >
-            <Text className="text-white">Add</Text>
-            <Icon size="sm" as={Plus} className="text-white" />
-          </Pressable>
+          filteredData?.length > 0 ? (
+            <Pressable
+              onPress={handleGetStarted}
+              both
+              className="flex-row items-center gap-1 p-1.5 px-3 rounded-xl bg-primary"
+            >
+              <Text className="text-white">Add</Text>
+              <Icon size="sm" as={Plus} className="text-white" />
+            </Pressable>
+          ) : (
+            <></>
+          )
         }
       >
         <VerticalProperties
@@ -170,6 +187,56 @@ export default function PropertiesScreen() {
           }
         />
       </MainLayout>
+      {ctaVisible && (
+        <View className="absolute inset-0 bg-black/40 justify-center items-center z-50">
+          <View className="bg-background-muted rounded-xl w-11/12 max-w-md p-6 gap-y-4">
+            <Heading size="lg" className="text-center">
+              {ctaType === "user"
+                ? "Interested in Becoming an Agent?"
+                : ctaType === "agent"
+                  ? "Ready to Start Listing Properties?"
+                  : "Access Restricted"}
+            </Heading>
+
+            <Text className="text-center text-sm">
+              {ctaType === "user"
+                ? "To list properties, please sign in with an agent account or create one to get started."
+                : ctaType === "agent"
+                  ? "You're almost there! Complete your agent registration to begin listing properties."
+                  : "Administrators are not permitted to list properties. Please switch to an agent account to proceed."}
+            </Text>
+
+            <View className="flex-row justify-center gap-4 mt-6">
+              <Button
+                variant="outline"
+                className="flex-1 h-12"
+                onPress={() => setCtaVisible(false)}
+              >
+                <ButtonText>Cancel</ButtonText>
+              </Button>
+
+              {(ctaType === "user" || ctaType === "agent") && (
+                <Button
+                  className="flex-1 h-12"
+                  onPress={() => {
+                    setCtaVisible(false);
+                    ctaType === "user"
+                      ? openSignInModal({
+                          visible: true,
+                          isAgentRequest: true,
+                        })
+                      : router.push("/forms/agent");
+                  }}
+                >
+                  <ButtonText>
+                    {ctaType === "user" ? "Sign In" : "Become Agent"}
+                  </ButtonText>
+                </Button>
+              )}
+            </View>
+          </View>
+        </View>
+      )}
     </>
   );
 }

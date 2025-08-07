@@ -148,7 +148,7 @@ const PropertyDetailsBottomSheet = () => {
 
             <PropertyNearbySection />
             <View className="bg-background-muted p-4 rounded-xl gap-4">
-              <Pressable className={"flex-row items-center "}>
+              <Pressable className={"f items-center "}>
                 <Avatar className=" w-14 h-14">
                   <AvatarFallbackText>
                     {fullName(property?.owner)}
@@ -161,7 +161,7 @@ const PropertyDetailsBottomSheet = () => {
                 </View>
               </Pressable>
               <Button
-                className="h-12 gap-1"
+                className="h-12 gap-1 bg-green-600"
                 onPress={() =>
                   router.push({
                     pathname: "/profile/[user]",

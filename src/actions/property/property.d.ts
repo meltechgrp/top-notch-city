@@ -134,4 +134,5 @@ type AmenityLabel = {
   name: string;
   type: string;
   id: string;
+  category: string;
 };

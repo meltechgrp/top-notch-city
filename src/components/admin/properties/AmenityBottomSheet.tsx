@@ -16,11 +16,12 @@ type Props = {
   onDismiss: () => void;
   loading?: boolean;
   type: "edit" | "add";
-  onSubmit: (data: { name: string; type: string }) => void;
+  onSubmit: (data: Omit<AmenityLabel, "id">) => void;
   value?: AmenityLabel;
 };
 function AmenityBottomSheet(props: Props) {
   const [typeBottomSheet, setTypeBottomSheet] = useState(false);
+  const [categoryBottomSheet, setCategoryBottomSheet] = useState(false);
   const { data } = useQuery({
     queryKey: ["categories"],
     queryFn: fetchAllCategories,
@@ -29,6 +30,7 @@ function AmenityBottomSheet(props: Props) {
   const [form, setForm] = useState({
     name: "",
     type: "",
+    category: "",
   });
   const categories = useMemo(() => data || [], [data]);
   useEffect(() => {
@@ -36,6 +38,20 @@ function AmenityBottomSheet(props: Props) {
       setForm(value);
     }
   }, [value]);
+  const types = [
+    {
+      value: "bool",
+      label: "A Switch Button",
+    },
+    {
+      value: "num",
+      label: "An Input Field",
+    },
+    {
+      value: "btn",
+      label: "A Pressable Button",
+    },
+  ];
   return (
     <>
       <BottomSheet
@@ -45,7 +61,7 @@ function AmenityBottomSheet(props: Props) {
         snapPoint={"45%"}
         visible={visible}
         onDismiss={() => {
-          setForm({ name: "", type: "" });
+          setForm({ name: "", type: "", category: "" });
           onDismiss();
         }}
       >
@@ -58,11 +74,21 @@ function AmenityBottomSheet(props: Props) {
           />
           <View className="gap-2 mb-6">
             <Pressable
+              onPress={() => setCategoryBottomSheet(true)}
+              className="flex-row justify-between items-center bg-background-muted rounded-xl p-4"
+            >
+              <Text size="sm" className=" font-normal capitalize">
+                {form?.category || "Select Category"}
+              </Text>
+              <Icon as={ChevronRight} />
+            </Pressable>
+            <Pressable
               onPress={() => setTypeBottomSheet(true)}
               className="flex-row justify-between items-center bg-background-muted rounded-xl p-4"
             >
               <Text size="sm" className=" font-normal capitalize">
-                {form?.type || "Select Type"}
+                {types?.find((item) => item.value == form.type)?.label ||
+                  "Select Type"}
               </Text>
               <Icon as={ChevronRight} />
             </Pressable>
@@ -84,7 +110,7 @@ function AmenityBottomSheet(props: Props) {
                   });
                 }
                 onSubmit(form);
-                setForm({ name: "", type: "" });
+                setForm({ name: "", type: "", category: "" });
               }}
             >
               {loading && <SpinningLoader />}
@@ -95,16 +121,25 @@ function AmenityBottomSheet(props: Props) {
           </View>
         </View>
       </BottomSheet>
-      {typeBottomSheet && (
+      {categoryBottomSheet && (
         <OptionsBottomSheet
-          isOpen={typeBottomSheet}
-          onDismiss={() => setTypeBottomSheet(false)}
-          onChange={(val) => setForm({ ...form, type: val.label })}
-          value={{ value: form.type, label: form.type }}
+          isOpen={categoryBottomSheet}
+          onDismiss={() => setCategoryBottomSheet(false)}
+          onChange={(val) => setForm({ ...form, category: val.label })}
+          value={{ value: form.category, label: form.category }}
           options={categories.map((item) => ({
             label: item.name,
             value: item.name,
           }))}
+        />
+      )}
+      {typeBottomSheet && (
+        <OptionsBottomSheet
+          isOpen={typeBottomSheet}
+          onDismiss={() => setTypeBottomSheet(false)}
+          onChange={(val) => setForm({ ...form, type: val.value })}
+          value={types.find((item) => item.value == form.type) || types[0]}
+          options={types}
         />
       )}
     </>

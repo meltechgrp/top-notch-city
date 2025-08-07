@@ -23,7 +23,7 @@ export default function ListingAmenities() {
   });
   const { listing, updateListing } = useTempStore();
   const amenities = useMemo(
-    () => data?.filter((item) => item.type == listing?.category) || [],
+    () => data?.filter((item) => item.category == listing?.category) || [],
     [data, listing?.category]
   );
   const updateFacilities = useCallback(
@@ -156,10 +156,7 @@ export default function ListingAmenities() {
                 {item.name}
               </Text>
             </View>
-            <Layout
-              type={item.name.includes("room") ? "btn" : "bool"}
-              name={item.name}
-            />
+            <Layout type={item.type} name={item.name} />
           </View>
         ))}
       </View>

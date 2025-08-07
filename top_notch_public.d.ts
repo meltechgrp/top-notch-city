@@ -48,5 +48,6 @@ type AuthModalProps = {
   onDismiss?: () => void;
   onLoginSuccess?: () => void;
   onRegisterSuccess?: () => void;
+  isAgentRequest?: boolean;
   id?: string;
 };

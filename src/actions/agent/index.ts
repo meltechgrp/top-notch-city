@@ -3,6 +3,7 @@ import { getAuthToken } from "@/lib/secureStore";
 import config from "@/config";
 import { format } from "date-fns";
 import { Fetch } from "../utills";
+import { getUniqueIdSync } from "react-native-device-info";
 
 type AgentResult = {
   total: number;
@@ -16,12 +17,13 @@ export async function uploadAgentForm(form: AgentFormData) {
   try {
     const data = new FormData();
     const authToken = getAuthToken();
+    const deviceId = getUniqueIdSync();
 
     // Append text fields
-    data.append("firstname", form.firstname);
-    data.append("lastname", form.lastname);
+    // data.append("firstname", form.firstname);
+    // data.append("lastname", form.lastname);
     data.append("phone", form.phone);
-    data.append("nin", form.nin);
+    // data.append("nin", Math.round(Math.random() * 123456789011).toString());
 
     // Handle birthdate as string
     if (form.birthdate) {
@@ -30,24 +32,18 @@ export async function uploadAgentForm(form: AgentFormData) {
 
     data.append("country", form.country);
     data.append("state", form.state);
-    data.append("city", form.city);
+    form.city && data.append("city", form.city);
 
-    // // Append each photo
-    form.photo.forEach((file, index) => {
-      data.append("photo", {
-        uri: file.uri,
-        name: `image.jpg`,
-        type: "image/jpeg",
-      } as any);
-    });
-    form.photo.forEach((file, index) => {
-      data.append("documents", {
-        uri: file.uri,
-        name: `image.jpg`,
-        type: "image/jpeg",
-      } as any);
-    });
-
+    data.append("photo", {
+      uri: form.photo,
+      name: `image.jpg`,
+      type: "image/jpeg",
+    } as any);
+    data.append("documents", {
+      uri: form.photo,
+      name: `image.jpg`,
+      type: "image/jpeg",
+    } as any);
     const response = await axios.post(
       `${config.origin}/api/agent/apply`,
       data,
@@ -56,6 +52,7 @@ export async function uploadAgentForm(form: AgentFormData) {
           ...(authToken && { Authorization: `Bearer ${authToken}` }),
           "Content-Type": "multipart/form-data",
           accept: "application/json",
+          "X-DID": deviceId,
         },
       }
     );

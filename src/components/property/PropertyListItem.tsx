@@ -101,7 +101,7 @@ export default function PropertyListItem(props: Props) {
             {address && (
               <View className="flex-row items-center gap-1">
                 <Icon as={MapPin} size="sm" color={Colors.primary} />
-                <Text size={"md"} className="text-white">
+                <Text size={"sm"} className="text-white">
                   {composeFullAddress(address, true, "long")}
                 </Text>
               </View>
