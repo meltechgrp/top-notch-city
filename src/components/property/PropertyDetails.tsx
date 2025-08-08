@@ -86,7 +86,18 @@ const PropertyDetailsBottomSheet = () => {
               </Text>
               <Icon as={ChevronRight} color="white" />
             </Pressable>
-            <Pressable className="flex-row flex-1 gap-2 bg-primary p-4 py-5 rounded-xl items-center justify-between">
+            <Pressable
+              both
+              onPress={() => {
+                router.replace({
+                  pathname: "/message/[chatId]",
+                  params: {
+                    chatId: property?.id!,
+                  },
+                });
+              }}
+              className="flex-row flex-1 gap-2 bg-primary p-4 py-5 rounded-xl items-center justify-between"
+            >
               <Icon size="xl" as={MessageCircle} className="text-white" />
               <Text size="md" className=" mr-auto text-white">
                 Chat Agent

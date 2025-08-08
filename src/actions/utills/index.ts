@@ -26,7 +26,7 @@ export async function Fetch(url: string, options: AxiosRequestConfig = {}) {
   return res.data;
 }
 
-export function useWebSocket(endpoint = "/ws") {
+export function useWebSocket(endpoint: string) {
   const ws = useRef<WebSocket | null>(null);
   const reconnectAttempts = useRef(0);
   const reconnectTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
