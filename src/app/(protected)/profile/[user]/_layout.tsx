@@ -59,7 +59,7 @@ export default function ProfileScreensLayout() {
         animationDuration: 1000,
         animationTypeForReplace: "push",
         headerTitleAlign: "center",
-        animation: "slide_from_bottom",
+        animation: "slide_from_right",
         headerBackVisible: false,
         headerShadowVisible: true,
         headerLeft: headerLeft(),

@@ -34,9 +34,15 @@ import PropertyMapSection from "./PropertyMapSection";
 import PropertyNearbySection from "./PropertyNearbySection";
 import { FindAmenity, fullName } from "@/lib/utils";
 import { openEnquiryModal } from "../globals/AuthModals";
+import { useMutation } from "@tanstack/react-query";
+import { startChat } from "@/actions/message";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
 
 const PropertyDetailsBottomSheet = () => {
   const { details: property, getImages, getVideos } = usePropertyStore();
+  const { mutateAsync } = useMutation({
+    mutationFn: startChat,
+  });
   const router = useRouter();
   const { width, onLayout } = useLayout();
 
@@ -88,13 +94,31 @@ const PropertyDetailsBottomSheet = () => {
             </Pressable>
             <Pressable
               both
-              onPress={() => {
-                router.replace({
-                  pathname: "/message/[chatId]",
-                  params: {
-                    chatId: property?.id!,
+              onPress={async () => {
+                await mutateAsync(
+                  {
+                    property_id: property?.id!,
+                    member_id: property?.owner.id!,
                   },
-                });
+                  {
+                    onError: (e) => {
+                      console.log(e);
+                      showErrorAlert({
+                        title: "Unable to start chat",
+                        alertType: "error",
+                      });
+                    },
+                    onSuccess: (data) => {
+                      console.log(data);
+                      router.replace({
+                        pathname: "/message/[chatId]",
+                        params: {
+                          chatId: data,
+                        },
+                      });
+                    },
+                  }
+                );
               }}
               className="flex-row flex-1 gap-2 bg-primary p-4 py-5 rounded-xl items-center justify-between"
             >

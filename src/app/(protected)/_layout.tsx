@@ -1,8 +1,10 @@
+import { useWebSocket } from "@/actions/utills";
 import AppCrashScreen from "@/components/shared/AppCrashScreen";
 import headerLeft from "@/components/shared/headerLeft";
 import { useResolvedTheme } from "@/components/ui";
 import { Colors } from "@/constants/Colors";
 import { ErrorBoundaryProps, Stack } from "expo-router";
+import { useEffect } from "react";
 
 export const unstable_settings = {
   // Ensure any route can link back to `/`
@@ -11,6 +13,15 @@ export const unstable_settings = {
 
 export default function ProtectedRoutesLayout() {
   const theme = useResolvedTheme();
+  const { connect, closeConnection } = useWebSocket();
+
+  useEffect(() => {
+    connect();
+
+    return () => {
+      closeConnection();
+    };
+  }, []);
   return (
     <Stack
       screenOptions={{

@@ -111,6 +111,7 @@ export const editSubcategory = async ({
   };
 }) => {
   try {
+    console.log(data);
     const res = await Fetch(`/categories/subcategories/${id}`, {
       method: "PUT",
       headers: {
@@ -118,7 +119,7 @@ export const editSubcategory = async ({
       },
       data: data,
     });
-
+    console.log(res);
     if (res?.detail) throw new Error("Failed to edit subcategory");
     return true;
   } catch (error) {

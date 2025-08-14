@@ -2,7 +2,12 @@ import { getAuthToken } from "@/lib/secureStore";
 import config from "@/config";
 import axios, { AxiosRequestConfig } from "axios";
 import { getUniqueIdSync } from "react-native-device-info";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useChatStore } from "@/store";
+import { useQueryClient } from "@tanstack/react-query";
+import { Platform } from "react-native";
+import Platforms from "@/constants/Plaforms";
+import eventBus from "@/lib/eventBus";
 const MAPS_API_KEY = process.env.EXPO_PUBLIC_ANDROID_MAPS_API_KEY;
 
 export async function Fetch(url: string, options: AxiosRequestConfig = {}) {
@@ -26,16 +31,15 @@ export async function Fetch(url: string, options: AxiosRequestConfig = {}) {
   return res.data;
 }
 
-export function useWebSocket(endpoint: string) {
+export function useWebSocket() {
+  const authToken = getAuthToken();
   const ws = useRef<WebSocket | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
   const reconnectAttempts = useRef(0);
   const reconnectTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const connect = async () => {
-    const token = getAuthToken();
-    const deviceId = getUniqueIdSync();
-    const wsUrl = `wss://app.topnotchcity.com${endpoint}?token=${token}&deviceId=${deviceId}`;
-
+  const connect = () => {
+    const wsUrl = `wss://app.topnotchcity.com/ws/?token=${authToken}`;
     console.log("🔌 Connecting to:", wsUrl);
 
     const socket = new WebSocket(wsUrl);
@@ -43,11 +47,23 @@ export function useWebSocket(endpoint: string) {
     socket.onopen = () => {
       console.log("✅ WebSocket connected");
       reconnectAttempts.current = 0;
+
+      setIsConnected(true);
     };
 
     socket.onmessage = (event) => {
-      console.log("📨 Message:", event.data);
-      // handle your message here
+      try {
+        const data = JSON.parse(event.data);
+        console.log("📨 Message:", data, data?.type);
+
+        // if (data?.type == "new_message") {
+        console.log(Platforms.isAndroid(), "here", data?.chat_id);
+        eventBus.dispatchEvent("REFRESH_CHAT", data?.chat_id);
+        // updateChat(data a);
+        // }
+      } catch (err) {
+        console.error("❌ Failed to parse message:", event.data);
+      }
     };
 
     socket.onerror = (error) => {
@@ -56,6 +72,7 @@ export function useWebSocket(endpoint: string) {
 
     socket.onclose = (event) => {
       console.log("🚪 WebSocket closed:", event.reason);
+      setIsConnected(false);
       attemptReconnect();
     };
 
@@ -63,7 +80,7 @@ export function useWebSocket(endpoint: string) {
   };
 
   const attemptReconnect = () => {
-    const maxAttempts = 10;
+    const maxAttempts = 5;
     if (reconnectAttempts.current < maxAttempts) {
       const timeout = Math.min(1000 * 2 ** reconnectAttempts.current, 30000); // exponential backoff, max 30s
       console.log(`🔄 Attempting reconnect in ${timeout / 1000}s...`);
@@ -77,14 +94,14 @@ export function useWebSocket(endpoint: string) {
   };
 
   useEffect(() => {
-    connect();
-
     return () => {
       reconnectTimeout.current && clearTimeout(reconnectTimeout.current);
-      ws.current?.close();
     };
-  }, [endpoint]);
-
+  }, []);
+  const closeConnection = () => {
+    reconnectTimeout.current && clearTimeout(reconnectTimeout.current);
+    ws.current?.close();
+  };
   const sendMessage = (msg: any) => {
     if (ws.current?.readyState === WebSocket.OPEN) {
       ws.current.send(JSON.stringify(msg));
@@ -93,7 +110,7 @@ export function useWebSocket(endpoint: string) {
     }
   };
 
-  return { sendMessage };
+  return { connect, sendMessage, isConnected, closeConnection };
 }
 
 export async function fetchPlaceFromTextQuery(

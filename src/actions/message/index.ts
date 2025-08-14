@@ -1,31 +1,65 @@
 import { Fetch } from "@/actions/utills";
-import config from "@/config";
-import { getAuthToken } from "@/lib/secureStore";
-import { getUniqueIdSync } from "react-native-device-info";
 
-export async function startChat({
-  property_id,
-  message,
-}: {
-  property_id: string;
-  message: string;
-}) {
-  const authToken = getAuthToken();
-  const deviceId = getUniqueIdSync();
-  const result = await fetch(
-    `${config.origin}/api/chat/start?property_id=${property_id}`,
+export async function startChat({ property_id, member_id }: StartChat) {
+  const result = await Fetch(
+    `/chat/start?property_id=${property_id}&member_id=${member_id}`,
     {
       method: "POST",
       headers: {
-        ...(authToken && { Authorization: `Bearer ${authToken}` }),
-        "X-DID": deviceId,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify([property_id]),
     }
   );
-  const res = await result.json();
-  console.log(res);
-  if (!res.ok) throw Error("error");
-  return res;
+  console.log(result);
+  return result as string;
+}
+export async function sendMessage({ chat_id, content, files }: SendMessage) {
+  console.log(chat_id, content);
+  const formData = new FormData();
+
+  if (chat_id) formData.append("chat_id", chat_id);
+  if (content) formData.append("content", content);
+  files?.forEach((item, index) => {
+    formData.append("media_files", {
+      uri: item.uri,
+      name: `image.jpg`,
+      type: "image/jpeg",
+    } as any);
+  });
+  const result = await Fetch(`/send/messages`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: {
+      chat_id,
+      content,
+    },
+  });
+  return result as string;
+}
+
+export async function getChats() {
+  const chats = await Fetch("/chats");
+  return chats as { total: number; chats: Chat[] };
+}
+
+export async function getChatMessages({
+  pageParam,
+  chatId,
+}: {
+  pageParam: number;
+  chatId: string;
+}) {
+  try {
+    const res = await Fetch(
+      `/chat/${chatId}/messages?page=${pageParam}&size=20`,
+      {}
+    );
+    if (res?.detail) throw new Error("Failed to fetch messages");
+    return res as ChatMessages;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to fetch properties");
+  }
 }

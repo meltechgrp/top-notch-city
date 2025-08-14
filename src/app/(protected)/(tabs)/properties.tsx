@@ -92,6 +92,8 @@ export default function PropertiesScreen() {
     );
   }, [search, setSearch, tabs, actveTab]);
   useRefreshOnFocus(refetch);
+
+  const isAdmin = useMemo(() => me?.role == "admin" || me?.is_superuser, [me]);
   function handleGetStarted() {
     if (!hasAuth) {
       // Not logged in — show CTA to become an agent
@@ -103,7 +105,7 @@ export default function PropertiesScreen() {
       return router.push("/property/add");
     }
 
-    if (me?.role === "admin") {
+    if (isAdmin) {
       // Show warning modal
       setCtaType("admin");
       return setCtaVisible(true);

@@ -1,4 +1,4 @@
-import { Tabs } from "expo-router";
+import { Tabs, usePathname } from "expo-router";
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import { HapticTab } from "@/components/HapticTab";
@@ -20,7 +20,8 @@ export const unstable_settings = {
 export default function TabLayout() {
   const theme = useResolvedTheme();
   const { me } = useStore();
-  const isAgent = useMemo(() => me?.role == "agent", [me]);
+  const pathname = usePathname();
+  const isChat = useMemo(() => pathname.split("/").length > 2, [pathname]);
   return (
     <Tabs
       screenOptions={{
@@ -30,18 +31,21 @@ export default function TabLayout() {
         headerTitleAlign: "center",
         tabBarHideOnKeyboard: true,
         tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: "absolute",
-          },
-          default: {
-            backgroundColor:
-              theme == "dark"
-                ? Colors.light.background
-                : Colors.dark.background,
-          },
-        }),
+        tabBarStyle: [
+          Platform.select({
+            ios: {
+              // Use a transparent background on iOS to show the blur effect
+              position: "absolute",
+            },
+            default: {
+              backgroundColor:
+                theme == "dark"
+                  ? Colors.light.background
+                  : Colors.dark.background,
+            },
+          }),
+          { display: isChat ? "none" : "flex" },
+        ],
         headerStyle: {
           backgroundColor:
             theme == "dark" ? Colors.light.background : Colors.dark.background,
@@ -78,7 +82,7 @@ export default function TabLayout() {
         name="message"
         options={{
           title: "Message",
-          headerShown: true,
+          headerShown: false,
           tabBarIcon: ({ color }) => (
             <MessageSquareMore size={24} color={color} />
           ),

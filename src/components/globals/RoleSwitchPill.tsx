@@ -11,10 +11,10 @@ export function RoleSwitchPill() {
   const router = useRouter();
   const { me } = useStore();
 
-  const role = useMemo(() => me?.role, [me]);
+  const isAdmin = useMemo(() => me?.role == "admin" || me?.is_superuser, [me]);
 
   // Show only if agent or admin is logged in
-  if (role !== "admin") return null;
+  if (!isAdmin) return null;
 
   // ✅ Allowed main tabs
   const MAIN_TABS = ["/home", "/message", "/sell"];
@@ -31,8 +31,7 @@ export function RoleSwitchPill() {
     pathname.startsWith("/agent/") && segments.length === 2;
 
   // ✅ Show pill only if matches the criteria
-  const shouldShow =
-    (isMainTab && role === "admin") || (isAdminTabsRoot && role === "admin");
+  const shouldShow = (isMainTab && isAdmin) || (isAdminTabsRoot && isAdmin);
   if (!shouldShow) return null;
 
   // Determine target route and label
@@ -41,7 +40,7 @@ export function RoleSwitchPill() {
   if (pathname.startsWith("/admin")) {
     targetPath = "/home";
     label = "Switch to Main";
-  } else if (role === "admin") {
+  } else if (isAdmin) {
     targetPath = "/admin"; // or wherever your admin landing page is
     label = "Switch to Admin";
   }

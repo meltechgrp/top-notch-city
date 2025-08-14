@@ -12,37 +12,16 @@ import Platforms from "@/constants/Plaforms";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomScreenHeader from "@/components/layouts/CustomScreenHeader";
 import { useChatStore, useStore } from "@/store";
-import {
-  Avatar,
-  AvatarFallbackText,
-  AvatarImage,
-  Box,
-  Button,
-  ButtonText,
-  Heading,
-  Text,
-} from "@/components/ui";
-import { useMutation } from "@tanstack/react-query";
-import { startChat } from "@/actions/message";
-// import { ReportReferenceType } from '@/graphql-types/index.gql';
+import { Box, Button, ButtonText, Heading, Text } from "@/components/ui";
+import { useWebSocket } from "@/actions/utills";
 
 export default function ChatRoomScreen() {
-  const { chatId: property_id, msg } = useLocalSearchParams<{
+  const { chatId } = useLocalSearchParams<{
     chatId: string;
-    msg?: string;
   }>();
-  const { mutateAsync } = useMutation({
-    mutationFn: startChat,
-    onError: (e) => {
-      console.log(e);
-    },
-    onSuccess: (data) => {
-      console.log(data);
-    },
-  });
-  console.log(property_id);
-  const chatId = "njnjnjndnjjk" as string;
-  const text = msg ? decodeURIComponent(msg || "") : "";
+  const { receiver } = useChatStore();
+  // const chatId = "njnjnjndnjjk" as string;
+  // const text = msg ? decodeURIComponent(msg || "") : "";
   // const isProfileSheetOpen = useChatStore((s) => s.isProfileOpen);
   // const toggleProfileSheet = useChatStore((s) => s.toggleProfile);
   // const [reportBottomSheetVisible, setReportBottomSheetVisible] =
@@ -51,15 +30,12 @@ export default function ChatRoomScreen() {
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          headerShown: false,
-        }}
-      />
       <Box className="flex-1 ">
         <SafeAreaView edges={["top", "bottom"]} style={{ flex: 1 }}>
           <CustomScreenHeader
-            headerCenterContent={<ScreenHeaderTitleSection />}
+            headerCenterContent={
+              <ScreenHeaderTitleSection receiver={receiver} />
+            }
           />
           <View className="flex-1">
             <KeyboardAvoidingView
@@ -67,23 +43,13 @@ export default function ChatRoomScreen() {
               behavior={Platforms.isIOS() ? "padding" : "height"}
               keyboardVerticalOffset={Platforms.isIOS() ? 100 : 0}
             >
-              {/* <ChatRoom
-								chatId={chatId}
-								ChatRoomFooterProps={{
-									placeholder: 'Write a message',
-									defaultText: text,
-								}}
-							/> */}
-              <Button
-                onPress={async () => {
-                  await mutateAsync({
-                    property_id,
-                    message: "Hello",
-                  });
+              <ChatRoom
+                chatId={chatId}
+                ChatRoomFooterProps={{
+                  placeholder: "Write a message",
+                  defaultText: "",
                 }}
-              >
-                <ButtonText>Start</ButtonText>
-              </Button>
+              />
               {/* {isProfileSheetOpen && (
 								<ChatRoomProfile
 									chatId={chatId}
@@ -120,7 +86,11 @@ export default function ChatRoomScreen() {
   );
 }
 
-function ScreenHeaderTitleSection() {
+interface ScreenHeaderTitleSectionProps {
+  receiver?: ChatMessages["receiver_info"];
+}
+
+function ScreenHeaderTitleSection({ receiver }: ScreenHeaderTitleSectionProps) {
   // const me = useStore((s) => s.me);
   // const { getOppositeUser, toggleProfile, chat } = useChatStore((s) => ({
   // 	getOppositeUser: s.getOppositeUser,
@@ -135,7 +105,7 @@ function ScreenHeaderTitleSection() {
   return (
     <View className="flex-1 justify-center items-center">
       <Heading size="lg" numberOfLines={1} className="">
-        Humphrey Joshua
+        {fullName(receiver)}
       </Heading>
     </View>
   );

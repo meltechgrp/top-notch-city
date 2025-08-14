@@ -160,30 +160,15 @@ export const useTempStore = create<TempState>((set, get) => ({
 }));
 
 type ChatState = {
-  getOppositeUser: (currentUserId?: string) => any | undefined;
-  getCurrentUser: (currentUserId?: string) => any | undefined;
-  chat?: any;
-  isProfileOpen: boolean;
-  toggleProfile: (val: boolean) => void;
-  updateChat?: (chat: any) => void;
+  updateReceiver: (data: ReceiverInfo) => any | undefined;
+  updateSender: (data: SenderInfo) => any | undefined;
+  chats?: Message[];
+  receiver?: ReceiverInfo;
+  sender?: SenderInfo;
+  updateChat: (chat: Message[]) => void;
 };
 export const useChatStore = create<ChatState>((set, get) => ({
-  isProfileOpen: false,
-  toggleProfile: (val: boolean) =>
-    set((state) => ({ ...state, isProfileOpen: val })),
-  setPinVerifyRequest: (pinVerifyRequest: TempState["pinVerifyRequest"]) =>
-    set((state) => ({ ...state, pinVerifyRequest })),
-  getOppositeUser: (currentUserId) => {
-    if (!currentUserId) return;
-    const chat = get().chat;
-    const members = chat?.members || [];
-    return members.find((m: any) => m.user.id !== currentUserId);
-  },
-  getCurrentUser: (currentUserId) => {
-    if (!currentUserId) return;
-    const chat = get().chat;
-    const members = chat?.members || [];
-    return members.find((m: any) => m.user.id === currentUserId);
-  },
-  updateChat: (chat: any) => set((state) => ({ ...state, chat })),
+  updateReceiver: (receiver) => set((state) => ({ ...state, receiver })),
+  updateSender: (sender) => set((state) => ({ ...state, sender })),
+  updateChat: (chats) => set((state) => ({ ...state, chats })),
 }));

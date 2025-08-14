@@ -103,11 +103,8 @@ function PageOne({
       className="flex-1"
       imageStyle={{ resizeMode: "cover" }}
     >
-      <SafeAreaView
-        edges={["top", "bottom"]}
-        className="flex-1 px-4 bg-black/20"
-      >
-        <View className=" flex-1 mb-16">
+      <SafeAreaView edges={["top", "bottom"]} className="flex-1 bg-black/20">
+        <View className=" flex-1 mb-16 px-6">
           <View className="flex-1 items-end mt-4 ">
             <Pressable onPress={skipHandler}>
               <Text size="lg" className="text-white font-medium">
@@ -162,8 +159,8 @@ function PageTwo({
       className="flex-1"
       imageStyle={{ resizeMode: "cover" }}
     >
-      <SafeAreaView edges={["top"]} className="flex-1 px-4 bg-black/20">
-        <View className=" flex-1 mb-16">
+      <SafeAreaView edges={["top"]} className="flex-1 bg-black/20">
+        <View className=" flex-1 mb-16 px-6">
           <View className="flex-1 items-end mt-4 ">
             <Pressable onPress={skipHandler}>
               <Text size="lg" className="text-white font-medium">
@@ -223,8 +220,8 @@ function PageThree({
       className="flex-1"
       imageStyle={{ resizeMode: "cover" }}
     >
-      <SafeAreaView edges={["top"]} className="flex-1 px-4 bg-black/40">
-        <View className="flex-1 mb-16">
+      <SafeAreaView edges={["top"]} className="flex-1 bg-black/40">
+        <View className="flex-1 mb-16 px-6">
           <View className="flex-1 items-end "></View>
           <View className=" gap-4 flex-row mb-2">
             <View className="flex-1">

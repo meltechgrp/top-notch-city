@@ -11,9 +11,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function PropertySections() {
   const { title } = useLocalSearchParams() as { title?: string };
   const [showFilter, setShowFilter] = useState(false);
-  const { data, isLoading, fetchNextPage, refetch } = useInfinityQueries({
-    type: "all",
-  });
+  const { data, isLoading, fetchNextPage, refetch, hasNextPage } =
+    useInfinityQueries({
+      type: "all",
+    });
   const [filter, setFilter] = useState<SearchFilters>({});
 
   const properties = useMemo(
@@ -58,6 +59,7 @@ export default function PropertySections() {
             isLoading={isLoading}
             className="pb-20 pt-4"
             refetch={refetch}
+            hasNextPage={hasNextPage}
             fetchNextPage={fetchNextPage}
           />
         </SafeAreaView>

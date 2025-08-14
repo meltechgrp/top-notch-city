@@ -115,6 +115,7 @@ export default function More() {
     }
   }
   const isAgent = false;
+  const isAdmin = useMemo(() => me?.role == "admin" || me?.is_superuser, [me]);
   //   useMemo(
   //   () => data?.some((ap) => ap.status == "approved"),
   //   [data]
@@ -228,7 +229,7 @@ export default function More() {
                     : "View your dashboard"
                 }
                 onPress={() => {
-                  if (me?.role === "admin") {
+                  if (isAdmin) {
                     router.dismissTo("/admin");
                   } else {
                     router.push("/dashboard");

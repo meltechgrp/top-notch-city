@@ -26,7 +26,7 @@ export default function SubCategoryItem({ item, categoryId }: Props) {
         id: item.id,
         data: {
           category_id: categoryId,
-          name: item.name,
+          name: val,
         },
       },
       {

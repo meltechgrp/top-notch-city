@@ -13,26 +13,16 @@ import { useRouter } from "expo-router";
 import { Trash2 } from "lucide-react-native";
 
 type MessageListItemProps = {
-  chat: any;
-
-  me: any;
+  chat: Chat;
 };
 export function MessageListItem(props: MessageListItemProps) {
-  const { chat, me } = props;
+  const { chat } = props;
   const router = useRouter();
   const avatar = React.useMemo(() => {
-    return (
-      <View className=" rounded-full">
-        <Avatar className="bg-background-muted w-20 h-20">
-          <AvatarFallbackText className="text-typography">
-            {fullName(chat)}
-          </AvatarFallbackText>
-        </Avatar>
-      </View>
-    );
+    return <View className=" rounded-full"></View>;
   }, []);
   const unreadCount = React.useMemo(() => {
-    const c = chat.unreadCount || 0;
+    const c = chat?.unreadCount || 1;
     return c > 99 ? "99+" : c;
   }, [chat]);
 
@@ -50,24 +40,28 @@ export function MessageListItem(props: MessageListItemProps) {
     <Pressable
       onPress={() => {
         router.push({
-          pathname: "/(protected)/message/[chatId]",
+          pathname: "/(protected)/(tabs)/message/[chatId]",
           params: {
-            chatId: chat.id,
+            chatId: chat.chat_id,
           },
         });
       }}
       className="active:bg-background/5  transparent"
       android_ripple={{ color: "#d5d4d5" }}
     >
-      <View className=" h-[92px] w-full px-4">
+      <View className=" h-[70px] w-full px-4">
         <View className="w-full h-full border-b border-outline  flex-row items-center">
           <View className="h-[60px] gap-4 w-full flex-row items-center">
-            <View className="w-[60px] h-[60px]">{avatar}</View>
-            <View className="flex-1 pl-[10px] gap-1">
+            <Avatar className="bg-gray-500 w-16 h-16">
+              <AvatarFallbackText className="text-typography text-xl">
+                {fullName(chat.receiver)}
+              </AvatarFallbackText>
+            </Avatar>
+            <View className="flex-1 gap-1">
               <View className="flex-row items-center justify-between">
                 <View className="flex-row items-center flex-1  pr-4">
                   <Text numberOfLines={1} className=" text-base">
-                    {fullName(chat)}
+                    {fullName(chat.receiver)}
                   </Text>
                 </View>
                 <Text className="text-typography/60 text-xs">
@@ -81,7 +75,7 @@ export function MessageListItem(props: MessageListItemProps) {
                     ellipsizeMode="tail"
                     numberOfLines={1}
                   >
-                    {chat.message}
+                    Elegant sterling silver bracelet with a polished finish.
                   </Text>
                 </View>
                 <View className="flex-row items-center gap-1">

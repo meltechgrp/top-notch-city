@@ -1,4 +1,4 @@
-import { format, subDays, subMonths } from "date-fns";
+import { format, isThisYear, isToday, subDays, subMonths } from "date-fns";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import eventBus from "./eventBus";
@@ -18,6 +18,22 @@ export function toNaira(amountInKobo: number) {
   return +(amountInKobo / 100).toFixed(2);
 }
 
+export function formatMessageTime(
+  time: Date,
+  opt?: { hideTimeForFullDate: boolean }
+) {
+  let date = new Date(time);
+  const { hideTimeForFullDate } = opt || {
+    hideTimeForFullDate: false,
+  };
+
+  if (isToday(date)) {
+    return format(date, "h:mm a");
+  } else if (isThisYear(date)) {
+    return format(date, `MMM d${hideTimeForFullDate ? "" : ", h:mm a"}`);
+  }
+  return format(date, `MM/dd/yyyy${hideTimeForFullDate ? "" : ", h:mm a"}`);
+}
 export function toKobo(amountInNaira: number) {
   return amountInNaira * 100;
 }
@@ -335,4 +351,48 @@ export function formatNumber(num?: string) {
 // Remove commas from formatted number
 export function unformatNumber(str: string) {
   return str.replace(/,/g, "");
+}
+export function calculateFeedDisplayDimensions(
+  originalWidth: number,
+  originalHeight: number,
+  maxWidth: number,
+  maxHeight: number
+): { width: number; height: number } {
+  if (
+    originalWidth <= 0 ||
+    originalHeight <= 0 ||
+    maxWidth <= 0 ||
+    maxHeight <= 0
+  ) {
+    return { width: 0, height: 0 };
+  }
+
+  const aspectRatio = originalWidth / originalHeight;
+  const minAspectRatioForNoCrop = 3 / 4; // 0.75
+
+  let displayWidth: number;
+  let displayHeight: number;
+
+  // Scale down while maintaining aspect ratio, respecting maxWidth and maxHeight
+  if (originalWidth > maxWidth || originalHeight > maxHeight) {
+    const widthScale = maxWidth / originalWidth;
+    const heightScale = maxHeight / originalHeight;
+    const scale = Math.min(widthScale, heightScale); // Use the smaller scale to fit within both constraints
+
+    displayWidth = Math.min(originalWidth * scale, maxWidth);
+    displayHeight = Math.min(originalHeight * scale, maxHeight);
+  } else {
+    displayWidth = originalWidth;
+    displayHeight = originalHeight;
+  }
+
+  // Apply X's cropping rule for very portrait images if needed
+  if (
+    aspectRatio < minAspectRatioForNoCrop &&
+    displayHeight > (4 / 3) * displayWidth
+  ) {
+    displayHeight = (4 / 3) * displayWidth;
+  }
+
+  return { width: Math.floor(displayWidth), height: Math.floor(displayHeight) };
 }
