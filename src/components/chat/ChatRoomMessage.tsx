@@ -3,6 +3,7 @@ import {
   AvatarFallbackText,
   AvatarImage,
   Icon,
+  Image,
   Text,
 } from "@/components/ui";
 // import QuoteMessage from '@/components/chat/ChatRoomQuoteMessage'
@@ -60,7 +61,6 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
     ),
     [formatedTime, message.content]
   );
-
   const pressProps = {
     onLongPress: () => {
       // if (message.status === 'Pending' || message.deletedAt) {
@@ -108,7 +108,32 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
               </Pressable>
             </View>
           )}
-
+          {message.file_data?.length ? (
+            <View
+              className={cn("gap-y-1", isMine ? "items-end" : "items-start")}
+            >
+              {message.file_data.map((item) => (
+                <View
+                  key={item.file_id}
+                  className={cn([
+                    "rounded-2xl mb-1 w-24 h-24",
+                    isMine ? "bg-primary-200" : "bg-gray-50",
+                  ])}
+                >
+                  <Image
+                    source={{
+                      ...generateMediaUrl({
+                        url: item.file_url,
+                        media_type: "IMAGE",
+                        id: item.file_id,
+                      }),
+                    }}
+                    alt={item.file_name}
+                  />
+                </View>
+              ))}
+            </View>
+          ) : null}
           <Pressable
             className={cn([
               "rounded-lg overflow-hidden gap-2",
@@ -118,15 +143,17 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
             ])}
             {...pressProps}
           >
-            <View className="p-2">
-              <PostTextContent
-                text={message.content || ""}
-                // tokenizedText={message.tokenizedText as any}
-                fullText={true}
-                trimLink={false}
-                isMine={isMine}
-              />
-            </View>
+            {message?.content && (
+              <View className="p-2">
+                <PostTextContent
+                  text={message.content || ""}
+                  // tokenizedText={message.tokenizedText as any}
+                  fullText={true}
+                  trimLink={false}
+                  isMine={isMine}
+                />
+              </View>
+            )}
           </Pressable>
           {messageInfo}
           {!isMine && <View className="flex-1" />}

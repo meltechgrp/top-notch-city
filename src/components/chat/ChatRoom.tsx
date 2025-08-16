@@ -202,7 +202,7 @@ export default function ChatRoom(props: Props) {
           key={item.id}
           sender={sender}
           me={me!}
-          message={item as any}
+          message={item}
           className={cn(index === messages.length - 1 ? "mt-4" : "")}
           onLongPress={handleMessageLongPress}
           isDeleting={isDeletingMessageId === item.id}

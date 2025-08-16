@@ -20,10 +20,9 @@ export function pushNotificationResponseHandler(
   if (!isPushNotification) return;
 
   const notificationType = getNotificationData(response)
-    ?.type as NotificationType;
+    ?.entity_type as NotificationType;
   const notificationId = getNotificationData(response)?.id as string;
   markAsRead({ id: notificationId });
-
   if (notificationType) {
     handleNotificationResponseByType(response, isAppStart);
     return;
@@ -41,18 +40,35 @@ function handleNotificationResponseByType(
 ) {
   const notificationData = getNotificationData(response);
   if (!notificationData) return;
-  const notificationType = notificationData?.type as NotificationType;
+  const notificationType = notificationData?.entity_type as NotificationType;
 
   const navigateTo = (href: Parameters<typeof router.push>[0]) => {
-    // if (isAppStart) {
-    router.push("/home");
-    //   router.push(href);
-    // } else {
-    //   router.navigate(href);
-    // }
+    if (isAppStart) {
+      router.push("/home");
+      router.push(href);
+    } else {
+      router.navigate(href);
+    }
   };
-
   switch (notificationType) {
+    case "chat": {
+      navigateTo({
+        pathname: "/(protected)/(tabs)/message/[chatId]",
+        params: {
+          chatId: notificationData?.entity_id as string,
+        },
+      });
+      break;
+    }
+    case "property": {
+      navigateTo({
+        pathname: "/(protected)/property/[propertyId]",
+        params: {
+          propertyId: notificationData?.entity_id as string,
+        },
+      });
+      break;
+    }
     default:
       if (isAppStart) {
         navigateTo("/home");

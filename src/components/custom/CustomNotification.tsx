@@ -8,12 +8,15 @@ import {
 } from "react-native-notifier";
 import { Colors } from "@/constants/Colors";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { router } from "expo-router";
 
 type Props = NotifierProps & {
   title: string;
   description?: string;
   theme?: "light" | "dark";
   alertType?: "error" | "warn" | "info" | "success";
+  entity_type?: string;
+  entity_id?: string;
 };
 
 // ❌ Alert-style error notification
@@ -45,6 +48,8 @@ export function showBounceNotification({
   title,
   description,
   onPress,
+  entity_id,
+  entity_type,
   onHidden,
   theme = "dark",
 }: Props) {
@@ -70,7 +75,18 @@ export function showBounceNotification({
     showAnimationDuration: 800,
     showEasing: Easing.bounce,
     hideOnPress: true,
-    onPress,
+    onPress: () => {
+      console.log("pressed", entity_type);
+      if (entity_type == "chat") {
+        console.log("pressed", entity_id);
+        router.push({
+          pathname: "/(protected)/(tabs)/message/[chatId]",
+          params: {
+            chatId: entity_id as string,
+          },
+        });
+      }
+    },
     onHidden,
   });
 }

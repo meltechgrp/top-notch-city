@@ -22,7 +22,7 @@ export function MessageListItem(props: MessageListItemProps) {
     return <View className=" rounded-full"></View>;
   }, []);
   const unreadCount = React.useMemo(() => {
-    const c = chat?.unreadCount || 1;
+    const c = chat?.unread_count || 1;
     return c > 99 ? "99+" : c;
   }, [chat]);
 
@@ -75,7 +75,7 @@ export function MessageListItem(props: MessageListItemProps) {
                     ellipsizeMode="tail"
                     numberOfLines={1}
                   >
-                    Elegant sterling silver bracelet with a polished finish.
+                    {chat?.recent_message}
                   </Text>
                 </View>
                 <View className="flex-row items-center gap-1">

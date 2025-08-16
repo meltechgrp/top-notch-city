@@ -14,13 +14,12 @@ export async function startChat({ property_id, member_id }: StartChat) {
   return result as string;
 }
 export async function sendMessage({ chat_id, content, files }: SendMessage) {
-  console.log(chat_id, content);
   const formData = new FormData();
 
   if (chat_id) formData.append("chat_id", chat_id);
   if (content) formData.append("content", content);
   files?.forEach((item, index) => {
-    formData.append("media_files", {
+    formData.append("media", {
       uri: item.uri,
       name: `image.jpg`,
       type: "image/jpeg",
@@ -29,12 +28,9 @@ export async function sendMessage({ chat_id, content, files }: SendMessage) {
   const result = await Fetch(`/send/messages`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": "multipart/form-data",
     },
-    data: {
-      chat_id,
-      content,
-    },
+    data: formData,
   });
   return result as string;
 }

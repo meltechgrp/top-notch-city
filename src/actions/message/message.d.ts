@@ -13,11 +13,12 @@ interface Chat {
     profile_image?: Media;
   };
   sender_id: string;
-  unreadCount: number;
+  recent_message: string;
+  unread_count: number;
 }
 
 interface FileData {
-  id: string;
+  file_id: string;
   file_url: string;
   file_type: string;
   file_name: string;

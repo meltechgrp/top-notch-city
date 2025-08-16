@@ -14,7 +14,7 @@ export function RoleSwitchPill() {
   const isAdmin = useMemo(() => me?.role == "admin" || me?.is_superuser, [me]);
 
   // Show only if agent or admin is logged in
-  if (!isAdmin) return null;
+  return null;
 
   // ✅ Allowed main tabs
   const MAIN_TABS = ["/home", "/message", "/sell"];

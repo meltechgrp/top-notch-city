@@ -25,10 +25,10 @@ import { showBounceNotification } from "@/components/custom/CustomNotification";
 
 const query = new QueryClient();
 
-// Initialize Microsoft Clarity
-Clarity.initialize("s756k52ds5", {
-  logLevel: Clarity.LogLevel.Verbose, // Note: Use "LogLevel.Verbose" value while testing to debug initialization issues.
-});
+// // Initialize Microsoft Clarity
+// Clarity.initialize("s756k52ds5", {
+//   logLevel: Clarity.LogLevel.Verbose, // Note: Use "LogLevel.Verbose" value while testing to debug initialization issues.
+// });
 
 export const unstable_settings = {
   initialRouteName: "(onboarding)/splash",
@@ -38,61 +38,32 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  useReactQueryDevTools(query);
+  // useReactQueryDevTools(query);
+  useNotificationObserver();
 
   useMountPushNotificationToken();
-  useNotificationObserver();
-  useEffect(() => {
-    const handleDeepLink = ({ url }: { url: string }) => {
-      console.log(`🔗 Received deep link: ${url}`);
-
+  useEffect(function linkingWorkaround() {
+    Linking.addEventListener("url", ({ url }) => {
+      console.log(`Deep link: ${url}`);
       let pathToNavigate: string | undefined;
 
-      try {
-        const parsedUrl = new URL(url);
+      if (
+        url.startsWith("exp://") ||
+        url.startsWith("exp+com.meltech.topnotchcity://")
+      ) {
+        pathToNavigate = url.split("--")[1];
+      } else if (url.startsWith("https://topnotchcity.com")) {
+        const path = url.split("topnotchcity.com")[1];
+        console.log(`Deep link: ${path}`);
+        pathToNavigate = path;
+      } else pathToNavigate = url.split("://")[1];
 
-        // 1️⃣ Handle known schemes (expo, custom)
-        const knownSchemes = ["exp:", "expo:", "com.meltech.topnotchcity:"];
-
-        if (knownSchemes.includes(parsedUrl.protocol)) {
-          const segments = parsedUrl.pathname.split("/").filter(Boolean);
-          pathToNavigate = segments.join("/");
-        }
-
-        // 2️⃣ Handle web links
-        else if (
-          ["topnotchcity.com", "www.topnotchcity.com"].includes(
-            parsedUrl.hostname
-          )
-        ) {
-          pathToNavigate = parsedUrl.pathname.slice(1); // remove leading "/"
-        }
-
-        // 3️⃣ Fallback: try manually removing scheme
-        else {
-          const parts = url.split("://");
-          if (parts.length > 1) {
-            const rest = parts[1].split("/").filter(Boolean);
-            pathToNavigate = rest.join("/");
-          }
-        }
-
-        // 4️⃣ Final routing
-        if (pathToNavigate) {
-          router.push(`/(protected)/${pathToNavigate}` as any);
-        }
-      } catch (e) {
-        console.warn("⚠️ Failed to handle deep link:", e);
+      if (pathToNavigate) {
+        pathToNavigate = `/(protected)/${pathToNavigate}`;
+        router.push(pathToNavigate as any);
       }
-    };
-
-    const subscription = Linking.addEventListener("url", handleDeepLink);
-
-    return () => {
-      subscription.remove(); // Clean up on unmount
-    };
+    });
   }, []);
-
   useEffect(() => {
     SplashScreen.hide();
   }, []);
@@ -140,17 +111,15 @@ function useMountPushNotificationToken() {
             console.error("Error registering for push notifications:", error);
           });
       }, 30000);
-
       const notificationListener =
         Notifications.addNotificationReceivedListener((notification) => {
-          console.log(
-            notification.request.content,
-            notification.request.trigger,
-            "test"
-          );
+          console.log(notification.request.content?.data, "test");
+          const data = notification.request.content.data;
           showBounceNotification({
             title: notification.request.content.title || "New Notification",
             description: notification.request.content.body || undefined,
+            entity_id: data?.entity_id as string,
+            entity_type: data?.entity_type as string,
           });
         });
       return () => {
