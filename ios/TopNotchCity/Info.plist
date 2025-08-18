@@ -9,7 +9,7 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>
-    <string>Top-Notch City</string>
+    <string>TopNotch City</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
@@ -29,7 +29,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>com.meltech.topnotchcity</string>
+          <string>topnotchcity</string>
           <string>com.meltech.topnotchcity</string>
         </array>
       </dict>

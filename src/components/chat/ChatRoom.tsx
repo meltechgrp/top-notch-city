@@ -120,17 +120,16 @@ export default function ChatRoom(props: Props) {
   React.useEffect(() => {
     if (messages?.length) {
       const latestMessage = messages[0];
-      console.log(latestMessage.sender_info?.id, me?.id);
-      if (!latestMessage.read && latestMessage.sender_info?.id !== me?.id) {
-        markAsRead(
-          {
-            chatId,
-          },
-          {
-            onSuccess: invalidate,
-          }
-        );
-      }
+      // if (!latestMessage.read) {
+      markAsRead(
+        {
+          chatId,
+        },
+        {
+          onSuccess: invalidate,
+        }
+      );
+      // }
     }
   }, [messages, chatId]);
 

@@ -3,9 +3,6 @@ import config from "@/config";
 import axios, { AxiosRequestConfig } from "axios";
 import { getUniqueIdSync } from "react-native-device-info";
 import { useEffect, useRef, useState } from "react";
-import { useChatStore } from "@/store";
-import { useQueryClient } from "@tanstack/react-query";
-import { Platform } from "react-native";
 import Platforms from "@/constants/Plaforms";
 import eventBus from "@/lib/eventBus";
 const MAPS_API_KEY = process.env.EXPO_PUBLIC_ANDROID_MAPS_API_KEY;
@@ -57,7 +54,6 @@ export function useWebSocket() {
         console.log("📨 Message:", data, data?.type);
 
         // if (data?.type == "new_message") {
-        console.log(Platforms.isAndroid(), "here", data?.chat_id);
         eventBus.dispatchEvent("REFRESH_CHAT", data?.chat_id);
         // updateChat(data a);
         // }

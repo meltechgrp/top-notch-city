@@ -1,15 +1,19 @@
 {
   "expo": {
-    "name": "Top-Notch City",
+    "name": "TopNotch City",
     "slug": "topnotch-city",
     "version": "1.0.1",
     "orientation": "portrait",
     "deepLinking": true,
     "icon": "./src/assets/images/icon.png",
     "userInterfaceStyle": "automatic",
-    "scheme": "com.meltech.topnotchcity",
+    "scheme": "topnotchcity",
     "newArchEnabled": true,
     "ios": {
+      "icon": {
+        "dark": "./src/assets/images/ios-dark.png",
+        "light": "./src/assets/images/ios-light.png"
+      },
       "supportsTablet": false,
       "usesAppleSignIn": true,
       "bundleIdentifier": "com.meltech.topnotchcity",
@@ -36,6 +40,9 @@
       "edgeToEdgeEnabled": true,
       "googleServicesFile": "./google-services.json",
       "package": "com.meltech.topnotchcity",
+      "adaptiveIcon": {
+        "foregroundImage": "./src/assets/images/adaptive-icon.png"
+      },
       "permissions": [
         "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.ACCESS_COARSE_LOCATION",

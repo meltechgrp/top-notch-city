@@ -6,6 +6,7 @@ import {
   Image,
   Text,
 } from "@/components/ui";
+import { chunk } from "lodash-es";
 // import QuoteMessage from '@/components/chat/ChatRoomQuoteMessage'
 // import MediaPreviewComponent from '@/components/chat/MediaPreviewComponent'
 // import PostLinkPreview from '@/components/contents/PostLinkPreview'
@@ -18,7 +19,7 @@ import Layout from "@/constants/Layout";
 import { cn } from "@/lib/utils";
 import { formatMessageTime, fullName } from "@/lib/utils";
 import { router } from "expo-router";
-import { ClockIcon, Trash2 } from "lucide-react-native";
+import { CheckCheck, ClockIcon, Trash2 } from "lucide-react-native";
 import React, { useState } from "react";
 import { Pressable, View } from "react-native";
 import PostTextContent from "./PostTextContent";
@@ -50,12 +51,11 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
           <Text className="text-[8px] text-typography/70 mr-1">Edited</Text>
         )} */}
         <Text className="text-[8px] text-typography/70">{formatedTime}</Text>
-        {!message.read && (
-          <ClockIcon
-            width={12}
-            height={12}
-            className="ml-1 text-typography/70 "
-          />
+        {!message.read && isMine && (
+          <Icon as={ClockIcon} size="2xs" className="ml-1 " />
+        )}
+        {message.read && isMine && (
+          <Icon as={CheckCheck} size="2xs" className="ml-1 " />
         )}
       </View>
     ),
@@ -83,9 +83,13 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
       >
         {isMine && <View className="flex-1" />}
         <View
-          className={cn("max-w-[80%]", isMine ? "items-end" : "items-start")}
+          className={cn(
+            "max-w-[80%] p-1 rounded-xl",
+            isMine ? "bg-gray-600" : "bg-background-muted",
+            isMine ? "items-end" : "items-start"
+          )}
         >
-          {!isMine && (
+          {/* {!isMine && (
             <View className="pb-2 flex-row items-center">
               <Avatar>
                 <AvatarFallbackText>
@@ -107,51 +111,51 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
                 </Text>
               </Pressable>
             </View>
-          )}
+          )} */}
           {message.file_data?.length ? (
             <View
-              className={cn("gap-y-1", isMine ? "items-end" : "items-start")}
+              className={cn(
+                "gap-1 flex-row ",
+                isMine ? "items-end" : "items-start"
+              )}
             >
-              {message.file_data.map((item) => (
-                <View
-                  key={item.file_id}
-                  className={cn([
-                    "rounded-2xl mb-1 w-24 h-24",
-                    isMine ? "bg-primary-200" : "bg-gray-50",
-                  ])}
-                >
-                  <Image
-                    source={{
-                      ...generateMediaUrl({
-                        url: item.file_url,
-                        media_type: "IMAGE",
-                        id: item.file_id,
-                      }),
-                    }}
-                    alt={item.file_name}
-                  />
+              {chunk(message.file_data, 2).map((row, i) => (
+                <View key={i} className="flex-row gap-1">
+                  {row.map((item) => (
+                    <View
+                      key={item.file_id}
+                      className={cn(["rounded-2xl mb-1 flex-1 h-40"])}
+                    >
+                      <Image
+                        source={{
+                          ...generateMediaUrl({
+                            url: item.file_url,
+                            media_type: "IMAGE",
+                            id: item.file_id,
+                          }),
+                          cacheKey: item.file_id,
+                        }}
+                        rounded
+                        alt={item.file_name}
+                      />
+                    </View>
+                  ))}
                 </View>
               ))}
             </View>
           ) : null}
           <Pressable
-            className={cn([
-              "rounded-lg overflow-hidden gap-2",
-              isMine
-                ? "bg-primary  active:bg-primary"
-                : "bg-background-muted active:bg-bg-background-info",
-            ])}
+            // className={cn([
+            //   "rounded-lg overflow-hidden gap-2",
+            //   isMine
+            //     ? "bg-primary  active:bg-primary"
+            //     : "bg-background-muted active:bg-bg-background-info",
+            // ])}
             {...pressProps}
           >
             {message?.content && (
-              <View className="p-2">
-                <PostTextContent
-                  text={message.content || ""}
-                  // tokenizedText={message.tokenizedText as any}
-                  fullText={true}
-                  trimLink={false}
-                  isMine={isMine}
-                />
+              <View className="px-1 mb-1">
+                <PostTextContent text={message.content || ""} isMine={isMine} />
               </View>
             )}
           </Pressable>

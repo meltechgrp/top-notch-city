@@ -66,6 +66,7 @@
     "axios": "^1.9.0",
     "babel-plugin-module-resolver": "^5.0.2",
     "date-fns": "^4.1.0",
+    "date-fns-tz": "^3.2.0",
     "expo": "^53.0.13",
     "expo-apple-authentication": "~7.2.4",
     "expo-audio": "~0.4.7",

@@ -65,5 +65,7 @@ export async function makeMessageReadAndDelivered({
 }: {
   chatId: string;
 }) {
-  await Fetch(`/chat/${chatId}/mark-all-read`);
+  await Fetch(`/chat/${chatId}/mark-all-read`, {
+    method: "POST",
+  });
 }

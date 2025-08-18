@@ -2,6 +2,7 @@ import { format, isThisYear, isToday, subDays, subMonths } from "date-fns";
 import { type ClassValue, clsx } from "clsx";
 import { TZDate } from "@date-fns/tz";
 import { twMerge } from "tailwind-merge";
+// import { toZonedTime, format } from "date-fns-tz";
 import eventBus from "./eventBus";
 import { useEffect, useState } from "react";
 
@@ -29,17 +30,19 @@ export function formatMessageTime(
   const date = typeof time === "string" ? new Date(time) : time;
 
   // Detect the user's local timezone automatically
-  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const timeZone = Intl.DateTimeFormat().resolvedOptions();
 
   // Convert UTC/server date into user's timezone
-  const localDate = new TZDate(date, timeZone);
-
-  if (isToday(date)) {
-    return format(date, "h:mm a");
-  } else if (isThisYear(date)) {
-    return format(date, `MMM d${hideTimeForFullDate ? "" : ", h:mm a"}`);
+  const localDate = new TZDate(date, "+02:00");
+  if (isToday(localDate)) {
+    return format(localDate, "h:mm a");
+  } else if (isThisYear(localDate)) {
+    return format(localDate, `MMM d${hideTimeForFullDate ? "" : ", h:mm a"}`);
   }
-  return format(date, `MM/dd/yyyy${hideTimeForFullDate ? "" : ", h:mm a"}`);
+  return format(
+    localDate,
+    `MM/dd/yyyy${hideTimeForFullDate ? "" : ", h:mm a"}`
+  );
 }
 export function toKobo(amountInNaira: number) {
   return amountInNaira * 100;
