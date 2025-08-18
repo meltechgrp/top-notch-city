@@ -31,6 +31,7 @@ interface Message {
   file_data: FileData[];
   receiver_info: ReceiverInfo;
   sender_info: SenderInfo;
+  read: boolean;
 }
 interface ChatMessages {
   pagination: {

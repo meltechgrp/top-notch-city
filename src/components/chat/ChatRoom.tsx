@@ -7,16 +7,10 @@ import {
   NativeSyntheticEvent,
   View,
 } from "react-native";
-// import ChatRoomFooter from '@/components/chat/ChatRoomFooter'
-// import ChatRoomMessage from '@/components/chat/ChatRoomMessage'
 import { useChatStore, useStore } from "@/store";
-// import { MockedMessage } from '@/components/chat/types'
 import debounce from "lodash-es/debounce";
-// import { MessageStatus } from '@/graphql-types/index.gql'
-// import useChatMessages from '@/components/chat/useChatMessages'
-// import useMakeMessageDeliveredAndRead from '@/components/chat/useMakeMessageReadAndDelivered'
 import { router, useFocusEffect } from "expo-router";
-// import MediaViewerScreen from '@/components/contents/MediaViewerScreen'
+// import MediaViewerScreen from "@/components/contents/MediaViewerScreen";
 import useMessageActions from "@/components/chat/useMessageActions";
 // import MessageActionsBottomSheet from '@/components/chat/MessageActionsBottomSheet'
 import { cn } from "@/lib/utils";
@@ -34,7 +28,11 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import { getChatMessages, sendMessage } from "@/actions/message";
+import {
+  getChatMessages,
+  makeMessageReadAndDelivered,
+  sendMessage,
+} from "@/actions/message";
 import { ImagePickerAsset } from "expo-image-picker";
 
 /**
@@ -52,6 +50,11 @@ type Props = {
 export default function ChatRoom(props: Props) {
   const { ChatRoomFooterProps = {}, chatId, forceUpdate } = props;
   const queryClient = useQueryClient();
+  function invalidate() {
+    queryClient.invalidateQueries({
+      queryKey: ["messages", chatId],
+    });
+  }
   const {
     data,
     refetch,
@@ -73,6 +76,9 @@ export default function ChatRoom(props: Props) {
   });
   const { mutateAsync, isPending } = useMutation({
     mutationFn: sendMessage,
+  });
+  const { mutate: markAsRead } = useMutation({
+    mutationFn: makeMessageReadAndDelivered,
   });
   const { updateReceiver, updateSender } = useChatStore();
   const [refreshing, setRefreshing] = React.useState(false);
@@ -111,25 +117,22 @@ export default function ChatRoom(props: Props) {
   // }, [chatId, chat])
 
   // make last received message delivered and read in chatroom
-  // React.useEffect(() => {
-  //   // don't mark read if split chat tab isn't active
-  //   if (inTab && !isTabActive) return
-
-  //   if (messages?.length) {
-  //     const latestMessage = messages[0]
-  //     const latestMessageId = latestMessage.id
-
-  //     if (
-  //       latestMessage.status === MessageStatus.Sent &&
-  //       latestMessage.sender?.id !== me?.id
-  //     ) {
-  //       makeMessageReadAndDelivered({
-  //         messageId: latestMessageId,
-  //         chatId,
-  //       })
-  //     }
-  //   }
-  // }, [messages, chatId, inTab, isTabActive])
+  React.useEffect(() => {
+    if (messages?.length) {
+      const latestMessage = messages[0];
+      console.log(latestMessage.sender_info?.id, me?.id);
+      if (!latestMessage.read && latestMessage.sender_info?.id !== me?.id) {
+        markAsRead(
+          {
+            chatId,
+          },
+          {
+            onSuccess: invalidate,
+          }
+        );
+      }
+    }
+  }, [messages, chatId]);
 
   const [listContainerHeight, setListContainerHeight] = React.useState(0);
 
@@ -229,10 +232,7 @@ export default function ChatRoom(props: Props) {
           console.log("err", e);
         },
         onSuccess: (d) => {
-          console.log("msg", d);
-          queryClient.invalidateQueries({
-            queryKey: ["messages", chatId],
-          });
+          invalidate();
         },
       }
     );
@@ -261,7 +261,7 @@ export default function ChatRoom(props: Props) {
         <FlatList
           scrollEnabled={refreshing ? false : true}
           keyboardShouldPersistTaps="handled"
-          ref={(r) => (listRef.current = r)}
+          // ref={(r) => (listRef.current = r)}
           keyExtractor={(item) => item.message_id}
           contentContainerStyle={{
             justifyContent: "flex-end",
@@ -328,21 +328,6 @@ export default function ChatRoom(props: Props) {
         {...ChatRoomFooterProps}
         className="pb-0 bg-background-info border-t border-outline"
       />
-      {/* <MessageActionsBottomSheet
-        visible={showMessageActionsModal}
-        onDismiss={() => setShowMessageActionsModal(false)}
-        handleReply={handleReply}
-        handleDelete={() =>
-          handleDelete((message) => {
-            updateStoreAndCacheAfterDelete({
-              chatId: message.chat?.id!,
-              messageId: message.id,
-            })
-          })
-        }
-        handleEdit={handleEdit}
-        message={selectedMessage}
-      /> */}
       {/* <MediaViewerScreen /> */}
     </View>
   );

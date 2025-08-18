@@ -42,27 +42,58 @@ export default function RootLayout() {
   useNotificationObserver();
 
   useMountPushNotificationToken();
-  useEffect(function linkingWorkaround() {
-    Linking.addEventListener("url", ({ url }) => {
-      console.log(`Deep link: ${url}`);
+  useEffect(() => {
+    const handleDeepLink = ({ url }: { url: string }) => {
+      console.log(`🔗 Received deep link: ${url}`);
+
       let pathToNavigate: string | undefined;
 
-      if (
-        url.startsWith("exp://") ||
-        url.startsWith("exp+com.meltech.topnotchcity://")
-      ) {
-        pathToNavigate = url.split("--")[1];
-      } else if (url.startsWith("https://topnotchcity.com")) {
-        const path = url.split("topnotchcity.com")[1];
-        console.log(`Deep link: ${path}`);
-        pathToNavigate = path;
-      } else pathToNavigate = url.split("://")[1];
+      try {
+        const parsedUrl = new URL(url);
 
-      if (pathToNavigate) {
-        pathToNavigate = `/(protected)/${pathToNavigate}`;
-        router.push(pathToNavigate as any);
+        // 1️⃣ Handle known schemes (expo, custom)
+        const knownSchemes = ["exp:", "expo:", "com.meltech.topnotchcity:"];
+        console.log(parsedUrl.pathname, url);
+        if (parsedUrl.pathname == "/oauthredirect") {
+          console.log(parsedUrl.pathname);
+          return router.replace("/(protected)/(tabs)/home");
+        } else if (knownSchemes.includes(parsedUrl.protocol)) {
+          const segments = parsedUrl.pathname.split("/").filter(Boolean);
+          pathToNavigate = segments.join("/");
+        }
+
+        // 2️⃣ Handle web links
+        else if (
+          ["topnotchcity.com", "www.topnotchcity.com"].includes(
+            parsedUrl.hostname
+          )
+        ) {
+          pathToNavigate = parsedUrl.pathname.slice(1); // remove leading "/"
+        }
+
+        // 3️⃣ Fallback: try manually removing scheme
+        else {
+          const parts = url.split("://");
+          if (parts.length > 1) {
+            const rest = parts[1].split("/").filter(Boolean);
+            pathToNavigate = rest.join("/");
+          }
+        }
+        console.log(pathToNavigate);
+        // 4️⃣ Final routing
+        if (pathToNavigate) {
+          router.push(`/(protected)/${pathToNavigate}` as any);
+        }
+      } catch (e) {
+        console.warn("⚠️ Failed to handle deep link:", e);
       }
-    });
+    };
+
+    const subscription = Linking.addEventListener("url", handleDeepLink);
+
+    return () => {
+      subscription.remove(); // Clean up on unmount
+    };
   }, []);
   useEffect(() => {
     SplashScreen.hide();
@@ -115,11 +146,11 @@ function useMountPushNotificationToken() {
         Notifications.addNotificationReceivedListener((notification) => {
           console.log(notification.request.content?.data, "test");
           const data = notification.request.content.data;
+          if (data?.entity_type == "chat") {
+          }
           showBounceNotification({
             title: notification.request.content.title || "New Notification",
             description: notification.request.content.body || undefined,
-            entity_id: data?.entity_id as string,
-            entity_type: data?.entity_type as string,
           });
         });
       return () => {

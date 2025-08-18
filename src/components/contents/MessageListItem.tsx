@@ -22,7 +22,7 @@ export function MessageListItem(props: MessageListItemProps) {
     return <View className=" rounded-full"></View>;
   }, []);
   const unreadCount = React.useMemo(() => {
-    const c = chat?.unread_count || 1;
+    const c = chat?.unread_count || 0;
     return c > 99 ? "99+" : c;
   }, [chat]);
 

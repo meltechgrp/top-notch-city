@@ -50,13 +50,13 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
           <Text className="text-[8px] text-typography/70 mr-1">Edited</Text>
         )} */}
         <Text className="text-[8px] text-typography/70">{formatedTime}</Text>
-        {/* {message.status === "Pending" && (
+        {!message.read && (
           <ClockIcon
             width={12}
             height={12}
             className="ml-1 text-typography/70 "
           />
-        )} */}
+        )}
       </View>
     ),
     [formatedTime, message.content]

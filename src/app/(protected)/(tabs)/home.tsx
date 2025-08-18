@@ -1,10 +1,12 @@
+import { openSignInModal } from "@/components/globals/AuthModals";
 import DiscoverProperties from "@/components/home/DiscoverProperties";
 import TopProperties from "@/components/home/properties";
 import TopLocations from "@/components/home/topLocations";
 import { Box, View } from "@/components/ui";
 import eventBus from "@/lib/eventBus";
+import { useStore } from "@/store";
 import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Dimensions, Platform, RefreshControl } from "react-native";
 import Animated, {
   interpolate,
@@ -18,6 +20,7 @@ const MAP_HEIGHT = height / 1.8;
 
 export default function HomeScreen() {
   const { data, refetch } = useInfinityQueries({ type: "all" });
+  const { hasAuth } = useStore();
   const scrollY = useSharedValue(0);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -68,7 +71,14 @@ export default function HomeScreen() {
       ],
     };
   });
-
+  useEffect(() => {
+    eventBus.dispatchEvent("REFRESH_PROFILE", null);
+  }, []);
+  useEffect(() => {
+    if (hasAuth) {
+      openSignInModal({ visible: false });
+    }
+  }, [hasAuth]);
   return (
     <Box className="flex-1 overflow-visible">
       <Animated.ScrollView

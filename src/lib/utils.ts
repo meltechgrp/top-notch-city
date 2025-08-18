@@ -1,5 +1,6 @@
 import { format, isThisYear, isToday, subDays, subMonths } from "date-fns";
 import { type ClassValue, clsx } from "clsx";
+import { TZDate } from "@date-fns/tz";
 import { twMerge } from "tailwind-merge";
 import eventBus from "./eventBus";
 import { useEffect, useState } from "react";
@@ -22,10 +23,16 @@ export function formatMessageTime(
   time: Date,
   opt?: { hideTimeForFullDate: boolean }
 ) {
-  let date = new Date(time);
   const { hideTimeForFullDate } = opt || {
     hideTimeForFullDate: false,
   };
+  const date = typeof time === "string" ? new Date(time) : time;
+
+  // Detect the user's local timezone automatically
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  // Convert UTC/server date into user's timezone
+  const localDate = new TZDate(date, timeZone);
 
   if (isToday(date)) {
     return format(date, "h:mm a");

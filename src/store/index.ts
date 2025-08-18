@@ -21,6 +21,11 @@ type State = {
   isAdmin: boolean;
   me?: Me;
   isOnboarded: boolean;
+  mediaViewer?: {
+    media: Media[];
+    currentIndex: number;
+    isVideoReady?: boolean;
+  };
 };
 
 type Actions = {
@@ -29,6 +34,11 @@ type Actions = {
   setIsAdmin: (isAdmin: boolean) => void;
   setIsOnboarded: (isOnboarded: boolean) => void;
   updateProfile: (data: Me) => void;
+  setMediaViewer: (
+    mediaViewer: Media[],
+    currentIndex: number,
+    isVideoReady?: boolean
+  ) => void;
 };
 
 const initialState: State = {
@@ -59,6 +69,17 @@ export const useStore = create<StateAndActions>(
           isOnboarded: isOnboarded,
         }));
       },
+      setMediaViewer: (mediaViewer, currentIndex, isVideoReady) =>
+        set((state) => ({
+          ...state,
+          mediaViewer: {
+            media: mediaViewer,
+            currentIndex,
+            isVideoReady,
+          },
+        })),
+      unsetMediaViewer: () =>
+        set((state) => ({ ...state, mediaViewer: undefined })),
       setIsOnboarded(isOnboarded) {
         set((state) => ({ ...state, isOnboarded }));
       },

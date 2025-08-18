@@ -59,3 +59,11 @@ export async function getChatMessages({
     throw new Error("Failed to fetch properties");
   }
 }
+
+export async function makeMessageReadAndDelivered({
+  chatId,
+}: {
+  chatId: string;
+}) {
+  await Fetch(`/chat/${chatId}/mark-all-read`);
+}
