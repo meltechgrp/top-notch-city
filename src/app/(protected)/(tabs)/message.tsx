@@ -12,19 +12,19 @@ import React, { useMemo } from "react";
 import { RefreshControl } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import { getChats } from "@/actions/message";
+import eventBus from "@/lib/eventBus";
 
 export default function MessageScreen() {
   const { me } = useStore();
   const router = useRouter();
   const [friendsModal, setFriendsModal] = React.useState(false);
-  const userId = useMemo(() => me?.id, [me]);
   const {
     data,
     refetch,
     isLoading: loading,
     isFetching: refreshing,
   } = useQuery({
-    queryKey: ["chats", userId],
+    queryKey: ["chats"],
     queryFn: getChats,
   });
   const onNewChat = () => {
@@ -32,6 +32,17 @@ export default function MessageScreen() {
   };
   const chats = useMemo(() => data?.chats || [], [data]);
   useRefreshOnFocus(refetch);
+  async function onRefreshChat() {
+    console.log("refreshing chats");
+    await refetch();
+  }
+  React.useEffect(() => {
+    eventBus.addEventListener("REFRESH_CHATS", onRefreshChat);
+
+    return () => {
+      eventBus.removeEventListener("REFRESH_CHATS", onRefreshChat);
+    };
+  }, []);
   return (
     <>
       <Box className="flex-1">
@@ -66,7 +77,7 @@ export default function MessageScreen() {
           onDismiss={() => setFriendsModal(false)}
           onSelect={(member) => {
             router.push({
-              pathname: "/(protected)/(tabs)/message/[chatId]",
+              pathname: "/(protected)/messages/[chatId]",
               params: {
                 chatId: `${member.id}_${me?.id}`,
               },

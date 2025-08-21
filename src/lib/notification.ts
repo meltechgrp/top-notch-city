@@ -50,10 +50,11 @@ function handleNotificationResponseByType(
       router.navigate(href);
     }
   };
+  console.log(notificationType);
   switch (notificationType) {
     case "chat": {
       navigateTo({
-        pathname: "/(protected)/(tabs)/message/[chatId]",
+        pathname: "/(protected)/messages/[chatId]",
         params: {
           chatId: notificationData?.entity_id as string,
         },

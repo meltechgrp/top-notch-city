@@ -82,7 +82,7 @@ export default function TabLayout() {
         name="message"
         options={{
           title: "Message",
-          headerShown: false,
+          headerShown: true,
           tabBarIcon: ({ color }) => (
             <MessageSquareMore size={24} color={color} />
           ),

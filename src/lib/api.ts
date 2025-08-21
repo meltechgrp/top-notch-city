@@ -16,6 +16,9 @@ export const generateMediaUrl = (media: Media) => {
     id: media.id,
   };
 };
+export const generateMediaUrlSingle = (media: string) => {
+  return `${config.origin}${media}`;
+};
 
 const SEARCH_HISTORY_KEY = "search_history";
 

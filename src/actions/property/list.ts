@@ -3,8 +3,7 @@ import { Fetch } from "../utills";
 // 🏠 Fetch all properties (paginated)
 export async function fetchProperties({ pageParam }: { pageParam: number }) {
   try {
-    console.log(pageParam);
-    const res = await Fetch(`/properties?page=${pageParam}&per_page=5`, {});
+    const res = await Fetch(`/properties?page=${pageParam}&per_page=20`, {});
     if (res?.detail) throw new Error("Failed to fetch properties");
     return res as Result;
   } catch (error) {

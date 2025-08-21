@@ -1,11 +1,14 @@
 import * as React from "react";
 import {
   ActivityIndicator,
+  Animated,
   FlatList,
   ListRenderItem,
   NativeScrollEvent,
   NativeSyntheticEvent,
+  SectionList,
   View,
+  ViewToken,
 } from "react-native";
 import { useChatStore, useStore } from "@/store";
 import debounce from "lodash-es/debounce";
@@ -34,6 +37,10 @@ import {
   sendMessage,
 } from "@/actions/message";
 import { ImagePickerAsset } from "expo-image-picker";
+import { format, isToday, isYesterday } from "date-fns";
+import useSound from "@/hooks/useSound";
+import useSuppressChatPushNotification from "@/components/chat/useSuppressChatPushNotification";
+import MessageActionsBottomSheet from "@/components/chat/MessageActionsBottomSheet";
 
 /**
  * @note
@@ -49,7 +56,10 @@ type Props = {
 };
 export default function ChatRoom(props: Props) {
   const { ChatRoomFooterProps = {}, chatId, forceUpdate } = props;
+  const { playSound } = useSound();
   const queryClient = useQueryClient();
+  const [currentTitle, setCurrentTitle] = React.useState("");
+  const scrollY = React.useRef(new Animated.Value(0)).current;
   function invalidate() {
     queryClient.invalidateQueries({
       queryKey: ["messages", chatId],
@@ -60,7 +70,7 @@ export default function ChatRoom(props: Props) {
     refetch,
     fetchNextPage,
     hasNextPage,
-    isFetching,
+    isFetching: refreshing,
     isLoading,
     isFetchingNextPage,
   } = useInfiniteQuery({
@@ -73,7 +83,12 @@ export default function ChatRoom(props: Props) {
       } = lastPage;
       return page < total_pages ? page + 1 : undefined;
     },
+    networkMode: "online",
   });
+  const messages = React.useMemo(
+    () => data?.pages.flatMap((item) => item.messages) || [],
+    [data?.pages]
+  );
   const { mutateAsync, isPending } = useMutation({
     mutationFn: sendMessage,
   });
@@ -81,12 +96,8 @@ export default function ChatRoom(props: Props) {
     mutationFn: makeMessageReadAndDelivered,
   });
   const { updateReceiver, updateSender } = useChatStore();
-  const [refreshing, setRefreshing] = React.useState(false);
+
   const me = useStore((s) => s.me);
-  const messages = React.useMemo(
-    () => data?.pages.flatMap((item) => item.messages) || [],
-    [data?.pages]
-  );
   const sender = React.useMemo(
     () => data?.pages.flatMap((item) => item.sender_info)[0] || null,
     [data?.pages]
@@ -107,16 +118,7 @@ export default function ChatRoom(props: Props) {
       updateSender(sender);
     }
   }, [sender, receiver, me]);
-  // useClearChatPushNotification(chatId)
-  // useSuppressChatPushNotification(chatId)
 
-  // React.useEffect(() => {
-  //   if (isCompositeId(chatId) && chat?.id) {
-  //     setChatId(chat?.id)
-  //   }
-  // }, [chatId, chat])
-
-  // make last received message delivered and read in chatroom
   React.useEffect(() => {
     if (messages?.length) {
       const latestMessage = messages[0];
@@ -155,8 +157,7 @@ export default function ChatRoom(props: Props) {
         earliestMessageOffset - (y + listContainerHeight);
 
       if (scrollOffsetFromTop < 200 && !refreshing) {
-        // ! This causes the component to freeze until the refresh is complete.
-        // ! This is because we are updating the `refreshing` state in the `onRefresh` function and also accessing it here (afaik)
+        hasNextPage && fetchNextPage();
       }
     }
   }
@@ -171,7 +172,7 @@ export default function ChatRoom(props: Props) {
   const scrollToBottom = () => {
     listRef.current?.scrollToOffset({ animated: true, offset: 0 });
   };
-
+  useSuppressChatPushNotification(chatId, true);
   function onRefreshChat() {
     refetch();
   }
@@ -232,6 +233,7 @@ export default function ChatRoom(props: Props) {
         },
         onSuccess: (d) => {
           invalidate();
+          playSound("MESSAGE_SENT");
         },
       }
     );
@@ -254,10 +256,46 @@ export default function ChatRoom(props: Props) {
     }, [])
   );
 
+  const viewabilityConfig = { viewAreaCoveragePercentThreshold: 50 };
+  const onViewableItemsChanged = React.useRef(
+    ({ viewableItems }: { viewableItems: ViewToken<Message>[] }) => {
+      if (viewableItems.length > 0) {
+        const createdAt = new Date(viewableItems[0].item.created_at);
+        let sectionTitle = format(createdAt, "MMM d, yyyy");
+        if (isToday(createdAt)) {
+          sectionTitle = "Today";
+        } else if (isYesterday(createdAt)) {
+          sectionTitle = "Yesterday";
+        }
+
+        setCurrentTitle(sectionTitle);
+      }
+    }
+  );
+
   return (
     <View className="flex-1 w-full">
+      <Animated.View
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 10,
+          opacity: scrollY.interpolate({
+            inputRange: [0, 50],
+            outputRange: [0, 1],
+            extrapolate: "clamp",
+          }),
+        }}
+      >
+        <Text className="text-center text-sm self-center mt-6 bg-background-muted p-1 px-2 rounded-full">
+          {currentTitle}
+        </Text>
+      </Animated.View>
+
       <View className="flex-1 w-full">
-        <FlatList
+        <Animated.FlatList
           scrollEnabled={refreshing ? false : true}
           keyboardShouldPersistTaps="handled"
           // ref={(r) => (listRef.current = r)}
@@ -269,12 +307,22 @@ export default function ChatRoom(props: Props) {
           }}
           renderItem={renderItem}
           data={messages}
+          viewabilityConfig={viewabilityConfig}
+          onViewableItemsChanged={onViewableItemsChanged.current}
           initialNumToRender={InitialNumToRender}
-          onScroll={(ev) => {
-            ev.persist();
-            onScroll(ev);
-          }}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+            {
+              useNativeDriver: true,
+              listener: (ev) => {
+                onScroll(
+                  ev as unknown as NativeSyntheticEvent<NativeScrollEvent>
+                );
+              },
+            }
+          )}
           inverted
+          scrollEventThrottle={16}
           ListFooterComponent={
             <View className="w-full">
               {refreshing && (
@@ -292,7 +340,7 @@ export default function ChatRoom(props: Props) {
             setListContainerHeight(height);
           }}
         />
-        {(isLoading || isFetching) && !messages.length ? (
+        {(isLoading || refreshing) && !messages.length ? (
           <View className="h-full justify-center items-center w-full z-50">
             <ActivityIndicator size="large" className="text-primary-900" />
             <Text className="text-gray-700 text-sm mt-2">
@@ -301,21 +349,16 @@ export default function ChatRoom(props: Props) {
           </View>
         ) : null}
         {!messages.length && <EmptyScreen message={"This space is empty"} />}
-        {/* <EditOverlay
-          visible={isEditing}
-          onDismiss={() => exitEditMode()}
-          activeMessage={selectedMessage}
-        /> */}
       </View>
       <ChatRoomFooter
         onUpdate={onRefreshChat}
         chatId={chatId}
         onPost={(data, isEdit) => {
           handleSendMessage(data);
-          // exitEditMode();
-          // if (!isEdit) {
-          //   scrollToBottom();
-          // }
+          exitEditMode();
+          if (!isEdit) {
+            scrollToBottom();
+          }
         }}
         activeQuoteMsg={activeQuoteMessage}
         clearActiveQuoteMsg={() => {
@@ -325,9 +368,23 @@ export default function ChatRoom(props: Props) {
         isEditing={isEditing}
         selectedMessage={selectedMessage}
         {...ChatRoomFooterProps}
-        className="pb-0 bg-background-info border-t border-outline"
+        className="pb-0 bg-background border-t border-outline"
       />
-      {/* <MediaViewerScreen /> */}
+      <MessageActionsBottomSheet
+        visible={showMessageActionsModal}
+        onDismiss={() => setShowMessageActionsModal(false)}
+        handleReply={handleReply}
+        handleDelete={() => {
+          // handleDelete((message) => {
+          //   updateStoreAndCacheAfterDelete({
+          //     chatId: message.chat?.id!,
+          //     messageId: message.id,
+          //   });
+          // })
+        }}
+        handleEdit={handleEdit}
+        message={selectedMessage}
+      />
     </View>
   );
 }

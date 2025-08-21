@@ -23,17 +23,10 @@ export default function ChatsLayout() {
       <Stack.Screen
         name="index"
         options={{
-          headerShown: true,
+          headerShown: false,
           headerTitle: "Messages",
           headerLeft: undefined,
-        }}
-      />
-      <Stack.Screen
-        name="[chatId]/index"
-        options={{
-          headerShown: false,
           animation: "slide_from_right",
-          gestureEnabled: true,
         }}
       />
     </Stack>

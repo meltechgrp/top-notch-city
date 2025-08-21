@@ -12,12 +12,14 @@ import SearchFilterBottomSheet from "@/components/modals/search/SearchFilterBott
 import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import { VoiceModal } from "@/components/modals/search/VoiceModal";
 import { useFilteredProperties } from "@/hooks/useFilteredProperties";
+import useGetLocation from "@/hooks/useGetLocation";
 
 const TABS = ["Map View", "List View"];
 
 export default function SearchScreen() {
   const { height: totalHeight } = Dimensions.get("screen");
   const [showFilter, setShowFilter] = useState(false);
+  const { location } = useGetLocation();
   const [activateVoice, setActivateVoice] = useState(false);
   const [audioProperties, setAudioProperties] = useState<Property[]>([]);
   const [locationBottomSheet, setLocationBottomSheet] = useState(false);
@@ -25,7 +27,8 @@ export default function SearchScreen() {
   const [currentPage, setCurrentPage] = useState(0);
   const [filter, setFilter] = useState<SearchFilters>({});
   const [search, setSearch] = useState<SearchFilters>({
-    use_geo_location: "true",
+    latitude: location?.latitude?.toString(),
+    longitude: location?.longitude?.toString(),
   });
   const {
     data,
@@ -38,7 +41,7 @@ export default function SearchScreen() {
 
   useEffect(() => {
     refetch();
-  }, [search]);
+  }, [search, location]);
 
   const onTabChange = React.useCallback((index: number) => {
     setCurrentPage(index);

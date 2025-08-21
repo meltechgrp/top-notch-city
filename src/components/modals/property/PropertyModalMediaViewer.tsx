@@ -56,7 +56,6 @@ export function PropertyModalMediaViewer({
   const animatedImageStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: translateY.value }],
   }));
-
   const animatedBackdrop = useAnimatedStyle(() => ({
     backgroundColor: `rgba(0,0,0,1)`,
   }));

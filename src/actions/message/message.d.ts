@@ -10,10 +10,16 @@ interface Chat {
     id: string;
     first_name: string;
     last_name: string;
-    profile_image?: Media;
+    profile_image?: string;
   };
   sender_id: string;
-  recent_message: string;
+  recent_message: {
+    message_id: string;
+    content: string;
+    created_at: string;
+    read: string;
+    file_data: FileData[];
+  };
   unread_count: number;
 }
 

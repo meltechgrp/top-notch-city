@@ -4,7 +4,8 @@ import FoundHorizontalList from "./FoundProperties";
 import HomeNavigation from "./HomeNavigation";
 import { useRouter } from "expo-router";
 import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
-import { memo, useMemo } from "react";
+import { memo, useEffect, useMemo } from "react";
+import useGetLocation from "@/hooks/useGetLocation";
 
 type Props = {
   className?: string;
@@ -12,10 +13,14 @@ type Props = {
 };
 const DiscoverProperties = (props: Props) => {
   const { className, mapHeight } = props;
+  const { location } = useGetLocation();
   const router = useRouter();
   const { data, refetch } = useInfinityQueries({
     type: "search",
-    filter: { use_geo_location: "true" },
+    filter: {
+      latitude: location?.latitude?.toString(),
+      longitude: location?.longitude?.toString(),
+    },
     key: "nearby",
     enabled: false,
   });
@@ -24,6 +29,10 @@ const DiscoverProperties = (props: Props) => {
     () => data?.pages.flatMap((page) => page.results) || [],
     [data]
   );
+
+  useEffect(() => {
+    refetch();
+  }, [location]);
   return (
     <View style={{ flex: 1 }} className={className}>
       <View className="overflow-hidden relative flex-1">

@@ -3,7 +3,7 @@ import * as React from "react";
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { cn } from "@/lib/utils";
-import MainLogo from "@/assets/images/icon.png";
+import MainLogo from "@/assets/images/notification.png";
 import NotificationBarButton from "@/components/notifications/NotificationBarButton";
 import { Avatar, AvatarImage, Icon, Pressable, Text } from "@/components/ui";
 import { Home } from "lucide-react-native";

@@ -1,29 +1,15 @@
-import {
-  Avatar,
-  AvatarFallbackText,
-  AvatarImage,
-  Icon,
-  Image,
-  Text,
-} from "@/components/ui";
+import { Icon, Image, Text } from "@/components/ui";
 import { chunk } from "lodash-es";
-// import QuoteMessage from '@/components/chat/ChatRoomQuoteMessage'
-// import MediaPreviewComponent from '@/components/chat/MediaPreviewComponent'
-// import PostLinkPreview from '@/components/contents/PostLinkPreview'
-// import PostTextContent from '@/components/contents/PostTextContent'
-// import { SplitListItemEmbedWithDataFetching } from '@/components/splits/SplitListItemEmbed'
-import Layout from "@/constants/Layout";
-// import { ChatMessagesQuery, ChatQuery } from '@/graphql-types/chat.queries.gql'
-// import { MessageStatus } from '@/graphql-types/index.gql'
-// import { MeQuery } from '@/graphql-types/queries.gql'
 import { cn } from "@/lib/utils";
-import { formatMessageTime, fullName } from "@/lib/utils";
-import { router } from "expo-router";
-import { CheckCheck, ClockIcon, Trash2 } from "lucide-react-native";
-import React, { useState } from "react";
+import { formatMessageTime } from "@/lib/utils";
+import { Check, CheckCheck } from "lucide-react-native";
+import React, { useMemo, useState } from "react";
 import { Pressable, View } from "react-native";
 import PostTextContent from "./PostTextContent";
 import { generateMediaUrl } from "@/lib/api";
+import { PropertyModalMediaViewer } from "@/components/modals/property/PropertyModalMediaViewer";
+import { useLayout } from "@react-native-community/hooks";
+import { hapticFeed } from "@/components/HapticTab";
 
 export type ChatRoomMessageProps = View["props"] & {
   me: Me;
@@ -34,11 +20,24 @@ export type ChatRoomMessageProps = View["props"] & {
 };
 export default function ChatRoomMessage(props: ChatRoomMessageProps) {
   const { me, sender, onLongPress, isDeleting, message, ...others } = props;
+  const { width, onLayout } = useLayout();
+  const images = useMemo(
+    () =>
+      message.file_data.map((item) => ({
+        id: item.file_id,
+        url: item.file_url,
+        media_type: "IMAGE",
+      })),
+    [message]
+  ) as Media[];
   const isMine = React.useMemo(() => message.sender_info?.id === me.id, []);
+  const [visible, setVisible] = useState(false);
   const formatedTime = React.useMemo(
     () => formatMessageTime(message.created_at as unknown as Date),
     []
   );
+
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const messageInfo = React.useMemo(
     () => (
       <View
@@ -47,15 +46,12 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
           isMine ? "justify-end" : "justify-start"
         )}
       >
-        {/* {message.edited_at && (
-          <Text className="text-[8px] text-typography/70 mr-1">Edited</Text>
-        )} */}
         <Text className="text-[8px] text-typography/70">{formatedTime}</Text>
         {!message.read && isMine && (
-          <Icon as={ClockIcon} size="2xs" className="ml-1 " />
+          <Icon as={Check} size="2xs" className="ml-1 text-primary " />
         )}
         {message.read && isMine && (
-          <Icon as={CheckCheck} size="2xs" className="ml-1 " />
+          <Icon as={CheckCheck} size="2xs" className="ml-1 text-primary" />
         )}
       </View>
     ),
@@ -71,13 +67,19 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
     delayLongPress: 400,
   };
 
+  const handleOpen = (index: number) => {
+    hapticFeed(true);
+    setSelectedIndex(index);
+    setVisible(true);
+  };
   return (
     <>
       <Pressable
         {...pressProps}
         {...others}
+        onLayout={onLayout}
         className={cn([
-          "w-full px-4 flex-row py-2",
+          " px-4 w-full flex-row py-2",
           isDeleting && "opacity-30",
         ])}
       >
@@ -89,41 +91,19 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
             isMine ? "items-end" : "items-start"
           )}
         >
-          {/* {!isMine && (
-            <View className="pb-2 flex-row items-center">
-              <Avatar>
-                <AvatarFallbackText>
-                  {fullName(message.sender_info)}
-                </AvatarFallbackText>
-                <AvatarImage
-                  source={{
-                    uri: generateMediaUrl({
-                      id: "",
-                      url: message.sender_info.profile_image,
-                      media_type: "IMAGE",
-                    }).uri,
-                  }}
-                />
-              </Avatar>
-              <Pressable>
-                <Text className="ml-2 text-sm">
-                  {fullName(message.sender_info)}
-                </Text>
-              </Pressable>
-            </View>
-          )} */}
           {message.file_data?.length ? (
             <View
               className={cn(
-                "gap-1 flex-row ",
+                "gap-1 flex-row flex-wrap ",
                 isMine ? "items-end" : "items-start"
               )}
             >
               {chunk(message.file_data, 2).map((row, i) => (
                 <View key={i} className="flex-row gap-1">
-                  {row.map((item) => (
-                    <View
+                  {row.map((item, i) => (
+                    <Pressable
                       key={item.file_id}
+                      onPress={() => handleOpen(i)}
                       className={cn(["rounded-2xl mb-1 flex-1 h-40"])}
                     >
                       <Image
@@ -138,7 +118,7 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
                         rounded
                         alt={item.file_name}
                       />
-                    </View>
+                    </Pressable>
                   ))}
                 </View>
               ))}
@@ -163,6 +143,14 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
           {!isMine && <View className="flex-1" />}
         </View>
       </Pressable>
+      <PropertyModalMediaViewer
+        width={width}
+        media={images}
+        visible={visible}
+        contentFit="cover"
+        setVisible={setVisible}
+        selectedIndex={selectedIndex}
+      />
     </>
   );
 }

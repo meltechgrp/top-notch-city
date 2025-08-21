@@ -111,7 +111,7 @@ const PropertyDetailsBottomSheet = () => {
                     onSuccess: (data) => {
                       console.log(data);
                       router.replace({
-                        pathname: "/message/[chatId]",
+                        pathname: "/messages/[chatId]",
                         params: {
                           chatId: data,
                         },

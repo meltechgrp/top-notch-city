@@ -13,6 +13,7 @@ import { usePropertyDataMutations } from "@/tanstack/mutations/usePropertyDataMu
 import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import { ImageContentFit } from "expo-image";
+import { VideoPlayer } from "@/components/custom/VideoPlayer";
 
 interface Props extends AnimatedProps<ViewProps> {
   style?: StyleProp<ImageStyle>;
@@ -55,31 +56,10 @@ const PropertyMedia: React.FC<Props> = (props) => {
     () => generateMediaUrl(source),
     [source]
   );
+
   const { mutateAsync, isPending } =
     usePropertyDataMutations().deletePropertyMediaMutation;
-  // Setup player if media is video
-  const player =
-    !isImage && uri
-      ? useVideoPlayer({ uri, useCaching: true }, (player) => {
-          try {
-            player.loop = false;
-            player.muted = true;
-          } catch (e) {
-            console.warn("VideoPlayer setup failed", e);
-          }
-        })
-      : undefined;
 
-  const isPlaying = player
-    ? useEvent(player, "playingChange", {
-        isPlaying: player.playing,
-      }).isPlaying
-    : false;
-  const status = player
-    ? useEvent(player, "statusChange", {
-        status: player.status,
-      }).status
-    : false;
   return (
     <Animated.View
       testID={testID}
@@ -98,57 +78,15 @@ const PropertyMedia: React.FC<Props> = (props) => {
           />
         </Pressable>
       ) : null}
-      {isVisible && !isImage && player ? (
-        <Pressable
-          onPress={() => onPress?.(uri)}
-          className={cn(
-            "relative w-full h-full",
-            rounded && "rounded-xl overflow-hidden"
-          )}
-        >
-          <VideoView
-            style={[style, { backgroundColor: "transparent" }]}
-            player={player}
-            contentFit="contain"
-            allowsFullscreen
-            nativeControls={false}
-            className={cn("w-full h-full", rounded && "rounded-xl")}
-          />
-          {/* ▶️ Play icon overlay */}
-          <Pressable
-            onPress={() => {
-              if (!canPlayVideo || status == "loading") return onPress?.(uri);
-              if (isPlaying) {
-                player.pause();
-              } else {
-                player.play();
-              }
-            }}
-            className="absolute z-10 inset-0 items-center justify-center"
-          >
-            {/* {canPlayVideo && ( */}
-            <View className="p-2 rounded-full bg-black/30 ">
-              {isPlaying ? (
-                <Icon as={Pause} className=" text-primary w-10 h-10" />
-              ) : (
-                <>
-                  {status !== "loading" ? (
-                    <Icon
-                      as={CirclePlay}
-                      className={cn(
-                        " text-primary w-10 h-10",
-                        isSmallView && "w-7 h-7"
-                      )}
-                    />
-                  ) : (
-                    <SpinningLoader />
-                  )}
-                </>
-              )}
-            </View>
-            {/* )} */}
-          </Pressable>
-        </Pressable>
+      {isVisible && !isImage && uri ? (
+        <VideoPlayer
+          uri={uri}
+          style={style}
+          rounded={rounded}
+          canPlayVideo={canPlayVideo}
+          isSmallView={isSmallView}
+          onPress={onPress}
+        />
       ) : null}
 
       {withBackdrop && (

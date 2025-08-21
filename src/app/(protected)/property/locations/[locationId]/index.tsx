@@ -11,10 +11,11 @@ export default function PropertyLocations() {
   const { locationId } = useLocalSearchParams() as { locationId?: string };
   const [showFilter, setShowFilter] = useState(false);
   const [filter, setFilter] = useState<SearchFilters>({});
-  const { data, isLoading, fetchNextPage, refetch } = useInfinityQueries({
-    type: "state",
-    state: locationId,
-  });
+  const { data, isLoading, fetchNextPage, refetch, hasNextPage } =
+    useInfinityQueries({
+      type: "state",
+      state: locationId,
+    });
 
   const propertysData = useMemo(() => {
     return data?.pages.flatMap((page) => page.results) ?? [];
@@ -55,6 +56,8 @@ export default function PropertyLocations() {
           <VerticalProperties
             data={filtered}
             isLoading={isLoading}
+            hasNextPage={hasNextPage}
+            fetchNextPage={fetchNextPage}
             refetch={refetch}
             className="pt-4 pb-20"
           />

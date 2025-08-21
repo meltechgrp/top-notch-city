@@ -153,7 +153,8 @@ export default function PropertiesScreen() {
               },
             });
           }}
-          refetch={async () => {}}
+          refetch={async () => await refetch()}
+          hasNextPage={hasNextPage}
           fetchNextPage={fetchNextPage}
           className="pb-24"
           ListEmptyComponent={

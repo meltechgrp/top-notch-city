@@ -96,6 +96,7 @@ export default function Properties() {
               setActiveProperty(data);
               setPropertyBottomSheet(true);
             }}
+            hasNextPage={hasNextPage}
             fetchNextPage={fetchNextPage}
             refetch={refetch}
           />

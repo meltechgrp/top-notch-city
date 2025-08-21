@@ -10,6 +10,8 @@ import { Alert, Pressable, ScrollView } from "react-native";
 import { useCallback, useImperativeHandle, useState, useMemo } from "react";
 import { Platform } from "react-native";
 import { CloseIcon, Image } from "@/components/ui";
+import { useMediaCompressor } from "@/hooks/useMediaCompressor";
+import { uniqueId } from "lodash-es";
 type Props = {
   media: (ImagePicker.ImagePickerAsset & { isCompressed?: boolean })[];
   max?: number;
@@ -40,6 +42,7 @@ const MediaPicker = React.forwardRef<MediaPickerRef, Props>((props, ref) => {
     origin = "chat",
     autoCompress = true,
   } = props;
+  const { compress } = useMediaCompressor();
   const [maxHeight, setMaxHeight] = useState<number>(0);
   const [scrollWidth, setScrollWidth] = useState<number>(0);
   const computedDimensions = useMemo(() => {
@@ -116,15 +119,28 @@ const MediaPicker = React.forwardRef<MediaPickerRef, Props>((props, ref) => {
         allowsMultipleSelection: true,
         orderedSelection: true,
         selectionLimit: max - media.length,
-        ...(Platform.OS === "ios" && {}),
       });
 
       if (result.canceled || !result.assets?.length) return;
 
       const assets: ImagePicker.ImagePickerAsset[] = [];
-
-      for (const asset of result.assets) {
-        assets.push(asset);
+      const files = await Promise.all(
+        result.assets.map((file) =>
+          compress({
+            type: "image",
+            uri: file.uri,
+            compressionRate: 0.2,
+          })
+        )
+      );
+      const compressed = files
+        .filter((item) => item !== null)
+        .map((item) => ({
+          uri: item!,
+          assetId: uniqueId("media"),
+        }));
+      for (const asset of compressed) {
+        asset && assets.push(asset as unknown as ImagePicker.ImagePickerAsset);
       }
 
       onChange((prev) => {
@@ -172,38 +188,36 @@ const MediaPicker = React.forwardRef<MediaPickerRef, Props>((props, ref) => {
         className={cn("flex-row gap-x-2 bg-transparent", className)}
         layout={LinearTransition}
       >
-        {media?.map((asset, index) =>
-          asset.mimeType ? (
-            <Animated.View
-              key={index}
-              entering={ZoomIn}
-              exiting={FadeInDown.duration(50).delay(0)}
-              layout={LinearTransition}
-              className="flex items-center bg-gray-200 rounded-lg mr-2"
-              style={{
-                width: 100,
-                height: 100,
-              }}
-            >
-              <Image
-                source={{ uri: asset.uri }}
-                className="w-full h-full rounded-lg"
-                contentFit="cover"
-                rounded
-              />
+        {media?.map((asset, index) => (
+          <Animated.View
+            key={index}
+            entering={ZoomIn}
+            exiting={FadeInDown.duration(50).delay(0)}
+            layout={LinearTransition}
+            className="flex items-center rounded-lg mr-2"
+            style={{
+              width: 100,
+              height: 100,
+            }}
+          >
+            <Image
+              source={{ uri: asset.uri }}
+              className="w-full h-full rounded-lg"
+              contentFit="cover"
+              rounded
+            />
 
-              <Pressable
-                className="bg-primary w-6 h-6 absolute -right-2 -top-2 items-center justify-center rounded-full border border-primary"
-                onPress={() => onRemovePhoto(asset.uri)}
-              >
-                <CloseIcon
-                  style={[{ transform: [{ scale: 0.5 }] }]}
-                  color={"white"}
-                />
-              </Pressable>
-            </Animated.View>
-          ) : null
-        )}
+            <Pressable
+              className="bg-primary w-6 h-6 absolute -right-2 -top-2 items-center justify-center rounded-full border border-primary"
+              onPress={() => onRemovePhoto(asset.uri)}
+            >
+              <CloseIcon
+                style={[{ transform: [{ scale: 0.5 }] }]}
+                color={"white"}
+              />
+            </Pressable>
+          </Animated.View>
+        ))}
       </Animated.View>
     </ScrollView>
   );

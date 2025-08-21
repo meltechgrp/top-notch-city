@@ -69,3 +69,9 @@ export async function makeMessageReadAndDelivered({
     method: "POST",
   });
 }
+
+export async function deleteChat(chat_id: string) {
+  await Fetch(`/delete/chats/${chat_id}`, {
+    method: "DELETE",
+  });
+}

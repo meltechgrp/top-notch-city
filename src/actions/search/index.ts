@@ -10,6 +10,8 @@ export async function searchProperties(
   if (filters?.keyword) query.append("title", filters.keyword);
   // if (filters?.city) query.append('city', filters.city);
   if (filters?.state) query.append("state", filters.state);
+  if (filters?.latitude) query.append("latitude", filters.latitude);
+  if (filters?.longitude) query.append("longitude", filters.longitude);
   if (filters?.country) query.append("country", filters.country);
   if (filters?.purpose) query.append("purpose", filters.purpose);
   if (filters?.min_price && filters.min_price !== "No Min")
@@ -29,8 +31,6 @@ export async function searchProperties(
       "created_at",
       format(new Date(filters.createdAt), "yyyy-MM-dd")
     );
-  if (filters?.use_geo_location)
-    query.append("use_geo_location", filters.use_geo_location);
   if (filters?.amenities?.length) {
     filters?.amenities.forEach((amenity) =>
       query.append("amenities_filter", amenity)
@@ -40,9 +40,10 @@ export async function searchProperties(
   query.append("page", String(page));
   query.append("per_page", String(perPage));
   query.append("sort_by", "created_at");
-  query.append("radius_km", "50");
+  query.append("radius_km", "20");
   query.append("sort_order", "desc");
   const path = `/properties/search/?${query.toString()}`;
+  console.log(path);
   try {
     const res = await Fetch(path, {});
     if (!res?.results) throw new Error("property not found");

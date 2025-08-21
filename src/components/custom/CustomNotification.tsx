@@ -71,7 +71,7 @@ export function showBounceNotification({
       descriptionStyle: { color: Colors[theme].text },
     },
     translucentStatusBar: true,
-    duration: 0,
+    duration: 4000,
     showAnimationDuration: 800,
     showEasing: Easing.bounce,
     hideOnPress: true,

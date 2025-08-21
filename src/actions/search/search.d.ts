@@ -14,4 +14,6 @@ type SearchFilters = {
   use_geo_location?: string;
   createdAt?: string;
   tour?: string;
+  latitude?: string;
+  longitude?: sttring;
 };

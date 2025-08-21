@@ -79,13 +79,10 @@ class MainApplication : Application(), ReactApplication {
     }
   }
   
-  fun isActivityInBackStack(cls: Class<*>?) =
-  cls != null && runningActivities.contains(cls)
-
+  fun isActivityInBackStack(cls: Class<*>?) = runningActivities.contains(cls)
 
   override fun onTerminate() {
     super.onTerminate()
     unregisterActivityLifecycleCallbacks(lifecycleCallbacks)
   }
-  
   }

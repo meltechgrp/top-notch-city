@@ -5,6 +5,7 @@ import { getUniqueIdSync } from "react-native-device-info";
 import { useEffect, useRef, useState } from "react";
 import Platforms from "@/constants/Plaforms";
 import eventBus from "@/lib/eventBus";
+import useSound from "@/hooks/useSound";
 const MAPS_API_KEY = process.env.EXPO_PUBLIC_ANDROID_MAPS_API_KEY;
 
 export async function Fetch(url: string, options: AxiosRequestConfig = {}) {
@@ -30,6 +31,7 @@ export async function Fetch(url: string, options: AxiosRequestConfig = {}) {
 
 export function useWebSocket() {
   const authToken = getAuthToken();
+  const { playSound } = useSound();
   const ws = useRef<WebSocket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const reconnectAttempts = useRef(0);
@@ -51,12 +53,14 @@ export function useWebSocket() {
     socket.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
+        // const data = event.data;
         console.log("📨 Message:", data, data?.type);
 
-        // if (data?.type == "new_message") {
-        eventBus.dispatchEvent("REFRESH_CHAT", data?.chat_id);
-        // updateChat(data a);
-        // }
+        if (data?.type == "new_message" || data?.type == "read_receipt") {
+          playSound("MESSAGE_RECEIVED");
+          eventBus.dispatchEvent("REFRESH_CHAT", data?.chat_id);
+          eventBus.dispatchEvent("REFRESH_CHATS", () => {});
+        }
       } catch (err) {
         console.error("❌ Failed to parse message:", event.data);
       }

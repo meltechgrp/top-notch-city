@@ -13,8 +13,6 @@ import {
 } from "../ui";
 import BottomSheet from "../shared/BottomSheet";
 import { CircleHelp, NotebookPen, SendHorizonal, X } from "lucide-react-native";
-import { useStore } from "@/store";
-import { fullName } from "@/lib/utils";
 
 type Props = {
   visible: boolean;
@@ -30,7 +28,7 @@ export default function ConnectionsListSelectBottomSheet(props: Props) {
       onDismiss={onDismiss}
       addBackground={false}
       plain
-      snapPoint={["60%", "75%"]}
+      snapPoint={["75%"]}
     >
       <LinearGradient
         colors={["#F16000", "#ddd"]}

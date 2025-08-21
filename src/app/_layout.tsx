@@ -22,6 +22,7 @@ import Constants from "expo-constants";
 import { updatePushNotificationToken } from "@/actions/utills";
 import { pushNotificationResponseHandler } from "@/lib/notification";
 import { showBounceNotification } from "@/components/custom/CustomNotification";
+import useSuppressChatPushNotification from "@/components/chat/useSuppressChatPushNotification";
 
 const query = new QueryClient();
 
@@ -40,7 +41,7 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   // useReactQueryDevTools(query);
   useNotificationObserver();
-
+  useSuppressChatPushNotification();
   useMountPushNotificationToken();
   useEffect(() => {
     const handleDeepLink = ({ url }: { url: string }) => {
@@ -142,20 +143,20 @@ function useMountPushNotificationToken() {
             console.error("Error registering for push notifications:", error);
           });
       }, 30000);
-      const notificationListener =
-        Notifications.addNotificationReceivedListener((notification) => {
-          console.log(notification.request.content?.data, "test");
-          const data = notification.request.content.data;
-          if (data?.entity_type == "chat") {
-          }
-          showBounceNotification({
-            title: notification.request.content.title || "New Notification",
-            description: notification.request.content.body || undefined,
-          });
-        });
-      return () => {
-        notificationListener.remove();
-      };
+      // const notificationListener =
+      //   Notifications.addNotificationReceivedListener((notification) => {
+      //     console.log(notification.request.content?.data, "test");
+      //     const data = notification.request.content.data;
+      //     if (data?.entity_type !== "chat") {
+      //       showBounceNotification({
+      //         title: notification.request.content.title || "New Notification",
+      //         description: notification.request.content.body || undefined,
+      //       });
+      //     }
+      //   });
+      // return () => {
+      //   notificationListener.remove();
+      // };
     }
   }, [hasAuth]);
 }
