@@ -1,7 +1,7 @@
 import { ChatRoomMessageProps } from "@/components/chat/ChatRoomMessage";
 import withRenderVisible from "@/components/shared/withRenderOpen";
 import { cn } from "@/lib/utils";
-import { Pressable, ToastAndroid, View } from "react-native";
+import { ToastAndroid, View } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import { showSnackbar } from "@/lib/utils";
 import Platforms from "@/constants/Plaforms";
@@ -10,7 +10,7 @@ import { useMemo } from "react";
 import BottomSheetPlainTwo from "@/components/shared/BottomSheetPlainTwo";
 import Layout from "@/constants/Layout";
 import { Copy, Edit, Reply, Trash } from "lucide-react-native";
-import { Icon, Text } from "@/components/ui";
+import { Icon, Text, Pressable } from "@/components/ui";
 
 type Props = {
   visible: boolean;
@@ -34,15 +34,15 @@ function MessageActionsBottomSheet(props: Props) {
             {
               label: "Copy",
               value: "copy" as const,
-              icon: <Copy />,
+              icon: <Icon as={Copy} />,
             },
           ]
         : []),
-      {
-        label: "Reply",
-        value: "reply" as const,
-        icon: <Reply />,
-      },
+      // {
+      //   label: "Reply",
+      //   value: "reply" as const,
+      //   icon: <Icon as={Reply} />,
+      // },
       ...(isMine && message?.content && message.content.trim().length > 0
         ? [
             {
@@ -80,9 +80,9 @@ function MessageActionsBottomSheet(props: Props) {
 
   const handleActionPress = (action: (typeof messageActions)[0]) => {
     switch (action.value) {
-      case "reply":
-        handleReply();
-        break;
+      // case "reply":
+      //   handleReply();
+      //   break;
 
       case "copy":
         handleCopy();
@@ -108,19 +108,20 @@ function MessageActionsBottomSheet(props: Props) {
       onDismiss={onDismiss}
       title="Message Actions"
     >
-      <View style={{ height: Layout.window.height / 3 }}>
+      <View style={{ height: Layout.window.height / 4 }}>
         {messageActions.map((action, i) => (
           <Pressable
             key={action.value}
+            both
             onPress={() => handleActionPress(action)}
             className={cn(
-              "flex-row items-center gap-2 ripple-[#333] active:bg-gray-200 py-4 px-8 ",
-              i !== 0 && "border-t border-gray-200"
+              "flex-row items-center gap-2 py-4 border-outline-100 px-8 ",
+              i !== 0 && "border-t border-outline"
             )}
           >
             {action.icon}
             <Text
-              className={cn("text-sm", action.destructive && "text-red-900")}
+              className={cn("text-sm", action.destructive && "text-red-500")}
             >
               {action.label}
             </Text>

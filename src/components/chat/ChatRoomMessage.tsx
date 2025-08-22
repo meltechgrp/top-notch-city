@@ -1,21 +1,22 @@
-import { Icon, Image, Text } from "@/components/ui";
+import { Icon, Image, Text, Pressable } from "@/components/ui";
 import { chunk } from "lodash-es";
 import { cn } from "@/lib/utils";
 import { formatMessageTime } from "@/lib/utils";
 import { Check, CheckCheck } from "lucide-react-native";
 import React, { useMemo, useState } from "react";
-import { Pressable, View } from "react-native";
+import { Keyboard, TextInput, View } from "react-native";
 import PostTextContent from "./PostTextContent";
 import { generateMediaUrl } from "@/lib/api";
 import { PropertyModalMediaViewer } from "@/components/modals/property/PropertyModalMediaViewer";
 import { useLayout } from "@react-native-community/hooks";
 import { hapticFeed } from "@/components/HapticTab";
+import { KeyboardDismissPressable } from "@/components/shared/KeyboardDismissPressable";
 
 export type ChatRoomMessageProps = View["props"] & {
   me: Me;
   sender: SenderInfo | null;
   message: Message;
-  onLongPress: (message: any) => void;
+  onLongPress: (message: Message) => void;
   isDeleting?: boolean;
 };
 export default function ChatRoomMessage(props: ChatRoomMessageProps) {
@@ -59,10 +60,11 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
   );
   const pressProps = {
     onLongPress: () => {
+      hapticFeed();
       // if (message.status === 'Pending' || message.deletedAt) {
       // 	return;
       // }
-      // onLongPress(message);
+      onLongPress(message);
     },
     delayLongPress: 400,
   };
@@ -72,11 +74,27 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
     setSelectedIndex(index);
     setVisible(true);
   };
+
+  const dismissKeyboard = (event: any) => {
+    const target = event?.target;
+
+    if (target) {
+      const currentlyFocusedInput = TextInput.State.currentlyFocusedInput?.();
+
+      if (currentlyFocusedInput && target === currentlyFocusedInput) {
+        return;
+      }
+    }
+
+    Keyboard.dismiss();
+  };
+
   return (
     <>
       <Pressable
         {...pressProps}
         {...others}
+        onPress={dismissKeyboard}
         onLayout={onLayout}
         className={cn([
           " px-4 w-full flex-row py-2",

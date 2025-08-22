@@ -11,7 +11,6 @@ import * as SplashScreen from "expo-splash-screen";
 import GlobalManager from "@/components/shared/GlobalManager";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { useReactQueryDevTools } from "@dev-plugins/react-query";
-import * as Clarity from "@microsoft/react-native-clarity";
 import { RoleSwitchPill } from "@/components/globals/RoleSwitchPill";
 import { Linking, Platform } from "react-native";
 import { cacheStorage } from "@/lib/asyncStorage";
@@ -25,11 +24,6 @@ import { showBounceNotification } from "@/components/custom/CustomNotification";
 import useSuppressChatPushNotification from "@/components/chat/useSuppressChatPushNotification";
 
 const query = new QueryClient();
-
-// // Initialize Microsoft Clarity
-// Clarity.initialize("s756k52ds5", {
-//   logLevel: Clarity.LogLevel.Verbose, // Note: Use "LogLevel.Verbose" value while testing to debug initialization issues.
-// });
 
 export const unstable_settings = {
   initialRouteName: "(onboarding)/splash",

@@ -32,6 +32,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import {
+  editMessage,
   getChatMessages,
   makeMessageReadAndDelivered,
   sendMessage,
@@ -89,8 +90,11 @@ export default function ChatRoom(props: Props) {
     () => data?.pages.flatMap((item) => item.messages) || [],
     [data?.pages]
   );
-  const { mutateAsync, isPending } = useMutation({
+  const { mutateAsync } = useMutation({
     mutationFn: sendMessage,
+  });
+  const { mutateAsync: edit } = useMutation({
+    mutationFn: editMessage,
   });
   const { mutate: markAsRead } = useMutation({
     mutationFn: makeMessageReadAndDelivered,
@@ -172,7 +176,7 @@ export default function ChatRoom(props: Props) {
   const scrollToBottom = () => {
     listRef.current?.scrollToOffset({ animated: true, offset: 0 });
   };
-  useSuppressChatPushNotification(chatId, true);
+  useSuppressChatPushNotification(chatId, false);
   function onRefreshChat() {
     refetch();
   }
@@ -190,7 +194,7 @@ export default function ChatRoom(props: Props) {
     isEditing,
     exitEditMode,
     handleEdit,
-  } = useMessageActions({ focusEditor, setEditorText });
+  } = useMessageActions({ focusEditor, setEditorText, chatId });
   const editorRef = React.useRef<any>(null);
   function focusEditor() {
     editorRef.current?.focus && editorRef.current?.focus();
@@ -214,29 +218,52 @@ export default function ChatRoom(props: Props) {
     },
     [messages, isDeletingMessageId]
   );
-  async function handleSendMessage({
-    text,
-    files,
-  }: {
-    text: string;
-    files: ImagePickerAsset[];
-  }) {
-    await mutateAsync(
-      {
-        chat_id: chatId,
-        content: text,
-        files,
-      },
-      {
-        onError: (e) => {
-          console.log("err", e);
+  async function handleSendMessage(
+    {
+      text,
+      files,
+      id,
+    }: {
+      text: string;
+      files: ImagePickerAsset[];
+      id?: string;
+    },
+    isEdit: boolean
+  ) {
+    if (isEdit) {
+      await edit(
+        {
+          message_id: id!,
+          content: text,
         },
-        onSuccess: (d) => {
-          invalidate();
-          playSound("MESSAGE_SENT");
+        {
+          onError: (e) => {
+            console.log("err", e);
+          },
+          onSuccess: (d) => {
+            invalidate();
+            playSound("MESSAGE_SENT");
+          },
+        }
+      );
+    } else {
+      await mutateAsync(
+        {
+          chat_id: chatId,
+          content: text,
+          files,
         },
-      }
-    );
+        {
+          onError: (e) => {
+            console.log("err", e);
+          },
+          onSuccess: (d) => {
+            invalidate();
+            playSound("MESSAGE_SENT");
+          },
+        }
+      );
+    }
   }
 
   React.useEffect(() => {
@@ -323,18 +350,18 @@ export default function ChatRoom(props: Props) {
           )}
           inverted
           scrollEventThrottle={16}
-          ListFooterComponent={
-            <View className="w-full">
-              {refreshing && (
-                <View className="  justify-center items-center w-full z-50">
-                  <ActivityIndicator
-                    size="large"
-                    className="text-primary-900"
-                  />
-                </View>
-              )}
-            </View>
-          }
+          // ListFooterComponent={
+          //   <View className="w-full">
+          //     {refreshing && (
+          //       <View className="  justify-center items-center w-full z-50">
+          //         <ActivityIndicator
+          //           size="large"
+          //           className="text-primary-900"
+          //         />
+          //       </View>
+          //     )}
+          //   </View>
+          // }
           onLayout={(e) => {
             const { height } = e.nativeEvent.layout;
             setListContainerHeight(height);
@@ -354,7 +381,7 @@ export default function ChatRoom(props: Props) {
         onUpdate={onRefreshChat}
         chatId={chatId}
         onPost={(data, isEdit) => {
-          handleSendMessage(data);
+          handleSendMessage(data, isEdit);
           exitEditMode();
           if (!isEdit) {
             scrollToBottom();
@@ -375,12 +402,12 @@ export default function ChatRoom(props: Props) {
         onDismiss={() => setShowMessageActionsModal(false)}
         handleReply={handleReply}
         handleDelete={() => {
-          // handleDelete((message) => {
-          //   updateStoreAndCacheAfterDelete({
-          //     chatId: message.chat?.id!,
-          //     messageId: message.id,
-          //   });
-          // })
+          handleDelete((message) => {
+            // updateStoreAndCacheAfterDelete({
+            //   chatId: message.chat?.id!,
+            //   messageId: message.id,
+            // });
+          });
         }}
         handleEdit={handleEdit}
         message={selectedMessage}

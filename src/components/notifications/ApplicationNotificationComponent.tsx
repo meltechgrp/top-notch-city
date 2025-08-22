@@ -2,7 +2,7 @@ import { router } from "expo-router";
 import React, { useMemo } from "react";
 import { Pressable, View } from "react-native";
 import { Avatar, AvatarBadge, AvatarImage, Text } from "../ui";
-import logo from "@/assets/images/icon.png";
+import logo from "@/assets/images/notification.png";
 import NotificationItemWrapper from "./NotificationItemWrapper";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteNotification, markAsRead } from "@/actions/notification";

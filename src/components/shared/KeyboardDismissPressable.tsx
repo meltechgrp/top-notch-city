@@ -1,42 +1,44 @@
-import React, { PropsWithChildren } from 'react';
+import React, { PropsWithChildren } from "react";
 import {
-	Keyboard,
-	TextInput,
-	TouchableWithoutFeedback,
-	View,
-	StyleSheet,
-	Platform,
-} from 'react-native';
+  Keyboard,
+  TextInput,
+  TouchableWithoutFeedback,
+  View,
+  StyleSheet,
+  Platform,
+} from "react-native";
 
 export const KeyboardDismissPressable = ({ children }: PropsWithChildren) => {
-	const dismissKeyboard = (event: any) => {
-		const target = event?.target;
+  const dismissKeyboard = (event: any) => {
+    const target = event?.target;
 
-		if (target) {
-			// If the platform is Android, the target is a native tag number.
-			// On iOS, it may be an internal node object.
-			const currentlyFocusedInput = TextInput.State.currentlyFocusedInput?.();
+    if (target) {
+      // If the platform is Android, the target is a native tag number.
+      // On iOS, it may be an internal node object.
+      const currentlyFocusedInput = TextInput.State.currentlyFocusedInput?.();
 
-			if (currentlyFocusedInput && target === currentlyFocusedInput) {
-				// Tapped inside a TextInput — don’t dismiss
-				return;
-			}
-		}
+      if (currentlyFocusedInput && target === currentlyFocusedInput) {
+        // Tapped inside a TextInput — don’t dismiss
+        return;
+      }
+    }
 
-		Keyboard.dismiss();
-	};
+    Keyboard.dismiss();
+  };
 
-	return (
-		<TouchableWithoutFeedback
-			onPress={dismissKeyboard}
-			touchSoundDisabled={true}>
-			<View style={styles.container}>{children}</View>
-		</TouchableWithoutFeedback>
-	);
+  return (
+    <TouchableWithoutFeedback
+      onPress={dismissKeyboard}
+      touchSoundDisabled={true}
+      className="flex-1"
+    >
+      <View style={styles.container}>{children}</View>
+    </TouchableWithoutFeedback>
+  );
 };
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-	},
+  container: {
+    flex: 1,
+  },
 });

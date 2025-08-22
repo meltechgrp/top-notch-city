@@ -52,12 +52,18 @@ export function useWebSocket() {
 
     socket.onmessage = (event) => {
       try {
-        const data = JSON.parse(event.data);
+        const raw = event.data;
+        const data = typeof raw === "string" ? JSON.parse(raw) : raw;
+
         // const data = event.data;
         console.log("📨 Message:", data, data?.type);
 
-        if (data?.type == "new_message" || data?.type == "read_receipt") {
-          playSound("MESSAGE_RECEIVED");
+        if (
+          data?.type == "new_message" ||
+          data?.type == "read_receipt" ||
+          data?.type == "message_edited"
+        ) {
+          // playSound("MESSAGE_RECEIVED");
           eventBus.dispatchEvent("REFRESH_CHAT", data?.chat_id);
           eventBus.dispatchEvent("REFRESH_CHATS", () => {});
         }

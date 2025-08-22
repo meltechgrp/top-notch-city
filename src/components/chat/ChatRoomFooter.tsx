@@ -11,6 +11,7 @@ type Props = View["props"] & {
     data: {
       text: string;
       files: ImagePickerAsset[];
+      id?: string;
     },
     isEdit: boolean
   ) => void;
@@ -38,7 +39,7 @@ const ChatRoomFooter = React.forwardRef<EditorComponentRefHandle, Props>(
     const me = useStore((s) => s.me);
     function onSubmit(data: { text: string; files: ImagePickerAsset[] }) {
       if (me) {
-        onPost(data, isEditing);
+        onPost({ ...data, id: selectedMessage?.message_id }, isEditing);
         clearActiveQuoteMsg();
       }
     }

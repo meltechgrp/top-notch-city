@@ -34,6 +34,25 @@ export async function sendMessage({ chat_id, content, files }: SendMessage) {
   });
   return result as string;
 }
+export async function editMessage({
+  message_id,
+  content,
+}: {
+  message_id: string;
+  content: string;
+}) {
+  console.log(message_id, content);
+  const result = await Fetch(
+    `/messages/${message_id}?new_content=${content} `,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return result as string;
+}
 
 export async function getChats() {
   const chats = await Fetch("/chats");
@@ -72,6 +91,11 @@ export async function makeMessageReadAndDelivered({
 
 export async function deleteChat(chat_id: string) {
   await Fetch(`/delete/chats/${chat_id}`, {
+    method: "DELETE",
+  });
+}
+export async function deleteChatMessage(message_id: string) {
+  await Fetch(`/messages/${message_id}`, {
     method: "DELETE",
   });
 }

@@ -3,7 +3,7 @@ import { Animated, Modal, Pressable, View } from "react-native";
 
 import { useKeyboard } from "@react-native-community/hooks";
 import Layout from "@/constants/Layout";
-import { CloseIcon, Text } from "@/components/ui";
+import { CloseIcon, Icon, Text } from "@/components/ui";
 import { cn } from "@/lib/utils";
 
 type BottomSheetProps = Modal["props"] & {
@@ -87,11 +87,14 @@ export default function BottomSheetPlainTwo(props: BottomSheetProps) {
             style={[keyboard.keyboardShown ? { height: h } : {}]}
             className="relative overflow-hidden"
           >
-            <View style={{ width: w }} className="bg-white pb-4 rounded-t-lg">
+            <View
+              style={{ width: w }}
+              className="bg-background-muted pb-4 rounded-t-lg"
+            >
               {!props?.noHeader && (
                 <View
                   className={cn(
-                    "h-16 border-b border-gray-200 flex-row items-center px-4 justify-between",
+                    "h-16 border-b border-outline flex-row items-center px-4 justify-between",
                     {
                       "border-b-0": props?.noHeaderBorder,
                     }
@@ -100,9 +103,9 @@ export default function BottomSheetPlainTwo(props: BottomSheetProps) {
                   <Text className=" text-base">{props?.title}</Text>
                   <Pressable
                     onPress={handleDismiss}
-                    className="bg-gray-100 rounded-full w-8 h-8 items-center justify-center"
+                    className="bg-outline rounded-full w-8 h-8 items-center justify-center"
                   >
-                    <CloseIcon className="transform scale-[0.6]" />
+                    <Icon as={CloseIcon} className="transform scale-[0.9]" />
                   </Pressable>
                 </View>
               )}
