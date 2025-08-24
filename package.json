@@ -3,9 +3,9 @@
   "main": "expo-router/entry",
   "version": "1.0.1",
   "scripts": {
-    "start": "expo start",
-    "android": "DARK_MODE=media  expo run:android",
-    "ios": "DARK_MODE=media  expo run:ios",
+    "start": "DARK_MODE=media APP_VARIANT=development expo start --dev-client --port 8082",
+    "android": "DARK_MODE=media APP_VARIANT=development  expo run:android --port 8082",
+    "ios": "DARK_MODE=media APP_VARIANT=development expo run:ios --port 8082",
     "prewidget": "npx expo prebuild --template node_modules/@bacons/apple-targets/prebuild-blank.tgz --clean",
     "web": "DARK_MODE=media expo start --web",
     "test": "jest --watchAll",
@@ -13,7 +13,12 @@
     "deploy": "npx expo export -p web && eas deploy --prod",
     "lint": "eslint \"**/*.{js,jsx,ts,tsx}\" && prettier -c \"**/*.{js,jsx,ts,tsx,json}\"",
     "format": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix && prettier \"**/*.{js,jsx,ts,tsx,json}\" --write",
-    "gen": "graphql-codegen"
+    "gen": "graphql-codegen",
+    "build": "NODE_ENV=production eas build",
+    "build:staging:ios": "APP_VARIANT=staging npx expo prebuild --platform ios --clean && NODE_ENV=production APP_VARIANT=staging eas build -e staging --platform ios --local",
+    "build:staging:android": "APP_VARIANT=staging npx expo prebuild --platform android --clean && NODE_ENV=production APP_VARIANT=staging eas build -e staging --platform android --local",
+    "build:dev:ios": "APP_VARIANT=development npx expo prebuild --platform ios --clean && NODE_ENV=production APP_VARIANT=development eas build -e development --platform ios --local",
+    "build:dev:android": "APP_VARIANT=development npx expo prebuild --platform android --clean && NODE_ENV=production APP_VARIANT=development eas build -e development --platform android --local"
   },
   "jest": {
     "preset": "jest-expo"
@@ -48,7 +53,7 @@
     "@gluestack-ui/switch": "^0.1.29",
     "@gluestack-ui/textarea": "^0.1.25",
     "@gluestack-ui/toast": "^1.0.9",
-    "@gorhom/bottom-sheet": "^5.1.4",
+    "@gorhom/bottom-sheet": "^5.2.3",
     "@legendapp/motion": "^2.4.0",
     "@react-native-async-storage/async-storage": "2.1.2",
     "@react-native-community/hooks": "^100.1.0",
@@ -66,7 +71,7 @@
     "babel-plugin-module-resolver": "^5.0.2",
     "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",
-    "expo": "^53.0.13",
+    "expo": "53.0.22",
     "expo-apple-authentication": "~7.2.4",
     "expo-audio": "~0.4.7",
     "expo-auth-session": "~6.2.0",

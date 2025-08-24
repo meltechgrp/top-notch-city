@@ -5,17 +5,49 @@
   },
   "build": {
     "development": {
+      "channel": "development",
       "developmentClient": true,
       "distribution": "internal",
-      "channel": "development",
-      "autoIncrement": true
-    },
-    "preview": {
-      "distribution": "internal"
-    },
-    "production": {
       "autoIncrement": true,
       "env": {
+        "APP_VARIANT": "developemnt",
+        "DARK_MODE": "media",
+        "EXPO_PUBLIC_ANDROID_MAPS_API_KEY": "AIzaSyA0KuQDKgwN92uPKBr17IIFX0ve4rVoszA",
+        "EXPO_OS": "android",
+        "EXPO_PUBLIC_WEBSITE_URL": "https://topnotchcity.com",
+        "EXPO_PUBLIC_API_URL": "https://app.topnotchcity.com",
+        "EXPO_PUBLIC_GOOGLE_AUTH_KEY": "198305892260-dqv5gtvj30hjofofa2spt2nrub7m4teb.apps.googleusercontent.com",
+        "EXPO_PUBLIC_APPLE_AUTH_KEY": "198305892260-dqv5gtvj30hjofofa2spt2nrub7m4teb.apps.googleusercontent.com"
+      }
+    },
+    "staging": {
+      "channel": "production",
+      "DARK_MODE": "media",
+      "developmentClient": true,
+      "distribution": "internal",
+      "autoIncrement": true,
+      "env": {
+        "APP_VARIANT": "staging",
+        "EXPO_PUBLIC_ANDROID_MAPS_API_KEY": "AIzaSyA0KuQDKgwN92uPKBr17IIFX0ve4rVoszA",
+        "EXPO_OS": "android",
+        "EXPO_PUBLIC_WEBSITE_URL": "https://topnotchcity.com",
+        "EXPO_PUBLIC_API_URL": "https://app.topnotchcity.com",
+        "EXPO_PUBLIC_GOOGLE_AUTH_KEY": "198305892260-dqv5gtvj30hjofofa2spt2nrub7m4teb.apps.googleusercontent.com",
+        "EXPO_PUBLIC_APPLE_AUTH_KEY": "198305892260-dqv5gtvj30hjofofa2spt2nrub7m4teb.apps.googleusercontent.com"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "production": {
+      "channel": "production",
+      "DARK_MODE": "media",
+      "autoIncrement": true,
+      "env": {
+        "APP_VARIANT": "production",
         "EXPO_PUBLIC_ANDROID_MAPS_API_KEY": "AIzaSyA0KuQDKgwN92uPKBr17IIFX0ve4rVoszA",
         "EXPO_OS": "android",
         "EXPO_PUBLIC_WEBSITE_URL": "https://topnotchcity.com",

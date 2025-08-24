@@ -13,23 +13,23 @@ import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import { VoiceModal } from "@/components/modals/search/VoiceModal";
 import { useFilteredProperties } from "@/hooks/useFilteredProperties";
 import useGetLocation from "@/hooks/useGetLocation";
+import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
 
 const TABS = ["Map View", "List View"];
 
 export default function SearchScreen() {
   const { height: totalHeight } = Dimensions.get("screen");
   const [showFilter, setShowFilter] = useState(false);
-  const { location } = useGetLocation();
+  const { location, retryGetLocation } = useGetLocation();
   const [activateVoice, setActivateVoice] = useState(false);
   const [audioProperties, setAudioProperties] = useState<Property[]>([]);
   const [locationBottomSheet, setLocationBottomSheet] = useState(false);
   const pagerRef = useRef<PagerView>(null);
   const [currentPage, setCurrentPage] = useState(0);
-  const [filter, setFilter] = useState<SearchFilters>({});
-  const [search, setSearch] = useState<SearchFilters>({
-    latitude: location?.latitude?.toString(),
-    longitude: location?.longitude?.toString(),
+  const [filter, setFilter] = useState<SearchFilters>({
+    use_geo_location: "true",
   });
+  const [search, setSearch] = useState<SearchFilters>();
   const {
     data,
     refetch,
@@ -37,7 +37,15 @@ export default function SearchScreen() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useInfinityQueries({ type: "search", filter: search, enabled: false });
+  } = useInfinityQueries({
+    type: "search",
+    filter: {
+      ...search,
+      latitude: location?.latitude?.toString(),
+      longitude: location?.longitude?.toString(),
+    },
+    enabled: false,
+  });
 
   useEffect(() => {
     refetch();
@@ -56,6 +64,7 @@ export default function SearchScreen() {
   }, [data, audioProperties]);
 
   const filtered = useFilteredProperties(properties, filter);
+  useRefreshOnFocus(retryGetLocation);
   return (
     <Box className="flex-1 relative">
       <SearchHeader

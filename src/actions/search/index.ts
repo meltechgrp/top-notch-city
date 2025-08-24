@@ -40,6 +40,10 @@ export async function searchProperties(
   query.append("page", String(page));
   query.append("per_page", String(perPage));
   query.append("sort_by", "created_at");
+  {
+    filters?.use_geo_location &&
+      query.append("use_geo_location", filters.use_geo_location);
+  }
   query.append("radius_km", "20");
   query.append("sort_order", "desc");
   const path = `/properties/search/?${query.toString()}`;

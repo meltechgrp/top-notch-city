@@ -3,7 +3,6 @@
 # dependencies
 node_modules/
 # Expo
-ios
 .expo/
 dist/
 web-build/
@@ -26,6 +25,10 @@ npm-debug.*
 yarn-debug.*
 yarn-error.*
 
+*.ipa
+*.aab
+*.apk
+
 # macOS
 .DS_Store
 *.pem
@@ -38,3 +41,9 @@ yarn-error.*
 *.tsbuildinfo
 
 app-example
+
+
+android
+ios
+
+.env.local

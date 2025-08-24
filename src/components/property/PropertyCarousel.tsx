@@ -26,6 +26,7 @@ type Props = {
   scrollAnimationDuration?: number;
   rounded?: boolean;
   stackMode?: boolean;
+  fullScreen?: boolean;
   isOwner?: boolean;
   withPagination?: boolean;
   canPlayVideo?: boolean;
@@ -58,15 +59,16 @@ function PropertyCarousel({
   rounded,
   contentFit,
   enabled = true,
+  fullScreen = false,
 }: Props) {
-  const { bannerHeight } = Layout;
+  const { bannerHeight, window } = Layout;
   const theme = useResolvedTheme();
   const progress = useSharedValue<number>(0);
   const carouselRef = React.useRef<ICarouselInstance>(null);
   const baseOptions = {
     vertical: false,
     width: width,
-    height: factor ? width * factor : bannerHeight,
+    height: fullScreen ? window.height : bannerHeight,
   } as const;
 
   const onPressPagination = (index: number) => {

@@ -75,10 +75,9 @@ export function PropertyModalMediaViewer({
               <View className="h-full w-full relative items-center justify-center">
                 <PropertyCarousel
                   width={width || 400}
-                  factor={1}
+                  fullScreen={true}
                   media={media}
                   enabled={enabled}
-                  contentFit={contentFit}
                   withPagination={false}
                   stackMode={stackMode}
                   isOwner={isOwner}

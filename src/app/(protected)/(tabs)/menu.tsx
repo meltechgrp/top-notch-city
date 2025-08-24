@@ -220,11 +220,15 @@ export default function More() {
               />
             )}
             {me && <Divider className=" h-[0.3px] bg-background-info mb-4" />}
-            {me && me?.role != "user" && (
+            {me && (me?.role != "user" || me?.is_superuser) && (
               <MenuListItem
-                title={me.role == "admin" ? "Dashboard" : "Analytics"}
+                title={
+                  me.role == "admin" || me?.is_superuser
+                    ? "Dashboard"
+                    : "Analytics"
+                }
                 description={
-                  me.role == "admin"
+                  me.role == "admin" || me?.is_superuser
                     ? "View admin dashboard"
                     : "View your dashboard"
                 }

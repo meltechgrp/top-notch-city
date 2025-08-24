@@ -21,15 +21,16 @@ export default function Users() {
   const [userBottomSheet, setUserBottomSheet] = useState(false);
   const [actveTab, setActiveTab] = useState("all");
   const [search, setSearch] = useState("");
-  const { data, refetch } = useInfiniteQuery({
-    queryKey: ["users"],
-    queryFn: ({ pageParam = 1 }) => getUsers({ pageParam }),
-    getNextPageParam: (lastPage) => {
-      const { page, pages } = lastPage;
-      return page < pages ? page + 1 : undefined;
-    },
-    initialPageParam: 1,
-  });
+  const { data, refetch, hasNextPage, fetchNextPage, isLoading } =
+    useInfiniteQuery({
+      queryKey: ["users"],
+      queryFn: ({ pageParam = 1 }) => getUsers({ pageParam }),
+      getNextPageParam: (lastPage) => {
+        const { page, pages } = lastPage;
+        return page < pages ? page + 1 : undefined;
+      },
+      initialPageParam: 1,
+    });
   const usersData = useMemo(() => {
     return data?.pages.flatMap((page) => page.results) || [];
   }, [data]);
@@ -119,6 +120,9 @@ export default function Users() {
             contentContainerClassName="pb-40"
             ListEmptyComponent={<MiniEmptyState title="No user found" />}
             ItemSeparatorComponent={() => <View className="h-2" />}
+            onEndReached={() => {
+              if (hasNextPage && !isLoading) fetchNextPage();
+            }}
             renderItem={({ item }) => (
               <UserListItem
                 user={item}
