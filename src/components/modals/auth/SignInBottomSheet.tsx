@@ -222,6 +222,7 @@ export default function SignInBottomSheet({
       <Box className=" gap-6 flex-1 p-6 pt-3">
         <CustomInput
           className="bg-background-muted"
+          isBottomSheet={false}
           value={form.email}
           onUpdate={(text) => setForm({ ...form, email: text })}
           placeholder="Email address"
@@ -229,6 +230,7 @@ export default function SignInBottomSheet({
         <CustomInput
           className="bg-background-muted"
           value={form.password}
+          isBottomSheet={false}
           onUpdate={(text) => setForm({ ...form, password: text })}
           placeholder="Password"
         />

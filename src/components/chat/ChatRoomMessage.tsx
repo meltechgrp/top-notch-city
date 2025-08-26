@@ -10,7 +10,6 @@ import { generateMediaUrl } from "@/lib/api";
 import { PropertyModalMediaViewer } from "@/components/modals/property/PropertyModalMediaViewer";
 import { useLayout } from "@react-native-community/hooks";
 import { hapticFeed } from "@/components/HapticTab";
-import { KeyboardDismissPressable } from "@/components/shared/KeyboardDismissPressable";
 
 export type ChatRoomMessageProps = View["props"] & {
   me: Me;
@@ -61,9 +60,9 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
   const pressProps = {
     onLongPress: () => {
       hapticFeed();
-      // if (message.status === 'Pending' || message.deletedAt) {
-      // 	return;
-      // }
+      if (message.status === "pending" || message.deleted_at) {
+        return;
+      }
       onLongPress(message);
     },
     delayLongPress: 400,

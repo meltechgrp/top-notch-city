@@ -13,14 +13,8 @@ import {
 import { useChatStore, useStore } from "@/store";
 import debounce from "lodash-es/debounce";
 import { router, useFocusEffect } from "expo-router";
-// import MediaViewerScreen from "@/components/contents/MediaViewerScreen";
 import useMessageActions from "@/components/chat/useMessageActions";
-// import MessageActionsBottomSheet from '@/components/chat/MessageActionsBottomSheet'
 import { cn } from "@/lib/utils";
-// import EditOverlay from '@/components/chat/EditOverlay'
-// import { EditorComponentRefHandle } from '@/components/form/Editor'
-// import useClearChatPushNotification from '@/components/chat/useClearChatPushNotification'
-// import useSuppressChatPushNotification from '@/components/chat/useSuppressChatPushNotification'
 import eventBus from "@/lib/eventBus";
 import { Text } from "../ui";
 import ChatRoomMessage from "./ChatRoomMessage";
@@ -42,12 +36,6 @@ import { format, isToday, isYesterday } from "date-fns";
 import useSound from "@/hooks/useSound";
 import useSuppressChatPushNotification from "@/components/chat/useSuppressChatPushNotification";
 import MessageActionsBottomSheet from "@/components/chat/MessageActionsBottomSheet";
-
-/**
- * @note
- * All offsets are relative to the bottom of the FlatList container
- * (except otherwise implied by the binding name) because the Flatlist is inverted
- */
 
 const InitialNumToRender = 30;
 type Props = {
@@ -71,9 +59,8 @@ export default function ChatRoom(props: Props) {
     refetch,
     fetchNextPage,
     hasNextPage,
-    isFetching: refreshing,
     isLoading,
-    isFetchingNextPage,
+    isFetchingNextPage: refreshing,
   } = useInfiniteQuery({
     queryKey: ["messages", chatId],
     queryFn: ({ pageParam = 1 }) => getChatMessages({ pageParam, chatId }),
@@ -177,9 +164,6 @@ export default function ChatRoom(props: Props) {
     listRef.current?.scrollToOffset({ animated: true, offset: 0 });
   };
   useSuppressChatPushNotification(chatId, false);
-  function onRefreshChat() {
-    refetch();
-  }
 
   const {
     activeQuoteMessage,
@@ -378,7 +362,6 @@ export default function ChatRoom(props: Props) {
         {!messages.length && <EmptyScreen message={"This space is empty"} />}
       </View>
       <ChatRoomFooter
-        onUpdate={onRefreshChat}
         chatId={chatId}
         onPost={(data, isEdit) => {
           handleSendMessage(data, isEdit);

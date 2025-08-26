@@ -17,11 +17,15 @@ type Props = {
   setVisible: (val: boolean) => void;
   selectedIndex: number;
   width: number;
+  factor?: number;
   media: Media[];
   isOwner?: boolean;
   enabled?: boolean;
   stackMode?: boolean;
   canPlayVideo?: boolean;
+  showImages?: boolean;
+  fullScreen?: boolean;
+  property?: Property;
   contentFit?: ImageContentFit;
 };
 
@@ -36,6 +40,10 @@ export function PropertyModalMediaViewer({
   enabled,
   stackMode = true,
   contentFit,
+  property,
+  factor,
+  showImages = false,
+  fullScreen = false,
 }: Props) {
   const opacity = useSharedValue(1);
   const translateY = useSharedValue(0);
@@ -75,9 +83,13 @@ export function PropertyModalMediaViewer({
               <View className="h-full w-full relative items-center justify-center">
                 <PropertyCarousel
                   width={width || 400}
-                  fullScreen={true}
+                  fullScreen={fullScreen}
                   media={media}
+                  factor={factor}
+                  contentFit={contentFit}
+                  property={property}
                   enabled={enabled}
+                  showImages={showImages}
                   withPagination={false}
                   stackMode={stackMode}
                   isOwner={isOwner}

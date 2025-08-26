@@ -8,6 +8,7 @@ import {
 import { Colors } from "@/constants/Colors";
 import { cn } from "@/lib/utils";
 import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
+import { memo, useMemo } from "react";
 import { KeyboardTypeOptions, ReturnKeyTypeOptions } from "react-native";
 
 interface Props {
@@ -29,8 +30,7 @@ interface Props {
   height?: number;
   type?: any;
 }
-
-export function CustomInput({
+function CustomInputComponent({
   isInvalid = false,
   errorMesssage,
   isRequired = false,
@@ -50,6 +50,20 @@ export function CustomInput({
   inputClassName,
 }: Props) {
   const theme = useResolvedTheme();
+  const multilineStyle = useMemo(
+    () =>
+      multiline
+        ? {
+            height: height || 120,
+            textAlignVertical: "top" as const,
+            padding: isBottomSheet ? 10 : undefined,
+          }
+        : {},
+    [multiline, height, isBottomSheet]
+  );
+
+  const textColor = useMemo(() => ({ color: Colors[theme].text }), [theme]);
+
   return (
     <View
       className={cn(
@@ -72,13 +86,7 @@ export function CustomInput({
               multiline && "px-1 pt-6",
               inputClassName
             )}
-            style={
-              multiline
-                ? {
-                    height: height || 120,
-                  }
-                : {}
-            }
+            style={multilineStyle}
           >
             <InputField
               type={type}
@@ -90,15 +98,7 @@ export function CustomInput({
               returnKeyLabel={returnKeyLabel}
               onChangeText={onUpdate}
               returnKeyType={returnKeyType}
-              style={[
-                multiline
-                  ? {
-                      height: height || 120,
-                      textAlignVertical: "top",
-                    }
-                  : {},
-                { color: Colors[theme].text },
-              ]}
+              style={[multilineStyle, textColor]}
             />
           </Input>
         ) : (
@@ -112,16 +112,7 @@ export function CustomInput({
             returnKeyType={returnKeyType}
             onChangeText={onUpdate}
             multiline={multiline}
-            style={[
-              multiline
-                ? {
-                    height: height || 120,
-                    textAlignVertical: "top", // 👈 This is the key
-                    padding: 10,
-                  }
-                : {},
-              { color: Colors[theme].text },
-            ]}
+            style={[multilineStyle, textColor]}
             keyboardType={keyboardType}
             returnKeyLabel={returnKeyLabel}
             numberOfLines={numberOfLines}
@@ -132,3 +123,5 @@ export function CustomInput({
     </View>
   );
 }
+
+export const CustomInput = memo(CustomInputComponent);

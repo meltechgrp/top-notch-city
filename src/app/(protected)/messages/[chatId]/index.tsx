@@ -1,10 +1,9 @@
 import * as React from "react";
 
 import { KeyboardAvoidingView, View } from "react-native";
-
 import ChatRoom from "@/components/chat/ChatRoom";
-import { fullName } from "@/lib/utils";
-import { useLocalSearchParams } from "expo-router";
+import { cn, fullName } from "@/lib/utils";
+import { router, useLocalSearchParams } from "expo-router";
 import Platforms from "@/constants/Plaforms";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomScreenHeader from "@/components/layouts/CustomScreenHeader";
@@ -16,8 +15,11 @@ import {
   AvatarImage,
   Box,
   Heading,
+  Pressable,
+  Text,
 } from "@/components/ui";
 import { generateMediaUrlSingle } from "@/lib/api";
+import BackgroundView from "@/components/layouts/BackgroundView";
 
 export default function ChatRoomScreen() {
   const { chatId } = useLocalSearchParams<{
@@ -27,7 +29,7 @@ export default function ChatRoomScreen() {
 
   return (
     <>
-      <Box className="flex-1 ">
+      <BackgroundView className="flex-1 ">
         <SafeAreaView
           edges={["top", "bottom"]}
           className="bg-background"
@@ -54,7 +56,7 @@ export default function ChatRoomScreen() {
             </KeyboardAvoidingView>
           </View>
         </SafeAreaView>
-      </Box>
+      </BackgroundView>
     </>
   );
 }
@@ -65,7 +67,17 @@ interface ScreenHeaderTitleSectionProps {
 
 function ScreenHeaderTitleSection({ receiver }: ScreenHeaderTitleSectionProps) {
   return (
-    <View className="flex-1 flex-row gap-4 justify-start items-center">
+    <Pressable
+      onPress={() =>
+        router.push({
+          pathname: "/profile/[user]",
+          params: {
+            user: receiver?.id!,
+          },
+        })
+      }
+      className="flex-1 flex-row gap-4 justify-start items-center"
+    >
       <Avatar className="bg-gray-500 w-10 h-10">
         <AvatarFallbackText className="text-typography text-xl">
           {fullName(receiver)}
@@ -75,11 +87,18 @@ function ScreenHeaderTitleSection({ receiver }: ScreenHeaderTitleSectionProps) {
             source={{ uri: generateMediaUrlSingle(receiver.profile_image) }}
           />
         )}
-        <AvatarBadge />
+        <AvatarBadge
+          className={cn(receiver?.status == "offline" && "bg-gray-500")}
+        />
       </Avatar>
-      <Heading size="lg" numberOfLines={1} className="">
-        {fullName(receiver)}
-      </Heading>
-    </View>
+      <View>
+        <Heading size="lg" numberOfLines={1} className="">
+          {fullName(receiver)}
+        </Heading>
+        {receiver?.status == "online" && (
+          <Text className=" text-xs text-gray-500">Online</Text>
+        )}
+      </View>
+    </Pressable>
   );
 }

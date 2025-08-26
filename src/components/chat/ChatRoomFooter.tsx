@@ -2,7 +2,7 @@ import { ChatRoomMessageProps } from "@/components/chat/ChatRoomMessage";
 import Editor, { EditorComponentRefHandle } from "@/components/custom/Editor";
 import { useStore } from "@/store";
 import { ImagePickerAsset } from "expo-image-picker";
-import React, { useMemo as useCallback } from "react";
+import React from "react";
 import { TextInput, View } from "react-native";
 
 type Props = View["props"] & {
@@ -15,7 +15,6 @@ type Props = View["props"] & {
     },
     isEdit: boolean
   ) => void;
-  onUpdate: (data: any) => void;
   placeholder?: string;
   defaultText?: string;
   activeQuoteMsg: ChatRoomMessageProps["message"] | undefined;

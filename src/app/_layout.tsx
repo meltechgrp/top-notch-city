@@ -12,7 +12,7 @@ import GlobalManager from "@/components/shared/GlobalManager";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { useReactQueryDevTools } from "@dev-plugins/react-query";
 import { RoleSwitchPill } from "@/components/globals/RoleSwitchPill";
-import { Linking, Platform } from "react-native";
+import { Linking, LogBox, Platform } from "react-native";
 import { cacheStorage } from "@/lib/asyncStorage";
 import { NotifierWrapper } from "react-native-notifier";
 import * as Notifications from "expo-notifications";
@@ -22,12 +22,26 @@ import { updatePushNotificationToken } from "@/actions/utills";
 import { pushNotificationResponseHandler } from "@/lib/notification";
 import { showBounceNotification } from "@/components/custom/CustomNotification";
 import useSuppressChatPushNotification from "@/components/chat/useSuppressChatPushNotification";
+import {
+  configureReanimatedLogger,
+  ReanimatedLogLevel,
+} from "react-native-reanimated";
 
 const query = new QueryClient();
 
 export const unstable_settings = {
   initialRouteName: "(onboarding)/splash",
 };
+// Optional: Ignore the warning in React Native’s LogBox too
+LogBox.ignoreLogs([
+  "[Reanimated] Reading from `value` during component render.",
+]);
+
+// Disable strict mode logging
+configureReanimatedLogger({
+  level: ReanimatedLogLevel.error, // only show errors
+  strict: false, // disables strict mode warnings
+});
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -127,32 +141,30 @@ function useMountPushNotificationToken() {
   }
 
   useEffect(() => {
-    if (hasAuth) {
-      setTimeout(() => {
-        registerForPushNotificationsAsync()
-          .then((token) => {
-            token && updatePushNotificationToken(token);
-          })
-          .catch((error) => {
-            console.error("Error registering for push notifications:", error);
-          });
-      }, 30000);
-      // const notificationListener =
-      //   Notifications.addNotificationReceivedListener((notification) => {
-      //     console.log(notification.request.content?.data, "test");
-      //     const data = notification.request.content.data;
-      //     if (data?.entity_type !== "chat") {
-      //       showBounceNotification({
-      //         title: notification.request.content.title || "New Notification",
-      //         description: notification.request.content.body || undefined,
-      //       });
-      //     }
-      //   });
-      // return () => {
-      //   notificationListener.remove();
-      // };
-    }
-  }, [hasAuth]);
+    setTimeout(() => {
+      registerForPushNotificationsAsync()
+        .then((token) => {
+          token && updatePushNotificationToken(token);
+        })
+        .catch((error) => {
+          console.error("Error registering for push notifications:", error);
+        });
+    }, 30000);
+    // const notificationListener =
+    //   Notifications.addNotificationReceivedListener((notification) => {
+    //     console.log(notification.request.content?.data, "test");
+    //     const data = notification.request.content.data;
+    //     if (data?.entity_type !== "chat") {
+    //       showBounceNotification({
+    //         title: notification.request.content.title || "New Notification",
+    //         description: notification.request.content.body || undefined,
+    //       });
+    //     }
+    //   });
+    // return () => {
+    //   notificationListener.remove();
+    // };
+  }, []);
 }
 
 export function useHandleNotification() {
@@ -202,9 +214,9 @@ export async function registerForPushNotificationsAsync() {
     "REQUESTED_FOR_PUSH_NOTIFICATION_PERMISSION"
   );
 
-  if (hasRequested === "True") {
-    return;
-  }
+  // if (hasRequested === "True") {
+  //   return;
+  // }
 
   const { status: existingStatus } = await Notifications.getPermissionsAsync();
   let finalStatus = existingStatus;

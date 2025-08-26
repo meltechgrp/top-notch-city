@@ -5,7 +5,7 @@ import HomeNavigation from "./HomeNavigation";
 import { useRouter } from "expo-router";
 import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import { memo, useEffect, useMemo } from "react";
-import useGetLocation from "@/hooks/useGetLocation";
+import { useStore } from "@/store";
 
 type Props = {
   className?: string;
@@ -13,16 +13,16 @@ type Props = {
 };
 const DiscoverProperties = (props: Props) => {
   const { className, mapHeight } = props;
-  const { location } = useGetLocation();
+  const { location } = useStore();
   const router = useRouter();
   const { data, refetch } = useInfinityQueries({
     type: "search",
     filter: {
       latitude: location?.latitude?.toString(),
       longitude: location?.longitude?.toString(),
+      use_geo_location: "true",
     },
     key: "nearby",
-    enabled: false,
   });
 
   const properties = useMemo(
@@ -44,7 +44,7 @@ const DiscoverProperties = (props: Props) => {
         </View>
         <Map
           markers={properties || []}
-          scrollEnabled={false}
+          // scrollEnabled={false}
           onDoublePress={() =>
             router.push({
               pathname: "/search",

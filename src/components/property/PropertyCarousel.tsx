@@ -5,11 +5,13 @@ import Carousel, {
 } from "react-native-reanimated-carousel";
 import PropertyMedia from "./PropertyMedia";
 import { Colors } from "@/constants/Colors";
-import { useResolvedTheme, View } from "../ui";
+import { Image, useResolvedTheme, View } from "../ui";
 import Layout from "@/constants/Layout";
 import { useSharedValue } from "react-native-reanimated";
-import { Dimensions } from "react-native";
+import { Dimensions, ScrollView } from "react-native";
 import { ImageContentFit } from "expo-image";
+import { generateMediaUrl } from "@/lib/api";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const INTERACTIVE_ZONE_WIDTH = SCREEN_WIDTH / 2.8;
@@ -36,6 +38,8 @@ type Props = {
   isList?: boolean;
   enabled?: boolean;
   contentFit?: ImageContentFit;
+  property?: Property;
+  showImages?: boolean;
 };
 
 function PropertyCarousel({
@@ -60,6 +64,8 @@ function PropertyCarousel({
   contentFit,
   enabled = true,
   fullScreen = false,
+  showImages = false,
+  property,
 }: Props) {
   const { bannerHeight, window } = Layout;
   const theme = useResolvedTheme();
@@ -68,7 +74,7 @@ function PropertyCarousel({
   const baseOptions = {
     vertical: false,
     width: width,
-    height: fullScreen ? window.height : bannerHeight,
+    height: fullScreen ? window.height : factor ? width * factor : bannerHeight,
   } as const;
 
   const onPressPagination = (index: number) => {
@@ -81,7 +87,7 @@ function PropertyCarousel({
   return (
     <View
       style={{ height: baseOptions.height }}
-      className="relative bg-background w-full flex-row items-center justify-center"
+      className="relative bg-background-muted w-full flex-row items-center justify-center"
     >
       {/* center zone */}
       {isList && (
@@ -118,8 +124,10 @@ function PropertyCarousel({
               source={props.item}
               isOwner={isOwner}
               isVisible
+              fullScreen={fullScreen}
               contentFit={contentFit}
               rounded={rounded}
+              property={property}
               canPlayVideo={canPlayVideo}
               {...props}
             />
@@ -165,6 +173,38 @@ function PropertyCarousel({
             horizontal
             onPress={onPressPagination}
           />
+        )}
+        {showImages && (
+          <View className="bg-background-muted w-full">
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <Pagination.Custom<Media>
+                progress={progress}
+                data={media}
+                size={52}
+                dotStyle={{
+                  borderRadius: 10,
+                  padding: 0,
+                }}
+                activeDotStyle={{
+                  borderRadius: 7,
+                  padding: 3,
+                  backgroundColor: Colors.primary,
+                }}
+                containerStyle={[
+                  {
+                    gap: 16,
+                    marginTop: 10,
+                    justifyContent: "center",
+                  },
+                ]}
+                onPress={onPressPagination}
+                renderItem={(item) => {
+                  const { uri, id } = generateMediaUrl(item);
+                  return <Image source={{ uri, cacheKey: id }} />;
+                }}
+              />
+            </ScrollView>
+          </View>
         )}
       </View>
     </View>

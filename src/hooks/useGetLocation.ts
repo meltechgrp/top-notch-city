@@ -1,51 +1,46 @@
-import { useCallback, useEffect, useState } from 'react';
-import * as Location from 'expo-location';
+import { useCallback, useEffect, useState } from "react";
+import * as Location from "expo-location";
+import { useStore } from "@/store";
 
 type Options = {
-	highAccuracy?: boolean;
+  highAccuracy?: boolean;
 };
 
 const useGetLocation = (options?: Options) => {
-	const { highAccuracy = false } = options || {};
+  const { highAccuracy = false } = options || {};
+  const { updateLocation, location } = useStore();
+  const [granted, setGranted] = useState(false);
 
-	const [location, setLocation] = useState<
-		Location.LocationObject['coords'] | null
-	>(null);
-	const [granted, setGranted] = useState(false);
+  const tryGetLocation = useCallback(async () => {
+    // Request location permission
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      setGranted(false);
+      return;
+    }
 
-	const tryGetLocation = useCallback(async () => {
-		// Request location permission
-		let { status } = await Location.requestForegroundPermissionsAsync();
-		if (status !== 'granted') {
-			setGranted(false);
-			return;
-		}
+    setGranted(true);
 
-		setGranted(true);
+    // Get user location
+    let location = await Location.getCurrentPositionAsync({
+      accuracy: Location.Accuracy.High,
+    });
 
-		// Get user location
-		let location = await Location.getCurrentPositionAsync({
-			accuracy: Location.Accuracy.High,
-		});
+    if (location) {
+      updateLocation(location.coords);
+      return location.coords;
+    }
+  }, [highAccuracy, updateLocation]);
 
-		if (location) {
-			setLocation(location.coords);
-			return location.coords;
-		} else {
-			setLocation(null);
-			return null;
-		}
-	}, [highAccuracy, setLocation]);
+  useEffect(() => {
+    tryGetLocation();
+  }, []);
 
-	useEffect(() => {
-		tryGetLocation();
-	}, []);
-
-	return {
-		location,
-		isLocationPermissionGranted: granted,
-		retryGetLocation: tryGetLocation,
-	};
+  return {
+    location,
+    isLocationPermissionGranted: granted,
+    retryGetLocation: tryGetLocation,
+  };
 };
 
 export default useGetLocation;

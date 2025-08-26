@@ -6,9 +6,10 @@ import { usePropertyStore } from "@/store/propertyStore";
 import { useLayout } from "@react-native-community/hooks";
 import { FlashList } from "@shopify/flash-list";
 import { useState } from "react";
+import BackgroundView from "@/components/layouts/BackgroundView";
 
 export default function Images() {
-  const { getVideos } = usePropertyStore();
+  const { getVideos, details } = usePropertyStore();
   const { width, onLayout } = useLayout();
   const videos = getVideos();
 
@@ -22,7 +23,7 @@ export default function Images() {
   };
   return (
     <>
-      <Box onLayout={onLayout} className="flex-1 px-4">
+      <BackgroundView onLayout={onLayout} className="flex-1 px-4">
         <FlashList
           data={videos}
           contentContainerClassName="py-4"
@@ -42,12 +43,14 @@ export default function Images() {
           estimatedItemSize={230}
           keyExtractor={(item) => item.id}
         />
-      </Box>
+      </BackgroundView>
       <PropertyModalMediaViewer
         width={width}
         media={videos}
         visible={visible}
         stackMode={false}
+        fullScreen
+        property={details}
         enabled={false}
         setVisible={setVisible}
         selectedIndex={selectedIndex}

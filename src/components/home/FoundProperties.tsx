@@ -1,16 +1,17 @@
-import { useEffect } from "react";
+import { memo, useEffect } from "react";
 import { ScrollView } from "react-native";
 import { View } from "@/components/ui";
 import { useRefresh } from "@react-native-community/hooks";
 import eventBus from "@/lib/eventBus";
 import HorizontalListItem from "../property/HorizontalListItem";
+import { HorizontalListItemSkeleton } from "@/components/skeleton/HorizontalListItemSkeleton";
 
 type Props = {
   data?: Property[];
   refetch: () => Promise<any>;
 };
 
-export default function FoundHorizontalList(props: Props) {
+const FoundHorizontalList = (props: Props) => {
   const { data, refetch } = props;
 
   const { onRefresh } = useRefresh(refetch);
@@ -26,7 +27,12 @@ export default function FoundHorizontalList(props: Props) {
       );
     };
   }, []);
-
+  {
+    !data &&
+      Array(5)
+        .fill("")
+        .map((_, i) => <HorizontalListItemSkeleton key={i} />);
+  }
   return (
     <View>
       <ScrollView
@@ -44,4 +50,6 @@ export default function FoundHorizontalList(props: Props) {
       </ScrollView>
     </View>
   );
-}
+};
+
+export default memo(FoundHorizontalList);

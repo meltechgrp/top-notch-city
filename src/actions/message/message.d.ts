@@ -11,6 +11,7 @@ interface Chat {
     first_name: string;
     last_name: string;
     profile_image?: string;
+    status: "offline" | "online";
   };
   sender_id: string;
   recent_message: {
@@ -38,6 +39,9 @@ interface Message {
   receiver_info: ReceiverInfo;
   sender_info: SenderInfo;
   read: boolean;
+  status: "pending" | "seen" | "delivered" | "sent";
+  updated_at: string;
+  deleted_at?: string;
 }
 interface ChatMessages {
   pagination: {
@@ -56,12 +60,14 @@ interface ReceiverInfo {
   first_name: string;
   last_name: string;
   profile_image: string;
+  status: "offline" | "online";
 }
 interface SenderInfo {
   id: string;
   first_name: string;
   last_name: string;
   profile_image: string;
+  status: "offline" | "online";
 }
 
 interface SendMessage {

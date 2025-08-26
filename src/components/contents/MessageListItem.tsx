@@ -1,6 +1,7 @@
 import React from "react";
 import {
   Avatar,
+  AvatarBadge,
   AvatarFallbackText,
   AvatarImage,
   Icon,
@@ -84,6 +85,11 @@ export function MessageListItem(props: MessageListItemProps) {
                 <AvatarFallbackText className="text-typography text-xl">
                   {fullName(chat.receiver)}
                 </AvatarFallbackText>
+                <AvatarBadge
+                  className={cn(
+                    chat.receiver.status == "offline" && "bg-gray-500"
+                  )}
+                />
                 {chat.receiver.profile_image && (
                   <AvatarImage
                     source={{

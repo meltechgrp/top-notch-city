@@ -5,13 +5,15 @@ import { memo } from "react";
 
 type Props = ViewProps;
 
-const BackgroundView = ({ className, children }: Props) => (
+const BackgroundView = ({ className, children, ...props }: Props) => (
   <Box className="flex-1">
     <ImageBackground
       source={require("@/assets/images/landing/home.png")}
       className="flex-1"
     >
-      <Box className={cn("flex-1 bg-background/95", className)}>{children}</Box>
+      <Box className={cn("flex-1 bg-background/90", className)} {...props}>
+        {children}
+      </Box>
     </ImageBackground>
   </Box>
 );

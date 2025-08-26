@@ -48,7 +48,7 @@ export default function MessageScreen() {
       <Box className="flex-1">
         <EmptyStateWrapper
           loading={loading}
-          isEmpty={chats?.length < 1}
+          isEmpty={!chats || chats?.length < 1}
           illustration={<SmartphoneChatIcon className="relative left-4" />}
           text="You don't have any message in your inbox"
           refreshControl={

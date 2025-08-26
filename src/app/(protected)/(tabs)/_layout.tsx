@@ -19,9 +19,6 @@ export const unstable_settings = {
 };
 export default function TabLayout() {
   const theme = useResolvedTheme();
-  const { me } = useStore();
-  const pathname = usePathname();
-  const isChat = useMemo(() => pathname.split("/").length > 2, [pathname]);
   return (
     <Tabs
       screenOptions={{
@@ -44,7 +41,6 @@ export default function TabLayout() {
                   : Colors.dark.background,
             },
           }),
-          { display: isChat ? "none" : "flex" },
         ],
         headerStyle: {
           backgroundColor:

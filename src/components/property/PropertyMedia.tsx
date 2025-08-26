@@ -1,6 +1,6 @@
 import { generateMediaUrl } from "@/lib/api";
 import { cn } from "@/lib/utils";
-import React, { memo, useMemo } from "react";
+import React, { memo, useEffect, useMemo, useState } from "react";
 import { ImageStyle, StyleProp, ViewProps } from "react-native";
 import type { AnimatedProps } from "react-native-reanimated";
 import Animated from "react-native-reanimated";
@@ -20,16 +20,16 @@ interface Props extends AnimatedProps<ViewProps> {
   rounded?: boolean;
   source: Media;
   withBackdrop?: boolean;
+  fullScreen?: boolean;
   isOwner?: boolean;
   canPlayVideo?: boolean;
   isVisible?: boolean;
   nativeControls?: boolean;
-  isSmallView?: boolean;
   propertyId?: string;
+  property?: Property;
   contentFit?: ImageContentFit;
   onPress?: (val: string) => void;
 }
-
 const PropertyMedia: React.FC<Props> = (props) => {
   const {
     style,
@@ -45,19 +45,18 @@ const PropertyMedia: React.FC<Props> = (props) => {
     onPress,
     source,
     imageStyle,
-    isSmallView,
     propertyId,
     contentFit = "cover",
+    fullScreen,
+    property,
     ...animatedViewProps
   } = props;
   const { uri, isImage, id } = useMemo(
     () => generateMediaUrl(source),
     [source]
   );
-
   const { mutateAsync, isPending } =
     usePropertyDataMutations().deletePropertyMediaMutation;
-
   return (
     <Animated.View
       testID={testID}
@@ -81,8 +80,9 @@ const PropertyMedia: React.FC<Props> = (props) => {
           uri={uri}
           style={style}
           rounded={rounded}
+          fullScreen={fullScreen}
+          property={property}
           canPlayVideo={canPlayVideo}
-          isSmallView={isSmallView}
           onPress={onPress}
         />
       ) : null}

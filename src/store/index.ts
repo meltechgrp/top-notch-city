@@ -3,6 +3,7 @@ import { createJSONStorage, persist, PersistOptions } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getUniqueIdSync } from "react-native-device-info";
 import { UpdateUserInput } from "@/lib/schema";
+import { LocationObjectCoords } from "expo-location";
 
 export type Profile = {
   firstName?: string;
@@ -20,6 +21,7 @@ type State = {
   hasAuth: boolean;
   isAdmin: boolean;
   me?: Me;
+  location?: LocationObjectCoords;
   isOnboarded: boolean;
   mediaViewer?: {
     media: Media[];
@@ -34,6 +36,7 @@ type Actions = {
   setIsAdmin: (isAdmin: boolean) => void;
   setIsOnboarded: (isOnboarded: boolean) => void;
   updateProfile: (data: Me) => void;
+  updateLocation: (data: LocationObjectCoords) => void;
   setMediaViewer: (
     mediaViewer: Media[],
     currentIndex: number,
@@ -69,6 +72,7 @@ export const useStore = create<StateAndActions>(
           isOnboarded: isOnboarded,
         }));
       },
+      updateLocation: (data) => set((p) => ({ ...p, location: data })),
       setMediaViewer: (mediaViewer, currentIndex, isVideoReady) =>
         set((state) => ({
           ...state,

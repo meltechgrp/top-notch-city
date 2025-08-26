@@ -37,6 +37,7 @@ import { openEnquiryModal } from "../globals/AuthModals";
 import { useMutation } from "@tanstack/react-query";
 import { startChat } from "@/actions/message";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
+import { LongDescription } from "@/components/custom/LongDescription";
 
 const PropertyDetailsBottomSheet = () => {
   const { details: property, getImages, getVideos } = usePropertyStore();
@@ -131,7 +132,7 @@ const PropertyDetailsBottomSheet = () => {
           </View>
           <View className="gap-3 px-4 flex">
             <Heading size="lg">Description</Heading>
-            <Text size="md">{property?.description}</Text>
+            <LongDescription description={property?.description || ""} />
           </View>
           <View className=" px-4 gap-4">
             <View className=" gap-3">

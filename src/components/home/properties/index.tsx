@@ -1,15 +1,21 @@
 import SectionHeaderWithRef from "@/components/home/SectionHeaderWithRef";
 import { router } from "expo-router";
-import React, { memo } from "react";
 import VerticalProperties from "@/components/property/VerticalProperties";
 import { View } from "@/components/ui";
-interface Props {
-  isLoading?: boolean;
-  data: Property[];
-  refetch: () => Promise<any>;
-}
+import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
+import { useMemo } from "react";
 
-const TopProperties = ({ data, isLoading, refetch }: Props) => {
+const TopProperties = () => {
+  const {
+    data,
+    refetch,
+    isRefetching: refetching,
+  } = useInfinityQueries({ type: "all" });
+
+  const properties = useMemo(
+    () => data?.pages.flatMap((page) => page.results) || [],
+    [data]
+  );
   return (
     <SectionHeaderWithRef
       title="Top Properties"
@@ -24,15 +30,15 @@ const TopProperties = ({ data, isLoading, refetch }: Props) => {
     >
       <View className="flex-1 px-4">
         <VerticalProperties
-          data={data}
+          data={properties}
           scrollEnabled={false}
           refetch={refetch}
           disableCount={true}
-          isLoading={isLoading}
+          isLoading={refetching}
         />
       </View>
     </SectionHeaderWithRef>
   );
 };
 
-export default memo(TopProperties);
+export default TopProperties;

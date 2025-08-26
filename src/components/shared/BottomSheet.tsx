@@ -42,6 +42,7 @@ type BottomSheetProps = Modal["props"] & {
   enableOverDrag?: boolean;
   enableClose?: boolean;
   sheetKey?: string;
+  enablePanDownToClose?: boolean;
   onAnimate?: (fromIndex: number, toIndex: number) => void;
   android_keyboardInputMode?: "adjustResize" | "adjustPan";
 };
@@ -57,12 +58,13 @@ export default function BottomSheet(props: BottomSheetProps) {
     plain,
     enableDynamicSizing = false,
     backdropVariant = true,
-    android_keyboardInputMode = "adjustPan",
+    android_keyboardInputMode = "adjustResize",
     contentClassName,
     enableClose = true,
     withScroll = false,
     sheetKey,
     onAnimate,
+    enablePanDownToClose,
   } = props;
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   // variables
@@ -130,17 +132,17 @@ export default function BottomSheet(props: BottomSheetProps) {
       ref={bottomSheetModalRef}
       snapPoints={snapPoints}
       onDismiss={handleDismiss}
-      key={sheetKey || undefined}
+      // key={sheetKey || undefined}
       android_keyboardInputMode={android_keyboardInputMode}
       backdropComponent={renderBackdrop}
       enableBlurKeyboardOnGesture
-      keyboardBehavior={Platform.OS === "ios" ? "interactive" : "interactive"}
+      keyboardBehavior={Platform.OS === "ios" ? "interactive" : "extend"}
       keyboardBlurBehavior="restore"
       enableDynamicSizing={enableDynamicSizing}
       onAnimate={onAnimate}
       enableOverDrag={enableOverDrag}
       enableDismissOnClose={enableClose}
-      enablePanDownToClose={enableClose}
+      enablePanDownToClose={enablePanDownToClose}
       backgroundComponent={null}
       style={{
         backgroundColor: addBackground

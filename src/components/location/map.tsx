@@ -1,4 +1,11 @@
-import React, { ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  memo,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import MapView, { Circle, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import Layout from "@/constants/Layout";
 import { CustomPropertyMarker } from "./CustomPropertyMarker";
@@ -30,7 +37,7 @@ interface MapProps {
 
 const DEFAULT_LAT_DELTA = 0.1;
 const DEFAULT_LONG_DELTA = 0.1;
-export default function Map(props: MapProps) {
+const Map = (props: MapProps) => {
   const {
     latitude: lat,
     longitude: long,
@@ -139,7 +146,9 @@ export default function Map(props: MapProps) {
       </MapView>
     </>
   );
-}
+};
+
+export default memo(Map);
 
 // constants/mapStyleDark.ts
 export const mapStyleDark = [

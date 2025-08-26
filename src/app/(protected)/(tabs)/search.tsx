@@ -14,22 +14,24 @@ import { VoiceModal } from "@/components/modals/search/VoiceModal";
 import { useFilteredProperties } from "@/hooks/useFilteredProperties";
 import useGetLocation from "@/hooks/useGetLocation";
 import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
+import { useStore } from "@/store";
 
 const TABS = ["Map View", "List View"];
 
 export default function SearchScreen() {
   const { height: totalHeight } = Dimensions.get("screen");
   const [showFilter, setShowFilter] = useState(false);
-  const { location, retryGetLocation } = useGetLocation();
+  const { location } = useStore();
+  const { retryGetLocation } = useGetLocation();
   const [activateVoice, setActivateVoice] = useState(false);
   const [audioProperties, setAudioProperties] = useState<Property[]>([]);
   const [locationBottomSheet, setLocationBottomSheet] = useState(false);
   const pagerRef = useRef<PagerView>(null);
   const [currentPage, setCurrentPage] = useState(0);
-  const [filter, setFilter] = useState<SearchFilters>({
+  const [filter, setFilter] = useState<SearchFilters>({});
+  const [search, setSearch] = useState<SearchFilters>({
     use_geo_location: "true",
   });
-  const [search, setSearch] = useState<SearchFilters>();
   const {
     data,
     refetch,
@@ -44,7 +46,7 @@ export default function SearchScreen() {
       latitude: location?.latitude?.toString(),
       longitude: location?.longitude?.toString(),
     },
-    enabled: false,
+    enabled: true,
   });
 
   useEffect(() => {
@@ -67,12 +69,14 @@ export default function SearchScreen() {
   useRefreshOnFocus(retryGetLocation);
   return (
     <Box className="flex-1 relative">
-      <SearchHeader
-        filter={filter}
-        setLocationBottomSheet={() => setLocationBottomSheet(true)}
-        setShowFilter={() => setShowFilter(true)}
-        setActivateVoice={() => setActivateVoice(true)}
-      />
+      {currentPage !== 2 && (
+        <SearchHeader
+          filter={filter}
+          setLocationBottomSheet={() => setLocationBottomSheet(true)}
+          setShowFilter={() => setShowFilter(true)}
+          setActivateVoice={() => setActivateVoice(true)}
+        />
+      )}
       <SearchTabs activeIndex={currentPage} onTabChange={onTabChange} />
 
       <PagerView

@@ -92,11 +92,11 @@ export default function NotificationScreen() {
           contentWrapperClassName="relative -top-24"
         >
           <SectionList
-            refreshControl={
-              <RefreshControl refreshing={isFetching} onRefresh={onRefresh} />
-            }
             contentContainerClassName="px-4"
             showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl refreshing={false} onRefresh={onRefresh} />
+            }
             renderSectionHeader={({ section: { title } }) => (
               <View className="px-4 mb-1">
                 <Text className="font-medium">{title}</Text>
