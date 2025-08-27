@@ -110,11 +110,10 @@ const PropertyDetailsBottomSheet = () => {
                       });
                     },
                     onSuccess: (data) => {
-                      console.log(data);
                       router.replace({
                         pathname: "/messages/[chatId]",
                         params: {
-                          chatId: data.chat_id,
+                          chatId: data,
                         },
                       });
                     },

@@ -10,6 +10,7 @@ import { PropertyModalMediaViewer } from "@/components/modals/property/PropertyM
 import { useLayout } from "@react-native-community/hooks";
 import { hapticFeed } from "@/components/HapticTab";
 import { MessageStatusIcon } from "@/components/chat/MessageStatus";
+import { router } from "expo-router";
 
 export type ChatRoomMessageProps = View["props"] & {
   me: Me;
@@ -146,6 +147,38 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
               ))}
             </View>
           ) : null}
+          {message?.property_info && (
+            <View
+              className={cn(
+                "gap-1 flex-row flex-wrap ",
+                isMine ? "items-end" : "items-start"
+              )}
+            >
+              <Pressable
+                onPress={() =>
+                  router.push({
+                    pathname: "/(protected)/property/[propertyId]",
+                    params: {
+                      propertyId: message.property_info?.id!,
+                    },
+                  })
+                }
+                className={cn(["rounded-2xl mb-1 flex-1 h-40"])}
+              >
+                <Image
+                  source={{
+                    uri: generateMediaUrl({
+                      url: message.property_info?.image_url,
+                      media_type: "IMAGE",
+                      id: message.property_info?.id!,
+                    }).uri,
+                  }}
+                  rounded
+                  alt={"property"}
+                />
+              </Pressable>
+            </View>
+          )}
           <Pressable
             // className={cn([
             //   "rounded-lg overflow-hidden gap-2",

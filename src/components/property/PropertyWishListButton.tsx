@@ -1,4 +1,4 @@
-import { Pressable, useResolvedTheme } from "../ui";
+import { Icon, Pressable, useResolvedTheme } from "../ui";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addToWishList, removeFromWishList } from "@/actions/property";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -7,6 +7,7 @@ import { Colors } from "@/constants/Colors";
 import { cn } from "@/lib/utils";
 import { useStore } from "@/store";
 import { openSignInModal } from "@/components/globals/AuthModals";
+import { Bookmark } from "lucide-react-native";
 
 interface Props {
   property: Property;
@@ -54,16 +55,13 @@ const PropertyWishListButton = ({
   }
   return (
     <Pressable both onPress={hnadleWishList} className={cn("px-2", className)}>
-      <FontAwesome
-        name={isAdded ? "bookmark" : "bookmark-o"}
-        size={24}
-        color={
-          isAdded
-            ? Colors.primary
-            : hasScrolledToDetails && theme == "light"
-              ? "text-black"
-              : "white"
-        }
+      <Icon
+        as={Bookmark}
+        className={cn(
+          "text-white fill-white w-8 h-8",
+          hasScrolledToDetails && theme == "light" && "text-black fill-black",
+          isAdded && "text-primary fill-primary"
+        )}
       />
     </Pressable>
   );

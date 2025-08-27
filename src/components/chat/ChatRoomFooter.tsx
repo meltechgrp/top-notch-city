@@ -48,21 +48,10 @@ const ChatRoomFooter = React.forwardRef<EditorComponentRefHandle, Props>(
           content: text,
           sender_info: {
             id: me.id,
-            first_name: "",
-            last_name: "",
-            profile_image: "",
-            status: "offline",
           },
           isMock: true,
-          receiver_info: {
-            id: receiver.id,
-            first_name: "",
-            last_name: "",
-            profile_image: "",
-            status: "offline",
-          },
           status: "pending",
-          file_data: files.map((f) => ({
+          file_data: files?.map((f) => ({
             file_id: guidGenerator(),
             file_url: f.uri,
             file_type: "image",

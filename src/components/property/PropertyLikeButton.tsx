@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Pressable, useResolvedTheme } from "../ui";
+import { Icon, Pressable, useResolvedTheme } from "../ui";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { likeProperty } from "@/actions/property";
 import { Colors } from "@/constants/Colors";
@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { memo } from "react";
 import { useStore } from "@/store";
 import { openSignInModal } from "@/components/globals/AuthModals";
+import { Heart } from "lucide-react-native";
 
 interface Props {
   property: Property;
@@ -41,16 +42,13 @@ const PropertyLikeButton = ({
   }
   return (
     <Pressable both onPress={hnadleLike} className={cn("px-2", className)}>
-      <FontAwesome
-        name={property?.owner_interaction?.liked ? "heart" : "heart-o"}
-        size={24}
-        color={
-          property?.owner_interaction?.liked
-            ? Colors.primary
-            : hasScrolledToDetails && theme == "light"
-              ? "text-black"
-              : "white"
-        }
+      <Icon
+        as={Heart}
+        className={cn(
+          "text-white fill-white w-8 h-8",
+          hasScrolledToDetails && theme == "light" && "text-black fill-black",
+          property?.owner_interaction?.liked && "text-primary fill-primary"
+        )}
       />
     </Pressable>
   );

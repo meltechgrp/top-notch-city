@@ -11,15 +11,7 @@ export async function startChat({ property_id, member_id }: StartChat) {
     }
   );
   console.log(result);
-  return result as {
-    chat_id: string;
-    sender_id: string;
-    content: string;
-    property_id: string;
-    property_image: string;
-    status: Message["status"];
-    created_at: string;
-  };
+  return result as string;
 }
 export async function sendMessage({ chat_id, content, files }: SendMessage) {
   const formData = new FormData();
@@ -120,12 +112,12 @@ export async function makeMessageReadAndDelivered({
 }
 
 export async function deleteChat(chat_id: string) {
-  await Fetch(`/delete/chats/${chat_id}`, {
+  await Fetch(`/chat/${chat_id}/delete-for-me`, {
     method: "DELETE",
   });
 }
 export async function deleteChatMessage(message_id: string) {
-  await Fetch(`/messages/${message_id}`, {
+  await Fetch(`/soft/delete/messages/${message_id}?delete_for_everyone=false`, {
     method: "DELETE",
   });
 }

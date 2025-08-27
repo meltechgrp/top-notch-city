@@ -7,8 +7,9 @@ import React, {
 import { StyleProp, ViewStyle, TouchableWithoutFeedback } from "react-native";
 import { useVideoPlayer, VideoView } from "expo-video";
 import { useEvent } from "expo";
-import { View, Icon, Text, useResolvedTheme } from "../ui";
+import { View, Icon, Text, useResolvedTheme, Pressable } from "../ui";
 import {
+  MessageSquareMore,
   Pause,
   Play,
   RotateCcw,
@@ -27,6 +28,11 @@ import PropertyLikeButton from "@/components/property/PropertyLikeButton";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
 import PropertyWishListButton from "@/components/property/PropertyWishListButton";
+import { useMutation } from "@tanstack/react-query";
+import { startChat } from "@/actions/message";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
+import { router } from "expo-router";
+import PropertyShareButton from "@/components/property/PropertyShareButton";
 
 interface VideoPlayerProps {
   uri: string;
@@ -115,7 +121,7 @@ export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
       if (shouldPlay) {
         player.play();
       } else {
-        player?.pause?.();
+        player?.pause();
       }
     }, [shouldPlay, player]);
     useImperativeHandle(
@@ -130,11 +136,13 @@ export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
       [player]
     );
 
-    useEffect(() => {
-      return () => {
-        player?.release?.(); // instead of just pause
-      };
-    }, [player]);
+    // useEffect(() => {
+    //   return () => {
+    //     if (player) {
+    //       player?.pause?.();
+    //     }
+    //   };
+    // }, [player]);
     return (
       <SafeAreaView className="flex-1" edges={[]}>
         <TouchableWithoutFeedback
@@ -236,6 +244,9 @@ function PlayerControl({
   handleMuted,
   property,
 }: PlayerControlProps) {
+  const { mutateAsync } = useMutation({
+    mutationFn: startChat,
+  });
   const theme = useResolvedTheme();
   const progress = useSharedValue(0);
   const min = useSharedValue(0);
@@ -270,14 +281,57 @@ function PlayerControl({
       <View className="flex-1 gap-6 mb-6 p-4">
         <View className="flex-row justify-between items-end gap-4">
           {property && <PropertyTitle property={property} />}
-          <View className=" gap-4 ml-auto items-center">
+          <View className=" gap-6 ml-auto items-center">
             {property && (
               <View className=" items-center">
                 <PropertyLikeButton property={property} />
                 <Text>{property.interaction?.liked || 0}</Text>
               </View>
             )}
-            {property && <PropertyWishListButton property={property} />}
+            {property && (
+              <View className=" items-center">
+                <PropertyWishListButton property={property} />
+                <Text>{property.interaction?.liked || 0}</Text>
+              </View>
+            )}
+            {property && (
+              <Pressable
+                both
+                onPress={async () => {
+                  await mutateAsync(
+                    {
+                      property_id: property?.id!,
+                      member_id: property?.owner.id!,
+                    },
+                    {
+                      onError: (e) => {
+                        console.log(e);
+                        showErrorAlert({
+                          title: "Unable to start chat",
+                          alertType: "error",
+                        });
+                      },
+                      onSuccess: (data) => {
+                        console.log(data);
+                        router.replace({
+                          pathname: "/messages/[chatId]",
+                          params: {
+                            chatId: data,
+                          },
+                        });
+                      },
+                    }
+                  );
+                }}
+              >
+                <Icon as={MessageSquareMore} className=" w-8 h-8" />
+              </Pressable>
+            )}
+            {property && (
+              <View className=" items-center">
+                <PropertyShareButton property={property} />
+              </View>
+            )}
             {/* Mute / Unmute */}
             <AnimatedPressable onPress={handleMuted} className="ml-2">
               <Icon

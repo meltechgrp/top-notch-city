@@ -80,6 +80,7 @@ export default function ReelScreen() {
     },
     [setActiveIndex]
   );
+
   const onViewableItemsChanged = useRef(({ viewableItems }: any) => {
     if (viewableItems.length > 0) {
       const index = viewableItems[0].index;
@@ -146,7 +147,6 @@ export default function ReelScreen() {
             <MiniEmptyState className=" mt-10" title={"No Reel Found"} />
           )}
           contentContainerStyle={{ padding: 0 }}
-          style={{ flex: 1 }}
           onEndReached={() => {
             if (hasNextPage && !loading) fetchNextPage?.();
           }}

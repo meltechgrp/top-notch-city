@@ -61,10 +61,11 @@ export default function ChatRoomScreen() {
 }
 
 interface ScreenHeaderTitleSectionProps {
-  receiver?: any;
+  receiver?: ReceiverInfo;
 }
 
 function ScreenHeaderTitleSection({ receiver }: ScreenHeaderTitleSectionProps) {
+  if (!receiver) return;
   return (
     <Pressable
       onPress={() =>
@@ -86,9 +87,7 @@ function ScreenHeaderTitleSection({ receiver }: ScreenHeaderTitleSectionProps) {
             source={{ uri: generateMediaUrlSingle(receiver.profile_image) }}
           />
         )}
-        <AvatarBadge
-          className={cn(receiver?.status == "offline" && "bg-gray-500")}
-        />
+        {receiver.status == "online" && <AvatarBadge />}
       </Avatar>
       <View>
         <Heading size="lg" numberOfLines={1} className="">
@@ -98,7 +97,7 @@ function ScreenHeaderTitleSection({ receiver }: ScreenHeaderTitleSectionProps) {
           <Text className=" text-xs text-gray-500">Online</Text>
         ) : (
           <Text className=" text-xs text-gray-500">
-            Last seen: {formatMessageTime(new Date(Date.now()))}
+            Last seen: {formatMessageTime(new Date(receiver?.last_seen))}
           </Text>
         )}
       </View>

@@ -11,13 +11,7 @@ interface ChatList {
 interface Chat {
   chat_id: string;
   property_id?: string;
-  receiver: {
-    id: string;
-    first_name: string;
-    last_name: string;
-    profile_image?: string;
-    status: "offline" | "online";
-  };
+  receiver: ReceiverInfo;
   sender_id: string;
   recent_message: {
     message_id: string;
@@ -41,6 +35,11 @@ interface Message {
   updated_at: string;
   deleted_at?: string;
   isMock?: boolean;
+  property_info?: {
+    id: string;
+    title: string;
+    image_url: string;
+  };
 }
 interface ChatMessages {
   pagination: {
@@ -49,8 +48,6 @@ interface ChatMessages {
     size: number;
     total_pages: number;
   };
-  receiver_info: ReceiverInfo;
-  sender_info: SenderInfo;
   messages: Message[];
 }
 
@@ -60,13 +57,14 @@ interface ReceiverInfo {
   last_name: string;
   profile_image?: string;
   status: "offline" | "online";
+  last_seen: string;
 }
 interface SenderInfo {
   id: string;
-  first_name: string;
-  last_name: string;
-  profile_image: string;
-  status: "offline" | "online";
+  first_name?: string;
+  last_name?: string;
+  profile_image?: string;
+  status?: "offline" | "online";
 }
 
 interface SendMessage {

@@ -4,14 +4,12 @@ import {
   AvatarBadge,
   AvatarFallbackText,
   AvatarImage,
-  Icon,
   Pressable,
   Text,
   View,
 } from "../ui";
 import { cn, formatMessageTime, fullName } from "@/lib/utils";
 import { useRouter } from "expo-router";
-import { Check, CheckCheck } from "lucide-react-native";
 import { generateMediaUrlSingle } from "@/lib/api";
 import { useStore } from "@/store";
 import SwipeableWrapper from "@/components/shared/SwipeableWrapper";
@@ -91,11 +89,7 @@ export function MessageListItem(props: MessageListItemProps) {
                 <AvatarFallbackText className="text-typography text-xl">
                   {fullName(chat.receiver)}
                 </AvatarFallbackText>
-                <AvatarBadge
-                  className={cn(
-                    chat.receiver.status == "offline" && "bg-gray-500"
-                  )}
-                />
+                {chat.receiver.status == "online" && <AvatarBadge />}
                 {chat.receiver.profile_image && (
                   <AvatarImage
                     source={{
