@@ -1,19 +1,19 @@
-import { Icon, Image, Text, Pressable } from "@/components/ui";
+import { Icon, Image, Text } from "@/components/ui";
 import { chunk } from "lodash-es";
 import { cn } from "@/lib/utils";
 import { formatMessageTime } from "@/lib/utils";
-import { Check, CheckCheck } from "lucide-react-native";
 import React, { useMemo, useState } from "react";
-import { Keyboard, TextInput, View } from "react-native";
+import { Keyboard, TextInput, View, Pressable } from "react-native";
 import PostTextContent from "./PostTextContent";
 import { generateMediaUrl } from "@/lib/api";
 import { PropertyModalMediaViewer } from "@/components/modals/property/PropertyModalMediaViewer";
 import { useLayout } from "@react-native-community/hooks";
 import { hapticFeed } from "@/components/HapticTab";
+import { MessageStatusIcon } from "@/components/chat/MessageStatus";
 
 export type ChatRoomMessageProps = View["props"] & {
   me: Me;
-  sender: SenderInfo | null;
+  sender?: string;
   message: Message;
   onLongPress: (message: Message) => void;
   isDeleting?: boolean;
@@ -33,7 +33,10 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
   const isMine = React.useMemo(() => message.sender_info?.id === me.id, []);
   const [visible, setVisible] = useState(false);
   const formatedTime = React.useMemo(
-    () => formatMessageTime(message.created_at as unknown as Date),
+    () =>
+      formatMessageTime(message.created_at as unknown as Date, {
+        onlyTime: true,
+      }),
     []
   );
 
@@ -46,21 +49,21 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
           isMine ? "justify-end" : "justify-start"
         )}
       >
-        <Text className="text-[8px] text-typography/70">{formatedTime}</Text>
-        {!message.read && isMine && (
-          <Icon as={Check} size="2xs" className="ml-1 text-primary " />
-        )}
-        {message.read && isMine && (
-          <Icon as={CheckCheck} size="2xs" className="ml-1 text-primary" />
-        )}
+        {/* {message.updated_at && (
+          <Text className="text-[8px] text-gray-600 mr-1">
+            Edited
+          </Text>
+        )} */}
+        <Text className="text-xs text-typography/70">{formatedTime}</Text>
+        {isMine && <MessageStatusIcon status={message.status} />}
       </View>
     ),
-    [formatedTime, message.content]
+    [formatedTime, message.content, message.status]
   );
   const pressProps = {
     onLongPress: () => {
       hapticFeed();
-      if (message.status === "pending" || message.deleted_at) {
+      if (message.status === "pending") {
         return;
       }
       onLongPress(message);
@@ -125,11 +128,13 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
                     >
                       <Image
                         source={{
-                          ...generateMediaUrl({
-                            url: item.file_url,
-                            media_type: "IMAGE",
-                            id: item.file_id,
-                          }),
+                          uri: message.isMock
+                            ? item.file_url
+                            : generateMediaUrl({
+                                url: item.file_url,
+                                media_type: "IMAGE",
+                                id: item.file_id,
+                              }).uri,
                           cacheKey: item.file_id,
                         }}
                         rounded
@@ -163,6 +168,9 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
       <PropertyModalMediaViewer
         width={width}
         media={images}
+        factor={1.7}
+        showImages
+        stackMode={false}
         visible={visible}
         contentFit="cover"
         setVisible={setVisible}

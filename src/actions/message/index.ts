@@ -11,7 +11,15 @@ export async function startChat({ property_id, member_id }: StartChat) {
     }
   );
   console.log(result);
-  return result as string;
+  return result as {
+    chat_id: string;
+    sender_id: string;
+    content: string;
+    property_id: string;
+    property_image: string;
+    status: Message["status"];
+    created_at: string;
+  };
 }
 export async function sendMessage({ chat_id, content, files }: SendMessage) {
   const formData = new FormData();
@@ -20,7 +28,7 @@ export async function sendMessage({ chat_id, content, files }: SendMessage) {
   if (content) formData.append("content", content);
   files?.forEach((item, index) => {
     formData.append("media", {
-      uri: item.uri,
+      uri: item.file_url,
       name: `image.jpg`,
       type: "image/jpeg",
     } as any);
@@ -32,7 +40,18 @@ export async function sendMessage({ chat_id, content, files }: SendMessage) {
     },
     data: formData,
   });
-  return result as string;
+  return result as {
+    type: string;
+    chat_id: string;
+    message_id: string;
+    content: string;
+    media: FileData[];
+    created_at: string;
+    sender_id: string;
+    sender_name: string;
+    read: boolean;
+    status: Message["status"];
+  };
 }
 export async function editMessage({
   message_id,
@@ -51,7 +70,18 @@ export async function editMessage({
       },
     }
   );
-  return result as string;
+  return result as {
+    type: string;
+    chat_id: string;
+    message_id: string;
+    content: string;
+    media: FileData[];
+    created_at: string;
+    sender_id: string;
+    sender_name: string;
+    read: boolean;
+    status: Message["status"];
+  };
 }
 
 export async function getChats() {

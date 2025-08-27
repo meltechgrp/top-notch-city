@@ -2,12 +2,11 @@ import * as React from "react";
 
 import { KeyboardAvoidingView, View } from "react-native";
 import ChatRoom from "@/components/chat/ChatRoom";
-import { cn, fullName } from "@/lib/utils";
+import { cn, formatMessageTime, fullName } from "@/lib/utils";
 import { router, useLocalSearchParams } from "expo-router";
 import Platforms from "@/constants/Plaforms";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomScreenHeader from "@/components/layouts/CustomScreenHeader";
-import { useChatStore } from "@/store";
 import {
   Avatar,
   AvatarBadge,
@@ -20,13 +19,13 @@ import {
 } from "@/components/ui";
 import { generateMediaUrlSingle } from "@/lib/api";
 import BackgroundView from "@/components/layouts/BackgroundView";
+import { useChatStore } from "@/store/chatStore";
 
 export default function ChatRoomScreen() {
   const { chatId } = useLocalSearchParams<{
     chatId: string;
   }>();
-  const { receiver } = useChatStore();
-
+  const { getReceiver } = useChatStore();
   return (
     <>
       <BackgroundView className="flex-1 ">
@@ -37,7 +36,7 @@ export default function ChatRoomScreen() {
         >
           <CustomScreenHeader
             headerCenterContent={
-              <ScreenHeaderTitleSection receiver={receiver} />
+              <ScreenHeaderTitleSection receiver={getReceiver(chatId)} />
             }
           />
           <View className="flex-1">
@@ -62,7 +61,7 @@ export default function ChatRoomScreen() {
 }
 
 interface ScreenHeaderTitleSectionProps {
-  receiver?: ChatMessages["receiver_info"];
+  receiver?: any;
 }
 
 function ScreenHeaderTitleSection({ receiver }: ScreenHeaderTitleSectionProps) {
@@ -95,8 +94,12 @@ function ScreenHeaderTitleSection({ receiver }: ScreenHeaderTitleSectionProps) {
         <Heading size="lg" numberOfLines={1} className="">
           {fullName(receiver)}
         </Heading>
-        {receiver?.status == "online" && (
+        {receiver?.status == "online" ? (
           <Text className=" text-xs text-gray-500">Online</Text>
+        ) : (
+          <Text className=" text-xs text-gray-500">
+            Last seen: {formatMessageTime(new Date(Date.now()))}
+          </Text>
         )}
       </View>
     </Pressable>

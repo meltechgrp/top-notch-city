@@ -4,19 +4,17 @@ import DiscoverProperties from "@/components/home/DiscoverProperties";
 import TopProperties from "@/components/home/properties";
 import TopLocations from "@/components/home/topLocations";
 import { View } from "@/components/ui";
-import useGetLocation from "@/hooks/useGetLocation";
+import { useChat } from "@/hooks/useChat";
+import { useHomeFeed } from "@/hooks/useHomeFeed";
 import eventBus from "@/lib/eventBus";
 import { useStore } from "@/store";
 import React, { useEffect } from "react";
 const MAP_HEIGHT = 400;
 
 export default function HomeScreen() {
-  const { retryGetLocation } = useGetLocation();
   const { hasAuth } = useStore();
-
-  async function onRefresh() {
-    eventBus.dispatchEvent("PROPERTY_HORIZONTAL_LIST_REFRESH", null);
-  }
+  const { refreshAll } = useHomeFeed();
+  useChat();
   useEffect(() => {
     eventBus.dispatchEvent("REFRESH_PROFILE", null);
   }, []);
@@ -25,15 +23,10 @@ export default function HomeScreen() {
       openSignInModal({ visible: false });
     }
   }, [hasAuth]);
-  useEffect(() => {
-    setTimeout(async () => {
-      await retryGetLocation();
-    }, 2000);
-  }, []);
   return (
     <ParallaxScrollView
       headerHeight={MAP_HEIGHT}
-      onRefresh={onRefresh}
+      onRefresh={refreshAll}
       headerComponent={<DiscoverProperties mapHeight={MAP_HEIGHT} />}
     >
       {/* Feed items */}

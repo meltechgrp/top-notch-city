@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import Platforms from "@/constants/Plaforms";
 import eventBus from "@/lib/eventBus";
 import useSound from "@/hooks/useSound";
+import { useChatStore } from "@/store/chatStore";
 const MAPS_API_KEY = process.env.EXPO_PUBLIC_ANDROID_MAPS_API_KEY;
 
 export async function Fetch(url: string, options: AxiosRequestConfig = {}) {
@@ -31,7 +32,8 @@ export async function Fetch(url: string, options: AxiosRequestConfig = {}) {
 
 export function useWebSocket() {
   const authToken = getAuthToken();
-  const { playSound } = useSound();
+  const { addIncomingMessage, updateMessageStatus, updateMessage } =
+    useChatStore.getState();
   const ws = useRef<WebSocket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const reconnectAttempts = useRef(0);
@@ -58,14 +60,38 @@ export function useWebSocket() {
         // const data = event.data;
         console.log("📨 Message:", data, data?.type);
 
-        if (
-          data?.type == "new_message" ||
-          data?.type == "read_receipt" ||
-          data?.type == "message_edited"
-        ) {
-          // playSound("MESSAGE_RECEIVED");
-          eventBus.dispatchEvent("REFRESH_CHAT", data?.chat_id);
-          eventBus.dispatchEvent("REFRESH_CHATS", () => {});
+        switch (data.type) {
+          case "new_message":
+            addIncomingMessage(data.chat_id, {
+              message_id: data?.message_id!,
+              created_at: data?.created_at,
+              updated_at: data?.created_at,
+              content: data?.content,
+              sender_info: {
+                id: data?.sender_id,
+                first_name: "",
+                last_name: "",
+                profile_image: "",
+                status: "offline",
+              },
+              status: data?.status,
+              file_data: data?.media?.map((f: any) => ({
+                file_id: f.id,
+                file_url: f.file_url,
+                file_type: f.file_type,
+                file_name: f.file_name,
+              })),
+              read: data?.read,
+            });
+            break;
+
+          case "read_receipt":
+            updateMessageStatus(data.chat_id, data.message_id, "seen");
+            break;
+
+          case "message_edited":
+            updateMessage(data.chat_id, data.message_id, data.content);
+            break;
         }
       } catch (err) {
         console.error("❌ Failed to parse message:", event.data);

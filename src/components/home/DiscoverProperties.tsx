@@ -2,9 +2,8 @@ import { View } from "@/components/ui";
 import Map from "../location/map";
 import FoundHorizontalList from "./FoundProperties";
 import HomeNavigation from "./HomeNavigation";
-import { useRouter } from "expo-router";
-import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
-import { memo, useEffect, useMemo } from "react";
+import { router } from "expo-router";
+import { memo } from "react";
 import { useStore } from "@/store";
 
 type Props = {
@@ -13,26 +12,8 @@ type Props = {
 };
 const DiscoverProperties = (props: Props) => {
   const { className, mapHeight } = props;
-  const { location } = useStore();
-  const router = useRouter();
-  const { data, refetch } = useInfinityQueries({
-    type: "search",
-    filter: {
-      latitude: location?.latitude?.toString(),
-      longitude: location?.longitude?.toString(),
-      use_geo_location: "true",
-    },
-    key: "nearby",
-  });
+  const { nearbyProperties: properties } = useStore();
 
-  const properties = useMemo(
-    () => data?.pages.flatMap((page) => page.results) || [],
-    [data]
-  );
-
-  useEffect(() => {
-    refetch();
-  }, [location]);
   return (
     <View style={{ flex: 1 }} className={className}>
       <View className="overflow-hidden relative flex-1">
@@ -40,7 +21,7 @@ const DiscoverProperties = (props: Props) => {
           <HomeNavigation />
         </View>
         <View className="absolute bottom-8 z-10">
-          <FoundHorizontalList data={properties} refetch={refetch} />
+          <FoundHorizontalList data={properties} refetch={async () => {}} />
         </View>
         <Map
           markers={properties || []}

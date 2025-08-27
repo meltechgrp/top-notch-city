@@ -28,7 +28,6 @@ export default function PropertySections() {
       <Box className="flex-1 px-4">
         <FlashList
           data={locations}
-          //   numColumns={2}
           horizontal={false}
           renderItem={({ item, index }) => (
             <TopLocation location={item} clasName={cn("w-full h-40")} />

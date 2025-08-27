@@ -6,6 +6,7 @@ import TopLocation from "./TopLocation";
 import { useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import { fetchTopLocations } from "@/actions/property/locations";
+import { useStore } from "@/store";
 
 type Props = {
   category?: string;
@@ -23,24 +24,7 @@ export type Property = {
 };
 
 export default function TopLocationsHorizontalList(props: Props) {
-  const router = useRouter();
-  const { data, refetch } = useQuery({
-    queryKey: ["locations"],
-    queryFn: fetchTopLocations,
-  });
-  const { onRefresh } = useRefresh(refetch);
-  const locations = useMemo(() => data || [], [data]);
-
-  useEffect(() => {
-    eventBus.addEventListener("PROPERTY_HORIZONTAL_LIST_REFRESH", onRefresh);
-
-    return () => {
-      eventBus.removeEventListener(
-        "PROPERTY_HORIZONTAL_LIST_REFRESH",
-        onRefresh
-      );
-    };
-  }, []);
+  const { topLocations: locations } = useStore();
 
   return (
     <ScrollView
@@ -52,7 +36,7 @@ export default function TopLocationsHorizontalList(props: Props) {
       snapToAlignment="center"
       decelerationRate="fast"
     >
-      {locations.map((location) => (
+      {locations?.map((location) => (
         <TopLocation key={location.state} location={location} />
       ))}
     </ScrollView>

@@ -28,6 +28,9 @@ type State = {
     currentIndex: number;
     isVideoReady?: boolean;
   };
+  topProperties?: Property[];
+  topLocations?: TopLocation[];
+  nearbyProperties?: Property[];
 };
 
 type Actions = {
@@ -42,6 +45,16 @@ type Actions = {
     currentIndex: number,
     isVideoReady?: boolean
   ) => void;
+
+  // 🔹 New Actions for property lists
+  setTopProperties: (properties: Property[]) => void;
+  clearTopProperties: () => void;
+
+  setNearbyProperties: (properties: Property[]) => void;
+  clearNearbyProperties: () => void;
+
+  setTopLocations: (locations: TopLocation[]) => void;
+  clearTopLocations: () => void;
 };
 
 const initialState: State = {
@@ -49,6 +62,8 @@ const initialState: State = {
   hasAuth: false,
   isAdmin: false,
   isOnboarded: false,
+  topLocations: [],
+  topProperties: [],
 };
 
 type StateAndActions = State & Actions;
@@ -89,6 +104,24 @@ export const useStore = create<StateAndActions>(
       },
       updateProfile: (data) =>
         set((state) => ({ ...state, me: { ...state.me, ...data } })),
+
+      // 🔹 Property list actions
+      setTopProperties: (properties) =>
+        set((state) => ({ ...state, topProperties: properties })),
+
+      clearTopProperties: () =>
+        set((state) => ({ ...state, topProperties: [] })),
+
+      setNearbyProperties: (properties) =>
+        set((state) => ({ ...state, nearbyProperties: properties })),
+
+      clearNearbyProperties: () =>
+        set((state) => ({ ...state, nearbyProperties: [] })),
+
+      setTopLocations: (locations) =>
+        set((state) => ({ ...state, topLocations: locations })),
+
+      clearTopLocations: () => set((state) => ({ ...state, topLocations: [] })),
     }),
     {
       name: "top-notch-storage",
@@ -182,18 +215,4 @@ export const useTempStore = create<TempState>((set, get) => ({
       ...state,
       listing: { ...state.listing, step: state?.listing?.step + 1 },
     })),
-}));
-
-type ChatState = {
-  updateReceiver: (data: ReceiverInfo) => any | undefined;
-  updateSender: (data: SenderInfo) => any | undefined;
-  chats?: Message[];
-  receiver?: ReceiverInfo;
-  sender?: SenderInfo;
-  updateChat: (chat: Message[]) => void;
-};
-export const useChatStore = create<ChatState>((set, get) => ({
-  updateReceiver: (receiver) => set((state) => ({ ...state, receiver })),
-  updateSender: (sender) => set((state) => ({ ...state, sender })),
-  updateChat: (chats) => set((state) => ({ ...state, chats })),
 }));

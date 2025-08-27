@@ -3,6 +3,11 @@ interface StartChat {
   member_id: string;
 }
 
+interface ChatList {
+  details: Chat;
+  messages: Message[];
+  typing?: boolean;
+}
 interface Chat {
   chat_id: string;
   property_id?: string;
@@ -24,24 +29,18 @@ interface Chat {
   unread_count: number;
 }
 
-interface FileData {
-  file_id: string;
-  file_url: string;
-  file_type: string;
-  file_name: string;
-}
-
 interface Message {
   content: string;
   created_at: string;
   message_id: string;
   file_data: FileData[];
-  receiver_info: ReceiverInfo;
+  receiver_info?: ReceiverInfo;
   sender_info: SenderInfo;
   read: boolean;
-  status: "pending" | "seen" | "delivered" | "sent";
+  status: "pending" | "seen" | "delivered" | "sent" | "error";
   updated_at: string;
   deleted_at?: string;
+  isMock?: boolean;
 }
 interface ChatMessages {
   pagination: {
@@ -50,16 +49,16 @@ interface ChatMessages {
     size: number;
     total_pages: number;
   };
-  messages: Message[];
   receiver_info: ReceiverInfo;
   sender_info: SenderInfo;
+  messages: Message[];
 }
 
 interface ReceiverInfo {
   id: string;
   first_name: string;
   last_name: string;
-  profile_image: string;
+  profile_image?: string;
   status: "offline" | "online";
 }
 interface SenderInfo {
@@ -73,5 +72,12 @@ interface SenderInfo {
 interface SendMessage {
   chat_id: string;
   content: string;
-  files?: ImagePickerAsset[];
+  files?: FileData[];
+}
+
+interface FileData {
+  file_id: string;
+  file_url: string;
+  file_type: string;
+  file_name: string;
 }

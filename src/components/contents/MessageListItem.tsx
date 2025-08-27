@@ -18,12 +18,15 @@ import SwipeableWrapper from "@/components/shared/SwipeableWrapper";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteChat } from "@/actions/message";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
+import { MessageStatusIcon } from "@/components/chat/MessageStatus";
+import { useMessages } from "@/hooks/useMessages";
 
 type MessageListItemProps = {
   chat: Chat;
 };
 export function MessageListItem(props: MessageListItemProps) {
   const { chat } = props;
+  const { message } = useMessages(chat.chat_id);
   const queryClient = useQueryClient();
   const router = useRouter();
   const { me } = useStore();
@@ -35,7 +38,10 @@ export function MessageListItem(props: MessageListItemProps) {
     return c > 99 ? "99+" : c;
   }, [chat]);
 
-  const isMine = React.useMemo(() => chat.sender_id === me?.id, [me, chat]);
+  const isMine = React.useMemo(
+    () => message?.sender_info.id === me?.id,
+    [me, message]
+  );
   const formatedTime = React.useMemo(
     () =>
       chat
@@ -109,49 +115,38 @@ export function MessageListItem(props: MessageListItemProps) {
                     {formatedTime}
                   </Text>
                 </View>
-                <View className="flex flex-row gap-2 w-full">
-                  <View className="flex-1 flex-row items-center overflow-hidden">
-                    {!chat.recent_message.read && isMine && (
-                      <Icon
-                        as={Check}
-                        size="2xs"
-                        className="ml-1 text-primary "
-                      />
-                    )}
-                    {chat.recent_message.read && isMine && (
-                      <Icon
-                        as={CheckCheck}
-                        size="2xs"
-                        className="ml-1 text-primary"
-                      />
-                    )}
-                    <Text
-                      className="text-typography/60 text-sm"
-                      ellipsizeMode="tail"
-                      numberOfLines={1}
-                    >
-                      {chat?.recent_message?.content
-                        ? chat.recent_message.content
-                        : chat?.recent_message?.file_data?.length
-                          ? "Media"
-                          : ""}
-                    </Text>
-                  </View>
-                  <View className="flex-row items-center gap-1">
-                    {!!unreadCount && (
-                      <View
-                        className={cn(
-                          "flex-row items-center  h-[18px] bg-primary rounded-full justify-center ml-auto",
-                          unreadCount === "99+" ? "w-[32px]" : "w-[20px]"
-                        )}
+                {message && (
+                  <View className="flex flex-row gap-4 w-full">
+                    <View className="flex-1 flex-row gap-2 items-center overflow-hidden">
+                      {isMine && <MessageStatusIcon status={message?.status} />}
+                      <Text
+                        className="text-typography/60 text-sm"
+                        ellipsizeMode="tail"
+                        numberOfLines={1}
                       >
-                        <Text className="text-white text-xs">
-                          {unreadCount}
-                        </Text>
-                      </View>
-                    )}
+                        {message?.content
+                          ? message.content
+                          : message?.file_data?.length
+                            ? "Media"
+                            : ""}
+                      </Text>
+                    </View>
+                    <View className="flex-row w-8 items-center gap-1">
+                      {!!unreadCount && (
+                        <View
+                          className={cn(
+                            "flex-row items-center  h-[18px] bg-primary rounded-full justify-center ml-auto",
+                            unreadCount === "99+" ? "w-[32px]" : "w-[20px]"
+                          )}
+                        >
+                          <Text className="text-white text-xs">
+                            {unreadCount}
+                          </Text>
+                        </View>
+                      )}
+                    </View>
                   </View>
-                </View>
+                )}
               </View>
             </View>
           </View>

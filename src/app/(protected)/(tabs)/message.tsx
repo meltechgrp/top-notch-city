@@ -4,45 +4,27 @@ import StartChatBottomSheet from "@/components/modals/StartChatBottomSheet";
 import CreateButton from "@/components/custom/CreateButton";
 import EmptyStateWrapper from "@/components/shared/EmptyStateWrapper";
 import { Box, View } from "@/components/ui";
-import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
 import { useStore } from "@/store";
 import { FlashList } from "@shopify/flash-list";
 import { useRouter } from "expo-router";
-import React, { useMemo } from "react";
+import React from "react";
 import { RefreshControl } from "react-native";
-import { useQuery } from "@tanstack/react-query";
-import { getChats } from "@/actions/message";
 import eventBus from "@/lib/eventBus";
+import { useChat } from "@/hooks/useChat";
+import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
 
 export default function MessageScreen() {
   const { me } = useStore();
+  const { chats, loading, refreshing, refetch } = useChat();
   const router = useRouter();
   const [friendsModal, setFriendsModal] = React.useState(false);
-  const {
-    data,
-    refetch,
-    isLoading: loading,
-    isFetching: refreshing,
-  } = useQuery({
-    queryKey: ["chats"],
-    queryFn: getChats,
-  });
+
   const onNewChat = () => {
     setFriendsModal(true);
   };
-  const chats = useMemo(() => data?.chats || [], [data]);
-  useRefreshOnFocus(refetch);
-  async function onRefreshChat() {
-    console.log("refreshing chats");
-    await refetch();
-  }
-  React.useEffect(() => {
-    eventBus.addEventListener("REFRESH_CHATS", onRefreshChat);
-
-    return () => {
-      eventBus.removeEventListener("REFRESH_CHATS", onRefreshChat);
-    };
-  }, []);
+  useRefreshOnFocus(async () => {
+    setTimeout(refetch, 1000);
+  });
   return (
     <>
       <Box className="flex-1">

@@ -9,8 +9,7 @@ import { ThemeProvider } from "@/components/layouts/ThemeProvider";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import * as SplashScreen from "expo-splash-screen";
 import GlobalManager from "@/components/shared/GlobalManager";
-import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import { useReactQueryDevTools } from "@dev-plugins/react-query";
+import { QueryClient } from "@tanstack/react-query";
 import { RoleSwitchPill } from "@/components/globals/RoleSwitchPill";
 import { Linking, LogBox, Platform } from "react-native";
 import { cacheStorage } from "@/lib/asyncStorage";
@@ -21,13 +20,27 @@ import Constants from "expo-constants";
 import { updatePushNotificationToken } from "@/actions/utills";
 import { pushNotificationResponseHandler } from "@/lib/notification";
 import { showBounceNotification } from "@/components/custom/CustomNotification";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import useSuppressChatPushNotification from "@/components/chat/useSuppressChatPushNotification";
 import {
   configureReanimatedLogger,
   ReanimatedLogLevel,
 } from "react-native-reanimated";
+import { useReactQueryDevTools } from "@dev-plugins/react-query";
 
-const query = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 60 * 24, // 24 hours
+    },
+  },
+});
+
+const asyncStoragePersister = createAsyncStoragePersister({
+  storage: AsyncStorage,
+});
 
 export const unstable_settings = {
   initialRouteName: "(onboarding)/splash",
@@ -47,7 +60,7 @@ configureReanimatedLogger({
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  // useReactQueryDevTools(query);
+  useReactQueryDevTools(queryClient);
   useNotificationObserver();
   useSuppressChatPushNotification();
   useMountPushNotificationToken();
@@ -110,7 +123,10 @@ export default function RootLayout() {
 
   return (
     <>
-      <QueryClientProvider client={query}>
+      <PersistQueryClientProvider
+        client={queryClient}
+        persistOptions={{ persister: asyncStoragePersister }}
+      >
         <ThemeProvider>
           <GestureHandlerRootView style={{ flex: 1 }}>
             <NotifierWrapper>
@@ -124,7 +140,7 @@ export default function RootLayout() {
             </NotifierWrapper>
           </GestureHandlerRootView>
         </ThemeProvider>
-      </QueryClientProvider>
+      </PersistQueryClientProvider>
     </>
   );
 }

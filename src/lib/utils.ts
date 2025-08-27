@@ -22,7 +22,7 @@ export function toNaira(amountInKobo: number) {
 
 export function formatMessageTime(
   time: Date,
-  opt?: { hideTimeForFullDate: boolean }
+  opt?: { hideTimeForFullDate?: boolean; onlyTime?: boolean }
 ) {
   const { hideTimeForFullDate } = opt || {
     hideTimeForFullDate: false,
@@ -33,7 +33,10 @@ export function formatMessageTime(
   const timeZone = Intl.DateTimeFormat().resolvedOptions();
 
   // Convert UTC/server date into user's timezone
-  const localDate = new TZDate(date, "+02:00");
+  const localDate = new TZDate(date, "+01:00");
+  if (opt?.onlyTime) {
+    return format(localDate, "h:mm");
+  }
   if (isToday(localDate)) {
     return format(localDate, "h:mm a");
   } else if (isThisYear(localDate)) {
@@ -405,4 +408,47 @@ export function calculateFeedDisplayDimensions(
   }
 
   return { width: Math.floor(displayWidth), height: Math.floor(displayHeight) };
+}
+
+export function shallowCompareProperties(
+  oldArr: Property[],
+  newArr: Property[]
+): boolean {
+  if (oldArr.length !== newArr.length) return false;
+
+  for (let i = 0; i < oldArr.length; i++) {
+    const oldItem = oldArr[i];
+    const newItem = newArr[i];
+
+    // Compare core fields that would make a property "different"
+    if (
+      oldItem.id !== newItem.id ||
+      oldItem.updated_at !== newItem.updated_at ||
+      oldItem.price !== newItem.price ||
+      oldItem.status !== newItem.status
+    ) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+export function guidGenerator() {
+  const S4 = () =>
+    (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+  return (
+    S4() +
+    S4() +
+    "-" +
+    S4() +
+    "-" +
+    S4() +
+    "-" +
+    S4() +
+    "-" +
+    S4() +
+    S4() +
+    S4()
+  );
 }
