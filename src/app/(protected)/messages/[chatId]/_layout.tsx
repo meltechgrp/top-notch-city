@@ -26,7 +26,7 @@ export default function ChatsLayout() {
           headerShown: false,
           headerTitle: "Messages",
           headerLeft: undefined,
-          animation: "slide_from_right",
+          animation: "none",
         }}
       />
     </Stack>

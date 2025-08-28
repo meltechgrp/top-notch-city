@@ -3,9 +3,6 @@ import config from "@/config";
 import axios, { AxiosRequestConfig } from "axios";
 import { getUniqueIdSync } from "react-native-device-info";
 import { useEffect, useRef, useState } from "react";
-import Platforms from "@/constants/Plaforms";
-import eventBus from "@/lib/eventBus";
-import useSound from "@/hooks/useSound";
 import { useChatStore } from "@/store/chatStore";
 const MAPS_API_KEY = process.env.EXPO_PUBLIC_ANDROID_MAPS_API_KEY;
 
@@ -38,8 +35,8 @@ export function useWebSocket() {
   const [isConnected, setIsConnected] = useState(false);
   const reconnectAttempts = useRef(0);
   const reconnectTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-
   const connect = () => {
+    if (!authToken) return;
     const wsUrl = `wss://app.topnotchcity.com/ws/?token=${authToken}`;
     console.log("🔌 Connecting to:", wsUrl);
 

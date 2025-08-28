@@ -74,7 +74,7 @@ export default function RootLayout() {
         const parsedUrl = new URL(url);
 
         // 1️⃣ Handle known schemes (expo, custom)
-        const knownSchemes = ["exp:", "expo:", "com.meltech.topnotchcity:"];
+        const knownSchemes = ["exp:", "expo:", "topnotchcity:"];
         console.log(parsedUrl.pathname, url);
         if (parsedUrl.pathname == "/oauthredirect") {
           console.log(parsedUrl.pathname);

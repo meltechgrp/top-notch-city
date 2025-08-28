@@ -11,7 +11,7 @@ const appVariantConfig = {
   },
   staging: {
     name: "TopNotch City",
-    slug: "topnotch-city-staging",
+    slug: "topnotch-city",
     identifier: "com.meltech.topnotchcity",
     version: "1.0.1",
     projectId: "d21cedf2-e98d-42e9-bf8b-6d52e1a7ef20",
@@ -20,7 +20,7 @@ const appVariantConfig = {
   },
   development: {
     name: "TopNotch City",
-    slug: "topnotch-city-dev",
+    slug: "topnotch-city",
     identifier: "com.meltech.topnotchcity",
     version: "1.0.1",
     projectId: "d21cedf2-e98d-42e9-bf8b-6d52e1a7ef20",
@@ -54,7 +54,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       light: "./src/assets/images/ios-light.png",
     },
     supportsTablet: false,
-    usesAppleSignIn: true,
     bundleIdentifier: variant.identifier,
     runtimeVersion: variant.version,
     infoPlist: {
@@ -120,14 +119,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   plugins: [
     "expo-router",
     "react-native-compressor",
-    "expo-apple-authentication",
-    [
-      "expo-local-authentication",
-      {
-        faceIDPermission:
-          "Allow $(PRODUCT_NAME) to use Face ID for secure login.",
-      },
-    ],
     [
       "./plugins/withAndroidQueries.js",
       [
@@ -213,7 +204,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         enableBackgroundRemoteNotifications: false,
       },
     ],
-    "@react-native-voice/voice",
   ],
   experiments: {
     typedRoutes: true,

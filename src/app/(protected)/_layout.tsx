@@ -4,6 +4,7 @@ import headerLeft from "@/components/shared/headerLeft";
 import { useResolvedTheme } from "@/components/ui";
 import { Colors } from "@/constants/Colors";
 import useGetLocation from "@/hooks/useGetLocation";
+import { useStore } from "@/store";
 import { ErrorBoundaryProps, Stack } from "expo-router";
 import { useEffect } from "react";
 
@@ -14,16 +15,19 @@ export const unstable_settings = {
 
 export default function ProtectedRoutesLayout() {
   const theme = useResolvedTheme();
+  const { hasAuth } = useStore();
   const { retryGetLocation } = useGetLocation();
   const { connect, closeConnection } = useWebSocket();
 
   useEffect(() => {
-    connect();
+    if (hasAuth) {
+      connect();
+    }
 
     return () => {
       closeConnection();
     };
-  }, []);
+  }, [hasAuth]);
   useEffect(() => {
     setTimeout(async () => {
       await retryGetLocation();

@@ -8,7 +8,6 @@ import {
 import { useAudioRecorder, AudioModule, RecordingPresets } from "expo-audio";
 import { cn } from "@/lib/utils";
 import { Text, View } from "@/components/ui";
-import { voiceSearchProperties } from "@/actions/search";
 import { Fetch } from "@/actions/utills";
 
 interface VoiceModalProps {
