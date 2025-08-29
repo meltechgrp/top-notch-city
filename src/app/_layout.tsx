@@ -10,7 +10,7 @@ import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import * as SplashScreen from "expo-splash-screen";
 import GlobalManager from "@/components/shared/GlobalManager";
 import { QueryClient } from "@tanstack/react-query";
-import { RoleSwitchPill } from "@/components/globals/RoleSwitchPill";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 import { Linking, LogBox, Platform } from "react-native";
 import { cacheStorage } from "@/lib/asyncStorage";
 import { NotifierWrapper } from "react-native-notifier";
@@ -74,7 +74,7 @@ export default function RootLayout() {
         const parsedUrl = new URL(url);
 
         // 1️⃣ Handle known schemes (expo, custom)
-        const knownSchemes = ["exp:", "expo:", "topnotchcity:"];
+        const knownSchemes = ["exp:", "expo:", "com.meltech.topnotchcity:"];
         console.log(parsedUrl.pathname, url);
         if (parsedUrl.pathname == "/oauthredirect") {
           console.log(parsedUrl.pathname);
@@ -131,11 +131,12 @@ export default function RootLayout() {
           <GestureHandlerRootView style={{ flex: 1 }}>
             <NotifierWrapper>
               <GluestackUIProvider>
-                <BottomSheetModalProvider>
-                  <Slot />
-                  <RoleSwitchPill />
-                  <GlobalManager />
-                </BottomSheetModalProvider>
+                <KeyboardProvider>
+                  <BottomSheetModalProvider>
+                    <Slot />
+                    <GlobalManager />
+                  </BottomSheetModalProvider>
+                </KeyboardProvider>
               </GluestackUIProvider>
             </NotifierWrapper>
           </GestureHandlerRootView>
@@ -158,14 +159,16 @@ function useMountPushNotificationToken() {
 
   useEffect(() => {
     setTimeout(() => {
-      registerForPushNotificationsAsync()
-        .then((token) => {
-          token && updatePushNotificationToken(token);
-        })
-        .catch((error) => {
-          console.error("Error registering for push notifications:", error);
-        });
-    }, 30000);
+      if (hasAuth) {
+        registerForPushNotificationsAsync()
+          .then((token) => {
+            token && updatePushNotificationToken(token);
+          })
+          .catch((error) => {
+            console.error("Error registering for push notifications:", error);
+          });
+      }
+    }, 5000);
     // const notificationListener =
     //   Notifications.addNotificationReceivedListener((notification) => {
     //     console.log(notification.request.content?.data, "test");
@@ -180,7 +183,7 @@ function useMountPushNotificationToken() {
     // return () => {
     //   notificationListener.remove();
     // };
-  }, []);
+  }, [hasAuth]);
 }
 
 export function useHandleNotification() {

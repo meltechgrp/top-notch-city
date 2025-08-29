@@ -9,7 +9,6 @@ import {
   View,
 } from "../ui";
 import { cn, formatMessageTime, fullName } from "@/lib/utils";
-import { useRouter } from "expo-router";
 import { generateMediaUrlSingle } from "@/lib/api";
 import { useStore } from "@/store";
 import SwipeableWrapper from "@/components/shared/SwipeableWrapper";
@@ -18,6 +17,7 @@ import { deleteChat } from "@/actions/message";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { MessageStatusIcon } from "@/components/chat/MessageStatus";
 import { useMessages } from "@/hooks/useMessages";
+import { Link } from "expo-router";
 
 type MessageListItemProps = {
   chat: Chat;
@@ -26,7 +26,6 @@ export function MessageListItem(props: MessageListItemProps) {
   const { chat } = props;
   const { message } = useMessages(chat.chat_id);
   const queryClient = useQueryClient();
-  const router = useRouter();
   const { me } = useStore();
   const { mutateAsync } = useMutation({
     mutationFn: deleteChat,
@@ -70,17 +69,10 @@ export function MessageListItem(props: MessageListItemProps) {
   }
   return (
     <SwipeableWrapper leftAction={handleDelete}>
-      <Pressable
-        onPress={() => {
-          router.push({
-            pathname: "/(protected)/messages/[chatId]",
-            params: {
-              chatId: chat.chat_id,
-            },
-          });
-        }}
+      <Link
+        href={`/(protected)/messages/${chat.chat_id}`}
+        prefetch
         className=" h-[70px] flex-1 bg-background"
-        android_ripple={{ color: "#d5d4d5" }}
       >
         <View className=" h-full w-full px-4">
           <View className="w-full h-full border-b border-outline  flex-row items-center">
@@ -145,7 +137,7 @@ export function MessageListItem(props: MessageListItemProps) {
             </View>
           </View>
         </View>
-      </Pressable>
+      </Link>
     </SwipeableWrapper>
   );
 }

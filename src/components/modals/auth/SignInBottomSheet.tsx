@@ -30,6 +30,8 @@ import { CustomInput } from "@/components/custom/CustomInput";
 import { getMe } from "@/actions/user";
 import { router } from "expo-router";
 
+WebBrowser.maybeCompleteAuthSession();
+
 export default function SignInBottomSheet({
   visible,
   onDismiss,
@@ -47,15 +49,17 @@ export default function SignInBottomSheet({
 
   const [googleRequest, googleResponse, googlePromptAsync] =
     Google.useAuthRequest({
-      androidClientId: process.env.EXPO_PUBLIC_APPLE_AUTH_KEY,
+      androidClientId:
+        "198305892260-c8eiep3tnnp29enadh4bvqb7vm0804cs.apps.googleusercontent.com",
       iosClientId: process.env.EXPO_PUBLIC_APPLE_AUTH_KEY,
+      webClientId:
+        "198305892260-av6ll3dbobcc0tcaninrut8plid77o9u.apps.googleusercontent.com",
     });
 
   // const [fbRequest, fbResponse, fbPromptAsync] = Facebook.useAuthRequest({
   //   clientId: "990600566300859",
   // });
 
-  WebBrowser.maybeCompleteAuthSession();
   // 🔑 Basic email sign-in
   const handleSubmit = async () => {
     hapticFeed();

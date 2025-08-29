@@ -12,8 +12,6 @@ import {
 } from "lucide-react-native";
 import { Colors } from "@/constants/Colors";
 import { useResolvedTheme } from "@/components/ui";
-import { useStore } from "@/store";
-import Platforms from "@/constants/Plaforms";
 
 export const unstable_settings = {
   initialRouteName: "home",
@@ -29,7 +27,6 @@ export default function TabLayout() {
         headerTitleAlign: "center",
         tabBarHideOnKeyboard: true,
         tabBarBackground: TabBarBackground,
-        animation: Platforms.isIOS() ? "fade" : "none",
         tabBarStyle: [
           Platform.select({
             ios: {

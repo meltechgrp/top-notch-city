@@ -41,7 +41,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   version: variant.version,
   orientation: "portrait",
   icon: "./src/assets/images/icon.png",
-  scheme: "topnotchcity",
+  scheme: "com.meltech.topnotchcity",
   userInterfaceStyle: "automatic",
   runtimeVersion: variant.version,
   updates: {
@@ -99,7 +99,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
             pathPrefix: "/",
           },
           {
-            scheme: "topnotchcity",
+            scheme: "com.meltech.topnotchcity",
           },
         ],
         category: ["BROWSABLE", "DEFAULT"],
