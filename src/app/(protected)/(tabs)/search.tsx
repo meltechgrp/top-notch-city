@@ -22,7 +22,6 @@ export default function SearchScreen() {
   const { height: totalHeight } = Dimensions.get("screen");
   const [showFilter, setShowFilter] = useState(false);
   const { location } = useStore();
-  const { retryGetLocation } = useGetLocation();
   const [activateVoice, setActivateVoice] = useState(false);
   const [audioProperties, setAudioProperties] = useState<Property[]>([]);
   const [locationBottomSheet, setLocationBottomSheet] = useState(false);
@@ -43,15 +42,20 @@ export default function SearchScreen() {
     type: "search",
     filter: {
       ...search,
-      latitude: location?.latitude?.toString(),
-      longitude: location?.longitude?.toString(),
+      ...(!search.state || !search.city
+        ? {
+            latitude: location?.latitude?.toString(),
+            longitude: location?.longitude?.toString(),
+          }
+        : {}),
     },
     enabled: true,
   });
 
   useEffect(() => {
     refetch();
-  }, [search, location]);
+    setFilter({});
+  }, [search]);
 
   const onTabChange = React.useCallback((index: number) => {
     setCurrentPage(index);
@@ -66,17 +70,17 @@ export default function SearchScreen() {
   }, [data, audioProperties]);
 
   const filtered = useFilteredProperties(properties, filter);
-  useRefreshOnFocus(retryGetLocation);
   return (
     <Box className="flex-1 relative">
-      {currentPage !== 2 && (
-        <SearchHeader
-          filter={filter}
-          setLocationBottomSheet={() => setLocationBottomSheet(true)}
-          setShowFilter={() => setShowFilter(true)}
-          setActivateVoice={() => setActivateVoice(true)}
-        />
-      )}
+      <SearchHeader
+        filter={filter}
+        setLocationBottomSheet={() => setLocationBottomSheet(true)}
+        setShowFilter={() => setShowFilter(true)}
+        setActivateVoice={() => setActivateVoice(true)}
+        onApply={setFilter}
+        properies={properties}
+        activeIndex={currentPage}
+      />
       <SearchTabs activeIndex={currentPage} onTabChange={onTabChange} />
 
       <PagerView
@@ -139,7 +143,7 @@ export default function SearchScreen() {
         onApply={setFilter}
         filter={filter}
         properies={properties}
-        showPurpose={false}
+        showPurpose
       />
     </Box>
   );

@@ -11,6 +11,19 @@ export async function fetchProperties({ pageParam }: { pageParam: number }) {
     throw new Error("Failed to fetch properties");
   }
 }
+export async function fetchReels({ pageParam }: { pageParam: number }) {
+  try {
+    const res = await Fetch(
+      `/properties/videos?page=${pageParam}&per_page=4`,
+      {}
+    );
+    if (res?.detail) throw new Error("Failed to fetch properties");
+    return res as Result;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to fetch properties");
+  }
+}
 export async function fetchPendingProperties({
   pageParam,
 }: {

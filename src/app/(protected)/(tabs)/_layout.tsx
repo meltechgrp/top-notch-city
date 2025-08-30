@@ -7,6 +7,7 @@ import {
   Home,
   Menu,
   MessageSquareMore,
+  MonitorPlay,
   Plus,
   Search,
 } from "lucide-react-native";
@@ -74,13 +75,11 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="message"
+        name="reels"
         options={{
-          title: "Message",
+          title: "Reels",
           headerShown: true,
-          tabBarIcon: ({ color }) => (
-            <MessageSquareMore size={24} color={color} />
-          ),
+          tabBarIcon: ({ color }) => <MonitorPlay size={24} color={color} />,
         }}
       />
       <Tabs.Screen

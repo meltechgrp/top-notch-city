@@ -46,20 +46,18 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
     () => (
       <View
         className={cn(
-          "flex-row items-end pb-1 px-2",
+          "flex-row items-center pb-1 px-2",
           isMine ? "justify-end" : "justify-start"
         )}
       >
-        {/* {message.updated_at && (
-          <Text className="text-[8px] text-gray-600 mr-1">
-            Edited
-          </Text>
-        )} */}
+        {message.updated_at && (
+          <Text className="text-[10px] text-typography mr-1">Edited</Text>
+        )}
         <Text className="text-xs text-typography/70">{formatedTime}</Text>
         {isMine && <MessageStatusIcon status={message.status} />}
       </View>
     ),
-    [formatedTime, message.content, message.status]
+    [formatedTime, message.content, message.status, message.updated_at]
   );
   const pressProps = {
     onLongPress: () => {

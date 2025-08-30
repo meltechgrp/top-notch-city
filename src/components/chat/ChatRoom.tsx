@@ -22,6 +22,7 @@ import MessageActionsBottomSheet from "@/components/chat/MessageActionsBottomShe
 import { useMessages } from "@/hooks/useMessages";
 import BackgroundView from "@/components/layouts/BackgroundView";
 import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
+import { useChat } from "@/hooks/useChat";
 
 const InitialNumToRender = 30;
 type Props = {
@@ -31,6 +32,7 @@ type Props = {
 export default function ChatRoom(props: Props) {
   const { ChatRoomFooterProps = {}, chatId } = props;
   const me = useStore((s) => s.me);
+  const { refetch } = useChat();
   const {
     handleSendMessage,
     hasNextPage,
@@ -142,6 +144,11 @@ export default function ChatRoom(props: Props) {
       }
     }
   );
+  React.useEffect(() => {
+    if (chatId && !messages?.length) {
+      refetch();
+    }
+  }, [chatId]);
   React.useEffect(() => {
     if (chatId && messages?.length) {
       markAsRead({ chatId });

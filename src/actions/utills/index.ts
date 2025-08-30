@@ -172,7 +172,7 @@ export async function fetchPlaceFromTextQuery(
     return (
       data.places?.map((item) => {
         const getComponent = (type: string) =>
-          item.addressComponents.find((comp) => comp.types.includes(type))
+          item.addressComponents.find((comp) => comp.types?.includes(type))
             ?.longText;
         return {
           displayName: item.displayName.text,

@@ -23,6 +23,7 @@ import { CloseIcon, Heading, Icon, Text, useResolvedTheme } from "../ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardDismissPressable } from "./KeyboardDismissPressable";
 import { Colors } from "@/constants/Colors";
+import BottomSheetKeyboardAwareScrollView from "@/components/custom/BottomSheetKeyboardAwareScrollView";
 
 type BottomSheetProps = Modal["props"] & {
   withHeader?: any;
@@ -194,7 +195,7 @@ export default function BottomSheet(props: BottomSheetProps) {
       }
     >
       {withScroll ? (
-        <BottomSheetScrollView
+        <BottomSheetKeyboardAwareScrollView
           style={{
             flex: 1,
           }}
@@ -213,7 +214,7 @@ export default function BottomSheet(props: BottomSheetProps) {
           >
             {props.children}
           </SafeAreaView>
-        </BottomSheetScrollView>
+        </BottomSheetKeyboardAwareScrollView>
       ) : (
         <BottomSheetView
           style={{

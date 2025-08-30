@@ -76,7 +76,7 @@ export default function PropertyListItem(props: Props) {
         width={width || 300}
         withBackdrop={true}
         loop={true}
-        withPagination={withPagination}
+        withPagination={false}
         rounded={rounded}
         isList={isList}
         enabled={enabled}

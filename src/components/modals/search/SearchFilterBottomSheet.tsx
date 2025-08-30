@@ -60,9 +60,9 @@ function SearchFilterBottomSheet({
       withHeader
       rounded={false}
       withBackButton={false}
-      snapPoint={["70%"]}
+      snapPoint={["90%"]}
       visible={show}
-      withScroll={Platforms.isAndroid()}
+      withScroll={true}
       onDismiss={onDismiss}
     >
       <View className="flex-1 relative">

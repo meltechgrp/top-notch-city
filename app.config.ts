@@ -184,7 +184,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       "expo-splash-screen",
       {
         image: "./src/assets/images/splash.png",
-        imageWidth: 200,
         resizeMode: "contain",
       },
     ],

@@ -5,27 +5,38 @@ import Animated, {
   withTiming,
   Easing,
 } from "react-native-reanimated";
-import { Icon, Pressable, Text, View } from "@/components/ui";
+import { Heading, Icon, Pressable, Text, View } from "@/components/ui";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { TouchableOpacity } from "react-native";
+import { ScrollView, TouchableOpacity } from "react-native";
 import { useEffect } from "react";
 import { cn, composeFullAddress } from "@/lib/utils";
+import { useFilterOptions } from "@/hooks/useFilteredProperties";
+import { Divider } from "@/components/ui/divider";
 
 interface Props {
   setLocationBottomSheet: () => void;
   setShowFilter: () => void;
   setActivateVoice: () => void;
   filter: SearchFilters;
+  onApply: (data: SearchFilters) => void;
+  properies: Property[];
+  activeIndex: number;
 }
-
+const options = [
+  { label: "Rent", value: "rent" },
+  { label: "Buy", value: "sell" },
+];
 export function SearchHeader({
   setShowFilter,
   setActivateVoice,
   setLocationBottomSheet,
   filter,
+  onApply,
+  properies,
+  activeIndex,
 }: Props) {
   const translateY = useSharedValue(50);
-
+  const { subcategories } = useFilterOptions(properies);
   useEffect(() => {
     translateY.value = withTiming(0, {
       duration: 2500,
@@ -76,6 +87,59 @@ export function SearchHeader({
               </Animated.View>
             </View>
           </View>
+          {activeIndex == 0 && (
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <View className="px-4 pt-4 gap-4 flex-row">
+                <View className="flex-row rounded-xl gap-5">
+                  {options.map(({ label, value }) => (
+                    <Pressable
+                      both
+                      key={label}
+                      onPress={() => onApply({ ...filter, purpose: value })}
+                      className={cn(
+                        "px-6 rounded-xl py-2  bg-background-muted flex-row gap-1 items-center",
+                        filter.purpose === value && "bg-primary"
+                      )}
+                    >
+                      <Text
+                        className={cn(
+                          "text-base",
+                          filter.purpose === value && "text-white"
+                        )}
+                      >
+                        {label}
+                      </Text>
+                    </Pressable>
+                  ))}
+                </View>
+                <Divider orientation="vertical" className="bg-typography" />
+                <View className="flex-row rounded-xl gap-5">
+                  {subcategories.map((label) => (
+                    <Pressable
+                      both
+                      key={label}
+                      onPress={() =>
+                        onApply({ ...filter, sub_category: label })
+                      }
+                      className={cn(
+                        "px-6 rounded-xl py-2  bg-background-muted flex-row gap-1 items-center",
+                        filter.sub_category === label && "bg-primary"
+                      )}
+                    >
+                      <Text
+                        className={cn(
+                          "text-base",
+                          filter.sub_category === label && "text-white"
+                        )}
+                      >
+                        {label}
+                      </Text>
+                    </Pressable>
+                  ))}
+                </View>
+              </View>
+            </ScrollView>
+          )}
         </SafeAreaView>
       </View>
     </>

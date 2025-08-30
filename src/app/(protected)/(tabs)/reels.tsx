@@ -1,11 +1,8 @@
-"use client";
 import { useCallback, useMemo, useRef, useState } from "react";
 import {
   Dimensions,
-  FlatList,
   NativeScrollEvent,
   NativeSyntheticEvent,
-  StyleSheet,
   View,
 } from "react-native";
 import {
@@ -15,13 +12,11 @@ import {
 import { FlashList } from "@shopify/flash-list";
 import { generateMediaUrl } from "@/lib/api";
 import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Box, Icon, Pressable } from "@/components/ui";
-import { ChevronLeft } from "lucide-react-native";
+import { Box } from "@/components/ui";
 import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
-import { router, Stack } from "expo-router";
+import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
 
-const { height, width } = Dimensions.get("screen");
+const { height: h, width } = Dimensions.get("window");
 interface VideoRef {
   id: string;
   video: Media;
@@ -36,12 +31,13 @@ export default function ReelScreen() {
     fetchNextPage,
     isFetchingNextPage: loading,
     isRefetching: refetching,
-  } = useInfinityQueries({ type: "all" });
+  } = useInfinityQueries({ type: "reels" });
 
   const properties = useMemo(
     () => data?.pages.flatMap((page) => page.results) || [],
     [data]
   );
+  const height = useMemo(() => h / 1.2, [h]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const videos = useMemo(() => {
     return properties
@@ -107,26 +103,10 @@ export default function ReelScreen() {
     ),
     [currentIndex]
   );
+  useRefreshOnFocus(refetch);
   return (
     <>
-      <Stack.Screen
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Box className="flex-1">
-        <View className=" absolute top-4 z-50 w-full left-0 px-4">
-          <SafeAreaView edges={["top"]}>
-            <View className="flex-row justify-between">
-              <Pressable
-                onPress={() => router.push("/search")}
-                className="p-2 bg-black/20 rounded-full"
-              >
-                <Icon size="xl" as={ChevronLeft} className=" w-6 h-6" />
-              </Pressable>
-            </View>
-          </SafeAreaView>
-        </View>
+      <Box className="flex-1 pb-24">
         <FlashList
           data={videos}
           keyExtractor={(item) => item.id}

@@ -1,7 +1,7 @@
 import withRenderVisible from "@/components/shared/withRenderOpen";
 import { FlatList, Pressable, View } from "react-native";
 import BottomSheet from "@/components/shared/BottomSheet";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Button,
   ButtonIcon,
@@ -13,12 +13,10 @@ import {
 import { debounce } from "lodash-es";
 import { History, MapPin, Send } from "lucide-react-native";
 import { fetchPlaceFromTextQuery } from "@/actions/utills";
-import { cn, composeFullAddress, showSnackbar } from "@/lib/utils";
+import { composeFullAddress } from "@/lib/utils";
 import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
 import { CustomInput } from "@/components/custom/CustomInput";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
-import useGetLocation from "@/hooks/useGetLocation";
-import { getReverseGeocode } from "@/hooks/useReverseGeocode";
 import {
   getSearchHistory,
   saveSearchToHistory,
@@ -34,11 +32,9 @@ type Props = {
 function SearchLocationBottomSheet({ show, onDismiss, onUpdate }: Props) {
   const [locating, setLocating] = useState(false);
   const [text, setText] = useState("");
-  const [purpose, setPurpose] = useState<string>("rent");
   const [locations, setLocations] = useState<GooglePlace[]>([]);
   const [typing, setTyping] = useState(false);
   const [history, setHistory] = useState<SearchHistory[]>([]);
-  const { retryGetLocation } = useGetLocation();
 
   const debouncedAutocompleteSearch = useMemo(
     () =>
@@ -79,7 +75,6 @@ function SearchLocationBottomSheet({ show, onDismiss, onUpdate }: Props) {
       state: item?.state,
       city: item?.city,
       country: item?.country,
-      purpose: item?.purpose || purpose,
       use_geo_location: "false",
     };
 
@@ -88,8 +83,7 @@ function SearchLocationBottomSheet({ show, onDismiss, onUpdate }: Props) {
       (h) =>
         h.city === newSearch.city &&
         h.state === newSearch.state &&
-        h.country === newSearch.country &&
-        h.purpose === newSearch.purpose
+        h.country === newSearch.country
     );
 
     if (!exists) await saveSearchToHistory(newSearch);
@@ -99,45 +93,11 @@ function SearchLocationBottomSheet({ show, onDismiss, onUpdate }: Props) {
     setText("");
     setLocations([]);
   };
-
-  const handleCurrentLocation = async () => {
-    setLocating(true);
-    const location = await retryGetLocation();
-    if (!location) {
-      showSnackbar({
-        message: "Unable to get location, try again!",
-        type: "warning",
-      });
-      setLocating(false);
-      return;
-    }
-
-    const result = await getReverseGeocode(location);
-    setLocating(false);
-    if (!result?.addressComponents) {
-      showSnackbar({
-        message: "Unable to reverse geocode location",
-        type: "warning",
-      });
-      return;
-    }
-
-    handleSelect({
-      ...result.addressComponents,
-      purpose,
-    });
-  };
-
-  const options = [
-    { label: "Rent", value: "rent" },
-    { label: "Buy", value: "sell" },
-  ];
   const displayData: SearchHistory[] = typing
     ? locations.map((item) => ({
         city: item?.addressComponents?.city || "",
         state: item?.addressComponents?.state || "",
         country: item?.addressComponents?.country || "",
-        purpose: purpose,
         displayName: item.displayName || "",
         isSuggestion: true,
       }))
@@ -152,7 +112,6 @@ function SearchLocationBottomSheet({ show, onDismiss, onUpdate }: Props) {
       onDismiss={onDismiss}
     >
       <View className="flex-1 px-4 gap-8 py-2 pb-8 bg-background">
-        {/* Input + Purpose Selector */}
         <View className="gap-3">
           <View className="px-4 pl-2 flex-row gap-4 items-center bg-background-info rounded-xl border border-outline-200">
             <CustomInput
@@ -168,35 +127,6 @@ function SearchLocationBottomSheet({ show, onDismiss, onUpdate }: Props) {
             <View className="w-4 h-4 ml-auto items-center justify-center">
               {locating || typing ? <SpinningLoader /> : <Icon as={Send} />}
             </View>
-          </View>
-
-          {/* Purpose Toggle + Location Button */}
-          <View className="flex-row gap-4 justify-between items-center">
-            <View className="flex-row py-0.5 h-14 rounded-xl bg-background-muted">
-              {options.map(({ label, value }) => (
-                <Pressable
-                  key={label}
-                  onPress={() => setPurpose(value)}
-                  className={cn(
-                    "px-6 rounded-xl py-1 flex-row gap-1 items-center",
-                    purpose === value && "bg-primary"
-                  )}
-                >
-                  <Heading
-                    className={cn(
-                      "text-base",
-                      purpose === value && "text-white"
-                    )}
-                  >
-                    {label}
-                  </Heading>
-                </Pressable>
-              ))}
-            </View>
-            <Button className="h-12 rounded-xl" onPress={handleCurrentLocation}>
-              <ButtonText>My location</ButtonText>
-              <ButtonIcon as={Send} color="white" />
-            </Button>
           </View>
         </View>
 
@@ -244,7 +174,7 @@ function SearchLocationBottomSheet({ show, onDismiss, onUpdate }: Props) {
                       {item.displayName || composeFullAddress(item, false)}
                     </Text>
                     <Text className="text-sm text-wrap text-typography/90">
-                      Properties for {item.purpose} in {item.city}
+                      Properties in {item?.city} {item?.state}
                     </Text>
                   </View>
                 </View>

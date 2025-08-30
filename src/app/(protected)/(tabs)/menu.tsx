@@ -17,6 +17,7 @@ import {
   HelpCircle,
   LayoutDashboard,
   LogOut,
+  MessageSquareMore,
   NotebookText,
   Settings,
   Share2,
@@ -247,6 +248,31 @@ export default function More() {
             {me && me?.role != "user" && (
               <Divider className=" h-[0.3px] bg-background-info mb-4" />
             )}
+            <MenuListItem
+              title="Messages"
+              description="View all your saved properties"
+              onPress={() => {
+                if (!me?.id) {
+                  openSignInModal({
+                    visible: true,
+                    onLoginSuccess: () => {
+                      router.push({
+                        pathname: "/(protected)/profile/[user]/wishlist",
+                        params: {
+                          user: me?.id!,
+                        },
+                      });
+                    },
+                  });
+                } else {
+                  router.push("/messages");
+                }
+              }}
+              icon={MessageSquareMore}
+              iconColor="primary"
+              className=" py-2 pb-3"
+            />
+            <Divider className=" h-[0.3px] bg-background-info mb-4" />
             <MenuListItem
               title="Wishlist"
               description="View all your saved properties"

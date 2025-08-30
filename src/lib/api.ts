@@ -23,7 +23,6 @@ export const generateMediaUrlSingle = (media: string) => {
 const SEARCH_HISTORY_KEY = "search_history";
 
 export type SearchHistory = {
-  purpose: string;
   country?: string;
   state?: string;
   city?: string;
@@ -38,8 +37,7 @@ export async function saveSearchToHistory(search: SearchHistory) {
       (item: any) =>
         item.city === search.city &&
         item.state === search.state &&
-        item.country === search.country &&
-        item.purpose === search.purpose
+        item.country === search.country
     );
 
     if (existingIndex !== -1) history.splice(existingIndex, 1);

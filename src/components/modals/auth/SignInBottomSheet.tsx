@@ -51,7 +51,8 @@ export default function SignInBottomSheet({
     Google.useAuthRequest({
       androidClientId:
         "198305892260-c8eiep3tnnp29enadh4bvqb7vm0804cs.apps.googleusercontent.com",
-      iosClientId: process.env.EXPO_PUBLIC_APPLE_AUTH_KEY,
+      iosClientId:
+        "198305892260-dqv5gtvj30hjofofa2spt2nrub7m4teb.apps.googleusercontent.com",
       webClientId:
         "198305892260-av6ll3dbobcc0tcaninrut8plid77o9u.apps.googleusercontent.com",
     });
@@ -216,7 +217,7 @@ export default function SignInBottomSheet({
   return (
     <BottomSheet
       visible={visible}
-      withScroll
+      // withScroll
       withHeader
       rounded={false}
       onDismiss={onDismiss}
@@ -226,7 +227,7 @@ export default function SignInBottomSheet({
       <Box className=" gap-6 flex-1 p-6 pt-3">
         <CustomInput
           className="bg-background-muted"
-          isBottomSheet={false}
+          isBottomSheet={true}
           value={form.email}
           onUpdate={(text) => setForm({ ...form, email: text })}
           placeholder="Email address"
@@ -234,7 +235,7 @@ export default function SignInBottomSheet({
         <CustomInput
           className="bg-background-muted"
           value={form.password}
-          isBottomSheet={false}
+          isBottomSheet={true}
           onUpdate={(text) => setForm({ ...form, password: text })}
           placeholder="Password"
         />
@@ -263,8 +264,10 @@ export default function SignInBottomSheet({
 
         <View className="gap-4">
           <Button
-            className="flex-1 h-14 bg-background-muted mt-4 gap-2"
-            onPress={() => googlePromptAsync()}
+            className=" h-14 bg-background-muted mt-4 gap-2"
+            onPress={() => {
+              googlePromptAsync();
+            }}
           >
             {fetching ? <SpinningLoader /> : <Icon as={GoogleIcon} />}
             <ButtonText className=" text-typography">

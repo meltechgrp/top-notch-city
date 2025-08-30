@@ -24,9 +24,6 @@ export default function SearchTabs(props: IProps) {
             <Pressable
               key={label}
               onPress={() => {
-                if (index == 2) {
-                  return router.push("/reels");
-                }
                 onTabChange(index);
               }}
               className={cn(
@@ -64,10 +61,5 @@ export const searchTabs = [
     label: "List View",
     icon: ListOrdered,
     key: "list",
-  },
-  {
-    label: "Reels",
-    icon: Video,
-    key: "reel",
   },
 ];

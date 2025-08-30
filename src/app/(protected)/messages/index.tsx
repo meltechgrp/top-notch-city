@@ -9,11 +9,10 @@ import { FlashList } from "@shopify/flash-list";
 import { useRouter } from "expo-router";
 import React from "react";
 import { RefreshControl } from "react-native";
-import eventBus from "@/lib/eventBus";
 import { useChat } from "@/hooks/useChat";
 import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
 
-export default function MessageScreen() {
+export default function MessagesScreen() {
   const { me } = useStore();
   const { chats, loading, refreshing, refetch } = useChat();
   const router = useRouter();

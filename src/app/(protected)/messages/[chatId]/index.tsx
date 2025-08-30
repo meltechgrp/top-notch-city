@@ -1,6 +1,7 @@
 import * as React from "react";
 
-import { KeyboardAvoidingView, View } from "react-native";
+import { View } from "react-native";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import ChatRoom from "@/components/chat/ChatRoom";
 import { cn, formatMessageTime, fullName } from "@/lib/utils";
 import { router, useLocalSearchParams } from "expo-router";
@@ -41,8 +42,11 @@ export default function ChatRoomScreen() {
           />
           <View className="flex-1">
             <KeyboardAvoidingView
-              className="flex-1"
-              behavior={Platforms.isIOS() ? "padding" : "padding"}
+              style={{
+                flex: 1,
+                // maxHeight: 600,
+              }}
+              behavior={"padding"}
               keyboardVerticalOffset={Platforms.isIOS() ? 100 : 80}
             >
               <ChatRoom

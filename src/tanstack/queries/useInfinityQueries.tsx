@@ -4,6 +4,7 @@ import {
   fetchUserProperties,
   fetchAdminProperties,
   fetchPendingProperties,
+  fetchReels,
 } from "@/actions/property/list";
 import { searchProperties } from "@/actions/search";
 import { fetchLocationProperties } from "@/actions/property/locations";
@@ -18,7 +19,7 @@ export function useInfinityQueries({
   key,
   state,
 }: {
-  type: "all" | "user" | "admin" | "search" | "state" | "pending";
+  type: "all" | "user" | "admin" | "search" | "state" | "pending" | "reels";
   profileId?: string;
   filter?: SearchFilters;
   enabled?: boolean;
@@ -31,6 +32,18 @@ export function useInfinityQueries({
       return useInfiniteQuery({
         queryKey: ["properties"],
         queryFn: ({ pageParam = 1 }) => fetchProperties({ pageParam }),
+        initialPageParam: 1,
+        getNextPageParam: (lastPage) => {
+          const { page, pages } = lastPage;
+          return page < pages ? page + 1 : undefined;
+        },
+        enabled,
+      });
+    }
+    case "reels": {
+      return useInfiniteQuery({
+        queryKey: ["reels"],
+        queryFn: ({ pageParam = 1 }) => fetchReels({ pageParam }),
         initialPageParam: 1,
         getNextPageParam: (lastPage) => {
           const { page, pages } = lastPage;
