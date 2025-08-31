@@ -33,7 +33,7 @@ export function formatMessageTime(
   const timeZone = Intl.DateTimeFormat().resolvedOptions();
 
   // Convert UTC/server date into user's timezone
-  const localDate = new TZDate(date, "+01:00");
+  const localDate = new TZDate(date, "+02:00");
   if (opt?.onlyTime) {
     return format(localDate, "h:mm");
   }
@@ -91,8 +91,39 @@ export function fullName(user: any) {
   return !user?.first_name ? "" : `${user.first_name} ${user.last_name}`;
 }
 export const FindAmenity = (item: string, data?: Property["amenities"]) => {
-  return data?.find((a) => a.name == item)?.value || 0;
+  return Number(data?.find((a) => a.name == item)?.value || 0);
 };
+
+export function generateTitle({
+  category,
+  subcategory,
+  amenities,
+  purpose,
+  full = false,
+}: Property & { full: boolean }) {
+  switch (category.name.trim()) {
+    case "Residential":
+      return `${FindAmenity("Bedroom", amenities) || ""} Bedroom ${subcategory?.name || ""}`.trim();
+
+    case "Commercial":
+      return `${subcategory?.name || "Commercial Space"} ${purpose ? `for ${purpose}` : ""}`.trim();
+
+    case "Landed":
+      return `${FindAmenity("Plots", amenities) || 1} Plot${FindAmenity("Plots", amenities) > 1 ? "s" : ""} of Land${location ? " in " + location : ""}`;
+
+    case "hotel":
+    case "Shortlet":
+    case "Chalet":
+      return `${subcategory || category}${FindAmenity("Pool", amenities) ? " with Pool" : ""}${
+        FindAmenity("Rooms", amenities)
+          ? `, ${FindAmenity("Rooms", amenities)} Rooms`
+          : ""
+      }`;
+
+    default:
+      return `${subcategory.name || category.name}`;
+  }
+}
 
 export function composeFullAddress(
   address: ParsedAddress,

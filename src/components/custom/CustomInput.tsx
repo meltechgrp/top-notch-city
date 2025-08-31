@@ -78,47 +78,44 @@ function CustomInputComponent({
         </View>
       )}
       <View className="">
-        {!isBottomSheet ? (
-          <Input
-            size="md"
-            className={cn(
-              "my-1 bg-background-muted h-14 rounded-xl",
-              multiline && "px-1 pt-6",
-              inputClassName
-            )}
-            style={multilineStyle}
-          >
-            <InputField
-              type={type}
-              placeholder={placeholder}
-              value={value}
-              keyboardType={keyboardType}
-              multiline={multiline}
-              numberOfLines={numberOfLines}
-              returnKeyLabel={returnKeyLabel}
-              onChangeText={onUpdate}
-              returnKeyType={returnKeyType}
-              style={[multilineStyle, textColor]}
-            />
-          </Input>
-        ) : (
-          <BottomSheetTextInput
-            className={cn(
-              " border border-outline text-typography px-4 h-14 rounded-xl",
-              inputClassName
-            )}
-            textContentType={type}
-            value={value}
-            returnKeyType={returnKeyType}
-            onChangeText={onUpdate}
-            multiline={multiline}
-            style={[multilineStyle, textColor]}
-            keyboardType={keyboardType}
-            returnKeyLabel={returnKeyLabel}
-            numberOfLines={numberOfLines}
+        <Input
+          size="md"
+          className={cn(
+            "my-1 bg-background-muted h-14 rounded-xl",
+            multiline && "px-1 pt-6",
+            inputClassName
+          )}
+          style={multilineStyle}
+        >
+          <InputField
+            type={type}
             placeholder={placeholder}
+            value={value}
+            keyboardType={keyboardType}
+            multiline={multiline}
+            numberOfLines={numberOfLines}
+            returnKeyLabel={returnKeyLabel}
+            onChangeText={onUpdate}
+            returnKeyType={returnKeyType}
+            style={[multilineStyle, textColor]}
           />
-        )}
+        </Input>
+        {/* <BottomSheetTextInput
+          className={cn(
+            " border border-outline text-typography px-4 h-14 rounded-xl",
+            inputClassName
+          )}
+          textContentType={type}
+          value={value}
+          returnKeyType={returnKeyType}
+          onChangeText={onUpdate}
+          multiline={multiline}
+          style={[multilineStyle, textColor]}
+          keyboardType={keyboardType}
+          returnKeyLabel={returnKeyLabel}
+          numberOfLines={numberOfLines}
+          placeholder={placeholder}
+        /> */}
       </View>
     </View>
   );

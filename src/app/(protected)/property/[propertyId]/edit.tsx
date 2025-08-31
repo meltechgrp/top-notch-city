@@ -391,7 +391,6 @@ export default function PropertyEdit() {
                             propertyId={property.id}
                             className={" bg-background-muted"}
                             source={media}
-                            isSmallView
                             canPlayVideo={false}
                             onPress={() => {
                               setImagesIndex(

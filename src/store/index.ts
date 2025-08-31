@@ -31,6 +31,10 @@ type State = {
   topProperties?: Property[];
   topLocations?: TopLocation[];
   nearbyProperties?: Property[];
+  muted: boolean;
+  playersRef: Record<string, VideoPlayerHandle | null>;
+  reels: ReelVideo[];
+  currentIndex: number;
 };
 
 type Actions = {
@@ -55,15 +59,28 @@ type Actions = {
 
   setTopLocations: (locations: TopLocation[]) => void;
   clearTopLocations: () => void;
+
+  // Reels
+
+  setReels: (reels: ReelVideo[]) => void;
+  setCurrentIndex: (index: number) => void;
+  registerPlayer: (id: string, ref: VideoPlayerHandle | null) => void;
+  playAtIndex: (index: number) => void;
+  pauseAll: () => void;
+  updateMuted: () => void;
 };
 
 const initialState: State = {
   me: undefined,
   hasAuth: false,
   isAdmin: false,
+  muted: false,
   isOnboarded: false,
   topLocations: [],
   topProperties: [],
+  reels: [],
+  currentIndex: 0,
+  playersRef: {},
 };
 
 type StateAndActions = State & Actions;
@@ -122,6 +139,34 @@ export const useStore = create<StateAndActions>(
         set((state) => ({ ...state, topLocations: locations })),
 
       clearTopLocations: () => set((state) => ({ ...state, topLocations: [] })),
+
+      // Reels sections
+      setReels: (reels) => set((s) => ({ ...s, reels })),
+      setCurrentIndex: (index) => set({ currentIndex: index }),
+      registerPlayer: (id, ref) =>
+        set((state) => ({
+          playersRef: { ...state.playersRef, [id]: ref },
+        })),
+      playAtIndex: (index) => {
+        const { reels, playersRef, setCurrentIndex } = get();
+        if (index < 0 || index >= reels.length) return;
+        setCurrentIndex(index);
+
+        reels.forEach((reel, i) => {
+          const player = playersRef[reel.id];
+          if (!player) return;
+          if (i === index) player.play();
+          else player.pause();
+        });
+      },
+      pauseAll: () => {
+        const { reels, playersRef } = get();
+        reels.forEach((reel) => {
+          const player = playersRef[reel.id];
+          player?.pause();
+        });
+      },
+      updateMuted: () => set((s) => ({ ...s, muted: !s.muted })),
     }),
     {
       name: "top-notch-storage",

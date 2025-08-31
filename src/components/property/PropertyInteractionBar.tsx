@@ -1,0 +1,121 @@
+import { startChat } from "@/actions/message";
+import AnimatedPressable from "@/components/custom/AnimatedPressable";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
+import PropertyLikeButton from "@/components/property/PropertyLikeButton";
+import PropertyShareButton from "@/components/property/PropertyShareButton";
+import PropertyWishListButton from "@/components/property/PropertyWishListButton";
+import {
+  Avatar,
+  AvatarFallbackText,
+  AvatarImage,
+  Icon,
+  Text,
+  View,
+} from "@/components/ui";
+import { profileDefault, useStore } from "@/store";
+import { useMutation } from "@tanstack/react-query";
+import { router } from "expo-router";
+import {
+  MessageSquareMore,
+  MoreHorizontal,
+  Volume2,
+  VolumeX,
+} from "lucide-react-native";
+import { useMemo } from "react";
+
+export function PropertyInteractionBar({
+  reel,
+  showChat = true,
+  showShare = true,
+  showMuted = false,
+  setShowBottomSheet,
+}: PropertyInteractionBar) {
+  const { mutateAsync } = useMutation({
+    mutationFn: startChat,
+  });
+  const isLiked = useMemo(
+    () => !!reel?.owner_interaction?.liked,
+    [reel?.owner_interaction]
+  );
+  const isAdded = useMemo(
+    () => !!reel?.owner_interaction?.added_to_wishlist,
+    [reel?.owner_interaction]
+  );
+  const record = useMemo(() => reel?.interations, [reel.interations]);
+  return (
+    <View className=" gap-6 ml-auto items-center">
+      <AnimatedPressable
+        onPress={() => {
+          router.push({
+            pathname: "/profile/[user]",
+            params: {
+              user: reel?.owner as unknown as string,
+            },
+          });
+        }}
+      >
+        <Avatar>
+          <AvatarImage source={profileDefault} />
+        </Avatar>
+      </AnimatedPressable>
+      <View className=" items-center">
+        <PropertyLikeButton liked={isLiked} id={reel.id} />
+        <Text className=" text-white">{record?.liked || 0}</Text>
+      </View>
+      <View className=" items-center">
+        <PropertyWishListButton isAdded={isAdded} id={reel.id} />
+        <Text className=" text-white">{record?.added_to_wishlist || 0}</Text>
+      </View>
+      {showChat && (
+        <View className=" items-center">
+          <AnimatedPressable
+            onPress={async () => {
+              await mutateAsync(
+                {
+                  property_id: reel.id!,
+                  member_id: reel?.owner as unknown as string,
+                },
+                {
+                  onError: (e) => {
+                    console.log(e);
+                    showErrorAlert({
+                      title: "Unable to start chat",
+                      alertType: "error",
+                    });
+                  },
+                  onSuccess: (data) => {
+                    console.log(data);
+                    router.replace({
+                      pathname: "/messages/[chatId]",
+                      params: {
+                        chatId: data,
+                      },
+                    });
+                  },
+                }
+              );
+            }}
+          >
+            <Icon as={MessageSquareMore} className=" text-white w-8 h-8" />
+          </AnimatedPressable>
+          <Text className="text-xs text-white">Chat</Text>
+        </View>
+      )}
+      {showShare && (
+        <View className=" items-center">
+          <PropertyShareButton title={reel.title} id={reel.id} />
+          <Text className="text-xs text-white">Share</Text>
+        </View>
+      )}
+
+      {showMuted && (
+        <AnimatedPressable
+          onPress={setShowBottomSheet}
+          className=" w-12 h-12 rounded-full bg-gray-500/60 items-center justify-center"
+        >
+          <Icon as={MoreHorizontal} className="text-white w-8 h-8" />
+        </AnimatedPressable>
+      )}
+    </View>
+  );
+}

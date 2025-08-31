@@ -79,7 +79,7 @@ export default function PropertyListItem(props: Props) {
         withPagination={false}
         rounded={rounded}
         isList={isList}
-        enabled={enabled}
+        enabled={false}
         paginationsize={6}
         media={images.slice(0, 5)}
         pointerPosition={6}

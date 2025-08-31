@@ -78,7 +78,7 @@ export default function TabLayout() {
         name="reels"
         options={{
           title: "Reels",
-          headerShown: true,
+          headerShown: false,
           tabBarIcon: ({ color }) => <MonitorPlay size={24} color={color} />,
         }}
       />

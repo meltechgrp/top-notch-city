@@ -11,7 +11,6 @@ import { usePropertyDataMutations } from "@/tanstack/mutations/usePropertyDataMu
 import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import { ImageContentFit } from "expo-image";
-import { VideoPlayer } from "@/components/custom/VideoPlayer";
 
 interface Props extends AnimatedProps<ViewProps> {
   style?: StyleProp<ImageStyle>;
@@ -75,18 +74,6 @@ const PropertyMedia: React.FC<Props> = (props) => {
           />
         </Pressable>
       ) : null}
-      {isVisible && !isImage && uri ? (
-        <VideoPlayer
-          uri={uri}
-          style={style}
-          rounded={rounded}
-          fullScreen={fullScreen}
-          property={property}
-          canPlayVideo={canPlayVideo}
-          onPress={onPress}
-        />
-      ) : null}
-
       {withBackdrop && (
         <View
           className={cn(

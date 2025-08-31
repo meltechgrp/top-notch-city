@@ -1,25 +1,24 @@
 import { Share2 } from "lucide-react-native";
 import { Icon, Pressable, useResolvedTheme } from "../ui";
-import { cn, FindAmenity } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { memo } from "react";
 import { onInvite } from "@/actions/share";
 
 interface Props {
-  property: Property;
+  title: string;
+  id: string;
   hasScrolledToDetails?: boolean;
 }
 
-const PropertyShareButton = ({ property, hasScrolledToDetails }: Props) => {
+const PropertyShareButton = ({ title, id, hasScrolledToDetails }: Props) => {
   const theme = useResolvedTheme();
   return (
     <Pressable
       both
       onPress={async () => {
         await onInvite({
-          title: `${FindAmenity("Bedroom", property.amenities)} Bedroom ${property.subcategory}`,
-          imageUrl: property.media.find((item) => item.media_type == "IMAGE")
-            ?.url!,
-          link: property.id,
+          title,
+          link: id,
         });
       }}
       style={{ padding: 8 }}

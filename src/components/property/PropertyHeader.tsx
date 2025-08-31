@@ -5,7 +5,7 @@ import PropertyShareButton from "./PropertyShareButton";
 import { usePropertyActions } from "@/hooks/usePropertyActions";
 import { router } from "expo-router";
 import { Edit } from "lucide-react-native";
-import { cn } from "@/lib/utils";
+import { cn, generateTitle } from "@/lib/utils";
 
 interface Props {
   property: Property;
@@ -22,11 +22,14 @@ export default function PropertyHeader({
     <>
       {isAgent && isOwner ? (
         <View className="pr-4 flex-row items-center gap-2">
-          <PropertyShareButton property={property} />
-          <PropertyLikeButton
-            hasScrolledToDetails={hasScrolledToDetails}
-            property={property}
+          <PropertyShareButton
+            title={generateTitle(property)}
+            id={property.id}
           />
+          {/* <PropertyLikeButton
+            hasScrolledToDetails={hasScrolledToDetails}
+            id={property.id}
+          /> */}
           <Pressable
             both
             onPress={() =>
@@ -53,7 +56,7 @@ export default function PropertyHeader({
         </View>
       ) : (
         <View className="pr-4 flex-row items-center gap-4">
-          <PropertyShareButton
+          {/* <PropertyShareButton
             hasScrolledToDetails={hasScrolledToDetails}
             property={property}
           />
@@ -64,7 +67,7 @@ export default function PropertyHeader({
           <PropertyWishListButton
             hasScrolledToDetails={hasScrolledToDetails}
             property={property}
-          />
+          /> */}
         </View>
       )}
     </>

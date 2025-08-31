@@ -31,7 +31,7 @@ export default function ConnectionsListSelectBottomSheet(props: Props) {
       snapPoint={["75%"]}
     >
       <LinearGradient
-        colors={["#F16000", "#ddd"]}
+        colors={["#F16000F0", "#ddd"]}
         locations={[0.3, 0.6]}
         style={{
           flex: 1,

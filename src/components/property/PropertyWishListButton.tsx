@@ -1,22 +1,23 @@
-import { Icon, Pressable, useResolvedTheme } from "../ui";
+import { Icon, useResolvedTheme } from "../ui";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addToWishList, removeFromWishList } from "@/actions/property";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { memo, useMemo } from "react";
-import { Colors } from "@/constants/Colors";
+import { memo } from "react";
 import { cn } from "@/lib/utils";
 import { useStore } from "@/store";
 import { openSignInModal } from "@/components/globals/AuthModals";
 import { Bookmark } from "lucide-react-native";
+import AnimatedPressable from "@/components/custom/AnimatedPressable";
 
 interface Props {
-  property: Property;
+  isAdded: boolean;
+  id: string;
   className?: string;
   hasScrolledToDetails?: boolean;
 }
 
 const PropertyWishListButton = ({
-  property,
+  isAdded,
+  id,
   hasScrolledToDetails,
   className,
 }: Props) => {
@@ -24,20 +25,17 @@ const PropertyWishListButton = ({
   const theme = useResolvedTheme();
   const { hasAuth } = useStore();
   function invalidate() {
-    client.invalidateQueries({ queryKey: ["properties", property.id] });
+    client.invalidateQueries({ queryKey: ["properties", id] });
     client.invalidateQueries({ queryKey: ["properties"] });
     client.invalidateQueries({ queryKey: ["wishlist"] });
+    client.invalidateQueries({ queryKey: ["reels"] });
   }
-  const isAdded = useMemo(
-    () => !!property.owner_interaction?.added_to_wishlist,
-    [property]
-  );
   const { mutate } = useMutation({
-    mutationFn: () => removeFromWishList({ id: property.id }),
+    mutationFn: () => removeFromWishList({ id }),
     onSuccess: () => invalidate(),
   });
   const { mutate: mutate2 } = useMutation({
-    mutationFn: () => addToWishList({ id: property.id }),
+    mutationFn: () => addToWishList({ id }),
     onSuccess: () => invalidate(),
   });
   function hnadleWishList() {
@@ -54,16 +52,19 @@ const PropertyWishListButton = ({
     }
   }
   return (
-    <Pressable both onPress={hnadleWishList} className={cn("px-2", className)}>
+    <AnimatedPressable
+      onPress={hnadleWishList}
+      className={cn("px-2", className)}
+    >
       <Icon
         as={Bookmark}
         className={cn(
-          "text-white fill-white w-8 h-8",
-          hasScrolledToDetails && theme == "light" && "text-black fill-black",
+          "text-white w-8 h-8",
+          hasScrolledToDetails && theme == "light" && "text-black",
           isAdded && "text-primary fill-primary"
         )}
       />
-    </Pressable>
+    </AnimatedPressable>
   );
 };
 

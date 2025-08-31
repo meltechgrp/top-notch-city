@@ -157,7 +157,6 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
           if (hasNextPage && !isLoading) fetchNextPage?.();
         }}
         onEndReachedThreshold={0.2}
-        contentInsetAdjustmentBehavior="automatic"
         ListEmptyComponent={() => (
           <>
             {ListEmptyComponent ? (

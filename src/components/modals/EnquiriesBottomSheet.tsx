@@ -62,8 +62,8 @@ const EnquiriesFormBottomSheet: React.FC<Props> = ({
     <BottomSheet
       visible={visible}
       onDismiss={onDismiss}
-      snapPoint={["75%"]}
-      title="Send an Enquiry"
+      snapPoint={["80%"]}
+      title="Send an Message"
       withHeader
       withScroll
     >

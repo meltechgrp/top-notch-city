@@ -32,6 +32,7 @@ type ChatState = {
     tempId: string,
     message: Message
   ) => void;
+  resetChatStore: () => void;
 };
 
 type MyChatPersist = (
@@ -268,7 +269,7 @@ export const useChatStore = create<ChatState>(
           chatList: state.chatList.filter((c) => c.details.chat_id !== chatId),
         }));
       },
-      resetStore: () => set(() => ({ chatList: [] })),
+      resetChatStore: () => set(() => ({ chatList: [] })),
       hasChat: (chatId: string) => {
         return get().chatList.some((c) => c.details.chat_id === chatId);
       },

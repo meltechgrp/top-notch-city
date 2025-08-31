@@ -1,12 +1,7 @@
 import config from "@/config";
-import { generateMediaUrl } from "@/lib/api";
 import { Share } from "react-native";
 
-export async function onInvite(property: {
-  title: string;
-  imageUrl: string;
-  link: string;
-}) {
+export async function onInvite(property: { title: string; link: string }) {
   try {
     const message = `
 🏡 Check out this property on Top-Notch City Estates!

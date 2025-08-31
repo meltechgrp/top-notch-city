@@ -77,6 +77,7 @@ type Amenity = {
 type Interaction = {
   viewed: number;
   liked: number;
+  added_to_wishlist: number;
 };
 
 type Owner_interaction = {
