@@ -1,5 +1,5 @@
 interface StartChat {
-  property_id: string;
+  property_id?: string;
   member_id: string;
 }
 

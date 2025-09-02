@@ -1,24 +1,17 @@
-import React from 'react';
-import { View, ViewProps } from 'react-native';
+import React from "react";
+import { View, ViewProps } from "react-native";
 
-import type { VariantProps } from '@gluestack-ui/nativewind-utils';
-import { boxStyle } from './styles';
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
-type IBoxProps = ViewProps &
-	VariantProps<typeof boxStyle> & { className?: string };
+type IBoxProps = ViewProps & { className?: string };
 
 const Box = React.forwardRef<React.ComponentRef<typeof View>, IBoxProps>(
-	function Box({ className, ...props }, ref) {
-		return (
-			<View
-				ref={ref}
-				{...props}
-				className={cn('bg-background', boxStyle({ class: className }))}
-			/>
-		);
-	}
+  function Box({ className, ...props }, ref) {
+    return (
+      <View ref={ref} {...props} className={cn("bg-background", className)} />
+    );
+  }
 );
 
-Box.displayName = 'Box';
+Box.displayName = "Box";
 export { Box };

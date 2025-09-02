@@ -11,11 +11,12 @@ import React from "react";
 import OTPInput from "@/components/custom/OTPInput";
 import { hapticFeed } from "@/components/HapticTab";
 import { authOptVerify } from "@/actions/auth";
-import { useTempStore } from "@/store";
+import { useStore, useTempStore } from "@/store";
 import { showSnackbar } from "@/lib/utils";
 import { Loader } from "lucide-react-native";
 import BottomSheet from "@/components/shared/BottomSheet";
 import { router } from "expo-router";
+import eventBus from "@/lib/eventBus";
 
 export default function VerifyOtpBottomSheet({
   visible,
@@ -46,6 +47,11 @@ export default function VerifyOtpBottomSheet({
         if (isAgentRequest) {
           router.push("/forms/agent");
         }
+        useStore.setState((s) => ({
+          ...s,
+          hasAuth: true,
+        }));
+        eventBus.dispatchEvent("REFRESH_PROFILE", null);
         onDismiss?.();
       }
     } catch (error) {

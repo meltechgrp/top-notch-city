@@ -8,10 +8,12 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
 type IProps = {
   total?: number;
+  isLocation?: boolean;
+  loading?: boolean;
   useMyLocation: () => Promise<void>;
 };
 export default function SearchTabs(props: IProps) {
-  const { total = 0, useMyLocation } = props;
+  const { total = 0, useMyLocation, isLocation, loading } = props;
   const bottom = useBottomTabBarHeight();
   return (
     <View
@@ -31,7 +33,10 @@ export default function SearchTabs(props: IProps) {
               <Icon as={Layers2} size="xl" />
             </AnimatedPressable>
             <AnimatedPressable
-              className=" p-5 flex-row gap-2 items-center justify-center rounded-full bg-background-muted"
+              className={cn(
+                " p-5 flex-row gap-2 items-center justify-center rounded-full bg-background-muted",
+                isLocation && "bg-primary"
+              )}
               onPress={async () => useMyLocation()}
             >
               <Icon as={MapPin} size="xl" />

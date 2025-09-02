@@ -10,11 +10,12 @@ const TopProperties = () => {
   return (
     <SectionHeaderWithRef
       title="Top Properties"
+      subTitle="See More"
       onSeeAllPress={() => {
         router.push({
-          pathname: "/(protected)/property/section",
+          pathname: "/search",
           params: {
-            title: "Top Properties",
+            list: "true",
           },
         });
       }}

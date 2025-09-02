@@ -9,7 +9,8 @@ import StartChatBottomSheet from "@/components/modals/StartChatBottomSheet";
 import { useHomeFeed } from "@/hooks/useHomeFeed";
 import eventBus from "@/lib/eventBus";
 import { useStore } from "@/store";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import CustomerCareBottomSheet from "@/components/modals/CustomerCareBottomSheet";
 const MAP_HEIGHT = 400;
 
 export default function HomeScreen() {
@@ -20,6 +21,7 @@ export default function HomeScreen() {
   }, []);
 
   const [friendsModal, setFriendsModal] = React.useState(false);
+  const [staffs, setStaffs] = useState(false);
 
   const onNewChat = () => {
     setFriendsModal(true);
@@ -46,10 +48,16 @@ export default function HomeScreen() {
         <StartChatBottomSheet
           visible={friendsModal}
           onDismiss={() => setFriendsModal(false)}
-          onSelect={(member) => {}}
+          setStaffs={() => setStaffs(true)}
           me={me}
         />
       )}
+      <CustomerCareBottomSheet
+        visible={staffs}
+        onDismiss={() => {
+          setStaffs(false);
+        }}
+      />
     </>
   );
 }

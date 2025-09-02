@@ -1,39 +1,21 @@
-import {
-  Input,
-  InputField,
-  View,
-  Text,
-  useResolvedTheme,
-} from "@/components/ui";
+import { View, Text, useResolvedTheme } from "@/components/ui";
 import { Colors } from "@/constants/Colors";
 import { cn } from "@/lib/utils";
-import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import { memo, useMemo } from "react";
-import { KeyboardTypeOptions, ReturnKeyTypeOptions } from "react-native";
+import { TextInput, TextInputProps } from "react-native";
 
-interface Props {
-  isInvalid?: boolean;
-  isRequired?: boolean;
+interface Props extends Partial<TextInputProps> {
   multiline?: boolean;
   isBottomSheet?: boolean;
   title?: string;
-  value?: string;
-  placeholder?: string;
-  keyboardType?: KeyboardTypeOptions | undefined;
   onUpdate: (val: string) => void;
-  returnKeyType?: ReturnKeyTypeOptions;
   errorMesssage?: string;
-  className?: string;
   inputClassName?: string;
   returnKeyLabel?: string;
-  numberOfLines?: number;
   height?: number;
   type?: any;
 }
 function CustomInputComponent({
-  isInvalid = false,
-  errorMesssage,
-  isRequired = false,
   value,
   onUpdate,
   title,
@@ -48,6 +30,7 @@ function CustomInputComponent({
   height,
   type = "text",
   inputClassName,
+  ...props
 }: Props) {
   const theme = useResolvedTheme();
   const multilineStyle = useMemo(
@@ -66,11 +49,7 @@ function CustomInputComponent({
 
   return (
     <View
-      className={cn(
-        "py-px min-h-20 gap-2 rounded-xl",
-        !title && "min-h-14",
-        className
-      )}
+      className={cn("py-px min-h-20 gap-2 rounded-xl", !title && "min-h-14")}
     >
       {title && (
         <View>
@@ -78,44 +57,24 @@ function CustomInputComponent({
         </View>
       )}
       <View className="">
-        <Input
-          size="md"
-          className={cn(
-            "my-1 bg-background-muted h-14 rounded-xl",
-            multiline && "px-1 pt-6",
-            inputClassName
-          )}
-          style={multilineStyle}
-        >
-          <InputField
-            type={type}
-            placeholder={placeholder}
-            value={value}
-            keyboardType={keyboardType}
-            multiline={multiline}
-            numberOfLines={numberOfLines}
-            returnKeyLabel={returnKeyLabel}
-            onChangeText={onUpdate}
-            returnKeyType={returnKeyType}
-            style={[multilineStyle, textColor]}
-          />
-        </Input>
-        {/* <BottomSheetTextInput
-          className={cn(
-            " border border-outline text-typography px-4 h-14 rounded-xl",
-            inputClassName
-          )}
-          textContentType={type}
-          value={value}
-          returnKeyType={returnKeyType}
-          onChangeText={onUpdate}
-          multiline={multiline}
-          style={[multilineStyle, textColor]}
-          keyboardType={keyboardType}
-          returnKeyLabel={returnKeyLabel}
-          numberOfLines={numberOfLines}
+        <TextInput
+          {...props}
           placeholder={placeholder}
-        /> */}
+          autoCapitalize="sentences"
+          className={cn(
+            "my-1 bg-background-muted px-4 h-14 rounded-xl",
+            multiline && "px-1 pt-6",
+            className
+          )}
+          value={value}
+          keyboardType={keyboardType}
+          multiline={multiline}
+          numberOfLines={numberOfLines}
+          returnKeyLabel={returnKeyLabel}
+          onChangeText={onUpdate}
+          returnKeyType={returnKeyType}
+          style={[multilineStyle, textColor]}
+        />
       </View>
     </View>
   );

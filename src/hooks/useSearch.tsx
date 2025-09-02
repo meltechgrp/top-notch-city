@@ -24,7 +24,7 @@ function searchReducer(
       return newState;
     }
     case "RESET_FILTERS":
-      return { use_geo_location: "true", perPage: 100000 };
+      return { perPage: 100000 };
     default:
       return state;
   }
@@ -35,7 +35,6 @@ export function useSearch() {
   const { retryGetLocation, location } = useGetLocation();
   const { searchProperties, updateSearchProperties } = useStore();
   const [search, dispatch] = useReducer(searchReducer, {
-    use_geo_location: "true",
     perPage: 100000,
     latitude: location?.latitude?.toString(),
     longitude: location?.longitude?.toString(),
@@ -88,13 +87,24 @@ export function useSearch() {
     const properties = data?.pages.flatMap((page) => page.results) || [];
     updateSearchProperties(properties || []);
   }
+  const isLocation = useMemo(
+    () =>
+      search?.latitude == location?.latitude &&
+      search?.longitude == location?.longitude,
+    [search, location]
+  );
   async function useMyLocation() {
-    const locate = await retryGetLocation();
-    if (locate) {
+    if (location) {
       setFilters({
-        latitude: locate.latitude.toString(),
-        longitude: locate.longitude.toString(),
-        use_geo_location: "true",
+        latitude: location.latitude.toString(),
+        longitude: location.longitude.toString(),
+      });
+      refetchAndApply();
+    } else {
+      const locate = await retryGetLocation();
+      setFilters({
+        latitude: locate?.latitude.toString(),
+        longitude: locate?.longitude.toString(),
       });
       refetchAndApply();
     }
@@ -115,6 +125,7 @@ export function useSearch() {
       resetFilters,
       useMyLocation,
       filter: search,
+      isLocation,
     },
     results: { total, available },
     query: {

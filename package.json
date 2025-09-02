@@ -55,6 +55,7 @@
     "@gluestack-ui/toast": "^1.0.9",
     "@gorhom/bottom-sheet": "^5.2.3",
     "@legendapp/motion": "^2.4.0",
+    "@maplibre/maplibre-react-native": "^10.2.1",
     "@react-native-async-storage/async-storage": "2.1.2",
     "@react-native-community/hooks": "^100.1.0",
     "@react-native-community/netinfo": "11.4.1",

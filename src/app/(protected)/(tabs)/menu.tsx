@@ -27,16 +27,12 @@ import { MenuListItem } from "@/components/menu/MenuListItem";
 import config from "@/config";
 import { Divider } from "@/components/ui/divider";
 import { cn, fullName } from "@/lib/utils";
-import NotificationBarButton from "@/components/notifications/NotificationBarButton";
 import { useStore } from "@/store";
 import { BodyScrollView } from "@/components/layouts/BodyScrollView";
 import { getImageUrl } from "@/lib/api";
 import { openSignInModal } from "@/components/globals/AuthModals";
 import LogoutAlertDialog from "@/components/modals/LogoutAlertDialog";
 import useResetAppState from "@/hooks/useResetAppState";
-import { useQuery } from "@tanstack/react-query";
-import { getMyApplications } from "@/actions/agent";
-import * as Linking from "expo-linking";
 // import * as FileSystem from "expo-file-system";
 
 export default function More() {
@@ -123,21 +119,6 @@ export default function More() {
   // );
   return (
     <>
-      <Stack.Screen
-        options={{
-          headerRight: () => (
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-              className=" px-4"
-            >
-              <NotificationBarButton className=" bg-transparent rounded-none" />
-            </View>
-          ),
-        }}
-      />
       <BodyScrollView withBackground={true}>
         <View
           className={cn(
@@ -315,7 +296,7 @@ export default function More() {
             />
             <Divider className=" h-[0.3px] bg-background-info mb-4" />
             <MenuListItem
-              title="Send us a message/enquiry"
+              title="Send us a feedback"
               description="Let's improve the app"
               onPress={() => router.push("/report")}
               icon={NotebookText}

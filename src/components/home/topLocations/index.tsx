@@ -10,7 +10,12 @@ const TopLocations = () => {
       subTitle="Explore"
       className=""
       onSeeAllPress={() => {
-        router.push("/(protected)/property/locations");
+        router.push({
+          pathname: "/search",
+          params: {
+            locate: "true",
+          },
+        });
       }}
     >
       <TopLocationsHorizontalList />

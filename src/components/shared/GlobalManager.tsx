@@ -1,11 +1,9 @@
-import { Fetch } from "@/actions/utills";
 import GlobalFullScreenLoader from "@/components/loaders/GlobalFullScreenLoader";
 import SnackBar from "@/components/shared/SnackBar";
 import eventBus from "@/lib/eventBus";
 import { getAuthToken, removeAuthToken } from "@/lib/secureStore";
 import { getUniqueIdSync } from "react-native-device-info";
 import { useStore, useTempStore } from "@/store";
-import { router } from "expo-router";
 import React, { useEffect } from "react";
 import AuthModals from "../globals/AuthModals";
 import config from "@/config";
@@ -16,8 +14,6 @@ export default function GlobalManager() {
   const updateFullScreenLoading = useTempStore(
     (s) => s.updateFullScreenLoading
   );
-  const pinVerifyRequest = useTempStore((s) => s.pinVerifyRequest);
-  const setPinVerifyRequest = useTempStore((s) => s.setPinVerifyRequest);
   const hasAuth = useStore((s) => s.hasAuth);
   const [snackBars, setSnackBars] = React.useState<Array<SnackBarOption>>([]);
   const [activeSnackBar, setActiveSnackBar] =

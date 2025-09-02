@@ -10,7 +10,6 @@ import {
 import {
   BottomSheetBackdropProps,
   BottomSheetModal,
-  BottomSheetScrollView,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import Animated, {
@@ -19,11 +18,12 @@ import Animated, {
   useAnimatedStyle,
 } from "react-native-reanimated";
 import { cn } from "@/lib/utils";
-import { CloseIcon, Heading, Icon, Text, useResolvedTheme } from "../ui";
+import { Heading, Icon, Text, useResolvedTheme } from "../ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardDismissPressable } from "./KeyboardDismissPressable";
 import { Colors } from "@/constants/Colors";
 import BottomSheetKeyboardAwareScrollView from "@/components/custom/BottomSheetKeyboardAwareScrollView";
+import { X } from "lucide-react-native";
 
 type BottomSheetProps = Modal["props"] & {
   withHeader?: any;
@@ -176,8 +176,8 @@ export default function BottomSheet(props: BottomSheetProps) {
                       </View>
                     ) : (
                       withCloseButton && (
-                        <View className="flex-row justify-center p-1 bg-background-info rounded-full items-center">
-                          <Icon size="xl" as={CloseIcon} />
+                        <View className="flex-row justify-center p-1.5 bg-background-info rounded-full items-center">
+                          <Icon size="xl" as={X} />
                         </View>
                       )
                     )}

@@ -74,11 +74,17 @@ export default function CustomSelect(props: Props) {
         {RightComponent}
         <View className={cn("flex-1 justify-center")}>
           {!!displayText ? (
-            <Text numberOfLines={1} className="text-sm leading-tight">
+            <Text
+              numberOfLines={1}
+              className="text-sm capitalize leading-tight"
+            >
               {displayText}
             </Text>
           ) : (
-            <Text numberOfLines={1} className="text-sm leading-tight">
+            <Text
+              numberOfLines={1}
+              className="text-sm capitalize leading-tight"
+            >
               {placeHolder || ""}
             </Text>
           )}

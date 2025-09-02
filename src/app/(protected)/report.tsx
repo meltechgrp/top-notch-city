@@ -45,11 +45,15 @@ const ReportReviewScreen = () => {
 
   const types = ["sell", "enquiry", "general", "visit", "offer"];
   return (
-    <BodyScrollView withBackground className="px-4 android:py-8">
+    <BodyScrollView
+      withBackground
+      contentContainerClassName="pb-12"
+      className="px-4 android:py-8"
+    >
       <SafeAreaView edges={["bottom"]} className="flex-1">
         <View className="gap-6">
           <View>
-            <Text className="text-sm mt-1">
+            <Text className="text-sm mt-4 text-center">
               Use the form below to send a message, report an issue, submit a
               review, or make an enquiry about a property or agent. We’re here
               to help!
@@ -68,7 +72,7 @@ const ReportReviewScreen = () => {
             value={formData.email}
             onUpdate={handleUpdate("email")}
             placeholder="Enter your email"
-            type="email"
+            keyboardType="email-address"
           />
           <CustomInput
             isBottomSheet={false}
@@ -80,11 +84,11 @@ const ReportReviewScreen = () => {
           />
           <View className="gap-2">
             <Text className="text-base font-medium">
-              Category <Text className="text-primary">*</Text>
+              Type <Text className="text-primary">*</Text>
             </Text>
             <CustomSelect
               withDropIcon
-              label="Duration"
+              label="Type"
               BottomSheet={OptionsBottomSheet}
               value={formData.type}
               valueParser={(value: any) => value || "Select Duration"}
@@ -95,7 +99,7 @@ const ReportReviewScreen = () => {
               }))}
             />
           </View>
-          <Button size="xl" onPress={handleSubmit}>
+          <Button size="xl" className="mt-6" onPress={handleSubmit}>
             {isPending && <SpinningLoader />}
             <ButtonText>Send</ButtonText>
           </Button>

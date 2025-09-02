@@ -1,17 +1,38 @@
 import * as React from "react";
 
-import { View } from "react-native";
-import { router } from "expo-router";
+import { Pressable, View } from "react-native";
+import { router, useNavigation } from "expo-router";
 import SettingsItemList from "@/components/settings/SettingsItemList";
-import { BodyScrollView } from "@/components/layouts/BodyScrollView";
 import { useStore } from "@/store";
+import { Box } from "@/components/ui";
 
 export default function SettingsScreen() {
   const hasAuth = useStore((s) => s.hasAuth);
+  const [tapCount, setTapCount] = React.useState(0);
+  const navigation = useNavigation();
+  React.useEffect(() => {
+    const handleBlur = (e: any) => {
+      setTapCount(0);
+    };
+
+    navigation.addListener("blur", handleBlur);
+
+    return () => {
+      navigation.removeListener("blur", handleBlur);
+    };
+  }, [navigation]);
+  const handleClick = (e: any) => {
+    if (tapCount < 4) {
+      setTapCount((prev) => prev + 1);
+    }
+  };
   return (
     <>
-      <BodyScrollView withBackground={true}>
-        <View className="flex-1 gap-6 w-full py-8 p-4">
+      <Box className=" flex-1">
+        <Pressable
+          onPress={handleClick}
+          className="flex-1 gap-6 w-full py-8 p-4"
+        >
           <View className="bg-background-muted pl-4 rounded-xl">
             <SettingsItemList
               title="Notifcations"
@@ -43,6 +64,16 @@ export default function SettingsScreen() {
               }}
             />
           </View>
+          {tapCount > 3 && (
+            <View className="bg-background-muted pl-4 rounded-xl">
+              <SettingsItemList onPress={() => {}} title="Clear Basic Cache" />
+              <SettingsItemList
+                onPress={() => {}}
+                title="Clear All Cache"
+                withBorder={false}
+              />
+            </View>
+          )}
           <View className="bg-background-muted pl-4 rounded-xl">
             {hasAuth && (
               <SettingsItemList
@@ -63,8 +94,8 @@ export default function SettingsScreen() {
               />
             )}
           </View>
-        </View>
-      </BodyScrollView>
+        </Pressable>
+      </Box>
     </>
   );
 }

@@ -133,7 +133,7 @@ export function SearchHeader({
             </ScrollView>
             {activeIndex == 1 && (
               <View className="flex-row gap-4 px-4 mt-2">
-                <View className=" bg-background-muted py-2 px-4 rounded-full">
+                <View className=" ml-auto bg-background-muted py-2 px-4 rounded-full">
                   <Text>{total} results</Text>
                 </View>
               </View>

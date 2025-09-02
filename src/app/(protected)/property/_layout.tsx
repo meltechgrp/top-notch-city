@@ -91,7 +91,7 @@ export default function PropertysLayout() {
       <Stack.Screen
         name="success"
         options={{
-          headerShown: true,
+          headerShown: false,
           headerTitle: "",
           animation: "slide_from_right",
         }}

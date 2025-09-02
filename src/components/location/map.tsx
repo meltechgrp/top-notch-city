@@ -63,12 +63,11 @@ const Map = (props: MapProps) => {
           }))
         );
 
+        mapRef.current?.animateToRegion(region, 2000);
         setLocation({
           latitude: region.latitude,
           longitude: region.longitude,
         });
-
-        mapRef.current?.animateToRegion(region, 1000);
       }
     })();
   }, [markers?.length]);

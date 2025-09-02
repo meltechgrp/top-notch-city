@@ -1,15 +1,15 @@
-import React from 'react';
+import { ComponentType } from "react";
 
-export default function withRenderVisible<T extends React.ComponentType<any>>(
-	Component: T
+export default function withRenderVisible<P extends object>(
+  Component: ComponentType<P>
 ) {
-	return function ({ ...props }: React.ComponentProps<T>) {
-		// Set displayName for debugging
-		(Component as any).displayName = `withRenderVisible(${
-			(Component as any).displayName || (Component as any).name || 'Component'
-		})`;
+  const EnhancedComponent = (props: P & { visible: boolean }) => {
+    return props.visible ? <Component {...(props as P)} /> : null;
+  };
 
-		// Conditionally render the component
-		return <Component {...(props as React.ComponentProps<T>)} />;
-	};
+  EnhancedComponent.displayName = `withRenderVisible(${
+    Component.displayName || Component.name || "Component"
+  })`;
+
+  return EnhancedComponent;
 }

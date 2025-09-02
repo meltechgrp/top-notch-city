@@ -128,7 +128,9 @@ type Currency = "ngn" | "usd";
 type TopLocation = {
   state: string;
   property_count: number;
-  photo_url: string;
+  property_image: string;
+  longitude: string;
+  latitude: string;
 };
 
 type AmenityLabel = {

@@ -1,0 +1,135 @@
+import { startChat } from "@/actions/message";
+import { Fetch } from "@/actions/utills";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
+import BottomSheet from "@/components/shared/BottomSheet";
+import {
+  Avatar,
+  AvatarBadge,
+  AvatarFallbackText,
+  AvatarImage,
+  Icon,
+  Text,
+} from "@/components/ui";
+import { Divider } from "@/components/ui/divider";
+import { generateMediaUrlSingle } from "@/lib/api";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { router } from "expo-router";
+import { ChevronRight } from "lucide-react-native";
+import {
+  View,
+  TouchableOpacity,
+  ActivityIndicator,
+  FlatList,
+} from "react-native";
+
+interface Staff {
+  id: string;
+  first_name: string;
+  last_name: string;
+  profile_image: string | null;
+  status: string; // online/offline
+  last_seen: string;
+}
+
+// Fetch staff API
+async function fetchStaff(): Promise<Staff[]> {
+  const res = await Fetch("/users/staff");
+  return res?.results || [];
+}
+
+export default function CustomerCareBottomSheet({
+  visible,
+  onDismiss,
+}: AuthModalProps) {
+  const { mutateAsync } = useMutation({
+    mutationFn: startChat,
+  });
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["staff"],
+    queryFn: fetchStaff,
+  });
+
+  return (
+    <BottomSheet
+      visible={visible}
+      onDismiss={onDismiss}
+      snapPoint={["50%"]}
+      title="Customer Care"
+      withHeader
+    >
+      {isLoading ? (
+        <View className=" flex-1 justify-center items-center">
+          <ActivityIndicator size="large" style={{ marginTop: 20 }} />
+        </View>
+      ) : isError ? (
+        <View className=" flex-1 justify-center items-center">
+          <Text className="text-red-500">Failed to load staff.</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={data}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={{ padding: 16 }}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              className="flex-row justify-between items-center gap-4"
+              onPress={async () => {
+                await mutateAsync(
+                  {
+                    member_id: item?.id!,
+                  },
+                  {
+                    onError: (e) => {
+                      console.log(e);
+                      showErrorAlert({
+                        title: "Unable to start chat",
+                        alertType: "error",
+                      });
+                    },
+                    onSuccess: (data) => {
+                      console.log(data);
+                      router.replace({
+                        pathname: "/messages/[chatId]",
+                        params: {
+                          chatId: data,
+                        },
+                      });
+                    },
+                  }
+                );
+              }}
+            >
+              <Avatar size="lg">
+                {item.profile_image && (
+                  <AvatarImage
+                    source={{
+                      uri: generateMediaUrlSingle(item.profile_image),
+                    }}
+                  />
+                )}
+                <AvatarFallbackText>
+                  {item.first_name} {item.last_name}
+                </AvatarFallbackText>
+                {item.status === "online" && <AvatarBadge />}
+              </Avatar>
+              <View className="flex-1 gap-1">
+                <Text style={{ fontSize: 16, fontWeight: "600" }}>
+                  {item.first_name} {item.last_name}
+                </Text>
+                <Text
+                  style={{ color: item.status === "online" ? "green" : "gray" }}
+                >
+                  {item.status}
+                </Text>
+              </View>
+              <View>
+                <Icon as={ChevronRight} className="text-primary" />
+              </View>
+            </TouchableOpacity>
+          )}
+          ItemSeparatorComponent={() => <Divider />}
+        />
+      )}
+    </BottomSheet>
+  );
+}

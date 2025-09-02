@@ -62,10 +62,6 @@ export default function SignUpBottomSheet({
           },
         }));
 
-        useStore.setState((s) => ({
-          ...s,
-          hasAuth: true,
-        }));
         eventBus.dispatchEvent("openEmailVerificationModal", {
           visible: true,
           isAgentRequest: isAgentRequest,

@@ -1,6 +1,6 @@
 import { SearchHeader } from "@/components/search/Searchheader";
 import { Box, View } from "@/components/ui";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Dimensions, StyleSheet } from "react-native";
 import SearchTabs from "@/components/search/SearchTabs";
 import PagerView from "react-native-pager-view";
@@ -13,11 +13,19 @@ import { RoomsFilterSheet } from "@/components/modals/search/RoomsFilterBottomSh
 import { PriceFilterSheet } from "@/components/modals/search/PriceFilterBottomSheet";
 import { useSearch } from "@/hooks/useSearch";
 import { PropertyTypeSheet } from "@/components/modals/search/PropertyTypeSheet";
-import { useLayout } from "@react-native-community/hooks";
+import { router, useGlobalSearchParams } from "expo-router";
 
 const TABS = ["Map View", "List View"];
 
 export default function SearchScreen() {
+  const { latitude, longitude, reset, list, locate } =
+    useGlobalSearchParams() as {
+      latitude: string;
+      longitude: string;
+      reset: string;
+      list: string;
+      locate: string;
+    };
   const { height: totalHeight } = Dimensions.get("screen");
   const [showFilter, setShowFilter] = useState(false);
   const { search, results, query, properties } = useSearch();
@@ -32,6 +40,22 @@ export default function SearchScreen() {
     setCurrentPage(index);
     pagerRef.current?.setPage(index);
   }, []);
+  useEffect(() => {
+    if (latitude && longitude) {
+      search.setFilters({
+        latitude: latitude,
+        longitude: longitude,
+      });
+      query.refetchAndApply();
+    }
+    if (list) {
+      onTabChange(1);
+    }
+    if (locate) {
+      setLocationBottomSheet(true);
+    }
+    router.setParams({});
+  }, [latitude, longitude, reset, list, locate]);
   return (
     <Box className="flex-1 relative">
       <SearchHeader
@@ -65,6 +89,7 @@ export default function SearchScreen() {
                   />
                   <SearchTabs
                     total={results.available}
+                    isLocation={search.isLocation}
                     useMyLocation={search.useMyLocation}
                   />
                 </View>

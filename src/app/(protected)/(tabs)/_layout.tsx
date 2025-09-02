@@ -68,18 +68,18 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="properties"
-        options={{
-          title: "Properties",
-          tabBarIcon: ({ color }) => <Plus size={24} color={color} />,
-        }}
-      />
-      <Tabs.Screen
         name="reels"
         options={{
           title: "Reels",
           headerShown: false,
           tabBarIcon: ({ color }) => <MonitorPlay size={24} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="properties"
+        options={{
+          title: "Properties",
+          tabBarIcon: ({ color }) => <Plus size={24} color={color} />,
         }}
       />
       <Tabs.Screen

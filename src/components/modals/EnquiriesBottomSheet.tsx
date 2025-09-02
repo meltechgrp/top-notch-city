@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { View } from "react-native";
 import BottomSheet from "../shared/BottomSheet";
 import { CustomInput } from "../custom/CustomInput";
-import { Button, ButtonText } from "../ui";
+import { Button, ButtonText, Text } from "../ui";
 import { useMutation } from "@tanstack/react-query";
 import { sendEquiry } from "@/actions/equiry";
 import { SpinningLoader } from "../loaders/SpinningLoader";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
+import CustomSelect from "@/components/custom/CustomSelect";
+import OptionsBottomSheet from "@/components/shared/OptionsBottomSheet";
 
 type Props = {
   visible: boolean;
@@ -58,14 +60,16 @@ const EnquiriesFormBottomSheet: React.FC<Props> = ({
     onDismiss();
   };
 
+  const types = ["sell", "enquiry", "general", "visit", "offer"];
   return (
     <BottomSheet
       visible={visible}
       onDismiss={onDismiss}
-      snapPoint={["80%"]}
-      title="Send an Message"
+      snapPoint={["90%"]}
+      title="Send a Message"
       withHeader
       withScroll
+      addBackground
     >
       <View className="flex-1 p-4 gap-4">
         <CustomInput
@@ -77,6 +81,7 @@ const EnquiriesFormBottomSheet: React.FC<Props> = ({
         <CustomInput
           title="Email"
           value={formData.email}
+          keyboardType="email-address"
           onUpdate={handleUpdate("email")}
           placeholder="Enter your email"
           type="email"
@@ -86,15 +91,30 @@ const EnquiriesFormBottomSheet: React.FC<Props> = ({
           value={formData.message}
           onUpdate={handleUpdate("message")}
           placeholder="Your message"
+          className="pt-3 px-4"
           multiline
         />
+        <View className="gap-2">
+          <Text>Type</Text>
+          <CustomSelect
+            withDropIcon
+            label="Type"
+            value={formData.type}
+            onChange={(val) => handleUpdate("type")(val.value)}
+            options={types.map((item) => ({
+              label: item.toUpperCase(),
+              value: item,
+            }))}
+            BottomSheet={OptionsBottomSheet}
+          />
+        </View>
         <CustomInput
           title="Address"
           value={formData.address}
           onUpdate={handleUpdate("address")}
           placeholder="Your address (optional)"
         />
-        <Button size="xl" onPress={handleSubmit}>
+        <Button size="xl" className="mt-4" onPress={handleSubmit}>
           {isPending && <SpinningLoader />}
           <ButtonText>Submit</ButtonText>
         </Button>

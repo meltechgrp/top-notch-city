@@ -71,7 +71,7 @@ export default function ProtectedRoutesLayout() {
       <Stack.Screen
         name="report"
         options={{
-          headerTitle: "Contact Admin",
+          headerTitle: "Send us a Feedback",
           headerShown: true,
         }}
       />
