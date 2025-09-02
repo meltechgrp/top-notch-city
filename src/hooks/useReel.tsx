@@ -28,7 +28,7 @@ export function useReels() {
             interations: p.interaction,
             owner_interaction: p.owner_interaction,
             created_at: p.created_at,
-            owner: p?.owner_id,
+            owner: p?.owner,
             price: p.price,
             location: composeFullAddress(p.address, false, "short"),
             purpose: p.purpose,

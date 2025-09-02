@@ -1,52 +1,16 @@
-import { ConfigContext, ExpoConfig } from "expo/config";
-const appVariantConfig = {
-  production: {
-    name: "TopNotch City",
-    slug: "topnotch-city",
-    identifier: "com.meltech.topnotchcity",
-    version: "1.0.1",
-    projectId: "d21cedf2-e98d-42e9-bf8b-6d52e1a7ef20",
-    googleServiceFile: "./google-services.json",
-    isProduction: true,
-  },
-  staging: {
-    name: "TopNotch City",
-    slug: "topnotch-city",
-    identifier: "com.meltech.topnotchcity",
-    version: "1.0.1",
-    projectId: "d21cedf2-e98d-42e9-bf8b-6d52e1a7ef20",
-    googleServiceFile: "./google-services.json",
-    isProduction: false,
-  },
-  development: {
-    name: "TopNotch City",
-    slug: "topnotch-city",
-    identifier: "com.meltech.topnotchcity",
-    version: "1.0.1",
-    projectId: "d21cedf2-e98d-42e9-bf8b-6d52e1a7ef20",
-    googleServiceFile: "./google-services.json",
-    isProduction: false,
-  },
-};
-
-const variant =
-  appVariantConfig[process.env.APP_VARIANT as keyof typeof appVariantConfig] ||
-  appVariantConfig.production;
-
-export default ({ config }: ConfigContext): ExpoConfig => ({
-  ...config,
-  name: variant.name,
-  slug: variant.slug,
+export default () => ({
+  name: "TopNotch City",
+  slug: "topnotch-city",
   newArchEnabled: true,
-  version: variant.version,
+  version: "1.0.1",
   orientation: "portrait",
   icon: "./src/assets/images/icon.png",
   scheme: "com.meltech.topnotchcity",
   userInterfaceStyle: "automatic",
-  runtimeVersion: variant.version,
+  runtimeVersion: "1.0.1",
   updates: {
     fallbackToCacheTimeout: 0,
-    url: `https://u.expo.dev/${variant.projectId}`,
+    url: `https://u.expo.dev/d21cedf2-e98d-42e9-bf8b-6d52e1a7ef20`,
   },
   ios: {
     icon: {
@@ -54,8 +18,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       light: "./src/assets/images/ios-light.png",
     },
     supportsTablet: false,
-    bundleIdentifier: variant.identifier,
-    runtimeVersion: variant.version,
+    bundleIdentifier: "com.meltech.topnotchcity",
+    runtimeVersion: "1.0.1",
     infoPlist: {
       NSLocationWhenInUseUsageDescription:
         "Allow $(PRODUCT_NAME) to access your location to show nearby properties and map search.",
@@ -76,8 +40,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   android: {
     edgeToEdgeEnabled: true,
-    googleServicesFile: variant.googleServiceFile,
-    package: variant.identifier,
+    googleServicesFile: "./google-services.json",
+    package: "com.meltech.topnotchcity",
     adaptiveIcon: {
       foregroundImage: "./src/assets/images/adaptive-icon.png",
     },
@@ -150,6 +114,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       },
     ],
     "expo-secure-store",
+    "expo-background-task",
     [
       "expo-web-browser",
       {
@@ -210,7 +175,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   extra: {
     router: {},
     eas: {
-      projectId: variant.projectId,
+      projectId: "d21cedf2-e98d-42e9-bf8b-6d52e1a7ef20",
     },
   },
   owner: "meltechnologies",

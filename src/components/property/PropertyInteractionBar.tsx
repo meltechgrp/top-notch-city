@@ -4,23 +4,12 @@ import { showErrorAlert } from "@/components/custom/CustomNotification";
 import PropertyLikeButton from "@/components/property/PropertyLikeButton";
 import PropertyShareButton from "@/components/property/PropertyShareButton";
 import PropertyWishListButton from "@/components/property/PropertyWishListButton";
-import {
-  Avatar,
-  AvatarFallbackText,
-  AvatarImage,
-  Icon,
-  Text,
-  View,
-} from "@/components/ui";
-import { profileDefault, useStore } from "@/store";
+import { Avatar, AvatarImage, Icon, Text, View } from "@/components/ui";
+import { generateMediaUrl } from "@/lib/api";
+import { profileDefault } from "@/store";
 import { useMutation } from "@tanstack/react-query";
 import { router } from "expo-router";
-import {
-  MessageSquareMore,
-  MoreHorizontal,
-  Volume2,
-  VolumeX,
-} from "lucide-react-native";
+import { MessageSquareMore, MoreHorizontal } from "lucide-react-native";
 import { useMemo } from "react";
 
 export function PropertyInteractionBar({
@@ -49,13 +38,27 @@ export function PropertyInteractionBar({
           router.push({
             pathname: "/profile/[user]",
             params: {
-              user: reel?.owner as unknown as string,
+              user: reel?.owner?.id!,
             },
           });
         }}
       >
         <Avatar>
-          <AvatarImage source={profileDefault} />
+          {reel?.owner?.profile_image ? (
+            <AvatarImage
+              source={
+                {
+                  uri: generateMediaUrl({
+                    url: reel.owner.profile_image,
+                    id: "",
+                    media_type: "IMAGE",
+                  }),
+                }.uri
+              }
+            />
+          ) : (
+            <AvatarImage source={profileDefault} />
+          )}
         </Avatar>
       </AnimatedPressable>
       <View className=" items-center">
@@ -73,7 +76,7 @@ export function PropertyInteractionBar({
               await mutateAsync(
                 {
                   property_id: reel.id!,
-                  member_id: reel?.owner as unknown as string,
+                  member_id: reel?.owner?.id!,
                 },
                 {
                   onError: (e) => {

@@ -26,8 +26,6 @@ const PropertyWishListButton = ({
   const { hasAuth } = useStore();
   function invalidate() {
     client.invalidateQueries({ queryKey: ["properties", id] });
-    client.invalidateQueries({ queryKey: ["properties"] });
-    client.invalidateQueries({ queryKey: ["wishlist"] });
     client.invalidateQueries({ queryKey: ["reels"] });
   }
   const { mutate } = useMutation({

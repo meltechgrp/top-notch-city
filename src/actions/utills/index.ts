@@ -142,57 +142,57 @@ export function useWebSocket() {
   return { connect, sendMessage, isConnected, closeConnection };
 }
 
-export async function fetchPlaceFromTextQuery(
-  query: string
-): Promise<GooglePlace[]> {
-  if (!query || query.trim().length === 0) return [];
+// export async function fetchPlaceFromTextQuery(
+//   query: string
+// ): Promise<GooglePlace[]> {
+//   if (!query || query.trim().length === 0) return [];
 
-  const endpoint = "https://places.googleapis.com/v1/places:searchText";
+//   const endpoint = "https://places.googleapis.com/v1/places:searchText";
 
-  try {
-    const res = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Goog-Api-Key": MAPS_API_KEY!,
-        "X-Goog-FieldMask":
-          "places.displayName,places.formattedAddress,places.location,places.id,places.addressComponents",
-      },
-      body: JSON.stringify({
-        textQuery: query,
-      }),
-    });
+//   try {
+//     const res = await fetch(endpoint, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//         "X-Goog-Api-Key": MAPS_API_KEY!,
+//         "X-Goog-FieldMask":
+//           "places.displayName,places.formattedAddress,places.location,places.id,places.addressComponents",
+//       },
+//       body: JSON.stringify({
+//         textQuery: query,
+//       }),
+//     });
 
-    if (!res.ok) {
-      console.error("Google Places API error:", await res.text());
-      return [];
-    }
+//     if (!res.ok) {
+//       console.error("Google Places API error:", await res.text());
+//       return [];
+//     }
 
-    const data = (await res.json()) as { places: GooglePlaceResult[] };
-    return (
-      data.places?.map((item) => {
-        const getComponent = (type: string) =>
-          item.addressComponents.find((comp) => comp.types?.includes(type))
-            ?.longText;
-        return {
-          displayName: item.displayName.text,
-          placeId: item.id,
-          location: item.location,
-          addressComponents: {
-            city: getComponent("locality"), // e.g., Port Harcourt
-            state: getComponent("administrative_area_level_1"), // e.g., Rivers
-            lga: getComponent("administrative_area_level_2"), // e.g., lga
-            street: getComponent("administrative_area_level_3"), // e.g., lga
-            country: getComponent("country"), // e.g., Nigeria
-          },
-        };
-      }) || []
-    );
-  } catch (err) {
-    console.error("Failed to fetch place:", err);
-    return [];
-  }
-}
+//     const data = (await res.json()) as { places: GooglePlaceResult[] };
+//     return (
+//       data.places?.map((item) => {
+//         const getComponent = (type: string) =>
+//           item.addressComponents.find((comp) => comp.types?.includes(type))
+//             ?.longText;
+//         return {
+//           displayName: item.displayName.text,
+//           placeId: item.id,
+//           location: item.location,
+//           addressComponents: {
+//             city: getComponent("locality"), // e.g., Port Harcourt
+//             state: getComponent("administrative_area_level_1"), // e.g., Rivers
+//             lga: getComponent("administrative_area_level_2"), // e.g., lga
+//             street: getComponent("administrative_area_level_3"), // e.g., lga
+//             country: getComponent("country"), // e.g., Nigeria
+//           },
+//         };
+//       }) || []
+//     );
+//   } catch (err) {
+//     console.error("Failed to fetch place:", err);
+//     return [];
+//   }
+// }
 
 export async function updatePushNotificationToken(token: string) {
   try {
@@ -203,5 +203,68 @@ export async function updatePushNotificationToken(token: string) {
     return res;
   } catch (error) {
     console.log(error);
+  }
+}
+
+export interface OSMPlace {
+  displayName: string;
+  placeId: string;
+  location: {
+    latitude: number;
+    longitude: number;
+  };
+  addressComponents: {
+    city?: string;
+    state?: string;
+    lga?: string;
+    street?: string;
+    country?: string;
+  };
+}
+
+export async function fetchPlaceFromTextQuery(
+  query: string
+): Promise<OSMPlace[]> {
+  if (!query || query.trim().length === 0) return [];
+
+  const endpoint = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&q=${encodeURIComponent(
+    query
+  )}`;
+
+  try {
+    const res = await fetch(endpoint, {
+      headers: {
+        "User-Agent": "topnotchapp/1.0 meltechnologiessolution@gmail.com", // required by OSM
+      },
+    });
+
+    if (!res.ok) {
+      console.error("OpenStreetMap API error:", await res.text());
+      return [];
+    }
+
+    const data = (await res.json()) as any[];
+
+    return data.map((item) => {
+      const address = item.address || {};
+      return {
+        displayName: item.display_name,
+        placeId: item.place_id.toString(),
+        location: {
+          latitude: parseFloat(item.lat),
+          longitude: parseFloat(item.lon),
+        },
+        addressComponents: {
+          city: address.city || address.town || address.village,
+          state: address.state,
+          lga: address.county,
+          street: address.road,
+          country: address.country,
+        },
+      };
+    });
+  } catch (err) {
+    console.error("Failed to fetch place:", err);
+    return [];
   }
 }

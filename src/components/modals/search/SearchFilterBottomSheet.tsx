@@ -1,55 +1,35 @@
 import withRenderVisible from "@/components/shared/withRenderOpen";
-import { useState } from "react";
-import { View, Switch } from "react-native";
+import { View, Switch, ScrollView } from "react-native";
 import { Text, Button, ButtonText, Pressable, Heading } from "@/components/ui";
 import BottomSheet from "@/components/shared/BottomSheet";
-import CustomSelect from "@/components/custom/CustomSelect";
-import OptionsBottomSheet from "@/components/shared/OptionsBottomSheet";
 import { CustomSlider } from "@/components/custom/CustomSlider";
-import { useFilterOptions } from "@/hooks/useFilteredProperties";
-import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import Platforms from "@/constants/Plaforms";
 import { cn } from "@/lib/utils";
+import { Amenities } from "@/constants/Amenities";
+import AnimatedPressable from "@/components/custom/AnimatedPressable";
 
 type Props = {
   show: boolean;
   onDismiss: () => void;
-  onApply: (data: SearchFilters) => void;
+  onUpdate: (values: Partial<SearchFilters>) => void;
+  onApply: () => void;
   filter: SearchFilters;
-  properies: Property[];
   showPurpose?: boolean;
+  loading: boolean;
+  total: number;
+  onReset: (values: (keyof SearchFilters)[]) => void;
 };
 
 function SearchFilterBottomSheet({
   show,
   onDismiss,
   onApply,
-  filter: initialFilter,
-  properies,
+  filter,
   showPurpose = true,
+  onUpdate,
+  onReset,
+  loading,
+  total,
 }: Props) {
-  const [filter, setFilter] = useState({ ...initialFilter });
-  const {
-    minBedrooms,
-    minPrice,
-    maxBedrooms,
-    maxPrice,
-    booleanAmenities,
-    subcategories,
-    maxBathrooms,
-    minBathrooms,
-  } = useFilterOptions(properies);
-  function handleApply() {
-    onApply(filter);
-    onDismiss();
-  }
-
-  function handleReset() {
-    setFilter({});
-    onApply({});
-    onDismiss();
-  }
-
   const options = [
     { label: "Rent", value: "rent" },
     { label: "Buy", value: "sell" },
@@ -62,17 +42,28 @@ function SearchFilterBottomSheet({
       withBackButton={false}
       snapPoint={["90%"]}
       visible={show}
-      withScroll={true}
       onDismiss={onDismiss}
+      HeaderRightComponent={
+        <AnimatedPressable
+          onPress={() =>
+            onReset([
+              "min_bedroom",
+              "max_bedroom",
+              "max_bathroom",
+              "min_bathroom",
+              "max_price",
+              "min_price",
+              "purpose",
+              "amenities",
+            ])
+          }
+        >
+          <Text>Reset</Text>
+        </AnimatedPressable>
+      }
     >
       <View className="flex-1 relative">
-        <BottomSheetScrollView
-          className="flex-1"
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingBottom: Platforms.isIOS() ? 80 : 0, // enough space for buttons!
-          }}
-        >
+        <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
           <View className="flex-1 px-4 gap-4 py-5 pb-8 bg-background">
             {showPurpose && (
               <View className="gap-2">
@@ -82,7 +73,7 @@ function SearchFilterBottomSheet({
                     <Pressable
                       both
                       key={label}
-                      onPress={() => setFilter({ ...filter, purpose: value })}
+                      onPress={() => onUpdate({ purpose: value })}
                       className={cn(
                         "px-10 rounded-xl py-1 bg-background-muted flex-row gap-1 items-center",
                         filter.purpose === value && "bg-primary"
@@ -105,11 +96,11 @@ function SearchFilterBottomSheet({
               <Text className="text-base">Price range (₦)</Text>
               <CustomSlider
                 onValueChange={(max_price) =>
-                  setFilter({ ...filter, max_price: max_price.toString() })
+                  onUpdate({ max_price: Math.round(max_price).toString() })
                 }
                 progress={Number(filter.max_price || 0)}
-                minimumValue={minPrice}
-                maximumValue={maxPrice > 0 ? maxPrice : 1000000}
+                minimumValue={100000}
+                maximumValue={1000000000}
                 steps={10}
                 isMoney
               />
@@ -118,87 +109,59 @@ function SearchFilterBottomSheet({
               <Text className="text-base">Bedrooms</Text>
               <CustomSlider
                 onValueChange={(min) =>
-                  setFilter({ ...filter, bedrooms: min.toString() })
+                  onUpdate({ max_bedroom: min.toString() })
                 }
-                progress={Number(filter.bedrooms || 0)}
-                minimumValue={minBedrooms}
-                maximumValue={maxBedrooms > 0 ? maxBedrooms : 10}
+                progress={Number(filter.max_bathroom || 0)}
+                minimumValue={1}
+                maximumValue={10}
               />
             </View>
             <View className="gap-1">
               <Text className="text-base">Bathrooms</Text>
               <CustomSlider
                 onValueChange={(min) =>
-                  setFilter({ ...filter, bathrooms: min.toString() })
+                  onUpdate({ max_bathroom: min.toString() })
                 }
-                progress={Number(filter.bathrooms || 0)}
-                minimumValue={minBathrooms}
-                maximumValue={maxBathrooms > 0 ? maxBathrooms : 10}
+                progress={Number(filter.max_bathroom || 0)}
+                minimumValue={0}
+                maximumValue={10}
               />
             </View>
-            {subcategories?.length > 0 && (
-              <View className="gap-1.5">
-                <Text className="text-base mb-2">Category</Text>
-                <CustomSelect
-                  withDropIcon={true}
-                  BottomSheet={OptionsBottomSheet}
-                  value={filter.sub_category}
-                  label="types"
-                  placeHolder="Select a category"
-                  valueParser={(value: any) => value}
-                  onChange={(value) => {
-                    setFilter({
-                      ...filter,
-                      sub_category: value.value,
-                    });
-                  }}
-                  options={subcategories.map((name) => ({
-                    label: name,
-                    value: name?.trim(),
-                  }))}
-                />
+            <View className="gap-1.5">
+              <Text className="text-base">Amenities</Text>
+              <View className="gap-y-3 bg-background-muted rounded-xl p-4">
+                {Amenities.map((label) => {
+                  const isSelected = filter.amenities?.includes(label);
+
+                  return (
+                    <View
+                      key={label}
+                      className="flex-row items-center justify-between border-b border-outline/20 pb-2"
+                    >
+                      <Text className="text-base text-typography">{label}</Text>
+                      <Switch
+                        value={isSelected}
+                        onValueChange={(val) => {
+                          let updatedAmenities = filter.amenities || [];
+
+                          if (val) {
+                            updatedAmenities = [...updatedAmenities, label];
+                          } else {
+                            updatedAmenities = updatedAmenities.filter(
+                              (item) => item !== label
+                            );
+                          }
+
+                          onUpdate({
+                            amenities: updatedAmenities,
+                          });
+                        }}
+                      />
+                    </View>
+                  );
+                })}
               </View>
-            )}
-            {booleanAmenities?.length > 0 && (
-              <View className="gap-1.5">
-                <Text className="text-base">Amenities</Text>
-                <View className="gap-y-3 bg-background-muted rounded-xl p-4">
-                  {booleanAmenities.map((label) => {
-                    const isSelected = filter.amenities?.includes(label);
-
-                    return (
-                      <View
-                        key={label}
-                        className="flex-row items-center justify-between border-b border-outline/20 pb-2"
-                      >
-                        <Text className="text-base text-typography">
-                          {label}
-                        </Text>
-                        <Switch
-                          value={isSelected}
-                          onValueChange={(val) => {
-                            let updatedAmenities = filter.amenities || [];
-
-                            if (val) {
-                              updatedAmenities = [...updatedAmenities, label];
-                            } else {
-                              updatedAmenities = updatedAmenities.filter(
-                                (item) => item !== label
-                              );
-                            }
-
-                            setFilter({
-                              ...filter,
-                              amenities: updatedAmenities,
-                            });
-                          }}
-                        />
-                      </View>
-                    );
-                  })}
-                </View>
-              </View>
-            )}
+            </View>
 
             {/* <View className="gap-1.5">
               <Text className="text-sm">Others</Text>
@@ -218,31 +181,24 @@ function SearchFilterBottomSheet({
               </View>
             </View> */}
           </View>
-        </BottomSheetScrollView>
-        <View
-          className={cn(
-            " absolute bottom-0 left-0 w-full",
-            Platforms.isAndroid() && "relative"
-          )}
-        >
-          <View className="flex-row bg-background gap-4 px-4 pt-4 android:pb-2 justify-center items-center">
-            <Button
-              onPress={handleReset}
-              className="h-12 flex-1"
-              size="xl"
-              variant="outline"
-            >
-              <ButtonText>Reset</ButtonText>
-            </Button>
-            <Button
-              onPress={handleApply}
-              className="h-12 flex-1"
-              size="xl"
-              variant="solid"
-            >
-              <ButtonText>Apply</ButtonText>
-            </Button>
-          </View>
+        </ScrollView>
+        <View className="flex-row bg-background gap-4 px-4 pt-4 android:pb-2 justify-center items-center">
+          <Button
+            onPress={onApply}
+            className="h-12 flex-1"
+            size="xl"
+            variant="solid"
+          >
+            {loading ? (
+              <ButtonText className=" font-semibold text-base">
+                Searching...
+              </ButtonText>
+            ) : (
+              <ButtonText className="font-semibold text-base">
+                See {total} {total > 1 ? "homes" : "home"}
+              </ButtonText>
+            )}
+          </Button>
         </View>
       </View>
     </BottomSheet>

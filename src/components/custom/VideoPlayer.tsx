@@ -126,7 +126,7 @@ export const VideoPlayer = memo(
       }
       function handleReset() {
         if (player && inTab) {
-          player?.pause?.();
+          player?.status == "readyToPlay" && player?.pause?.();
           player.currentTime = 0;
         }
       }
@@ -147,7 +147,7 @@ export const VideoPlayer = memo(
         ref,
         () => ({
           play: () => player.play(),
-          pause: () => player?.pause(),
+          pause: () => {},
           seekTo: (sec: number) => {
             player.currentTime = sec;
           },

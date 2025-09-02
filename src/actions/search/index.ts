@@ -8,24 +8,30 @@ export async function searchProperties(
 ): Promise<Result> {
   const query = new URLSearchParams();
   if (filters?.keyword) query.append("title", filters.keyword);
-  if (filters?.city) query.append("city", filters.city);
-  if (filters?.state) query.append("state", filters.state);
+  // if (filters?.city) query.append("city", filters.city);
+  // if (filters?.state) query.append("state", filters.state);
   if (filters?.latitude) query.append("latitude", filters.latitude);
   if (filters?.longitude) query.append("longitude", filters.longitude);
-  if (filters?.country) query.append("country", filters.country);
+  // if (filters?.country) query.append("country", filters.country);
   if (filters?.purpose) query.append("purpose", filters.purpose);
-  if (filters?.min_price && filters.min_price !== "No Min")
+  if (filters?.min_price && filters.min_price !== "No min")
     query.append("min_price", filters.min_price);
-  if (filters?.max_price && filters.max_price !== "No Max")
+  if (filters?.max_price && filters.max_price !== "No max")
     query.append("max_price", filters.max_price);
-  if (filters?.category && filters.category !== "any")
-    query.append("category", filters.category);
+  // if (filters?.category && filters.category !== "any")
+  //   query.append("category", filters.category);
   if (filters?.tour) query.append("virtual_tour", "true");
-  if (filters?.sub_category) query.append("sub_category", filters.sub_category);
-  if (filters?.bedrooms && filters.bedrooms !== "Any")
-    query.append("amenities_filter", "Bedrooms");
-  if (filters?.bedrooms && filters.bedrooms !== "Any")
-    query.append("amenities_value_filter", filters.bedrooms);
+  filters?.sub_category?.forEach((sub) => {
+    query.append("sub_category", sub);
+  });
+  if (filters?.min_bedroom && filters.min_bedroom !== "No min")
+    query.append("min_bedroom", filters.min_bedroom);
+  if (filters?.max_bedroom && filters.max_bedroom !== "No max")
+    query.append("max_bedroom", filters.max_bedroom);
+  if (filters?.min_bathroom && filters.min_bathroom !== "No min")
+    query.append("min_bathroom", filters.min_bathroom);
+  if (filters?.max_bathroom && filters.max_bathroom !== "No max")
+    query.append("max_bathroom", filters.max_bathroom);
   if (filters?.createdAt && filters.createdAt !== "any")
     query.append(
       "created_at",
@@ -38,12 +44,9 @@ export async function searchProperties(
   }
 
   query.append("page", String(page));
-  query.append("per_page", String(perPage));
+  query.append("per_page", "90");
   query.append("sort_by", "created_at");
-  {
-    filters?.use_geo_location &&
-      query.append("use_geo_location", filters.use_geo_location);
-  }
+  query.append("use_geo_location", "true");
   query.append("radius_km", "20");
   query.append("sort_order", "desc");
   const path = `/properties/search/?${query.toString()}`;

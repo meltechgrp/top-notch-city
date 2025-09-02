@@ -27,8 +27,8 @@ const PropertyLikeButton = ({
   const { mutate, isSuccess } = useMutation({
     mutationFn: () => likeProperty({ id }),
     onSuccess: () => {
-      client.invalidateQueries({ queryKey: ["properties", id] });
-      client.invalidateQueries({ queryKey: ["properties"] });
+      // client.invalidateQueries({ queryKey: ["properties", id] });
+      // client.invalidateQueries({ queryKey: ["properties"] });
       client.invalidateQueries({ queryKey: ["reels"] });
     },
   });

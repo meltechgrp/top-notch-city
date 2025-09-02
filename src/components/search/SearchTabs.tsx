@@ -1,65 +1,44 @@
 import { cn } from "@/lib/utils";
-import { Pressable, View } from "react-native";
-import { Heading, Icon } from "../ui";
-import { ListOrdered, Map, Video } from "lucide-react-native";
+import { View } from "react-native";
+import { Icon, Text } from "../ui";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { router } from "expo-router";
+import AnimatedPressable from "@/components/custom/AnimatedPressable";
+import { Layers2, MapPin } from "lucide-react-native";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
 type IProps = {
-  activeIndex: number;
-  onTabChange: (index: number) => void;
+  total?: number;
+  useMyLocation: () => Promise<void>;
 };
 export default function SearchTabs(props: IProps) {
-  const { onTabChange, activeIndex } = props;
+  const { total = 0, useMyLocation } = props;
+  const bottom = useBottomTabBarHeight();
   return (
     <View
-      className={cn(
-        "w-full flex fixed top-[90%] ios:top-[80%] left-0 z-50",
-        activeIndex == 2 && "hidden"
-      )}
+      className={cn("w-full absolute left-0 right-0 z-50")}
+      style={{ bottom }}
     >
       <SafeAreaView edges={["bottom"]}>
-        <View className="flex-row self-center p-1 rounded-full bg-background-muted">
-          {searchTabs.map(({ label, icon }, index) => (
-            <Pressable
-              key={label}
-              onPress={() => {
-                onTabChange(index);
-              }}
-              className={cn(
-                " px-4 rounded-full py-2  flex-row gap-1 items-center",
-                activeIndex === index && "bg-primary"
-              )}
+        <View className="flex-row justify-between items-end px-4">
+          <View className=" bg-background-muted/60 py-2 px-4 rounded-full">
+            <Text>{total} results</Text>
+          </View>
+          <View className=" items-center gap-6">
+            <AnimatedPressable
+              className=" p-5 flex-row gap-2 items-center justify-center rounded-full bg-background-muted"
+              onPress={() => {}}
             >
-              <Icon
-                as={icon}
-                className={cn(activeIndex === index ? `text-white` : ` `)}
-              />
-              <Heading
-                className={cn(
-                  " text-sm",
-                  activeIndex === index && "text-white"
-                )}
-              >
-                {label}
-              </Heading>
-            </Pressable>
-          ))}
+              <Icon as={Layers2} size="xl" />
+            </AnimatedPressable>
+            <AnimatedPressable
+              className=" p-5 flex-row gap-2 items-center justify-center rounded-full bg-background-muted"
+              onPress={async () => useMyLocation()}
+            >
+              <Icon as={MapPin} size="xl" />
+            </AnimatedPressable>
+          </View>
         </View>
       </SafeAreaView>
     </View>
   );
 }
-
-export const searchTabs = [
-  {
-    label: "Map View",
-    icon: Map,
-    key: "map",
-  },
-  {
-    label: "List View",
-    icon: ListOrdered,
-    key: "list",
-  },
-];

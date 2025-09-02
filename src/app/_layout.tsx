@@ -57,7 +57,7 @@ configureReanimatedLogger({
 });
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+// SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   useReactQueryDevTools(queryClient);
@@ -117,9 +117,9 @@ export default function RootLayout() {
       subscription.remove(); // Clean up on unmount
     };
   }, []);
-  useEffect(() => {
-    SplashScreen.hide();
-  }, []);
+  // useEffect(() => {
+  //   SplashScreen.hide();
+  // }, []);
 
   return (
     <>

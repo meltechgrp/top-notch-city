@@ -1,15 +1,8 @@
 import withRenderVisible from "@/components/shared/withRenderOpen";
 import { FlatList, Pressable, View } from "react-native";
 import BottomSheet from "@/components/shared/BottomSheet";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  Button,
-  ButtonIcon,
-  ButtonText,
-  Heading,
-  Icon,
-  Text,
-} from "@/components/ui";
+import { useEffect, useMemo, useState } from "react";
+import { Icon, Text } from "@/components/ui";
 import { debounce } from "lodash-es";
 import { History, MapPin, Send } from "lucide-react-native";
 import { fetchPlaceFromTextQuery } from "@/actions/utills";
@@ -17,24 +10,26 @@ import { composeFullAddress } from "@/lib/utils";
 import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
 import { CustomInput } from "@/components/custom/CustomInput";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
-import {
-  getSearchHistory,
-  saveSearchToHistory,
-  SearchHistory,
-} from "@/lib/api";
+import { useStore } from "@/store";
 
 type Props = {
   show: boolean;
   onDismiss: () => void;
-  onUpdate: (data: SearchFilters) => void;
+  onUpdate: (values: Partial<SearchFilters>) => void;
+  refetchAndApply: () => void;
 };
 
-function SearchLocationBottomSheet({ show, onDismiss, onUpdate }: Props) {
-  const [locating, setLocating] = useState(false);
+function SearchLocationBottomSheet({
+  show,
+  onDismiss,
+  onUpdate,
+  refetchAndApply,
+}: Props) {
   const [text, setText] = useState("");
   const [locations, setLocations] = useState<GooglePlace[]>([]);
+  const { savedSearches, updateSavedSearch } = useStore();
   const [typing, setTyping] = useState(false);
-  const [history, setHistory] = useState<SearchHistory[]>([]);
+  const [locating, setLocating] = useState(false);
 
   const debouncedAutocompleteSearch = useMemo(
     () =>
@@ -54,12 +49,6 @@ function SearchLocationBottomSheet({ show, onDismiss, onUpdate }: Props) {
   );
 
   useEffect(() => {
-    if (show) {
-      getSearchHistory().then(setHistory);
-    }
-  }, [show]);
-
-  useEffect(() => {
     return () => debouncedAutocompleteSearch.cancel();
   }, []);
 
@@ -68,6 +57,23 @@ function SearchLocationBottomSheet({ show, onDismiss, onUpdate }: Props) {
     setTyping(val.length > 0);
     debouncedAutocompleteSearch(val);
   };
+  function hnadleSave(search: SearchHistory) {
+    const history = savedSearches;
+    const existingIndex = history.findIndex(
+      (item: any) =>
+        item.city === search.city &&
+        item.state === search.state &&
+        item.country === search.country &&
+        item.longitude === search.longitude &&
+        item.latitude === search.latitude
+    );
+
+    if (existingIndex !== -1) history.splice(existingIndex, 1);
+    history.unshift(search);
+
+    const trimmed = history.slice(0, 10);
+    updateSavedSearch(trimmed);
+  }
 
   const handleSelect = async (item: SearchFilters) => {
     setTyping(false);
@@ -76,19 +82,24 @@ function SearchLocationBottomSheet({ show, onDismiss, onUpdate }: Props) {
       city: item?.city,
       country: item?.country,
       use_geo_location: "false",
+      longitude: item.longitude,
+      latitude: item.latitude as string,
     };
 
     // Save to history if not already present
-    const exists = history.some(
+    const exists = savedSearches.some(
       (h) =>
         h.city === newSearch.city &&
         h.state === newSearch.state &&
-        h.country === newSearch.country
+        h.country === newSearch.country &&
+        h.longitude === newSearch.longitude &&
+        h.latitude === newSearch.latitude
     );
 
-    if (!exists) await saveSearchToHistory(newSearch);
+    if (!exists) hnadleSave(newSearch);
 
     onUpdate(newSearch);
+    refetchAndApply();
     onDismiss();
     setText("");
     setLocations([]);
@@ -100,8 +111,10 @@ function SearchLocationBottomSheet({ show, onDismiss, onUpdate }: Props) {
         country: item?.addressComponents?.country || "",
         displayName: item.displayName || "",
         isSuggestion: true,
+        longitude: item.location.longitude.toString(),
+        latitude: item.location.latitude.toString(),
       }))
-    : history;
+    : savedSearches;
   return (
     <BottomSheet
       title="Search property location"
@@ -142,7 +155,7 @@ function SearchLocationBottomSheet({ show, onDismiss, onUpdate }: Props) {
             refreshing={locating}
             contentContainerClassName="bg-background-muted p-4 rounded-xl"
             ListHeaderComponent={() =>
-              !typing && history.length ? (
+              !typing && savedSearches.length ? (
                 <View className="px-4 pb-2">
                   <Text size="lg" className="font-light">
                     Recent searches

@@ -12,6 +12,7 @@ import { Box } from "@/components/ui";
 import Platforms from "@/constants/Plaforms";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useReels } from "@/hooks/useReel";
+import { FlashList } from "@shopify/flash-list";
 
 const { height: h, width } = Dimensions.get("window");
 
@@ -73,7 +74,7 @@ export default function ReelScreen() {
         className="flex-1"
         style={{ paddingBottom: Platforms.isIOS() ? bottomHeight : undefined }}
       >
-        <FlatList
+        <FlashList
           data={reels}
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
@@ -86,7 +87,7 @@ export default function ReelScreen() {
           showsVerticalScrollIndicator={false}
           decelerationRate="fast"
           onMomentumScrollEnd={handleMomentumEnd}
-          initialNumToRender={1}
+          estimatedItemSize={height}
           snapToInterval={height}
           ListEmptyComponent={() => (
             <MiniEmptyState className=" mt-10" title={"No Reel Found"} />

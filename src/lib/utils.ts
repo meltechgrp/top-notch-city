@@ -99,8 +99,7 @@ export function generateTitle({
   subcategory,
   amenities,
   purpose,
-  full = false,
-}: Property & { full: boolean }) {
+}: Property) {
   switch (category.name.trim()) {
     case "Residential":
       return `${FindAmenity("Bedroom", amenities) || ""} Bedroom ${subcategory?.name || ""}`.trim();

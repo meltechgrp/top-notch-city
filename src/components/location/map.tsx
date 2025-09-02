@@ -1,11 +1,4 @@
-import React, {
-  memo,
-  ReactNode,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { memo, ReactNode, useEffect, useRef, useState } from "react";
 import MapView, { Circle, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import Layout from "@/constants/Layout";
 import { CustomPropertyMarker } from "./CustomPropertyMarker";
@@ -78,7 +71,7 @@ const Map = (props: MapProps) => {
         mapRef.current?.animateToRegion(region, 1000);
       }
     })();
-  }, [markers]);
+  }, [markers?.length]);
   return (
     <>
       <MapView

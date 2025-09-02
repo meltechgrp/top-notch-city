@@ -9,8 +9,6 @@ import {
 import { searchProperties } from "@/actions/search";
 import { fetchLocationProperties } from "@/actions/property/locations";
 
-const perPage = 20; // default per page value, adjust if needed
-
 export function useInfinityQueries({
   type,
   profileId,
@@ -18,6 +16,7 @@ export function useInfinityQueries({
   enabled = true,
   key,
   state,
+  perPage = 20,
 }: {
   type: "all" | "user" | "admin" | "search" | "state" | "pending" | "reels";
   profileId?: string;
@@ -26,6 +25,7 @@ export function useInfinityQueries({
   key?: string; // optional key for query
   state?: string;
   audioUrl?: string;
+  perPage?: number;
 }) {
   switch (type) {
     case "all": {
