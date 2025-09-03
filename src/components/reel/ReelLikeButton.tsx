@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { Icon, useResolvedTheme } from "../ui";
 import { likeProperty } from "@/actions/property";
 import { cn } from "@/lib/utils";
@@ -21,15 +21,12 @@ const PropertyLikeButton = ({
   hasScrolledToDetails,
   className,
 }: Props) => {
-  const client = useQueryClient();
   const theme = useResolvedTheme();
-  const { hasAuth } = useStore();
-  const { mutate, isSuccess } = useMutation({
+  const { hasAuth, updateLike } = useStore();
+  const { mutate } = useMutation({
     mutationFn: () => likeProperty({ id }),
     onSuccess: () => {
-      // client.invalidateQueries({ queryKey: ["properties", id] });
-      // client.invalidateQueries({ queryKey: ["properties"] });
-      client.invalidateQueries({ queryKey: ["reels"] });
+      updateLike(id);
     },
   });
 

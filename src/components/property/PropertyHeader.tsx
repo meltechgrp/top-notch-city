@@ -1,7 +1,7 @@
 import { Icon, Pressable, useResolvedTheme, View } from "@/components/ui";
-import PropertyLikeButton from "./PropertyLikeButton";
-import PropertyWishListButton from "./PropertyWishListButton";
-import PropertyShareButton from "./PropertyShareButton";
+import ReelLikeButton from "../reel/ReelLikeButton";
+import ReelWishListButton from "../reel/ReelWishListButton";
+import ReelShareButton from "../reel/ReelShareButton";
 import { usePropertyActions } from "@/hooks/usePropertyActions";
 import { router } from "expo-router";
 import { Edit } from "lucide-react-native";
@@ -22,10 +22,7 @@ export default function PropertyHeader({
     <>
       {isAgent && isOwner ? (
         <View className="pr-4 flex-row items-center gap-2">
-          <PropertyShareButton
-            title={generateTitle(property)}
-            id={property.id}
-          />
+          <ReelShareButton title={generateTitle(property)} id={property.id} />
           {/* <PropertyLikeButton
             hasScrolledToDetails={hasScrolledToDetails}
             id={property.id}
@@ -56,15 +53,16 @@ export default function PropertyHeader({
         </View>
       ) : (
         <View className="pr-4 flex-row items-center gap-4">
-          {/* <PropertyShareButton
+          <ReelShareButton
+            hasScrolledToDetails={hasScrolledToDetails}
+            id={property.id}
+            title={generateTitle(property)}
+          />
+          {/* <ReelLikeButton
             hasScrolledToDetails={hasScrolledToDetails}
             property={property}
           />
-          <PropertyLikeButton
-            hasScrolledToDetails={hasScrolledToDetails}
-            property={property}
-          />
-          <PropertyWishListButton
+          <ReelWishListButton
             hasScrolledToDetails={hasScrolledToDetails}
             property={property}
           /> */}

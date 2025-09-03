@@ -3,8 +3,8 @@ interface ReelVideo {
   uri: string;
   title: string;
   description: string;
-  interations?: Interaction;
-  owner_interaction?: Owner_interaction;
+  interations: Interaction;
+  owner_interaction: Owner_interaction;
   created_at: string;
   owner?: Owner;
   purpose: PropertyPurpose;
@@ -26,9 +26,10 @@ type VideoPlayerHandle = {
   pause: () => void;
   seekTo?: (sec: number) => void;
   reset: () => void;
+  status: VideoPlayerStatus;
 };
 
-interface PropertyInteractionBar {
+interface ReelInteractionBar {
   reel: ReelVideo;
   showChat?: boolean;
   showShare?: boolean;

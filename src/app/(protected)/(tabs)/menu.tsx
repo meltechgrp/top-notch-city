@@ -31,7 +31,6 @@ import { useStore } from "@/store";
 import { BodyScrollView } from "@/components/layouts/BodyScrollView";
 import { getImageUrl } from "@/lib/api";
 import { openSignInModal } from "@/components/globals/AuthModals";
-import LogoutAlertDialog from "@/components/modals/LogoutAlertDialog";
 import useResetAppState from "@/hooks/useResetAppState";
 // import * as FileSystem from "expo-file-system";
 
@@ -359,11 +358,6 @@ export default function More() {
             )}
           </View>
         </View>
-
-        <LogoutAlertDialog
-          setOpenLogoutAlertDialog={setOpenLogoutAlertDialog}
-          openLogoutAlertDialog={openLogoutAlertDialog}
-        />
       </BodyScrollView>
     </>
   );

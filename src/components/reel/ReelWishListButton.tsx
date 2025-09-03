@@ -1,5 +1,5 @@
 import { Icon, useResolvedTheme } from "../ui";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { addToWishList, removeFromWishList } from "@/actions/property";
 import { memo } from "react";
 import { cn } from "@/lib/utils";
@@ -21,20 +21,15 @@ const PropertyWishListButton = ({
   hasScrolledToDetails,
   className,
 }: Props) => {
-  const client = useQueryClient();
   const theme = useResolvedTheme();
-  const { hasAuth } = useStore();
-  function invalidate() {
-    client.invalidateQueries({ queryKey: ["properties", id] });
-    client.invalidateQueries({ queryKey: ["reels"] });
-  }
+  const { hasAuth, updateWishlist } = useStore();
   const { mutate } = useMutation({
     mutationFn: () => removeFromWishList({ id }),
-    onSuccess: () => invalidate(),
+    onSuccess: () => updateWishlist(id),
   });
   const { mutate: mutate2 } = useMutation({
     mutationFn: () => addToWishList({ id }),
-    onSuccess: () => invalidate(),
+    onSuccess: () => updateWishlist(id),
   });
   function hnadleWishList() {
     if (!hasAuth) {

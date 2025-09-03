@@ -105,7 +105,7 @@ export default function SearchScreen() {
                       key={index}
                       headerOnlyHeight={150}
                       isLoading={query.loading}
-                      refetch={query.refetch}
+                      refetch={query.refetchAndApply}
                       hasNextPage={query.hasNextPage}
                       fetchNextPage={query.fetchNextPage}
                       properties={properties}

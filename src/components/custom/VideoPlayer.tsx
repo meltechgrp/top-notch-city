@@ -4,6 +4,7 @@ import React, {
   useEffect,
   useImperativeHandle,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { TouchableWithoutFeedback, AppState } from "react-native";
@@ -39,24 +40,20 @@ export const VideoPlayer = memo(
       },
       ref
     ) => {
-      const { muted } = useStore();
+      const { muted, updateCount } = useStore();
       const [showControls, setShowControls] = useState(true);
       const [showBottomSheet, setShowBottomSheet] = useState(false);
       const { uri } = reel;
       const isFocused = useIsFocused();
-      const queryClient = useQueryClient();
       const path = usePathname();
+      const mounted = useRef(true);
       const { mutate } = useMutation({
         mutationFn: () => viewProperty({ id: reel.id }),
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["properties"] });
-          queryClient.invalidateQueries({ queryKey: ["reels"] });
+          updateCount(reel.id);
         },
       });
-      const isVisible = useMemo(
-        () => path.includes("/reels") || path.includes("/videos"),
-        [path]
-      );
+      const isVisible = useMemo(() => path.includes("/reels"), [path]);
       // Setup player
       const player = useVideoPlayer({ uri, useCaching: true }, (player) => {
         try {
@@ -125,11 +122,20 @@ export const VideoPlayer = memo(
         }
       }
       function handleReset() {
-        if (player && inTab) {
-          player?.status == "readyToPlay" && player?.pause?.();
+        if (!mounted.current || !player || !inTab) return;
+
+        try {
+          player.pause?.();
           player.currentTime = 0;
+        } catch (e) {
+          console.warn("handleReset failed:", e);
         }
       }
+      useEffect(() => {
+        return () => {
+          mounted.current = false;
+        };
+      }, []);
       useEffect(() => {
         player.muted = !!muted;
       }, [muted]);
@@ -154,6 +160,7 @@ export const VideoPlayer = memo(
           reset: () => {
             handleReset();
           },
+          status: player.status,
         }),
         [player]
       );
@@ -163,10 +170,12 @@ export const VideoPlayer = memo(
         };
       }, []);
       useEffect(() => {
-        if (shouldPlay) {
-          mutate();
+        if (shouldPlay && !reel.owner_interaction.viewed) {
+          setTimeout(() => {
+            mutate();
+          }, 100);
         }
-      }, [shouldPlay]);
+      }, [shouldPlay, reel.owner_interaction]);
       return (
         <>
           <View style={style}>

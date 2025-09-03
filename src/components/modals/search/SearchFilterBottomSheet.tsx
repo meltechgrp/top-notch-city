@@ -205,4 +205,4 @@ function SearchFilterBottomSheet({
   );
 }
 
-export default withRenderVisible(SearchFilterBottomSheet);
+export default SearchFilterBottomSheet;

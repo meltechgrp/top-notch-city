@@ -5,9 +5,10 @@ import { router, useNavigation } from "expo-router";
 import SettingsItemList from "@/components/settings/SettingsItemList";
 import { useStore } from "@/store";
 import { Box } from "@/components/ui";
+import { storage } from "@/lib/asyncStorage";
 
 export default function SettingsScreen() {
-  const hasAuth = useStore((s) => s.hasAuth);
+  const { hasAuth } = useStore();
   const [tapCount, setTapCount] = React.useState(0);
   const navigation = useNavigation();
   React.useEffect(() => {
@@ -68,7 +69,10 @@ export default function SettingsScreen() {
             <View className="bg-background-muted pl-4 rounded-xl">
               <SettingsItemList onPress={() => {}} title="Clear Basic Cache" />
               <SettingsItemList
-                onPress={() => {}}
+                onPress={() => {
+                  useStore.getState().resetStore();
+                  storage.clearAll();
+                }}
                 title="Clear All Cache"
                 withBorder={false}
               />

@@ -12,7 +12,7 @@ import { useLayout } from "@react-native-community/hooks";
 import { cn } from "@/lib/utils";
 import { useMediaUpload } from "@/hooks/useMediaUpload";
 
-const MAX = 4;
+const MAX = 1;
 
 type Props = {
   visible: boolean;
@@ -35,7 +35,7 @@ function ListingVideosBottomSheet(props: Props) {
   const { loading, pickMedia, takeMedia } = useMediaUpload({
     type: "video",
     onSuccess: onUpdate,
-    maxSelection: 16 - currentCount,
+    maxSelection: MAX - currentCount,
   });
   const { width, onLayout } = useLayout();
   const ListHeader = useMemo(

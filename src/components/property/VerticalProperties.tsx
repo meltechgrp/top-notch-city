@@ -15,6 +15,7 @@ import { useAnimatedScrollHandler } from "react-native-reanimated";
 import { AnimatedFlashList } from "../shared/AnimatedFlashList";
 import FullHeightLoaderWrapper from "../loaders/FullHeightLoaderWrapper";
 import { cn, deduplicate } from "@/lib/utils";
+import LoadingLine from "@/components/custom/HorizontalLoader";
 
 interface Props {
   category?: string;
@@ -173,6 +174,7 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
           itemVisiblePercentThreshold: 50,
         }}
         removeClippedSubviews={false}
+        ListFooterComponent={<LoadingLine />}
       />
     </FullHeightLoaderWrapper>
   );

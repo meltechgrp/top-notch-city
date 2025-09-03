@@ -39,13 +39,6 @@ export default function PropertysLayout() {
         }}
       />
       <Stack.Screen
-        name="[propertyId]/videos"
-        options={{
-          headerShown: true,
-          title: "Videos",
-        }}
-      />
-      <Stack.Screen
         name="[propertyId]/edit"
         options={{
           headerShown: true,
@@ -57,27 +50,6 @@ export default function PropertysLayout() {
         options={{
           headerShown: true,
           title: "Visual Tour",
-        }}
-      />
-      <Stack.Screen
-        name="locations/index"
-        options={{
-          headerShown: true,
-          title: "Trending Locations",
-        }}
-      />
-      <Stack.Screen
-        name="locations/[locationId]/index"
-        options={{
-          headerShown: true,
-          title: "",
-        }}
-      />
-      <Stack.Screen
-        name="section"
-        options={{
-          headerShown: true,
-          title: "Top Properties",
         }}
       />
       <Stack.Screen

@@ -1,24 +1,20 @@
-import { Tabs, usePathname } from "expo-router";
-import React, { useMemo } from "react";
+import { Tabs } from "expo-router";
+import React from "react";
 import { Platform } from "react-native";
 import { HapticTab } from "@/components/HapticTab";
 import TabBarBackground from "@/components/TabBarBackground";
-import {
-  Home,
-  Menu,
-  MessageSquareMore,
-  MonitorPlay,
-  Plus,
-  Search,
-} from "lucide-react-native";
+import { Home, Menu, MonitorPlay, Plus, Search } from "lucide-react-native";
 import { Colors } from "@/constants/Colors";
-import { useResolvedTheme } from "@/components/ui";
+import { useResolvedTheme, Pressable } from "@/components/ui";
+import { useReels } from "@/hooks/useReel";
 
 export const unstable_settings = {
   initialRouteName: "home",
 };
 export default function TabLayout() {
   const theme = useResolvedTheme();
+  const { forceRefresh } = useReels();
+
   return (
     <Tabs
       screenOptions={{
@@ -72,15 +68,18 @@ export default function TabLayout() {
         options={{
           title: "Reels",
           headerShown: false,
+          tabBarButton: (props) => (
+            <Pressable {...(props as any)} onDoublePress={forceRefresh} />
+          ),
           tabBarIcon: ({ color }) => <MonitorPlay size={24} color={color} />,
         }}
       />
       <Tabs.Screen
         name="properties"
-        options={{
+        options={() => ({
           title: "Properties",
           tabBarIcon: ({ color }) => <Plus size={24} color={color} />,
-        }}
+        })}
       />
       <Tabs.Screen
         name="menu"

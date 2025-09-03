@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react";
-import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useChatStore } from "@/store/chatStore";
 import { getChatMessages, getChats } from "@/actions/message";
 

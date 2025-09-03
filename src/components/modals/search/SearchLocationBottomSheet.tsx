@@ -200,4 +200,4 @@ function SearchLocationBottomSheet({
   );
 }
 
-export default withRenderVisible(SearchLocationBottomSheet);
+export default SearchLocationBottomSheet;

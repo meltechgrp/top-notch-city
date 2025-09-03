@@ -28,6 +28,9 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
+import { useStore } from "@/store";
+import { generateMediaUrl } from "@/lib/api";
+import { composeFullAddress, generateTitle } from "@/lib/utils";
 
 const { height } = Dimensions.get("window");
 const HERO_HEIGHT = height / 2.3;
@@ -35,6 +38,7 @@ const HERO_HEIGHT = height / 2.3;
 export default function PropertyItem() {
   const { propertyId } = useLocalSearchParams() as { propertyId: string };
   const { updateProperty } = usePropertyStore();
+  const { setReels, updateCount } = useStore();
   const { width, onLayout } = useLayout();
   const theme = useResolvedTheme();
   const detailsY = useSharedValue(0);
@@ -51,7 +55,7 @@ export default function PropertyItem() {
     mutationFn: () => viewProperty({ id: propertyId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["properties", propertyId] });
-      queryClient.invalidateQueries({ queryKey: ["properties"] });
+      updateCount(propertyId);
     },
   });
 
@@ -65,7 +69,36 @@ export default function PropertyItem() {
   useEffect(() => {
     if (property) {
       updateProperty(property);
-      mutate();
+      let v = property.media.find((m) => m.media_type === "VIDEO");
+      if (v) {
+        setReels([
+          {
+            id: property.id,
+            uri: generateMediaUrl(v).uri,
+            title: generateTitle(property),
+            description: property.description || "",
+            interations: {
+              liked: property.interaction?.liked || 0,
+              added_to_wishlist: property.interaction?.added_to_wishlist || 0,
+              viewed: property.interaction?.viewed || 0,
+            },
+            owner_interaction: {
+              liked: property.owner_interaction?.liked || false,
+              added_to_wishlist:
+                property.owner_interaction?.added_to_wishlist || false,
+              viewed: property.owner_interaction?.viewed || false,
+            },
+            created_at: property.created_at,
+            owner: property.owner,
+            price: property.price,
+            location: composeFullAddress(property.address, false, "short"),
+            purpose: property.purpose,
+          },
+        ]);
+      }
+      setTimeout(() => {
+        mutate();
+      }, 500);
     }
   }, [property]);
 

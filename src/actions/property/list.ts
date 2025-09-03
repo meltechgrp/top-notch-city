@@ -3,7 +3,7 @@ import { Fetch } from "../utills";
 // 🏠 Fetch all properties (paginated)
 export async function fetchProperties({ pageParam }: { pageParam: number }) {
   try {
-    const res = await Fetch(`/properties?page=${pageParam}&per_page=20`, {});
+    const res = await Fetch(`/properties?page=${pageParam}&per_page=10`, {});
     if (res?.detail) throw new Error("Failed to fetch properties");
     return res as Result;
   } catch (error) {
@@ -14,7 +14,7 @@ export async function fetchProperties({ pageParam }: { pageParam: number }) {
 export async function fetchReels({ pageParam }: { pageParam: number }) {
   try {
     const res = await Fetch(
-      `/properties/videos?page=${pageParam}&per_page=4`,
+      `/properties/videos?page=${pageParam}&per_page=8`,
       {}
     );
     if (res?.detail) throw new Error("Failed to fetch properties");

@@ -1,8 +1,6 @@
 import {
   Avatar,
-  AvatarBadge,
   AvatarFallbackText,
-  AvatarImage,
   Box,
   Button,
   ButtonText,
@@ -29,18 +27,18 @@ import React, { memo } from "react";
 import { generateMediaUrl } from "@/lib/api";
 import { useLayout } from "@react-native-community/hooks";
 import { usePropertyStore } from "@/store/propertyStore";
-import { Divider } from "../ui/divider";
-import PropertyMapSection from "./PropertyMapSection";
-import PropertyNearbySection from "./PropertyNearbySection";
 import { FindAmenity, fullName } from "@/lib/utils";
 import { openEnquiryModal } from "../globals/AuthModals";
 import { useMutation } from "@tanstack/react-query";
 import { startChat } from "@/actions/message";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { LongDescription } from "@/components/custom/LongDescription";
+import { CustomCenterSheet } from "@/components/property/CustomMapCenterSheet";
+import { useStore } from "@/store";
 
 const PropertyDetailsBottomSheet = () => {
   const { details: property, getImages, getVideos } = usePropertyStore();
+  const { me } = useStore();
   const { mutateAsync } = useMutation({
     mutationFn: startChat,
   });
@@ -95,6 +93,7 @@ const PropertyDetailsBottomSheet = () => {
             </Pressable>
             <Pressable
               both
+              disabled={me?.id == property?.owner.id}
               onPress={async () => {
                 await mutateAsync(
                   {
@@ -152,13 +151,18 @@ const PropertyDetailsBottomSheet = () => {
             <Pressable
               disabled={getVideos().length < 1}
               onPress={() => {
-                router.push("/(protected)/property/[propertyId]/videos");
+                router.push({
+                  pathname: "/reels",
+                  params: {
+                    propertyId: property?.id,
+                  },
+                });
               }}
               className="flex-row gap-4 bg-background-muted p-4 rounded-xl items-center justify-between"
             >
               <Icon as={Video} className="text-primary" />
               <Text size="lg" className=" mr-auto">
-                Videos
+                Video
               </Text>
               <Icon as={ChevronRight} />
             </Pressable>
@@ -177,11 +181,11 @@ const PropertyDetailsBottomSheet = () => {
             </Pressable>
           </View>
           <View className="px-4 gap-6">
-            <PropertyMapSection />
+            <CustomCenterSheet />
 
-            <Divider />
+            {/* <Divider /> */}
 
-            <PropertyNearbySection />
+            {/* <PropertyNearbySection /> */}
             <View className="bg-background-muted p-4 rounded-xl gap-4">
               <Pressable className={"f items-center "}>
                 <Avatar className=" w-14 h-14">

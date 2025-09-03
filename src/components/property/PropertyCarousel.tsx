@@ -11,7 +11,10 @@ import { useSharedValue } from "react-native-reanimated";
 import { Dimensions, ScrollView } from "react-native";
 import { ImageContentFit } from "expo-image";
 import { generateMediaUrl } from "@/lib/api";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const INTERACTIVE_ZONE_WIDTH = SCREEN_WIDTH / 2.8;
@@ -70,11 +73,16 @@ function PropertyCarousel({
   const { bannerHeight, window } = Layout;
   const theme = useResolvedTheme();
   const progress = useSharedValue<number>(0);
+  const insets = useSafeAreaInsets();
   const carouselRef = React.useRef<ICarouselInstance>(null);
   const baseOptions = {
     vertical: false,
     width: width,
-    height: fullScreen ? window.height : factor ? width * factor : bannerHeight,
+    height: fullScreen
+      ? window.height - insets.bottom - insets.top - 48
+      : factor
+        ? width * factor
+        : bannerHeight,
   } as const;
 
   const onPressPagination = (index: number) => {

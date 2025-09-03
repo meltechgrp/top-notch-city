@@ -1,5 +1,4 @@
-import AnimatedPressable from "@/components/custom/AnimatedPressable";
-import { PropertyInteractionBar } from "@/components/property/PropertyInteractionBar";
+import { ReelInteractionBar } from "@/components/reel/ReelInteractionBar";
 import { Icon, Pressable, Text, useResolvedTheme, View } from "@/components/ui";
 import { Divider } from "@/components/ui/divider";
 import { Colors } from "@/constants/Colors";
@@ -82,7 +81,7 @@ function PlayerController({
               </Text>
             </View>
           </View>
-          <PropertyInteractionBar
+          <ReelInteractionBar
             showMuted
             reel={reel}
             setShowBottomSheet={setShowBottomSheet}

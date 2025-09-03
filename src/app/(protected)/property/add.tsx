@@ -78,9 +78,9 @@ export default function SellAddScreen() {
         alertType: "warn",
       });
     } else if (listing.step == 6) {
-      if (listing?.photos && listing?.photos?.length < 3)
+      if (listing?.photos && listing?.photos?.length < 1)
         return showErrorAlert({
-          title: "Select at least 3 images",
+          title: "Select at least 1 images",
           alertType: "warn",
         });
       else if (!listing?.photos?.length)

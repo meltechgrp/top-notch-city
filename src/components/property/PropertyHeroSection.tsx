@@ -24,7 +24,7 @@ export function PropertyHeroSection({ property, width }: Props) {
           pointerPosition={40}
         />
         <View className=" absolute flex-row justify-between bottom-16 left-4 right-4 w-full px-1">
-          <View className="gap-2">
+          <View className="gap-2 flex-1">
             <PropertyTitle property={property} />
             <PropertyPrice property={property} className="self-start" />
             <View className="flex-row items-center mt-1 gap-2">

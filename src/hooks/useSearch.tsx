@@ -132,7 +132,7 @@ export function useSearch() {
       refetch,
       fetchNextPage,
       hasNextPage,
-      loading: isLoading || isFetchingNextPage,
+      loading: isLoading,
       applyCachedResults,
       refetchAndApply,
     },

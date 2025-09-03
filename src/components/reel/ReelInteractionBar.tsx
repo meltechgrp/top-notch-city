@@ -1,9 +1,9 @@
 import { startChat } from "@/actions/message";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
-import PropertyLikeButton from "@/components/property/PropertyLikeButton";
-import PropertyShareButton from "@/components/property/PropertyShareButton";
-import PropertyWishListButton from "@/components/property/PropertyWishListButton";
+import ReelLikeButton from "@/components/reel/ReelLikeButton";
+import ReelShareButton from "@/components/reel/ReelShareButton";
+import ReelWishListButton from "@/components/reel/ReelWishListButton";
 import { Avatar, AvatarImage, Icon, Text, View } from "@/components/ui";
 import { generateMediaUrl } from "@/lib/api";
 import { profileDefault } from "@/store";
@@ -12,13 +12,13 @@ import { router } from "expo-router";
 import { MessageSquareMore, MoreHorizontal } from "lucide-react-native";
 import { useMemo } from "react";
 
-export function PropertyInteractionBar({
+export function ReelInteractionBar({
   reel,
   showChat = true,
   showShare = true,
   showMuted = false,
   setShowBottomSheet,
-}: PropertyInteractionBar) {
+}: ReelInteractionBar) {
   const { mutateAsync } = useMutation({
     mutationFn: startChat,
   });
@@ -62,11 +62,11 @@ export function PropertyInteractionBar({
         </Avatar>
       </AnimatedPressable>
       <View className=" items-center">
-        <PropertyLikeButton liked={isLiked} id={reel.id} />
+        <ReelLikeButton liked={isLiked} id={reel.id} />
         <Text className=" text-white">{record?.liked || 0}</Text>
       </View>
       <View className=" items-center">
-        <PropertyWishListButton isAdded={isAdded} id={reel.id} />
+        <ReelWishListButton isAdded={isAdded} id={reel.id} />
         <Text className=" text-white">{record?.added_to_wishlist || 0}</Text>
       </View>
       {showChat && (
@@ -106,7 +106,7 @@ export function PropertyInteractionBar({
       )}
       {showShare && (
         <View className=" items-center">
-          <PropertyShareButton title={reel.title} id={reel.id} />
+          <ReelShareButton title={reel.title} id={reel.id} />
           <Text className="text-xs text-white">Share</Text>
         </View>
       )}
