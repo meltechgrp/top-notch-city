@@ -11,6 +11,7 @@ import {
   Text,
 } from "@/components/ui";
 import { Divider } from "@/components/ui/divider";
+import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
 import { generateMediaUrlSingle } from "@/lib/api";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { router } from "expo-router";
@@ -20,6 +21,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   FlatList,
+  RefreshControl,
 } from "react-native";
 
 interface Staff {
@@ -44,11 +46,14 @@ export default function CustomerCareBottomSheet({
   const { mutateAsync } = useMutation({
     mutationFn: startChat,
   });
-  const { data, isLoading, isError } = useQuery({
+  const { data, refetch, error, isLoading } = useQuery({
     queryKey: ["staff"],
     queryFn: fetchStaff,
   });
-
+  if (__DEV__) {
+    console.log(error);
+  }
+  useRefreshOnFocus(refetch);
   return (
     <BottomSheet
       visible={visible}
@@ -57,79 +62,80 @@ export default function CustomerCareBottomSheet({
       title="Customer Care"
       withHeader
     >
-      {isLoading ? (
-        <View className=" flex-1 justify-center items-center">
-          <ActivityIndicator size="large" style={{ marginTop: 20 }} />
-        </View>
-      ) : isError ? (
-        <View className=" flex-1 justify-center items-center">
-          <Text className="text-red-500">Failed to load staff.</Text>
-        </View>
-      ) : (
-        <FlatList
-          data={data}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={{ padding: 16 }}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              className="flex-row justify-between items-center gap-4"
-              onPress={async () => {
-                await mutateAsync(
-                  {
-                    member_id: item?.id!,
+      <FlatList
+        data={data}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={{ padding: 16 }}
+        refreshControl={
+          <RefreshControl refreshing={false} onRefresh={refetch} />
+        }
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            className="flex-row justify-between items-center gap-4"
+            onPress={async () => {
+              await mutateAsync(
+                {
+                  member_id: item?.id!,
+                },
+                {
+                  onError: (e) => {
+                    console.log(e);
+                    showErrorAlert({
+                      title: "Unable to start chat",
+                      alertType: "error",
+                    });
                   },
-                  {
-                    onError: (e) => {
-                      console.log(e);
-                      showErrorAlert({
-                        title: "Unable to start chat",
-                        alertType: "error",
-                      });
-                    },
-                    onSuccess: (data) => {
-                      console.log(data);
-                      router.replace({
-                        pathname: "/messages/[chatId]",
-                        params: {
-                          chatId: data,
-                        },
-                      });
-                    },
-                  }
-                );
-              }}
-            >
-              <Avatar size="lg">
-                {item.profile_image && (
-                  <AvatarImage
-                    source={{
-                      uri: generateMediaUrlSingle(item.profile_image),
-                    }}
-                  />
-                )}
-                <AvatarFallbackText>
-                  {item.first_name} {item.last_name}
-                </AvatarFallbackText>
-                {item.status === "online" && <AvatarBadge />}
-              </Avatar>
-              <View className="flex-1 gap-1">
-                <Text style={{ fontSize: 16, fontWeight: "600" }}>
-                  {item.first_name} {item.last_name}
-                </Text>
-                <Text
-                  style={{ color: item.status === "online" ? "green" : "gray" }}
-                >
-                  {item.status}
-                </Text>
-              </View>
-              <View>
-                <Icon as={ChevronRight} className="text-primary" />
-              </View>
-            </TouchableOpacity>
-          )}
-          ItemSeparatorComponent={() => <Divider />}
-        />
-      )}
+                  onSuccess: (data) => {
+                    console.log(data);
+                    router.replace({
+                      pathname: "/messages/[chatId]",
+                      params: {
+                        chatId: data,
+                      },
+                    });
+                  },
+                }
+              );
+            }}
+          >
+            <Avatar size="lg">
+              {item.profile_image && (
+                <AvatarImage
+                  source={{
+                    uri: generateMediaUrlSingle(item.profile_image),
+                  }}
+                />
+              )}
+              <AvatarFallbackText>
+                {item.first_name} {item.last_name}
+              </AvatarFallbackText>
+              {item.status === "online" && <AvatarBadge />}
+            </Avatar>
+            <View className="flex-1 gap-1">
+              <Text style={{ fontSize: 16, fontWeight: "600" }}>
+                {item.first_name} {item.last_name}
+              </Text>
+              <Text
+                style={{ color: item.status === "online" ? "green" : "gray" }}
+              >
+                {item.status}
+              </Text>
+            </View>
+            <View>
+              <Icon as={ChevronRight} className="text-primary" />
+            </View>
+          </TouchableOpacity>
+        )}
+        ListFooterComponent={() =>
+          isLoading ? (
+            <View className=" flex-1 justify-center items-center">
+              <ActivityIndicator size="large" style={{ marginTop: 20 }} />
+            </View>
+          ) : undefined
+        }
+        ItemSeparatorComponent={() => <Divider />}
+      />
+      {/* )} */}
     </BottomSheet>
   );
 }

@@ -1,5 +1,11 @@
 import { cn } from "@/lib/utils";
-import React, { useImperativeHandle, useMemo } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useState,
+} from "react";
 import {
   Keyboard,
   Pressable,
@@ -11,6 +17,7 @@ import { CameraIcon, Send } from "lucide-react-native";
 import { Icon } from "../ui";
 import MediaPicker, { MediaPickerRef } from "@/components/custom/MediaPicker";
 import type { ImagePickerAsset } from "expo-image-picker";
+import { sendTyping } from "@/actions/message";
 
 export type EditorOnchangeArgs = { text: string; files: ImagePickerAsset[] };
 type Props = View["props"] & {
@@ -23,6 +30,7 @@ type Props = View["props"] & {
   value?: string;
   headerComponent?: React.ReactNode;
   noMedia?: boolean;
+  chatId: string;
 };
 
 export type EditorComponentRefHandle = Pick<TextInput, "focus"> & {
@@ -46,9 +54,11 @@ const EditorComponent = React.forwardRef<
     autoFocus,
     value = "",
     noMedia,
+    chatId,
   } = props;
   const mediaPickerRef = React.useRef<any>(null);
   const [text, setText] = React.useState(value);
+  const [typing, setTyping] = useState(false);
   const [media, setMedia] = React.useState<any[]>([]);
   const textInputRef = React.useRef<TextInput>(null);
   const isComposing = useMemo(() => {
@@ -80,6 +90,26 @@ const EditorComponent = React.forwardRef<
       setText,
     };
   }, []);
+  const handleTyping = useCallback(
+    (text: string) => {
+      setText(text);
+      if (text?.length > 1 && !typing) {
+        setTyping(true);
+      }
+    },
+    [text, setText]
+  );
+  function SendTyping(typing: boolean) {
+    sendTyping({ chat_id: chatId, is_typing: typing });
+  }
+  useEffect(() => {
+    if (typing) {
+      SendTyping(true);
+    } else {
+      SendTyping(false);
+    }
+    return () => SendTyping(false);
+  }, [typing]);
   return (
     <View
       className={cn("w-full relative border-t border-t-outline", className)}
@@ -119,7 +149,7 @@ const EditorComponent = React.forwardRef<
                 }
               }}
               value={text}
-              onChangeText={setText}
+              onChangeText={handleTyping}
               className="flex-1 text-typography max-h-[100px]"
               multiline={true}
               placeholder={placeholder}

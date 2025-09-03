@@ -49,20 +49,23 @@ function CustomInputComponent({
 
   return (
     <View
-      className={cn("py-px min-h-20 gap-2 rounded-xl", !title && "min-h-14")}
+      className={cn(
+        "py-px min-h-20 gap-2 flex-1 rounded-xl",
+        !title && "min-h-14"
+      )}
     >
       {title && (
         <View>
           <Text>{title}</Text>
         </View>
       )}
-      <View className="">
+      <View className="flex-1">
         <TextInput
           {...props}
           placeholder={placeholder}
           autoCapitalize="sentences"
           className={cn(
-            "my-1 bg-background-muted px-4 h-14 rounded-xl",
+            "my-1 bg-background-muted flex-1 px-4 h-14 rounded-xl",
             multiline && "px-1 pt-6",
             className
           )}

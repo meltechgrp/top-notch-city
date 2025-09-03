@@ -1,13 +1,5 @@
 import { View } from "react-native";
-import {
-  Badge,
-  BadgeText,
-  Button,
-  Heading,
-  Icon,
-  Pressable,
-  Text,
-} from "@/components/ui";
+import { Button, Heading, Icon, Pressable, Text } from "@/components/ui";
 import withRenderVisible from "@/components/shared/withRenderOpen";
 import { composeFullAddress, formatMoney, fullName } from "@/lib/utils";
 import { capitalize, chunk } from "lodash-es";
@@ -153,19 +145,17 @@ function PropertyDetailsBottomSheet(props: PropertyBottomSheetProps) {
             </Heading>
             <View className="flex-row gap-4 justify-between flex-wrap">
               {property.amenities.map((a) => (
-                <Badge
-                  size="lg"
-                  variant="solid"
-                  className="bg-background px-3 py-1.5 gap-2"
+                <View
+                  className="bg-background px-3 py-1.5 rounded-full gap-2"
                   key={a.name}
                 >
-                  <BadgeText className=" capitalize">{a.name}</BadgeText>
+                  <Text className=" capitalize">{a.name}</Text>
                   {parseInt(a.value) > 0 ? (
                     <Text className="text-primary">{a.value}</Text>
                   ) : (
                     <Icon size="sm" className="text-primary" as={Check} />
                   )}
-                </Badge>
+                </View>
               ))}
             </View>
           </View>

@@ -11,3 +11,4 @@ export * from "./pressable";
 export * from "./switch";
 export * from "./text";
 export * from "./view";
+export * from "./badge";

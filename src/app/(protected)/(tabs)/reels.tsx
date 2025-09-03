@@ -11,12 +11,12 @@ import { Box, View } from "@/components/ui";
 import Platforms from "@/constants/Plaforms";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useReels } from "@/hooks/useReel";
-import { FlashList, FlashListProps } from "@shopify/flash-list";
+import { FlashList } from "@shopify/flash-list";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Loading from "@/components/search/Loading";
 import BackgroundView from "@/components/layouts/BackgroundView";
 import LoadingLine from "@/components/custom/HorizontalLoader";
-import { router, useGlobalSearchParams } from "expo-router";
+import { router, useGlobalSearchParams, usePathname } from "expo-router";
 
 const { height: h, width } = Dimensions.get("window");
 
@@ -32,6 +32,7 @@ export default function ReelScreen() {
     forceRefresh,
   } = useReels();
   const bottomHeight = useBottomTabBarHeight();
+  const path = usePathname();
   const insets = useSafeAreaInsets();
   const listRef = useRef<FlashList<ReelVideo>>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -40,6 +41,7 @@ export default function ReelScreen() {
     () => (Platforms.isIOS() ? h - bottomHeight : h - insets.bottom),
     [h, bottomHeight, insets]
   );
+  const isVisible = useMemo(() => path.includes("/reels"), [path]);
   const setActiveIndex = useCallback(
     (nextIndex: number) => {
       // Guard
@@ -89,17 +91,16 @@ export default function ReelScreen() {
   );
   const scrollToReelById = (reelId: string) => {
     const index = reels.findIndex((reel) => reel.id === reelId);
-    console.log(index, reelId);
     if (index !== -1 && listRef.current) {
       listRef.current.scrollToIndex({ index, animated: true });
     }
   };
   useEffect(() => {
-    if (propertyId) {
+    if (propertyId && isVisible) {
       scrollToReelById(propertyId);
       router.setParams({});
     }
-  }, [propertyId]);
+  }, [propertyId, isVisible]);
   return (
     <>
       <Box

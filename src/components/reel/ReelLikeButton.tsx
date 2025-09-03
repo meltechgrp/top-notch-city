@@ -25,19 +25,21 @@ const PropertyLikeButton = ({
   const { hasAuth, updateLike } = useStore();
   const { mutate } = useMutation({
     mutationFn: () => likeProperty({ id }),
-    onSuccess: () => {
-      updateLike(id);
-    },
   });
 
   function hnadleLike() {
     if (!hasAuth) {
       return openSignInModal({
         visible: true,
-        onLoginSuccess: () => mutate(),
+        onLoginSuccess: () => {
+          updateLike(id);
+          mutate();
+        },
       });
+    } else {
+      updateLike(id);
+      mutate();
     }
-    mutate();
   }
   return (
     <AnimatedPressable onPress={hnadleLike} className={cn("px-2", className)}>

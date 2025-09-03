@@ -18,7 +18,7 @@ import AnimatedPressable from "@/components/custom/AnimatedPressable";
 import { useIsFocused } from "@react-navigation/native";
 import PlayerController from "@/components/custom/PlayerController";
 import { useStore } from "@/store";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { viewProperty } from "@/actions/property";
 import { usePathname } from "expo-router";
 import { ReelsShareSheet } from "@/components/modals/ReelsBottomsheet";

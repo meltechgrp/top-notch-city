@@ -87,7 +87,7 @@ function PlayerController({
             setShowBottomSheet={setShowBottomSheet}
           />
         </View>
-        <View className={cn("w-full", !inTab && "px-4")}>
+        <View className={cn("w-full gap-4", !inTab && "px-4")}>
           {inTab && (
             <Pressable
               both
@@ -99,10 +99,10 @@ function PlayerController({
                   },
                 })
               }
-              className="bg-gray-500/80 flex-row justify-between items-center px-3 py-2"
+              className="bg-gray-500/80 ml-4 flex-row rounded-md justify-between items-center self-start px-3 py-2"
             >
-              <Text className="text-white text-sm ">Read More...</Text>
-              <Icon size="sm" as={ChevronRight} />
+              <Text className="text-white text-sm ">More details</Text>
+              <Icon as={ChevronRight} />
             </Pressable>
           )}
           <Slider

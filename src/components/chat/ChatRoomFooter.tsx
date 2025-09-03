@@ -67,6 +67,7 @@ const ChatRoomFooter = React.forwardRef<EditorComponentRefHandle, Props>(
     return (
       <View>
         <Editor
+          chatId={chatId}
           headerComponent={null}
           onSend={onSubmit}
           placeholder={placeholder}

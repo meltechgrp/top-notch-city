@@ -174,7 +174,6 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
           itemVisiblePercentThreshold: 50,
         }}
         removeClippedSubviews={false}
-        ListFooterComponent={<LoadingLine />}
       />
     </FullHeightLoaderWrapper>
   );

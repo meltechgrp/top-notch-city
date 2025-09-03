@@ -1,14 +1,11 @@
 import { TouchableOpacity, Linking, Share, Alert } from "react-native";
-// import * as FileSystem from "expo-file-system";
 import {
   Facebook,
   Instagram,
   MessageCircle,
   Mail,
   Link as LinkIcon,
-  Download,
   Flag,
-  Heart,
   Twitter,
   MoreHorizontal,
 } from "lucide-react-native";
@@ -104,19 +101,6 @@ export function ReelsShareSheet({
       onDismiss();
     }
   };
-  const handleDownload = async () => {
-    if (!downloadUrl) {
-      Alert.alert("Error", "No media to download");
-      return;
-    }
-    try {
-      // const fileUri = FileSystem.documentDirectory + "property.jpg"; // adjust extension dynamically
-      // const { uri } = await FileSystem.downloadAsync(downloadUrl, fileUri);
-      // Alert.alert("Download complete", `Saved to ${uri}`);
-    } catch (err) {
-      Alert.alert("Error", "Download failed");
-    }
-  };
   return (
     <BottomSheet
       visible={visible}
@@ -152,17 +136,6 @@ export function ReelsShareSheet({
         <Divider />
         {/* Bottom actions */}
         <View className=" bg-background-muted p-4 py-6 mx-4 rounded-lg gap-6">
-          <TouchableOpacity
-            className="flex-row items-center gap-3 "
-            //   onPress={handleDownload}
-          >
-            <Icon as={Download} />
-            <Text className="text-base">Download</Text>
-          </TouchableOpacity>
-          <TouchableOpacity className="flex-row items-center gap-3 ">
-            <Icon as={Heart} />
-            <Text className="text-base">Not interested</Text>
-          </TouchableOpacity>
           <TouchableOpacity
             onPress={() => openEnquiryModal({ visible: true, id })}
             className="flex-row items-center gap-3 "

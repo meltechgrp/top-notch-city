@@ -153,7 +153,7 @@ export default function ChatRoom(props: Props) {
     if (chatId && messages?.length) {
       markAsRead({ chatId });
     }
-  }, [messages.length, chatId]);
+  }, [messages.length, chatId, me]);
   useRefreshOnFocus(async () => {
     setTimeout(refetchMessages, 500);
   });

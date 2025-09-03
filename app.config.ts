@@ -83,7 +83,6 @@ export default () => ({
   plugins: [
     "expo-router",
     "react-native-compressor",
-    "@maplibre/maplibre-react-native",
     [
       "./plugins/withAndroidQueries.js",
       [

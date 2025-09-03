@@ -1,17 +1,26 @@
 import { Fetch } from "@/actions/utills";
 
 export async function startChat({ property_id, member_id }: StartChat) {
-  const result = await Fetch(
-    `/chat/start?property_id=${property_id}&member_id=${member_id}`,
-    {
+  if (property_id) {
+    const result = await Fetch(
+      `/chat/start?property_id=${property_id}&member_id=${member_id}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return result as string;
+  } else {
+    const result = await Fetch(`/chat/start?member_id=${member_id}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-    }
-  );
-  console.log(result);
-  return result as string;
+    });
+    return result as string;
+  }
 }
 export async function sendMessage({ chat_id, content, files }: SendMessage) {
   const formData = new FormData();
@@ -108,6 +117,18 @@ export async function makeMessageReadAndDelivered({
 }) {
   await Fetch(`/chat/${chatId}/mark-all-read`, {
     method: "POST",
+  });
+}
+export async function sendTyping({
+  chat_id,
+  is_typing,
+}: {
+  chat_id: string;
+  is_typing: boolean;
+}) {
+  await Fetch(`/typing`, {
+    method: "POST",
+    data: { chat_id, is_typing },
   });
 }
 

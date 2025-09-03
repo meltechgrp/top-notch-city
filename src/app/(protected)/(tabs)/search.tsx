@@ -12,7 +12,7 @@ import SearchFilterBottomSheet from "@/components/modals/search/SearchFilterBott
 import { RoomsFilterSheet } from "@/components/modals/search/RoomsFilterBottomSheet";
 import { PriceFilterSheet } from "@/components/modals/search/PriceFilterBottomSheet";
 import { useSearch } from "@/hooks/useSearch";
-import { PropertyTypeSheet } from "@/components/modals/search/PropertyTypeSheet";
+import PropertyTypeSheet from "@/components/modals/search/PropertyTypeSheet";
 import { router, useGlobalSearchParams } from "expo-router";
 
 const TABS = ["Map View", "List View"];

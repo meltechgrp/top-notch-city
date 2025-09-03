@@ -82,9 +82,9 @@ export function useWebSocket() {
             });
             break;
 
-          case "read_receipt":
-            updateMessageStatus(data.chat_id, data.message_id, "seen");
-            break;
+          // case "read_receipt":
+          //   updateMessageStatus(data.chat_id, data.message_id, "seen");
+          //   break;
 
           case "message_edited":
             updateMessage(data.chat_id, data.message_id, data.content);

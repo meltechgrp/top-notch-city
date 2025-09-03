@@ -25,11 +25,9 @@ const PropertyWishListButton = ({
   const { hasAuth, updateWishlist } = useStore();
   const { mutate } = useMutation({
     mutationFn: () => removeFromWishList({ id }),
-    onSuccess: () => updateWishlist(id),
   });
   const { mutate: mutate2 } = useMutation({
     mutationFn: () => addToWishList({ id }),
-    onSuccess: () => updateWishlist(id),
   });
   function hnadleWishList() {
     if (!hasAuth) {
@@ -39,9 +37,11 @@ const PropertyWishListButton = ({
       });
     }
     if (isAdded) {
+      updateWishlist(id);
       mutate();
     } else {
       mutate2();
+      updateWishlist(id);
     }
   }
   return (

@@ -4,6 +4,7 @@ import { View, Text, Heading } from "@/components/ui";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
 import { useCategoryQueries } from "@/tanstack/queries/useCategoryQueries";
 import { cn } from "@/lib/utils";
+import withRenderVisible from "@/components/shared/withRenderOpen";
 
 interface PropertyTypeSheetProps {
   visible: boolean;
@@ -16,7 +17,7 @@ interface PropertyTypeSheetProps {
   loading: boolean;
 }
 
-export function PropertyTypeSheet({
+function PropertyTypeSheet({
   visible,
   onDismiss,
   onUpdate,
@@ -106,3 +107,5 @@ export function PropertyTypeSheet({
     </BottomSheet>
   );
 }
+
+export default withRenderVisible(PropertyTypeSheet);
