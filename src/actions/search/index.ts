@@ -50,20 +50,17 @@ export async function searchProperties(
   query.append("radius_km", "20");
   query.append("sort_order", "desc");
   const path = `/properties/search/?${query.toString()}`;
-  console.log(path);
   try {
     const res = await Fetch(path, {});
     if (!res?.results) throw new Error("property not found");
     return res;
   } catch (error) {
-    console.error("Search error:", error);
     throw error;
   }
 }
 export async function voiceSearchProperties(
   audioUrl?: string
 ): Promise<Result> {
-  console.log(audioUrl, "api");
   const query = new URLSearchParams();
   const formData = new FormData();
   formData.append("voice_file", {
@@ -74,7 +71,6 @@ export async function voiceSearchProperties(
 
   query.append("sort_by", "created_at");
   query.append("sort_order", "desc");
-  console.log(formData);
   try {
     const res = await Fetch("/properties/search/voice", {
       method: "POST",
@@ -83,11 +79,10 @@ export async function voiceSearchProperties(
       },
       data: formData,
     });
-    console.log(res);
+
     if (!res?.results) throw new Error("property not found");
     return res;
   } catch (error) {
-    console.error("Search error:", error);
     throw error;
   }
 }

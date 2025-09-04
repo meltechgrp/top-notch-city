@@ -5,7 +5,6 @@ export const fetchAllSubcategories = async (): Promise<SubCategory[]> => {
     const res = await Fetch(`/categories/subcategories/`, {});
     return res as SubCategory[];
   } catch (error) {
-    console.log(error);
     throw new Error("Failed to fetch subcategories");
   }
 };
@@ -14,7 +13,6 @@ export const fetchAllCategories = async (): Promise<Category[]> => {
     const res = await Fetch(`/categories/`, {});
     return res as Category[];
   } catch (error) {
-    console.log(error);
     throw new Error("Failed to fetch categories");
   }
 };
@@ -32,7 +30,6 @@ export const addCategory = async ({ name }: { name: string }) => {
     if (res?.detail) throw new Error("Failed to add category");
     return true;
   } catch (error) {
-    console.error(error);
     throw error;
   }
 };
@@ -57,7 +54,6 @@ export const editCategory = async ({
     if (res?.detail) throw new Error("Failed to edit category");
     return true;
   } catch (error) {
-    console.error(error);
     throw error;
   }
 };
@@ -70,7 +66,6 @@ export const deleteCategory = async ({ id }: { id: string }) => {
     if (res?.detail) throw new Error("Failed to delete category");
     return true;
   } catch (error) {
-    console.error(error);
     throw error;
   }
 };
@@ -96,7 +91,6 @@ export const addSubcategory = async ({
     if (res?.detail) throw new Error("Failed to add subcategory");
     return true;
   } catch (error) {
-    console.error(error);
     throw error;
   }
 };
@@ -111,7 +105,6 @@ export const editSubcategory = async ({
   };
 }) => {
   try {
-    console.log(data);
     const res = await Fetch(`/categories/subcategories/${id}`, {
       method: "PUT",
       headers: {
@@ -119,11 +112,10 @@ export const editSubcategory = async ({
       },
       data: data,
     });
-    console.log(res);
+
     if (res?.detail) throw new Error("Failed to edit subcategory");
     return true;
   } catch (error) {
-    console.error(error);
     throw error;
   }
 };
@@ -146,7 +138,6 @@ export const deleteSubcategory = async ({
     if (res?.detail) throw new Error("Failed to delete subcategory");
     return true;
   } catch (error) {
-    console.error(error);
     throw error;
   }
 };

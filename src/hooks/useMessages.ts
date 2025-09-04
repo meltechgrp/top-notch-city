@@ -70,7 +70,6 @@ export function useMessages(chatId: string) {
       await edit(
         { message_id, content },
         {
-          onError: (e) => console.log("edit error", e),
           onSuccess: (m) => {
             replaceMockMessage(chatId, data.message_id, {
               ...data,
@@ -88,7 +87,6 @@ export function useMessages(chatId: string) {
         { chat_id: chatId, content, files: file_data },
         {
           onError: (e) => {
-            console.log("send error", e);
             updateMessageStatus(chatId, data.message_id, "error");
           },
           onSuccess: (m) => {

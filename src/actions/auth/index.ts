@@ -37,7 +37,6 @@ export async function authOptVerify({
       };
     }
   } catch (error) {
-    console.log(error);
     return {
       formError: "Something went wrong try ",
     };
@@ -83,7 +82,6 @@ export async function loginWithSocial({
     }
     return data;
   } catch (error) {
-    console.log(error);
     throw new Error("Failed to login");
   }
 }
@@ -124,11 +122,8 @@ export async function authSignup(
       }),
     });
     const data = await res.json();
-    console.log(data);
     if (data.detail) {
-      data.detail?.map((item: any) => {
-        console.log(item);
-      });
+      data.detail?.map((item: any) => {});
       return {
         formError: "Please check your details",
       };
@@ -141,7 +136,6 @@ export async function authSignup(
       };
     }
   } catch (error) {
-    console.log(error);
     return {
       formError: "Something went wrong try ",
     };
@@ -167,7 +161,7 @@ export async function authLogin(
       body: JSON.stringify(form),
     });
     const res = await data.json();
-    console.log(res);
+
     if (res.detail) {
       return {
         formError: "Incorrect Email or Password",
@@ -181,7 +175,6 @@ export async function authLogin(
       };
     }
   } catch (error) {
-    console.log(error, "here");
     return {
       formError: "Something went wrong try ",
     };
@@ -195,7 +188,7 @@ export async function sendPasswordReset({ email }: { email: string }) {
     },
     data: JSON.stringify({ email }),
   });
-  console.log(res);
+
   if (res?.detail) {
     throw new Error("Error occurried");
   }
@@ -219,7 +212,6 @@ export async function resetPassword({
     },
     data: { email: email.toLowerCase(), code, new_password, confirm_password },
   });
-  console.log(res);
 
   if (res?.detail) {
     throw new Error("Error occurried");

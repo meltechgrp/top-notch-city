@@ -61,6 +61,9 @@ const EditorComponent = React.forwardRef<
   const [typing, setTyping] = useState(false);
   const [media, setMedia] = React.useState<any[]>([]);
   const textInputRef = React.useRef<TextInput>(null);
+  const typingTimeout = React.useRef<ReturnType<typeof setTimeout> | null>(
+    null
+  );
   const isComposing = useMemo(() => {
     return text.length > 0 || media.length > 0;
   }, [text, media]);
@@ -70,12 +73,13 @@ const EditorComponent = React.forwardRef<
     onSend({ text: text.length !== 0 ? text : " ", files: media });
     setText("");
     setMedia([]);
+    setTyping(false);
   }
   React.useEffect(() => {
     if (onUpdate) {
       onUpdate({ text, files: media });
     }
-  }, [text]);
+  }, [text, media]);
   React.useEffect(() => {
     if (commentId && textInputRef) {
       textInputRef.current?.focus();
@@ -90,25 +94,24 @@ const EditorComponent = React.forwardRef<
       setText,
     };
   }, []);
-  const handleTyping = useCallback(
-    (text: string) => {
-      setText(text);
-      if (text?.length > 1 && !typing) {
-        setTyping(true);
-      }
-    },
-    [text, setText]
-  );
+  const handleTyping = (val: string) => {
+    setText(val);
+    if (!typing) setTyping(true);
+
+    if (typingTimeout.current) clearTimeout(typingTimeout.current);
+    typingTimeout.current = setTimeout(() => {
+      setTyping(false);
+    }, 2000); // stop typing after 2s of inactivity
+  };
+
   function SendTyping(typing: boolean) {
     sendTyping({ chat_id: chatId, is_typing: typing });
   }
   useEffect(() => {
-    if (typing) {
-      SendTyping(true);
-    } else {
-      SendTyping(false);
-    }
-    return () => SendTyping(false);
+    const timeout = setTimeout(() => {
+      SendTyping(typing);
+    }, 500); // debounce network call
+    return () => clearTimeout(timeout);
   }, [typing]);
   return (
     <View

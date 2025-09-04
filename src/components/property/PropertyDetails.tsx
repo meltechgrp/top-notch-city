@@ -102,7 +102,6 @@ const PropertyDetailsBottomSheet = () => {
                   },
                   {
                     onError: (e) => {
-                      console.log(e);
                       showErrorAlert({
                         title: "Unable to start chat",
                         alertType: "error",

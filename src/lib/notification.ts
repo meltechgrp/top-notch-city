@@ -50,7 +50,6 @@ function handleNotificationResponseByType(
       router.navigate(href);
     }
   };
-  console.log(notificationType);
   switch (notificationType) {
     case "chat": {
       navigateTo({

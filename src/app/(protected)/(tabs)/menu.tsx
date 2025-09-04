@@ -132,9 +132,7 @@ export default function More() {
               if (!me?.id) {
                 openSignInModal({
                   visible: true,
-                  onLoginSuccess: () => {
-                    console.log("logged in");
-                  },
+                  onLoginSuccess: () => {},
                 });
               } else if (me.role == "agent") {
                 router.push({

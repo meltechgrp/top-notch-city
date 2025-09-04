@@ -182,7 +182,7 @@ export default function PropertiesScreen() {
                   size="xl"
                   className="mt-6 w-1/2 mx-auto rounded-md"
                 >
-                  <ButtonText>Get Started</ButtonText>
+                  <ButtonText className="text-sm">Get Started</ButtonText>
                   <Icon size="xl" as={MoveRight} className="text-white" />
                 </Button>
               </View>

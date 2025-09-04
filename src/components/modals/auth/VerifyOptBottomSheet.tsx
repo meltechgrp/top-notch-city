@@ -55,7 +55,6 @@ export default function VerifyOtpBottomSheet({
         onDismiss?.();
       }
     } catch (error) {
-      console.error(error);
     } finally {
       setLoading(false);
     }

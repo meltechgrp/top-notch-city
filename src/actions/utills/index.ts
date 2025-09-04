@@ -20,10 +20,6 @@ export async function Fetch(url: string, options: AxiosRequestConfig = {}) {
     },
     data: options.data,
   });
-  // console.log("Fetch URL:", url, "Response:", res.status, res.statusText);
-  // if (res.status >= 400) {
-  //   throw new Error(`HTTP error! status: ${res.status}`);
-  // }
   return res.data;
 }
 
@@ -38,7 +34,6 @@ export function useWebSocket() {
   const connect = () => {
     if (!authToken) return;
     const wsUrl = `wss://app.topnotchcity.com/ws/?token=${authToken}`;
-    console.log("🔌 Connecting to:", wsUrl);
 
     const socket = new WebSocket(wsUrl);
 
@@ -82,9 +77,9 @@ export function useWebSocket() {
             });
             break;
 
-          // case "read_receipt":
-          //   updateMessageStatus(data.chat_id, data.message_id, "seen");
-          //   break;
+          case "read_receipt":
+            updateMessageStatus(data.chat_id, data.message_id, "seen");
+            break;
 
           case "message_edited":
             updateMessage(data.chat_id, data.message_id, data.content);
@@ -112,13 +107,10 @@ export function useWebSocket() {
     const maxAttempts = 5;
     if (reconnectAttempts.current < maxAttempts) {
       const timeout = Math.min(1000 * 2 ** reconnectAttempts.current, 30000); // exponential backoff, max 30s
-      console.log(`🔄 Attempting reconnect in ${timeout / 1000}s...`);
       reconnectTimeout.current = setTimeout(() => {
         reconnectAttempts.current += 1;
         connect();
       }, timeout);
-    } else {
-      console.warn("❌ Max reconnect attempts reached.");
     }
   };
 
@@ -142,58 +134,6 @@ export function useWebSocket() {
   return { connect, sendMessage, isConnected, closeConnection };
 }
 
-// export async function fetchPlaceFromTextQuery(
-//   query: string
-// ): Promise<GooglePlace[]> {
-//   if (!query || query.trim().length === 0) return [];
-
-//   const endpoint = "https://places.googleapis.com/v1/places:searchText";
-
-//   try {
-//     const res = await fetch(endpoint, {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//         "X-Goog-Api-Key": MAPS_API_KEY!,
-//         "X-Goog-FieldMask":
-//           "places.displayName,places.formattedAddress,places.location,places.id,places.addressComponents",
-//       },
-//       body: JSON.stringify({
-//         textQuery: query,
-//       }),
-//     });
-
-//     if (!res.ok) {
-//       console.error("Google Places API error:", await res.text());
-//       return [];
-//     }
-
-//     const data = (await res.json()) as { places: GooglePlaceResult[] };
-//     return (
-//       data.places?.map((item) => {
-//         const getComponent = (type: string) =>
-//           item.addressComponents.find((comp) => comp.types?.includes(type))
-//             ?.longText;
-//         return {
-//           displayName: item.displayName.text,
-//           placeId: item.id,
-//           location: item.location,
-//           addressComponents: {
-//             city: getComponent("locality"), // e.g., Port Harcourt
-//             state: getComponent("administrative_area_level_1"), // e.g., Rivers
-//             lga: getComponent("administrative_area_level_2"), // e.g., lga
-//             street: getComponent("administrative_area_level_3"), // e.g., lga
-//             country: getComponent("country"), // e.g., Nigeria
-//           },
-//         };
-//       }) || []
-//     );
-//   } catch (err) {
-//     console.error("Failed to fetch place:", err);
-//     return [];
-//   }
-// }
-
 export async function updatePushNotificationToken(token: string) {
   try {
     const res = await Fetch(`/notifications/save-token/`, {
@@ -201,9 +141,7 @@ export async function updatePushNotificationToken(token: string) {
       data: { push_token: token },
     });
     return res;
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 }
 
 export interface OSMPlace {
@@ -239,7 +177,6 @@ export async function fetchPlaceFromTextQuery(
     });
 
     if (!res.ok) {
-      console.error("OpenStreetMap API error:", await res.text());
       return [];
     }
 
@@ -264,7 +201,6 @@ export async function fetchPlaceFromTextQuery(
       };
     });
   } catch (err) {
-    console.error("Failed to fetch place:", err);
     return [];
   }
 }

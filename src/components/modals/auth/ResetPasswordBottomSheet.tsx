@@ -61,7 +61,6 @@ export default function ResetPasswordBottomSheet({
         }
       );
     } catch (error) {
-      console.log(error);
       showErrorAlert({
         title: "Error occurred! Please try again.",
         alertType: "error",
@@ -90,7 +89,6 @@ export default function ResetPasswordBottomSheet({
         }
       );
     } catch (error) {
-      console.log(error);
       showErrorAlert({ title: "Failed to resend code.", alertType: "warn" });
     }
   };

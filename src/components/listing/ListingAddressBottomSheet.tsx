@@ -39,7 +39,6 @@ function ListingAddressBottomSheet(props: Props) {
             const result = await fetchPlaceFromTextQuery(query);
             setLocations(result);
           } catch (error) {
-            console.error("Autocomplete error:", error);
           } finally {
             setFetching(false);
           }

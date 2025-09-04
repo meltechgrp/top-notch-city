@@ -49,7 +49,6 @@ export default function ChangePassword() {
         });
       }
     } catch (error) {
-      console.log(error);
       showSnackbar({
         message: "Failed to update.. try again",
         type: "warning",

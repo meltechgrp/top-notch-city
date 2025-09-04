@@ -96,7 +96,6 @@ export function ReelsShareSheet({
           break;
       }
     } catch (e) {
-      console.error(e);
     } finally {
       onDismiss();
     }

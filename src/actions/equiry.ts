@@ -32,6 +32,6 @@ export async function deleteEnquiry({ enquiry_id }: { enquiry_id: string }) {
   if (res?.detail) {
     throw new Error("Failed to delete enquires");
   }
-  console.log(res);
+
   return res as { message: string };
 }

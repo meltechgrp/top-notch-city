@@ -84,7 +84,6 @@ export default function SignInBottomSheet({
         onDismiss?.();
       }
     } catch (error) {
-      console.error(error);
       showSnackbar({
         message: "Something went wrong. Try again",
         type: "error",
@@ -102,7 +101,6 @@ export default function SignInBottomSheet({
       last_name?: string;
     }) => {
       try {
-        console.log(socialData);
         setFetching(true);
         const res = await loginWithSocial(socialData);
         if (res?.access_token) {
@@ -121,7 +119,6 @@ export default function SignInBottomSheet({
         }
         onDismiss?.();
       } catch (error) {
-        console.error(error);
         showSnackbar({
           message: "Error occurred during. Please try again.",
           type: "error",

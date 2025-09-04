@@ -123,17 +123,15 @@ export async function verifyEmail({ user_id }: { user_id: string }) {
 }
 export async function deleteUser({ user_id }: { user_id: string }) {
   try {
-    console.log(user_id);
     const res = await Fetch(`/users/${user_id}`, {
       method: "DELETE",
     });
-    console.log(res);
+
     if (res?.detail) {
       throw new Error("Failed to DELETE profile");
     }
     return res as { message: string };
   } catch (error) {
-    console.log(error);
     throw new Error("Failed to DELETE profile");
   }
 }

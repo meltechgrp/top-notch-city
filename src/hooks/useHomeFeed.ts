@@ -9,8 +9,6 @@ export function useHomeFeed() {
   const {
     topProperties,
     setTopProperties,
-    topLocations,
-    setTopLocations,
     nearbyProperties,
     setNearbyProperties,
     location,
@@ -58,11 +56,11 @@ export function useHomeFeed() {
     () => nearbyData?.pages.flatMap((page) => page.results) || [],
     [nearbyData]
   );
-  useEffect(() => {
-    if (location) {
-      refetchNearby();
-    }
-  }, [location]);
+  // useEffect(() => {
+  //   if (location) {
+  //     refetchNearby();
+  //   }
+  // }, [location]);
   /** --- Sync with Store only when changed --- */
   useEffect(() => {
     if (!allProperties.length) return;
@@ -70,13 +68,6 @@ export function useHomeFeed() {
       setTopProperties(allProperties);
     }
   }, [allProperties, topProperties, setTopProperties]);
-
-  useEffect(() => {
-    if (!locationsData) return;
-    if (JSON.stringify(topLocations) !== JSON.stringify(locationsData)) {
-      setTopLocations(locationsData);
-    }
-  }, [locationsData, topLocations, setTopLocations]);
 
   useEffect(() => {
     if (!nearby.length) return;
@@ -89,10 +80,13 @@ export function useHomeFeed() {
   const refreshAll = useCallback(async () => {
     await Promise.all([refetchAll(), refetchLocations(), refetchNearby()]);
   }, [refetchAll, refetchLocations, refetchNearby]);
-
+  const locations = useMemo(
+    () => locationsData?.slice() || [],
+    [locationsData]
+  );
   return {
     allProperties: topProperties || [],
-    locations: topLocations || [],
+    locations,
     nearby: nearbyProperties || [],
     refreshAll,
     refetching: refetchingAll || refetchingLocations || refetchingNearby,

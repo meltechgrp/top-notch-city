@@ -66,8 +66,6 @@ export default function RootLayout() {
   useMountPushNotificationToken();
   useEffect(() => {
     const handleDeepLink = ({ url }: { url: string }) => {
-      console.log(`🔗 Received deep link: ${url}`);
-
       let pathToNavigate: string | undefined;
 
       try {
@@ -77,8 +75,7 @@ export default function RootLayout() {
         const knownSchemes = ["exp:", "expo:", "com.meltech.topnotchcity:"];
         console.log(parsedUrl.pathname, url);
         if (parsedUrl.pathname == "/oauthredirect") {
-          console.log(parsedUrl.pathname);
-          return router.replace("/(protected)/(tabs)/home");
+          return router.push("/(protected)/(tabs)/home");
         } else if (knownSchemes.includes(parsedUrl.protocol)) {
           const segments = parsedUrl.pathname.split("/").filter(Boolean);
           pathToNavigate = segments.join("/");
@@ -106,9 +103,7 @@ export default function RootLayout() {
         if (pathToNavigate) {
           router.push(`/(protected)/${pathToNavigate}` as any);
         }
-      } catch (e) {
-        console.warn("⚠️ Failed to handle deep link:", e);
-      }
+      } catch (e) {}
     };
 
     const subscription = Linking.addEventListener("url", handleDeepLink);

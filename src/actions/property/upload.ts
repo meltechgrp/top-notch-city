@@ -33,7 +33,6 @@ export async function updatePropertyBasicInfo(
 
     return res;
   } catch (error) {
-    console.error("Property update failed:", error);
     throw error;
   }
 }
@@ -58,7 +57,6 @@ export async function updatePropertyDescription(
 
     return res;
   } catch (error) {
-    console.error("Update description failed:", error);
     throw error;
   }
 }
@@ -256,7 +254,6 @@ export function useUpdateProperty() {
       );
 
       const result = res.data;
-      console.log(result);
       if (result?.detail) {
         throw new Error("Please verify your property details");
       }
@@ -268,7 +265,6 @@ export function useUpdateProperty() {
       throw new Error("Something went wrong, please try again");
     },
     onSuccess: () => {
-      // Invalidate `properties` query so it's refetched
       queryClient.invalidateQueries({ queryKey: ["properties"] });
     },
   });

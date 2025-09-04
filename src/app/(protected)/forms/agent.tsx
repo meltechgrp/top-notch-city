@@ -23,8 +23,7 @@ const AgentFormSchema = z.object({
   phone: z.string().min(1, "Phone number is required"),
   // nin: z.string().min(1, "NIN is required"),
   birthdate: z.date({
-    required_error: "Birthdate is required",
-    invalid_type_error: "Birthdate must be a valid date",
+    error: "Birthdate is required",
   }),
   country: z.string().min(1, "Country is required"),
   state: z.string().min(1, "State is required"),
@@ -65,15 +64,12 @@ export default function AgentFormScreen() {
       });
     } catch (err) {
       if (err instanceof z.ZodError) {
-        // ✅ Use showSnackbar for each error combined
-        const messages = err.errors[0].message;
         showErrorAlert({
-          title: messages,
+          title: "Something went wrong during upload.",
           alertType: "error",
           duration: 2000,
         });
       } else {
-        console.error(err);
         showErrorAlert({
           title: "Something went wrong during upload.",
           alertType: "error",

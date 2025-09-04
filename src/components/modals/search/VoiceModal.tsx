@@ -48,7 +48,6 @@ export const VoiceModal: React.FC<VoiceModalProps> = ({
       });
       audioRecorder.record();
     } catch (err: any) {
-      console.log("[Start Error]", err);
       setError(err.message || "Recording failed");
       setIsRecording(false);
     }
@@ -64,7 +63,6 @@ export const VoiceModal: React.FC<VoiceModalProps> = ({
         await uploadRecording(uri);
       }
     } catch (err: any) {
-      console.log("[Stop Error]", err);
       setError(err.message || "Failed to stop recording");
     }
   };
@@ -92,7 +90,6 @@ export const VoiceModal: React.FC<VoiceModalProps> = ({
       onClose();
       return onUpload(res.results.results);
     } catch (err: any) {
-      console.log("[Upload Error]", err);
       setError("Failed to upload audio");
     } finally {
       setLoading(false);
@@ -106,11 +103,9 @@ export const VoiceModal: React.FC<VoiceModalProps> = ({
   //       const res = await voiceSearchProperties(uri);
   //       if (res) {
   //         const properties = res.results || [];
-  //         console.log(properties);
   //         onUpload(properties);
   //       }
   //     } catch (err: any) {
-  //       console.log("[Upload Error]", err);
   //       setError("Failed to upload audio");
   //     } finally {
   //       setLoading(false);

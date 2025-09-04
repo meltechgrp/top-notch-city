@@ -52,7 +52,6 @@ export default function GlobalManager() {
         err?.detail?.includes("expired") ||
         err?.detail?.includes("Not authenticated")
       ) {
-        console.log("expired");
         return await unsetAuthToken();
       }
     }

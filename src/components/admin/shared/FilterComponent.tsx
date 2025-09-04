@@ -1,13 +1,7 @@
 import { Pressable, ScrollView } from "react-native";
-import {
-  Badge,
-  BadgeText,
-  Input,
-  InputField,
-  Text,
-  View,
-} from "@/components/ui";
+import { Badge, BadgeText, Text, View } from "@/components/ui";
 import { cn } from "@/lib/utils";
+import { CustomInput } from "@/components/custom/CustomInput";
 
 type Props = {
   tab?: string;
@@ -33,15 +27,14 @@ export function FilterComponent({
     <View className="gap-5 mb-4">
       <View className="gap-4">
         <View>
-          <Input className="rounded-xl bg-background-muted px-2 h-11 ">
-            <InputField
-              placeholder={
-                searchPlaceholder ?? "Search by name, email or phone..."
-              }
-              value={search}
-              onChangeText={onSearch}
-            />
-          </Input>
+          <CustomInput
+            className="rounded-xl bg-background-muted px-2 h-11 "
+            value={search}
+            placeholder={
+              searchPlaceholder ?? "Search by name, email or phone..."
+            }
+            onUpdate={onSearch}
+          />
         </View>
         {tabs?.length && (
           <ScrollView

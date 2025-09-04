@@ -151,9 +151,7 @@ const MediaPicker = React.forwardRef<MediaPickerRef, Props>((props, ref) => {
           .slice(0, max);
         return merged;
       });
-    } catch (err) {
-      console.error("Failed to pick media:", err);
-    }
+    } catch (err) {}
   }, [onChange, media, max, origin, autoCompress]);
 
   const onRemovePhoto = React.useCallback(

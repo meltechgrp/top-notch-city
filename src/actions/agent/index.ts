@@ -58,7 +58,6 @@ export async function uploadAgentForm(form: AgentFormData) {
     );
     return response.data;
   } catch (error) {
-    console.error("Upload failed:", error);
     throw error;
   }
 }
@@ -76,7 +75,6 @@ export async function getMyApplications() {
     const res = await Fetch("/agent/me");
     return res as AgentReview[];
   } catch (error) {
-    console.log(error);
     return undefined;
   }
 }
@@ -96,7 +94,6 @@ export async function acceptApplication({
   if (res?.detail) {
     throw new Error("Failed to accept agent application");
   }
-  console.log(res);
   return res as { message: string };
 }
 export async function rejectApplication({
@@ -117,7 +114,6 @@ export async function rejectApplication({
   if (res?.detail) {
     throw new Error("Failed to accept agent application");
   }
-  console.log(res);
   return res as { message: string };
 }
 export async function deleteApplication({
@@ -132,6 +128,5 @@ export async function deleteApplication({
   if (res?.detail) {
     throw new Error("Failed to delete agent application");
   }
-  console.log(res);
   return res as { message: string };
 }

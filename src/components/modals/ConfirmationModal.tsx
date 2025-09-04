@@ -64,7 +64,6 @@ export function ConfirmationModal({
       onPress && onPress(e);
       setConfirmationModal(false);
     } catch (err) {
-      console.error("Confirmation error:", err);
     } finally {
       setLoading(false);
     }

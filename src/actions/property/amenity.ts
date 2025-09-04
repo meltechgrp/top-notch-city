@@ -5,7 +5,6 @@ export const fetchAllAmenities = async (): Promise<AmenityLabel[]> => {
     const res = await Fetch(`/amenity-labels/`, {});
     return res as AmenityLabel[];
   } catch (error) {
-    console.log(error);
     throw new Error("Failed to fetch amenity labels");
   }
 };
@@ -31,7 +30,6 @@ export const addAmenity = async ({
     if (res?.detail) throw new Error("Failed to add amenity");
     return true;
   } catch (error) {
-    console.error(error);
     throw error;
   }
 };
@@ -58,7 +56,6 @@ export const editAmenity = async ({
     if (res?.detail) throw new Error("Failed to edit amenity");
     return true;
   } catch (error) {
-    console.error(error);
     throw error;
   }
 };
@@ -71,7 +68,6 @@ export const deleteAmenity = async ({ id }: { id: string }) => {
     if (res?.detail) throw new Error("Failed to delete amenity");
     return true;
   } catch (error) {
-    console.error(error);
     throw error;
   }
 };

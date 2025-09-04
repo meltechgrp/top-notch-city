@@ -12,7 +12,6 @@ export async function fetchProperty({ id }: { id: string }) {
 
     return res as Property;
   } catch (error) {
-    console.log(error);
     throw new Error("Failed to fetch property");
   }
 }
@@ -25,7 +24,6 @@ export async function fetchWishlist() {
 
     return res as Wishlist[];
   } catch (error) {
-    console.log(error);
     throw new Error("Failed to fetch wishlist");
   }
 }
@@ -69,7 +67,6 @@ export async function fetchNearbySection({
 
     return await res.json();
   } catch (error) {
-    console.log(error);
     throw new Error("Failed to fetch");
   }
 }
@@ -90,7 +87,6 @@ export async function addToWishList({ id }: { id: string }) {
 
     return res;
   } catch (error) {
-    console.log(error);
     throw new Error("Failed to add wishlist item");
   }
 }
@@ -105,7 +101,6 @@ export async function removeFromWishList({ id }: { id: string }) {
     }
     return res;
   } catch (error) {
-    console.log(error);
     throw new Error("Failed to remove wishlist item");
   }
 }
@@ -120,7 +115,6 @@ export async function likeProperty({ id }: { id: string }) {
     });
     return res;
   } catch (error) {
-    console.log(error);
     throw new Error("Failed to like");
   }
 }
@@ -132,7 +126,6 @@ export async function viewProperty({ id }: { id: string }) {
     });
     return res;
   } catch (error) {
-    console.log(error);
     throw new Error("Failed to view");
   }
 }

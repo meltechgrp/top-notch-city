@@ -24,7 +24,6 @@ const TABS = ["Properties", "Reviews"];
 export default function ProfileScreen() {
   const router = useRouter();
   const { user } = useLocalSearchParams() as { user: string };
-  console.log(user);
   const { data, refetch, isLoading, isFetching } = useQuery({
     queryKey: ["user", user],
     queryFn: () => getUser(user),

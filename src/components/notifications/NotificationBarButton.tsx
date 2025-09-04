@@ -1,5 +1,5 @@
 import NotificationBadge from "@/components/notifications/NotificationBadge";
-import { router, useFocusEffect, usePathname } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { Bell } from "lucide-react-native";
 import { useCallback, useMemo } from "react";
 import { View } from "react-native";

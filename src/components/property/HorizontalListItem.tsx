@@ -17,7 +17,6 @@ export default function HorizontalListItem(props: Props) {
     <Pressable
       both
       onPress={() => {
-        console.log("hello");
         router.push({
           pathname: `/property/[propertyId]`,
           params: {

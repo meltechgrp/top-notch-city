@@ -69,7 +69,6 @@ export default function DatePicker(props: IProps) {
         className={cn(!modal && "mx-auto bg-blue-500")}
         onDateChange={(date) => {
           if (modal) return;
-          console.log(date);
           onChange?.(date);
           setShow(false);
         }}

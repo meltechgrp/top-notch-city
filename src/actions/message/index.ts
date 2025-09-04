@@ -61,7 +61,6 @@ export async function editMessage({
   message_id: string;
   content: string;
 }) {
-  console.log(message_id, content);
   const result = await Fetch(
     `/messages/${message_id}?new_content=${content} `,
     {
@@ -105,7 +104,6 @@ export async function getChatMessages({
     if (res?.detail) throw new Error("Failed to fetch messages");
     return res as ChatMessages;
   } catch (error) {
-    console.error(error);
     throw new Error("Failed to fetch properties");
   }
 }

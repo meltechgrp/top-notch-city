@@ -51,7 +51,6 @@ export default function CustomerCareBottomSheet({
     queryFn: fetchStaff,
   });
   if (__DEV__) {
-    console.log(error);
   }
   useRefreshOnFocus(refetch);
   return (
@@ -79,14 +78,12 @@ export default function CustomerCareBottomSheet({
                 },
                 {
                   onError: (e) => {
-                    console.log(e);
                     showErrorAlert({
                       title: "Unable to start chat",
                       alertType: "error",
                     });
                   },
                   onSuccess: (data) => {
-                    console.log(data);
                     router.replace({
                       pathname: "/messages/[chatId]",
                       params: {

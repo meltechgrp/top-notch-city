@@ -80,14 +80,12 @@ export function ReelInteractionBar({
                 },
                 {
                   onError: (e) => {
-                    console.log(e);
                     showErrorAlert({
                       title: "Unable to start chat",
                       alertType: "error",
                     });
                   },
                   onSuccess: (data) => {
-                    console.log(data);
                     router.replace({
                       pathname: "/messages/[chatId]",
                       params: {

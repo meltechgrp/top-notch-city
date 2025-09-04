@@ -75,18 +75,6 @@ export function showBounceNotification({
     showAnimationDuration: 800,
     showEasing: Easing.bounce,
     hideOnPress: true,
-    onPress: () => {
-      console.log("pressed", entity_type);
-      if (entity_type == "chat") {
-        console.log("pressed", entity_id);
-        router.push({
-          pathname: "/(protected)/(tabs)/message/[chatId]",
-          params: {
-            chatId: entity_id as string,
-          },
-        });
-      }
-    },
     onHidden,
   });
 }

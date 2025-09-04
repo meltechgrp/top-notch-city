@@ -30,9 +30,7 @@ const Image = memo(
       if (!source) return null;
       const image = useImage(source as ImageSource, {
         maxWidth: 500,
-        onError(error, retry) {
-          console.error("Loading failed:", error.message);
-        },
+        onError(error, retry) {},
       });
       return (
         <ExpoImage

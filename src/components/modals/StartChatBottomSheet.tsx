@@ -1,5 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useState } from "react";
+import React from "react";
 import { TouchableOpacity, View } from "react-native";
 import {
   Avatar,
@@ -18,18 +18,12 @@ import {
   HelpCircle,
   House,
   MessagesSquare,
-  NotebookPen,
   SendHorizonal,
   X,
 } from "lucide-react-native";
 import { Divider } from "@/components/ui/divider";
-import AnimatedPressable from "@/components/custom/AnimatedPressable";
 import { router } from "expo-router";
-import {
-  openEnquiryModal,
-  openStaffsModal,
-} from "@/components/globals/AuthModals";
-import CustomerCareBottomSheet from "@/components/modals/CustomerCareBottomSheet";
+import { openEnquiryModal } from "@/components/globals/AuthModals";
 
 type Props = {
   visible: boolean;
@@ -116,7 +110,7 @@ export default function ConnectionsListSelectBottomSheet(props: Props) {
                   We reply in few minutes
                 </Text>
               </View>
-              <Icon as={SendHorizonal} />
+              <Icon className="text-primary" as={SendHorizonal} />
             </TouchableOpacity>
             <View className=" mt-6 px-6 shadow py-6 gap-4 bg-background-muted rounded-3xl">
               <TouchableOpacity
@@ -129,7 +123,7 @@ export default function ConnectionsListSelectBottomSheet(props: Props) {
                 <Text size="xl" className=" font-heading">
                   Messages
                 </Text>
-                <Icon as={MessagesSquare} />
+                <Icon className="text-primary" as={MessagesSquare} />
               </TouchableOpacity>
               <Divider />
               <TouchableOpacity
@@ -147,7 +141,7 @@ export default function ConnectionsListSelectBottomSheet(props: Props) {
                 <Text size="xl" className=" font-heading">
                   Explore Properties
                 </Text>
-                <Icon as={House} />
+                <Icon className="text-primary" as={House} />
               </TouchableOpacity>
             </View>
             <View className=" mt-6 px-6 shadow py-6 gap-4 bg-background-muted rounded-3xl">
@@ -162,7 +156,7 @@ export default function ConnectionsListSelectBottomSheet(props: Props) {
                 <Text size="xl" className=" font-heading">
                   Help
                 </Text>
-                <Icon as={HelpCircle} />
+                <Icon className="text-primary" as={HelpCircle} />
               </TouchableOpacity>
               <Divider />
               <TouchableOpacity
@@ -175,7 +169,7 @@ export default function ConnectionsListSelectBottomSheet(props: Props) {
                 <Text size="xl" className=" font-heading">
                   Send us a feedback
                 </Text>
-                <Icon as={Bot} />
+                <Icon className="text-primary" as={Bot} />
               </TouchableOpacity>
             </View>
           </View>
