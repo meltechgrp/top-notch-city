@@ -45,7 +45,6 @@ const ChatRoomFooter = React.forwardRef<EditorComponentRefHandle, Props>(
         const mock: Message = {
           message_id: isEditing ? selectedMessage?.message_id! : tempId,
           created_at: new Date().toString(),
-          updated_at: new Date().toString(),
           content: text,
           sender_info: {
             id: me.id,

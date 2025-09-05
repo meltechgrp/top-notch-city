@@ -47,6 +47,7 @@ type Property = {
   address: Address;
   media: Media[];
   owner: Owner;
+  is_following: boolean;
   amenities: Amenity[];
   interaction: Interaction;
   owner_interaction: Owner_interaction;

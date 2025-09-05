@@ -32,7 +32,7 @@ interface Message {
   sender_info: SenderInfo;
   read: boolean;
   status: "pending" | "seen" | "delivered" | "sent" | "error";
-  updated_at: string;
+  updated_at?: string;
   deleted_at?: string;
   isMock?: boolean;
   property_info?: {

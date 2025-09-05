@@ -1,6 +1,6 @@
 import { ScrollView } from "react-native";
 import TopLocation from "./TopLocation";
-import { useStore } from "@/store";
+import { useHomeFeed } from "@/hooks/useHomeFeed";
 
 type Props = {
   category?: string;
@@ -9,7 +9,7 @@ type Props = {
 };
 
 export default function TopLocationsHorizontalList(props: Props) {
-  const { topLocations: locations } = useStore();
+  const { locations } = useHomeFeed();
 
   return (
     <ScrollView

@@ -27,13 +27,13 @@ export function formatMessageTime(
   const { hideTimeForFullDate } = opt || {
     hideTimeForFullDate: false,
   };
-  const date = typeof time === "string" ? new Date(time) : time;
+  const localDate = typeof time === "string" ? new Date(time) : time;
 
   // Detect the user's local timezone automatically
   const timeZone = Intl.DateTimeFormat().resolvedOptions();
 
   // Convert UTC/server date into user's timezone
-  const localDate = new TZDate(date, "+02:00");
+  // const localDate = new TZDate(date, "+02:00");
   if (opt?.onlyTime) {
     return format(localDate, "h:mm");
   }

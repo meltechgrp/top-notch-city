@@ -4,7 +4,8 @@ import axios, { AxiosRequestConfig } from "axios";
 import { getUniqueIdSync } from "react-native-device-info";
 import { useEffect, useRef, useState } from "react";
 import { useChatStore } from "@/store/chatStore";
-const MAPS_API_KEY = process.env.EXPO_PUBLIC_ANDROID_MAPS_API_KEY;
+import { useChat } from "@/hooks/useChat";
+import { useHomeFeed } from "@/hooks/useHomeFeed";
 
 export async function Fetch(url: string, options: AxiosRequestConfig = {}) {
   const authToken = getAuthToken();
@@ -27,6 +28,8 @@ export function useWebSocket() {
   const authToken = getAuthToken();
   const { addIncomingMessage, updateMessageStatus, updateMessage } =
     useChatStore.getState();
+  const { getTotalCount } = useHomeFeed();
+  const { refetch } = useChat();
   const ws = useRef<WebSocket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const reconnectAttempts = useRef(0);
@@ -83,6 +86,10 @@ export function useWebSocket() {
 
           case "message_edited":
             updateMessage(data.chat_id, data.message_id, data.content);
+            break;
+          case "unread_count_update":
+            refetch();
+            getTotalCount();
             break;
         }
       } catch (err) {

@@ -1,6 +1,6 @@
 import { generateMediaUrl } from "@/lib/api";
 import { cn } from "@/lib/utils";
-import React, { memo, useEffect, useMemo, useState } from "react";
+import React, { memo, useMemo } from "react";
 import { ImageStyle, StyleProp, ViewProps } from "react-native";
 import type { AnimatedProps } from "react-native-reanimated";
 import Animated from "react-native-reanimated";
@@ -54,8 +54,8 @@ const PropertyMedia: React.FC<Props> = (props) => {
     () => generateMediaUrl(source),
     [source]
   );
-  const { mutateAsync, isPending } =
-    usePropertyDataMutations().deletePropertyMediaMutation;
+  // const { mutateAsync, isPending } =
+  //   usePropertyDataMutations().deletePropertyMediaMutation;
   return (
     <Animated.View
       testID={testID}
@@ -82,7 +82,7 @@ const PropertyMedia: React.FC<Props> = (props) => {
           )}
         />
       )}
-      {isOwner && (
+      {/* {isOwner && (
         <View className=" absolute top-1 right-1">
           <ConfirmationModal
             header="Delete media"
@@ -124,7 +124,7 @@ const PropertyMedia: React.FC<Props> = (props) => {
             actionText=""
           />
         </View>
-      )}
+      )} */}
     </Animated.View>
   );
 };

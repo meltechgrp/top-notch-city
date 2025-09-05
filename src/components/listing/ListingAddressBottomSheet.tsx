@@ -13,14 +13,14 @@ import { CustomInput } from "../custom/CustomInput";
 import { SpinningLoader } from "../loaders/SpinningLoader";
 
 type Props = {
-  show: boolean;
+  visible: boolean;
   onDismiss: () => void;
   onUpdate: (data: GooglePlace) => void;
   address?: GooglePlace;
 };
 
 function ListingAddressBottomSheet(props: Props) {
-  const { show, onDismiss, onUpdate } = props;
+  const { visible, onDismiss, onUpdate } = props;
   const [fetching, setFetching] = useState(false);
   const [text, setText] = useState("");
   const [locations, setLocations] = useState<GooglePlace[]>([]);
@@ -73,7 +73,7 @@ function ListingAddressBottomSheet(props: Props) {
       withHeader={false}
       withBackButton={false}
       snapPoint={"80%"}
-      visible={show}
+      visible={visible}
       onDismiss={onDismiss}
     >
       <KeyboardDismissPressable>

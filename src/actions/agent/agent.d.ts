@@ -42,4 +42,20 @@ interface AgentInfo {
   total_property_count: number;
   total_property_views: number;
   followers_count: number;
+  is_following: boolean;
 }
+
+type AgentResult = {
+  total: number;
+  page: number;
+  per_page: number;
+  pages: number;
+  results: AgentReview[];
+};
+type AgentResult2 = {
+  total: number;
+  page: number;
+  per_page: number;
+  pages: number;
+  results: AgentInfo[];
+};

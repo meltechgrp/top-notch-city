@@ -4,7 +4,13 @@ import { useStore } from "@/store";
 import { shallowCompareProperties } from "@/lib/utils";
 import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import { fetchTopLocations } from "@/actions/property/locations";
+import { Fetch } from "@/actions/utills";
 
+async function getTotal() {
+  return (await Fetch("/chats/unread-count")) as {
+    total_unread: number;
+  };
+}
 export function useHomeFeed() {
   const {
     topProperties,
@@ -21,11 +27,15 @@ export function useHomeFeed() {
     isRefetching: refetchingAll,
   } = useInfinityQueries({ type: "all" });
 
+  const { data: totalCount, refetch: getTotalCount } = useQuery({
+    queryKey: ["total"],
+    queryFn: getTotal,
+  });
+
   const allProperties = useMemo(
     () => allData?.pages.flatMap((page) => page.results) || [],
     [allData]
   );
-
   /** --- Top Locations --- */
   const {
     data: locationsData,
@@ -56,11 +66,6 @@ export function useHomeFeed() {
     () => nearbyData?.pages.flatMap((page) => page.results) || [],
     [nearbyData]
   );
-  // useEffect(() => {
-  //   if (location) {
-  //     refetchNearby();
-  //   }
-  // }, [location]);
   /** --- Sync with Store only when changed --- */
   useEffect(() => {
     if (!allProperties.length) return;
@@ -68,7 +73,7 @@ export function useHomeFeed() {
       setTopProperties(allProperties);
     }
   }, [allProperties, topProperties, setTopProperties]);
-
+  const total = useMemo(() => totalCount?.total_unread, [totalCount]);
   useEffect(() => {
     if (!nearby.length) return;
     if (!shallowCompareProperties(nearbyProperties || [], nearby)) {
@@ -78,17 +83,27 @@ export function useHomeFeed() {
 
   /** --- Combined Refresh --- */
   const refreshAll = useCallback(async () => {
-    await Promise.all([refetchAll(), refetchLocations(), refetchNearby()]);
-  }, [refetchAll, refetchLocations, refetchNearby]);
+    await Promise.all([
+      refetchAll(),
+      refetchLocations(),
+      refetchNearby(),
+      getTotalCount(),
+    ]);
+  }, [refetchAll, refetchLocations, refetchNearby, getTotalCount]);
   const locations = useMemo(
     () => locationsData?.slice() || [],
-    [locationsData]
+    [locationsData?.length]
   );
+  useEffect(() => {
+    getTotal();
+  }, []);
   return {
     allProperties: topProperties || [],
     locations,
     nearby: nearbyProperties || [],
     refreshAll,
     refetching: refetchingAll || refetchingLocations || refetchingNearby,
+    total,
+    getTotalCount,
   };
 }

@@ -53,7 +53,6 @@ type Actions = {
 
   setTopLocations: (locations: TopLocation[]) => void;
   clearTopLocations: () => void;
-
   updateMuted: () => void;
   // Search
   updateSearchProperties: (data: Property[]) => void;

@@ -8,7 +8,7 @@ import { RefreshControl } from "react-native";
 import { useChat } from "@/hooks/useChat";
 import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
 
-export default function MessagesScreen() {
+export default function ChatsScreen() {
   const { chats, loading, refreshing, refetch } = useChat();
 
   useRefreshOnFocus(async () => {

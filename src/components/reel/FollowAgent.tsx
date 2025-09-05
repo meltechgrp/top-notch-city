@@ -3,7 +3,6 @@ import { Icon, Pressable } from "@/components/ui";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus, Check } from "lucide-react-native";
 import { MotiView, AnimatePresence } from "moti";
-import { useState } from "react";
 
 export function FollowAgent({
   id,
@@ -13,77 +12,62 @@ export function FollowAgent({
   following: boolean;
 }) {
   const client = useQueryClient();
-  const [state, setState] = useState<"plus" | "check" | "hidden">("plus");
   const { mutate } = useMutation({
     mutationFn: () => followAgent(id),
-    //   onMutate: async () => {
-    //     await client.cancelQueries({ queryKey: ["reels"] });
+    onMutate: async () => {
+      await client.cancelQueries({ queryKey: ["reels"] });
 
-    //     const previousData = client.getQueryData<{
-    //       pages: Result[];
-    //       pageParams: unknown[];
-    //     }>(["reels"]);
+      const previousData = client.getQueryData<{
+        pages: Result[];
+        pageParams: unknown[];
+      }>(["reels"]);
 
-    //     client.setQueryData<{
-    //       pages: Result[];
-    //       pageParams: unknown[];
-    //     }>(["reels"], (old) => {
-    //       if (!old) return old;
-    //       return {
-    //         ...old,
-    //         pages: old.pages.map((page) => ({
-    //           ...page,
-    //           results: page.results?.map((reel) => {
-    //             if (reel.id !== id) return reel;
-    //             return {
-    //               ...reel,
-    //               owner_interaction: {
-    //                 ...reel?.owner_interaction,
-    //                 viewed: !viewed,
-    //               },
-    //               interaction: {
-    //                 ...reel?.interaction,
-    //                 added_to_wishlist: reel.interaction
-    //                   ? reel.interaction.added_to_wishlist + (viewed ? -1 : 1)
-    //                   : viewed
-    //                     ? -1
-    //                     : 1,
-    //               },
-    //             };
-    //           }),
-    //         })),
-    //       };
-    //     });
+      client.setQueryData<{
+        pages: Result[];
+        pageParams: unknown[];
+      }>(["reels"], (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          pages: old.pages.map((page) => ({
+            ...page,
+            results: page.results?.map((reel) => {
+              if (reel.id !== id) return reel;
+              const following = reel.is_following;
+              return {
+                ...reel,
+                is_following: !following,
+              };
+            }),
+          })),
+        };
+      });
 
-    //     return { previousData };
-    //   },
-    //   // If the request fails, rollback
-    //   onError: (_err, _vars, ctx) => {
-    //     console.log(_err);
-    //     if (ctx?.previousData) {
-    //       client.setQueryData(["reels"], ctx.previousData);
-    //     }
-    //   },
+      return { previousData };
+    },
+    // If the request fails, rollback
+    onError: (_err, _vars, ctx) => {
+      console.log(_err);
+      if (ctx?.previousData) {
+        client.setQueryData(["reels"], ctx.previousData);
+      }
+    },
 
-    //   // After success, refetch in background to ensure sync
-    //   onSettled: () => {
-    //     client.invalidateQueries({ queryKey: ["reels"] });
-    //   },
+    // After success, refetch in background to ensure sync
+    onSettled: () => {
+      client.invalidateQueries({ queryKey: ["agents"] });
+      client.invalidateQueries({ queryKey: ["reels"] });
+    },
   });
   const handlePress = () => {
     mutate();
-    setState("check");
-    // Auto hide after 1s
-    setTimeout(() => {
-      setState("hidden");
-    }, 1000);
   };
   return (
     <AnimatePresence>
-      {state === "plus" && (
+      {!following && (
         <Pressable
           onPress={handlePress}
-          className="absolute -bottom-2.5 rounded-full p-1 bg-primary left-[26%]"
+          className="absolute -bottom-2.5 rounded-full p-1 bg-primary left-[22%]"
         >
           <MotiView
             from={{ scale: 0, opacity: 0 }}
@@ -100,7 +84,7 @@ export function FollowAgent({
         </Pressable>
       )}
 
-      {state === "check" && (
+      {following && (
         <MotiView
           key="check"
           from={{ scale: 0, opacity: 0 }}
@@ -110,7 +94,7 @@ export function FollowAgent({
             opacity: 0,
           }}
           transition={{ type: "spring" }}
-          className="absolute -bottom-2.5 rounded-full p-1 bg-primary left-[26%]"
+          className="absolute -bottom-2.5 rounded-full p-1 bg-primary left-[22%]"
         >
           <Icon size={"sm"} as={Check} className="text-white" />
         </MotiView>

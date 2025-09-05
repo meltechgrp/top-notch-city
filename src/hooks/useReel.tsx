@@ -53,6 +53,7 @@ export function propertyToReelVideo(properties: Property[]) {
           created_at: p.created_at,
           owner: p?.owner,
           price: p.price,
+          is_following: p.is_following || false,
           location: composeFullAddress(p.address, false, "short"),
           purpose: p.purpose,
         };

@@ -1,5 +1,5 @@
 import { Box, Button, ButtonText, Icon } from "@/components/ui";
-import { View } from "react-native";
+import { Dimensions, View } from "react-native";
 import { Heading, Pressable, Text } from "@/components/ui";
 import { composeFullAddress, formatMoney } from "@/lib/utils";
 import { capitalize, chunk } from "lodash-es";
@@ -31,12 +31,13 @@ import ListingBottomNavigation from "@/components/listing/ListingBottomNavigatio
 import { generateMediaUrl } from "@/lib/api";
 import headerLeft from "@/components/shared/headerLeft";
 
+const { width, height } = Dimensions.get("window");
+
 export default function PropertyEdit() {
   const { details: property, getImages, getVideos } = usePropertyStore();
   const [isViewer, setIsViewer] = useState(false);
   const [editingMode, setEditingMode] = useState(false);
   const [imageIndex, setImagesIndex] = useState(0);
-  const { width, onLayout, height } = useLayout();
   const { updateProperty, loading, error } = useUpdateProperty();
   const { listing, updateListing, updateListingStep, resetListing } =
     useTempStore();
@@ -89,9 +90,9 @@ export default function PropertyEdit() {
         alertType: "warn",
       });
     } else if (listing.step == 6) {
-      if (listing?.photos && listing?.photos?.length < 3)
+      if (listing?.photos && listing?.photos?.length < 1)
         return showErrorAlert({
-          title: "Select at least 3 images",
+          title: "Select at least 1 images",
           alertType: "warn",
         });
       else if (!listing?.photos?.length)
@@ -121,13 +122,13 @@ export default function PropertyEdit() {
       ...listing,
       step: step,
       purpose: property?.purpose,
-      category: property?.category as any,
-      subCategory: property?.subcategory as any,
+      category: property?.category.name,
+      subCategory: property?.subcategory.name,
       facilities: property?.amenities.map((item) => ({
         label: item.name,
         value: item.value,
       })),
-      description: property?.description as any,
+      description: property?.description as string,
       price: property?.price?.toString(),
       currency: property?.currency,
       photos: property?.media
@@ -163,11 +164,12 @@ export default function PropertyEdit() {
             alertType: "success",
           });
         },
-        onError: () =>
+        onError: (e) => {
           showErrorAlert({
             title: "Something went wrong. Try again!",
             alertType: "error",
-          }),
+          });
+        },
       }
     );
   }
@@ -204,7 +206,7 @@ export default function PropertyEdit() {
         }}
       />
       {editingMode ? (
-        <Box onLayout={onLayout} className="flex-1">
+        <Box className="flex-1">
           <FullHeightLoaderWrapper className="flex-1" loading={loading}>
             <SafeAreaView edges={["bottom"]} className="flex-1">
               <Animated.View
@@ -228,10 +230,7 @@ export default function PropertyEdit() {
       ) : (
         <Box className="flex-1">
           <BodyScrollView>
-            <View
-              onLayout={onLayout}
-              className="gap-y-4 flex-1 mt-4 px-4 pb-32"
-            >
+            <View className="gap-y-4 flex-1 mt-4 px-4 pb-32">
               <View className=" rounded-2xl bg-background-muted p-4">
                 <View className="flex-row justify-between mb-4">
                   <Heading size="md">Property Info</Heading>
@@ -261,11 +260,11 @@ export default function PropertyEdit() {
                   </View>
                   <InfoRow
                     label="Category"
-                    value={capitalize(property.category as any)}
+                    value={capitalize(property.category.name)}
                   />
                   <InfoRow
                     label="Sub-Category"
-                    value={capitalize(property.subcategory as any)}
+                    value={capitalize(property.subcategory.name)}
                   />
 
                   <InfoRow

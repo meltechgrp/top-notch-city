@@ -155,7 +155,7 @@ export default function ChatRoom(props: Props) {
     }
   }, [messages.length, chatId, me]);
   useRefreshOnFocus(async () => {
-    setTimeout(refetchMessages, 500);
+    setTimeout(refetchMessages, 200);
   });
   return (
     <BackgroundView className="flex-1 w-full">

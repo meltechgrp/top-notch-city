@@ -5,14 +5,6 @@ import { format } from "date-fns";
 import { Fetch } from "../utills";
 import { getUniqueIdSync } from "react-native-device-info";
 
-type AgentResult = {
-  total: number;
-  page: number;
-  per_page: number;
-  pages: number;
-  results: AgentReview[];
-};
-
 export async function uploadAgentForm(form: AgentFormData) {
   try {
     const data = new FormData();
@@ -131,8 +123,8 @@ export async function deleteApplication({
   return res as { message: string };
 }
 
-export async function getAgents() {
-  return (await Fetch("/agents/info")) as { results: AgentInfo[] };
+export async function getAgents({ pageParam }: { pageParam: number }) {
+  return (await Fetch("/agents/info")) as AgentResult2;
 }
 
 export async function followAgent(id: string) {

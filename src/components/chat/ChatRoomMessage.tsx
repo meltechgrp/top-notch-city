@@ -50,7 +50,7 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
           isMine ? "justify-end" : "justify-start"
         )}
       >
-        {message.updated_at && (
+        {!isMine && message?.updated_at && (
           <Text className="text-[10px] text-typography mr-1">Edited</Text>
         )}
         <Text className="text-xs text-typography/70">{formatedTime}</Text>

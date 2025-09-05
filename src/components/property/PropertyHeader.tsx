@@ -40,7 +40,7 @@ export default function PropertyHeader({
           style: "cancel",
         },
         {
-          text: "Logout",
+          text: "Delete",
           style: "destructive",
           onPress: async () => {
             mutate(

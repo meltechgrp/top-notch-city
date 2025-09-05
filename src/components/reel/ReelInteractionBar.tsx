@@ -72,7 +72,7 @@ export function ReelInteractionBar({
             {reel.owner?.first_name} {reel.owner?.last_name}
           </AvatarFallbackText>
         </Avatar>
-        <FollowAgent id={reel.owner?.id!} following={false} />
+        <FollowAgent id={reel.owner?.id!} following={reel.is_following} />
       </AnimatedPressable>
       <View className=" items-center">
         <ReelLikeButton liked={isLiked} id={reel.id} />

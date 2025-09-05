@@ -11,6 +11,7 @@ interface Reel {
   purpose: PropertyPurpose;
   price: number;
   location: string;
+  is_following: boolean;
 }
 interface VideoPlayerProps {
   style?: StyleProp<ViewStyle>;

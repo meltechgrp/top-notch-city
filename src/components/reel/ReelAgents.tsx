@@ -5,7 +5,7 @@ import { ReelAgentListItem } from "@/components/reel/ReelAgentListItem";
 import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
 import { View } from "@/components/ui";
 import { FlashList } from "@shopify/flash-list";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { Dimensions, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -17,12 +17,21 @@ export default function AgentList({ visible }: { visible: boolean }) {
     refetch,
     isLoading: loading,
     isRefetching: fetching,
-  } = useQuery({
-    queryKey: ["reel-agents"],
-    queryFn: getAgents,
-    enabled: !visible,
+    hasNextPage,
+    fetchNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["agents"],
+    queryFn: ({ pageParam = 1 }) => getAgents({ pageParam }),
+    getNextPageParam: (lastPage) => {
+      const { page, pages } = lastPage;
+      return page < pages ? page + 1 : undefined;
+    },
+    initialPageParam: 1,
   });
-  const agents = useMemo(() => data?.results || [], [data]);
+  const agents = useMemo(
+    () => data?.pages.flatMap((page) => page.results) || [],
+    [data]
+  );
   return (
     <SafeAreaView edges={["bottom", "top"]} className="flex-1 mt-14">
       <FlashList
@@ -32,16 +41,16 @@ export default function AgentList({ visible }: { visible: boolean }) {
           <RefreshControl
             progressViewOffset={30}
             colors={["#fff"]}
-            refreshing={fetching}
+            refreshing={false}
             onRefresh={refetch}
           />
         }
         decelerationRate="fast"
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <ReelAgentListItem account={item} />}
-        // onEndReached={() => {
-        //   if (hasNextPage && !loading) fetchNextPage?.();
-        // }}
+        onEndReached={() => {
+          if (hasNextPage && !loading) fetchNextPage?.();
+        }}
         contentContainerStyle={{ paddingBottom: 20 }}
         ListEmptyComponent={() =>
           loading ? (

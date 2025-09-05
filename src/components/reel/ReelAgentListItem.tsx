@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { View, Pressable, TouchableOpacity } from "react-native";
-import { Check, CheckCircle } from "lucide-react-native";
+import React from "react";
+import { View, TouchableOpacity } from "react-native";
+import { Check, Dot } from "lucide-react-native";
 import {
   Avatar,
   AvatarFallbackText,
@@ -16,50 +16,43 @@ import AnimatedPressable from "@/components/custom/AnimatedPressable";
 import { router } from "expo-router";
 
 export const ReelAgentListItem = ({ account }: { account: AgentInfo }) => {
-  const [following, setFollowing] = useState(false);
   const client = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: () =>
-      following ? unFollowAgent(account.id) : followAgent(account.id),
+      account.is_following
+        ? unFollowAgent(account.id)
+        : followAgent(account.id),
     onMutate: async () => {
-      await client.cancelQueries({ queryKey: ["reels"] });
+      await client.cancelQueries({ queryKey: ["agents"] });
 
       const previousData = client.getQueryData<
         | {
-            results: AgentInfo[];
+            pages: AgentResult2[];
+            pageParams: unknown[];
           }
         | undefined
-      >(["reels"]);
+      >(["agents"]);
 
       client.setQueryData<
         | {
-            results: AgentInfo[];
+            pages: AgentResult2[];
+            pageParams: unknown[];
           }
         | undefined
-      >(["reels"], (old) => {
-        if (!old?.results) return old;
+      >(["agents"], (old) => {
+        if (!old?.pages) return old;
         return {
           ...old,
-          results: old.results.map((page) => ({
+          pages: old.pages.map((page) => ({
             ...page,
-            // results: page.results?.map((reel) => {
-            //   if (reel.id !== id) return reel;
-            //   return {
-            //     ...reel,
-            //     owner_interaction: {
-            //       ...reel?.owner_interaction,
-            //       viewed: !viewed,
-            //     },
-            //     interaction: {
-            //       ...reel?.interaction,
-            //       added_to_wishlist: reel.interaction
-            //         ? reel.interaction.added_to_wishlist + (viewed ? -1 : 1)
-            //         : viewed
-            //           ? -1
-            //           : 1,
-            //     },
-            //   };
-            // }),
+            results: page.results?.map((agent) => {
+              if (agent.id !== account.id) return agent;
+              const following = agent.is_following;
+              return {
+                ...agent,
+                is_following: !following,
+              };
+            }),
           })),
         };
       });
@@ -70,18 +63,17 @@ export const ReelAgentListItem = ({ account }: { account: AgentInfo }) => {
     onError: (_err, _vars, ctx) => {
       console.log(_err);
       if (ctx?.previousData) {
-        client.setQueryData(["reels"], ctx.previousData);
+        client.setQueryData(["agents"], ctx.previousData);
       }
     },
 
     // After success, refetch in background to ensure sync
     onSettled: () => {
-      client.invalidateQueries({ queryKey: ["reels"] });
+      client.invalidateQueries({ queryKey: ["agents"] });
     },
   });
   const handlePress = () => {
     mutate();
-    setFollowing(!following);
   };
   return (
     <TouchableOpacity
@@ -121,24 +113,32 @@ export const ReelAgentListItem = ({ account }: { account: AgentInfo }) => {
             <Icon as={Check} size="xs" />
           </View>
         </View>
-        <Text className=" text-sm">
-          {account.total_property_count} Properties
-        </Text>
-        <Text className=" text-sm">
-          {account.followers_count} followers · {account.total_property_views}{" "}
-          likes
-        </Text>
+        <View className="flex flex-row gap-2">
+          <Text>{account.total_property_count}</Text>
+          <Text className=" text-sm text-gray-400">Properties</Text>
+        </View>
+        <View className="flex flex-row items-center">
+          <View className="flex flex-row items-center gap-2">
+            <Text className=" text-sm">{account.followers_count}</Text>
+            <Text className=" text-sm text-gray-400">followers</Text>
+          </View>
+          <Icon as={Dot} />
+          <View className="flex flex-row items-center gap-2">
+            <Text className=" text-sm">{account.total_property_views}</Text>
+            <Text className=" text-sm text-gray-400">likes</Text>
+          </View>
+        </View>
       </View>
 
       {/* Follow Button */}
       <AnimatedPressable
         onPress={handlePress}
         className={`px-5 py-1.5 rounded-full ${
-          following ? "bg-gray-500" : "bg-primary"
+          account.is_following ? "bg-gray-500" : "bg-primary"
         }`}
       >
         <Text className={`font-semibold`}>
-          {following ? "Following" : "Follow"}
+          {account.is_following ? "Following" : "Follow"}
         </Text>
       </AnimatedPressable>
     </TouchableOpacity>

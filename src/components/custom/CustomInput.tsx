@@ -68,7 +68,7 @@ function CustomInputComponent({
           placeholder={placeholder}
           autoCapitalize="sentences"
           className={cn(
-            " bg-background-muted flex-1 px-4 h-14 rounded-xl",
+            " bg-background-muted text-typography flex-1 px-4 h-14 rounded-xl",
             multiline && "px-1 pt-6",
             className
           )}

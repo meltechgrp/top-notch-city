@@ -14,6 +14,8 @@ import { useResolvedTheme, Pressable } from "@/components/ui";
 import { useReels } from "@/hooks/useReel";
 import { useStore } from "@/store";
 
+// import { NativeTabs, Icon, Label } from "expo-router/unstable-native-tabs";
+
 export const unstable_settings = {
   initialRouteName: "home",
 };
@@ -78,6 +80,18 @@ export default function TabLayout() {
         options={() => ({
           title: "Properties",
           tabBarIcon: ({ color }) => <Plus size={24} color={color} />,
+          href: isAdmin ? null : "/(protected)/(tabs)/properties",
+        })}
+      />
+      <Tabs.Screen
+        name="chats"
+        options={() => ({
+          title: "Messages",
+          headerShown: true,
+          tabBarIcon: ({ color }) => (
+            <MessageSquareMore size={24} color={color} />
+          ),
+          href: null,
         })}
       />
       <Tabs.Screen

@@ -258,7 +258,7 @@ export function useUpdateProperty() {
         throw new Error("Please verify your property details");
       }
 
-      if (result?.property_id) {
+      if (result) {
         return result;
       }
 

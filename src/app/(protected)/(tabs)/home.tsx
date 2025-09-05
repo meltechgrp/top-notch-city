@@ -11,11 +11,12 @@ import eventBus from "@/lib/eventBus";
 import { useStore } from "@/store";
 import React, { useEffect, useState } from "react";
 import CustomerCareBottomSheet from "@/components/modals/CustomerCareBottomSheet";
+import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
 const MAP_HEIGHT = 400;
 
 export default function HomeScreen() {
   const { hasAuth, me } = useStore();
-  const { refreshAll } = useHomeFeed();
+  const { refreshAll, total, getTotalCount } = useHomeFeed();
   useEffect(() => {
     eventBus.dispatchEvent("REFRESH_PROFILE", null);
   }, []);
@@ -31,6 +32,7 @@ export default function HomeScreen() {
       openSignInModal({ visible: false });
     }
   }, [hasAuth]);
+  useRefreshOnFocus(getTotalCount);
   return (
     <>
       <ParallaxScrollView
@@ -44,7 +46,7 @@ export default function HomeScreen() {
         <TopProperties />
         <View className="h-24" />
       </ParallaxScrollView>
-      {me && <CreateButton className="" onPress={onNewChat} />}
+      {me && <CreateButton className="" total={total} onPress={onNewChat} />}
       {me && friendsModal && (
         <StartChatBottomSheet
           visible={friendsModal}
