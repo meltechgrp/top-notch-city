@@ -14,6 +14,7 @@ interface Props extends Partial<TextInputProps> {
   returnKeyLabel?: string;
   height?: number;
   type?: any;
+  containerClassName?: string;
 }
 function CustomInputComponent({
   value,
@@ -30,6 +31,7 @@ function CustomInputComponent({
   height,
   type = "text",
   inputClassName,
+  containerClassName,
   ...props
 }: Props) {
   const theme = useResolvedTheme();
@@ -50,8 +52,9 @@ function CustomInputComponent({
   return (
     <View
       className={cn(
-        "py-px min-h-20 gap-2 flex-1 rounded-xl",
-        !title && "min-h-14"
+        "py-px min-h-20 gap-2 rounded-xl",
+        !title && "min-h-14",
+        containerClassName
       )}
     >
       {title && (
@@ -65,7 +68,7 @@ function CustomInputComponent({
           placeholder={placeholder}
           autoCapitalize="sentences"
           className={cn(
-            "my-1 bg-background-muted flex-1 px-4 h-14 rounded-xl",
+            " bg-background-muted flex-1 px-4 h-14 rounded-xl",
             multiline && "px-1 pt-6",
             className
           )}

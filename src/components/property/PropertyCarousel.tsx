@@ -184,7 +184,11 @@ function PropertyCarousel({
         )}
         {showImages && (
           <View className="bg-background-muted w-full">
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerClassName="pl-4 pb-4"
+            >
               <Pagination.Custom<Media>
                 progress={progress}
                 data={media}

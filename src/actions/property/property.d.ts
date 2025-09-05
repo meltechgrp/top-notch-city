@@ -48,8 +48,8 @@ type Property = {
   media: Media[];
   owner: Owner;
   amenities: Amenity[];
-  interaction?: Interaction;
-  owner_interaction?: Owner_interaction;
+  interaction: Interaction;
+  owner_interaction: Owner_interaction;
   reason_or_comment?: string;
 };
 

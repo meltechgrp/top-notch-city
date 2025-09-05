@@ -5,11 +5,9 @@ import "react-native-reanimated";
 import { ErrorBoundaryProps, router, Slot } from "expo-router";
 import AppCrashScreen from "@/components/shared/AppCrashScreen";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { ThemeProvider } from "@/components/layouts/ThemeProvider";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import * as SplashScreen from "expo-splash-screen";
 import GlobalManager from "@/components/shared/GlobalManager";
-import { QueryClient } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { Linking, LogBox, Platform } from "react-native";
 import { cacheStorage } from "@/lib/asyncStorage";
@@ -19,27 +17,19 @@ import { useStore } from "@/store";
 import Constants from "expo-constants";
 import { updatePushNotificationToken } from "@/actions/utills";
 import { pushNotificationResponseHandler } from "@/lib/notification";
-import { showBounceNotification } from "@/components/custom/CustomNotification";
-import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
-import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import useSuppressChatPushNotification from "@/components/chat/useSuppressChatPushNotification";
+import * as SplashScreen from "expo-splash-screen";
 import {
   configureReanimatedLogger,
   ReanimatedLogLevel,
 } from "react-native-reanimated";
-import { useReactQueryDevTools } from "@dev-plugins/react-query";
 
-const queryClient = new QueryClient({
+const query = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 1000 * 60 * 60 * 24, // 24 hours
     },
   },
-});
-
-const asyncStoragePersister = createAsyncStoragePersister({
-  storage: AsyncStorage,
 });
 
 export const unstable_settings = {
@@ -57,10 +47,9 @@ configureReanimatedLogger({
 });
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
-// SplashScreen.preventAutoHideAsync();
+SplashScreen.hide();
 
 export default function RootLayout() {
-  useReactQueryDevTools(queryClient);
   useNotificationObserver();
   useSuppressChatPushNotification();
   useMountPushNotificationToken();
@@ -118,25 +107,20 @@ export default function RootLayout() {
 
   return (
     <>
-      <PersistQueryClientProvider
-        client={queryClient}
-        persistOptions={{ persister: asyncStoragePersister }}
-      >
-        <ThemeProvider>
-          <GestureHandlerRootView style={{ flex: 1 }}>
-            <NotifierWrapper>
-              <GluestackUIProvider>
-                <KeyboardProvider>
-                  <BottomSheetModalProvider>
-                    <Slot />
-                    <GlobalManager />
-                  </BottomSheetModalProvider>
-                </KeyboardProvider>
-              </GluestackUIProvider>
-            </NotifierWrapper>
-          </GestureHandlerRootView>
-        </ThemeProvider>
-      </PersistQueryClientProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <NotifierWrapper>
+          <GluestackUIProvider>
+            <KeyboardProvider>
+              <BottomSheetModalProvider>
+                <QueryClientProvider client={query}>
+                  <Slot />
+                  <GlobalManager />
+                </QueryClientProvider>
+              </BottomSheetModalProvider>
+            </KeyboardProvider>
+          </GluestackUIProvider>
+        </NotifierWrapper>
+      </GestureHandlerRootView>
     </>
   );
 }

@@ -7,7 +7,7 @@ import { PropertyPrice } from "./PropertyPrice";
 import { PropertyTitle } from "./PropertyTitle";
 
 interface Props {
-  property: Property;
+  property: Property | null;
   width: number;
 }
 
@@ -20,22 +20,26 @@ export function PropertyHeroSection({ property, width }: Props) {
           factor={1}
           withBackdrop={true}
           loop={false}
-          media={property.media.filter((item) => item.media_type == "IMAGE")}
+          media={
+            property?.media.filter((item) => item.media_type == "IMAGE") || []
+          }
           pointerPosition={40}
         />
-        <View className=" absolute flex-row justify-between bottom-16 left-4 right-4 w-full px-1">
-          <View className="gap-2 flex-1">
-            <PropertyTitle property={property} />
-            <PropertyPrice property={property} className="self-start" />
-            <View className="flex-row items-center mt-1 gap-2">
-              <Icon size="sm" as={MapPin} className="text-primary" />
-              <Text size="sm" className=" text-white">
-                {composeFullAddress(property?.address, true, "long")}
-              </Text>
+        {property && (
+          <View className=" absolute flex-row justify-between bottom-16 left-4 right-4 w-full px-1">
+            <View className="gap-2 flex-1">
+              <PropertyTitle property={property} />
+              <PropertyPrice property={property} className="self-start" />
+              <View className="flex-row items-center mt-1 gap-2">
+                <Icon size="sm" as={MapPin} className="text-primary" />
+                <Text size="sm" className=" text-white">
+                  {composeFullAddress(property?.address, true, "long")}
+                </Text>
+              </View>
             </View>
+            <PropertyInteractions interaction={property.interaction} />
           </View>
-          <PropertyInteractions interaction={property.interaction} />
-        </View>
+        )}
       </View>
     </View>
   );

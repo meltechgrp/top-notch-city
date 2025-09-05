@@ -36,6 +36,7 @@ export default function HomeScreen() {
       <ParallaxScrollView
         headerHeight={MAP_HEIGHT}
         onRefresh={refreshAll}
+        setHasScrolledToDetails={() => {}}
         headerComponent={<DiscoverProperties mapHeight={MAP_HEIGHT} />}
       >
         {/* Feed items */}

@@ -159,7 +159,10 @@ export default function PropertiesScreen() {
           className="pb-24"
           ListEmptyComponent={
             <View className="flex-1 gap-8">
-              <View className="flex-1 min-h-96 rounded-3xl overflow-hidden">
+              <View
+                style={{ height: height / 1.3 }}
+                className="flex-1 min-h-96 rounded-3xl overflow-hidden"
+              >
                 <Image
                   source={require("@/assets/images/landing/agent.png")}
                   alt="sell banner"
@@ -180,9 +183,9 @@ export default function PropertiesScreen() {
                 <Button
                   onPress={handleGetStarted}
                   size="xl"
-                  className="mt-6 w-1/2 mx-auto rounded-md"
+                  className="mt-6 self-center mx-auto rounded-md"
                 >
-                  <ButtonText className="text-sm">Get Started</ButtonText>
+                  <ButtonText className="text-md">Get Started</ButtonText>
                   <Icon size="xl" as={MoveRight} className="text-white" />
                 </Button>
               </View>

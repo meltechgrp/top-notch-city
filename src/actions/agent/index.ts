@@ -130,3 +130,18 @@ export async function deleteApplication({
   }
   return res as { message: string };
 }
+
+export async function getAgents() {
+  return (await Fetch("/agents/info")) as { results: AgentInfo[] };
+}
+
+export async function followAgent(id: string) {
+  await Fetch(`/agents/${id}/follow`, {
+    method: "POST",
+  });
+}
+export async function unFollowAgent(id: string) {
+  await Fetch(`/agents/${id}/unfollow`, {
+    method: "DELETE",
+  });
+}

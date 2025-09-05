@@ -199,18 +199,14 @@ export default function More() {
               />
             )}
             {me && <Divider className=" h-[0.3px] bg-background-info mb-4" />}
-            {me && (me?.role != "user" || me?.is_superuser) && (
+            {me && (me?.role != "user" || isAdmin) && (
               <MenuListItem
                 title={
-                  me.role == "admin" || me?.is_superuser
+                  me?.role == "admin" || me?.is_superuser
                     ? "Dashboard"
                     : "Analytics"
                 }
-                description={
-                  me.role == "admin" || me?.is_superuser
-                    ? "View admin dashboard"
-                    : "View your dashboard"
-                }
+                description=""
                 onPress={() => {
                   if (isAdmin) {
                     router.dismissTo("/admin");

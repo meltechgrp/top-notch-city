@@ -39,6 +39,13 @@ export default function PropertysLayout() {
         }}
       />
       <Stack.Screen
+        name="[propertyId]/videos"
+        options={{
+          headerShown: true,
+          title: "Video",
+        }}
+      />
+      <Stack.Screen
         name="[propertyId]/edit"
         options={{
           headerShown: true,

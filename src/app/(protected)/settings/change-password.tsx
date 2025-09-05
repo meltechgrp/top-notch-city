@@ -65,7 +65,6 @@ export default function ChangePassword() {
             Current Password
           </Text>
           <CustomInput
-            isBottomSheet={false}
             value={form.current}
             secureTextEntry
             onUpdate={(val) => setForm({ ...form, current: val })}
@@ -77,7 +76,6 @@ export default function ChangePassword() {
             New Password
           </Text>
           <CustomInput
-            isBottomSheet={false}
             secureTextEntry
             value={form.new}
             onUpdate={(val) => setForm({ ...form, new: val })}
@@ -89,7 +87,6 @@ export default function ChangePassword() {
             Comfirm Password
           </Text>
           <CustomInput
-            isBottomSheet={false}
             secureTextEntry
             value={form.comfirm}
             onUpdate={(val) => setForm({ ...form, comfirm: val })}

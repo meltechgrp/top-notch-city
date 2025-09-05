@@ -45,6 +45,12 @@ export default function SettingsLayout() {
           headerTitle: "Delete Account",
         }}
       />
+      <Stack.Screen
+        name="change-password"
+        options={{
+          headerTitle: "Change Password",
+        }}
+      />
     </Stack>
   );
 }

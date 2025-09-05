@@ -1,6 +1,7 @@
-interface ReelVideo {
+interface Reel {
   id: string;
-  uri: string;
+  video: string;
+  photos: Media[];
   title: string;
   description: string;
   interations: Interaction;
@@ -14,7 +15,7 @@ interface ReelVideo {
 interface VideoPlayerProps {
   style?: StyleProp<ViewStyle>;
   rounded?: boolean;
-  reel: ReelVideo;
+  reel: Reel;
   canPlayVideo?: boolean;
   fullScreen?: boolean;
   shouldPlay?: boolean;
@@ -30,9 +31,19 @@ type VideoPlayerHandle = {
 };
 
 interface ReelInteractionBar {
-  reel: ReelVideo;
+  reel: Reel;
   showChat?: boolean;
   showShare?: boolean;
   showMuted?: boolean;
   setShowBottomSheet: () => void;
+}
+
+interface ReelPhotoViewerProps {
+  rounded?: boolean;
+  onPress?: (uri: string) => void;
+  reel: Reel;
+  fullScreen?: boolean;
+  inTab?: boolean;
+  width: number;
+  height: number;
 }

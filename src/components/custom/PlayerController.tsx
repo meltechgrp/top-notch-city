@@ -4,7 +4,7 @@ import { Divider } from "@/components/ui/divider";
 import { Colors } from "@/constants/Colors";
 import { cn, formatMessageTime, formatMoney } from "@/lib/utils";
 import { router } from "expo-router";
-import { ChevronRight, MapPin } from "lucide-react-native";
+import { ChevronRight, House, MapPin } from "lucide-react-native";
 import { memo, useEffect } from "react";
 import { Slider, SliderThemeType } from "react-native-awesome-slider";
 import { useSharedValue } from "react-native-reanimated";
@@ -13,9 +13,10 @@ interface PlayerControlProps {
   handleSkip: (val: number) => void;
   setShowBottomSheet: () => void;
   currentTime: number;
-  reel: ReelVideo;
+  reel: Reel;
   length: number;
   inTab?: boolean;
+  showSlider?: boolean;
 }
 
 function PlayerController({
@@ -25,13 +26,13 @@ function PlayerController({
   reel,
   setShowBottomSheet,
   inTab,
+  showSlider = true,
 }: PlayerControlProps) {
   const theme = useResolvedTheme();
   const progress = useSharedValue(0);
   const min = useSharedValue(0);
   const duration = useSharedValue(0);
   const isDark = theme === "dark";
-
   const sliderTheme: SliderThemeType = {
     maximumTrackTintColor: isDark
       ? Colors.dark.background
@@ -60,11 +61,17 @@ function PlayerController({
       <View className={cn("flex-1 gap-2 pb-1 android:pb-4", !inTab && "pb-8")}>
         <View className="flex-row justify-between items-end gap-4 px-3">
           <View className="flex-1 gap-1">
+            <View className="bg-primary rounded-md self-start py-1 px-2">
+              <Text className="text-lg text-white capitalize">
+                For {reel.purpose}
+              </Text>
+            </View>
             <Text className="text-2xl font-bold text-white">
               {formatMoney(reel.price, "NGN", 0)}
             </Text>
             {inTab && (
               <View className="flex-row gap-2 items-center">
+                <Icon size="sm" as={House} className="text-primary" />
                 <Text className="text-lg  text-white">{reel.title}</Text>
                 <Divider orientation="vertical" className="bg-gray-500" />
                 <Text className="text-sm text-white">
@@ -105,19 +112,21 @@ function PlayerController({
               <Icon as={ChevronRight} />
             </Pressable>
           )}
-          <Slider
-            progress={progress}
-            minimumValue={min}
-            theme={sliderTheme}
-            maximumValue={duration}
-            bubble={(value) => formatTime(value)}
-            onSlidingComplete={handleSkip}
-            onValueChange={handleSkip}
-            bubbleTranslateY={-40}
-            sliderHeight={4}
-            thumbWidth={9}
-            bubbleContainerStyle={{ padding: 10 }}
-          />
+          {showSlider && (
+            <Slider
+              progress={progress}
+              minimumValue={min}
+              theme={sliderTheme}
+              maximumValue={duration}
+              bubble={(value) => formatTime(value)}
+              onSlidingComplete={handleSkip}
+              onValueChange={handleSkip}
+              bubbleTranslateY={-40}
+              sliderHeight={4}
+              thumbWidth={9}
+              bubbleContainerStyle={{ padding: 10 }}
+            />
+          )}
         </View>
       </View>
     </View>

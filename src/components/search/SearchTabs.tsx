@@ -4,7 +4,6 @@ import { Icon, Text } from "../ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
 import { Layers2, MapPin } from "lucide-react-native";
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
 type IProps = {
   total?: number;
@@ -14,12 +13,8 @@ type IProps = {
 };
 export default function SearchTabs(props: IProps) {
   const { total = 0, useMyLocation, isLocation, loading } = props;
-  const bottom = useBottomTabBarHeight();
   return (
-    <View
-      className={cn("w-full absolute left-0 right-0 z-50")}
-      style={{ bottom }}
-    >
+    <View className={cn("w-full absolute left-0 bottom-4 right-0 z-50")}>
       <SafeAreaView edges={["bottom"]}>
         <View className="flex-row justify-between items-end px-4">
           <View className=" bg-background-muted/60 py-2 px-4 rounded-full">

@@ -3,11 +3,10 @@ import React, {
   memo,
   useEffect,
   useImperativeHandle,
-  useMemo,
   useRef,
   useState,
 } from "react";
-import { TouchableWithoutFeedback, AppState } from "react-native";
+import { TouchableWithoutFeedback } from "react-native";
 import { useVideoPlayer, VideoView } from "expo-video";
 import { useEvent } from "expo";
 import { View, Icon, Text } from "../ui";
@@ -15,15 +14,12 @@ import { Eye, Play } from "lucide-react-native";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import { cn } from "@/lib/utils";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
-import { useIsFocused } from "@react-navigation/native";
 import PlayerController from "@/components/custom/PlayerController";
 import { useStore } from "@/store";
-import { useMutation } from "@tanstack/react-query";
-import { viewProperty } from "@/actions/property";
-import { usePathname } from "expo-router";
 import { ReelsShareSheet } from "@/components/modals/ReelsBottomsheet";
 import config from "@/config";
 import { hapticFeed } from "@/components/HapticTab";
+import { ReelViewsController } from "@/components/reel/ReelViewsController";
 
 export const VideoPlayer = memo(
   forwardRef<VideoPlayerHandle, VideoPlayerProps>(
@@ -31,7 +27,6 @@ export const VideoPlayer = memo(
       {
         style,
         rounded = false,
-        canPlayVideo = true,
         onPress,
         fullScreen = false,
         reel,
@@ -40,29 +35,26 @@ export const VideoPlayer = memo(
       },
       ref
     ) => {
-      const { muted, updateCount } = useStore();
-      const [showControls, setShowControls] = useState(true);
+      const { muted } = useStore();
+      const [showControls, setShowControls] = useState(false);
       const [showBottomSheet, setShowBottomSheet] = useState(false);
-      const { uri } = reel;
-      const isFocused = useIsFocused();
-      const path = usePathname();
       const mounted = useRef(true);
-      const { mutate } = useMutation({
-        mutationFn: () => viewProperty({ id: reel.id }),
-        onSuccess: () => {
-          updateCount(reel.id);
-        },
-      });
-      const isVisible = useMemo(() => path.includes("/reels"), [path]);
       // Setup player
-      const player = useVideoPlayer({ uri, useCaching: true }, (player) => {
-        try {
-          player.loop = true;
-          player.muted = !!muted;
-          player.timeUpdateEventInterval = 1;
-        } catch (e) {
-          console.warn("VideoPlayer setup failed", e);
+      const player = useVideoPlayer(
+        { uri: reel.video, useCaching: true },
+        (player) => {
+          try {
+            player.loop = true;
+            player.muted = !!muted;
+            player.timeUpdateEventInterval = 1;
+          } catch (e) {
+            console.warn("VideoPlayer setup failed", e);
+          }
         }
+      );
+      ReelViewsController({
+        id: reel.id,
+        viewed: reel.owner_interaction.viewed,
       });
       let currentTime = Math.round(
         useEvent(player, "timeUpdate")?.currentTime || 0
@@ -82,38 +74,14 @@ export const VideoPlayer = memo(
           return () => clearTimeout(timer);
         }
       }, [isPlaying, showControls]);
-      // App minimized
-      useEffect(() => {
-        const sub = AppState.addEventListener("change", (state) => {
-          if (state !== "active") player.pause();
-          else if (
-            status == "readyToPlay" &&
-            shouldPlay &&
-            canPlayVideo &&
-            isVisible
-          )
-            player.play();
-        });
-        return () => sub.remove();
-      }, [player, status, shouldPlay, canPlayVideo, canPlayVideo, isVisible]);
-      // Screen unfocused
-      useEffect(() => {
-        if (!isFocused || AppState.currentState !== "active") {
-          player.pause();
-          return;
-        }
 
-        if (
-          shouldPlay &&
-          status === "readyToPlay" &&
-          canPlayVideo &&
-          isVisible
-        ) {
+      useEffect(() => {
+        if (shouldPlay) {
           player.play();
         } else {
-          handleReset();
+          player.pause();
         }
-      }, [isFocused, shouldPlay, status, canPlayVideo, isVisible]);
+      }, [shouldPlay]);
       function handleToggle() {
         if (isPlaying) {
           player.pause();
@@ -142,18 +110,11 @@ export const VideoPlayer = memo(
       function handleSkip(val: number) {
         player.currentTime = Math.round(val);
       }
-      useEffect(() => {
-        if (shouldPlay && status == "readyToPlay") {
-          player.play();
-        } else {
-          handleReset();
-        }
-      }, [shouldPlay, player, status]);
       useImperativeHandle(
         ref,
         () => ({
           play: () => player.play(),
-          pause: () => {},
+          pause: () => player.pause(),
           seekTo: (sec: number) => {
             player.currentTime = sec;
           },
@@ -169,16 +130,9 @@ export const VideoPlayer = memo(
           handleReset();
         };
       }, []);
-      useEffect(() => {
-        if (shouldPlay && !reel.owner_interaction.viewed) {
-          setTimeout(() => {
-            mutate();
-          }, 100);
-        }
-      }, [shouldPlay, reel.owner_interaction]);
       return (
         <>
-          <View style={style}>
+          <View className="flex-1">
             <TouchableWithoutFeedback
               onPress={() => {
                 if (fullScreen) {
@@ -207,49 +161,27 @@ export const VideoPlayer = memo(
 
                 {/* Controls Overlay */}
                 <View className="absolute inset-0 z-10 bg-black/20 items-center justify-center">
-                  <View
-                    className={cn(
-                      " absolute flex-row justify-between items-center top-16 w-full px-4 left-0 right-0",
-                      !inTab && "top-8"
-                    )}
-                  >
-                    <View className="bg-primary rounded-md self-start py-1 px-2">
-                      <Text className="text-lg text-white capitalize">
-                        For {reel.purpose}
-                      </Text>
-                    </View>
-                    <View className="flex-row gap-2 items-center">
-                      <Icon size="sm" as={Eye} />
-                      <Text className="text-lg">
-                        {reel.interations?.viewed}
-                      </Text>
-                    </View>
-                  </View>
                   {/* Play / Pause */}
                   {showControls && (
                     <View className="flex-row gap-4 items-center">
                       <AnimatedPressable
                         onPress={() => {
-                          if (!canPlayVideo || status === "loading")
-                            return onPress?.(uri);
-                          else if (status == "readyToPlay") {
+                          if (status == "readyToPlay") {
                             handleToggle();
                           }
                         }}
                         className="p-3 "
                       >
-                        {status === "loading" ? (
+                        {status !== "readyToPlay" ? (
                           <SpinningLoader />
                         ) : (
-                          !isPlaying && (
-                            <Icon
-                              as={Play}
-                              className={cn(
-                                "text-white/70 fill-white w-12 h-12",
-                                !fullScreen && "w-8 h-8"
-                              )}
-                            />
-                          )
+                          <Icon
+                            as={Play}
+                            className={cn(
+                              "text-primary fill-primary w-12 h-12",
+                              !fullScreen && "w-8 h-8"
+                            )}
+                          />
                         )}
                       </AnimatedPressable>
                     </View>

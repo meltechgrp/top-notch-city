@@ -128,7 +128,7 @@ function SearchLocationBottomSheet({
             <CustomInput
               placeholder="Search property location..."
               value={text}
-              className=" flex-1"
+              containerClassName=" flex-1"
               onUpdate={onChangeText}
               returnKeyLabel="Done"
               returnKeyType="done"

@@ -1,5 +1,5 @@
 import { Icon, useResolvedTheme } from "../ui";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addToWishList, removeFromWishList } from "@/actions/property";
 import { memo } from "react";
 import { cn } from "@/lib/utils";
@@ -22,12 +22,65 @@ const PropertyWishListButton = ({
   className,
 }: Props) => {
   const theme = useResolvedTheme();
-  const { hasAuth, updateWishlist } = useStore();
+  const client = useQueryClient();
+  const { hasAuth } = useStore();
   const { mutate } = useMutation({
-    mutationFn: () => removeFromWishList({ id }),
-  });
-  const { mutate: mutate2 } = useMutation({
-    mutationFn: () => addToWishList({ id }),
+    mutationFn: () =>
+      isAdded ? removeFromWishList({ id }) : addToWishList({ id }),
+
+    onMutate: async () => {
+      await client.cancelQueries({ queryKey: ["reels"] });
+
+      const previousData = client.getQueryData<{
+        pages: Result[];
+        pageParams: unknown[];
+      }>(["reels"]);
+
+      client.setQueryData<{
+        pages: Result[];
+        pageParams: unknown[];
+      }>(["reels"], (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          pages: old.pages.map((page) => ({
+            ...page,
+            results: page.results?.map((reel) => {
+              if (reel.id !== id) return reel;
+              return {
+                ...reel,
+                owner_interaction: {
+                  ...reel?.owner_interaction,
+                  added_to_wishlist: !isAdded,
+                },
+                interaction: {
+                  ...reel?.interaction,
+                  added_to_wishlist: reel.interaction
+                    ? reel.interaction.added_to_wishlist + (isAdded ? -1 : 1)
+                    : isAdded
+                      ? -1
+                      : 1,
+                },
+              };
+            }),
+          })),
+        };
+      });
+
+      return { previousData };
+    },
+    // If the request fails, rollback
+    onError: (_err, _vars, ctx) => {
+      console.log(_err);
+      if (ctx?.previousData) {
+        client.setQueryData(["reels"], ctx.previousData);
+      }
+    },
+
+    // After success, refetch in background to ensure sync
+    onSettled: () => {
+      client.invalidateQueries({ queryKey: ["reels"] });
+    },
   });
   function hnadleWishList() {
     if (!hasAuth) {
@@ -35,13 +88,8 @@ const PropertyWishListButton = ({
         visible: true,
         onLoginSuccess: () => mutate(),
       });
-    }
-    if (isAdded) {
-      updateWishlist(id);
-      mutate();
     } else {
-      mutate2();
-      updateWishlist(id);
+      mutate();
     }
   }
   return (
@@ -52,7 +100,7 @@ const PropertyWishListButton = ({
       <Icon
         as={Bookmark}
         className={cn(
-          "text-white w-8 h-8",
+          "text-white w-9 h-9",
           hasScrolledToDetails && theme == "light" && "text-black",
           isAdded && "text-primary fill-primary"
         )}

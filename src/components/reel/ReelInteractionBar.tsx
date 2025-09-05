@@ -1,15 +1,23 @@
 import { startChat } from "@/actions/message";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
+import { FollowAgent } from "@/components/reel/FollowAgent";
 import ReelLikeButton from "@/components/reel/ReelLikeButton";
 import ReelShareButton from "@/components/reel/ReelShareButton";
 import ReelWishListButton from "@/components/reel/ReelWishListButton";
-import { Avatar, AvatarImage, Icon, Text, View } from "@/components/ui";
+import {
+  Avatar,
+  AvatarFallbackText,
+  AvatarImage,
+  Icon,
+  Text,
+  View,
+} from "@/components/ui";
 import { generateMediaUrl } from "@/lib/api";
 import { profileDefault } from "@/store";
 import { useMutation } from "@tanstack/react-query";
 import { router } from "expo-router";
-import { MessageSquareMore, MoreHorizontal } from "lucide-react-native";
+import { MessageSquareMore, MoreHorizontal, Plus } from "lucide-react-native";
 import { useMemo } from "react";
 
 export function ReelInteractionBar({
@@ -34,6 +42,7 @@ export function ReelInteractionBar({
   return (
     <View className=" gap-6 ml-auto items-center">
       <AnimatedPressable
+        className=" relative"
         onPress={() => {
           router.push({
             pathname: "/profile/[user]",
@@ -59,7 +68,11 @@ export function ReelInteractionBar({
           ) : (
             <AvatarImage source={profileDefault} />
           )}
+          <AvatarFallbackText>
+            {reel.owner?.first_name} {reel.owner?.last_name}
+          </AvatarFallbackText>
         </Avatar>
+        <FollowAgent id={reel.owner?.id!} following={false} />
       </AnimatedPressable>
       <View className=" items-center">
         <ReelLikeButton liked={isLiked} id={reel.id} />

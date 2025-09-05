@@ -1,9 +1,8 @@
-import { generateMediaUrl } from "@/lib/api";
 import { composeFullAddress, generateTitle } from "@/lib/utils";
 import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import { useMemo } from "react";
 
-export function useReels() {
+export function usePhotos() {
   const {
     data,
     refetch,
@@ -13,31 +12,31 @@ export function useReels() {
     isFetchingNextPage,
   } = useInfinityQueries({ type: "reels" });
 
-  const videos = useMemo(() => {
-    return propertyToReelVideo(
+  const photos = useMemo(() => {
+    return propertyToReelPhoto(
       data?.pages.flatMap((page) => page.results) || []
     );
   }, [data]);
 
   return {
-    reels: videos,
+    photos,
     fetchNextPage,
     loading: isLoading,
     hasNextPage,
-    isFetchingNextPage,
+    fetching: isFetchingNextPage,
     refetch,
   };
 }
 
-export function propertyToReelVideo(properties: Property[]) {
+export function propertyToReelPhoto(properties: Property[]) {
   return properties
     .map((p) => {
-      let v = p.media.find((m) => m.media_type === "VIDEO");
-      if (v) {
+      let v = p.media.filter((m) => m.media_type === "IMAGE");
+      if (v?.length > 0) {
         return {
           id: p.id,
-          video: generateMediaUrl(v).uri,
-          photos: [],
+          video: "",
+          photos: v,
           title: generateTitle(p),
           description: p.description || "",
           interations: {

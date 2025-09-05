@@ -28,7 +28,6 @@ type State = {
   nearbyProperties?: Property[];
   searchProperties: Property[];
   savedSearches: SearchHistory[];
-  reels: ReelVideo[];
   muted: boolean;
 };
 
@@ -55,14 +54,7 @@ type Actions = {
   setTopLocations: (locations: TopLocation[]) => void;
   clearTopLocations: () => void;
 
-  // Reels
-
-  setReels: (reels: ReelVideo[]) => void;
   updateMuted: () => void;
-  updateLike: (id: string) => void;
-  updateWishlist: (id: string) => void;
-  updateCount: (id: string) => void;
-  clearReels: () => void;
   // Search
   updateSearchProperties: (data: Property[]) => void;
   updateSavedSearch: (data: SearchHistory[]) => void;
@@ -76,7 +68,6 @@ const initialState: State = {
   isOnboarded: false,
   topLocations: [],
   topProperties: [],
-  reels: [],
   searchProperties: [],
   savedSearches: [],
 };
@@ -137,88 +128,7 @@ export const useStore = create<StateAndActions>(
         set((state) => ({ ...state, topLocations: locations })),
 
       clearTopLocations: () => set((state) => ({ ...state, topLocations: [] })),
-
-      // Reels sections
-      setReels: (newReels) =>
-        set((state) => {
-          // Prepend new reels so newest always comes first
-          const merged = [...newReels, ...(state.reels || [])];
-
-          // Remove duplicates based on `id` (keep the latest occurrence)
-          const uniqueMap = new Map<string, (typeof merged)[number]>();
-          for (const reel of merged) {
-            uniqueMap.set(reel.id, reel);
-          }
-
-          const uniqueReels = Array.from(uniqueMap.values());
-
-          return { reels: uniqueReels };
-        }),
       updateMuted: () => set((s) => ({ ...s, muted: !s.muted })),
-      updateCount: (id) =>
-        set((s) => ({
-          ...s,
-          reels: s.reels.map((reel) =>
-            reel.id === id
-              ? {
-                  ...reel,
-                  interations: {
-                    ...reel?.interations,
-                    viewed: (reel.interations?.viewed ?? 0) + 1,
-                  },
-                  owner_interaction: {
-                    ...reel.owner_interaction,
-                    viewed: true,
-                  },
-                }
-              : reel
-          ),
-        })),
-
-      updateLike: (id) =>
-        set((s) => ({
-          ...s,
-          reels: s.reels.map((reel) =>
-            reel.id === id
-              ? {
-                  ...reel,
-                  interations: {
-                    ...reel.interations,
-                    liked: reel.owner_interaction?.liked
-                      ? (reel.interations?.liked ?? 0) - 1
-                      : (reel.interations?.liked ?? 0) + 1,
-                  },
-                  owner_interaction: {
-                    ...reel.owner_interaction,
-                    liked: !reel.owner_interaction?.liked,
-                  },
-                }
-              : reel
-          ),
-        })),
-      clearReels: () => set((s) => ({ ...s, reels: [] })),
-      updateWishlist: (id) =>
-        set((s) => ({
-          ...s,
-          reels: s.reels.map((reel) =>
-            reel.id === id
-              ? {
-                  ...reel,
-                  interations: {
-                    ...reel.interations,
-                    added_to_wishlist: reel.owner_interaction?.added_to_wishlist
-                      ? (reel.interations?.added_to_wishlist ?? 0) - 1
-                      : (reel.interations?.added_to_wishlist ?? 0) + 1,
-                  },
-                  owner_interaction: {
-                    ...reel.owner_interaction,
-                    added_to_wishlist:
-                      !reel.owner_interaction?.added_to_wishlist,
-                  },
-                }
-              : reel
-          ),
-        })),
       updateSearchProperties: (searchProperties) =>
         set((s) => ({ ...s, searchProperties })),
       updateSavedSearch: (data) => set((s) => ({ ...s, savedSearches: data })),

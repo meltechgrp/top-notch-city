@@ -150,12 +150,7 @@ const PropertyDetailsBottomSheet = () => {
             <Pressable
               disabled={getVideos().length < 1}
               onPress={() => {
-                router.push({
-                  pathname: "/reels",
-                  params: {
-                    propertyId: property?.id,
-                  },
-                });
+                router.push("/(protected)/property/[propertyId]/videos");
               }}
               className="flex-row gap-4 bg-background-muted p-4 rounded-xl items-center justify-between"
             >

@@ -57,68 +57,69 @@ export default function SearchScreen() {
     router.setParams({});
   }, [latitude, longitude, reset, list, locate]);
   return (
-    <Box className="flex-1 relative">
-      <SearchHeader
-        filter={search.filter}
-        setLocationBottomSheet={() => setLocationBottomSheet(true)}
-        setShowFilter={() => setShowFilter(true)}
-        setActivateVoice={() => setActivateVoice(true)}
-        setRoomsFilter={() => setRoomsFilter(true)}
-        setPriceFilter={() => setPriceFilter(true)}
-        setTypesFilter={() => setTypesFilter(true)}
-        activeIndex={currentPage}
-        onTabChange={onTabChange}
-        total={results.available}
-      />
-      <PagerView
-        initialPage={0}
-        style={StyleSheet.absoluteFill}
-        ref={pagerRef}
-        scrollEnabled={false}
-        onPageSelected={(e) => setCurrentPage(e.nativeEvent.position)}
-      >
-        {TABS.map((tab, index) => {
-          switch (tab) {
-            case "Map View":
-              return (
-                <View style={{ flex: 1 }} key={index}>
-                  <SearchMapView
-                    key={index}
-                    height={totalHeight}
-                    properties={properties}
-                  />
-                  <SearchTabs
-                    total={results.available}
-                    isLocation={search.isLocation}
-                    useMyLocation={search.useMyLocation}
-                  />
-                </View>
-              );
-            case "List View":
-              return (
-                <View style={{ flex: 1 }} key={index}>
-                  <SafeAreaView
-                    style={{ flex: 1, backgroundColor: "transparent" }}
-                    edges={["top"]}
-                  >
-                    <SearchListView
+    <>
+      <Box className="flex-1 relative">
+        <SearchHeader
+          filter={search.filter}
+          setLocationBottomSheet={() => setLocationBottomSheet(true)}
+          setShowFilter={() => setShowFilter(true)}
+          setActivateVoice={() => setActivateVoice(true)}
+          setRoomsFilter={() => setRoomsFilter(true)}
+          setPriceFilter={() => setPriceFilter(true)}
+          setTypesFilter={() => setTypesFilter(true)}
+          activeIndex={currentPage}
+          onTabChange={onTabChange}
+          total={results.available}
+        />
+        <PagerView
+          initialPage={0}
+          style={StyleSheet.absoluteFill}
+          ref={pagerRef}
+          scrollEnabled={false}
+          onPageSelected={(e) => setCurrentPage(e.nativeEvent.position)}
+        >
+          {TABS.map((tab, index) => {
+            switch (tab) {
+              case "Map View":
+                return (
+                  <View style={{ flex: 1 }} key={index}>
+                    <SearchMapView
                       key={index}
-                      headerOnlyHeight={150}
-                      isLoading={query.loading}
-                      refetch={query.refetchAndApply}
-                      hasNextPage={query.hasNextPage}
-                      fetchNextPage={query.fetchNextPage}
+                      height={totalHeight}
                       properties={properties}
                     />
-                  </SafeAreaView>
-                </View>
-              );
-            default:
-              return null;
-          }
-        })}
-      </PagerView>
-
+                    <SearchTabs
+                      total={results.available}
+                      isLocation={search.isLocation}
+                      useMyLocation={search.useMyLocation}
+                    />
+                  </View>
+                );
+              case "List View":
+                return (
+                  <View style={{ flex: 1 }} key={index}>
+                    <SafeAreaView
+                      style={{ flex: 1, backgroundColor: "transparent" }}
+                      edges={["top"]}
+                    >
+                      <SearchListView
+                        key={index}
+                        headerOnlyHeight={150}
+                        isLoading={query.loading}
+                        refetch={query.refetchAndApply}
+                        hasNextPage={query.hasNextPage}
+                        fetchNextPage={query.fetchNextPage}
+                        properties={properties}
+                      />
+                    </SafeAreaView>
+                  </View>
+                );
+              default:
+                return null;
+            }
+          })}
+        </PagerView>
+      </Box>
       <SearchLocationBottomSheet
         show={locationBottomSheet}
         onDismiss={() => setLocationBottomSheet(false)}
@@ -171,6 +172,6 @@ export default function SearchScreen() {
         onApply={query.applyCachedResults}
         onReset={search.resetSome}
       />
-    </Box>
+    </>
   );
 }

@@ -11,12 +11,7 @@ type CreateButtonProps = {
 
 function CreateButton(props: CreateButtonProps) {
   return (
-    <View
-      className={cn(
-        "absolute bottom-[120px] android:bottom-[50px] right-3",
-        props.className
-      )}
-    >
+    <View className={cn("absolute bottom-16 right-3", props.className)}>
       <Pressable
         className="bg-primary rounded-2xl p-1 flex w-16 h-16 flex-row items-center justify-center z-30 shadow "
         accessibilityRole="button"

@@ -33,3 +33,13 @@ interface AgentReview {
   created_at: string;
   updated_at: string;
 }
+
+interface AgentInfo {
+  id: string;
+  first_name: string;
+  last_name: string;
+  profile_image?: string;
+  total_property_count: number;
+  total_property_views: number;
+  followers_count: number;
+}

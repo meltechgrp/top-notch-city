@@ -6,17 +6,17 @@ import EmptyStateWrapper from "@/components/shared/EmptyStateWrapper";
 import { Box, View } from "@/components/ui";
 import { useStore } from "@/store";
 import { FlashList } from "@shopify/flash-list";
-import { useRouter } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import { RefreshControl } from "react-native";
 import { useChat } from "@/hooks/useChat";
 import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
+import CustomerCareBottomSheet from "@/components/modals/CustomerCareBottomSheet";
 
 export default function MessagesScreen() {
   const { me } = useStore();
   const { chats, loading, refreshing, refetch } = useChat();
-  const router = useRouter();
   const [friendsModal, setFriendsModal] = React.useState(false);
+  const [staffs, setStaffs] = useState(false);
 
   const onNewChat = () => {
     setFriendsModal(true);
@@ -56,17 +56,16 @@ export default function MessagesScreen() {
         <StartChatBottomSheet
           visible={friendsModal}
           onDismiss={() => setFriendsModal(false)}
-          onSelect={(member) => {
-            router.push({
-              pathname: "/(protected)/messages/[chatId]",
-              params: {
-                chatId: `${member.id}_${me?.id}`,
-              },
-            });
-          }}
+          setStaffs={() => setStaffs(true)}
           me={me}
         />
       )}
+      <CustomerCareBottomSheet
+        visible={staffs}
+        onDismiss={() => {
+          setStaffs(false);
+        }}
+      />
     </>
   );
 }
