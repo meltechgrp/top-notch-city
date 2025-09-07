@@ -4,7 +4,10 @@ import { addToWishList, removeFromWishList } from "@/actions/property";
 import { memo } from "react";
 import { cn } from "@/lib/utils";
 import { useStore } from "@/store";
-import { openSignInModal } from "@/components/globals/AuthModals";
+import {
+  openAccessModal,
+  openSignInModal,
+} from "@/components/globals/AuthModals";
 import { Bookmark } from "lucide-react-native";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
 
@@ -84,10 +87,7 @@ const PropertyWishListButton = ({
   });
   function hnadleWishList() {
     if (!hasAuth) {
-      return openSignInModal({
-        visible: true,
-        onLoginSuccess: () => mutate(),
-      });
+      return openAccessModal({ visible: true });
     } else {
       mutate();
     }

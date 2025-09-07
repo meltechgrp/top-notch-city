@@ -4,7 +4,7 @@ import {
   deleteProperty,
   softDeleteProperty,
 } from "@/actions/property/actions";
-import { showSnackbar } from "@/lib/utils";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
 
 export function usePropertyStatusMutations() {
   const queryClient = useQueryClient();
@@ -26,20 +26,18 @@ export function usePropertyStatusMutations() {
         reason?: string;
       }) => updatePropertyStatus(propertyId, action, reason),
       onSuccess: (_, { propertyId }) => {
-        showSnackbar({
-          message: `Property marked as ${action}`,
-          type: "success",
+        showErrorAlert({
+          title: `Property marked as ${action}`,
+          alertType: "success",
           duration: 3000,
-          backdrop: false,
         });
         invalidate(propertyId);
       },
       onError: () =>
-        showSnackbar({
-          message: `Failed to ${action} property`,
-          type: "error",
+        showErrorAlert({
+          title: `Failed to ${action} property`,
+          alertType: "error",
           duration: 3000,
-          backdrop: false,
         }),
     });
 
@@ -47,36 +45,36 @@ export function usePropertyStatusMutations() {
     mutationFn: ({ propertyId }: { propertyId: string }) =>
       deleteProperty(propertyId),
     onSuccess: ({ propertyId }) => {
-      showSnackbar({
-        message: "Property permanently deleted",
-        type: "success",
+      showErrorAlert({
+        title: "Property permanently deleted",
+        alertType: "success",
         duration: 3000,
-        backdrop: false,
       });
       invalidate(propertyId);
     },
     onError: () =>
-      showSnackbar({ message: "Failed to delete property", type: "error" }),
+      showErrorAlert({
+        title: "Failed to delete property",
+        alertType: "error",
+      }),
   });
 
   const softDeleteMutation = useMutation({
     mutationFn: ({ propertyId }: { propertyId: string }) =>
       softDeleteProperty(propertyId),
     onSuccess: ({ propertyId }) => {
-      showSnackbar({
-        message: "Property soft deleted",
-        type: "success",
+      showErrorAlert({
+        title: "Property soft deleted",
+        alertType: "success",
         duration: 3000,
-        backdrop: false,
       });
       invalidate(propertyId);
     },
     onError: () =>
-      showSnackbar({
-        message: "Failed to soft delete",
-        type: "error",
+      showErrorAlert({
+        title: "Failed to soft delete",
+        alertType: "error",
         duration: 3000,
-        backdrop: false,
       }),
   });
 

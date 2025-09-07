@@ -1,6 +1,5 @@
 import {
   Avatar,
-  AvatarBadge,
   AvatarFallbackText,
   AvatarImage,
   Icon,
@@ -9,8 +8,8 @@ import {
   useResolvedTheme,
   View,
 } from "@/components/ui";
-import { Stack, useRouter } from "expo-router";
-import { Alert, Platform, Share } from "react-native";
+import { useRouter } from "expo-router";
+import { Alert, Share } from "react-native";
 import React, { useMemo } from "react";
 import {
   Heart,
@@ -30,26 +29,17 @@ import { cn, fullName } from "@/lib/utils";
 import { useStore } from "@/store";
 import { BodyScrollView } from "@/components/layouts/BodyScrollView";
 import { getImageUrl } from "@/lib/api";
-import { openSignInModal } from "@/components/globals/AuthModals";
+import { openAccessModal } from "@/components/globals/AuthModals";
 import useResetAppState from "@/hooks/useResetAppState";
-// import * as FileSystem from "expo-file-system";
 
 export default function More() {
   const resetAppState = useResetAppState();
   const { me, hasAuth } = useStore();
   const router = useRouter();
-  // const { data } = useQuery({
-  //   queryKey: ["applications"],
-  //   queryFn: getMyApplications,
-  // });
   const theme = useResolvedTheme();
-
-  const [openLogoutAlertDialog, setOpenLogoutAlertDialog] =
-    React.useState(false);
 
   function logout() {
     resetAppState();
-    router.dismissTo("/(protected)/(tabs)/home");
   }
   async function onLogout() {
     Alert.alert(
@@ -78,21 +68,6 @@ export default function More() {
         `Discover amazing apartments and real estate opportunities near you.\n\n` +
         `👉 Tap here to join: ${config.websiteUrl}/home `;
 
-      // Optionally prepare an image for sharing
-      // const imageUrl = "https://yourdomain.com/invite-banner.jpg"; // <-- replace with your image URL
-      // const imageName = FileSystem.documentDirectory + "invite-banner.jpg";
-
-      // Download image locally
-      // const download = await FileSystem.downloadAsync(imageUrl, imageName);
-
-      // Share with image if supported
-      // if (Platform.OS !== "web" && (await Sharing.isAvailableAsync())) {
-      //   await Sharing.shareAsync(download.uri, {
-      //     mimeType: "image/jpeg",
-      //     dialogTitle: "Invite to TopNotch City Estate",
-      //   });
-      // } else {
-      // Fallback to basic text sharing
       const result = await Share.share({
         title: "Join TopNotch City Estate",
         message,
@@ -103,19 +78,13 @@ export default function More() {
           // shared with activity type
         }
       } else if (result.action === Share.dismissedAction) {
-        // dismissed
       }
-      // }
     } catch (error: any) {
       alert(error.message);
     }
   }
   const isAgent = false;
   const isAdmin = useMemo(() => me?.role == "admin" || me?.is_superuser, [me]);
-  //   useMemo(
-  //   () => data?.some((ap) => ap.status == "approved"),
-  //   [data]
-  // );
   return (
     <>
       <BodyScrollView withBackground={true}>
@@ -130,10 +99,7 @@ export default function More() {
           <Pressable
             onPress={() => {
               if (!me?.id) {
-                openSignInModal({
-                  visible: true,
-                  onLoginSuccess: () => {},
-                });
+                router.replace("/signin");
               } else if (me.role == "agent") {
                 router.push({
                   pathname: "/profile/[user]",
@@ -145,15 +111,14 @@ export default function More() {
           >
             <Avatar className=" w-14 h-14">
               <AvatarFallbackText>{fullName(me)}</AvatarFallbackText>
-              <AvatarBadge size="md" />
               <AvatarImage source={getImageUrl(me?.profile_image)} />
             </Avatar>
             <View className="flex-1 pl-3">
               <Text className="text-lg text-typography font-medium">
-                {me ? fullName(me) : "Sign in to view profile"}
+                {me ? fullName(me) : "Let’s get you signed in"}
               </Text>
               <Text className="text-sm text-typography/80">
-                {me ? me?.email : "Account details"}
+                {me ? me?.email : "Welcome"}
               </Text>
             </View>
           </Pressable>
@@ -173,17 +138,7 @@ export default function More() {
                 }
                 onPress={() => {
                   if (!me?.id) {
-                    openSignInModal({
-                      visible: true,
-                      onLoginSuccess: () => {
-                        router.push({
-                          pathname: "/(protected)/profile/[user]/account",
-                          params: {
-                            user: me?.id!,
-                          },
-                        });
-                      },
-                    });
+                    openAccessModal({ visible: true });
                   } else {
                     router.push({
                       pathname: "/(protected)/profile/[user]/account",
@@ -227,17 +182,7 @@ export default function More() {
               description="View all your saved properties"
               onPress={() => {
                 if (!me?.id) {
-                  openSignInModal({
-                    visible: true,
-                    onLoginSuccess: () => {
-                      router.push({
-                        pathname: "/(protected)/profile/[user]/wishlist",
-                        params: {
-                          user: me?.id!,
-                        },
-                      });
-                    },
-                  });
+                  openAccessModal({ visible: true });
                 } else {
                   router.push("/messages");
                 }
@@ -252,17 +197,7 @@ export default function More() {
               description="View all your saved properties"
               onPress={() => {
                 if (!me?.id) {
-                  openSignInModal({
-                    visible: true,
-                    onLoginSuccess: () => {
-                      router.push({
-                        pathname: "/(protected)/profile/[user]/wishlist",
-                        params: {
-                          user: me?.id!,
-                        },
-                      });
-                    },
-                  });
+                  openAccessModal({ visible: true });
                 } else {
                   router.push({
                     pathname: "/(protected)/profile/[user]/wishlist",
@@ -315,12 +250,7 @@ export default function More() {
                 iconColor="gray-600"
                 onPress={() => {
                   if (!me?.id) {
-                    openSignInModal({
-                      visible: true,
-                      onLoginSuccess: () => {
-                        router.push("/forms/agent");
-                      },
-                    });
+                    openAccessModal({ visible: true });
                   } else {
                     router.push("/forms/agent");
                   }

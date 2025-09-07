@@ -1,9 +1,8 @@
 import { FilterComponent } from "@/components/admin/shared/FilterComponent";
 import MainLayout from "@/components/admin/shared/MainLayout";
-import { openSignInModal } from "@/components/globals/AuthModals";
+import { openAccessModal } from "@/components/globals/AuthModals";
 import VerticalProperties from "@/components/property/VerticalProperties";
 import {
-  Box,
   Button,
   ButtonText,
   Heading,
@@ -17,7 +16,7 @@ import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
 import { useStore } from "@/store";
 import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import { useLayout } from "@react-native-community/hooks";
-import { Stack, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { MoveRight, Plus } from "lucide-react-native";
 import { useMemo, useState } from "react";
 
@@ -95,6 +94,7 @@ export default function PropertiesScreen() {
 
   const isAdmin = useMemo(() => me?.role == "admin" || me?.is_superuser, [me]);
   function handleGetStarted() {
+    console.log("here");
     if (!hasAuth) {
       // Not logged in — show CTA to become an agent
       setCtaType("user");
@@ -169,14 +169,11 @@ export default function PropertiesScreen() {
                   className={`object-cover object-bottom w-full flex-1 rounded-3xl`}
                 />
               </View>
-              <View className="bg-background-muted rounded-xl p-6 mx-4">
+              <View className="bg-background-muted rounded-xl p-6 px-4 mx-4">
                 <Heading size="xl" className="text-center">
                   Ready to List Your Property?
                 </Heading>
-                <Text
-                  size="sm"
-                  className="font-light w-3/4 mx-auto text-center mb-4 mt-2"
-                >
+                <Text size="sm" className="font-light text-center mb-4 mt-2">
                   Easily list your property, add details, photos, and reach
                   thousands of potential buyers or renters.
                 </Text>
@@ -225,13 +222,7 @@ export default function PropertiesScreen() {
                 <Button
                   className="flex-1 h-12"
                   onPress={() => {
-                    setCtaVisible(false);
-                    ctaType === "user"
-                      ? openSignInModal({
-                          visible: true,
-                          isAgentRequest: true,
-                        })
-                      : router.push("/forms/agent");
+                    openAccessModal({ visible: true });
                   }}
                 >
                   <ButtonText>

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import * as Haptics from "expo-haptics";
 import { Alert } from "react-native";
-import { showSnackbar } from "@/lib/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteChatMessage } from "@/actions/message";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
 
 type Args = {
   focusEditor: () => void;
@@ -57,19 +57,19 @@ export default function useMessageActions(args: Args) {
             await mutateAsync(selectedMessage.message_id, {
               onSuccess() {
                 onDone(selectedMessage);
-                showSnackbar({
-                  type: "success",
+                showErrorAlert({
+                  alertType: "success",
                   duration: 3000,
-                  message: "Message deleted.",
+                  title: "Message deleted.",
                 });
                 invalidate();
                 setIsDeletingMessageId(null);
               },
               onError: (err) => {
-                showSnackbar({
-                  type: "error",
+                showErrorAlert({
+                  alertType: "error",
                   duration: 3000,
-                  message: err.message || "Could not delete message!",
+                  title: err.message || "Could not delete message!",
                 });
                 setIsDeletingMessageId(null);
               },

@@ -8,14 +8,14 @@ import { useStore } from "@/store";
 
 type Props = {
   className?: string;
-  mapHeight?: number;
+  mapHeight: number;
 };
 const DiscoverProperties = (props: Props) => {
   const { className, mapHeight } = props;
   const { nearbyProperties: properties } = useStore();
 
   return (
-    <View style={{ flex: 1 }} className={className}>
+    <View style={{ flex: 1, height: mapHeight }} className={className}>
       <View className="overflow-hidden relative flex-1">
         <View className="  absolute top-16 w-full z-10">
           <HomeNavigation />

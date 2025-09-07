@@ -1,5 +1,7 @@
 import { followAgent } from "@/actions/agent";
+import { openAccessModal } from "@/components/globals/AuthModals";
 import { Icon, Pressable } from "@/components/ui";
+import { useStore } from "@/store";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus, Check } from "lucide-react-native";
 import { MotiView, AnimatePresence } from "moti";
@@ -12,6 +14,7 @@ export function FollowAgent({
   following: boolean;
 }) {
   const client = useQueryClient();
+  const { me } = useStore();
   const { mutate } = useMutation({
     mutationFn: () => followAgent(id),
     onMutate: async () => {
@@ -60,6 +63,9 @@ export function FollowAgent({
     },
   });
   const handlePress = () => {
+    if (!me) {
+      return openAccessModal({ visible: true });
+    }
     mutate();
   };
   return (

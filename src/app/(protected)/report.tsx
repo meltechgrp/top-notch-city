@@ -1,11 +1,11 @@
 import { sendEquiry } from "@/actions/equiry";
 import { CustomInput } from "@/components/custom/CustomInput";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
 import CustomSelect from "@/components/custom/CustomSelect";
 import { BodyScrollView } from "@/components/layouts/BodyScrollView";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import OptionsBottomSheet from "@/components/shared/OptionsBottomSheet";
 import { Button, ButtonText, Text } from "@/components/ui";
-import { showSnackbar } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
 import React, { useState } from "react";
 import { View } from "react-native";
@@ -15,14 +15,14 @@ const ReportReviewScreen = () => {
   const { mutateAsync, isPending } = useMutation({
     mutationFn: sendEquiry,
     onSuccess: () =>
-      showSnackbar({
-        message: "Message sent successfully",
-        type: "success",
+      showErrorAlert({
+        title: "Message sent successfully",
+        alertType: "success",
       }),
     onError: (err) =>
-      showSnackbar({
-        message: err.message,
-        type: "error",
+      showErrorAlert({
+        title: err.message,
+        alertType: "error",
       }),
   });
   const [formData, setFormData] = useState<Enquiry>({

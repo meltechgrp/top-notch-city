@@ -31,7 +31,7 @@ export function useInfinityQueries({
     case "all": {
       return useInfiniteQuery({
         queryKey: ["properties"],
-        queryFn: ({ pageParam = 1 }) => fetchProperties({ pageParam }),
+        queryFn: ({ pageParam = 1 }) => fetchProperties({ pageParam, perPage }),
         initialPageParam: 1,
         getNextPageParam: (lastPage) => {
           const { page, pages } = lastPage;

@@ -181,18 +181,28 @@ export async function authLogin(
   }
 }
 export async function sendPasswordReset({ email }: { email: string }) {
-  const res = await Fetch("/password-reset/request", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: JSON.stringify({ email }),
-  });
+  try {
+    const data = await fetch(`${config.origin}/api/password-reset/request`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+    });
+    const res = await data.json();
 
-  if (res?.detail) {
-    throw new Error("Error occurried");
+    if (res.detail) {
+      return {
+        formError: "Email not found",
+      };
+    } else {
+      return {
+        success: true,
+      };
+    }
+  } catch (error) {
+    throw Error("error");
   }
-  return true;
 }
 export async function resetPassword({
   email,
@@ -205,16 +215,26 @@ export async function resetPassword({
   new_password: string;
   confirm_password: string;
 }) {
-  const res = await Fetch("/password-reset/confirm", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: { email: email.toLowerCase(), code, new_password, confirm_password },
-  });
-
-  if (res?.detail) {
-    throw new Error("Error occurried");
+  try {
+    const data = await fetch(`${config.origin}/api/password-reset/request`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: email.toLowerCase(),
+        code,
+        new_password,
+        confirm_password,
+      }),
+    });
+    const res = await data.json();
+    console.log(res);
+    if (res?.detail) {
+      throw new Error("Error occurried");
+    }
+    return res;
+  } catch (error) {
+    throw Error("error");
   }
-  return res;
 }

@@ -1,19 +1,34 @@
 import { Fetch } from "../utills";
 
 // 🏠 Fetch all properties (paginated)
-export async function fetchProperties({ pageParam }: { pageParam: number }) {
+export async function fetchProperties({
+  pageParam,
+  perPage,
+}: {
+  pageParam: number;
+  perPage?: number;
+}) {
   try {
-    const res = await Fetch(`/properties?page=${pageParam}&per_page=10`, {});
+    const res = await Fetch(
+      `/properties?page=${pageParam}&per_page=${perPage}`,
+      {}
+    );
     if (res?.detail) throw new Error("Failed to fetch properties");
     return res as Result;
   } catch (error) {
     throw new Error("Failed to fetch properties");
   }
 }
-export async function fetchReels({ pageParam }: { pageParam: number }) {
+export async function fetchReels({
+  pageParam,
+  perPage = 10,
+}: {
+  pageParam: number;
+  perPage?: number;
+}) {
   try {
     const res = await Fetch(
-      `/properties/videos?page=${pageParam}&per_page=8`,
+      `/properties/videos?page=${pageParam}&per_page=${perPage}`,
       {}
     );
     if (res?.detail) throw new Error("Failed to fetch properties");

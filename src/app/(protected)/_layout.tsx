@@ -10,7 +10,7 @@ import { useEffect } from "react";
 
 export const unstable_settings = {
   // Ensure any route can link back to `/`
-  initialRouteName: "home",
+  initialRouteName: "/home",
 };
 
 export default function ProtectedRoutesLayout() {
@@ -29,9 +29,7 @@ export default function ProtectedRoutesLayout() {
     };
   }, [hasAuth]);
   useEffect(() => {
-    setTimeout(async () => {
-      await retryGetLocation();
-    }, 1000);
+    setTimeout(retryGetLocation, 1000);
   }, []);
   return (
     <Stack

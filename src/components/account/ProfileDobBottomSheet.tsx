@@ -2,7 +2,6 @@ import withRenderVisible from "@/components/shared/withRenderOpen";
 import { View } from "react-native";
 import BottomSheet from "../shared/BottomSheet";
 import { Button, ButtonText } from "../ui";
-import { showSnackbar } from "@/lib/utils";
 import { SpinningLoader } from "../loaders/SpinningLoader";
 import { useState } from "react";
 import { useStore } from "@/store";
@@ -10,6 +9,7 @@ import DatePicker from "../custom/DatePicker";
 import { format } from "date-fns";
 import { useProfileMutations } from "@/tanstack/mutations/useProfileMutations";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
 
 type Props = {
   visible: boolean;
@@ -28,9 +28,9 @@ function ProfileDobBottomSheet(props: Props) {
     useProfileMutations().updateDobMutation;
   async function handleUpload() {
     if (!dob) {
-      return showSnackbar({
-        message: "Enter a valid Date",
-        type: "warning",
+      return showErrorAlert({
+        title: "Enter a valid Date",
+        alertType: "warn",
       });
     }
     await mutateAsync(format(dob, "yyyy-MM-dd"), {

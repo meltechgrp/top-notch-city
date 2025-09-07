@@ -1,3 +1,5 @@
+import OnboardingScreenContainer from "@/components/onboarding/OnboardingScreenContainer";
+import { router } from "expo-router";
 import {
   Button,
   ButtonText,
@@ -7,31 +9,34 @@ import {
   Box,
   Icon,
 } from "@/components/ui";
-import React from "react";
+import React, { useState } from "react";
 import OTPInput from "@/components/custom/OTPInput";
-import { hapticFeed } from "@/components/HapticTab";
 import { authOptVerify } from "@/actions/auth";
-import { useStore, useTempStore } from "@/store";
+import { useTempStore } from "@/store";
 import { Loader } from "lucide-react-native";
-import BottomSheet from "@/components/shared/BottomSheet";
-import { router } from "expo-router";
-import eventBus from "@/lib/eventBus";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
+import { useAuthMutations } from "@/tanstack/mutations/useAuthMutations";
 
-export default function VerifyOtpBottomSheet({
-  visible,
-  onDismiss,
-  isAgentRequest,
-}: AuthModalProps) {
+export default function VerifyOtp() {
   const [otp, setOtp] = React.useState("");
   const { email } = useTempStore();
+  const [timer, setTimer] = useState(300);
   const [loading, setLoading] = React.useState(false);
+  const { mutateAsync: resendCode, isPending: isSending } =
+    useAuthMutations().resendVerificationMutation;
 
   const isValid = React.useMemo(() => /\d{6,6}$/.test(otp), [otp]);
   const handleSubmit = async () => {
-    if (!isValid) return;
-    if (!email) return;
-    hapticFeed();
+    if (!isValid)
+      return showErrorAlert({
+        title: "Invalid Code",
+        alertType: "warn",
+      });
+    if (!email)
+      return showErrorAlert({
+        title: "Invalid Email",
+        alertType: "warn",
+      });
     setLoading(true);
     try {
       const state = await authOptVerify({
@@ -41,30 +46,48 @@ export default function VerifyOtpBottomSheet({
       if (state?.formError) {
         showErrorAlert({
           title: state.formError,
-          alertType: "error",
+          alertType: "warn",
         });
-      } else {
-        if (isAgentRequest) {
-          router.push("/forms/agent");
-        }
-        useStore.setState((s) => ({
-          ...s,
-          hasAuth: true,
-        }));
-        eventBus.dispatchEvent("REFRESH_PROFILE", null);
-        onDismiss?.();
+      } else if (state?.data) {
+        router.dismissTo("/home");
       }
     } catch (error) {
+      showErrorAlert({
+        title: "Something went wront!. Try again.",
+        alertType: "error",
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  const [countdown, setCountdown] = React.useState(300); // 5 minutes in seconds
-
+  const handleResend = async () => {
+    try {
+      await resendCode(
+        { email: email! },
+        {
+          onSuccess: () => {
+            showErrorAlert({
+              title: "Password reset code sent to your email.",
+              alertType: "success",
+            });
+            setTimer(300);
+          },
+          onError: () => {
+            showErrorAlert({
+              title: "Please try again!",
+              alertType: "warn",
+            });
+          },
+        }
+      );
+    } catch (error) {
+      showErrorAlert({ title: "Failed to resend code.", alertType: "warn" });
+    }
+  };
   React.useEffect(() => {
     const timer = setInterval(() => {
-      setCountdown((prevCountdown) => {
+      setTimer((prevCountdown) => {
         if (prevCountdown === 0) {
           clearInterval(timer);
           return 0;
@@ -78,26 +101,24 @@ export default function VerifyOtpBottomSheet({
     };
   }, []);
 
-  const minutes = Math.floor(countdown / 60);
-  const seconds = countdown % 60;
+  const minutes = Math.floor(timer / 60);
+  const seconds = timer % 60;
   return (
-    <BottomSheet
-      title="Verify your Email"
-      visible={visible}
-      withHeader
-      onDismiss={onDismiss}
-      snapPoint={["74%"]}
-    >
-      <Box className=" gap-6 mt-4 p-6">
+    <OnboardingScreenContainer allowBack={false}>
+      <Box className="w-[98%] bg-background-muted/90 max-w-[26rem] gap-6 mt-4 mx-auto rounded-xl p-6">
         <View className="gap-2 mb-4">
-          <Text className=" text-3xl text-primary font-semibold font-heading text-center"></Text>
+          <Text className=" text-3xl text-primary font-semibold font-heading text-center">
+            Verify your Email
+          </Text>
           <Text className=" text-sm text-center">
             Enter the One-Time Password sent to your email to ensure a safe and
             secure login experience.
           </Text>
         </View>
-        <OTPInput onTextChange={setOtp} inModal />
-        {countdown > 0 && (
+        <View>
+          <OTPInput onTextChange={setOtp} />
+        </View>
+        {timer > 0 && (
           <View className="flex-row items-center mt-4">
             <Text className="text-typography text-lg">Resend code in </Text>
 
@@ -106,11 +127,11 @@ export default function VerifyOtpBottomSheet({
             </Text>
           </View>
         )}
-        {countdown <= 0 && (
+        {timer <= 0 && (
           <View className=" flex-row gap-2 mt-4">
             <Text>Haven’t got the email yet?</Text>
-            <Pressable>
-              <Text className=" text-primary font-medium">Resend email</Text>
+            <Pressable onPress={handleResend}>
+              <Text className=" text-primary font-medium">Resend code</Text>
             </Pressable>
           </View>
         )}
@@ -127,6 +148,6 @@ export default function VerifyOtpBottomSheet({
           <ButtonText>Verify</ButtonText>
         </Button>
       </Box>
-    </BottomSheet>
+    </OnboardingScreenContainer>
   );
 }

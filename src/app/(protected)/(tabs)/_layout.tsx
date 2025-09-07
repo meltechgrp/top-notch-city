@@ -1,31 +1,16 @@
 import { Tabs } from "expo-router";
-import React, { useMemo } from "react";
+import React from "react";
 import { HapticTab } from "@/components/HapticTab";
-import {
-  Home,
-  Menu,
-  MessageSquareMore,
-  MonitorPlay,
-  Plus,
-  Search,
-} from "lucide-react-native";
+import { Home, Menu, MonitorPlay, Plus, Search } from "lucide-react-native";
 import { Colors } from "@/constants/Colors";
 import { useResolvedTheme, Pressable } from "@/components/ui";
-import { useReels } from "@/hooks/useReel";
-import { useStore } from "@/store";
-
-// import { NativeTabs, Icon, Label } from "expo-router/unstable-native-tabs";
 
 export const unstable_settings = {
-  initialRouteName: "home",
+  initialRouteName: "/home",
 };
 export default function TabLayout() {
   const theme = useResolvedTheme();
-  const { refetch } = useReels();
-  const { me } = useStore();
 
-  const isAdmin = false;
-  // useMemo(() => me?.role == "admin" || me?.is_superuser, [me]);
   return (
     <Tabs
       screenOptions={{
@@ -69,9 +54,7 @@ export default function TabLayout() {
         options={{
           title: "Reels",
           headerShown: false,
-          tabBarButton: (props) => (
-            <Pressable {...(props as any)} onDoublePress={refetch} />
-          ),
+          tabBarButton: (props) => <Pressable {...(props as any)} />,
           tabBarIcon: ({ color }) => <MonitorPlay size={24} color={color} />,
         }}
       />
@@ -80,18 +63,6 @@ export default function TabLayout() {
         options={() => ({
           title: "Properties",
           tabBarIcon: ({ color }) => <Plus size={24} color={color} />,
-          href: isAdmin ? null : "/(protected)/(tabs)/properties",
-        })}
-      />
-      <Tabs.Screen
-        name="chats"
-        options={() => ({
-          title: "Messages",
-          headerShown: true,
-          tabBarIcon: ({ color }) => (
-            <MessageSquareMore size={24} color={color} />
-          ),
-          href: null,
         })}
       />
       <Tabs.Screen

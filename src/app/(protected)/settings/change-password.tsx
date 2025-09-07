@@ -1,12 +1,12 @@
 import { TextInput, View } from "react-native";
 import { Button, ButtonText, Text } from "@/components/ui";
-import { showSnackbar } from "@/lib/utils";
 import { useState } from "react";
 import { validatePassword } from "@/lib/schema";
 import { z } from "zod";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import { Fetch } from "@/actions/utills";
 import { CustomInput } from "@/components/custom/CustomInput";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
 
 const ProfileNameSchema = z.object({
   current: validatePassword,
@@ -23,9 +23,9 @@ export default function ChangePassword() {
   });
   async function handleUpload() {
     if (form.new !== form.comfirm) {
-      return showSnackbar({
-        message: "Passwords do not match",
-        type: "warning",
+      return showErrorAlert({
+        title: "Passwords do not match",
+        alertType: "warn",
       });
     }
     try {
@@ -38,20 +38,20 @@ export default function ChangePassword() {
         },
       });
       if (data && !data?.detail) {
-        showSnackbar({
-          message: "Profile name updated successfully",
-          type: "success",
+        showErrorAlert({
+          title: "Profile name updated successfully",
+          alertType: "success",
         });
       } else {
-        showSnackbar({
-          message: "Failed to update.. try again",
-          type: "warning",
+        showErrorAlert({
+          title: "Failed to update.. try again",
+          alertType: "warn",
         });
       }
     } catch (error) {
-      showSnackbar({
-        message: "Failed to update.. try again",
-        type: "warning",
+      showErrorAlert({
+        title: "Failed to update.. try again",
+        alertType: "warn",
       });
     } finally {
       setLoading(false);
@@ -100,9 +100,9 @@ export default function ChangePassword() {
           onPress={async () => {
             const validate = ProfileNameSchema.safeParse(form);
             if (!validate.success) {
-              return showSnackbar({
-                message: "Passwords must be atleast 8 characters",
-                type: "warning",
+              return showErrorAlert({
+                title: "Passwords must be atleast 8 characters",
+                alertType: "warn",
               });
             }
             await handleUpload();

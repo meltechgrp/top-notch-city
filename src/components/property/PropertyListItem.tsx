@@ -2,16 +2,16 @@ import { cn, composeFullAddress, useTimeAgo } from "@/lib/utils";
 import { StyleProp, View, ViewStyle } from "react-native";
 import { Icon, Text, Pressable } from "../ui";
 import { MapPin } from "lucide-react-native";
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import { Colors } from "@/constants/Colors";
 import Layout from "@/constants/Layout";
-import PropertyCarousel from "./PropertyCarousel";
 import { useLayout } from "@react-native-community/hooks";
 import { PropertyStatus } from "./PropertyStatus";
-import { PropertyInteractions } from "./PropertyInteractions";
+import PropertyInteractions from "./PropertyInteractions";
 import { PropertyTitle } from "./PropertyTitle";
 import { useStore } from "@/store";
 import { PropertyPrice } from "./PropertyPrice";
+import PropertyMedia from "@/components/property/PropertyMedia";
 
 type Props = {
   data: Property;
@@ -26,7 +26,7 @@ type Props = {
   style?: StyleProp<ViewStyle>;
   onPress: (data: Props["data"]) => void;
 };
-export default function PropertyListItem(props: Props) {
+function PropertyListItem(props: Props) {
   const {
     data,
     className,
@@ -72,17 +72,11 @@ export default function PropertyListItem(props: Props) {
         className
       )}
     >
-      <PropertyCarousel
-        width={width || 300}
-        withBackdrop={true}
-        loop={true}
-        withPagination={false}
-        rounded={rounded}
-        isList={isList}
-        enabled={false}
-        paginationsize={6}
-        media={images.slice(0, 5)}
-        pointerPosition={6}
+      <PropertyMedia
+        style={{ width, height: bannerHeight }}
+        source={images[0]}
+        withBackdrop
+        rounded
       />
       <View className=" absolute top-0 w-full h-full justify-between">
         <View className={cn(" flex-row p-4 pb-0 items-start justify-between")}>
@@ -118,3 +112,5 @@ export default function PropertyListItem(props: Props) {
     </Pressable>
   );
 }
+
+export default memo(PropertyListItem);

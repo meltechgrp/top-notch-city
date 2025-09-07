@@ -3,6 +3,7 @@ import { router } from "expo-router";
 import VerticalProperties from "@/components/property/VerticalProperties";
 import { View } from "@/components/ui";
 import { useStore } from "@/store";
+import { memo } from "react";
 
 const TopProperties = () => {
   const { topProperties: properties } = useStore();
@@ -33,4 +34,4 @@ const TopProperties = () => {
   );
 };
 
-export default TopProperties;
+export default memo(TopProperties);

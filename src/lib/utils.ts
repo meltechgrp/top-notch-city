@@ -58,11 +58,6 @@ export function formatToNaira(
   return formatMoney(toNaira(amountInKobo), "NGN", fractionDigits);
 }
 
-// show snackbar message
-export function showSnackbar(option: SnackBarOption) {
-  eventBus.dispatchEvent("addSnackBar", option);
-}
-
 export function formatMoney(
   amount: number,
   currency: string,

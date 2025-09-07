@@ -13,7 +13,7 @@ import { format } from "date-fns";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { acceptApplication } from "@/actions/agent";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
-import { showSnackbar } from "@/lib/utils";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
 
 interface ApplicationBottomSheetProps {
   visible: boolean;
@@ -129,9 +129,9 @@ export default function ApplicationBottomSheet({
                       query.invalidateQueries({
                         queryKey: ["agent-applications"],
                       });
-                      showSnackbar({
-                        message: "Application reviewed and marked as approved.",
-                        type: "success",
+                      showErrorAlert({
+                        title: "Application reviewed and marked as approved.",
+                        alertType: "success",
                       });
                       onDismiss();
                     },

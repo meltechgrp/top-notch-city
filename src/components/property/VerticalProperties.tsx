@@ -1,8 +1,9 @@
 import { View } from "@/components/ui";
 import { RefreshControl } from "react-native-gesture-handler";
-import { NativeScrollEvent } from "react-native";
+import { Dimensions, NativeScrollEvent } from "react-native";
 import React, {
   forwardRef,
+  memo,
   ReactNode,
   useCallback,
   useImperativeHandle,
@@ -16,6 +17,7 @@ import { AnimatedFlashList } from "../shared/AnimatedFlashList";
 import FullHeightLoaderWrapper from "../loaders/FullHeightLoaderWrapper";
 import { cn, deduplicate } from "@/lib/utils";
 import LoadingLine from "@/components/custom/HorizontalLoader";
+import BackgroundView from "@/components/layouts/BackgroundView";
 
 interface Props {
   category?: string;
@@ -30,6 +32,7 @@ interface Props {
   isHorizontal?: boolean;
   showsVerticalScrollIndicator?: boolean;
   isLoading?: boolean;
+  isRefetching?: boolean;
   hasNextPage?: boolean;
   showStatus?: boolean;
   data: Property[];
@@ -43,11 +46,10 @@ interface Props {
   ListEmptyComponent?: ReactNode;
   onPress?: (data: Props["data"][0]) => void;
 }
+const { height } = Dimensions.get("window");
 const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
   {
-    category,
     scrollY,
-    disableCount = false,
     scrollEnabled = true,
     data,
     isLoading,
@@ -57,8 +59,6 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
     isHorizontal = false,
     headerTopComponent,
     disableHeader,
-    isAdmin,
-    onScroll,
     className,
     onPress,
     scrollElRef,
@@ -67,6 +67,7 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
     hasNextPage,
     showStatus = false,
     ListEmptyComponent,
+    isRefetching,
   },
   ref
 ) {
@@ -163,13 +164,16 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
             {ListEmptyComponent ? (
               ListEmptyComponent
             ) : (
-              <MiniEmptyState
-                className=" mt-10"
-                title={isEmptyTitle || "No property found"}
-              />
+              <BackgroundView style={{ height }} className="flex-1">
+                <MiniEmptyState
+                  className=" mt-10"
+                  title={isEmptyTitle || "No property found"}
+                />
+              </BackgroundView>
             )}
           </>
         )}
+        ListFooterComponent={() => (isRefetching ? <LoadingLine /> : undefined)}
         viewabilityConfig={{
           itemVisiblePercentThreshold: 50,
         }}
@@ -179,4 +183,4 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
   );
 });
 
-export default VerticalProperties;
+export default memo(VerticalProperties);

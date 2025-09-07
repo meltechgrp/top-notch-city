@@ -1,6 +1,6 @@
 import { View } from "react-native";
 import { format } from "date-fns";
-import { fullName, showSnackbar } from "@/lib/utils";
+import { fullName } from "@/lib/utils";
 import BottomSheet from "@/components/shared/BottomSheet";
 import {
   Avatar,

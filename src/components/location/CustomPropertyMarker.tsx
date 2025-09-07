@@ -3,14 +3,13 @@ import PropertyMedia from "@/assets/images/property.png";
 import { generateMediaUrl } from "@/lib/api";
 import { Image, View } from "@/components/ui";
 import { Colors } from "@/constants/Colors";
-import { useState } from "react";
+import { memo, useState } from "react";
 
 interface Props {
   property: Property;
   onPress: (data: Property) => void;
 }
-
-export function CustomPropertyMarker({ property, onPress }: Props) {
+function CustomPropertyMarker({ property, onPress }: Props) {
   const { latitude, longitude } = property.address;
   const media = property.media.find((item) => item.media_type == "IMAGE")!;
   const image = generateMediaUrl(media)?.uri;
@@ -75,3 +74,5 @@ export function CustomPropertyMarker({ property, onPress }: Props) {
     </Marker>
   );
 }
+
+export default memo(CustomPropertyMarker);

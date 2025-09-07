@@ -1,8 +1,8 @@
 import { useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { uniqueId } from "lodash-es";
-import { showSnackbar } from "@/lib/utils";
 import { useMediaCompressor } from "./useMediaCompressor";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
 
 type MediaType = "image" | "video";
 
@@ -43,9 +43,9 @@ export function useMediaUpload({
     setLoading(false);
 
     if (compressed.length === 0) {
-      showSnackbar({
-        message: "Failed to upload.. try again",
-        type: "warning",
+      showErrorAlert({
+        title: "Failed to upload.. try again",
+        alertType: "warn",
       });
     } else {
       onSuccess(compressed);

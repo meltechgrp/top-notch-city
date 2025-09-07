@@ -3,7 +3,6 @@ import withRenderVisible from "@/components/shared/withRenderOpen";
 import { cn } from "@/lib/utils";
 import { ToastAndroid, View } from "react-native";
 import * as Clipboard from "expo-clipboard";
-import { showSnackbar } from "@/lib/utils";
 import Platforms from "@/constants/Plaforms";
 import { useStore } from "@/store";
 import { useMemo } from "react";
@@ -11,6 +10,7 @@ import BottomSheetPlainTwo from "@/components/shared/BottomSheetPlainTwo";
 import Layout from "@/constants/Layout";
 import { Copy, Edit, Reply, Trash } from "lucide-react-native";
 import { Icon, Text, Pressable } from "@/components/ui";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
 
 type Props = {
   visible: boolean;
@@ -70,9 +70,9 @@ function MessageActionsBottomSheet(props: Props) {
       await Clipboard.setStringAsync(message.content);
       ToastAndroid.show("Message copied to clipboard", 1500);
       Platforms.isIOS() &&
-        showSnackbar({
-          message: "Message copied to clipboard",
-          type: "success",
+        showErrorAlert({
+          title: "Message copied to clipboard",
+          alertType: "success",
           duration: 1500,
         });
     }

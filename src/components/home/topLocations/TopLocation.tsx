@@ -4,7 +4,7 @@ import { generateMediaUrlSingle } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { router } from "expo-router";
 import { MapPin } from "lucide-react-native";
-import React from "react";
+import React, { memo } from "react";
 import { TouchableOpacity } from "react-native";
 
 type Props = {
@@ -12,7 +12,7 @@ type Props = {
   clasName?: string;
 };
 
-export default function TopLocation({
+function TopLocation({
   location: { state, property_count, property_image, longitude, latitude },
   clasName,
 }: Props) {
@@ -57,3 +57,5 @@ export default function TopLocation({
     </TouchableOpacity>
   );
 }
+
+export default memo(TopLocation);

@@ -1,6 +1,7 @@
 import { ScrollView } from "react-native";
 import TopLocation from "./TopLocation";
 import { useHomeFeed } from "@/hooks/useHomeFeed";
+import { memo } from "react";
 
 type Props = {
   category?: string;
@@ -8,7 +9,7 @@ type Props = {
   emptyState?: React.ReactNode;
 };
 
-export default function TopLocationsHorizontalList(props: Props) {
+function TopLocationsHorizontalList(props: Props) {
   const { locations } = useHomeFeed();
 
   return (
@@ -27,3 +28,5 @@ export default function TopLocationsHorizontalList(props: Props) {
     </ScrollView>
   );
 }
+
+export default memo(TopLocationsHorizontalList);

@@ -4,7 +4,10 @@ import { likeProperty } from "@/actions/property";
 import { cn } from "@/lib/utils";
 import { memo } from "react";
 import { useStore } from "@/store";
-import { openSignInModal } from "@/components/globals/AuthModals";
+import {
+  openAccessModal,
+  openSignInModal,
+} from "@/components/globals/AuthModals";
 import { Heart } from "lucide-react-native";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
 
@@ -89,12 +92,7 @@ const PropertyLikeButton = ({
 
   function handleLike() {
     if (!hasAuth) {
-      return openSignInModal({
-        visible: true,
-        onLoginSuccess: () => {
-          mutate();
-        },
-      });
+      return openAccessModal({ visible: true });
     }
     mutate();
   }
@@ -104,7 +102,7 @@ const PropertyLikeButton = ({
       <Icon
         as={Heart}
         className={cn(
-          "text-white  w-9 h-9",
+          "text-white fill-white w-9 h-9",
           hasScrolledToDetails && theme == "light" && "text-black",
           liked && "text-primary fill-primary"
         )}

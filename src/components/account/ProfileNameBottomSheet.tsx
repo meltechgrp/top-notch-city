@@ -2,7 +2,6 @@ import withRenderVisible from "@/components/shared/withRenderOpen";
 import { View } from "react-native";
 import BottomSheet from "../shared/BottomSheet";
 import { Button, ButtonText, Text } from "../ui";
-import { showSnackbar } from "@/lib/utils";
 import { SpinningLoader } from "../loaders/SpinningLoader";
 import { useState } from "react";
 import { Name } from "@/lib/schema";
@@ -10,6 +9,7 @@ import { useStore } from "@/store";
 import { z } from "zod";
 import { useProfileMutations } from "@/tanstack/mutations/useProfileMutations";
 import { CustomInput } from "../custom/CustomInput";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
 
 type Props = {
   visible: boolean;
@@ -72,9 +72,9 @@ function ProfileNameBottomSheet(props: Props) {
             onPress={async () => {
               const validate = ProfileNameSchema.safeParse(form);
               if (!validate.success) {
-                return showSnackbar({
-                  message: "Please enter valid names..",
-                  type: "warning",
+                return showErrorAlert({
+                  title: "Please enter valid names..",
+                  alertType: "warn",
                 });
               }
               await handleUpload();

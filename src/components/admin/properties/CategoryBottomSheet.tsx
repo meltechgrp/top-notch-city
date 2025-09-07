@@ -3,9 +3,9 @@ import { View } from "react-native";
 import BottomSheet from "@/components/shared/BottomSheet";
 import { Button, ButtonText } from "@/components/ui";
 import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
-import { showSnackbar } from "@/lib/utils";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import { useEffect, useState } from "react";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
 
 type Props = {
   visible: boolean;
@@ -47,9 +47,9 @@ function CategoryBottomSheet(props: Props) {
             className="h-11 flex-1"
             onPress={() => {
               if (!text || text?.length < 3) {
-                showSnackbar({
-                  type: "warning",
-                  message: "Invalid name",
+                showErrorAlert({
+                  alertType: "warn",
+                  title: "Invalid name",
                 });
               }
               onSubmit(text);

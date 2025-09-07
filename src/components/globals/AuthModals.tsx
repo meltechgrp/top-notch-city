@@ -6,12 +6,14 @@ import SignUpBottomSheet from "../modals/auth/SignupBottomSheet";
 import EnquiriesFormBottomSheet from "../modals/EnquiriesBottomSheet";
 import ResetPasswordBottomSheet from "@/components/modals/auth/ResetPasswordBottomSheet";
 import CustomerCareBottomSheet from "@/components/modals/CustomerCareBottomSheet";
+import { ContentAccessModal } from "@/components/modals/ContentAccessModal";
 
 export default function AuthModals() {
   const [signIn, setSignIn] = useState<AuthModalProps | null>(null);
   const [signUp, setSignUp] = useState<AuthModalProps | null>(null);
   const [enquiry, setEnquiry] = useState<AuthModalProps | null>(null);
   const [staffs, setStaffs] = useState<AuthModalProps | null>(null);
+  const [access, setAccess] = useState<AuthModalProps | null>(null);
   const [resetPassword, setResetPassword] = useState<AuthModalProps | null>(
     null
   );
@@ -24,6 +26,7 @@ export default function AuthModals() {
     eventBus.addEventListener("openResetPasswordModal", setResetPassword);
 
     eventBus.addEventListener("openSignUpModal", setSignUp);
+    eventBus.addEventListener("openAccessModal", setAccess);
     eventBus.addEventListener("openEnquiryModal", setEnquiry);
     eventBus.addEventListener("openStaffs", setStaffs);
     eventBus.addEventListener(
@@ -88,6 +91,15 @@ export default function AuthModals() {
           }}
         />
       )}
+      {!!access && (
+        <ContentAccessModal
+          {...access}
+          onDismiss={() => {
+            access.onDismiss?.();
+            setAccess(null);
+          }}
+        />
+      )}
     </>
   );
 }
@@ -111,4 +123,7 @@ export function openEnquiryModal(props: AuthModalProps) {
 }
 export function openStaffsModal(props: AuthModalProps) {
   eventBus.dispatchEvent("openStaffs", props);
+}
+export function openAccessModal(props: AuthModalProps) {
+  eventBus.dispatchEvent("openAccessModal", props);
 }

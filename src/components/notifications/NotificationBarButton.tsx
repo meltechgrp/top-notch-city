@@ -1,7 +1,7 @@
 import NotificationBadge from "@/components/notifications/NotificationBadge";
 import { router, useFocusEffect } from "expo-router";
 import { Bell } from "lucide-react-native";
-import { useCallback, useMemo } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { View } from "react-native";
 import { Button, Icon } from "../ui";
 import { cn } from "@/lib/utils";
@@ -15,7 +15,7 @@ type Props = {
   isAdmin?: boolean;
 };
 
-export default function NotificationBarButton({ className, isAdmin }: Props) {
+function NotificationBarButton({ className, isAdmin }: Props) {
   const { me } = useStore();
   const { data, refetch } = useQuery({
     queryKey: ["notifications"],
@@ -50,3 +50,5 @@ export default function NotificationBarButton({ className, isAdmin }: Props) {
     </Button>
   );
 }
+
+export default memo(NotificationBarButton);

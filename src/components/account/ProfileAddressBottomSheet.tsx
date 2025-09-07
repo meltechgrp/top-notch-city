@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Button, ButtonIcon, ButtonText, Icon, Text } from "../ui";
 import { debounce } from "lodash-es";
 import { MapPin, Send } from "lucide-react-native";
-import { composeFullAddress, showSnackbar } from "@/lib/utils";
+import { composeFullAddress } from "@/lib/utils";
 import { MiniEmptyState } from "../shared/MiniEmptyState";
 import { SpinningLoader } from "../loaders/SpinningLoader";
 import useGetLocation from "@/hooks/useGetLocation";
@@ -14,6 +14,7 @@ import { getReverseGeocode } from "@/hooks/useReverseGeocode";
 import { useProfileMutations } from "@/tanstack/mutations/useProfileMutations";
 import { fetchPlaceFromTextQuery } from "@/actions/utills";
 import { CustomInput } from "../custom/CustomInput";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
 
 type Props = {
   visible: boolean;
@@ -144,18 +145,18 @@ function ProfileAddressBottomSheet(props: Props) {
                     setLocating(true);
                     const location = await retryGetLocation();
                     if (!location)
-                      return showSnackbar({
-                        message: "Unable to get location, try again!",
-                        type: "warning",
+                      return showErrorAlert({
+                        title: "Unable to get location, try again!",
+                        alertType: "warn",
                       });
                     const result = await getReverseGeocode(location);
                     if (result) {
                       const { address, addressComponents } = result;
                       setLocating(false);
                       if (!address) {
-                        showSnackbar({
-                          message: "Unable to get location, try again!",
-                          type: "warning",
+                        showErrorAlert({
+                          title: "Unable to get location, try again!",
+                          alertType: "warn",
                         });
                       } else {
                         await handleAddress({

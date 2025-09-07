@@ -1,5 +1,6 @@
 import { useIsFocused } from "@react-navigation/native";
-import { useCallback, useEffect } from "react";
+import { usePathname } from "expo-router";
+import { useEffect } from "react";
 import { AppState } from "react-native";
 
 export function useDebouncedVisibility({
@@ -10,10 +11,11 @@ export function useDebouncedVisibility({
 }: {
   visible: boolean;
   currentIndex: number;
-  reels: ReelVideo[];
+  reels: Reel[];
   playersRef: React.RefObject<Record<string, VideoPlayerHandle | null>>;
 }) {
   const isFocused = useIsFocused();
+  const path = usePathname();
   const handlePause = () => {
     Object.values(playersRef.current).forEach((player) => {
       player?.pause?.();
@@ -28,24 +30,33 @@ export function useDebouncedVisibility({
   };
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if (!visible) handlePause();
+      if (!visible || path !== "/reels") handlePause();
       else handleCurrentPlay();
     }, 300);
 
     return () => clearTimeout(timeout);
-  }, [visible, currentIndex, reels]);
-
+  }, [visible, currentIndex, reels, path]);
   // App minimized
   useEffect(() => {
     const sub = AppState.addEventListener("change", (state) => {
       if (state !== "active") handlePause();
-      else if (visible) handleCurrentPlay();
+      else if (visible) {
+        if (path !== "/reels") {
+          return handlePause();
+        }
+        handleCurrentPlay();
+      }
     });
     return () => sub.remove();
-  }, [visible, currentIndex, reels]);
+  }, [visible, path, currentIndex, reels]);
   // // Screen unfocused
   useEffect(() => {
     if (!isFocused || AppState.currentState !== "active") handlePause();
-    else if (visible) handleCurrentPlay();
-  }, [isFocused, visible, currentIndex, reels]);
+    else if (visible) {
+      if (path !== "/reels") {
+        return handlePause();
+      }
+      handleCurrentPlay();
+    }
+  }, [isFocused, visible, path, currentIndex, reels]);
 }

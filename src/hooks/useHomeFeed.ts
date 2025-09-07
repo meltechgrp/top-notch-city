@@ -25,7 +25,7 @@ export function useHomeFeed() {
     data: allData,
     refetch: refetchAll,
     isRefetching: refetchingAll,
-  } = useInfinityQueries({ type: "all" });
+  } = useInfinityQueries({ type: "all", perPage: 5 });
 
   const { data: totalCount, refetch: getTotalCount } = useQuery({
     queryKey: ["total"],
@@ -69,17 +69,13 @@ export function useHomeFeed() {
   /** --- Sync with Store only when changed --- */
   useEffect(() => {
     if (!allProperties.length) return;
-    if (!shallowCompareProperties(topProperties || [], allProperties)) {
-      setTopProperties(allProperties);
-    }
-  }, [allProperties, topProperties, setTopProperties]);
+    setTopProperties(allProperties);
+  }, [allProperties, setTopProperties]);
   const total = useMemo(() => totalCount?.total_unread, [totalCount]);
   useEffect(() => {
     if (!nearby.length) return;
-    if (!shallowCompareProperties(nearbyProperties || [], nearby)) {
-      setNearbyProperties(nearby);
-    }
-  }, [nearby, nearbyProperties, setNearbyProperties]);
+    setNearbyProperties(nearby);
+  }, [nearby, setNearbyProperties]);
 
   /** --- Combined Refresh --- */
   const refreshAll = useCallback(async () => {

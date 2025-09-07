@@ -28,7 +28,7 @@ import { generateMediaUrl } from "@/lib/api";
 import { useLayout } from "@react-native-community/hooks";
 import { usePropertyStore } from "@/store/propertyStore";
 import { FindAmenity, fullName } from "@/lib/utils";
-import { openEnquiryModal } from "../globals/AuthModals";
+import { openAccessModal, openEnquiryModal } from "../globals/AuthModals";
 import { useMutation } from "@tanstack/react-query";
 import { startChat } from "@/actions/message";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
@@ -95,6 +95,9 @@ const PropertyDetailsBottomSheet = () => {
               both
               disabled={me?.id == property?.owner.id}
               onPress={async () => {
+                if (!me) {
+                  return openAccessModal({ visible: true });
+                }
                 await mutateAsync(
                   {
                     property_id: property?.id!,

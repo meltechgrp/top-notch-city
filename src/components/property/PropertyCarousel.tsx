@@ -223,4 +223,4 @@ function PropertyCarousel({
   );
 }
 
-export default PropertyCarousel;
+export default React.memo(PropertyCarousel);

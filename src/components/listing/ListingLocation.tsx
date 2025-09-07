@@ -18,7 +18,7 @@ import useGetLocation from "@/hooks/useGetLocation";
 import { CustomInput } from "@/components/custom/CustomInput";
 import { fetchPlaceFromTextQuery } from "@/actions/utills";
 import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
-import { composeFullAddress, showSnackbar } from "@/lib/utils";
+import { composeFullAddress } from "@/lib/utils";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import { getReverseGeocode } from "@/hooks/useReverseGeocode";
 
@@ -168,7 +168,7 @@ export default function ListingLocation({ height }: { height?: number }) {
             setLoading(true);
             const location = await retryGetLocation();
             if (!location)
-              return showSnackbar({
+              return showErrorAlert({
                 message: "Unable to get location, try again!",
                 type: "warning",
               });
@@ -176,7 +176,7 @@ export default function ListingLocation({ height }: { height?: number }) {
             if (result) {
               const { address, addressComponents } = result;
               if (!address) {
-                showSnackbar({
+                showErrorAlert({
                   message: "Unable to get location, try again!",
                   type: "warning",
                 });
@@ -191,7 +191,7 @@ export default function ListingLocation({ height }: { height?: number }) {
                 },
               });
             } else {
-              showSnackbar({
+              showErrorAlert({
                 message: "Unable to get location, try again!",
                 type: "warning",
               });

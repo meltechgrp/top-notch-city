@@ -1,9 +1,10 @@
 import { Text, View } from "@/components/ui";
 import SwipeableWrapper from "@/components/shared/SwipeableWrapper";
 import { Pressable } from "react-native";
-import { composeFullAddress, showSnackbar } from "@/lib/utils";
+import { composeFullAddress } from "@/lib/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteApplication } from "@/actions/agent";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
 
 type Props = {
   request: AgentReview;
@@ -33,14 +34,14 @@ export default function RequestListItem({ request, onPress }: Props) {
                   },
                   {
                     onSettled: () =>
-                      showSnackbar({
-                        message: "Applcation deleted successfully",
-                        type: "success",
+                      showErrorAlert({
+                        title: "Applcation deleted successfully",
+                        alertType: "success",
                       }),
                     onError: () =>
-                      showSnackbar({
-                        message: "Error occuried, try again!",
-                        type: "error",
+                      showErrorAlert({
+                        title: "Error occuried, try again!",
+                        alertType: "error",
                       }),
                   }
                 );

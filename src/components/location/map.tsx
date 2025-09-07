@@ -1,7 +1,7 @@
 import React, { memo, ReactNode, useEffect, useRef, useState } from "react";
 import MapView, { Circle, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import Layout from "@/constants/Layout";
-import { CustomPropertyMarker } from "./CustomPropertyMarker";
+import CustomPropertyMarker from "./CustomPropertyMarker";
 import Platforms from "@/constants/Plaforms";
 import PropertyMedia from "@/assets/images/property.png";
 import { Colors } from "@/constants/Colors";

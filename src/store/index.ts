@@ -183,11 +183,12 @@ type TempState = {
   clearPinSetupOptions: () => void;
   fullScreenLoading: boolean;
   listing: Listing;
-  kyc?: Partial<UpdateUserInput>;
+  email?: string;
   updateFullScreenLoading: (fullScreenLoading: boolean) => void;
   resetStore: () => void;
   resetListing: () => void;
-  resetKyc: () => void;
+  resetEmail: () => void;
+  saveEmail: (email: string) => void;
   updateListing: (data: Listing) => void;
   updateListingStep: () => void;
 };
@@ -208,7 +209,8 @@ export const useTempStore = create<TempState>((set, get) => ({
   setPinVerifyRequest: (pinVerifyRequest: TempState["pinVerifyRequest"]) =>
     set((state) => ({ ...state, pinVerifyRequest })),
   resetStore: () => set(initialTempState),
-  resetKyc: () => set((state) => ({ ...state, kyc0: undefined })),
+  resetEmail: () => set((state) => ({ ...state, email: undefined })),
+  saveEmail: (email) => set((state) => ({ ...state, email })),
   resetListing: () =>
     set((state) => ({ ...state, listing: initialTempState.listing })),
   setPinSetupOptions: (args) => {

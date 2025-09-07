@@ -14,7 +14,6 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Platform } from "react-native";
 import SystemNavigationBar from "react-native-system-navigation-bar";
-import { openSignInModal } from "@/components/globals/AuthModals";
 
 export default function OnboardingScreen() {
   const [activeIndex, setActiveIndex] = React.useState(0);
@@ -26,11 +25,6 @@ export default function OnboardingScreen() {
     }
   }, []);
   function skipHandler() {
-    setTimeout(() => {
-      openSignInModal({
-        visible: true,
-      });
-    }, 3000);
     router.push("/home");
   }
   useFocusEffect(
@@ -112,17 +106,11 @@ function PageOne({
               </Text>
             </Pressable>
           </View>
-          <View className=" gap-4">
+          <View className=" gap-2">
             <View className="flex-row justify-between items-center">
-              <Text
-                size="4xl"
-                className="font-bold font-heading w-[60%] text-white"
-              >
+              <Text className="text-4xl font-bold font-heading w-[60%] text-white">
                 Find Your Dream{" "}
-                <Text
-                  size="4xl"
-                  className="text-[#FF4C00] font-bold font-heading"
-                >
+                <Text className="text-4xl text-[#FF4C00] font-bold font-heading">
                   Home
                 </Text>
               </Text>
@@ -168,21 +156,17 @@ function PageTwo({
               </Text>
             </Pressable>
           </View>
-          <View className=" gap-4">
+          <View className=" gap-2">
             <View className="flex-row justify-between items-center">
               <View className="">
                 <View className=" flex-row gap-1">
-                  <Text size="4xl" className="font-bold text-white">
-                    Which{" "}
+                  <Text className="text-4xl font-bold text-white">Which </Text>
+                  <Text className="text-4xl font-bold text-primary">
+                    location{" "}
                   </Text>
-                  <Text size="4xl" className="font-bold text-primary">
-                    location
-                  </Text>
-                  <Text size="4xl" className="font-bold text-white">
-                    are
-                  </Text>
+                  <Text className="text-4xl font-bold text-white">are </Text>
                 </View>
-                <Text size="4xl" className="font-bold text-white">
+                <Text className="text-4xl font-bold text-white">
                   you interested in
                 </Text>
               </View>
@@ -225,10 +209,10 @@ function PageThree({
           <View className="flex-1 items-end "></View>
           <View className=" gap-4 flex-row mb-2">
             <View className="flex-1">
-              <Text size="4xl" className="font-bold w-[70%] text-white">
+              <Text className="text-4xl  font-bold w-[70%] text-white">
                 Connect with Trusted{" "}
-                <Text size="4xl" className="text-[#FF4C00] font-bold">
-                  Agents
+                <Text className="text-[#FF4C00] text-4xl  font-bold">
+                  Agents{" "}
                 </Text>
               </Text>
             </View>

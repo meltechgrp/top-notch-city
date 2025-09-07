@@ -14,25 +14,6 @@ type Props = {
 const FoundHorizontalList = (props: Props) => {
   const { data, refetch } = props;
 
-  const { onRefresh } = useRefresh(refetch);
-
-  useEffect(() => {
-    onRefresh();
-    eventBus.addEventListener("PROPERTY_HORIZONTAL_LIST_REFRESH", onRefresh);
-
-    return () => {
-      eventBus.removeEventListener(
-        "PROPERTY_HORIZONTAL_LIST_REFRESH",
-        onRefresh
-      );
-    };
-  }, []);
-  {
-    !data &&
-      Array(5)
-        .fill("")
-        .map((_, i) => <HorizontalListItemSkeleton key={i} />);
-  }
   return (
     <View>
       <ScrollView

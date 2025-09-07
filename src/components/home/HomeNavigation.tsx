@@ -2,8 +2,9 @@ import { Search } from "lucide-react-native";
 import { Icon, Pressable, Text, View } from "../ui";
 import { useRouter } from "expo-router";
 import NotificationBarButton from "../notifications/NotificationBarButton";
+import { memo } from "react";
 
-export default function HomeNavigation() {
+function HomeNavigation() {
   const router = useRouter();
   return (
     <View className="flex-row justify-end items-center px-4 gap-4">
@@ -27,3 +28,5 @@ export default function HomeNavigation() {
     </View>
   );
 }
+
+export default memo(HomeNavigation);

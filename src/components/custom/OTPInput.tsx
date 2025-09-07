@@ -6,7 +6,8 @@ import {
 } from "react-native";
 import Layout from "@/constants/Layout";
 import { cn } from "@/lib/utils";
-import { useResolvedTheme, View } from "../ui";
+import { Pressable, useResolvedTheme, View } from "../ui";
+
 type Props = {
   inputStyle?: TextInput["props"]["style"];
   onTextChange?: (text: string) => void;
@@ -18,26 +19,23 @@ type Props = {
   className?: string;
 };
 
-export default function OTPInput(props: Props) {
-  const {
-    inputStyle,
-    onTextChange,
-    onTextComplete,
-    inputRange = [0, 1, 2, 3, 4, 5],
-    inputProps = {},
-    hasError,
-    inModal,
-    className,
-  } = props;
+export default function OTPInput({
+  inputStyle,
+  onTextChange,
+  onTextComplete,
+  inputRange = [0, 1, 2, 3, 4, 5],
+  inputProps = {},
+  hasError,
+  className,
+}: Props) {
   const theme = useResolvedTheme();
   const [value, setValue] = React.useState<{ [k: number]: string }>({});
   const [focused, setFocused] = React.useState<number>(-1);
-  const Input = TextInput;
   // prettier-ignore
-  const w = React.useMemo( ()=>(Layout.window.width - ((inputRange.length - 1 ) * 18) - 10) / inputRange.length,[inputRange])
+  const w = React.useMemo( ()=>(Layout.window.width - ((inputRange.length - 1 ) * 18) - 48) / inputRange.length,[inputRange])
 
-  const refs = React.useRef<React.MutableRefObject<TextInput>[]>([]);
-  refs.current = inputRange.map<React.MutableRefObject<TextInput>>(
+  const refs = React.useRef<React.RefObject<TextInput>[]>([]);
+  refs.current = inputRange.map<React.RefObject<TextInput>>(
     (_, index) => (refs.current[index] = React.createRef() as any)
   );
   async function onChange(text: string, id: number) {
@@ -85,44 +83,42 @@ export default function OTPInput(props: Props) {
 
   return (
     <View className="justify-between flex-row w-full">
-      {inputRange.map((id) => {
-        return (
-          <View
-            className={cn(
-              "text-center text-typography rounded-md text-lg border  leading-tight justify-center items-center flex",
-              {
-                "border-gray-500": id != focused,
-                "border-primary": id == focused,
-                "border-red-500": !!hasError,
-              },
-              className
-            )}
-            style={[
-              inputStyle,
-              {
-                width: w,
-                height: w,
-              },
-            ]}
-            key={id}
-          >
-            <Input
-              value={value[id]}
-              ref={refs.current[id]}
-              {...(id ? {} : { autoFocus: true })}
-              key={id}
-              textAlign="center"
-              keyboardType="phone-pad"
-              onChangeText={(v) => onChange(v, id)}
-              onKeyPress={(v) => onKeyPress(v, id)}
-              onFocus={() => setFocused(id)}
-              {...inputProps}
-              style={{ color: theme == "dark" ? "white" : "black", flex: 1 }}
-              className="text-center"
-            />
-          </View>
-        );
-      })}
+      {inputRange.map((id) => (
+        <Pressable
+          key={id}
+          onPress={() => {
+            refs.current[id]?.current?.focus();
+          }}
+          className={cn(
+            "text-center rounded-md border justify-center items-center flex",
+            {
+              "border-gray-500": id !== focused,
+              "border-primary": id === focused,
+              "border-red-500": !!hasError,
+            },
+            className
+          )}
+          style={[{ width: w, height: w }]}
+        >
+          <TextInput
+            value={value[id]}
+            ref={refs.current[id]}
+            {...(id ? {} : { autoFocus: true })}
+            textAlign="center"
+            keyboardType="number-pad"
+            maxLength={1}
+            onChangeText={(v) => onChange(v, id)}
+            onKeyPress={(e) => onKeyPress(e, id)}
+            onFocus={() => setFocused(id)}
+            {...inputProps}
+            style={{
+              color: theme === "dark" ? "white" : "black",
+              flex: 1,
+              fontSize: 20,
+            }}
+          />
+        </Pressable>
+      ))}
     </View>
   );
 }

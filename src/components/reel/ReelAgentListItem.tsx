@@ -9,14 +9,16 @@ import {
   Text,
 } from "@/components/ui";
 import { generateMediaUrlSingle } from "@/lib/api";
-import { profileDefault } from "@/store";
+import { profileDefault, useStore } from "@/store";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { followAgent, unFollowAgent } from "@/actions/agent";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
 import { router } from "expo-router";
+import { openAccessModal } from "@/components/globals/AuthModals";
 
 export const ReelAgentListItem = ({ account }: { account: AgentInfo }) => {
   const client = useQueryClient();
+  const { me } = useStore();
   const { mutate } = useMutation({
     mutationFn: () =>
       account.is_following
@@ -73,6 +75,9 @@ export const ReelAgentListItem = ({ account }: { account: AgentInfo }) => {
     },
   });
   const handlePress = () => {
+    if (!me) {
+      return openAccessModal({ visible: true });
+    }
     mutate();
   };
   return (

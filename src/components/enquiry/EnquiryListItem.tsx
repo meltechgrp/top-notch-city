@@ -1,9 +1,9 @@
 import { Text, View } from "@/components/ui";
 import SwipeableWrapper from "@/components/shared/SwipeableWrapper";
 import { Pressable } from "react-native";
-import { showSnackbar } from "@/lib/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteEnquiry } from "@/actions/equiry";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
 
 type Props = {
   enquiry: EnquiryList;
@@ -30,14 +30,14 @@ export default function EnquiryListItem({ enquiry, onPress }: Props) {
             },
             {
               onSettled: () =>
-                showSnackbar({
-                  message: "Applcation deleted successfully",
-                  type: "success",
+                showErrorAlert({
+                  title: "Applcation deleted successfully",
+                  alertType: "success",
                 }),
               onError: () =>
-                showSnackbar({
-                  message: "Error occuried, try again!",
-                  type: "error",
+                showErrorAlert({
+                  title: "Error occuried, try again!",
+                  alertType: "error",
                 }),
             }
           );

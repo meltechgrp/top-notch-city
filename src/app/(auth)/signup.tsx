@@ -1,21 +1,24 @@
-import { Button, ButtonText, View, Box, Icon } from "@/components/ui";
+import OnboardingScreenContainer from "@/components/onboarding/OnboardingScreenContainer";
+import { router } from "expo-router";
+import {
+  Button,
+  ButtonText,
+  View,
+  Box,
+  Icon,
+  Text,
+  Pressable,
+} from "@/components/ui";
 import React, { useState } from "react";
 import { Loader } from "lucide-react-native";
-import { saveAuthToken } from "@/lib/secureStore";
+import { removeAuthToken, saveAuthToken } from "@/lib/secureStore";
 import { useStore, useTempStore } from "@/store";
 import { AuthSignupInput } from "@/lib/schema";
-import { hapticFeed } from "@/components/HapticTab";
-import eventBus from "@/lib/eventBus";
-import BottomSheet from "@/components/shared/BottomSheet";
 import { authSignup } from "@/actions/auth";
 import { CustomInput } from "@/components/custom/CustomInput";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
 
-export default function SignUpBottomSheet({
-  visible,
-  onDismiss,
-  isAgentRequest,
-}: AuthModalProps) {
+export default function SignUp() {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = React.useState<AuthSignupInput>({
     email: "",
@@ -26,18 +29,17 @@ export default function SignUpBottomSheet({
   });
 
   const handleSubmit = async () => {
-    hapticFeed();
     setLoading(true);
     try {
       const state = await authSignup(form);
       if (state?.fieldError) {
         const message = Object.values(state.fieldError).filter(Boolean)[0];
-        showErrorAlert({
+        return showErrorAlert({
           title: message,
           alertType: "error",
         });
       } else if (state?.formError) {
-        showErrorAlert({
+        return showErrorAlert({
           title: state.formError,
           alertType: "error",
         });
@@ -57,47 +59,59 @@ export default function SignUpBottomSheet({
 
         useTempStore.setState((v) => ({
           ...v,
-          kyc: {
-            email: form.email,
-          },
+          email: form.email,
         }));
 
-        eventBus.dispatchEvent("openEmailVerificationModal", {
-          visible: true,
-          isAgentRequest: isAgentRequest,
-        });
-        onDismiss?.();
+        router.replace("/verify-otp");
       }
     } catch (error) {
     } finally {
       setLoading(false);
     }
   };
+  function onBack() {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      removeAuthToken();
+      useStore.getState().resetStore();
+      useTempStore.getState().resetStore();
+      router.replace("/onboarding");
+    }
+  }
   return (
-    <BottomSheet
-      withHeader
-      title="Create an Account"
-      visible={visible}
-      onDismiss={onDismiss}
-      snapPoint={["65%"]}
-    >
-      <Box className=" flex-1  gap-6 mt-4  rounded-xl py-6 px-4">
-        <View className="flex-1 gap-4">
+    <OnboardingScreenContainer onBack={onBack}>
+      <Box className="w-[98%] bg-background/90 max-w-[26rem] gap-6 mt-4 mx-auto rounded-xl p-6">
+        <View>
+          <Text className=" text-2xl text-primary font-semibold font-heading text-center">
+            Create an Account
+          </Text>
+          <Text className=" text-center">
+            Create an account to explore our app
+          </Text>
+        </View>
+        <View className="gap-4">
           <CustomInput
             className="bg-background-muted"
             value={form.first_name}
+            autoCapitalize="words"
+            autoComplete="given-name"
             onUpdate={(text) => setForm({ ...form, first_name: text })}
             placeholder="First Name"
           />
           <CustomInput
             className="bg-background-muted"
             value={form.last_name}
+            autoComplete="family-name"
+            autoCapitalize="words"
             onUpdate={(text) => setForm({ ...form, last_name: text })}
             placeholder="Last Name"
           />
           <CustomInput
             className="bg-background-muted"
             value={form.email}
+            autoCapitalize="words"
+            autoComplete="email"
             onUpdate={(text) => setForm({ ...form, email: text })}
             placeholder="Email address"
           />
@@ -105,6 +119,7 @@ export default function SignUpBottomSheet({
             className="bg-background-muted"
             type={"password"}
             value={form.password}
+            secureTextEntry
             onUpdate={(text) => setForm({ ...form, password: text })}
             placeholder="Password"
           />
@@ -112,22 +127,29 @@ export default function SignUpBottomSheet({
             type={"password"}
             className="bg-background-muted"
             value={form.comfirmPassword}
+            secureTextEntry
             onUpdate={(text) => setForm({ ...form, comfirmPassword: text })}
             placeholder="Comfirm password"
           />
-          <Button
-            variant="solid"
-            className="w-full mt-4 gap-2"
-            size="xl"
-            onPress={handleSubmit}
-          >
-            {loading && (
-              <Icon as={Loader} color="white" className=" animate-spin" />
-            )}
-            <ButtonText>Sign Up</ButtonText>
-          </Button>
+        </View>
+        <Button
+          variant="solid"
+          className="w-full mt-4 gap-2"
+          size="xl"
+          onPress={handleSubmit}
+        >
+          {loading && (
+            <Icon as={Loader} color="white" className=" animate-spin" />
+          )}
+          <ButtonText>Sign Up</ButtonText>
+        </Button>
+        <View className=" flex-row justify-center gap-2 mt-4">
+          <Text>Already have an account?</Text>
+          <Pressable onPress={() => router.push("/(auth)/signin")}>
+            <Text className=" text-primary font-medium">Sign In</Text>
+          </Pressable>
         </View>
       </Box>
-    </BottomSheet>
+    </OnboardingScreenContainer>
   );
 }

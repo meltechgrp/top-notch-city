@@ -2,13 +2,13 @@ import withRenderVisible from "@/components/shared/withRenderOpen";
 import { View } from "react-native";
 import BottomSheet from "../shared/BottomSheet";
 import { Button, ButtonText, Text } from "../ui";
-import { showSnackbar } from "@/lib/utils";
 import { SpinningLoader } from "../loaders/SpinningLoader";
 import { useState } from "react";
 import { validateEmail } from "@/lib/schema";
 import { useStore } from "@/store";
 import { useProfileMutations } from "@/tanstack/mutations/useProfileMutations";
 import { CustomInput } from "../custom/CustomInput";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
 
 type Props = {
   visible: boolean;
@@ -49,9 +49,9 @@ function ProfileEmailBottomSheet(props: Props) {
             className="h-11 flex-1"
             onPress={async () => {
               if (!validateEmail.safeParse(form.email).success) {
-                return showSnackbar({
-                  message: "Please enter a valid email address..",
-                  type: "warning",
+                return showErrorAlert({
+                  title: "Please enter a valid email address..",
+                  alertType: "warn",
                 });
               }
               await handleUpload();

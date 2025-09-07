@@ -12,13 +12,11 @@ export function useReels() {
     hasNextPage,
     isFetchingNextPage,
   } = useInfinityQueries({ type: "reels" });
-
   const videos = useMemo(() => {
     return propertyToReelVideo(
       data?.pages.flatMap((page) => page.results) || []
     );
   }, [data]);
-
   return {
     reels: videos,
     fetchNextPage,

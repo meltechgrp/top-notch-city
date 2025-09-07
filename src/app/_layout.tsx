@@ -23,7 +23,8 @@ import {
   configureReanimatedLogger,
   ReanimatedLogLevel,
 } from "react-native-reanimated";
-
+import { enableScreens } from "react-native-screens";
+enableScreens(true);
 const query = new QueryClient({
   defaultOptions: {
     queries: {
@@ -47,64 +48,15 @@ configureReanimatedLogger({
 });
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.hide();
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   useNotificationObserver();
   useSuppressChatPushNotification();
   useMountPushNotificationToken();
   useEffect(() => {
-    const handleDeepLink = ({ url }: { url: string }) => {
-      let pathToNavigate: string | undefined;
-
-      try {
-        const parsedUrl = new URL(url);
-
-        // 1️⃣ Handle known schemes (expo, custom)
-        const knownSchemes = ["exp:", "expo:", "com.meltech.topnotchcity:"];
-        console.log(parsedUrl.pathname, url);
-        if (parsedUrl.pathname == "/oauthredirect") {
-          return router.push("/(protected)/(tabs)/home");
-        } else if (knownSchemes.includes(parsedUrl.protocol)) {
-          const segments = parsedUrl.pathname.split("/").filter(Boolean);
-          pathToNavigate = segments.join("/");
-        }
-
-        // 2️⃣ Handle web links
-        else if (
-          ["topnotchcity.com", "www.topnotchcity.com"].includes(
-            parsedUrl.hostname
-          )
-        ) {
-          pathToNavigate = parsedUrl.pathname.slice(1); // remove leading "/"
-        }
-
-        // 3️⃣ Fallback: try manually removing scheme
-        else {
-          const parts = url.split("://");
-          if (parts.length > 1) {
-            const rest = parts[1].split("/").filter(Boolean);
-            pathToNavigate = rest.join("/");
-          }
-        }
-        console.log(pathToNavigate);
-        // 4️⃣ Final routing
-        if (pathToNavigate) {
-          router.push(`/(protected)/${pathToNavigate}` as any);
-        }
-      } catch (e) {}
-    };
-
-    const subscription = Linking.addEventListener("url", handleDeepLink);
-
-    return () => {
-      subscription.remove(); // Clean up on unmount
-    };
+    SplashScreen.hide();
   }, []);
-  // useEffect(() => {
-  //   SplashScreen.hide();
-  // }, []);
-
   return (
     <>
       <GestureHandlerRootView style={{ flex: 1 }}>

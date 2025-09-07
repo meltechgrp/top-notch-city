@@ -10,7 +10,7 @@ const Text = React.forwardRef<React.ComponentRef<typeof RNText>, ITextProps>(
   ({ className, ...props }, ref) => {
     return (
       <RNText
-        className={cn("text-typography", className)}
+        className={cn("text-typography text-base font-normal", className)}
         {...props}
         ref={ref}
       />
