@@ -10,6 +10,8 @@ import { z } from "zod";
 import { useProfileMutations } from "@/tanstack/mutations/useProfileMutations";
 import { CustomInput } from "../custom/CustomInput";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
+import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
+import Platforms from "@/constants/Plaforms";
 
 type Props = {
   visible: boolean;
@@ -45,25 +47,24 @@ function ProfileNameBottomSheet(props: Props) {
     <BottomSheet
       title="Update profile full name"
       withHeader={true}
-      snapPoint={"46%"}
+      snapPoint={Platforms.isAndroid() ? ["46%", "70%"] : "40%"}
       visible={visible}
+      enableDynamicSizing={Platforms.isAndroid()}
       onDismiss={onDismiss}
     >
       <View className="flex-1 gap-4 p-4 pb-8 bg-background">
         <View className=" gap-4 mb-3">
-          <CustomInput
-            title="First name"
-            className=""
-            value={form.first_name}
-            onUpdate={(val) => setForm({ ...form, first_name: val })}
+          <BottomSheetTextInput
             placeholder="First name"
+            value={form.first_name}
+            onChangeText={(val) => setForm({ ...form, first_name: val })}
+            className="h-14 mt-4 bg-background-muted px-4 text-typography rounded-xl"
           />
-          <CustomInput
-            className=""
-            title="Last name"
-            value={form.last_name}
-            onUpdate={(val) => setForm({ ...form, last_name: val })}
+          <BottomSheetTextInput
             placeholder="Last name"
+            value={form.last_name}
+            onChangeText={(val) => setForm({ ...form, last_name: val })}
+            className="h-14 my-4 bg-background-muted px-4 text-typography rounded-xl"
           />
         </View>
         <View className="flex-row gap-4">

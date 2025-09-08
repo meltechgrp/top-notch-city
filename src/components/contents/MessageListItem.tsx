@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import {
   Avatar,
   AvatarBadge,
@@ -17,13 +17,14 @@ import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { MessageStatusIcon } from "@/components/chat/MessageStatus";
 import { useMessages } from "@/hooks/useMessages";
 import { Link } from "expo-router";
+import { TypingIndicator } from "@/components/chat/TypingIndicator";
 
 type MessageListItemProps = {
   chat: Chat;
 };
-export function MessageListItem(props: MessageListItemProps) {
+function MessageListItem(props: MessageListItemProps) {
   const { chat } = props;
-  const { message } = useMessages(chat.chat_id);
+  const { message, typing } = useMessages(chat.chat_id);
   const queryClient = useQueryClient();
   const { me } = useStore();
   const { mutateAsync } = useMutation({
@@ -100,7 +101,8 @@ export function MessageListItem(props: MessageListItemProps) {
                     {formatedTime}
                   </Text>
                 </View>
-                {message && (
+                {typing && <TypingIndicator />}
+                {!typing && message && (
                   <View className="flex flex-row gap-4 w-full">
                     <View className="flex-1 flex-row gap-2 items-center overflow-hidden">
                       {isMine && <MessageStatusIcon status={message?.status} />}
@@ -140,3 +142,5 @@ export function MessageListItem(props: MessageListItemProps) {
     </SwipeableWrapper>
   );
 }
+
+export default memo(MessageListItem);

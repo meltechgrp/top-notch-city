@@ -17,9 +17,15 @@ type ChatState = {
   addPendingMessage: (chatId: string, newMessage: Message[]) => void;
   clearChatMessages: (chatId: string) => void;
   deleteChatMessage: (chatId: string, messageId: string) => void;
-  updateChatList: (data: ChatList) => void;
+  updateChatList: (data: ChatList[]) => void;
   deleteChat: (chatId: string) => void;
-  setTyping: (chatId: string) => void;
+  setTyping: (chatId: string, typing: boolean) => void;
+  getTyping: (chatId: string) => boolean;
+  updateUserStatus: (
+    chatId: string,
+    status: ReceiverInfo["status"],
+    timestamp: string
+  ) => void;
   updateMessageStatus: (
     chatId: string,
     messageId: string,
@@ -55,7 +61,10 @@ export const useChatStore = create<ChatState>(
         return get().chatList.find((c) => c.details.chat_id === chatId)?.details
           .receiver;
       },
-
+      getTyping: (chatId) => {
+        return !!get().chatList.find((c) => c.details.chat_id === chatId)
+          ?.typing;
+      },
       getMessages: (chatId) => {
         return (
           get().chatList.find((c) => c.details.chat_id === chatId)?.messages ||
@@ -122,29 +131,29 @@ export const useChatStore = create<ChatState>(
           const index = chatList.findIndex((c) => c.details.chat_id === chatId);
 
           if (index !== -1) {
-            const existingMessages = chatList[index].messages || [];
+            // const existingMessages = chatList[index].messages || [];
 
-            // Merge messages (prioritize new ones)
-            const merged = [...existingMessages, ...newMessages];
+            // // Merge messages (prioritize new ones)
+            // const merged = [...existingMessages, ...newMessages];
 
-            // Remove duplicates based on message_id (keep latest)
-            const uniqueMap = new Map();
-            for (const msg of merged) {
-              uniqueMap.set(msg.message_id, msg);
-            }
+            // // Remove duplicates based on message_id (keep latest)
+            // const uniqueMap = new Map();
+            // for (const msg of merged) {
+            //   uniqueMap.set(msg.message_id, msg);
+            // }
 
-            const uniqueMessages = Array.from(uniqueMap.values());
+            // const uniqueMessages = Array.from(uniqueMap.values());
 
-            // Sort by created_at (oldest → newest)
-            uniqueMessages.sort(
-              (a, b) =>
-                new Date(b.created_at).getTime() -
-                new Date(a.created_at).getTime()
-            );
+            // // Sort by created_at (oldest → newest)
+            // uniqueMessages.sort(
+            //   (a, b) =>
+            //     new Date(b.created_at).getTime() -
+            //     new Date(a.created_at).getTime()
+            // );
 
             chatList[index] = {
               ...chatList[index],
-              messages: uniqueMessages,
+              messages: newMessages,
             };
           }
 
@@ -162,6 +171,29 @@ export const useChatStore = create<ChatState>(
             chatList[index] = {
               ...chatList[index],
               messages: [...message, ...(chatList[index].messages || [])],
+            };
+          }
+          return { chatList };
+        });
+      },
+      updateUserStatus: (chatId, status, timestamp) => {
+        set((state) => {
+          const chatList = state.chatList ? [...state.chatList] : [];
+          const index = chatList.findIndex(
+            (c) => String(c.details.chat_id) === String(chatId)
+          );
+
+          if (index !== -1) {
+            chatList[index] = {
+              ...chatList[index],
+              details: {
+                ...chatList[index].details,
+                receiver: {
+                  ...chatList[index].details.receiver,
+                  status,
+                  last_seen: timestamp,
+                },
+              },
             };
           }
           return { chatList };
@@ -192,23 +224,23 @@ export const useChatStore = create<ChatState>(
 
       updateChatList: (data) => {
         set((state) => {
-          const exists = state.chatList.find(
-            (c) => c.details.chat_id === data.details.chat_id
-          );
+          // const exists = state.chatList.find(
+          //   (c) => c.details.chat_id === data.details.chat_id
+          // );
 
-          if (exists) {
-            // Update existing chat details
-            return {
-              chatList: state.chatList.map((c) =>
-                c.details.chat_id === data.details.chat_id
-                  ? { ...c, ...data }
-                  : c
-              ),
-            };
-          } else {
-            // Add new chat
-            return { chatList: [...state.chatList, data] };
-          }
+          // if (exists) {
+          //   // Update existing chat details
+          //   return {
+          //     chatList: state.chatList.map((c) =>
+          //       c.details.chat_id === data.details.chat_id
+          //         ? { ...c, ...data }
+          //         : c
+          //     ),
+          //   };
+          // } else {
+          // Add new chat
+          return { chatList: data };
+          // }
         });
       },
       addIncomingMessage: (chatId, message) => {
@@ -256,10 +288,10 @@ export const useChatStore = create<ChatState>(
         });
       },
 
-      setTyping: (chatId) => {
+      setTyping: (chatId, typing) => {
         set((state) => ({
           chatList: state.chatList.map((c) =>
-            c.details.chat_id === chatId ? { ...c, typing: !c.typing } : c
+            c.details.chat_id === chatId ? { ...c, typing } : c
           ),
         }));
       },

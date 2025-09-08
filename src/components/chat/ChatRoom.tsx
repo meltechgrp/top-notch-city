@@ -23,6 +23,7 @@ import { useMessages } from "@/hooks/useMessages";
 import BackgroundView from "@/components/layouts/BackgroundView";
 import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
 import { useChat } from "@/hooks/useChat";
+import { TypingIndicator } from "@/components/chat/TypingIndicator";
 
 const InitialNumToRender = 30;
 type Props = {
@@ -42,6 +43,7 @@ export default function ChatRoom(props: Props) {
     messages,
     refreshing,
     loading,
+    typing,
     refetchMessages,
     deleteChatMessage,
     markAsRead,
@@ -224,6 +226,11 @@ export default function ChatRoom(props: Props) {
         ) : null}
         {!messages?.length && <EmptyScreen message={"This space is empty"} />}
       </View>
+      {typing && (
+        <View style={{ padding: 10 }}>
+          <TypingIndicator />
+        </View>
+      )}
       <ChatRoomFooter
         chatId={chatId}
         onPost={(data, isEdit) => {

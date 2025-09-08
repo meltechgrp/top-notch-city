@@ -55,6 +55,7 @@ export function useMessages(chatId: string) {
 
   const messages = useChatStore(useShallow((s) => s.getMessages(chatId)));
   const message = useChatStore(useShallow((s) => s.getMessage(chatId)));
+  const typing = useChatStore(useShallow((s) => s.getTyping(chatId)));
 
   /** --- MUTATIONS --- */
   const { mutateAsync: send } = useMutation({ mutationFn: sendMessage });
@@ -130,6 +131,7 @@ export function useMessages(chatId: string) {
     deleteChatMessage,
     clearChatMessages,
     markAsRead,
+    typing,
     receiver: getReceiver(chatId),
     sender: getSender(chatId),
   };

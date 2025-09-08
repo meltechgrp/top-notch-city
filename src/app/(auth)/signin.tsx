@@ -39,10 +39,6 @@ export default function SignIn() {
     email: "",
     password: "",
   });
-  AuthSession.makeRedirectUri({
-    path: "/signin",
-    scheme: "com.meltech.topnotchcity",
-  });
   const [googleRequest, googleResponse, googlePromptAsync] =
     Google.useAuthRequest({
       androidClientId:
@@ -133,7 +129,6 @@ export default function SignIn() {
   );
 
   useEffect(() => {
-    console.log(googleResponse, googleRequest);
     if (googleResponse?.type === "success") {
       getGoogleUserInfo(googleResponse.authentication?.accessToken);
     }

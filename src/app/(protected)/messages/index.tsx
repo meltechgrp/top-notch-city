@@ -1,4 +1,4 @@
-import { MessageListItem } from "@/components/contents/MessageListItem";
+import MessageListItem from "@/components/contents/MessageListItem";
 import SmartphoneChatIcon from "@/components/icons/SmartphoneChatIcon";
 import EmptyStateWrapper from "@/components/shared/EmptyStateWrapper";
 import { Box, View } from "@/components/ui";

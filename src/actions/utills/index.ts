@@ -24,81 +24,21 @@ export async function Fetch(url: string, options: AxiosRequestConfig = {}) {
   return res.data;
 }
 
-export function useWebSocket() {
-  const authToken = getAuthToken();
-  const { addIncomingMessage, updateMessageStatus, updateMessage } =
-    useChatStore.getState();
-  const { getTotalCount } = useHomeFeed();
-  const { refetch } = useChat();
+export function useWebSocketConnection(url: string | null) {
   const ws = useRef<WebSocket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const reconnectAttempts = useRef(0);
   const reconnectTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const connect = () => {
-    if (!authToken) return;
-    const wsUrl = `wss://app.topnotchcity.com/ws/?token=${authToken}`;
 
-    const socket = new WebSocket(wsUrl);
+  const connect = () => {
+    if (!url) return;
+
+    const socket = new WebSocket(url);
 
     socket.onopen = () => {
       console.log("✅ WebSocket connected");
       reconnectAttempts.current = 0;
-
       setIsConnected(true);
-    };
-
-    socket.onmessage = (event) => {
-      try {
-        const raw = event.data;
-        const data = typeof raw === "string" ? JSON.parse(raw) : raw;
-
-        // const data = event.data;
-        console.log("📨 Message:", data, data?.type);
-
-        switch (data.type) {
-          case "new_message":
-            addIncomingMessage(data.chat_id, {
-              message_id: data?.message_id!,
-              created_at: data?.created_at,
-              updated_at: data?.created_at,
-              content: data?.content,
-              sender_info: {
-                id: data?.sender_id,
-                first_name: "",
-                last_name: "",
-                profile_image: "",
-                status: "offline",
-              },
-              status: data?.status,
-              file_data: data?.media?.map((f: any) => ({
-                file_id: f.id,
-                file_url: f.file_url,
-                file_type: f.file_type,
-                file_name: f.file_name,
-              })),
-              read: data?.read,
-            });
-            break;
-
-          case "read_receipt":
-            updateMessageStatus(data.chat_id, data.message_id, "seen");
-            break;
-
-          case "message_edited":
-            updateMessage(data.chat_id, data.message_id, data.content);
-            break;
-          case "unread_count_update":
-            refetch();
-            getTotalCount();
-            break;
-        }
-      } catch (err) {
-        console.error("❌ Failed to parse message:", event.data);
-      }
-    };
-
-    socket.onerror = (error) => {
-      console.error("❌ WebSocket error:", error);
     };
 
     socket.onclose = (event) => {
@@ -107,13 +47,17 @@ export function useWebSocket() {
       attemptReconnect();
     };
 
+    socket.onerror = (error) => {
+      console.error("❌ WebSocket error:", error);
+    };
+
     ws.current = socket;
   };
 
   const attemptReconnect = () => {
     const maxAttempts = 5;
     if (reconnectAttempts.current < maxAttempts) {
-      const timeout = Math.min(1000 * 2 ** reconnectAttempts.current, 30000); // exponential backoff, max 30s
+      const timeout = Math.min(1000 * 2 ** reconnectAttempts.current, 30000);
       reconnectTimeout.current = setTimeout(() => {
         reconnectAttempts.current += 1;
         connect();
@@ -121,15 +65,11 @@ export function useWebSocket() {
     }
   };
 
-  useEffect(() => {
-    return () => {
-      reconnectTimeout.current && clearTimeout(reconnectTimeout.current);
-    };
-  }, []);
   const closeConnection = () => {
     reconnectTimeout.current && clearTimeout(reconnectTimeout.current);
     ws.current?.close();
   };
+
   const sendMessage = (msg: any) => {
     if (ws.current?.readyState === WebSocket.OPEN) {
       ws.current.send(JSON.stringify(msg));
@@ -138,7 +78,27 @@ export function useWebSocket() {
     }
   };
 
-  return { connect, sendMessage, isConnected, closeConnection };
+  const setOnMessage = (handler: (data: any) => void) => {
+    if (!ws.current) return;
+    ws.current.onmessage = (event) => {
+      try {
+        const raw = event.data;
+        const data = typeof raw === "string" ? JSON.parse(raw) : raw;
+        handler(data);
+      } catch (err) {
+        console.error("❌ Failed to parse message:", event.data);
+      }
+    };
+  };
+
+  useEffect(() => {
+    return () => {
+      reconnectTimeout.current && clearTimeout(reconnectTimeout.current);
+      ws.current?.close();
+    };
+  }, []);
+
+  return { connect, closeConnection, sendMessage, setOnMessage, isConnected };
 }
 
 export async function updatePushNotificationToken(token: string) {

@@ -9,6 +9,8 @@ import { useStore } from "@/store";
 import { useProfileMutations } from "@/tanstack/mutations/useProfileMutations";
 import { CustomInput } from "../custom/CustomInput";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
+import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
+import Platforms from "@/constants/Plaforms";
 
 type Props = {
   visible: boolean;
@@ -32,21 +34,21 @@ function ProfileEmailBottomSheet(props: Props) {
     <BottomSheet
       title="Update Email Address"
       withHeader={true}
-      snapPoint={"30%"}
+      snapPoint={Platforms.isAndroid() ? ["35%", "60%"] : "35%"}
       visible={visible}
+      enableDynamicSizing={Platforms.isAndroid()}
       onDismiss={onDismiss}
     >
       <View className="flex-1 gap-4 p-4 pb-8 bg-background">
-        <CustomInput
-          title="Email Address"
-          className=" "
-          value={form.email}
-          onUpdate={(val) => setForm({ ...form, email: val })}
+        <BottomSheetTextInput
           placeholder="Email address"
+          value={form.email}
+          onChangeText={(val) => setForm({ ...form, email: val })}
+          className="h-14 my-4 bg-background-muted px-4 text-typography rounded-xl"
         />
         <View className="flex-row gap-4">
           <Button
-            className="h-11 flex-1"
+            className="h-12 rounded-xl flex-1"
             onPress={async () => {
               if (!validateEmail.safeParse(form.email).success) {
                 return showErrorAlert({

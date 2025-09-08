@@ -7,8 +7,9 @@ import { useState } from "react";
 import { validatePhone } from "@/lib/schema";
 import { useStore } from "@/store";
 import { useProfileMutations } from "@/tanstack/mutations/useProfileMutations";
-import { CustomInput } from "../custom/CustomInput";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
+import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
+import Platforms from "@/constants/Plaforms";
 
 type Props = {
   visible: boolean;
@@ -32,25 +33,21 @@ function ProfilePhoneBottomSheet(props: Props) {
     <BottomSheet
       title="Update Phone Number"
       withHeader={true}
-      snapPoint={"30%"}
+      snapPoint={Platforms.isAndroid() ? ["35%", "60%"] : "35%"}
+      enableDynamicSizing={Platforms.isAndroid()}
       visible={visible}
       onDismiss={onDismiss}
     >
       <View className="flex-1 gap-4 p-4 pb-8 bg-background">
-        <View className=" gap-4">
-          <View className="gap-1">
-            <Text size="sm" className="font-light px-2"></Text>
-            <CustomInput
-              title="Phone Number"
-              value={form.phone}
-              onUpdate={(val) => setForm({ ...form, phone: val })}
-              placeholder="Phone Number"
-            />
-          </View>
-        </View>
+        <BottomSheetTextInput
+          placeholder="Phone Number"
+          value={form.phone}
+          onChangeText={(val) => setForm({ ...form, phone: val })}
+          className="h-14 my-4 bg-background-muted px-4 text-typography rounded-xl"
+        />
         <View className="flex-row gap-4">
           <Button
-            className="h-11 flex-1"
+            className="h-12 flex-1"
             onPress={async () => {
               if (!validatePhone.safeParse(form.phone).success) {
                 return showErrorAlert({

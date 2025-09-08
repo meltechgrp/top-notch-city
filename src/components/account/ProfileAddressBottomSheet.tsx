@@ -98,6 +98,7 @@ function ProfileAddressBottomSheet(props: Props) {
             <CustomInput
               placeholder="Search property location..."
               value={text}
+              containerClassName="flex-1"
               className="flex-1"
               inputClassName="border-0"
               onUpdate={onChangeText}

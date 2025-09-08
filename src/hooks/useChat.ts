@@ -5,7 +5,7 @@ import { getChatMessages, getChats } from "@/actions/message";
 
 export function useChat() {
   const { updateChatList, getMessages, updateChatMessages, getChatList } =
-    useChatStore();
+    useChatStore.getState();
 
   const queryClient = useQueryClient();
   const {
@@ -16,18 +16,17 @@ export function useChat() {
   } = useQuery({
     queryKey: ["chats"],
     queryFn: getChats,
-    enabled: false,
   });
 
   // Sync chat list into Zustand
   useEffect(() => {
     if (chatData) {
-      chatData?.chats?.forEach((chat) => {
-        updateChatList({
-          details: chat,
-          messages: getMessages(chat.chat_id), // keep old messages
-        });
-      });
+      const chats = chatData?.chats?.filter(Boolean).map((c) => ({
+        details: c,
+        messages: getMessages(c.chat_id),
+        typing: false,
+      }));
+      updateChatList(chats);
     }
   }, [chatData]);
 

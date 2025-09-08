@@ -111,9 +111,9 @@ const EditorComponent = React.forwardRef<
   useEffect(() => {
     const timeout = setTimeout(() => {
       SendTyping(typing);
-    }, 500); // debounce network call
+    }, 500);
     return () => clearTimeout(timeout);
-  }, [typing]);
+  }, [typing, text]);
   return (
     <View
       className={cn("w-full relative border-t border-t-outline", className)}
