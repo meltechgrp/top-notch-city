@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { View, TouchableOpacity } from "react-native";
 import { Check, Dot } from "lucide-react-native";
 import {
@@ -16,7 +16,7 @@ import AnimatedPressable from "@/components/custom/AnimatedPressable";
 import { router } from "expo-router";
 import { openAccessModal } from "@/components/globals/AuthModals";
 
-export const ReelAgentListItem = ({ account }: { account: AgentInfo }) => {
+const ReelAgentListItem = ({ account }: { account: AgentInfo }) => {
   const client = useQueryClient();
   const { me } = useStore();
   const { mutate } = useMutation({
@@ -149,3 +149,5 @@ export const ReelAgentListItem = ({ account }: { account: AgentInfo }) => {
     </TouchableOpacity>
   );
 };
+
+export default memo(ReelAgentListItem);

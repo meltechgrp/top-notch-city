@@ -1,27 +1,27 @@
 "use client";
 import React from "react";
 import { Text, View } from "react-native";
-import { PrimitiveIcon, UIIcon } from "@gluestack-ui/icon";
-import { tva } from "@gluestack-ui/nativewind-utils/tva";
+import { PrimitiveIcon, UIIcon } from "@gluestack-ui/core/icon/creator";
+import { tva } from "@gluestack-ui/utils/nativewind-utils";
 import {
   withStyleContext,
   useStyleContext,
-} from "@gluestack-ui/nativewind-utils/withStyleContext";
+} from "@gluestack-ui/utils/nativewind-utils";
 import { cssInterop } from "nativewind";
-import type { VariantProps } from "@gluestack-ui/nativewind-utils";
+import type { VariantProps } from "@gluestack-ui/utils/nativewind-utils";
 
 import { Svg } from "react-native-svg";
 const SCOPE = "BADGE";
 
 const badgeStyle = tva({
-  base: "flex-row items-center rounded-xl data-[disabled=true]:opacity-50 px-2 py-1",
+  base: "flex-row items-center rounded-sm data-[disabled=true]:opacity-50 px-2 py-1",
   variants: {
     action: {
-      error: "bg-background-error border-error",
-      warning: "bg-background-warning border-outline",
-      success: "bg-background-success border-outline",
-      info: "bg-background-info border-outline",
-      muted: "bg-background-muted border-outline",
+      error: "bg-background-error border-error-300",
+      warning: "bg-background-warning border-warning-300",
+      success: "bg-background-success border-success-300",
+      info: "bg-background-info border-info-300",
+      muted: "bg-background-muted border-background-300",
     },
     variant: {
       solid: "",
@@ -36,15 +36,15 @@ const badgeStyle = tva({
 });
 
 const badgeTextStyle = tva({
-  base: "text-typography font-body font-medium tracking-normal uppercase",
+  base: "text-typography-700 font-body font-normal tracking-normal uppercase",
 
   parentVariants: {
     action: {
-      error: "text-error",
-      warning: "text-warning",
-      success: "text-success",
-      info: "text-info",
-      muted: "text-typography",
+      error: "text-error-600",
+      warning: "text-warning-600",
+      success: "text-success-600",
+      info: "text-info-600",
+      muted: "text-background-800",
     },
     size: {
       sm: "text-2xs",
@@ -81,11 +81,11 @@ const badgeIconStyle = tva({
   base: "fill-none",
   parentVariants: {
     action: {
-      error: "text-error",
-      warning: "text-warning",
-      success: "text-success",
-      info: "text-info",
-      muted: "text-secondary",
+      error: "text-error-600",
+      warning: "text-warning-600",
+      success: "text-success-600",
+      info: "text-info-600",
+      muted: "text-background-800",
     },
     size: {
       sm: "h-3 w-3",

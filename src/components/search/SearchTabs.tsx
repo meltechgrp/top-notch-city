@@ -4,6 +4,7 @@ import { Icon, Text } from "../ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
 import { Layers2, MapPin } from "lucide-react-native";
+import { memo } from "react";
 
 type IProps = {
   total?: number;
@@ -11,7 +12,7 @@ type IProps = {
   loading?: boolean;
   useMyLocation: () => Promise<void>;
 };
-export default function SearchTabs(props: IProps) {
+function SearchTabs(props: IProps) {
   const { total = 0, useMyLocation, isLocation, loading } = props;
   return (
     <View className={cn("w-full absolute left-0 bottom-4 right-0 z-50")}>
@@ -42,3 +43,5 @@ export default function SearchTabs(props: IProps) {
     </View>
   );
 }
+
+export default memo(SearchTabs);

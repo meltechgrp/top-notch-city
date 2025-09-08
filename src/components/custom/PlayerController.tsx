@@ -1,4 +1,4 @@
-import { ReelInteractionBar } from "@/components/reel/ReelInteractionBar";
+import ReelInteractionBar from "@/components/reel/ReelInteractionBar";
 import { Icon, Pressable, Text, useResolvedTheme, View } from "@/components/ui";
 import { Divider } from "@/components/ui/divider";
 import { Colors } from "@/constants/Colors";

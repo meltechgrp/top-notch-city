@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import React, {
+  memo,
   useCallback,
   useEffect,
   useImperativeHandle,
@@ -177,4 +178,4 @@ const EditorComponent = React.forwardRef<
   );
 });
 
-export default EditorComponent;
+export default memo(EditorComponent);

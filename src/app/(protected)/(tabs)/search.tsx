@@ -1,10 +1,10 @@
-import { SearchHeader } from "@/components/search/Searchheader";
+import SearchHeader from "@/components/search/Searchheader";
 import { Box, View } from "@/components/ui";
 import React, { useEffect, useRef, useState } from "react";
 import { Dimensions, StyleSheet } from "react-native";
 import SearchTabs from "@/components/search/SearchTabs";
 import PagerView from "react-native-pager-view";
-import { SearchMapView } from "@/components/search/SearchMapView";
+import SearchMapView from "@/components/search/SearchMapView";
 import SearchListView from "@/components/search/SearchListView";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SearchLocationBottomSheet from "@/components/modals/search/SearchLocationBottomSheet";

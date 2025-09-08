@@ -57,10 +57,10 @@ export function FollowAgent({
     },
 
     // After success, refetch in background to ensure sync
-    onSettled: () => {
-      client.invalidateQueries({ queryKey: ["agents"] });
-      client.invalidateQueries({ queryKey: ["reels"] });
-    },
+    // onSettled: () => {
+    //   client.invalidateQueries({ queryKey: ["agents"] });
+    //   client.invalidateQueries({ queryKey: ["reels"] });
+    // },
   });
   const handlePress = () => {
     if (!me) {

@@ -4,10 +4,11 @@ import {
   Icon,
   Pressable,
   Text,
+  useResolvedTheme,
   View,
 } from "@/components/ui";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import PropertyHeader from "@/components/property/PropertyHeader";
 import { usePropertyStore } from "@/store/propertyStore";
 import PropertyDetails from "@/components/property/PropertyDetails";
@@ -22,21 +23,20 @@ import { Dimensions, LayoutChangeEvent } from "react-native";
 import Animated, {
   Extrapolation,
   interpolate,
+  runOnJS,
+  useAnimatedScrollHandler,
   useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
-import ParallaxScrollView, {
-  ParallaxScrollViewRefProps,
-} from "@/components/custom/ParallaxScrollView";
 
 const { height } = Dimensions.get("window");
-const HERO_HEIGHT = height / 2.1;
+const HERO_HEIGHT = height / 2.3;
 
 export default function PropertyItem() {
   const { propertyId } = useLocalSearchParams() as { propertyId: string };
   const { updateProperty } = usePropertyStore();
-  const ref = useRef<ParallaxScrollViewRefProps>(null);
   const { width, onLayout } = useLayout();
+  const theme = useResolvedTheme();
   const detailsY = useSharedValue(0);
   const [hasScrolledToDetails, setHasScrolledToDetails] = useState(false);
   const router = useRouter();
@@ -51,6 +51,7 @@ export default function PropertyItem() {
     mutationFn: () => viewProperty({ id: propertyId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["properties", propertyId] });
+      queryClient.invalidateQueries({ queryKey: ["properties"] });
     },
   });
 
@@ -64,27 +65,55 @@ export default function PropertyItem() {
   useEffect(() => {
     if (property) {
       updateProperty(property);
-      setTimeout(() => {
-        mutate();
-      }, 200);
+      mutate();
     }
   }, [property]);
 
+  const scrollY = useSharedValue(0);
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      scrollY.value = event.contentOffset.y;
+      if (event.contentOffset.y >= detailsY.value) {
+        runOnJS(setHasScrolledToDetails)(true);
+      } else {
+        runOnJS(setHasScrolledToDetails)(false);
+      }
+    },
+  });
+
+  const heroAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateY: interpolate(
+            scrollY.value,
+            [-HERO_HEIGHT, 0, HERO_HEIGHT],
+            [-HERO_HEIGHT / 2, 0, HERO_HEIGHT * 0.4]
+          ),
+        },
+        {
+          scale: interpolate(
+            scrollY.value,
+            [-HERO_HEIGHT, 0, HERO_HEIGHT],
+            [1.3, 1, 1]
+          ),
+        },
+      ],
+    };
+  });
   const headerBgStyle = useAnimatedStyle(() => {
     const opacity = interpolate(
-      ref?.current?.scrollOffset.value || 0,
-      [detailsY.value - 60, detailsY.value + 60],
+      scrollY.value,
+      [detailsY.value - 50, detailsY.value + 50],
       [0, 1],
       Extrapolation.CLAMP
     );
     return {
-      backgroundColor: `rgba(22,24,25,${opacity})`,
+      backgroundColor: `rgba(${theme == "dark" ? "22,24,25" : "238,236,240"},${opacity})`,
     };
-    // return {
-    //   backgroundColor: `rgba(${theme == "dark" ? "22,24,25" : "238,236,240"},${opacity})`,
-    // };
   });
-  if (!isLoading && (error || !property)) {
+  if (error) {
     return (
       <View className="flex-1 bg-background justify-center items-center">
         <Text>Error occurred. Please try again.</Text>
@@ -166,18 +195,24 @@ export default function PropertyItem() {
       )}
       <FullHeightLoaderWrapper loading={isLoading}>
         <Box onLayout={onLayout} className="flex-1 relative">
-          <ParallaxScrollView
-            headerHeight={HERO_HEIGHT}
-            headerComponent={
-              <PropertyHeroSection property={property} width={width} />
-            }
-            setHasScrolledToDetails={setHasScrolledToDetails}
-            ref={ref}
+          <Animated.ScrollView
+            scrollEventThrottle={16}
+            onScroll={scrollHandler}
+            showsVerticalScrollIndicator={false}
           >
-            <View onLayout={onDetailsLayout}>
-              <PropertyDetails />
-            </View>
-          </ParallaxScrollView>
+            {property && (
+              <Animated.View
+                style={[{ width, height: HERO_HEIGHT }, heroAnimatedStyle]}
+              >
+                <PropertyHeroSection property={property} width={width} />
+              </Animated.View>
+            )}
+            {property && (
+              <View onLayout={onDetailsLayout}>
+                <PropertyDetails />
+              </View>
+            )}
+          </Animated.ScrollView>
         </Box>
       </FullHeightLoaderWrapper>
     </>

@@ -1,16 +1,12 @@
 import React, { forwardRef, memo, useImperativeHandle, useState } from "react";
-import { View, Icon, Text } from "../ui";
-import { Eye, Play } from "lucide-react-native";
-import { SpinningLoader } from "@/components/loaders/SpinningLoader";
-import { cn } from "@/lib/utils";
-import AnimatedPressable from "@/components/custom/AnimatedPressable";
+import { View } from "../ui";
 import PlayerController from "@/components/custom/PlayerController";
 import { ReelViewsController } from "@/components/reel/ReelViewsController";
 import PropertyCarousel from "@/components/property/PropertyCarousel";
 import { ReelsShareSheet } from "@/components/modals/ReelsBottomsheet";
 import config from "@/config";
 
-export const ReelPhotoViewer = memo(
+const ReelPhotoViewer = memo(
   forwardRef<any, ReelPhotoViewerProps>(
     (
       {
@@ -73,3 +69,5 @@ export const ReelPhotoViewer = memo(
     }
   )
 );
+
+export default memo(ReelPhotoViewer);

@@ -1,17 +1,17 @@
 import { getAgents } from "@/actions/agent";
 import BackgroundView from "@/components/layouts/BackgroundView";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
-import { ReelAgentListItem } from "@/components/reel/ReelAgentListItem";
+import ReelAgentListItem from "@/components/reel/ReelAgentListItem";
 import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
 import { View } from "@/components/ui";
 import { FlashList } from "@shopify/flash-list";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import { Dimensions, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const { height, width } = Dimensions.get("window");
-export default function AgentList({ visible }: { visible: boolean }) {
+function AgentList({ visible }: { visible: boolean }) {
   const {
     data,
     refetch,
@@ -69,3 +69,4 @@ export default function AgentList({ visible }: { visible: boolean }) {
     </SafeAreaView>
   );
 }
+export default memo(AgentList);

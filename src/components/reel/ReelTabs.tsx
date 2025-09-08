@@ -3,13 +3,14 @@ import { View } from "react-native";
 import { Heading } from "../ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
+import { memo } from "react";
 
 type IProps = {
   currentPage: number;
   setCurrentPage: (val: number) => void;
   tabs: string[];
 };
-export default function ReelTabs(props: IProps) {
+function ReelTabs(props: IProps) {
   const { currentPage, setCurrentPage, tabs } = props;
   return (
     <View
@@ -43,3 +44,5 @@ export default function ReelTabs(props: IProps) {
     </View>
   );
 }
+
+export default memo(ReelTabs);

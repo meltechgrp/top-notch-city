@@ -15,7 +15,7 @@ interface Props {
   hasScrolledToDetails?: boolean;
 }
 
-const ReelWishListButton = ({
+const PropertyWishListButton = ({
   isAdded,
   id,
   hasScrolledToDetails,
@@ -29,41 +29,30 @@ const ReelWishListButton = ({
       isAdded ? removeFromWishList({ id }) : addToWishList({ id }),
 
     onMutate: async () => {
-      await client.cancelQueries({ queryKey: ["reels"] });
+      await client.cancelQueries({ queryKey: ["properties", id] });
 
-      const previousData = client.getQueryData<{
-        pages: Result[];
-        pageParams: unknown[];
-      }>(["reels"]);
+      const previousData = client.getQueryData<Property | undefined>([
+        "properties",
+        id,
+      ]);
 
-      client.setQueryData<{
-        pages: Result[];
-        pageParams: unknown[];
-      }>(["reels"], (old) => {
+      client.setQueryData<Property | undefined>(["properties", id], (old) => {
         if (!old) return old;
+        const added = old.owner_interaction?.added_to_wishlist ?? false;
         return {
           ...old,
-          pages: old.pages.map((page) => ({
-            ...page,
-            results: page.results?.map((reel) => {
-              if (reel.id !== id) return reel;
-              return {
-                ...reel,
-                owner_interaction: {
-                  ...reel?.owner_interaction,
-                  added_to_wishlist: !isAdded,
-                },
-                interaction: {
-                  ...reel?.interaction,
-                  added_to_wishlist: reel.interaction
-                    ? reel.interaction.added_to_wishlist + (isAdded ? -1 : 1)
-                    : isAdded
-                      ? -1
-                      : 1,
-                },
-              };
-            }),
-          })),
+          owner_interaction: {
+            ...old?.owner_interaction,
+            added_to_wishlist: !added,
+          },
+          interaction: {
+            ...old?.interaction,
+            added_to_wishlist: old.interaction
+              ? old.interaction.added_to_wishlist + (added ? -1 : 1)
+              : added
+                ? -1
+                : 1,
+          },
         };
       });
 
@@ -73,14 +62,14 @@ const ReelWishListButton = ({
     onError: (_err, _vars, ctx) => {
       console.log(_err);
       if (ctx?.previousData) {
-        client.setQueryData(["reels"], ctx.previousData);
+        client.setQueryData(["properties", id], ctx.previousData);
       }
     },
 
     // After success, refetch in background to ensure sync
-    // onSettled: () => {
-    //   client.invalidateQueries({ queryKey: ["reels"] });
-    // },
+    onSettled: () => {
+      client.invalidateQueries({ queryKey: ["properties", id] });
+    },
   });
   function hnadleWishList() {
     if (!hasAuth) {
@@ -106,4 +95,4 @@ const ReelWishListButton = ({
   );
 };
 
-export default memo(ReelWishListButton);
+export default memo(PropertyWishListButton);

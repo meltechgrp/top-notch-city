@@ -7,7 +7,7 @@ import ReelTabs from "@/components/reel/ReelTabs";
 import AgentList from "@/components/reel/ReelAgents";
 import ReelPhotoList from "@/components/reel/ReelPhotos";
 
-const TABS = ["Photos", "Videos", "Agents"];
+const TABS = ["Lands", "Videos", "Agents"];
 
 export default function ReelScreen() {
   const pagerRef = useRef<PagerView>(null);
@@ -31,8 +31,8 @@ export default function ReelScreen() {
           offscreenPageLimit={1}
           onPageSelected={(e) => setCurrentPage(e.nativeEvent.position)}
         >
-          {/* Photos */}
-          <View key="photos" style={{ flex: 1 }}>
+          {/* Lands */}
+          <View key="lands" style={{ flex: 1 }}>
             <ReelPhotoList visible={currentPage == 0} />
           </View>
 

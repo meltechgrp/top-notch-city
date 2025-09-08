@@ -1,15 +1,20 @@
+"use client";
 import React from "react";
-import { createCheckbox } from "@gluestack-ui/checkbox";
+import { createCheckbox } from "@gluestack-ui/core/checkbox/creator";
 import { View, Pressable, Text, Platform } from "react-native";
 import type { TextProps, ViewProps } from "react-native";
-import { tva } from "@gluestack-ui/nativewind-utils/tva";
-import { PrimitiveIcon, IPrimitiveIcon, UIIcon } from "@gluestack-ui/icon";
+import { tva } from "@gluestack-ui/utils/nativewind-utils";
+import {
+  PrimitiveIcon,
+  IPrimitiveIcon,
+  UIIcon,
+} from "@gluestack-ui/core/icon/creator";
 import {
   withStyleContext,
   useStyleContext,
-} from "@gluestack-ui/nativewind-utils/withStyleContext";
+} from "@gluestack-ui/utils/nativewind-utils";
 import { cssInterop } from "nativewind";
-import type { VariantProps } from "@gluestack-ui/nativewind-utils";
+import type { VariantProps } from "@gluestack-ui/utils/nativewind-utils";
 
 const IndicatorWrapper = React.forwardRef<
   React.ComponentRef<typeof View>,
@@ -70,7 +75,7 @@ const checkboxStyle = tva({
 });
 
 const checkboxIndicatorStyle = tva({
-  base: "justify-center items-center border-outline-400 bg-transparent rounded web:data-[focus-visible=true]:outline-none web:data-[focus-visible=true]:ring-2 web:data-[focus-visible=true]:ring-indicator-primary data-[checked=true]:bg-primary data-[checked=true]:border-primary data-[hover=true]:data-[checked=false]:border-outline-400 data-[hover=true]:bg-transparent data-[hover=true]:data-[invalid=true]:border-error-300 data-[hover=true]:data-[checked=true]:bg-primary data-[hover=true]:data-[checked=true]:border-primary data-[hover=true]:data-[checked=true]:data-[disabled=true]:border-primary-600 data-[hover=true]:data-[checked=true]:data-[disabled=true]:bg-primary-600 data-[hover=true]:data-[checked=true]:data-[disabled=true]:opacity-40 data-[hover=true]:data-[checked=true]:data-[disabled=true]:data-[invalid=true]:border-error data-[hover=true]:data-[disabled=true]:border-outline-400 data-[hover=true]:data-[disabled=true]:data-[invalid=true]:border-error data-[active=true]:data-[checked=true]:bg-primary-800 data-[active=true]:data-[checked=true]:border-primary-800 data-[invalid=true]:border-error data-[disabled=true]:opacity-40",
+  base: "justify-center items-center border-outline bg-transparent rounded web:data-[focus-visible=true]:outline-none web:data-[focus-visible=true]:ring-2 web:data-[focus-visible=true]:ring-indicator-primary data-[checked=true]:bg-primary data-[checked=true]:border-primary data-[hover=true]:data-[checked=false]:border-outline-500 data-[hover=true]:bg-transparent data-[hover=true]:data-[invalid=true]:border-error data-[hover=true]:data-[checked=true]:bg-primary data-[hover=true]:data-[checked=true]:border-primary data-[hover=true]:data-[checked=true]:data-[disabled=true]:border-primary data-[hover=true]:data-[checked=true]:data-[disabled=true]:bg-primary data-[hover=true]:data-[checked=true]:data-[disabled=true]:opacity-40 data-[hover=true]:data-[checked=true]:data-[disabled=true]:data-[invalid=true]:border-error data-[hover=true]:data-[disabled=true]:border-outline data-[hover=true]:data-[disabled=true]:data-[invalid=true]:border-error data-[active=true]:data-[checked=true]:bg-primary data-[active=true]:data-[checked=true]:border-primary data-[invalid=true]:border-error data-[disabled=true]:opacity-40",
   parentVariants: {
     size: {
       lg: "w-6 h-6 border-[3px]",
@@ -92,7 +97,7 @@ const checkboxLabelStyle = tva({
 });
 
 const checkboxIconStyle = tva({
-  base: "text-typography data-[checked=true]:text-white fill-none",
+  base: "text-typography-50 fill-none",
 
   parentVariants: {
     size: {
@@ -214,8 +219,8 @@ const CheckboxIcon = React.forwardRef<
         parentVariants: {
           size: parentSize,
         },
-        class: className,
         size,
+        class: className,
       })}
       {...props}
       ref={ref}

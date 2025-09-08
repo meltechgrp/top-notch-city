@@ -1,15 +1,15 @@
+"use client";
 import React from "react";
-import { createButton } from "@gluestack-ui/button";
-import { tva } from "@gluestack-ui/nativewind-utils/tva";
+import { createButton } from "@gluestack-ui/core/button/creator";
+import { tva } from "@gluestack-ui/utils/nativewind-utils";
 import {
   withStyleContext,
   useStyleContext,
-} from "@gluestack-ui/nativewind-utils/withStyleContext";
+} from "@gluestack-ui/utils/nativewind-utils";
 import { cssInterop } from "nativewind";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
-import type { VariantProps } from "@gluestack-ui/nativewind-utils";
-import { PrimitiveIcon, UIIcon } from "@gluestack-ui/icon";
-import { hapticFeed } from "@/components/HapticTab";
+import type { VariantProps } from "tailwind-variants";
+import { PrimitiveIcon, UIIcon } from "@gluestack-ui/core/icon/creator";
 
 const SCOPE = "BUTTON";
 
@@ -37,24 +37,24 @@ cssInterop(PrimitiveIcon, {
 });
 
 const buttonStyle = tva({
-  base: "group/button rounded-xl bg-primary flex-row items-center justify-center data-[focus-visible=true]:web:outline-none data-[focus-visible=true]:web:ring-2 data-[disabled=true]:opacity-40 gap-2",
+  base: "group/button rounded bg-primary flex-row items-center justify-center data-[focus-visible=true]:web:outline-none data-[focus-visible=true]:web:ring-2 data-[disabled=true]:opacity-40 gap-2",
   variants: {
     action: {
       primary:
-        "bg-primary data-[hover=true]:bg-primary data-[active=true]:bg-primary border-primary-100 data-[hover=true]:border-primary-400 data-[active=true]:border-primary-500 data-[focus-visible=true]:web:ring-indicator-info",
+        "bg-primary data-[hover=true]:bg-primary data-[active=true]:bg-primary border-primary data-[hover=true]:border-primary data-[active=true]:border-primary data-[focus-visible=true]:web:ring-indicator-info",
       secondary:
-        "bg-background border-outline-100 data-[hover=true]:bg-secondary-muted data-[hover=true]:border-secondary-muted data-[active=true]:bg-secondary-muted data-[active=true]:border-secondary-muted data-[focus-visible=true]:web:ring-indicator-info",
+        "bg-secondary border-secondary data-[hover=true]:bg-secondary data-[hover=true]:border-secondary data-[active=true]:bg-secondary data-[active=true]:border-secondary data-[focus-visible=true]:web:ring-indicator-info",
       positive:
-        "bg-success border-success-300 data-[hover=true]:bg-success data-[hover=true]:border-success-400 data-[active=true]:bg-success-300 data-[active=true]:border-success-500 data-[focus-visible=true]:web:ring-indicator-info",
+        "bg-success border-success data-[hover=true]:bg-success data-[hover=true]:border-success data-[active=true]:bg-success data-[active=true]:border-success data-[focus-visible=true]:web:ring-indicator-info",
       negative:
-        "bg-error border-error-300 data-[hover=true]:bg-error data-[hover=true]:border-error-400 data-[active=true]:bg-error-300 data-[active=true]:border-error-500 data-[focus-visible=true]:web:ring-indicator-info",
+        "bg-error border-error data-[hover=true]:bg-error data-[hover=true]:border-error data-[active=true]:bg-error data-[active=true]:border-error data-[focus-visible=true]:web:ring-indicator-info",
       default:
         "bg-transparent data-[hover=true]:bg-background data-[active=true]:bg-transparent",
     },
     variant: {
-      link: "px-0",
+      link: "px",
       outline:
-        "bg-transparent border border-primary data-[hover=true]:bg-background data-[active=true]:bg-transparent",
+        "bg-transparent border data-[hover=true]:bg-background data-[active=true]:bg-transparent",
       solid: "",
     },
 
@@ -71,71 +71,71 @@ const buttonStyle = tva({
       action: "primary",
       variant: "link",
       class:
-        "px-0 bg-transparent data-[hover=true]:bg-transparent data-[active=true]:bg-transparent",
+        "px bg-transparent data-[hover=true]:bg-transparent data-[active=true]:bg-transparent",
     },
     {
       action: "secondary",
       variant: "link",
       class:
-        "px-0 bg-transparent data-[hover=true]:bg-transparent data-[active=true]:bg-transparent",
+        "px bg-transparent data-[hover=true]:bg-transparent data-[active=true]:bg-transparent",
     },
     {
       action: "positive",
       variant: "link",
       class:
-        "px-0 bg-transparent data-[hover=true]:bg-transparent data-[active=true]:bg-transparent",
+        "px bg-transparent data-[hover=true]:bg-transparent data-[active=true]:bg-transparent",
     },
     {
       action: "negative",
       variant: "link",
       class:
-        "px-0 bg-transparent data-[hover=true]:bg-transparent data-[active=true]:bg-transparent",
+        "px bg-transparent data-[hover=true]:bg-transparent data-[active=true]:bg-transparent",
     },
     {
       action: "primary",
       variant: "outline",
       class:
-        "bg-transparent data-[hover=true]:bg-background-50 data-[active=true]:bg-transparent",
+        "bg-transparent data-[hover=true]:bg-background data-[active=true]:bg-transparent",
     },
     {
       action: "secondary",
       variant: "outline",
       class:
-        "bg-transparent data-[hover=true]:bg-background border-outline-100 data-[active=true]:bg-transparent",
+        "bg-transparent data-[hover=true]:bg-background data-[active=true]:bg-transparent",
     },
     {
       action: "positive",
       variant: "outline",
       class:
-        "bg-transparent data-[hover=true]:bg-background-50 data-[active=true]:bg-transparent",
+        "bg-transparent data-[hover=true]:bg-background data-[active=true]:bg-transparent",
     },
     {
       action: "negative",
       variant: "outline",
       class:
-        "bg-transparent data-[hover=true]:bg-background-50 data-[active=true]:bg-transparent",
+        "bg-transparent data-[hover=true]:bg-background data-[active=true]:bg-transparent",
     },
   ],
 });
 
 const buttonTextStyle = tva({
-  base: "text-white font-semibold web:select-none",
+  base: "text-typography font-semibold web:select-none",
   parentVariants: {
     action: {
       primary:
-        "text-white data-[hover=true]:text-primary data-[active=true]:text-primary",
+        "text-primary data-[hover=true]:text-primary data-[active=true]:text-primary",
       secondary:
-        "text-white data-[hover=true]:text-white data-[active=true]:text-white",
+        "text-typography data-[hover=true]:text-typography data-[active=true]:text-typography",
       positive:
-        "text-success data-[hover=true]:text-success data-[active=true]:text-success-300",
+        "text-success data-[hover=true]:text-success data-[active=true]:text-success",
       negative:
-        "text-white data-[hover=true]:text-error data-[active=true]:text-error-300",
+        "text-error data-[hover=true]:text-error data-[active=true]:text-error",
     },
     variant: {
       link: "data-[hover=true]:underline data-[active=true]:underline",
       outline: "",
       solid:
-        "text-white data-[hover=true]:text-typography data-[active=true]:text-typography",
+        "text-typography data-[hover=true]:text-typography data-[active=true]:text-typography",
     },
     size: {
       xs: "text-xs",
@@ -150,13 +150,13 @@ const buttonTextStyle = tva({
       variant: "solid",
       action: "primary",
       class:
-        "text-white data-[hover=true]:text-white/90 data-[active=true]:text-white",
+        "text-typography data-[hover=true]:text-typography data-[active=true]:text-typography",
     },
     {
       variant: "solid",
       action: "secondary",
       class:
-        "text-white data-[hover=true]:text-typography data-[active=true]:text-typography",
+        "text-typography-800 data-[hover=true]:text-typography-800 data-[active=true]:text-typography-800",
     },
     {
       variant: "solid",
@@ -217,12 +217,12 @@ const buttonIconStyle = tva({
       primary:
         "text-primary data-[hover=true]:text-primary data-[active=true]:text-primary",
       secondary:
-        "text-white data-[hover=true]:text-white data-[active=true]:text-white",
+        "text-typography data-[hover=true]:text-typography data-[active=true]:text-typography",
       positive:
-        "text-success data-[hover=true]:text-success data-[active=true]:text-success-300",
+        "text-success data-[hover=true]:text-success data-[active=true]:text-success",
 
       negative:
-        "text-error data-[hover=true]:text-error data-[active=true]:text-error-300",
+        "text-error data-[hover=true]:text-error data-[active=true]:text-error",
     },
   },
   parentCompoundVariants: [
@@ -236,7 +236,7 @@ const buttonIconStyle = tva({
       variant: "solid",
       action: "secondary",
       class:
-        "text-white data-[hover=true]:text-typography data-[active=true]:text-typography",
+        "text-typography-800 data-[hover=true]:text-typography-800 data-[active=true]:text-typography-800",
     },
     {
       variant: "solid",
@@ -267,7 +267,7 @@ const buttonGroupStyle = tva({
       "4xl": "gap-8",
     },
     isAttached: {
-      true: "gap-0",
+      true: "gap",
     },
     flexDirection: {
       row: "flex-row",
@@ -282,48 +282,34 @@ type IButtonProps = Omit<
   React.ComponentPropsWithoutRef<typeof UIButton>,
   "context"
 > &
-  VariantProps<typeof buttonStyle> & {
-    className?: string;
-    disableHaptic?: boolean;
-  };
+  VariantProps<typeof buttonStyle> & { className?: string };
 
 const Button = React.forwardRef<
-  React.ComponentRef<typeof UIButton>,
+  React.ElementRef<typeof UIButton>,
   IButtonProps
->(function Button(
-  {
-    className,
-    variant = "solid",
-    size = "md",
-    disableHaptic = false,
-    action = "primary",
-    ...props
-  },
-  ref
-) {
-  return (
-    <UIButton
-      ref={ref}
-      onPress={async (e) => {
-        if (!disableHaptic) {
-          await hapticFeed();
-        }
-        props.onPress && props.onPress(e);
-      }}
-      {...props}
-      className={buttonStyle({ variant, size, action, class: className })}
-      context={{ variant, size, action }}
-    />
-  );
-});
+>(
+  (
+    { className, variant = "solid", size = "md", action = "primary", ...props },
+    ref
+  ) => {
+    return (
+      <UIButton
+        ref={ref}
+        {...props}
+        className={buttonStyle({ variant, size, action, class: className })}
+        context={{ variant, size, action }}
+      />
+    );
+  }
+);
 
 type IButtonTextProps = React.ComponentPropsWithoutRef<typeof UIButton.Text> &
   VariantProps<typeof buttonTextStyle> & { className?: string };
 
 const ButtonText = React.forwardRef<
-  React.ComponentRef<typeof UIButton.Text>,
+  React.ElementRef<typeof UIButton.Text>,
   IButtonTextProps
->(function ButtonText({ className, variant, size, action, ...props }, ref) {
+>(({ className, variant, size, action, ...props }, ref) => {
   const {
     variant: parentVariant,
     size: parentSize,
@@ -340,9 +326,14 @@ const ButtonText = React.forwardRef<
           size: parentSize,
           action: parentAction,
         },
-        variant,
+        variant: variant as "link" | "outline" | "solid" | undefined,
         size,
-        action,
+        action: action as
+          | "primary"
+          | "secondary"
+          | "positive"
+          | "negative"
+          | undefined,
         class: className,
       })}
     />
@@ -360,9 +351,9 @@ type IButtonIcon = React.ComponentPropsWithoutRef<typeof UIButton.Icon> &
   };
 
 const ButtonIcon = React.forwardRef<
-  React.ComponentRef<typeof UIButton.Icon>,
+  React.ElementRef<typeof UIButton.Icon>,
   IButtonIcon
->(function ButtonIcon({ className, size, ...props }, ref) {
+>(({ className, size, ...props }, ref) => {
   const {
     variant: parentVariant,
     size: parentSize,
@@ -411,31 +402,33 @@ type IButtonGroupProps = React.ComponentPropsWithoutRef<typeof UIButton.Group> &
   VariantProps<typeof buttonGroupStyle>;
 
 const ButtonGroup = React.forwardRef<
-  React.ComponentRef<typeof UIButton.Group>,
+  React.ElementRef<typeof UIButton.Group>,
   IButtonGroupProps
->(function ButtonGroup(
-  {
-    className,
-    space = "md",
-    isAttached = false,
-    flexDirection = "column",
-    ...props
-  },
-  ref
-) {
-  return (
-    <UIButton.Group
-      className={buttonGroupStyle({
-        class: className,
-        space,
-        isAttached,
-        flexDirection,
-      })}
-      {...props}
-      ref={ref}
-    />
-  );
-});
+>(
+  (
+    {
+      className,
+      space = "md",
+      isAttached = false,
+      flexDirection = "column",
+      ...props
+    },
+    ref
+  ) => {
+    return (
+      <UIButton.Group
+        className={buttonGroupStyle({
+          class: className,
+          space,
+          isAttached: isAttached as boolean,
+          flexDirection: flexDirection as any,
+        })}
+        {...props}
+        ref={ref}
+      />
+    );
+  }
+);
 
 Button.displayName = "Button";
 ButtonText.displayName = "ButtonText";

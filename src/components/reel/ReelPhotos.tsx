@@ -1,13 +1,13 @@
 import BackgroundView from "@/components/layouts/BackgroundView";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
-import { ReelPhotoViewer } from "@/components/reel/ReelPhotoViewer";
+import ReelPhotoViewer from "@/components/reel/ReelPhotoViewer";
 import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
 import { Box, View } from "@/components/ui";
 import Platforms from "@/constants/Plaforms";
 import { usePhotos } from "@/hooks/usePhotos";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { FlashList } from "@shopify/flash-list";
-import { useCallback, useMemo } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { Dimensions, RefreshControl } from "react-native";
 import {
   SafeAreaView,
@@ -15,7 +15,7 @@ import {
 } from "react-native-safe-area-context";
 
 const { height: h, width } = Dimensions.get("window");
-export default function ReelPhotoList({ visible }: { visible: boolean }) {
+function ReelPhotoList({ visible }: { visible: boolean }) {
   const { photos, refetch, loading, fetching, hasNextPage, fetchNextPage } =
     usePhotos();
   const insets = useSafeAreaInsets();
@@ -74,3 +74,4 @@ export default function ReelPhotoList({ visible }: { visible: boolean }) {
     </Box>
   );
 }
+export default memo(ReelPhotoList);

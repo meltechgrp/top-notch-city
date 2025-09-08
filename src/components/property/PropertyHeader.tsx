@@ -1,6 +1,4 @@
 import { Icon, Pressable, useResolvedTheme, View } from "@/components/ui";
-import ReelLikeButton from "../reel/ReelLikeButton";
-import ReelWishListButton from "../reel/ReelWishListButton";
 import ReelShareButton from "../reel/ReelShareButton";
 import { usePropertyActions } from "@/hooks/usePropertyActions";
 import { router } from "expo-router";
@@ -9,6 +7,8 @@ import { cn, generateTitle } from "@/lib/utils";
 import { useMemo } from "react";
 import { Alert } from "react-native";
 import { usePropertyStatusMutations } from "@/tanstack/mutations/usePropertyStatusMutations";
+import LikeButton from "@/components/property/LikeButton";
+import WishListButton from "@/components/property/WishListButton";
 
 interface Props {
   property: Property;
@@ -102,12 +102,12 @@ export default function PropertyHeader({
             id={property.id}
             title={generateTitle(property)}
           />
-          <ReelLikeButton
+          <LikeButton
             liked={isLiked}
             id={property.id}
             hasScrolledToDetails={hasScrolledToDetails}
           />
-          <ReelWishListButton
+          <WishListButton
             id={property.id}
             isAdded={wishlisted}
             hasScrolledToDetails={hasScrolledToDetails}

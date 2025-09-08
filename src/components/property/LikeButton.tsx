@@ -15,7 +15,7 @@ interface Props {
   hasScrolledToDetails?: boolean;
 }
 
-const ReelLikeButton = ({
+const PropertyLikeButton = ({
   liked,
   id,
   hasScrolledToDetails,
@@ -30,44 +30,31 @@ const ReelLikeButton = ({
     // OPTIMISTIC UPDATE
     onMutate: async () => {
       await client.cancelQueries({
-        queryKey: ["reels"],
+        queryKey: ["properties", id],
       });
 
-      const previousData = client.getQueryData<{
-        pages: Result[];
-        pageParams: unknown[];
-      }>(["reels"]);
+      const previousData = client.getQueryData<Property | undefined>([
+        "properties",
+        id,
+      ]);
 
-      client.setQueryData<{
-        pages: Result[];
-        pageParams: unknown[];
-      }>(["reels"], (old) => {
+      client.setQueryData<Property | undefined>(["properties", id], (old) => {
         if (!old) return old;
+        const alreadyLiked = old.owner_interaction?.liked ?? false;
         return {
           ...old,
-          pages: old.pages.map((page) => ({
-            ...page,
-            results: page.results?.map((reel) => {
-              if (reel.id !== id) return reel;
-
-              const alreadyLiked = reel.owner_interaction?.liked ?? false;
-              return {
-                ...reel,
-                owner_interaction: {
-                  ...reel?.owner_interaction,
-                  liked: !alreadyLiked,
-                },
-                interaction: {
-                  ...reel?.interaction,
-                  liked: reel.interaction
-                    ? reel.interaction.liked + (alreadyLiked ? -1 : 1)
-                    : alreadyLiked
-                      ? -1
-                      : 1,
-                },
-              };
-            }),
-          })),
+          owner_interaction: {
+            ...old?.owner_interaction,
+            liked: !alreadyLiked,
+          },
+          interaction: {
+            ...old?.interaction,
+            liked: old.interaction
+              ? old.interaction.liked + (alreadyLiked ? -1 : 1)
+              : alreadyLiked
+                ? -1
+                : 1,
+          },
         };
       });
 
@@ -77,14 +64,15 @@ const ReelLikeButton = ({
     onError: (_err, _vars, ctx) => {
       console.log(_err);
       if (ctx?.previousData) {
-        client.setQueryData(["reels"], ctx.previousData);
+        client.setQueryData(["properties", id], ctx.previousData);
       }
     },
 
     // After success, refetch in background to ensure sync
-    // onSettled: () => {
-    //   client.invalidateQueries({ queryKey: ["reels"] });
-    // },
+    onSettled: () => {
+      client.invalidateQueries({ queryKey: ["properties", id] });
+      client.invalidateQueries({ queryKey: ["properties"] });
+    },
   });
 
   function handleLike() {
@@ -108,4 +96,4 @@ const ReelLikeButton = ({
   );
 };
 
-export default memo(ReelLikeButton);
+export default memo(PropertyLikeButton);

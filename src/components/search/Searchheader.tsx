@@ -14,7 +14,7 @@ import Animated, {
 import { Heading, Icon, Pressable, Text, View } from "@/components/ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView, TouchableOpacity, ViewProps } from "react-native";
-import { useEffect } from "react";
+import { memo, useEffect } from "react";
 import { cn, composeFullAddress } from "@/lib/utils";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
 
@@ -30,7 +30,7 @@ interface Props extends Partial<ViewProps> {
   total: number;
   onTabChange: (index: number) => void;
 }
-export function SearchHeader({
+function SearchHeader({
   setShowFilter,
   setActivateVoice,
   setLocationBottomSheet,
@@ -144,3 +144,5 @@ export function SearchHeader({
     </>
   );
 }
+
+export default memo(SearchHeader);

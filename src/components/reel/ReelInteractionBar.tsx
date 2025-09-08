@@ -18,9 +18,9 @@ import { profileDefault } from "@/store";
 import { useMutation } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { MessageSquareMore, MoreHorizontal, Plus } from "lucide-react-native";
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 
-export function ReelInteractionBar({
+function ReelInteractionBar({
   reel,
   showChat = true,
   showShare = true,
@@ -133,3 +133,5 @@ export function ReelInteractionBar({
     </View>
   );
 }
+
+export default memo(ReelInteractionBar);

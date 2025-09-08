@@ -23,7 +23,7 @@ type Props = View["props"] & {
   title?: string;
 };
 
-export default function CustomSelect(props: Props) {
+function CustomSelect(props: Props) {
   const {
     Icon,
     value,
@@ -111,3 +111,5 @@ export default function CustomSelect(props: Props) {
     </View>
   );
 }
+
+export default React.memo(CustomSelect);

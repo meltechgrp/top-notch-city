@@ -1,10 +1,10 @@
 import { composeFullAddress } from "@/lib/utils";
 import { Icon, Text, View } from "../ui";
 import PropertyCarousel from "./PropertyCarousel";
-import { PropertyInteractions } from "./PropertyInteractions";
 import { MapPin } from "lucide-react-native";
 import { PropertyPrice } from "./PropertyPrice";
 import { PropertyTitle } from "./PropertyTitle";
+import PropertyInteractions from "@/components/property/PropertyInteractions";
 
 interface Props {
   property: Property | null;

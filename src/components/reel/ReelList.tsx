@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Dimensions,
   NativeScrollEvent,
@@ -19,7 +19,7 @@ import { useDebouncedVisibility } from "@/hooks/useDebouncedVisibility";
 
 const { height: h, width } = Dimensions.get("window");
 
-export default function ReelList({ visible }: { visible: boolean }) {
+function ReelList({ visible }: { visible: boolean }) {
   const {
     reels,
     hasNextPage,
@@ -140,3 +140,5 @@ export default function ReelList({ visible }: { visible: boolean }) {
     </>
   );
 }
+
+export default memo(ReelList);

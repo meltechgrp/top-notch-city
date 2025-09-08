@@ -1,16 +1,16 @@
 "use client";
 import React from "react";
-import { createAvatar } from "@gluestack-ui/avatar";
+import { createAvatar } from "@gluestack-ui/core/avatar/creator";
 
 import { View, Text, Image, Platform } from "react-native";
 
-import { tva } from "@gluestack-ui/nativewind-utils/tva";
+import { tva } from "@gluestack-ui/utils/nativewind-utils";
 import {
   withStyleContext,
   useStyleContext,
-} from "@gluestack-ui/nativewind-utils/withStyleContext";
+} from "@gluestack-ui/utils/nativewind-utils";
 const SCOPE = "AVATAR";
-import type { VariantProps } from "@gluestack-ui/nativewind-utils";
+import type { VariantProps } from "@gluestack-ui/utils/nativewind-utils";
 
 const UIAvatar = createAvatar({
   Root: withStyleContext(View, SCOPE),
@@ -35,7 +35,7 @@ const avatarStyle = tva({
 });
 
 const avatarFallbackTextStyle = tva({
-  base: "text-white font-semibold overflow-hidden text-transform:uppercase web:cursor-default",
+  base: "text-typography font-semibold overflow-hidden text-transform:uppercase web:cursor-default",
 
   parentVariants: {
     size: {
@@ -54,7 +54,7 @@ const avatarGroupStyle = tva({
 });
 
 const avatarBadgeStyle = tva({
-  base: "w-5 h-5 bg-success rounded-full absolute right-0 bottom-0 border-background z-40",
+  base: "w-5 h-5 bg-success rounded-full absolute right-0 bottom-0 border-background border-2",
   parentVariants: {
     size: {
       xs: "w-2 h-2",
