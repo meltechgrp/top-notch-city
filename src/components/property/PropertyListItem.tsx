@@ -94,9 +94,9 @@ function PropertyListItem(props: Props) {
 
             {address && (
               <View className="flex-row items-center gap-1">
-                <Icon as={MapPin} size="sm" color={Colors.primary} />
+                <Icon as={MapPin} size="xs" color={Colors.primary} />
                 <Text size={"sm"} className="text-white">
-                  {composeFullAddress(address, true, "long")}
+                  {composeFullAddress(address, true, "short")}
                 </Text>
               </View>
             )}

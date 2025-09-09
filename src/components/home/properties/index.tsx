@@ -2,11 +2,11 @@ import SectionHeaderWithRef from "@/components/home/SectionHeaderWithRef";
 import { router } from "expo-router";
 import VerticalProperties from "@/components/property/VerticalProperties";
 import { View } from "@/components/ui";
-import { useStore } from "@/store";
 import { memo } from "react";
+import { useHomeFeed } from "@/hooks/useHomeFeed";
 
 const TopProperties = () => {
-  const { topProperties: properties } = useStore();
+  const { allProperties } = useHomeFeed();
 
   return (
     <SectionHeaderWithRef
@@ -23,7 +23,7 @@ const TopProperties = () => {
     >
       <View className="flex-1 px-4">
         <VerticalProperties
-          data={properties || []}
+          data={allProperties}
           scrollEnabled={false}
           refetch={async () => {}}
           disableCount={true}

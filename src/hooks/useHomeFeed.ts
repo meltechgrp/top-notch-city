@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useStore } from "@/store";
-import { shallowCompareProperties } from "@/lib/utils";
 import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import { fetchTopLocations } from "@/actions/property/locations";
 import { Fetch } from "@/actions/utills";
@@ -12,13 +11,7 @@ async function getTotal() {
   };
 }
 export function useHomeFeed() {
-  const {
-    topProperties,
-    setTopProperties,
-    nearbyProperties,
-    setNearbyProperties,
-    location,
-  } = useStore();
+  const { nearbyProperties, setNearbyProperties, location } = useStore();
 
   /** --- All Properties --- */
   const {
@@ -26,7 +19,6 @@ export function useHomeFeed() {
     refetch: refetchAll,
     isRefetching: refetchingAll,
   } = useInfinityQueries({ type: "all", perPage: 5 });
-
   const { data: totalCount, refetch: getTotalCount } = useQuery({
     queryKey: ["total"],
     queryFn: getTotal,
@@ -66,11 +58,6 @@ export function useHomeFeed() {
     () => nearbyData?.pages.flatMap((page) => page.results) || [],
     [nearbyData]
   );
-  /** --- Sync with Store only when changed --- */
-  useEffect(() => {
-    if (!allProperties.length) return;
-    setTopProperties(allProperties);
-  }, [allProperties, setTopProperties]);
   const total = useMemo(() => totalCount?.total_unread, [totalCount]);
   useEffect(() => {
     if (!nearby.length) return;
@@ -94,7 +81,7 @@ export function useHomeFeed() {
     getTotal();
   }, []);
   return {
-    allProperties: topProperties || [],
+    allProperties,
     locations,
     nearby: nearbyProperties || [],
     refreshAll,

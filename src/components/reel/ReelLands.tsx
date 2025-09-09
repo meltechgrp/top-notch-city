@@ -1,10 +1,10 @@
 import BackgroundView from "@/components/layouts/BackgroundView";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
-import ReelPhotoViewer from "@/components/reel/ReelPhotoViewer";
+import ReelLandViewer from "@/components/reel/ReelLandViewer";
 import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
 import { Box, View } from "@/components/ui";
 import Platforms from "@/constants/Plaforms";
-import { usePhotos } from "@/hooks/usePhotos";
+import { useLand } from "@/hooks/useLand";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { FlashList } from "@shopify/flash-list";
 import { memo, useCallback, useMemo } from "react";
@@ -15,9 +15,9 @@ import {
 } from "react-native-safe-area-context";
 
 const { height: h, width } = Dimensions.get("window");
-function ReelPhotoList({ visible }: { visible: boolean }) {
-  const { photos, refetch, loading, fetching, hasNextPage, fetchNextPage } =
-    usePhotos();
+function ReelLandList({ visible }: { visible: boolean }) {
+  const { lands, refetch, loading, fetching, hasNextPage, fetchNextPage } =
+    useLand();
   const insets = useSafeAreaInsets();
   const bottomHeight = useBottomTabBarHeight();
   const height = useMemo(
@@ -26,7 +26,7 @@ function ReelPhotoList({ visible }: { visible: boolean }) {
   );
   const renderItem = useCallback(
     ({ item, index }: { item: Reel; index: number }) => (
-      <ReelPhotoViewer width={width} reel={item} fullScreen height={height} />
+      <ReelLandViewer width={width} reel={item} fullScreen height={height} />
     ),
     []
   );
@@ -34,7 +34,7 @@ function ReelPhotoList({ visible }: { visible: boolean }) {
     <Box className="flex-1">
       <SafeAreaView edges={["top"]} className="flex-1">
         <FlashList
-          data={photos}
+          data={lands}
           estimatedItemSize={height}
           snapToInterval={height}
           pagingEnabled
@@ -74,4 +74,4 @@ function ReelPhotoList({ visible }: { visible: boolean }) {
     </Box>
   );
 }
-export default memo(ReelPhotoList);
+export default memo(ReelLandList);

@@ -6,8 +6,8 @@ import PropertyCarousel from "@/components/property/PropertyCarousel";
 import { ReelsShareSheet } from "@/components/modals/ReelsBottomsheet";
 import config from "@/config";
 
-const ReelPhotoViewer = memo(
-  forwardRef<any, ReelPhotoViewerProps>(
+const ReelLandViewer = memo(
+  forwardRef<any, ReelLandViewerProps>(
     (
       {
         rounded = false,
@@ -31,14 +31,13 @@ const ReelPhotoViewer = memo(
           <View className="flex-1 justify-center" style={{ height }}>
             <PropertyCarousel
               width={width || 300}
-              withBackdrop={false}
+              // withBackdrop={false}
               loop={false}
               withPagination={true}
               rounded={rounded}
               factor={1.3}
               isList={true}
-              enabled={true}
-              paginationsize={6}
+              paginationsize={8}
               media={reel.photos}
               pointerPosition={6}
             />
@@ -52,6 +51,7 @@ const ReelPhotoViewer = memo(
                   setShowBottomSheet={() => setShowBottomSheet(true)}
                   currentTime={0}
                   length={0}
+                  isLand={true}
                   inTab={inTab}
                   showSlider={false}
                 />
@@ -70,4 +70,4 @@ const ReelPhotoViewer = memo(
   )
 );
 
-export default memo(ReelPhotoViewer);
+export default memo(ReelLandViewer);

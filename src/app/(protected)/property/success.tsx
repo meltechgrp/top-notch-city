@@ -23,7 +23,7 @@ export default function ListingSuccess() {
           <View className="items-center mb-6">
             <Icon as={CheckCircle} className="text-green-500 mb-4 w-12 h-12" />
             <Text className="text-2xl font-bold text-center text-white">
-              Uploaded Successful!
+              Uploaded Successfully!
             </Text>
           </View>
 

@@ -2,7 +2,7 @@ import { composeFullAddress, generateTitle } from "@/lib/utils";
 import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import { useMemo } from "react";
 
-export function usePhotos() {
+export function useLand() {
   const {
     data,
     refetch,
@@ -10,16 +10,16 @@ export function usePhotos() {
     isLoading,
     hasNextPage,
     isFetchingNextPage,
-  } = useInfinityQueries({ type: "reels" });
+  } = useInfinityQueries({ type: "lands" });
 
-  const photos = useMemo(() => {
-    return propertyToReelPhoto(
+  const lands = useMemo(() => {
+    return propertyToReelLand(
       data?.pages.flatMap((page) => page.results) || []
-    );
+    ) as Land[];
   }, [data]);
 
   return {
-    photos,
+    lands,
     fetchNextPage,
     loading: isLoading,
     hasNextPage,
@@ -28,7 +28,7 @@ export function usePhotos() {
   };
 }
 
-export function propertyToReelPhoto(properties: Property[]) {
+export function propertyToReelLand(properties: Property[]) {
   return properties
     .map((p) => {
       let v = p.media.filter((m) => m.media_type === "IMAGE");

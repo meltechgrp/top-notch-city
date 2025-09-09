@@ -10,7 +10,7 @@ export default function GlobalManager() {
   const setMe = useStore((s) => s.updateProfile);
   const hasAuth = useStore((s) => s.hasAuth);
   async function unsetAuthToken() {
-    useStore.getState().resetStore();
+    useStore.setState((s) => ({ me: undefined, hasAuth: false }));
     useTempStore.getState().resetStore();
     removeAuthToken();
   }

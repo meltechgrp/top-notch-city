@@ -10,9 +10,7 @@ import Animated, {
   withDelay,
 } from "react-native-reanimated";
 
-const DOT_SIZE = 8;
-
-const Dot = ({ delay }: { delay: number }) => {
+const Dot = ({ delay, size }: { delay: number; size: number }) => {
   const translateY = useSharedValue(0);
 
   useEffect(() => {
@@ -37,9 +35,9 @@ const Dot = ({ delay }: { delay: number }) => {
     <Animated.View
       style={[
         {
-          width: DOT_SIZE,
-          height: DOT_SIZE,
-          borderRadius: DOT_SIZE / 2,
+          width: size,
+          height: size,
+          borderRadius: size / 2,
           backgroundColor: Colors.primary,
           marginHorizontal: 4,
         },
@@ -49,12 +47,12 @@ const Dot = ({ delay }: { delay: number }) => {
   );
 };
 
-export const TypingIndicator = () => {
+export const TypingIndicator = ({ size = 8 }: { size?: number }) => {
   return (
     <View style={{ flexDirection: "row", alignItems: "flex-end", height: 20 }}>
-      <Dot delay={0} />
-      <Dot delay={100} />
-      <Dot delay={200} />
+      <Dot size={size} delay={0} />
+      <Dot size={size} delay={100} />
+      <Dot size={size} delay={200} />
     </View>
   );
 };

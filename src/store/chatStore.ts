@@ -18,14 +18,11 @@ type ChatState = {
   clearChatMessages: (chatId: string) => void;
   deleteChatMessage: (chatId: string, messageId: string) => void;
   updateChatList: (data: ChatList[]) => void;
+  updateChatListDetails: (data: ChatList["details"]) => void;
   deleteChat: (chatId: string) => void;
   setTyping: (chatId: string, typing: boolean) => void;
   getTyping: (chatId: string) => boolean;
-  updateUserStatus: (
-    chatId: string,
-    status: ReceiverInfo["status"],
-    timestamp: string
-  ) => void;
+  updateUserStatus: (chatId: string, status: ReceiverInfo["status"]) => void;
   updateMessageStatus: (
     chatId: string,
     messageId: string,
@@ -176,7 +173,7 @@ export const useChatStore = create<ChatState>(
           return { chatList };
         });
       },
-      updateUserStatus: (chatId, status, timestamp) => {
+      updateUserStatus: (chatId, status) => {
         set((state) => {
           const chatList = state.chatList ? [...state.chatList] : [];
           const index = chatList.findIndex(
@@ -191,7 +188,6 @@ export const useChatStore = create<ChatState>(
                 receiver: {
                   ...chatList[index].details.receiver,
                   status,
-                  last_seen: timestamp,
                 },
               },
             };
@@ -241,6 +237,27 @@ export const useChatStore = create<ChatState>(
           // Add new chat
           return { chatList: data };
           // }
+        });
+      },
+      updateChatListDetails: (data) => {
+        set((state) => {
+          const exists = state.chatList.find(
+            (c) => c.details.chat_id === data.chat_id
+          );
+
+          if (exists) {
+            // Update existing chat details
+            return {
+              chatList: state.chatList.map((c) =>
+                c.details.chat_id === data.chat_id
+                  ? { ...c, details: { ...data } }
+                  : c
+              ),
+            };
+          } else {
+            // Add new chat
+            return state;
+          }
         });
       },
       addIncomingMessage: (chatId, message) => {

@@ -28,8 +28,10 @@ export function PropertyHeroSection({ property, width }: Props) {
         {property && (
           <View className=" absolute flex-row justify-between bottom-16 left-4 right-4 w-full px-1">
             <View className="gap-2 flex-1">
-              <PropertyTitle property={property} />
-              <PropertyPrice property={property} className="self-start" />
+              <View className="px-2 gap-2">
+                <PropertyTitle property={property} />
+                <PropertyPrice property={property} className="self-start" />
+              </View>
               <View className="flex-row items-center mt-1 gap-2">
                 <Icon size="sm" as={MapPin} className="text-primary" />
                 <Text size="sm" className=" text-white">

@@ -25,6 +25,7 @@ function ReelInteractionBar({
   showChat = true,
   showShare = true,
   showMuted = false,
+  isLand,
   setShowBottomSheet,
 }: ReelInteractionBar) {
   const { mutateAsync } = useMutation({
@@ -75,11 +76,11 @@ function ReelInteractionBar({
         <FollowAgent id={reel.owner?.id!} following={reel.is_following} />
       </AnimatedPressable>
       <View className=" items-center">
-        <ReelLikeButton liked={isLiked} id={reel.id} />
+        <ReelLikeButton liked={isLiked} isLand={isLand} id={reel.id} />
         <Text className=" text-white">{record?.liked || 0}</Text>
       </View>
       <View className=" items-center">
-        <ReelWishListButton isAdded={isAdded} id={reel.id} />
+        <ReelWishListButton isAdded={isAdded} isLand={isLand} id={reel.id} />
         <Text className=" text-white">{record?.added_to_wishlist || 0}</Text>
       </View>
       {showChat && (

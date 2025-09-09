@@ -102,18 +102,18 @@ function MessageListItem(props: MessageListItemProps) {
                   </Text>
                 </View>
                 {typing && <TypingIndicator />}
-                {!typing && message && (
+                {!typing && chat?.recent_message && (
                   <View className="flex flex-row gap-4 w-full">
                     <View className="flex-1 flex-row gap-2 items-center overflow-hidden">
-                      {isMine && <MessageStatusIcon status={message?.status} />}
+                      {/* {isMine && <MessageStatusIcon status={chat?.recent_message?.status} />} */}
                       <Text
                         className="text-typography/60 text-sm"
                         ellipsizeMode="tail"
                         numberOfLines={1}
                       >
-                        {message?.content
-                          ? message.content
-                          : message?.file_data?.length
+                        {chat?.recent_message?.content
+                          ? chat?.recent_message.content
+                          : chat?.recent_message?.file_data?.length
                             ? "Media"
                             : ""}
                       </Text>

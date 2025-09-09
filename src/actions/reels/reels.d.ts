@@ -37,9 +37,10 @@ interface ReelInteractionBar {
   showShare?: boolean;
   showMuted?: boolean;
   setShowBottomSheet: () => void;
+  isLand?: boolean;
 }
 
-interface ReelPhotoViewerProps {
+interface ReelLandViewerProps {
   rounded?: boolean;
   onPress?: (uri: string) => void;
   reel: Reel;
@@ -47,4 +48,20 @@ interface ReelPhotoViewerProps {
   inTab?: boolean;
   width: number;
   height: number;
+}
+
+interface Land {
+  id: string;
+  video: string;
+  photos: Media[];
+  title: string;
+  description: string;
+  interations: Interaction;
+  owner_interaction: Owner_interaction;
+  created_at: string;
+  owner?: Owner;
+  purpose: PropertyPurpose;
+  price: number;
+  location: string;
+  is_following: boolean;
 }

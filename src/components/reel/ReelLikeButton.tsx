@@ -12,16 +12,10 @@ interface Props {
   liked: boolean;
   id: string;
   className?: string;
-  hasScrolledToDetails?: boolean;
+  isLand?: boolean;
 }
 
-const ReelLikeButton = ({
-  liked,
-  id,
-  hasScrolledToDetails,
-  className,
-}: Props) => {
-  const theme = useResolvedTheme();
+const ReelLikeButton = ({ liked, id, className, isLand }: Props) => {
   const { hasAuth } = useStore();
   const client = useQueryClient();
 
@@ -86,12 +80,77 @@ const ReelLikeButton = ({
     //   client.invalidateQueries({ queryKey: ["reels"] });
     // },
   });
+  const { mutate: mutateLand } = useMutation({
+    mutationFn: () => likeProperty({ id }),
+    // OPTIMISTIC UPDATE
+    onMutate: async () => {
+      await client.cancelQueries({
+        queryKey: ["lands"],
+      });
+
+      const previousData = client.getQueryData<{
+        pages: Result[];
+        pageParams: unknown[];
+      }>(["lands"]);
+
+      client.setQueryData<{
+        pages: Result[];
+        pageParams: unknown[];
+      }>(["lands"], (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          pages: old.pages.map((page) => ({
+            ...page,
+            results: page.results?.map((reel) => {
+              if (reel.id !== id) return reel;
+
+              const alreadyLiked = reel.owner_interaction?.liked ?? false;
+              return {
+                ...reel,
+                owner_interaction: {
+                  ...reel?.owner_interaction,
+                  liked: !alreadyLiked,
+                },
+                interaction: {
+                  ...reel?.interaction,
+                  liked: reel.interaction
+                    ? reel.interaction.liked + (alreadyLiked ? -1 : 1)
+                    : alreadyLiked
+                      ? -1
+                      : 1,
+                },
+              };
+            }),
+          })),
+        };
+      });
+
+      return { previousData };
+    },
+    // If the request fails, rollback
+    onError: (_err, _vars, ctx) => {
+      console.log(_err);
+      if (ctx?.previousData) {
+        client.setQueryData(["lands"], ctx.previousData);
+      }
+    },
+
+    // After success, refetch in background to ensure sync
+    // onSettled: () => {
+    //   client.invalidateQueries({ queryKey: ["lands"] });
+    // },
+  });
 
   function handleLike() {
     if (!hasAuth) {
       return openAccessModal({ visible: true });
     }
-    mutate();
+    if (isLand) {
+      mutateLand();
+    } else {
+      mutate();
+    }
   }
 
   return (
@@ -100,7 +159,6 @@ const ReelLikeButton = ({
         as={Heart}
         className={cn(
           "text-white w-9 h-9",
-          hasScrolledToDetails && theme == "light" && "text-black",
           liked && "text-primary fill-primary"
         )}
       />

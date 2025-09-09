@@ -5,7 +5,7 @@ import PagerView from "react-native-pager-view";
 import ReelList from "@/components/reel/ReelList";
 import ReelTabs from "@/components/reel/ReelTabs";
 import AgentList from "@/components/reel/ReelAgents";
-import ReelPhotoList from "@/components/reel/ReelPhotos";
+import ReelPhotoList from "@/components/reel/ReelLands";
 
 const TABS = ["Lands", "Videos", "Agents"];
 

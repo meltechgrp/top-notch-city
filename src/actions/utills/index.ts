@@ -48,7 +48,7 @@ export function useWebSocketConnection(url: string | null) {
     };
 
     socket.onerror = (error) => {
-      console.error("❌ WebSocket error:", error);
+      // console.error("❌ WebSocket error:", error);
     };
 
     ws.current = socket;

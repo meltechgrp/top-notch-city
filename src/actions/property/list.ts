@@ -16,6 +16,7 @@ export async function fetchProperties({
     if (res?.detail) throw new Error("Failed to fetch properties");
     return res as Result;
   } catch (error) {
+    console.log(error);
     throw new Error("Failed to fetch properties");
   }
 }
@@ -29,6 +30,24 @@ export async function fetchReels({
   try {
     const res = await Fetch(
       `/properties/videos?page=${pageParam}&per_page=${perPage}`,
+      {}
+    );
+    if (res?.detail) throw new Error("Failed to fetch properties");
+    return res as Result;
+  } catch (error) {
+    throw new Error("Failed to fetch properties");
+  }
+}
+export async function fetchLands({
+  pageParam,
+  perPage = 10,
+}: {
+  pageParam: number;
+  perPage?: number;
+}) {
+  try {
+    const res = await Fetch(
+      `/properties/land?page=${pageParam}&per_page=${perPage}`,
       {}
     );
     if (res?.detail) throw new Error("Failed to fetch properties");

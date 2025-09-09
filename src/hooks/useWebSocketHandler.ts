@@ -19,7 +19,7 @@ export function useWebSocketHandler() {
     updateUserStatus,
   } = useChatStore.getState();
   const { getTotalCount } = useHomeFeed();
-  const { refetch } = useChat();
+  const { refetch, updateChatListDetails } = useChat();
 
   const { connect, setOnMessage, ...rest } = useWebSocketConnection(url);
 
@@ -54,6 +54,8 @@ export function useWebSocketHandler() {
             })),
             read: data?.read,
           });
+
+          setTyping(data.chat_id, false);
           break;
 
         case "read_receipt":
@@ -71,12 +73,24 @@ export function useWebSocketHandler() {
         case "typing":
           setTyping(data.chat_id, data.is_typing);
           break;
-        // case "online":
-        //   updateUserStatus(data.chat_id, "online", data.timestamp);
-        //   break;
-        // case "offline":
-        //   updateUserStatus(data.chat_id, "offline", data.timestamp);
-        //   break;
+        case "presence":
+          updateUserStatus(
+            data.chat_id,
+            data?.is_online ? "online" : "offline"
+          );
+          break;
+        case "presence":
+          updateUserStatus(
+            data.chat_id,
+            data?.is_online ? "online" : "offline"
+          );
+          break;
+        case "chat_list_update":
+          const chats = data?.chats as ChatList["details"][];
+          chats?.forEach((c) => {
+            updateChatListDetails(c);
+          });
+          break;
       }
     });
   }, [url]);

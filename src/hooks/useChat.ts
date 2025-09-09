@@ -4,8 +4,13 @@ import { useChatStore } from "@/store/chatStore";
 import { getChatMessages, getChats } from "@/actions/message";
 
 export function useChat() {
-  const { updateChatList, getMessages, updateChatMessages, getChatList } =
-    useChatStore.getState();
+  const {
+    updateChatList,
+    getMessages,
+    updateChatListDetails,
+    updateChatMessages,
+    getChatList,
+  } = useChatStore.getState();
 
   const queryClient = useQueryClient();
   const {
@@ -57,5 +62,6 @@ export function useChat() {
     refetch: refetchChats,
     loading: loadingChats,
     refreshing: refreshingChats,
+    updateChatListDetails,
   };
 }

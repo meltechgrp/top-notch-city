@@ -124,7 +124,6 @@ export async function sendTyping({
   chat_id: string;
   is_typing: boolean;
 }) {
-  console.log(is_typing);
   await Fetch(`/typing`, {
     method: "POST",
     data: { chat_id, is_typing },

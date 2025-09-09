@@ -102,8 +102,8 @@ export function generateTitle({
     case "Commercial":
       return `${subcategory?.name || "Commercial Space"} ${purpose ? `for ${purpose}` : ""}`.trim();
 
-    case "Landed":
-      return `${FindAmenity("Plots", amenities) || 1} Plot${FindAmenity("Plots", amenities) > 1 ? "s" : ""} of Land${location ? " in " + location : ""}`;
+    case "Land":
+      return `${FindAmenity("Total Plot", amenities) || 1} Plot${FindAmenity("Total Plot", amenities) > 1 ? "s" : ""} of Land`;
 
     case "hotel":
     case "Shortlet":

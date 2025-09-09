@@ -17,6 +17,7 @@ interface PlayerControlProps {
   length: number;
   inTab?: boolean;
   showSlider?: boolean;
+  isLand?: boolean;
 }
 
 function PlayerController({
@@ -27,6 +28,7 @@ function PlayerController({
   setShowBottomSheet,
   inTab,
   showSlider = true,
+  isLand = false,
 }: PlayerControlProps) {
   const theme = useResolvedTheme();
   const progress = useSharedValue(0);
@@ -58,7 +60,7 @@ function PlayerController({
   return (
     <View className="absolute bottom-0 w-full left-0 right-0 ">
       {/* Time */}
-      <View className={cn("flex-1 gap-2 pb-1 android:pb-4", !inTab && "pb-8")}>
+      <View className={cn("flex-1 gap-2 pb-1 android:pb-4", isLand && "pb-8")}>
         <View className="flex-row justify-between items-end gap-4 px-3">
           <View className="flex-1 gap-1">
             <View className="bg-primary rounded-md self-start py-1 px-2">
@@ -91,6 +93,7 @@ function PlayerController({
           <ReelInteractionBar
             showMuted
             reel={reel}
+            isLand={isLand}
             setShowBottomSheet={setShowBottomSheet}
           />
         </View>
