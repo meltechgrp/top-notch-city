@@ -1,22 +1,32 @@
 import OnboardingScreenContainer from "@/components/onboarding/OnboardingScreenContainer";
 import * as Google from "expo-auth-session/providers/google";
 import * as WebBrowser from "expo-web-browser";
-import * as AuthSession from "expo-auth-session";
+import * as Facebook from "expo-auth-session/providers/facebook";
+import * as AppleAuthentication from "expo-apple-authentication";
 import {
   Button,
   ButtonText,
   Text,
   View,
   Box,
-  Icon,
   Pressable,
+  Icon,
 } from "@/components/ui";
 
+import {
+  AuthError,
+  AuthRequestConfig,
+  DiscoveryDocument,
+  exchangeCodeAsync,
+  makeRedirectUri,
+  useAuthRequest,
+} from "expo-auth-session";
 import React, { useCallback, useEffect, useState } from "react";
 import { hapticFeed } from "@/components/HapticTab";
 import { authLogin, loginWithSocial } from "@/actions/auth";
 import { saveAuthToken } from "@/lib/secureStore";
 import { useStore } from "@/store";
+import FacebookIcon from "@/components/icons/FacebookIcon";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import GoogleIcon from "@/components/icons/GoogleIcon";
 import { Divider } from "@/components/ui/divider";
@@ -25,14 +35,28 @@ import { getMe } from "@/actions/user";
 import { router, useGlobalSearchParams } from "expo-router";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
 import Platforms from "@/constants/Plaforms";
+import config from "@/config";
+import { randomUUID } from "expo-crypto";
 
 WebBrowser.maybeCompleteAuthSession();
 
+const configs: AuthRequestConfig = {
+  clientId: "google",
+  scopes: ["openid", "profile", "email"],
+  redirectUri: makeRedirectUri(),
+};
+
+const discovery: DiscoveryDocument = {
+  authorizationEndpoint: `${config.origin}/api/auth/authorize`,
+  tokenEndpoint: `${config}/api/auth/token`,
+};
 export default function SignIn() {
+  const [isAppleAvailable, setIsAppleAvailable] = useState(false);
   const { isAgentRequest, path } = useGlobalSearchParams() as {
     isAgentRequest: string;
     path: string;
   };
+  const [request, response, promptAsync] = useAuthRequest(configs, discovery);
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(false);
   const [form, setForm] = React.useState({
@@ -42,13 +66,16 @@ export default function SignIn() {
   const [googleRequest, googleResponse, googlePromptAsync] =
     Google.useAuthRequest({
       androidClientId:
-        "198305892260-dqv5gtvj30hjofofa2spt2nrub7m4teb.apps.googleusercontent.com",
+        "198305892260-ebhbeho9dtprtjbj7kjd2e16ov5m6n30.apps.googleusercontent.com",
       iosClientId:
         "198305892260-dqv5gtvj30hjofofa2spt2nrub7m4teb.apps.googleusercontent.com",
       webClientId:
         "198305892260-av6ll3dbobcc0tcaninrut8plid77o9u.apps.googleusercontent.com",
+      responseType: "code",
     });
-
+  const [fbRequest, fbResponse, fbPromptAsync] = Facebook.useAuthRequest({
+    clientId: "1964809884362173",
+  });
   const handleSubmit = async () => {
     hapticFeed();
     setLoading(true);
@@ -90,17 +117,26 @@ export default function SignIn() {
       setLoading(false);
     }
   };
-
+  // ✅ Facebook response handler
+  useEffect(() => {
+    console.log(fbResponse);
+    if (fbResponse?.type === "success" && fbResponse.authentication) {
+      // (async () => {
+      //   const userInfoResponse = await fetch(
+      //     `https://graph.facebook.com/me?access_token=${fbResponse.authentication?.accessToken}&fields=id,name,email,picture.type(large)`
+      //   );
+      //   const userInfo = await userInfoResponse.json();
+      //   console.log(userInfo); // Or map fields if needed
+      // })();
+    }
+  }, [fbResponse]);
   //  Social handler (common logic)
   const handleSocialLogin = useCallback(
-    async (socialData: {
-      email: string;
-      first_name?: string;
-      last_name?: string;
-    }) => {
+    async (socialData: { provider: string; token: string }) => {
       try {
         setFetching(true);
         const res = await loginWithSocial(socialData);
+        console.log(res);
         if (res?.access_token) {
           saveAuthToken(res.access_token);
           const me = await getMe();
@@ -129,24 +165,17 @@ export default function SignIn() {
   );
 
   useEffect(() => {
-    if (googleResponse?.type === "success") {
-      getGoogleUserInfo(googleResponse.authentication?.accessToken);
+    console.log(googleResponse);
+    if (
+      googleResponse?.type === "success" &&
+      googleResponse.authentication?.accessToken
+    ) {
+      handleSocialLogin({
+        provider: "google",
+        token: googleResponse.authentication?.accessToken,
+      });
     }
   }, [googleResponse, googleRequest]);
-
-  const getGoogleUserInfo = async (token?: string) => {
-    console.log("here", token);
-    if (!token) return;
-    const response = await fetch("https://www.googleapis.com/userinfo/v2/me", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const user = await response.json();
-    await handleSocialLogin({
-      email: user?.email,
-      first_name: user?.family_name,
-      last_name: user?.given_name,
-    });
-  };
   function onBack() {
     if (router.canGoBack()) {
       router.back();
@@ -154,6 +183,34 @@ export default function SignIn() {
       router.replace("/home");
     }
   }
+  // ✅ Apple sign-in
+  const handleAppleSignIn = async () => {
+    try {
+      // const rawNonce = randomUUID();
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+        // nonce: rawNonce,
+      });
+      if (credential.identityToken) {
+        await handleSocialLogin({
+          provider: "apple",
+          token: credential.identityToken,
+        });
+      }
+    } catch (error: any) {
+      if (error.code === "ERR_CANCELED") {
+        console.log("User cancelled Apple Sign-In.");
+      } else {
+        console.error(error);
+      }
+    }
+  };
+  useEffect(() => {
+    AppleAuthentication.isAvailableAsync().then(setIsAppleAvailable);
+  }, []);
   return (
     <OnboardingScreenContainer
       withScroll={false}
@@ -161,7 +218,7 @@ export default function SignIn() {
       allowBack
       onBack={onBack}
     >
-      <Box className="w-[98%] bg-background/90 max-w-[26rem] gap-6 mt-4 mx-auto rounded-xl p-6">
+      <Box className="w-[98%] bg-background/90 max-w-[26rem] gap-4 mt-4 mx-auto rounded-xl p-6">
         <View className=" gap-2">
           <Text className=" text-2xl text-primary font-semibold font-heading text-center">
             Welcome Back
@@ -201,29 +258,51 @@ export default function SignIn() {
           <ButtonText>Continue</ButtonText>
         </Button>
 
-        {Platforms.isIOS() && (
-          <View className="flex-row mt-2 gap-3 items-center">
-            <Divider className="flex-1" />
-            <Text size="xs">OR</Text>
-            <Divider className="flex-1" />
-          </View>
-        )}
+        <View className="flex-row mt-2 gap-3 items-center">
+          <Divider className="flex-1" />
+          <Text size="xs">OR</Text>
+          <Divider className="flex-1" />
+        </View>
 
         <View className="gap-4">
-          {Platforms.isIOS() && (
-            <Button
-              className=" h-14 bg-background-muted mt-4 gap-2"
-              onPress={() => {
-                googlePromptAsync();
+          <Button
+            className=" h-12 bg-background-muted mt-4 gap-2"
+            onPress={() => {
+              googlePromptAsync();
+            }}
+          >
+            {fetching ? (
+              <SpinningLoader />
+            ) : (
+              <Icon size={"sm"} as={GoogleIcon} />
+            )}
+            <ButtonText className=" text-typography font-bold text-lg">
+              Sign in with Google
+            </ButtonText>
+          </Button>
+          <Button
+            className="flex-1 h-12 bg-background-muted gap-2"
+            onPress={() => fbPromptAsync()}
+          >
+            <Icon size={"sm"} as={FacebookIcon} />
+            <ButtonText>Continue with Facebook</ButtonText>
+          </Button>
+          {isAppleAvailable && (
+            <AppleAuthentication.AppleAuthenticationButton
+              buttonType={
+                AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN
+              }
+              buttonStyle={
+                AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
+              }
+              cornerRadius={5}
+              style={{
+                width: "100%",
+                height: 40,
               }}
-            >
-              {fetching ? <SpinningLoader /> : <Icon as={GoogleIcon} />}
-              <ButtonText className=" text-typography">
-                Continue with Google
-              </ButtonText>
-            </Button>
+              onPress={handleAppleSignIn}
+            />
           )}
-
           <View className=" flex-row justify-center gap-2 mt-4">
             <Text>Don’t have an account?</Text>
             <Pressable

@@ -13,11 +13,15 @@ function PropertyInteractions({ interaction, className }: Props) {
     <View className={cn("gap-4 pr-8", className)}>
       <View className="flex-row gap-2 items-center">
         <Icon as={Eye} size="sm" color="white" />
-        <Text className="text-white text-lg">{interaction?.viewed}</Text>
+        <Text className="text-white font-bold font-satoshi text-lg">
+          {interaction?.viewed}
+        </Text>
       </View>
       <View className="flex-row gap-2 items-center">
         <Icon as={ThumbsUp} size="sm" color={"white"} />
-        <Text className="text-white text-lg">{interaction?.liked}</Text>
+        <Text className="text-white font-bold font-satoshi text-lg">
+          {interaction?.liked}
+        </Text>
       </View>
     </View>
   );

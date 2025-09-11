@@ -1,5 +1,6 @@
 import { cn, FindAmenity } from "@/lib/utils";
-import { Text, View } from "../ui";
+import { Icon, Text, View } from "../ui";
+import { House, LandPlot } from "lucide-react-native";
 
 interface Props {
   property: Property;
@@ -8,50 +9,37 @@ interface Props {
 
 export function PropertyTitle({
   property: { purpose, amenities, subcategory, category },
-  smallView = false,
 }: Props) {
   if (purpose == "rent") {
     if (category.name == "Land") {
       return (
         <View className="mb-2 gap-1">
-          <View className="bg-gray-500/80 rounded-md self-start py-1 px-2">
-            <Text
-              className={cn("text-base text-white", smallView && "text-sm")}
-            >
-              For Rent
+          <View className="bg-primary/80 rounded-md self-start py-1 px-2">
+            <Text className={cn("text-base text-white")}>For Rent</Text>
+          </View>
+          <View className="flex-row gap-2 items-center">
+            <Icon size={"sm"} as={LandPlot} className="text-white" />
+            <Text className={cn("text-md text-white font-bold")}>
+              {FindAmenity("Total Plot", amenities)}{" "}
+              {FindAmenity("Total Plot", amenities) > 1 ? "Plots" : "Plot"} of
+              Land
             </Text>
           </View>
-          <Text
-            className={cn(
-              "text-xl text-white font-bold",
-              smallView && "text-sm"
-            )}
-          >
-            {FindAmenity("Total Plot", amenities)}{" "}
-            {FindAmenity("Total Plot", amenities) > 1 ? "Plots" : "Plot"} of
-            Land
-          </Text>
         </View>
       );
     } else {
       return (
         <View className="mb-2 gap-1">
-          <View className="bg-gray-500/80 rounded-md self-start py-1 px-2">
-            <Text
-              className={cn("text-base text-white", smallView && "text-sm")}
-            >
-              For Rent
+          <View className="bg-primary/80 rounded-md self-start py-1 px-2">
+            <Text className={cn("text-base text-white")}>For Rent</Text>
+          </View>
+          <View className="flex-row gap-2 items-center">
+            <Icon size={"sm"} as={House} className="text-white" />
+            <Text className={cn("text-md text-white font-bold")}>
+              {FindAmenity("Bedroom", amenities)} Bedroom{" "}
+              {subcategory?.name || (subcategory as any)}
             </Text>
           </View>
-          <Text
-            className={cn(
-              "text-xl text-white font-bold",
-              smallView && "text-sm"
-            )}
-          >
-            {FindAmenity("Bedroom", amenities)} Bedroom{" "}
-            {subcategory?.name || (subcategory as any)}
-          </Text>
         </View>
       );
     }
@@ -59,44 +47,32 @@ export function PropertyTitle({
     if (category.name == "Land") {
       return (
         <View className="mb-2 gap-1">
-          <View className="bg-gray-500/80 rounded-md self-start py-1 px-2">
-            <Text
-              className={cn("text-base text-white", smallView && "text-sm")}
-            >
-              For Sale
+          <View className="bg-primary/80 rounded-md self-start py-1 px-2">
+            <Text className={cn("text-base text-white")}>For Sale</Text>
+          </View>
+          <View className="flex-row gap-2 items-center">
+            <Icon size={"sm"} as={LandPlot} />
+            <Text className={cn("text-md text-white font-bold")}>
+              {FindAmenity("Total Plot", amenities)}{" "}
+              {FindAmenity("Total Plot", amenities) > 1 ? "Plots" : "Plot"} of
+              Land
             </Text>
           </View>
-          <Text
-            className={cn(
-              "text-xl text-white font-bold",
-              smallView && "text-sm"
-            )}
-          >
-            {FindAmenity("Total Plot", amenities)}{" "}
-            {FindAmenity("Total Plot", amenities) > 1 ? "Plots" : "Plot"} of
-            Land
-          </Text>
         </View>
       );
     } else {
       return (
         <View className="gap-1">
-          <View className="bg-gray-500/80 rounded-md self-start py-1 px-2">
-            <Text
-              className={cn("text-base text-white", smallView && "text-sm")}
-            >
-              For Sale
+          <View className="bg-primary/80 rounded-md self-start py-1 px-2">
+            <Text className={cn("text-base text-white")}>For Sale</Text>
+          </View>
+          <View className="flex-row gap-2 items-center">
+            <Icon size={"sm"} as={House} className="text-white" />
+            <Text className={cn("text-md text-white font-bold")}>
+              {FindAmenity("Bedroom", amenities)} Bedroom{" "}
+              {subcategory?.name || (subcategory as any)}
             </Text>
           </View>
-          <Text
-            className={cn(
-              "text-xl text-white font-bold",
-              smallView && "text-sm"
-            )}
-          >
-            {FindAmenity("Bedroom", amenities)} Bedroom{" "}
-            {subcategory?.name || (subcategory as any)}
-          </Text>
         </View>
       );
     }

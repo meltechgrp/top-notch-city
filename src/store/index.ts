@@ -165,7 +165,7 @@ type TempState = {
     buttonTitle: string;
     description?: string;
   };
-
+  totalUnreadChat: number;
   pinSetupOptions?: {
     onSuccessRoute?: string;
     onSuccessRouteParams?: any;
@@ -190,6 +190,7 @@ type TempState = {
   saveEmail: (email: string) => void;
   updateListing: (data: Listing) => void;
   updateListingStep: () => void;
+  updatetotalUnreadChat: (data: number) => void;
 };
 const initialTempState = {
   fullScreenLoading: false,
@@ -199,6 +200,7 @@ const initialTempState = {
     currency: "ngn",
     totalSteps: 7,
   },
+  totalUnreadChat: 0,
 };
 // temporary store
 export const useTempStore = create<TempState>((set, get) => ({
@@ -225,4 +227,6 @@ export const useTempStore = create<TempState>((set, get) => ({
       ...state,
       listing: { ...state.listing, step: state?.listing?.step + 1 },
     })),
+  updatetotalUnreadChat: (data) =>
+    set((s) => ({ ...s, totalUnreadChat: data })),
 }));

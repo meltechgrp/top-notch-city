@@ -45,7 +45,6 @@ export default function ChatRoom(props: Props) {
     loading,
     typing,
     refetchMessages,
-    deleteChatMessage,
     markAsRead,
   } = useMessages(chatId);
   const [currentTitle, setCurrentTitle] = React.useState("");
@@ -105,6 +104,7 @@ export default function ChatRoom(props: Props) {
     isEditing,
     exitEditMode,
     handleEdit,
+    handleDeleteAll,
   } = useMessageActions({ focusEditor, setEditorText, chatId });
   const editorRef = React.useRef<any>(null);
   function focusEditor() {
@@ -124,6 +124,9 @@ export default function ChatRoom(props: Props) {
           className={cn(index === messages?.length - 1 ? "mt-4" : "")}
           onLongPress={handleMessageLongPress}
           isDeleting={isDeletingMessageId === item.message_id}
+          resendMessage={(msg) => {
+            handleSendMessage(msg, false);
+          }}
         />
       );
     },
@@ -255,11 +258,8 @@ export default function ChatRoom(props: Props) {
         visible={showMessageActionsModal}
         onDismiss={() => setShowMessageActionsModal(false)}
         handleReply={handleReply}
-        handleDelete={() => {
-          handleDelete((message) => {
-            deleteChatMessage(chatId!, message.message_id);
-          });
-        }}
+        handleDelete={handleDelete}
+        handleDeleteAll={handleDeleteAll}
         handleEdit={handleEdit}
         message={selectedMessage}
       />

@@ -17,7 +17,7 @@ function HomeNavigation() {
         className="flex-1 h-14 p-2 pl-4 flex-row bg-background-muted rounded-full items-center gap-1"
       >
         <Text size="md" numberOfLines={1} className="flex-1 text-typography/70">
-          Search property, city or everything...
+          Search state, city or location...
         </Text>
 
         <View className=" p-2 bg-primary rounded-full">

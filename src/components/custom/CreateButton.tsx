@@ -10,7 +10,9 @@ type CreateButtonProps = {
   total?: number;
 };
 
-function CreateButton(props: CreateButtonProps) {
+function CreateButton({ total = 0, ...props }: CreateButtonProps) {
+  const exceeds9 = total > 9;
+  const _count = exceeds9 ? "9+" : total;
   return (
     <View className={cn("absolute bottom-16 right-3", props.className)}>
       <Pressable
@@ -20,9 +22,9 @@ function CreateButton(props: CreateButtonProps) {
         onPress={props.onPress}
       >
         <Icon size="xl" as={MessageCircleMore} className="text-white" />
-        {props?.total ? (
-          <View className=" absolute bg-background-muted rounded-full px-1 top-1 z-50 right-1">
-            <Text className="font-bold">{props.total}</Text>
+        {total ? (
+          <View className=" absolute bg-background-muted rounded-full px-1.5 top-1 z-50 right-1">
+            <Text className="text-sm font-bold">{_count}</Text>
           </View>
         ) : null}
       </Pressable>

@@ -18,6 +18,7 @@ export default () => ({
       light: "./src/assets/images/ios-light.png",
     },
     supportsTablet: false,
+    usesAppleSignIn: true,
     bundleIdentifier: "com.meltech.topnotchcity",
     runtimeVersion: "1.0.1",
     infoPlist: {
@@ -83,6 +84,7 @@ export default () => ({
   plugins: [
     "expo-router",
     "react-native-compressor",
+    "expo-apple-authentication",
     [
       "./plugins/withAndroidQueries.js",
       [

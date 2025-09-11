@@ -57,25 +57,19 @@ export async function resendVerificationCode({ email }: { email: string }) {
   return true;
 }
 export async function loginWithSocial({
-  email,
-  first_name,
-  last_name,
+  provider,
+  token,
 }: {
-  email: string;
-  last_name?: string;
-  first_name?: string;
+  provider: string;
+  token: string;
 }) {
   try {
-    const parsed = validateEmail.safeParse(email);
-    if (!parsed.success) {
-      throw new Error("Please enter a valid email address");
-    }
     const data = await Fetch("/social-login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      data: JSON.stringify({ email, last_name, first_name }),
+      data: JSON.stringify({ provider, token }),
     });
     if (data?.detail) {
       throw new Error("Please check your details");

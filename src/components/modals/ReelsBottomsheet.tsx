@@ -19,8 +19,8 @@ interface ShareSheetProps {
   visible: boolean;
   onDismiss: () => void;
   id: string;
+  hideMute?: boolean;
   propertyUrl: string;
-  downloadUrl?: string;
 }
 
 const SHARE_OPTIONS = [
@@ -57,8 +57,8 @@ export function ReelsShareSheet({
   visible,
   onDismiss,
   propertyUrl,
-  downloadUrl,
   id,
+  hideMute = false,
 }: ShareSheetProps) {
   const { muted, updateMuted } = useStore();
   const handleShare = async (action: string) => {
@@ -104,7 +104,7 @@ export function ReelsShareSheet({
     <BottomSheet
       visible={visible}
       onDismiss={onDismiss}
-      snapPoint={["70%"]}
+      snapPoint={["60%"]}
       title="Share with"
       withHeader
       withScroll
@@ -128,11 +128,12 @@ export function ReelsShareSheet({
           ))}
         </View>
         <Divider />
-        <View className=" bg-background-muted p-4 py-4 mx-4 rounded-lg flex-row justify-between items-center">
-          <Text>Mute Video</Text>
-          <Switch value={muted} onValueChange={updateMuted} />
-        </View>
-        <Divider />
+        {!hideMute && (
+          <View className=" bg-background-muted p-4 py-4 mx-4 rounded-lg flex-row justify-between items-center">
+            <Text>Mute Video</Text>
+            <Switch value={muted} onValueChange={updateMuted} />
+          </View>
+        )}
         {/* Bottom actions */}
         <View className=" bg-background-muted p-4 py-6 mx-4 rounded-lg gap-6">
           <TouchableOpacity

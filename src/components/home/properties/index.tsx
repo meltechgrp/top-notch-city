@@ -1,16 +1,17 @@
 import SectionHeaderWithRef from "@/components/home/SectionHeaderWithRef";
 import { router } from "expo-router";
-import VerticalProperties from "@/components/property/VerticalProperties";
 import { View } from "@/components/ui";
 import { memo } from "react";
 import { useHomeFeed } from "@/hooks/useHomeFeed";
+import { ScrollView } from "react-native";
+import PropertyListItem from "@/components/property/PropertyListItem";
 
 const TopProperties = () => {
-  const { allProperties } = useHomeFeed();
+  const { trending } = useHomeFeed();
 
   return (
     <SectionHeaderWithRef
-      title="Top Properties"
+      title="Trending Properties"
       subTitle="See More"
       onSeeAllPress={() => {
         router.push({
@@ -21,14 +22,35 @@ const TopProperties = () => {
         });
       }}
     >
-      <View className="flex-1 px-4">
-        <VerticalProperties
-          data={allProperties}
-          scrollEnabled={false}
-          refetch={async () => {}}
-          disableCount={true}
-          isLoading={false}
-        />
+      <View className="">
+        <ScrollView
+          horizontal
+          contentContainerClassName="gap-x-4 pl-4"
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          snapToInterval={238 + 4}
+          snapToAlignment="center"
+          decelerationRate="fast"
+        >
+          {trending?.map((data) => (
+            <PropertyListItem
+              key={data.id}
+              showLike
+              listType="trending"
+              onPress={(data) => {
+                router.push({
+                  pathname: `/property/[propertyId]`,
+                  params: {
+                    propertyId: data.id,
+                  },
+                });
+              }}
+              isHorizontal={true}
+              data={data}
+              rounded={true}
+            />
+          ))}
+        </ScrollView>
       </View>
     </SectionHeaderWithRef>
   );

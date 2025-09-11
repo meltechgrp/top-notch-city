@@ -46,6 +46,7 @@ export function useSearch() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    isFetching,
   } = useInfinityQueries({
     type: "search",
     filter: search,
@@ -132,7 +133,7 @@ export function useSearch() {
       refetch,
       fetchNextPage,
       hasNextPage,
-      loading: isLoading,
+      loading: isLoading || isFetching,
       applyCachedResults,
       refetchAndApply,
     },

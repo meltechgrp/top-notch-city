@@ -135,8 +135,17 @@ export async function deleteChat(chat_id: string) {
     method: "DELETE",
   });
 }
-export async function deleteChatMessage(message_id: string) {
-  await Fetch(`/soft/delete/messages/${message_id}?delete_for_everyone=false`, {
-    method: "DELETE",
-  });
+export async function deleteChatMessage({
+  message_id,
+  delete_for_everyone,
+}: {
+  message_id: string;
+  delete_for_everyone: boolean;
+}) {
+  await Fetch(
+    `/soft/delete/messages/${message_id}?delete_for_everyone=${delete_for_everyone}`,
+    {
+      method: "DELETE",
+    }
+  );
 }

@@ -136,19 +136,13 @@ export function composeFullAddress(
     );
   }
   if (!address?.street) {
-    return joinWithComma(
-      address?.city,
-      address?.lga,
-      address?.state,
-      address?.country
-    );
+    return joinWithComma(address?.city, address?.lga, address?.state);
   }
   return joinWithComma(
     address?.street,
     address?.city,
     address?.lga,
-    address?.state,
-    address?.country
+    address?.state
   );
 }
 export function joinWithComma(...arr: Array<string | undefined | null>) {

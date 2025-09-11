@@ -6,7 +6,7 @@ import { memo } from "react";
 const TopLocations = () => {
   return (
     <SectionHeaderWithRef
-      title="Top Locations"
+      title="Trending Locations"
       subTitle="Explore"
       className=""
       onSeeAllPress={() => {

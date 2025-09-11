@@ -20,6 +20,66 @@ export async function fetchProperties({
     throw new Error("Failed to fetch properties");
   }
 }
+// 🏠 Fetch all featured properties (paginated)
+export async function fetchFeaturedProperties({
+  pageParam,
+  perPage,
+}: {
+  pageParam: number;
+  perPage?: number;
+}) {
+  try {
+    const res = await Fetch(
+      `/properties/featured?page=${pageParam}&per_page=${perPage}`,
+      {}
+    );
+    if (res?.detail) throw new Error("Failed to fetch properties");
+    return res as Result;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to fetch properties");
+  }
+}
+// 🏠 Fetch all trending properties (paginated)
+export async function fetchTrendingProperties({
+  pageParam,
+  perPage,
+}: {
+  pageParam: number;
+  perPage?: number;
+}) {
+  try {
+    const res = await Fetch(
+      `/properties/most-liked?page=${pageParam}&per_page=${perPage}`,
+      {}
+    );
+    if (res?.detail) throw new Error("Failed to fetch properties");
+    return res as Result;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to fetch properties");
+  }
+}
+// 🏠 Fetch all trending properties (paginated)
+export async function fetchTrendingLandsProperties({
+  pageParam,
+  perPage,
+}: {
+  pageParam: number;
+  perPage?: number;
+}) {
+  try {
+    const res = await Fetch(
+      `/properties/home/land?page=${pageParam}&per_page=${perPage}`,
+      {}
+    );
+    if (res?.detail) throw new Error("Failed to fetch properties");
+    return res as Result;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to fetch properties");
+  }
+}
 export async function fetchReels({
   pageParam,
   perPage = 10,

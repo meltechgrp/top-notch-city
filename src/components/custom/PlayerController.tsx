@@ -65,12 +65,9 @@ function PlayerController({
           <View className="flex-1 gap-1">
             <View className="bg-primary rounded-md self-start py-1 px-2">
               <Text className="text-lg text-white capitalize">
-                For {reel.purpose}
+                For {reel.purpose == "sell" ? "Sale" : "Rent"}
               </Text>
             </View>
-            <Text className="text-2xl font-bold text-white">
-              {formatMoney(reel.price, "NGN", 0)}
-            </Text>
             {inTab && (
               <View className="flex-row gap-2 items-center">
                 <Icon size="sm" as={House} className="text-primary" />
@@ -89,6 +86,9 @@ function PlayerController({
                 {reel.location}
               </Text>
             </View>
+            <Text className="text-2xl font-bold text-white">
+              {formatMoney(reel.price, "NGN", 0)}
+            </Text>
           </View>
           <ReelInteractionBar
             showMuted

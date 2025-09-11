@@ -37,9 +37,8 @@ function NotificationBarButton({ className, isAdmin }: Props) {
           pathname: isAdmin ? "/admin/notification" : "/notification",
         });
       }}
-      action="secondary"
       className={cn(
-        "rounded-full h-14 px-4 justify-center items-center flex",
+        "rounded-full h-14 px-4 bg-background-muted justify-center items-center flex",
         className
       )}
     >

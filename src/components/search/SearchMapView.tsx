@@ -34,6 +34,7 @@ function SearchMapView({
           latitude={latitude}
           longitude={longitude}
           markers={properties}
+          showSmallMarker={false}
           onMarkerPress={(marker) => setSeletedItem(marker)}
         />
       </View>

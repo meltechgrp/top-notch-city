@@ -10,6 +10,9 @@ import { useStore } from "@/store";
 import React, { useEffect, useState } from "react";
 import CustomerCareBottomSheet from "@/components/modals/CustomerCareBottomSheet";
 import { FlatList, ListRenderItem, RefreshControl } from "react-native";
+import FeaturedProperties from "@/components/home/featured";
+import RecentProperties from "@/components/home/recent";
+import Lands from "@/components/home/lands";
 const MAP_HEIGHT = 400;
 
 export default function HomeScreen() {
@@ -30,15 +33,30 @@ export default function HomeScreen() {
       id: "featured",
       __typename: "Featured",
     } as any;
-    const properties = {
-      id: "properties",
-      _typename: "Properties",
+    const trending = {
+      id: "trending",
+      _typename: "Trending",
+    } as any;
+    const recent = {
+      id: "recent",
+      _typename: "Recent",
+    } as any;
+    const lands = {
+      id: "lands",
+      _typename: "Lands",
     } as any;
     const bottomPlaceHolder = {
       id: "bottomPlaceHolder",
       __typename: "bottomPlaceHolder",
     } as any;
-    return [topLocations, populerCommunities, properties, bottomPlaceHolder];
+    return [
+      topLocations,
+      populerCommunities,
+      trending,
+      recent,
+      lands,
+      bottomPlaceHolder,
+    ];
   }, []);
 
   type FeedList = any;
@@ -46,11 +64,17 @@ export default function HomeScreen() {
     if (item.id === "locations") {
       return <TopLocations />;
     }
-    // if (item.id === "featured") {
-    //   return <FeaturedProperties />;
-    // }
-    if (item.id === "properties") {
+    if (item.id === "featured") {
+      return <FeaturedProperties />;
+    }
+    if (item.id === "trending") {
       return <TopProperties />;
+    }
+    if (item.id === "recent") {
+      return <RecentProperties />;
+    }
+    if (item.id === "lands") {
+      return <Lands />;
     }
     if (item.id === "bottomPlaceHolder") {
       return <View className="h-24" />;

@@ -17,9 +17,10 @@ export function useWebSocketHandler() {
     updateMessage,
     setTyping,
     updateUserStatus,
+    deleteChatMessage,
   } = useChatStore.getState();
-  const { getTotalCount } = useHomeFeed();
-  const { refetch, updateChatListDetails } = useChat();
+  const { updatetotalUnreadChat } = useHomeFeed();
+  const { updateChatListDetails } = useChat();
 
   const { connect, setOnMessage, ...rest } = useWebSocketConnection(url);
 
@@ -33,10 +34,10 @@ export function useWebSocketHandler() {
 
       switch (data.type) {
         case "new_message":
+          setTyping(data.chat_id, false);
           addIncomingMessage(data.chat_id, {
             message_id: data?.message_id!,
             created_at: data?.created_at,
-            updated_at: data?.created_at,
             content: data?.content,
             sender_info: {
               id: data?.sender_id,
@@ -54,8 +55,6 @@ export function useWebSocketHandler() {
             })),
             read: data?.read,
           });
-
-          setTyping(data.chat_id, false);
           break;
 
         case "read_receipt":
@@ -67,16 +66,16 @@ export function useWebSocketHandler() {
           break;
 
         case "unread_count_update":
-          refetch();
-          getTotalCount();
+          updatetotalUnreadChat(data?.total_unread);
           break;
         case "typing":
           setTyping(data.chat_id, data.is_typing);
           break;
-        case "presence":
-          updateUserStatus(
+        case "message_deleted":
+          deleteChatMessage(
             data.chat_id,
-            data?.is_online ? "online" : "offline"
+            data?.message_id,
+            data.deleted_for_everyone
           );
           break;
         case "presence":

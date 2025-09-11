@@ -17,13 +17,21 @@ type Props = {
   onDismiss: () => void;
   handleReply: () => void;
   handleDelete: () => void;
+  handleDeleteAll: () => void;
   handleEdit: () => void;
   message?: ChatRoomMessageProps["message"];
 };
 
 function MessageActionsBottomSheet(props: Props) {
-  const { visible, onDismiss, handleReply, handleDelete, handleEdit, message } =
-    props;
+  const {
+    visible,
+    onDismiss,
+    handleReply,
+    handleDelete,
+    handleDeleteAll,
+    handleEdit,
+    message,
+  } = props;
   const me = useStore((s) => s.me);
   const isMine = me?.id === message?.sender_info?.id;
 
@@ -55,8 +63,18 @@ function MessageActionsBottomSheet(props: Props) {
       ...(isMine
         ? [
             {
-              label: "Delete",
+              label: "Delete for Me",
               value: "delete" as const,
+              icon: <Icon as={Trash} />,
+              destructive: true,
+            },
+          ]
+        : []),
+      ...(isMine
+        ? [
+            {
+              label: "Delete for Everyone",
+              value: "deleteAll" as const,
               icon: <Icon as={Trash} />,
               destructive: true,
             },
@@ -91,6 +109,9 @@ function MessageActionsBottomSheet(props: Props) {
       case "delete":
         handleDelete();
         break;
+      case "deleteAll":
+        handleDeleteAll();
+        break;
 
       case "edit":
         handleEdit();
@@ -108,7 +129,7 @@ function MessageActionsBottomSheet(props: Props) {
       onDismiss={onDismiss}
       title="Message Actions"
     >
-      <View style={{ height: Layout.window.height / 4 }}>
+      <View style={{ height: Layout.window.height / 3 }}>
         {messageActions.map((action, i) => (
           <Pressable
             key={action.value}

@@ -15,10 +15,12 @@ import {
 import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
 import { useStore } from "@/store";
 import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
-import { useLayout } from "@react-native-community/hooks";
 import { useRouter } from "expo-router";
 import { MoveRight, Plus } from "lucide-react-native";
 import { useMemo, useState } from "react";
+import { Dimensions } from "react-native";
+
+const { height } = Dimensions.get("window");
 
 export default function PropertiesScreen() {
   const router = useRouter();
@@ -115,13 +117,11 @@ export default function PropertiesScreen() {
     setCtaType("agent");
     setCtaVisible(true);
   }
-  const { onLayout, height } = useLayout();
   return (
     <>
       <MainLayout
         isAgent
         showNotification={false}
-        onLayout={onLayout}
         className="pt-4 px-2"
         rightHeaderComponent={
           filteredData?.length > 0 ? (
@@ -160,16 +160,16 @@ export default function PropertiesScreen() {
           ListEmptyComponent={
             <View className="flex-1 gap-8">
               <View
-                style={{ height: height / 1.3 }}
-                className="flex-1 min-h-96 rounded-3xl overflow-hidden"
+                style={{ height: height / 2.5 }}
+                className="min-h-56 rounded-2xl overflow-hidden"
               >
                 <Image
                   source={require("@/assets/images/landing/agent.png")}
                   alt="sell banner"
-                  className={`object-cover object-bottom w-full flex-1 rounded-3xl`}
+                  className={`object-cover object-bottom w-full flex-1 rounded-2xl`}
                 />
               </View>
-              <View className="bg-background-muted rounded-xl p-6 px-4 mx-4">
+              <View className="bg-background-muted rounded-xl p-6 px-4 ">
                 <Heading size="xl" className="text-center">
                   Ready to List Your Property?
                 </Heading>

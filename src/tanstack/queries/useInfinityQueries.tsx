@@ -6,6 +6,9 @@ import {
   fetchPendingProperties,
   fetchReels,
   fetchLands,
+  fetchTrendingProperties,
+  fetchFeaturedProperties,
+  fetchTrendingLandsProperties,
 } from "@/actions/property/list";
 import { searchProperties } from "@/actions/search";
 import { fetchLocationProperties } from "@/actions/property/locations";
@@ -20,14 +23,17 @@ export function useInfinityQueries({
   perPage = 20,
 }: {
   type:
-    | "all"
+    | "latest"
     | "user"
     | "admin"
     | "search"
     | "state"
     | "pending"
     | "reels"
-    | "lands";
+    | "lands"
+    | "featured"
+    | "trending"
+    | "trending-lands";
   profileId?: string;
   filter?: SearchFilters;
   enabled?: boolean;
@@ -37,10 +43,49 @@ export function useInfinityQueries({
   perPage?: number;
 }) {
   switch (type) {
-    case "all": {
+    case "latest": {
       return useInfiniteQuery({
-        queryKey: ["properties"],
+        queryKey: ["latest"],
         queryFn: ({ pageParam = 1 }) => fetchProperties({ pageParam, perPage }),
+        initialPageParam: 1,
+        getNextPageParam: (lastPage) => {
+          const { page, pages } = lastPage;
+          return page < pages ? page + 1 : undefined;
+        },
+        enabled,
+      });
+    }
+    case "featured": {
+      return useInfiniteQuery({
+        queryKey: ["featured"],
+        queryFn: ({ pageParam = 1 }) =>
+          fetchFeaturedProperties({ pageParam, perPage }),
+        initialPageParam: 1,
+        getNextPageParam: (lastPage) => {
+          const { page, pages } = lastPage;
+          return page < pages ? page + 1 : undefined;
+        },
+        enabled,
+      });
+    }
+    case "trending": {
+      return useInfiniteQuery({
+        queryKey: ["trending"],
+        queryFn: ({ pageParam = 1 }) =>
+          fetchTrendingProperties({ pageParam, perPage }),
+        initialPageParam: 1,
+        getNextPageParam: (lastPage) => {
+          const { page, pages } = lastPage;
+          return page < pages ? page + 1 : undefined;
+        },
+        enabled,
+      });
+    }
+    case "trending-lands": {
+      return useInfiniteQuery({
+        queryKey: ["trending-lands"],
+        queryFn: ({ pageParam = 1 }) =>
+          fetchTrendingLandsProperties({ pageParam, perPage }),
         initialPageParam: 1,
         getNextPageParam: (lastPage) => {
           const { page, pages } = lastPage;

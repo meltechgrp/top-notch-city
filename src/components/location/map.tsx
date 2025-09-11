@@ -22,6 +22,7 @@ interface MapProps {
   markers?: Property[];
   marker?: LocationData;
   showRadius?: boolean;
+  showSmallMarker?: boolean;
   radiusInMeters?: number;
   customMarkerImage?: any;
   onDoublePress?: () => void;
@@ -45,6 +46,7 @@ const Map = (props: MapProps) => {
     onDoublePress,
     zoomControlEnabled,
     delta,
+    showSmallMarker = true,
   } = props;
   const theme = useResolvedTheme();
   const [location, setLocation] = useState({
@@ -68,6 +70,20 @@ const Map = (props: MapProps) => {
           latitude: region.latitude,
           longitude: region.longitude,
         });
+      } else if (lat && long) {
+        setLocation({
+          latitude: lat,
+          longitude: long,
+        });
+        mapRef.current?.animateToRegion(
+          {
+            latitude: lat,
+            longitude: long,
+            latitudeDelta: 0.1,
+            longitudeDelta: 0.1,
+          },
+          2000
+        );
       }
     })();
   }, [markers?.length]);
@@ -109,7 +125,7 @@ const Map = (props: MapProps) => {
             anchor={{ x: 0.5, y: 0.5 }}
           />
         )}
-        {lat && long && (
+        {showSmallMarker && lat && long && (
           <Marker
             coordinate={{
               latitude: lat,

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { StyleSheet } from "react-native";
 import { Box, View } from "@/components/ui";
 import PagerView from "react-native-pager-view";
@@ -6,6 +6,7 @@ import ReelList from "@/components/reel/ReelList";
 import ReelTabs from "@/components/reel/ReelTabs";
 import AgentList from "@/components/reel/ReelAgents";
 import ReelPhotoList from "@/components/reel/ReelLands";
+import { useFocusEffect } from "expo-router";
 
 const TABS = ["Lands", "Videos", "Agents"];
 
@@ -16,6 +17,12 @@ export default function ReelScreen() {
     setCurrentPage(index);
     pagerRef.current?.setPage(index);
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      onTabChange(1);
+    }, [])
+  );
   return (
     <>
       <Box className="flex-1 relative">

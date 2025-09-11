@@ -1,16 +1,17 @@
 import SectionHeaderWithRef from "@/components/home/SectionHeaderWithRef";
-import PropertyListItem from "@/components/property/PropertyListItem";
-import { View } from "@/components/ui";
-import { useHomeFeed } from "@/hooks/useHomeFeed";
 import { router } from "expo-router";
+import { View } from "@/components/ui";
 import { memo } from "react";
+import { useHomeFeed } from "@/hooks/useHomeFeed";
 import { ScrollView } from "react-native";
+import PropertyListItem from "@/components/property/PropertyListItem";
 
-function FeaturedProperties() {
-  const { featured } = useHomeFeed();
+const Lands = () => {
+  const { lands } = useHomeFeed();
+
   return (
     <SectionHeaderWithRef
-      title="Featured Properties"
+      title="Trending Lands"
       subTitle="See More"
       onSeeAllPress={() => {
         router.push({
@@ -31,11 +32,11 @@ function FeaturedProperties() {
           snapToAlignment="center"
           decelerationRate="fast"
         >
-          {featured.map((data) => (
+          {lands?.map((data) => (
             <PropertyListItem
               key={data.id}
               showLike
-              listType="featured"
+              listType="trending-lands"
               onPress={(data) => {
                 router.push({
                   pathname: `/property/[propertyId]`,
@@ -44,7 +45,6 @@ function FeaturedProperties() {
                   },
                 });
               }}
-              isFeatured
               isHorizontal={true}
               data={data}
               rounded={true}
@@ -54,6 +54,6 @@ function FeaturedProperties() {
       </View>
     </SectionHeaderWithRef>
   );
-}
+};
 
-export default memo(FeaturedProperties);
+export default memo(Lands);

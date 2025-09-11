@@ -1,6 +1,6 @@
 import SearchHeader from "@/components/search/Searchheader";
 import { Box, View } from "@/components/ui";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Dimensions, StyleSheet } from "react-native";
 import SearchTabs from "@/components/search/SearchTabs";
 import PagerView from "react-native-pager-view";
@@ -13,7 +13,7 @@ import { RoomsFilterSheet } from "@/components/modals/search/RoomsFilterBottomSh
 import { PriceFilterSheet } from "@/components/modals/search/PriceFilterBottomSheet";
 import { useSearch } from "@/hooks/useSearch";
 import PropertyTypeSheet from "@/components/modals/search/PropertyTypeSheet";
-import { router, useGlobalSearchParams } from "expo-router";
+import { router, useFocusEffect, useGlobalSearchParams } from "expo-router";
 
 const TABS = ["Map View", "List View"];
 
@@ -40,6 +40,12 @@ export default function SearchScreen() {
     setCurrentPage(index);
     pagerRef.current?.setPage(index);
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      onTabChange(0);
+    }, [])
+  );
   useEffect(() => {
     if (latitude && longitude) {
       search.setFilters({
@@ -54,7 +60,13 @@ export default function SearchScreen() {
     if (locate) {
       setLocationBottomSheet(true);
     }
-    router.setParams({});
+    router.setParams({
+      latitude: undefined,
+      longitude: undefined,
+      reset: undefined,
+      list: undefined,
+      locate: undefined,
+    });
   }, [latitude, longitude, reset, list, locate]);
   return (
     <>
@@ -67,9 +79,15 @@ export default function SearchScreen() {
           setRoomsFilter={() => setRoomsFilter(true)}
           setPriceFilter={() => setPriceFilter(true)}
           setTypesFilter={() => setTypesFilter(true)}
+        />
+
+        <SearchTabs
+          total={results.available}
+          isLocation={search.isLocation}
+          useMyLocation={search.useMyLocation}
           activeIndex={currentPage}
           onTabChange={onTabChange}
-          total={results.available}
+          loading={query.loading}
         />
         <PagerView
           initialPage={0}
@@ -87,11 +105,16 @@ export default function SearchScreen() {
                       key={index}
                       height={totalHeight}
                       properties={properties}
-                    />
-                    <SearchTabs
-                      total={results.available}
-                      isLocation={search.isLocation}
-                      useMyLocation={search.useMyLocation}
+                      latitude={
+                        search.filter?.latitude
+                          ? Number(search.filter.latitude)
+                          : undefined
+                      }
+                      longitude={
+                        search.filter?.longitude
+                          ? Number(search.filter.longitude)
+                          : undefined
+                      }
                     />
                   </View>
                 );
@@ -104,7 +127,8 @@ export default function SearchScreen() {
                     >
                       <SearchListView
                         key={index}
-                        headerOnlyHeight={150}
+                        setShowFilter={() => setShowFilter(true)}
+                        headerOnlyHeight={110}
                         isLoading={query.loading}
                         refetch={query.refetchAndApply}
                         hasNextPage={query.hasNextPage}

@@ -5,7 +5,6 @@ import { useStore } from "@/store";
 import { ImagePickerAsset } from "expo-image-picker";
 import React from "react";
 import { View } from "react-native";
-import { KeyboardStickyView } from "react-native-keyboard-controller";
 
 type Props = View["props"] & {
   chatId: string;

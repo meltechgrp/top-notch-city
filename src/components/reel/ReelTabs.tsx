@@ -14,7 +14,7 @@ function ReelTabs(props: IProps) {
   const { currentPage, setCurrentPage, tabs } = props;
   return (
     <View
-      className={cn("w-full absolute top-0 android:top-8 left-0 right-0 z-50")}
+      className={cn("w-full absolute top-4 android:top-12 left-0 right-0 z-50")}
     >
       <SafeAreaView edges={["top"]}>
         <View className="flex-row self-center p-1">

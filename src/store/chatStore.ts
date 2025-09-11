@@ -16,7 +16,7 @@ type ChatState = {
   updateChatMessages: (chatId: string, newMessages: Message[]) => void;
   addPendingMessage: (chatId: string, newMessage: Message[]) => void;
   clearChatMessages: (chatId: string) => void;
-  deleteChatMessage: (chatId: string, messageId: string) => void;
+  deleteChatMessage: (chatId: string, messageId: string, soft: boolean) => void;
   updateChatList: (data: ChatList[]) => void;
   updateChatListDetails: (data: ChatList["details"]) => void;
   deleteChat: (chatId: string) => void;
@@ -203,18 +203,36 @@ export const useChatStore = create<ChatState>(
         }));
       },
 
-      deleteChatMessage: (chatId, messageId) => {
+      deleteChatMessage: (chatId, messageId, soft) => {
         set((state) => ({
-          chatList: state.chatList.map((c) =>
-            c.details.chat_id === chatId
-              ? {
-                  ...c,
-                  messages: c.messages.filter(
-                    (m) => m.message_id !== messageId
-                  ),
-                }
-              : c
-          ),
+          chatList: state.chatList.map((c) => {
+            if (soft) {
+              return c.details.chat_id === chatId
+                ? {
+                    ...c,
+                    messages: c.messages.filter(
+                      (m) => m.message_id !== messageId
+                    ),
+                  }
+                : c;
+            } else {
+              return c.details.chat_id === chatId
+                ? {
+                    ...c,
+                    messages: c.messages.map((m) => {
+                      if (m.message_id == messageId) {
+                        return {
+                          ...m,
+                          deleted_at: new Date(Date.now()).toString(),
+                        };
+                      } else {
+                        return m;
+                      }
+                    }),
+                  }
+                : c;
+            }
+          }),
         }));
       },
 

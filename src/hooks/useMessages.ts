@@ -14,7 +14,6 @@ export function useMessages(chatId: string) {
   const { playSound } = useSound();
   const {
     updateChatMessages,
-    deleteChatMessage,
     clearChatMessages,
     getReceiver,
     getSender,
@@ -128,7 +127,6 @@ export function useMessages(chatId: string) {
     loading: loadingMessages,
     refreshing: refreshingMessages,
     handleSendMessage,
-    deleteChatMessage,
     clearChatMessages,
     markAsRead,
     typing,

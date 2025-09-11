@@ -4,14 +4,16 @@ import { Image, Pressable, Text, View } from "../ui";
 import { useRouter } from "expo-router";
 import { generateMediaUrl } from "@/lib/api";
 import { PropertyTitle } from "./PropertyTitle";
+import { memo } from "react";
 
 type Props = {
   data: Property;
   className?: string;
 };
-export default function HorizontalListItem(props: Props) {
+function HorizontalListItem(props: Props) {
   const { data, className } = props;
-  const { media, price, id, title, amenities } = data;
+  const { media, price, id, title, category } = data;
+  if (category.name == "Land") return null;
   const router = useRouter();
   return (
     <Pressable
@@ -47,3 +49,5 @@ export default function HorizontalListItem(props: Props) {
     </Pressable>
   );
 }
+
+export default memo(HorizontalListItem);

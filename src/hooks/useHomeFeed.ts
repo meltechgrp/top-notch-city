@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useStore } from "@/store";
+import { useStore, useTempStore } from "@/store";
 import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import { fetchTopLocations } from "@/actions/property/locations";
 import { Fetch } from "@/actions/utills";
@@ -12,22 +12,8 @@ async function getTotal() {
 }
 export function useHomeFeed() {
   const { nearbyProperties, setNearbyProperties, location } = useStore();
+  const { updatetotalUnreadChat, totalUnreadChat } = useTempStore();
 
-  /** --- All Properties --- */
-  const {
-    data: allData,
-    refetch: refetchAll,
-    isRefetching: refetchingAll,
-  } = useInfinityQueries({ type: "all", perPage: 5 });
-  const { data: totalCount, refetch: getTotalCount } = useQuery({
-    queryKey: ["total"],
-    queryFn: getTotal,
-  });
-
-  const allProperties = useMemo(
-    () => allData?.pages.flatMap((page) => page.results) || [],
-    [allData]
-  );
   /** --- Top Locations --- */
   const {
     data: locationsData,
@@ -37,6 +23,54 @@ export function useHomeFeed() {
     queryKey: ["locations"],
     queryFn: fetchTopLocations,
   });
+
+  const locations = useMemo(
+    () => locationsData?.slice() || [],
+    [locationsData?.length]
+  );
+
+  /** --- featured Properties --- */
+  const { data: allFeatured, refetch: refetchFeatured } = useInfinityQueries({
+    type: "featured",
+    perPage: 5,
+  });
+
+  const featured = useMemo(
+    () => allFeatured?.pages.flatMap((page) => page.results) || [],
+    [allFeatured]
+  );
+
+  /** --- trending Properties --- */
+  const { data: allTrending, refetch: refetchTrending } = useInfinityQueries({
+    type: "trending",
+    perPage: 5,
+  });
+
+  const trending = useMemo(
+    () => allTrending?.pages.flatMap((page) => page.results) || [],
+    [allTrending]
+  );
+  /** --- trending lands Properties --- */
+  const { data: allLands, refetch: refetchLands } = useInfinityQueries({
+    type: "trending-lands",
+    perPage: 5,
+  });
+
+  const lands = useMemo(
+    () => allLands?.pages.flatMap((page) => page.results) || [],
+    [allLands]
+  );
+
+  /** --- latest Properties --- */
+  const { data: allLatest, refetch: refetchLatest } = useInfinityQueries({
+    type: "latest",
+    perPage: 5,
+  });
+
+  const latest = useMemo(
+    () => allLatest?.pages.flatMap((page) => page.results) || [],
+    [allLatest]
+  );
 
   /** --- Nearby Properties --- */
   const {
@@ -58,35 +92,52 @@ export function useHomeFeed() {
     () => nearbyData?.pages.flatMap((page) => page.results) || [],
     [nearbyData]
   );
-  const total = useMemo(() => totalCount?.total_unread, [totalCount]);
   useEffect(() => {
     if (!nearby.length) return;
     setNearbyProperties(nearby);
   }, [nearby, setNearbyProperties]);
 
+  /* Total unread count */
+  const { data: totalCount, refetch: getTotalCount } = useQuery({
+    queryKey: ["total"],
+    queryFn: getTotal,
+  });
+
   /** --- Combined Refresh --- */
   const refreshAll = useCallback(async () => {
     await Promise.all([
-      refetchAll(),
+      refetchFeatured(),
+      refetchLands(),
+      refetchLatest(),
+      refetchTrending(),
       refetchLocations(),
       refetchNearby(),
       getTotalCount(),
     ]);
-  }, [refetchAll, refetchLocations, refetchNearby, getTotalCount]);
-  const locations = useMemo(
-    () => locationsData?.slice() || [],
-    [locationsData?.length]
-  );
+  }, [
+    refetchFeatured,
+    refetchLands,
+    refetchLatest,
+    refetchFeatured,
+    refetchTrending,
+    refetchLocations,
+    refetchNearby,
+    getTotalCount,
+  ]);
   useEffect(() => {
-    getTotal();
-  }, []);
+    updatetotalUnreadChat(totalCount?.total_unread || 0);
+  }, [totalCount]);
   return {
-    allProperties,
+    trending,
+    lands,
+    latest,
+    featured,
     locations,
     nearby: nearbyProperties || [],
     refreshAll,
-    refetching: refetchingAll || refetchingLocations || refetchingNearby,
-    total,
+    refetching: refetchingLocations || refetchingNearby,
+    total: totalUnreadChat,
     getTotalCount,
+    updatetotalUnreadChat,
   };
 }

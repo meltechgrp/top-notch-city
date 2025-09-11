@@ -1,4 +1,4 @@
-import { composeFullAddress } from "@/lib/utils";
+import { composeFullAddress, formatMoney } from "@/lib/utils";
 import { Icon, Text, View } from "../ui";
 import PropertyCarousel from "./PropertyCarousel";
 import { MapPin } from "lucide-react-native";
@@ -26,18 +26,21 @@ export function PropertyHeroSection({ property, width }: Props) {
           pointerPosition={40}
         />
         {property && (
-          <View className=" absolute flex-row justify-between bottom-16 left-4 right-4 w-full px-1">
+          <View className=" absolute flex-row justify-between bottom-10 left-4 right-4 w-full px-1">
             <View className="gap-2 flex-1">
               <View className="px-2 gap-2">
                 <PropertyTitle property={property} />
-                <PropertyPrice property={property} className="self-start" />
               </View>
               <View className="flex-row items-center mt-1 gap-2">
                 <Icon size="sm" as={MapPin} className="text-primary" />
-                <Text size="sm" className=" text-white">
+                <Text className="text-sm text-white">
                   {composeFullAddress(property?.address, true, "long")}
                 </Text>
               </View>
+
+              <Text className="text-white text-xl font-bold">
+                {formatMoney(property.price, "NGN", 0)}
+              </Text>
             </View>
             <PropertyInteractions interaction={property.interaction} />
           </View>

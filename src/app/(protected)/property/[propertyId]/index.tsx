@@ -30,7 +30,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 const { height } = Dimensions.get("window");
-const HERO_HEIGHT = height / 2.3;
+const HERO_HEIGHT = height / 2.2;
 
 export default function PropertyItem() {
   const { propertyId } = useLocalSearchParams() as { propertyId: string };

@@ -1,10 +1,9 @@
-import withRenderVisible from "@/components/shared/withRenderOpen";
 import { FlatList, Pressable, View } from "react-native";
 import BottomSheet from "@/components/shared/BottomSheet";
 import { useEffect, useMemo, useState } from "react";
 import { Icon, Text } from "@/components/ui";
 import { debounce } from "lodash-es";
-import { History, MapPin, Send } from "lucide-react-native";
+import { History, MapPin, SearchIcon, Send } from "lucide-react-native";
 import { fetchPlaceFromTextQuery } from "@/actions/utills";
 import { composeFullAddress } from "@/lib/utils";
 import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
@@ -115,26 +114,32 @@ function SearchLocationBottomSheet({
     : savedSearches;
   return (
     <BottomSheet
-      title="Search property location"
       withHeader={false}
       withBackButton={false}
-      snapPoint={"90%"}
+      snapPoint={"95%"}
       visible={show}
       onDismiss={onDismiss}
     >
       <View className="flex-1 px-4 gap-8 py-2 pb-8 bg-background">
         <View className="gap-3">
-          <View className="px-4 pl-2 flex-row gap-4 items-center bg-background-info rounded-xl border border-outline-200">
+          <View className="px-2 flex-row gap-4 items-center bg-background-info rounded-full border border-outline-200">
             <CustomInput
-              placeholder="Search property location..."
+              placeholder="Search for a state, city or location..."
               value={text}
-              containerClassName=" flex-1"
+              containerClassName=" min-h-12 flex-1"
+              className="h-12"
+              autoFocus
               onUpdate={onChangeText}
-              returnKeyLabel="Done"
-              returnKeyType="done"
+              onSubmitEditing={() => {
+                if (displayData?.length > 0) handleSelect(displayData[0]);
+              }}
+              submitBehavior={"blurAndSubmit"}
+              enablesReturnKeyAutomatically
+              returnKeyLabel="Search"
+              returnKeyType="search"
             />
-            <View className="w-4 h-4 ml-auto items-center justify-center">
-              {locating || typing ? <SpinningLoader /> : <Icon as={Send} />}
+            <View className=" ml-auto p-2 bg-primary rounded-full">
+              {locating ? <SpinningLoader /> : <Icon as={SearchIcon} />}
             </View>
           </View>
         </View>

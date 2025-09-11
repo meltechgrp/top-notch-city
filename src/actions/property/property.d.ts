@@ -121,7 +121,8 @@ type PropertyStatus =
   | "sold"
   | "rejected"
   | "flagged"
-  | "expired";
+  | "expired"
+  | "featured";
 
 type PropertyPurpose = "rent" | "sell";
 type Currency = "ngn" | "usd";

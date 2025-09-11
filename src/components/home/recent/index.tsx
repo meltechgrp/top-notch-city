@@ -6,11 +6,11 @@ import { router } from "expo-router";
 import { memo } from "react";
 import { ScrollView } from "react-native";
 
-function FeaturedProperties() {
-  const { featured } = useHomeFeed();
+function RecentProperties() {
+  const { latest } = useHomeFeed();
   return (
     <SectionHeaderWithRef
-      title="Featured Properties"
+      title="Recently Added"
       subTitle="See More"
       onSeeAllPress={() => {
         router.push({
@@ -31,11 +31,11 @@ function FeaturedProperties() {
           snapToAlignment="center"
           decelerationRate="fast"
         >
-          {featured.map((data) => (
+          {latest.map((data) => (
             <PropertyListItem
               key={data.id}
               showLike
-              listType="featured"
+              listType="latest"
               onPress={(data) => {
                 router.push({
                   pathname: `/property/[propertyId]`,
@@ -44,7 +44,6 @@ function FeaturedProperties() {
                   },
                 });
               }}
-              isFeatured
               isHorizontal={true}
               data={data}
               rounded={true}
@@ -56,4 +55,4 @@ function FeaturedProperties() {
   );
 }
 
-export default memo(FeaturedProperties);
+export default memo(RecentProperties);

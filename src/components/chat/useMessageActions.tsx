@@ -4,6 +4,7 @@ import { Alert } from "react-native";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteChatMessage } from "@/actions/message";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
+import { useChatStore } from "@/store/chatStore";
 
 type Args = {
   focusEditor: () => void;
@@ -13,11 +14,9 @@ type Args = {
 
 export default function useMessageActions(args: Args) {
   const { focusEditor, setEditorText, chatId } = args;
-  const queryClient = useQueryClient();
-  function invalidate() {
-    queryClient.invalidateQueries({
-      queryKey: ["messages", chatId],
-    });
+  const { deleteChatMessage: deleteMessage } = useChatStore.getState();
+  function invalidate(chatId: string, messageId: string, soft: boolean) {
+    deleteMessage(chatId, messageId, soft);
   }
   const { mutateAsync } = useMutation({
     mutationFn: deleteChatMessage,
@@ -40,7 +39,47 @@ export default function useMessageActions(args: Args) {
   const [isDeletingMessageId, setIsDeletingMessageId] = useState<string | null>(
     null
   );
-  async function handleDelete(onDone: (message: Message) => void) {
+  async function handleDelete() {
+    if (!selectedMessage?.message_id) return;
+
+    Alert.alert("Confirm delete", "Delete message for yourself in this chat?", [
+      {
+        text: "Cancel",
+      },
+      {
+        text: "Yes",
+        style: "destructive",
+        onPress: async () => {
+          await mutateAsync(
+            {
+              message_id: selectedMessage.message_id,
+              delete_for_everyone: false,
+            },
+            {
+              onSuccess() {
+                showErrorAlert({
+                  alertType: "success",
+                  duration: 3000,
+                  title: "Message deleted.",
+                });
+                invalidate(chatId, selectedMessage.message_id, true);
+                setIsDeletingMessageId(null);
+              },
+              onError: (err) => {
+                showErrorAlert({
+                  alertType: "error",
+                  duration: 3000,
+                  title: err.message || "Could not delete message!",
+                });
+                setIsDeletingMessageId(null);
+              },
+            }
+          );
+        },
+      },
+    ]);
+  }
+  async function handleDeleteAll() {
     if (!selectedMessage?.message_id) return;
 
     Alert.alert(
@@ -54,26 +93,31 @@ export default function useMessageActions(args: Args) {
           text: "Yes",
           style: "destructive",
           onPress: async () => {
-            await mutateAsync(selectedMessage.message_id, {
-              onSuccess() {
-                onDone(selectedMessage);
-                showErrorAlert({
-                  alertType: "success",
-                  duration: 3000,
-                  title: "Message deleted.",
-                });
-                invalidate();
-                setIsDeletingMessageId(null);
+            await mutateAsync(
+              {
+                message_id: selectedMessage.message_id,
+                delete_for_everyone: true,
               },
-              onError: (err) => {
-                showErrorAlert({
-                  alertType: "error",
-                  duration: 3000,
-                  title: err.message || "Could not delete message!",
-                });
-                setIsDeletingMessageId(null);
-              },
-            });
+              {
+                onSuccess() {
+                  showErrorAlert({
+                    alertType: "success",
+                    duration: 3000,
+                    title: "Message deleted.",
+                  });
+                  invalidate(chatId, selectedMessage.message_id, true);
+                  setIsDeletingMessageId(null);
+                },
+                onError: (err) => {
+                  showErrorAlert({
+                    alertType: "error",
+                    duration: 3000,
+                    title: err.message || "Could not delete message!",
+                  });
+                  setIsDeletingMessageId(null);
+                },
+              }
+            );
           },
         },
       ]
@@ -104,5 +148,6 @@ export default function useMessageActions(args: Args) {
     isEditing,
     exitEditMode,
     handleEdit,
+    handleDeleteAll,
   };
 }

@@ -50,6 +50,7 @@
     "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",
     "expo": "^53.0.22",
+    "expo-apple-authentication": "~7.2.4",
     "expo-audio": "~0.4.7",
     "expo-auth-session": "~6.2.0",
     "expo-background-task": "~0.2.8",

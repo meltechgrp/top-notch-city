@@ -1,21 +1,15 @@
-import {
-  ListOrdered,
-  Mic,
-  SearchIcon,
-  Map,
-  Settings2,
-} from "lucide-react-native";
+import { SearchIcon, Settings2 } from "lucide-react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
   Easing,
 } from "react-native-reanimated";
-import { Heading, Icon, Pressable, Text, View } from "@/components/ui";
+import { Icon, Pressable, Text, View } from "@/components/ui";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ScrollView, TouchableOpacity, ViewProps } from "react-native";
+import { ScrollView, ViewProps } from "react-native";
 import { memo, useEffect } from "react";
-import { cn, composeFullAddress } from "@/lib/utils";
+import { composeFullAddress } from "@/lib/utils";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
 
 interface Props extends Partial<ViewProps> {
@@ -26,21 +20,15 @@ interface Props extends Partial<ViewProps> {
   setTypesFilter: () => void;
   setActivateVoice: () => void;
   filter: SearchFilters;
-  activeIndex: number;
-  total: number;
-  onTabChange: (index: number) => void;
 }
 function SearchHeader({
   setShowFilter,
   setActivateVoice,
   setLocationBottomSheet,
   filter,
-  activeIndex,
-  onTabChange,
   setRoomsFilter,
   setPriceFilter,
   setTypesFilter,
-  total,
   ...props
 }: Props) {
   const translateY = useSharedValue(50);
@@ -74,31 +62,18 @@ function SearchHeader({
                     <Text numberOfLines={1} className="flex-1 px-2">
                       {filter?.state
                         ? composeFullAddress(filter, true)
-                        : "Search a city..."}
+                        : "Search for a state, city or location..."}
                     </Text>
                     <View className=" p-2 bg-primary rounded-full">
                       <Icon as={SearchIcon} color="white" />
                     </View>
                   </Pressable>
-                  <TouchableOpacity
+                  {/* <TouchableOpacity
                     className=" p-3 flex items-center justify-center rounded-full bg-background-muted" // consistent width
                     onPress={setActivateVoice}
                   >
                     <Icon as={Mic} className={cn("w-6 h-6")} />
-                  </TouchableOpacity>
-                  <Pressable
-                    onPress={() => {
-                      onTabChange(activeIndex == 0 ? 1 : 0);
-                    }}
-                    className={cn(
-                      " rounded-full py-2 w-14 flex-row gap-1 items-center"
-                    )}
-                  >
-                    <Icon size="xl" as={activeIndex == 1 ? Map : ListOrdered} />
-                    <Heading className={cn(" text-lg")}>
-                      {activeIndex == 1 ? "Map" : "List"}
-                    </Heading>
-                  </Pressable>
+                  </TouchableOpacity> */}
                 </View>
               </View>
             </View>
@@ -131,13 +106,6 @@ function SearchHeader({
                 </AnimatedPressable>
               </View>
             </ScrollView>
-            {activeIndex == 1 && (
-              <View className="flex-row gap-4 px-4 mt-2">
-                <View className=" ml-auto bg-background-muted py-2 px-4 rounded-full">
-                  <Text>{total} results</Text>
-                </View>
-              </View>
-            )}
           </Animated.View>
         </SafeAreaView>
       </View>

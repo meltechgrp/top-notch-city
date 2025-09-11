@@ -1,10 +1,7 @@
-import { memo, useEffect } from "react";
+import { memo } from "react";
 import { ScrollView } from "react-native";
 import { View } from "@/components/ui";
-import { useRefresh } from "@react-native-community/hooks";
-import eventBus from "@/lib/eventBus";
 import HorizontalListItem from "../property/HorizontalListItem";
-import { HorizontalListItemSkeleton } from "@/components/skeleton/HorizontalListItemSkeleton";
 
 type Props = {
   data?: Property[];
