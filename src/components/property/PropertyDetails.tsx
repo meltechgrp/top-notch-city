@@ -23,7 +23,7 @@ import {
   Video,
 } from "lucide-react-native";
 import { useRouter } from "expo-router";
-import React, { memo } from "react";
+import React, { memo, useMemo } from "react";
 import { generateMediaUrl } from "@/lib/api";
 import { useLayout } from "@react-native-community/hooks";
 import { usePropertyStore } from "@/store/propertyStore";
@@ -44,7 +44,10 @@ const PropertyDetailsBottomSheet = () => {
   });
   const router = useRouter();
   const { width, onLayout } = useLayout();
-
+  const isHouse = useMemo(
+    () => property?.category.name !== "Land",
+    [property?.category]
+  );
   return (
     <>
       <Box
@@ -52,26 +55,28 @@ const PropertyDetailsBottomSheet = () => {
         className=" flex-1 bg-background rounded-t-3xl gap-4"
       >
         <View className="gap-4 p-4 py-2">
-          <View className="flex-row gap-4 mt-2">
-            <View className="flex-row flex-1 bg-background-muted rounded-xl p-4 items-center justify-center gap-2">
-              <Icon size="sm" as={Bed} className="text-primary" />
-              <Text size="sm">
-                {FindAmenity("Bedroom", property?.amenities)} Beds
-              </Text>
+          {isHouse && (
+            <View className="flex-row gap-4 mt-2">
+              <View className="flex-row flex-1 bg-background-muted rounded-xl p-4 items-center justify-center gap-2">
+                <Icon size="sm" as={Bed} className="text-primary" />
+                <Text size="sm">
+                  {FindAmenity("Bedroom", property?.amenities)} Bed
+                </Text>
+              </View>
+              <View className="flex-row flex-1 bg-background-muted rounded-xl p-4 items-center justify-center gap-2">
+                <Icon size="sm" as={Bath} className="text-primary" />
+                <Text size="sm">
+                  {FindAmenity("Bathroom", property?.amenities)} Bath
+                </Text>
+              </View>
+              <View className="flex-row flex-1 bg-background-muted rounded-xl p-4 items-center justify-center gap-2">
+                <Icon size="sm" as={LandPlot} className="text-primary" />
+                <Text size="sm">
+                  {FindAmenity("Area", property?.amenities)} Sq
+                </Text>
+              </View>
             </View>
-            <View className="flex-row flex-1 bg-background-muted rounded-xl p-4 items-center justify-center gap-2">
-              <Icon size="sm" as={Bath} className="text-primary" />
-              <Text size="sm">
-                {FindAmenity("Bathroom", property?.amenities)} Baths
-              </Text>
-            </View>
-            <View className="flex-row flex-1 bg-background-muted rounded-xl p-4 items-center justify-center gap-2">
-              <Icon size="sm" as={LandPlot} className="text-primary" />
-              <Text size="sm">
-                {FindAmenity("Area", property?.amenities)} Sq
-              </Text>
-            </View>
-          </View>
+          )}
         </View>
         <View className=" pt-2 flex-1 gap-6 pb-20">
           <View className=" flex-row gap-4 px-4">
