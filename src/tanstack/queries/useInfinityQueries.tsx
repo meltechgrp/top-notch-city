@@ -9,6 +9,7 @@ import {
   fetchTrendingProperties,
   fetchFeaturedProperties,
   fetchTrendingLandsProperties,
+  fetchAgentProperties,
 } from "@/actions/property/list";
 import { searchProperties } from "@/actions/search";
 import { fetchLocationProperties } from "@/actions/property/locations";
@@ -33,7 +34,8 @@ export function useInfinityQueries({
     | "lands"
     | "featured"
     | "trending"
-    | "trending-lands";
+    | "trending-lands"
+    | "agent-property";
   profileId?: string;
   filter?: SearchFilters;
   enabled?: boolean;
@@ -135,6 +137,18 @@ export function useInfinityQueries({
         queryKey: ["properties", profileId],
         queryFn: ({ pageParam = 1 }) =>
           fetchUserProperties({ userId: profileId!, pageParam }),
+        initialPageParam: 1,
+        getNextPageParam: (lastPage) => {
+          const { page, pages } = lastPage;
+          return page < pages ? page + 1 : undefined;
+        },
+        enabled: !!profileId && enabled,
+      });
+    }
+    case "agent-property": {
+      return useInfiniteQuery({
+        queryKey: ["properties", profileId],
+        queryFn: ({ pageParam = 1 }) => fetchAgentProperties({ pageParam }),
         initialPageParam: 1,
         getNextPageParam: (lastPage) => {
           const { page, pages } = lastPage;

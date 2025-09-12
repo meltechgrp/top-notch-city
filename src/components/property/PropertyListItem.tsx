@@ -99,8 +99,8 @@ function PropertyListItem(props: Props) {
     }
   }
   const liked = useMemo(
-    () => data.owner_interaction.liked,
-    [data.owner_interaction.liked]
+    () => data?.owner_interaction?.liked,
+    [data?.owner_interaction?.liked]
   );
   return (
     <Pressable

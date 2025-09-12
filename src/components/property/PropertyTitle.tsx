@@ -9,6 +9,7 @@ interface Props {
 
 export function PropertyTitle({
   property: { purpose, amenities, subcategory, category },
+  smallView,
 }: Props) {
   if (purpose == "rent") {
     if (category.name == "Land") {
@@ -34,8 +35,15 @@ export function PropertyTitle({
             <Text className={cn("text-base text-white")}>For Rent</Text>
           </View>
           <View className="flex-row gap-2 items-center">
-            <Icon size={"sm"} as={House} className="text-white" />
-            <Text className={cn("text-md text-white font-bold")}>
+            {!smallView && (
+              <Icon size={"sm"} as={House} className="text-white" />
+            )}
+            <Text
+              className={cn(
+                "text-md text-white font-bold",
+                smallView && "text-sm"
+              )}
+            >
               {FindAmenity("Bedroom", amenities)} Bedroom{" "}
               {subcategory?.name || (subcategory as any)}
             </Text>
@@ -67,8 +75,15 @@ export function PropertyTitle({
             <Text className={cn("text-base text-white")}>For Sale</Text>
           </View>
           <View className="flex-row gap-2 items-center">
-            <Icon size={"sm"} as={House} className="text-white" />
-            <Text className={cn("text-md text-white font-bold")}>
+            {!smallView && (
+              <Icon size={"sm"} as={House} className="text-white" />
+            )}
+            <Text
+              className={cn(
+                "text-md text-white font-bold",
+                smallView && "text-sm"
+              )}
+            >
               {FindAmenity("Bedroom", amenities)} Bedroom{" "}
               {subcategory?.name || (subcategory as any)}
             </Text>

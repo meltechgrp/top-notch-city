@@ -11,6 +11,7 @@ type IProps = {
   headerHeight: number;
   scrollElRef: any;
   refetch: any;
+  type?: boolean;
   listRef: any;
   scrollY?: SharedValue<number>;
 };
@@ -23,6 +24,7 @@ export default function PropertiesTabView(props: IProps) {
     refetch: reload,
     scrollElRef,
     listRef,
+    type = true,
   } = props;
   const {
     data,
@@ -36,14 +38,21 @@ export default function PropertiesTabView(props: IProps) {
     () => data?.pages.flatMap((page) => page.results) || [],
     [data]
   );
-
+  const newData = useMemo(
+    () =>
+      list?.filter((p) =>
+        type ? p.category.name != "Land" : p.category.name == "Land"
+      ),
+    [list]
+  );
   useRefreshOnFocus(refetch);
   return (
     <>
       <View className="flex-1 p-4">
         <VerticalProperties
           isLoading={isLoading}
-          data={list}
+          data={newData}
+          showLike={false}
           onScroll={onScroll}
           scrollElRef={scrollElRef}
           headerHeight={headerHeight}

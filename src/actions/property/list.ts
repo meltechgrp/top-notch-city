@@ -146,6 +146,20 @@ export async function fetchUserProperties({
     throw new Error("Failed to fetch user properties");
   }
 }
+// 👤 Fetch agent properties (paginated)
+export async function fetchAgentProperties({
+  pageParam,
+}: {
+  pageParam: number;
+}) {
+  try {
+    const res = await Fetch(`/agent/my-properties?page=${pageParam}`, {});
+    if (res?.detail) throw new Error("Failed to fetch user properties");
+    return res as Result;
+  } catch (error) {
+    throw new Error("Failed to fetch user properties");
+  }
+}
 
 // 👨‍💼 Fetch admin properties (paginated)
 export async function fetchAdminProperties({

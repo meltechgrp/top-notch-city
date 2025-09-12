@@ -3,9 +3,6 @@ import config from "@/config";
 import axios, { AxiosRequestConfig } from "axios";
 import { getUniqueIdSync } from "react-native-device-info";
 import { useEffect, useRef, useState } from "react";
-import { useChatStore } from "@/store/chatStore";
-import { useChat } from "@/hooks/useChat";
-import { useHomeFeed } from "@/hooks/useHomeFeed";
 
 export async function Fetch(url: string, options: AxiosRequestConfig = {}) {
   const authToken = getAuthToken();

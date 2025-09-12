@@ -1,13 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Pressable, View } from "react-native";
-import { Heading, Icon } from "../ui";
-import {
-  BookmarkCheck,
-  ChartNoAxesColumn,
-  House,
-  MessageSquareText,
-  UserCircle,
-} from "lucide-react-native";
+import { Icon } from "../ui";
+import { House, LandPlot } from "lucide-react-native";
 
 type IProps = {
   profile: Me;
@@ -18,8 +12,8 @@ export default function ProfileTabHeaderSection(props: IProps) {
   const { profile, onTabChange, activeIndex } = props;
   // if (profile?.isBlocked) return null
   return (
-    <View className=" bg-background-muted w-[80%] mx-auto rounded-xl my-4">
-      <View className="flex-row h-12">
+    <View className="  w-[70%] mx-auto rounded-xl my-4">
+      <View className="flex-row justify-between flex-1">
         {profileTabs.map(({ label, icon }, index) => (
           <Pressable
             key={label}
@@ -27,19 +21,15 @@ export default function ProfileTabHeaderSection(props: IProps) {
               onTabChange(index);
             }}
             className={cn(
-              "h-full flex-row gap-1 items-center rounded-xl w-1/2 justify-center mt-0.5",
-              activeIndex === index ? `bg-primary` : `border-transparent`
+              "h-full flex-row gap-1 w-20 border-b border-background pb-1 items-center justify-center mt-0.5",
+              activeIndex === index && `border-white`
             )}
           >
             <Icon
+              size={"xl"}
               as={icon}
               className={cn(activeIndex === index ? `text-white` : ` `)}
             />
-            <Heading
-              className={cn(" text-sm", activeIndex === index && "text-white")}
-            >
-              {label}
-            </Heading>
           </Pressable>
         ))}
       </View>
@@ -49,13 +39,13 @@ export default function ProfileTabHeaderSection(props: IProps) {
 
 export const profileTabs = [
   {
-    label: "Properties",
+    label: "Houses",
     icon: House,
-    key: "properties",
+    key: "houses",
   },
   {
-    label: "Reviews",
-    icon: MessageSquareText,
-    key: "review",
+    label: "Lands",
+    icon: LandPlot,
+    key: "land",
   },
 ];

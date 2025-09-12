@@ -20,6 +20,8 @@ type Me = {
   views_count: number;
   likes_count: number;
   total_properties: number;
+  followers_count: number;
+  is_following?: boolean;
   address: {
     street: string;
     city: string;

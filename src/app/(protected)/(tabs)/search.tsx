@@ -15,7 +15,7 @@ import { useSearch } from "@/hooks/useSearch";
 import PropertyTypeSheet from "@/components/modals/search/PropertyTypeSheet";
 import { router, useFocusEffect, useGlobalSearchParams } from "expo-router";
 
-const TABS = ["Map View", "List View"];
+const TABS = ["List View", "Map View"];
 
 export default function SearchScreen() {
   const { latitude, longitude, reset, list, locate } =

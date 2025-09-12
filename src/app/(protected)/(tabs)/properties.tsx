@@ -36,7 +36,7 @@ export default function PropertiesScreen() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useInfinityQueries({ type: "user", profileId: me?.id });
+  } = useInfinityQueries({ type: "agent-property" });
   const list = useMemo(
     () => data?.pages.flatMap((page) => page.results) || [],
     [data]
@@ -138,26 +138,30 @@ export default function PropertiesScreen() {
           )
         }
       >
-        <VerticalProperties
-          isLoading={isLoading}
-          data={filteredData}
-          showStatus={true}
-          headerTopComponent={
-            filteredData.length > 0 ? headerComponent : undefined
-          }
-          onPress={(data) => {
-            router.push({
-              pathname: "/property/[propertyId]",
-              params: {
-                propertyId: data.id,
-              },
-            });
-          }}
-          refetch={async () => await refetch()}
-          hasNextPage={hasNextPage}
-          fetchNextPage={fetchNextPage}
-          className="pb-24"
-          ListEmptyComponent={
+        <View className="flex-1">
+          {filteredData?.length > 0 ? (
+            <VerticalProperties
+              isLoading={isLoading}
+              data={filteredData}
+              showStatus={true}
+              showLike={false}
+              headerTopComponent={
+                filteredData.length > 0 ? headerComponent : undefined
+              }
+              onPress={(data) => {
+                router.push({
+                  pathname: "/property/[propertyId]",
+                  params: {
+                    propertyId: data.id,
+                  },
+                });
+              }}
+              refetch={async () => await refetch()}
+              hasNextPage={hasNextPage}
+              fetchNextPage={fetchNextPage}
+              className="pb-24"
+            />
+          ) : (
             <View className="flex-1 gap-8">
               <View
                 style={{ height: height / 2.5 }}
@@ -187,8 +191,8 @@ export default function PropertiesScreen() {
                 </Button>
               </View>
             </View>
-          }
-        />
+          )}
+        </View>
       </MainLayout>
       {ctaVisible && (
         <View className="absolute inset-0 bg-black/40 justify-center items-center z-50">

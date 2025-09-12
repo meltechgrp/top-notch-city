@@ -35,13 +35,13 @@ function HorizontalListItem(props: Props) {
       <Image
         source={{ uri: generateMediaUrl(media[0]).uri }}
         className="h-full w-32 rounded-xl"
-        style={{ width: 128, borderRadius: 8 }}
+        style={{ width: 120, borderRadius: 8 }}
         alt={title}
       />
-      <View className=" w-[120px] gap-1">
+      <View className=" w-[128px] gap-2 justify-center">
         <PropertyTitle property={data} smallView />
         <View className=" gap-1">
-          <Text size="md" className="text-medium text-typography">
+          <Text size="md" className="font-bold text-typography">
             {formatMoney(price, "NGN", 0)}
           </Text>
         </View>

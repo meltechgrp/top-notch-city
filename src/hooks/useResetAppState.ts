@@ -1,4 +1,3 @@
-import { Fetch } from "@/actions/utills";
 import { storage } from "@/lib/asyncStorage";
 import { removeAuthToken } from "@/lib/secureStore";
 import { useStore, useTempStore } from "@/store";
@@ -15,12 +14,6 @@ export default function useResetAppState(isDelete?: boolean) {
     useChatStore.getState().resetChatStore();
     useTempStore.getState().resetStore();
     queryClient.clear();
-    {
-      !isDelete &&
-        (await Fetch("/logout", {
-          method: "POST",
-        }));
-    }
   }, []);
 
   return resetAppState;

@@ -31,14 +31,21 @@ import { BodyScrollView } from "@/components/layouts/BodyScrollView";
 import { getImageUrl } from "@/lib/api";
 import { openAccessModal } from "@/components/globals/AuthModals";
 import useResetAppState from "@/hooks/useResetAppState";
+import { Fetch } from "@/actions/utills";
+import { getUniqueIdSync } from "react-native-device-info";
 
 export default function More() {
   const resetAppState = useResetAppState();
   const { me, hasAuth } = useStore();
   const router = useRouter();
+  const deviceId = getUniqueIdSync();
   const theme = useResolvedTheme();
 
-  function logout() {
+  async function logout() {
+    await Fetch("/logout", {
+      method: "POST",
+      data: { device_id: deviceId },
+    });
     resetAppState();
   }
   async function onLogout() {

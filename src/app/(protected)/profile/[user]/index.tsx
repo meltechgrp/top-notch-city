@@ -14,8 +14,8 @@ import { Box, Text, View } from "@/components/ui";
 import { ProfileTopSection } from "@/components/profile/ProfileTopSection";
 import ProfileTabHeaderSection from "@/components/profile/ProfileTabHeaderSection";
 import PropertiesTabView from "@/components/profile/PropertiesTab";
+import AgentProfileList from "@/components/profile/agents";
 import BeachPersonWaterParasolSingleColorIcon from "@/components/icons/BeachPersonWaterParasolIcon";
-import ReviewsTabView from "@/components/profile/ReviewsTab";
 import { useQuery } from "@tanstack/react-query";
 import { getUser } from "@/actions/user";
 import FullHeightLoaderWrapper from "@/components/loaders/FullHeightLoaderWrapper";
@@ -31,6 +31,7 @@ export default function ProfileScreen() {
   const userData = useMemo(() => data || null, [data]);
   const pagerRef = useRef<PagerView>(null);
   const [currentPage, setCurrentPage] = useState(0);
+  const [showAgents, setShowAgents] = useState(false);
   const scrollYs = useRef(TABS.map(() => useSharedValue(0))).current;
   const scrollRefs = useRef(TABS.map(() => useAnimatedRef())).current;
 
@@ -110,7 +111,14 @@ export default function ProfileScreen() {
             pointerEvents="box-none"
           >
             <View onLayout={onHeaderLayout} pointerEvents="box-none">
-              {userData && <ProfileTopSection userData={userData} />}
+              {userData && (
+                <ProfileTopSection
+                  setShowAgents={setShowAgents}
+                  showAgents={showAgents}
+                  userData={userData}
+                />
+              )}
+              {showAgents && <AgentProfileList />}
             </View>
             <View onLayout={onTabBarLayout} className=" bg-background">
               {userData && (
@@ -151,10 +159,12 @@ export default function ProfileScreen() {
                   return (
                     <View style={{ flex: 1 }} key={index}>
                       {user && currentPage === index ? (
-                        <ReviewsTabView
+                        <PropertiesTabView
                           key={index}
+                          refetch={refetch}
                           listRef={scrollRefs[index]}
                           profileId={user}
+                          type={false}
                           scrollElRef={scrollRefs[index]}
                           headerHeight={fullHeaderHeight}
                           scrollY={scrollYs[index]}

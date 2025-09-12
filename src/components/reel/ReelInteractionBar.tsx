@@ -39,7 +39,7 @@ function ReelInteractionBar({
     () => !!reel?.owner_interaction?.added_to_wishlist,
     [reel?.owner_interaction]
   );
-  const record = useMemo(() => reel?.interations, []);
+  const record = useMemo(() => reel?.interations, [reel?.interations]);
   return (
     <View className=" gap-6 ml-auto items-center">
       <AnimatedPressable

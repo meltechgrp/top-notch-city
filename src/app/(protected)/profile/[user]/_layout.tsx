@@ -85,9 +85,11 @@ export default function ProfileScreensLayout() {
             ),
             headerRight: () => (
               <View className="flex-row gap-3 items-center">
-                <Pressable onPress={onInvite}>
-                  <Icon size="xl" as={Share2} />
-                </Pressable>
+                {!isOwner && (
+                  <Pressable onPress={onInvite}>
+                    <Icon size="xl" as={Share2} />
+                  </Pressable>
+                )}
                 {/* {isOwner && (
                   <Pressable
                     className=" bg-gray-500 rounded-xl p-1 px-1.5"

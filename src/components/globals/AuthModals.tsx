@@ -3,16 +3,19 @@ import eventBus from "@/lib/eventBus";
 import EnquiriesFormBottomSheet from "../modals/EnquiriesBottomSheet";
 import CustomerCareBottomSheet from "@/components/modals/CustomerCareBottomSheet";
 import { ContentAccessModal } from "@/components/modals/ContentAccessModal";
+import { AgentShareSheet } from "@/components/modals/agent/AgentShareSheet";
 
 export default function AuthModals() {
   const [enquiry, setEnquiry] = useState<AuthModalProps | null>(null);
   const [staffs, setStaffs] = useState<AuthModalProps | null>(null);
   const [access, setAccess] = useState<AuthModalProps | null>(null);
+  const [agent, setAgent] = useState<AuthModalProps | null>(null);
 
   useEffect(() => {
     eventBus.addEventListener("openAccessModal", setAccess);
     eventBus.addEventListener("openEnquiryModal", setEnquiry);
     eventBus.addEventListener("openStaffs", setStaffs);
+    eventBus.addEventListener("openAgentModal", setAgent);
   }, []);
 
   return (
@@ -44,6 +47,15 @@ export default function AuthModals() {
           }}
         />
       )}
+      {!!agent && (
+        <AgentShareSheet
+          {...agent}
+          onDismiss={() => {
+            agent.onDismiss?.();
+            setAgent(null);
+          }}
+        />
+      )}
     </>
   );
 }
@@ -56,4 +68,7 @@ export function openStaffsModal(props: AuthModalProps) {
 }
 export function openAccessModal(props: AuthModalProps) {
   eventBus.dispatchEvent("openAccessModal", props);
+}
+export function openAgentModal(props: AuthModalProps) {
+  eventBus.dispatchEvent("openAgentModal", props);
 }

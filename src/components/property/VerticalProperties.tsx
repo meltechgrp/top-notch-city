@@ -24,6 +24,7 @@ interface Props {
   className?: string;
   isEmptyTitle?: string;
   scrollY?: any;
+  showLike?: boolean;
   disableCount?: boolean;
   isAdmin?: boolean;
   profileId?: string;
@@ -68,6 +69,7 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
     showStatus = false,
     ListEmptyComponent,
     isRefetching,
+    showLike = true,
   },
   ref
 ) {
@@ -109,6 +111,7 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
             });
           }}
           isList={true}
+          showLike={showLike}
           showStatus={showStatus}
           isHorizontal={isHorizontal}
           data={item}

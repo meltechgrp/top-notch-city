@@ -54,7 +54,7 @@ const avatarGroupStyle = tva({
 });
 
 const avatarBadgeStyle = tva({
-  base: "w-5 h-5 bg-success rounded-full absolute right-0 bottom-0 border-background border-2",
+  base: "w-5 h-5 bg-success rounded-full absolute z-50 right-0 bottom-0 border-success border-2",
   parentVariants: {
     size: {
       xs: "w-2 h-2",
