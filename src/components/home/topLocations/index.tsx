@@ -7,6 +7,7 @@ const TopLocations = () => {
   return (
     <SectionHeaderWithRef
       title="Trending Locations"
+      titleClassName="text-gray-400 text-base"
       subTitle="Explore"
       className=""
       onSeeAllPress={() => {

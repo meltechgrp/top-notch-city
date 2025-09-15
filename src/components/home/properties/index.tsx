@@ -12,6 +12,7 @@ const TopProperties = () => {
   return (
     <SectionHeaderWithRef
       title="Trending Properties"
+      titleClassName="text-gray-400 text-base"
       subTitle="See More"
       onSeeAllPress={() => {
         router.push({
@@ -25,10 +26,10 @@ const TopProperties = () => {
       <View className="">
         <ScrollView
           horizontal
-          contentContainerClassName="gap-x-4 pl-4"
+          contentContainerClassName="gap-x-4 px-4"
           pagingEnabled
           showsHorizontalScrollIndicator={false}
-          snapToInterval={238 + 4}
+          snapToInterval={344}
           snapToAlignment="center"
           decelerationRate="fast"
         >

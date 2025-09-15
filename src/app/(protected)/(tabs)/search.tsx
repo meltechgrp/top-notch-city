@@ -80,7 +80,7 @@ export default function SearchScreen() {
           setPriceFilter={() => setPriceFilter(true)}
           setTypesFilter={() => setTypesFilter(true)}
           onUpdate={search.setFilters}
-          refetchAndApply={query.applyCachedResults}
+          refetchAndApply={query.refetchAndApply}
         />
 
         <SearchTabs

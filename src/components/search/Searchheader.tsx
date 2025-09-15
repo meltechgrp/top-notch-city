@@ -19,7 +19,7 @@ interface Props extends Partial<ViewProps> {
   setPriceFilter: () => void;
   setTypesFilter: () => void;
   setActivateVoice: () => void;
-  refetchAndApply: () => void;
+  refetchAndApply: () => Promise<void>;
   onUpdate: (values: Partial<SearchFilters>) => void;
   filter: SearchFilters;
 }
@@ -107,11 +107,11 @@ function SearchHeader({
                     " py-2 px-5 flex-row gap-2 items-center justify-center rounded-full bg-background-muted",
                     filter.category == "Land" && "bg-primary"
                   )}
-                  onPress={() => {
+                  onPress={async () => {
                     filter?.category
                       ? onUpdate({ category: "" })
                       : onUpdate({ category: "Land" });
-                    refetchAndApply();
+                    await refetchAndApply();
                   }}
                 >
                   <Text>Lands</Text>

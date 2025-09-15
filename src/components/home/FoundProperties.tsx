@@ -18,7 +18,7 @@ const FoundHorizontalList = (props: Props) => {
         contentContainerClassName="gap-x-4 pl-4"
         pagingEnabled
         showsHorizontalScrollIndicator={false}
-        snapToInterval={238 + 4}
+        snapToInterval={180}
         snapToAlignment="center"
         decelerationRate="fast"
       >

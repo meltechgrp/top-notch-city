@@ -199,7 +199,6 @@ export function useUpdateProperty() {
         address,
         duration,
       } = listing;
-
       formData.append("title", "property");
       if (description) formData.append("description", description);
       if (price) formData.append("price", price);
@@ -254,6 +253,7 @@ export function useUpdateProperty() {
       );
 
       const result = res.data;
+      console.log(result?.detail);
       if (result?.detail) {
         throw new Error("Please verify your property details");
       }

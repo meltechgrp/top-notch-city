@@ -280,13 +280,13 @@ export default function SignIn() {
               Sign in with Google
             </ButtonText>
           </Button>
-          <Button
+          {/* <Button
             className="flex-1 h-12 bg-background-muted gap-2"
             onPress={() => fbPromptAsync()}
           >
             <Icon size={"sm"} as={FacebookIcon} />
             <ButtonText>Continue with Facebook</ButtonText>
-          </Button>
+          </Button> */}
           {isAppleAvailable && (
             <AppleAuthentication.AppleAuthenticationButton
               buttonType={

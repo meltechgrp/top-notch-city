@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import Map from "../location/map";
 import { View } from "../ui";
 import PropertyBottomSheet from "../location/PropertyBottomSheet";

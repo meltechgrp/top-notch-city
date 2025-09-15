@@ -40,7 +40,7 @@ export default function SectionHeaderWithRef(props: Props) {
             className="flex-row items-center  justify-center rounded-md"
             onPress={onSeeAllPress}
           >
-            <Text className="text-base font-heading text-primary">
+            <Text className="text-sm font-heading text-primary">
               {subTitle ?? "See all"}
             </Text>
           </Pressable>

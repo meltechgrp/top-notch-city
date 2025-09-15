@@ -128,7 +128,7 @@ export default function PropertiesScreen() {
             <Pressable
               onPress={handleGetStarted}
               both
-              className="flex-row items-center gap-1 p-1.5 px-3 rounded-xl bg-primary"
+              className="flex-row items-center gap-1 p-2 px-4 rounded-xl bg-primary"
             >
               <Text className="text-white">Add</Text>
               <Icon size="sm" as={Plus} className="text-white" />
