@@ -33,7 +33,10 @@ function AgentList({ visible }: { visible: boolean }) {
     [data]
   );
   return (
-    <SafeAreaView edges={["bottom", "top"]} className="flex-1 mt-14">
+    <SafeAreaView
+      edges={["bottom", "top"]}
+      className="flex-1 mt-12 android:pt-12"
+    >
       <FlashList
         data={agents}
         estimatedItemSize={90}

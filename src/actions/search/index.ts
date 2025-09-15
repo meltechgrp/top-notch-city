@@ -18,8 +18,7 @@ export async function searchProperties(
     query.append("min_price", filters.min_price);
   if (filters?.max_price && filters.max_price !== "No max")
     query.append("max_price", filters.max_price);
-  // if (filters?.category && filters.category !== "any")
-  //   query.append("category", filters.category);
+  if (filters?.category) query.append("category", filters.category);
   if (filters?.tour) query.append("virtual_tour", "true");
   filters?.sub_category?.forEach((sub) => {
     query.append("sub_category", sub);

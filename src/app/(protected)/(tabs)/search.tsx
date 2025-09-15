@@ -15,7 +15,7 @@ import { useSearch } from "@/hooks/useSearch";
 import PropertyTypeSheet from "@/components/modals/search/PropertyTypeSheet";
 import { router, useFocusEffect, useGlobalSearchParams } from "expo-router";
 
-const TABS = ["List View", "Map View"];
+const TABS = ["Map View", "List View"];
 
 export default function SearchScreen() {
   const { latitude, longitude, reset, list, locate } =
@@ -79,6 +79,8 @@ export default function SearchScreen() {
           setRoomsFilter={() => setRoomsFilter(true)}
           setPriceFilter={() => setPriceFilter(true)}
           setTypesFilter={() => setTypesFilter(true)}
+          onUpdate={search.setFilters}
+          refetchAndApply={query.applyCachedResults}
         />
 
         <SearchTabs

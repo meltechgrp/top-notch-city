@@ -121,10 +121,9 @@ export default memo(Map);
 
 interface MarkerProps {
   property: Property;
-  onPress?: (data: Property) => void;
 }
 
-function Marker({ property, onPress }: MarkerProps) {
+function Marker({ property }: MarkerProps) {
   const { latitude, longitude } = property.address;
   const media = property.media.find((item) => item.media_type == "IMAGE")!;
   const image = generateMediaUrl(media)?.uri;

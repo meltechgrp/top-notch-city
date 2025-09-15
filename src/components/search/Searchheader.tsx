@@ -9,7 +9,7 @@ import { Icon, Pressable, Text, View } from "@/components/ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView, ViewProps } from "react-native";
 import { memo, useEffect } from "react";
-import { composeFullAddress } from "@/lib/utils";
+import { cn, composeFullAddress } from "@/lib/utils";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
 
 interface Props extends Partial<ViewProps> {
@@ -19,6 +19,8 @@ interface Props extends Partial<ViewProps> {
   setPriceFilter: () => void;
   setTypesFilter: () => void;
   setActivateVoice: () => void;
+  refetchAndApply: () => void;
+  onUpdate: (values: Partial<SearchFilters>) => void;
   filter: SearchFilters;
 }
 function SearchHeader({
@@ -29,6 +31,8 @@ function SearchHeader({
   setRoomsFilter,
   setPriceFilter,
   setTypesFilter,
+  onUpdate,
+  refetchAndApply,
   ...props
 }: Props) {
   const translateY = useSharedValue(50);
@@ -97,6 +101,20 @@ function SearchHeader({
                   onPress={setRoomsFilter}
                 >
                   <Text>Rooms</Text>
+                </AnimatedPressable>
+                <AnimatedPressable
+                  className={cn(
+                    " py-2 px-5 flex-row gap-2 items-center justify-center rounded-full bg-background-muted",
+                    filter.category == "Land" && "bg-primary"
+                  )}
+                  onPress={() => {
+                    filter?.category
+                      ? onUpdate({ category: "" })
+                      : onUpdate({ category: "Land" });
+                    refetchAndApply();
+                  }}
+                >
+                  <Text>Lands</Text>
                 </AnimatedPressable>
                 <AnimatedPressable
                   className=" py-2 px-4 flex-row gap-2 items-center justify-center rounded-full bg-background-muted"

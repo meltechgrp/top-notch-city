@@ -27,12 +27,13 @@ export function PropertyHeroSection({ property, width }: Props) {
         />
         {property && (
           <View className=" absolute flex-row justify-between bottom-10 left-4 right-4 w-full px-1">
-            <View className="gap-2 flex-1">
-              <View className="px-2 gap-2">
+            <View className="gap-1 flex-1">
+              <View className=" flex-row justify-between items-end">
                 <PropertyTitle property={property} />
+                <PropertyInteractions interaction={property.interaction} />
               </View>
-              <View className="flex-row items-center mt-1 gap-2">
-                <Icon size="sm" as={MapPin} className="text-primary" />
+              <View className="flex-row items-center gap-2">
+                <Icon size="sm" as={MapPin} className="" />
                 <Text className="text-sm text-white">
                   {composeFullAddress(property?.address, true, "long")}
                 </Text>
@@ -42,7 +43,6 @@ export function PropertyHeroSection({ property, width }: Props) {
                 {formatMoney(property.price, "NGN", 0)}
               </Text>
             </View>
-            <PropertyInteractions interaction={property.interaction} />
           </View>
         )}
       </View>

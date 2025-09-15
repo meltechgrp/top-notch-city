@@ -43,6 +43,7 @@ interface AgentInfo {
   total_property_views: number;
   followers_count: number;
   is_following: boolean;
+  total_likes: number;
 }
 
 type AgentResult = {

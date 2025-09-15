@@ -118,19 +118,19 @@ const ReelAgentListItem = ({ account }: { account: AgentInfo }) => {
             <Icon as={Check} size="xs" />
           </View>
         </View>
-        <View className="flex flex-row gap-2">
+        <View className="flex flex-row gap-2 items-center">
           <Text>{account.total_property_count}</Text>
           <Text className=" text-sm text-gray-400">Properties</Text>
         </View>
         <View className="flex flex-row items-center">
           <View className="flex flex-row items-center gap-2">
             <Text className=" text-sm">{account.followers_count}</Text>
-            <Text className=" text-sm text-gray-400">followers</Text>
+            <Text className=" text-sm text-gray-400">Followers</Text>
           </View>
           <Icon as={Dot} />
           <View className="flex flex-row items-center gap-2">
-            <Text className=" text-sm">{account.total_property_views}</Text>
-            <Text className=" text-sm text-gray-400">likes</Text>
+            <Text className=" text-sm">{account.total_likes}</Text>
+            <Text className=" text-sm text-gray-400">Likes</Text>
           </View>
         </View>
       </View>

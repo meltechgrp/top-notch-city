@@ -44,9 +44,9 @@ function SearchTabs(props: IProps) {
                 activeIndex == 0 && "bg-primary"
               )}
             >
-              <Icon size="lg" className="text-white" as={ListOrdered} />
+              <Icon size="lg" className="text-white" as={Map} />
               <Heading className={cn(" text-md font-bold text-white")}>
-                List
+                Map
               </Heading>
             </AnimatedPressable>
             <AnimatedPressable
@@ -58,14 +58,14 @@ function SearchTabs(props: IProps) {
                 activeIndex == 1 && "bg-primary"
               )}
             >
-              <Icon size="lg" className="text-white" as={Map} />
+              <Icon size="lg" className="text-white" as={ListOrdered} />
               <Heading className={cn(" text-md font-bold text-white")}>
-                Map
+                List
               </Heading>
             </AnimatedPressable>
           </View>
           <View className=" items-center min-w-6 gap-6">
-            {activeIndex == 1 && (
+            {activeIndex == 0 && (
               <AnimatedPressable
                 className=" p-4 flex-row gap-2 items-center justify-center rounded-full bg-background-muted/70"
                 onPress={() => {}}

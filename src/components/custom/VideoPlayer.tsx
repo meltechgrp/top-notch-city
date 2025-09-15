@@ -161,7 +161,7 @@ export const VideoPlayer = memo(
 
                 {/* Controls Overlay */}
                 <View className="absolute inset-0 z-10 bg-black/20 items-center justify-center">
-                  <View className=" absolute top-20 right-4 items-center flex-row gap-2">
+                  <View className=" absolute top-28 right-4 items-center flex-row gap-2">
                     <Icon size={"sm"} as={Eye} />
                     <Text className="font-bold">{reel.interations.viewed}</Text>
                   </View>
