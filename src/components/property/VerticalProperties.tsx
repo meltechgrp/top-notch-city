@@ -157,7 +157,6 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
           ) : undefined
         }
         keyExtractor={(item: any, index) => item.id}
-        estimatedItemSize={340}
         onEndReached={() => {
           if (hasNextPage && !isLoading) fetchNextPage?.();
         }}

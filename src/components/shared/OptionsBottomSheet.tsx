@@ -52,7 +52,6 @@ export default function OptionsBottomSheet(props: Props) {
           data={options}
           showsVerticalScrollIndicator={false}
           keyExtractor={(item) => item.label}
-          estimatedItemSize={40}
           renderItem={({ item: option, index }) =>
             OptionComponent ? (
               <OptionComponent

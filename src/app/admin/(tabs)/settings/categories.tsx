@@ -132,7 +132,6 @@ export default function CategoriesScreen() {
 
               return null;
             }}
-            estimatedItemSize={80}
             contentContainerStyle={{
               paddingBottom: 120,
               paddingHorizontal: 16,

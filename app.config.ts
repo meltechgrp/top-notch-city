@@ -83,7 +83,6 @@ export default () => ({
   jsEngine: "hermes",
   plugins: [
     "expo-router",
-    "react-native-compressor",
     "expo-apple-authentication",
     [
       "./plugins/withAndroidQueries.js",
@@ -112,7 +111,7 @@ export default () => ({
       "expo-location",
       {
         locationAlwaysAndWhenInUsePermission:
-          "Allow $(PRODUCT_NAME) to access your location for map search and nearby properties.",
+          "$(PRODUCT_NAME) requires access to your location at all times to help you discover nearby properties, receive location-based recommendations, and improve property search results",
       },
     ],
     "expo-secure-store",
@@ -140,11 +139,11 @@ export default () => ({
       "expo-image-picker",
       {
         photosPermission:
-          "Allow $(PRODUCT_NAME) to access your photos to upload property images or update your profile.",
+          "$(PRODUCT_NAME) needs access to your photo library so you can upload property images, select profile pictures, and share media for property listings.",
         cameraPermission:
-          "To take photos and videos, allow $(PRODUCT_NAME) to access your camera.",
+          "$(PRODUCT_NAME) needs access to your camera so you can take photos and videos of properties, upload property listings, and update your profile picture.",
         microphonePermission:
-          "To record videos, allow $(PRODUCT_NAME) to access your microphone.",
+          "$(PRODUCT_NAME) requires microphone access to record audio when creating video tours of properties or capturing voice notes.",
       },
     ],
     [
@@ -158,7 +157,7 @@ export default () => ({
       "expo-audio",
       {
         microphonePermission:
-          "To record audio, allow $(PRODUCT_NAME) to access your microphone.",
+          "$(PRODUCT_NAME) requires microphone access to record audio when creating video tours of properties or capturing voice notes.",
       },
     ],
     [

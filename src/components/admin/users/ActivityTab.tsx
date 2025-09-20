@@ -90,7 +90,6 @@ const ActivityTabView = forwardRef<any, IProps>(function ActivityTabView(
             <RefreshControl refreshing={isFetching} onRefresh={onRefresh} />
           }
           contentContainerStyle={{ paddingTop: headerHeight }}
-          estimatedItemSize={340}
           onEndReached={() => {
             if (hasNextPage && (!isLoading || !isFetching)) fetchNextPage?.();
           }}

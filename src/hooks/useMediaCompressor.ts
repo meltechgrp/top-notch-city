@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Video, Image } from "react-native-compressor";
+// import { Video, Image } from "react-native-compressor";
 
 type MediaType = "image" | "video";
 
@@ -26,14 +26,16 @@ export function useMediaCompressor() {
     try {
       let result: string;
       if (type === "image") {
-        result = await Image.compress(uri, {
-          compressionMethod: "manual",
-          quality: compressionRate,
-          output: "jpg",
-          returnableOutputType: "uri",
-        });
+        // result = await Image.compress(uri, {
+        //   compressionMethod: "manual",
+        //   quality: compressionRate,
+        //   output: "jpg",
+        //   returnableOutputType: "uri",
+        // });
+        return "";
       } else {
-        result = await Video.compress(uri);
+        // result = await Video.compress(uri);
+        return "";
       }
 
       setCompressedUri(result);

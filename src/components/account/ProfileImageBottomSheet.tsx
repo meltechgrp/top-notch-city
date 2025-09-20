@@ -5,7 +5,7 @@ import { Icon, Pressable, Text } from "../ui";
 import * as ImagePicker from "expo-image-picker";
 import { Camera, ImageIcon } from "lucide-react-native";
 import { Divider } from "../ui/divider";
-import { useMediaCompressor } from "@/hooks/useMediaCompressor";
+// import { useMediaCompressor } from "@/hooks/useMediaCompressor";
 import { SpinningLoader } from "../loaders/SpinningLoader";
 import { useProfileMutations } from "@/tanstack/mutations/useProfileMutations";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
@@ -17,7 +17,7 @@ type Props = {
 
 function ProfileImageBottomSheet(props: Props) {
   const { visible, onDismiss } = props;
-  const { compress, compressing, error: comError } = useMediaCompressor();
+  // const { compress, compressing, error: comError } = useMediaCompressor();
   const { mutateAsync, isPending: loading } =
     useProfileMutations().updatePhotoMutation;
   const pickImage = async () => {
@@ -51,20 +51,15 @@ function ProfileImageBottomSheet(props: Props) {
     }
   };
   async function handleUpload(uri: string) {
-    const result = await compress({
-      type: "image",
-      uri: uri,
-      compressionRate: 0.4,
-    });
-    if (!result || comError) {
-      return showErrorAlert({
-        title: "Failed to upload.. try again",
-        alertType: "warn",
-      });
-    }
+    // const result = await compress({
+    //   type: "image",
+    //   uri: uri,
+    //   compressionRate: 0.4,
+    // });
+    // if (c
     await mutateAsync(
       {
-        image: result,
+        image: uri,
       },
       {
         onSuccess: () => onDismiss(),
@@ -89,7 +84,7 @@ function ProfileImageBottomSheet(props: Props) {
             <Text size="xl" className=" font-normal">
               Take photo
             </Text>
-            {loading || compressing ? (
+            {loading ? (
               <SpinningLoader />
             ) : (
               <Icon as={Camera} size="xl" className="text-typography" />
@@ -104,7 +99,7 @@ function ProfileImageBottomSheet(props: Props) {
             <Text size="xl" className=" font-normal">
               Choose photo
             </Text>
-            {loading || compressing ? (
+            {loading ? (
               <SpinningLoader />
             ) : (
               <Icon as={ImageIcon} size="xl" className="text-typography" />

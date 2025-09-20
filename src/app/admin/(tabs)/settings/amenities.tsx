@@ -126,7 +126,6 @@ export default function AmenitiesScreen() {
 
               return null;
             }}
-            estimatedItemSize={80}
             contentContainerStyle={{
               paddingBottom: 120,
               paddingTop: 10,

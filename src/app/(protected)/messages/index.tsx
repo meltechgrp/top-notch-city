@@ -3,17 +3,27 @@ import SmartphoneChatIcon from "@/components/icons/SmartphoneChatIcon";
 import EmptyStateWrapper from "@/components/shared/EmptyStateWrapper";
 import { Box, View } from "@/components/ui";
 import { FlashList } from "@shopify/flash-list";
-import React from "react";
+import React, { useEffect } from "react";
 import { RefreshControl } from "react-native";
 import { useChat } from "@/hooks/useChat";
-import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
+import { AppState } from "react-native";
+import { useIsFocused } from "@react-navigation/native";
 
 export default function MessagesScreen() {
   const { chats, loading, refreshing, refetch } = useChat();
+  const isFocused = useIsFocused();
 
-  useRefreshOnFocus(async () => {
-    setTimeout(refetch, 500);
-  });
+  useEffect(() => {
+    if (isFocused) {
+      refetch();
+    }
+  }, [isFocused]);
+  useEffect(() => {
+    const sub = AppState.addEventListener("change", (state) => {
+      refetch();
+    });
+    return () => sub.remove();
+  }, []);
   return (
     <>
       <Box className="flex-1">
@@ -36,7 +46,6 @@ export default function MessagesScreen() {
               contentContainerClassName="pt-4"
               keyExtractor={(item) => item.chat_id}
               renderItem={({ item }) => <MessageListItem chat={item} />}
-              estimatedItemSize={92}
             />
           </View>
         </EmptyStateWrapper>

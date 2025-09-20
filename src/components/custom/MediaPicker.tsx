@@ -10,7 +10,7 @@ import { Alert, Pressable, ScrollView } from "react-native";
 import { useCallback, useImperativeHandle, useState, useMemo } from "react";
 import { Platform } from "react-native";
 import { CloseIcon, Image } from "@/components/ui";
-import { useMediaCompressor } from "@/hooks/useMediaCompressor";
+// import { useMediaCompressor } from "@/hooks/useMediaCompressor";
 import { uniqueId } from "lodash-es";
 type Props = {
   media: (ImagePicker.ImagePickerAsset & { isCompressed?: boolean })[];
@@ -42,7 +42,7 @@ const MediaPicker = React.forwardRef<MediaPickerRef, Props>((props, ref) => {
     origin = "chat",
     autoCompress = true,
   } = props;
-  const { compress } = useMediaCompressor();
+  // const { compress } = useMediaCompressor();
   const [maxHeight, setMaxHeight] = useState<number>(0);
   const [scrollWidth, setScrollWidth] = useState<number>(0);
   const computedDimensions = useMemo(() => {
@@ -124,21 +124,19 @@ const MediaPicker = React.forwardRef<MediaPickerRef, Props>((props, ref) => {
       if (result.canceled || !result.assets?.length) return;
 
       const assets: ImagePicker.ImagePickerAsset[] = [];
-      const files = await Promise.all(
-        result.assets.map((file) =>
-          compress({
-            type: "image",
-            uri: file.uri,
-            compressionRate: 0.2,
-          })
-        )
-      );
-      const compressed = files
-        .filter((item) => item !== null)
-        .map((item) => ({
-          uri: item!,
-          assetId: uniqueId("media"),
-        }));
+      // const files = await Promise.all(
+      //   result.assets.map((file) =>
+      //     compress({
+      //       type: "image",
+      //       uri: file.uri,
+      //       compressionRate: 0.2,
+      //     })
+      //   )
+      // );
+      const compressed = result.assets.map((item) => ({
+        uri: item.uri!,
+        assetId: uniqueId("media"),
+      }));
       for (const asset of compressed) {
         asset && assets.push(asset as unknown as ImagePicker.ImagePickerAsset);
       }

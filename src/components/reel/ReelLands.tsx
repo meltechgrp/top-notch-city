@@ -35,7 +35,6 @@ function ReelLandList({ visible }: { visible: boolean }) {
       <SafeAreaView edges={["top"]} className="flex-1">
         <FlashList
           data={lands}
-          estimatedItemSize={height}
           snapToInterval={height}
           pagingEnabled
           refreshControl={

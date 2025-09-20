@@ -39,7 +39,6 @@ export default function PropertyActionsBottomSheet(props: Props) {
           data={options}
           showsVerticalScrollIndicator={false}
           keyExtractor={(item) => item.actionText}
-          estimatedItemSize={56}
           ListHeaderComponent={() => (
             <>
               <View className=" items-center py-3 mb-2 border-outline border-b">

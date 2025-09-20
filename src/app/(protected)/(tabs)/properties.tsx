@@ -42,7 +42,7 @@ export default function PropertiesScreen() {
     [data]
   );
   const filteredData = useMemo(() => {
-    let filtered = list;
+    let filtered = data?.pages.flatMap((page) => page.results) || [];
 
     if (actveTab !== "all") {
       filtered = filtered.filter((u) => u.status.toLowerCase() === actveTab);
@@ -61,7 +61,7 @@ export default function PropertiesScreen() {
       );
     }
     return filtered;
-  }, [list, search, actveTab]);
+  }, [list, search, actveTab, data]);
   const tabs = useMemo(() => {
     const all = list.length;
     const rejected = list.filter((item) => item.status == "rejected").length;

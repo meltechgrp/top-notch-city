@@ -64,7 +64,7 @@ export async function loginWithSocial({
   token: string;
 }) {
   try {
-    const data = await Fetch("/social-login", {
+    const data = await Fetch("/apple/social-login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -39,7 +39,6 @@ function AgentList({ visible }: { visible: boolean }) {
     >
       <FlashList
         data={agents}
-        estimatedItemSize={90}
         refreshControl={
           <RefreshControl
             progressViewOffset={30}

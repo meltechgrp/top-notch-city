@@ -11,7 +11,7 @@ import { Box, View } from "@/components/ui";
 import Platforms from "@/constants/Plaforms";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useReels } from "@/hooks/useReel";
-import { FlashList } from "@shopify/flash-list";
+import { FlashList, FlashListRef } from "@shopify/flash-list";
 import BackgroundView from "@/components/layouts/BackgroundView";
 import LoadingLine from "@/components/custom/HorizontalLoader";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
@@ -29,7 +29,7 @@ function ReelList({ visible }: { visible: boolean }) {
     refetch,
   } = useReels();
   const bottomHeight = useBottomTabBarHeight();
-  const listRef = useRef<FlashList<Reel>>(null);
+  const listRef = useRef<FlashListRef<Reel>>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const currentRef = useRef<VideoPlayerHandle>(null);
   const playersRef = useRef<Record<string, VideoPlayerHandle | null>>({});
@@ -112,7 +112,6 @@ function ReelList({ visible }: { visible: boolean }) {
           showsVerticalScrollIndicator={false}
           decelerationRate="fast"
           onMomentumScrollEnd={handleMomentumEnd}
-          estimatedItemSize={height}
           snapToInterval={height}
           ListEmptyComponent={() =>
             loading ? (

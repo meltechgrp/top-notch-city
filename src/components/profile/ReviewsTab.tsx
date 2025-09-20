@@ -77,7 +77,6 @@ const ReviewsTabView = forwardRef<any, IProps>(function ReviewsTabView(
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
           contentContainerStyle={{ paddingTop: headerHeight }}
-          estimatedItemSize={340}
           // onEndReached={() => {
           //   if (hasNextPage && !isLoading) fetchNextPage?.();
           // }}

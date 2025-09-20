@@ -12,7 +12,19 @@ import {
   Pressable,
   Icon,
 } from "@/components/ui";
-
+import React, { useCallback, useEffect, useState } from "react";
+import { hapticFeed } from "@/components/HapticTab";
+import { authLogin, loginWithSocial } from "@/actions/auth";
+import { saveAuthToken } from "@/lib/secureStore";
+import { useStore } from "@/store";
+import { SpinningLoader } from "@/components/loaders/SpinningLoader";
+import GoogleIcon from "@/components/icons/GoogleIcon";
+import { Divider } from "@/components/ui/divider";
+import { CustomInput } from "@/components/custom/CustomInput";
+import { getMe } from "@/actions/user";
+import { router, useGlobalSearchParams } from "expo-router";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
+import config from "@/config";
 import {
   AuthError,
   AuthRequestConfig,
@@ -21,22 +33,8 @@ import {
   makeRedirectUri,
   useAuthRequest,
 } from "expo-auth-session";
-import React, { useCallback, useEffect, useState } from "react";
-import { hapticFeed } from "@/components/HapticTab";
-import { authLogin, loginWithSocial } from "@/actions/auth";
-import { saveAuthToken } from "@/lib/secureStore";
-import { useStore } from "@/store";
-import FacebookIcon from "@/components/icons/FacebookIcon";
-import { SpinningLoader } from "@/components/loaders/SpinningLoader";
-import GoogleIcon from "@/components/icons/GoogleIcon";
-import { Divider } from "@/components/ui/divider";
-import { CustomInput } from "@/components/custom/CustomInput";
-import { getMe } from "@/actions/user";
-import { router, useGlobalSearchParams } from "expo-router";
-import { showErrorAlert } from "@/components/custom/CustomNotification";
-import Platforms from "@/constants/Plaforms";
-import config from "@/config";
-import { randomUUID } from "expo-crypto";
+import { FacebookIcon } from "lucide-react-native";
+import { ExternalLink } from "@/components/ExternalLink";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -45,36 +43,45 @@ const configs: AuthRequestConfig = {
   scopes: ["openid", "profile", "email"],
   redirectUri: makeRedirectUri(),
 };
+const fConfigs: AuthRequestConfig = {
+  clientId: "1964809884362173",
+  scopes: ["email", "public_profile"],
+  redirectUri: makeRedirectUri(),
+};
 
 const discovery: DiscoveryDocument = {
-  authorizationEndpoint: `${config.origin}/api/auth/authorize`,
-  tokenEndpoint: `${config}/api/auth/token`,
+  authorizationEndpoint: `${config.origin}/api/auth-url/google`,
+  tokenEndpoint: `${config.origin}/api/auth/google/callback`,
 };
+// const fDiscovery: DiscoveryDocument = {
+//   authorizationEndpoint: `${config.origin}/api/auth-url/facebook`,
+//   tokenEndpoint: `${config.origin}/api/auth/facebook/callback`,
+// };
+interface AuthRedirectResult {
+  authentication: null;
+  error: [Error] | null;
+  errorCode: null | string;
+  params: {
+    email: string;
+    name: string;
+    token: string;
+  };
+  type: "error";
+  url: string;
+}
 export default function SignIn() {
   const [isAppleAvailable, setIsAppleAvailable] = useState(false);
   const { isAgentRequest, path } = useGlobalSearchParams() as {
     isAgentRequest: string;
     path: string;
   };
-  const [request, response, promptAsync] = useAuthRequest(configs, discovery);
+  const [g, response, promptAsync] = useAuthRequest(configs, discovery);
+  // const [f, fResponse, FPromptAsync] = useAuthRequest(fConfigs, fDiscovery);
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(false);
   const [form, setForm] = React.useState({
     email: "",
     password: "",
-  });
-  const [googleRequest, googleResponse, googlePromptAsync] =
-    Google.useAuthRequest({
-      androidClientId:
-        "198305892260-ebhbeho9dtprtjbj7kjd2e16ov5m6n30.apps.googleusercontent.com",
-      iosClientId:
-        "198305892260-dqv5gtvj30hjofofa2spt2nrub7m4teb.apps.googleusercontent.com",
-      webClientId:
-        "198305892260-av6ll3dbobcc0tcaninrut8plid77o9u.apps.googleusercontent.com",
-      responseType: "code",
-    });
-  const [fbRequest, fbResponse, fbPromptAsync] = Facebook.useAuthRequest({
-    clientId: "1964809884362173",
   });
   const handleSubmit = async () => {
     hapticFeed();
@@ -117,19 +124,6 @@ export default function SignIn() {
       setLoading(false);
     }
   };
-  // ✅ Facebook response handler
-  useEffect(() => {
-    console.log(fbResponse);
-    if (fbResponse?.type === "success" && fbResponse.authentication) {
-      // (async () => {
-      //   const userInfoResponse = await fetch(
-      //     `https://graph.facebook.com/me?access_token=${fbResponse.authentication?.accessToken}&fields=id,name,email,picture.type(large)`
-      //   );
-      //   const userInfo = await userInfoResponse.json();
-      //   console.log(userInfo); // Or map fields if needed
-      // })();
-    }
-  }, [fbResponse]);
   //  Social handler (common logic)
   const handleSocialLogin = useCallback(
     async (socialData: { provider: string; token: string }) => {
@@ -165,17 +159,41 @@ export default function SignIn() {
   );
 
   useEffect(() => {
-    console.log(googleResponse);
-    if (
-      googleResponse?.type === "success" &&
-      googleResponse.authentication?.accessToken
-    ) {
-      handleSocialLogin({
-        provider: "google",
-        token: googleResponse.authentication?.accessToken,
-      });
+    if (response) {
+      handleGoogleLogin();
     }
-  }, [googleResponse, googleRequest]);
+  }, [response]);
+  // useEffect(() => {
+  //   if (fResponse) {
+  //     handleGoogleLogin();
+  //   }
+  // }, [fResponse]);
+  const handleGoogleLogin = async () => {
+    try {
+      setFetching(true);
+      const res = response as AuthRedirectResult;
+      if (res?.params.token) {
+        saveAuthToken(res.params.token);
+        const me = await getMe();
+        if (me) {
+          useStore.setState((s) => ({
+            ...s,
+            me: me,
+            hasAuth: true,
+          }));
+        }
+        return router.push("/home");
+      }
+    } catch (error) {
+      showErrorAlert({
+        title: "Error occurred during. Please try again.",
+        alertType: "error",
+      });
+    } finally {
+      setFetching(false);
+    }
+  };
+
   function onBack() {
     if (router.canGoBack()) {
       router.back();
@@ -186,13 +204,11 @@ export default function SignIn() {
   // ✅ Apple sign-in
   const handleAppleSignIn = async () => {
     try {
-      // const rawNonce = randomUUID();
       const credential = await AppleAuthentication.signInAsync({
         requestedScopes: [
           AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
           AppleAuthentication.AppleAuthenticationScope.EMAIL,
         ],
-        // nonce: rawNonce,
       });
       if (credential.identityToken) {
         await handleSocialLogin({
@@ -268,7 +284,7 @@ export default function SignIn() {
           <Button
             className=" h-12 bg-background-muted mt-4 gap-2"
             onPress={() => {
-              googlePromptAsync();
+              promptAsync();
             }}
           >
             {fetching ? (
@@ -280,9 +296,15 @@ export default function SignIn() {
               Sign in with Google
             </ButtonText>
           </Button>
+          {/* <ExternalLink
+            className="flex-1"
+            href={`${config.origin}/api/auth-url/facebook` as any}
+          >
+            <Text>Continue with Facebook</Text>
+          </ExternalLink> */}
           {/* <Button
             className="flex-1 h-12 bg-background-muted gap-2"
-            onPress={() => fbPromptAsync()}
+            onPress={() => FPromptAsync()}
           >
             <Icon size={"sm"} as={FacebookIcon} />
             <ButtonText>Continue with Facebook</ButtonText>
@@ -307,12 +329,7 @@ export default function SignIn() {
             <Text>Don’t have an account?</Text>
             <Pressable
               onPress={() => {
-                return router.push({
-                  pathname: "/(auth)/signup",
-                  params: {
-                    isAgentRequest,
-                  },
-                });
+                return router.push("/(auth)/signup");
               }}
             >
               <Text className=" text-primary font-medium">Sign Up</Text>

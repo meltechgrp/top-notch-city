@@ -1,7 +1,7 @@
 import { useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { uniqueId } from "lodash-es";
-import { useMediaCompressor } from "./useMediaCompressor";
+// import { useMediaCompressor } from "./useMediaCompressor";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
 
 type MediaType = "image" | "video";
@@ -20,25 +20,23 @@ export function useMediaUpload({
   maxSelection,
 }: UseMediaUploadOptions) {
   const [loading, setLoading] = useState(false);
-  const { compress } = useMediaCompressor();
+  // const { compress } = useMediaCompressor();
 
   const compressor = async (data: { uri: string }[]) => {
-    const result = await Promise.all(
-      data.map((file) =>
-        compress({
-          type,
-          uri: file.uri,
-          compressionRate: type === "image" ? 0.2 : undefined,
-        })
-      )
-    );
+    // const result = await Promise.all(
+    //   data.map((file) =>
+    //     compress({
+    //       type,
+    //       uri: file.uri,
+    //       compressionRate: type === "image" ? 0.2 : undefined,
+    //     })
+    //   )
+    // );
 
-    const compressed = result
-      .filter((item) => item !== null)
-      .map((item) => ({
-        uri: item!,
-        id: uniqueId("media"),
-      }));
+    const compressed = data.map((item) => ({
+      uri: item.uri!,
+      id: uniqueId("media"),
+    }));
 
     setLoading(false);
 

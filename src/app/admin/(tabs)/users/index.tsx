@@ -111,7 +111,6 @@ export default function Users() {
           <FlashList
             data={filteredData}
             keyExtractor={(item) => item.id}
-            estimatedItemSize={200}
             keyboardDismissMode="on-drag"
             onScroll={() => eventBus.dispatchEvent("SWIPEABLE_OPEN", null)}
             refreshControl={
