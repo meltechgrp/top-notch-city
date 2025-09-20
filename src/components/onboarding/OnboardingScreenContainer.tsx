@@ -20,7 +20,7 @@ export default function OnboardingScreenContainer(props: Props) {
     allowBack = true,
     withScroll = true,
     showHeader = true,
-    edges = ["top", "bottom"],
+    edges = ["top"],
     skip = false,
   } = props;
 
@@ -43,55 +43,55 @@ export default function OnboardingScreenContainer(props: Props) {
         className="flex-1 bg-cover w-full md:max-w-[1400px]"
       >
         <View className="flex-1 bg-black/30">
-          <ScreenContianer
+          {/* <ScreenContianer
             edges={edges}
             style={{ flex: 1 }}
             keyboardVerticalOffset={Platforms.isIOS() ? 20 : 0}
-          >
-            <View className="py-6 flex-1 ">
-              <View className="flex-row mt-2 items-center pb-4 px-6">
-                {allowBack && (
-                  <Pressable
-                    onPress={_onBack}
-                    className=" bg-outline-100/60 p-1.5 rounded-full"
-                  >
-                    <ChevronLeft strokeWidth={2} color={"#fff"} />
-                  </Pressable>
-                )}
-                {showHeader && (
-                  <View className="flex-1 gap-2 justify-center flex-row items-center ">
-                    <View className="w-12 h-12">
-                      <Image
-                        source={require("@/assets/images/splash.png")}
-                        alt="Logo"
-                      />
-                    </View>
+          > */}
+          <View className="py-6 flex-1 ">
+            <View className="flex-row mt-2 items-center pb-4 px-6">
+              {allowBack && (
+                <Pressable
+                  onPress={_onBack}
+                  className=" bg-outline-100/60 p-1.5 rounded-full"
+                >
+                  <ChevronLeft strokeWidth={2} color={"#fff"} />
+                </Pressable>
+              )}
+              {showHeader && (
+                <View className="flex-1 gap-2 justify-center flex-row items-center ">
+                  <View className="w-12 h-12">
+                    <Image
+                      source={require("@/assets/images/splash.png")}
+                      alt="Logo"
+                    />
                   </View>
-                )}
-                {skip && (
-                  <Pressable
-                    onPress={() => router.push("/home")}
-                    className="ml-auto"
-                  >
-                    <Text className="text-lg">Skip</Text>
-                  </Pressable>
-                )}
-              </View>
-              <ScrollView
-                keyboardShouldPersistTaps="handled"
-                contentInsetAdjustmentBehavior="automatic"
-                automaticallyAdjustsScrollIndicatorInsets={true}
-                showsVerticalScrollIndicator={false}
-                alwaysBounceVertical
-                contentInset={{ bottom: 0 }}
-                scrollIndicatorInsets={{ bottom: 0 }}
-                automaticallyAdjustKeyboardInsets={true}
-                contentContainerClassName="pt-2 px-6"
-              >
-                {children}
-              </ScrollView>
+                </View>
+              )}
+              {skip && (
+                <Pressable
+                  onPress={() => router.push("/home")}
+                  className="ml-auto"
+                >
+                  <Text className="text-lg">Skip</Text>
+                </Pressable>
+              )}
             </View>
-          </ScreenContianer>
+            <ScrollView
+              keyboardShouldPersistTaps="handled"
+              contentInsetAdjustmentBehavior="automatic"
+              automaticallyAdjustsScrollIndicatorInsets={true}
+              showsVerticalScrollIndicator={false}
+              alwaysBounceVertical
+              contentInset={{ bottom: 0 }}
+              scrollIndicatorInsets={{ bottom: 0 }}
+              automaticallyAdjustKeyboardInsets={true}
+              contentContainerClassName="pt-2 px-6"
+            >
+              {children}
+            </ScrollView>
+          </View>
+          {/* </ScreenContianer> */}
         </View>
       </ImageBackground>
     </Box>

@@ -269,9 +269,9 @@ export default function SignIn() {
             <Text className="text-sm text-primary">Forgotten Password?</Text>
           </Pressable>
         </View>
-        <Button className="w-full mt-2 gap-2" size="xl" onPress={handleSubmit}>
+        <Button className="w-full mt-2" size="xl" onPress={handleSubmit}>
           {loading && <SpinningLoader />}
-          <ButtonText>Continue</ButtonText>
+          <ButtonText>Login</ButtonText>
         </Button>
 
         <View className="flex-row mt-2 gap-3 items-center">

@@ -4,6 +4,7 @@ import {
   AvatarBadge,
   AvatarFallbackText,
   AvatarImage,
+  Pressable,
   Text,
   View,
 } from "../ui";
@@ -16,7 +17,7 @@ import { deleteChat } from "@/actions/message";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { MessageStatusIcon } from "@/components/chat/MessageStatus";
 import { useMessages } from "@/hooks/useMessages";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { TypingIndicator } from "@/components/chat/TypingIndicator";
 
 type MessageListItemProps = {
@@ -69,9 +70,8 @@ function MessageListItem(props: MessageListItemProps) {
   }
   return (
     <SwipeableWrapper leftAction={handleDelete}>
-      <Link
-        href={`/(protected)/messages/${chat.chat_id}`}
-        prefetch
+      <Pressable
+        onPress={() => router.push(`/(protected)/messages/${chat.chat_id}`)}
         className=" h-[70px] flex-1 bg-background"
       >
         <View className=" h-full w-full px-4">
@@ -138,7 +138,7 @@ function MessageListItem(props: MessageListItemProps) {
             </View>
           </View>
         </View>
-      </Link>
+      </Pressable>
     </SwipeableWrapper>
   );
 }

@@ -53,7 +53,7 @@ function CustomInputComponent({
     <View
       className={cn(
         "py-px min-h-20 gap-2 rounded-xl",
-        !title && "min-h-14",
+        !title && "min-h-14 sm:min-h-12",
         containerClassName
       )}
     >
@@ -68,7 +68,7 @@ function CustomInputComponent({
           placeholder={placeholder}
           autoCapitalize="sentences"
           className={cn(
-            " bg-background-muted text-typography placeholder:text-typography flex-1 px-4 h-14 rounded-xl",
+            " bg-background-muted text-typography placeholder:text-typography flex-1 px-4 h-14 sm:h-12 rounded-xl",
             multiline && "px-1 pt-6",
             className
           )}

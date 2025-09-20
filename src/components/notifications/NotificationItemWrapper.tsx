@@ -5,7 +5,6 @@ import ReanimatedSwipeable, {
   SwipeableMethods,
 } from "react-native-gesture-handler/ReanimatedSwipeable";
 import Reanimated, {
-  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
@@ -16,6 +15,7 @@ import eventBus from "@/lib/eventBus";
 import Animated from "react-native-reanimated";
 import { RectButton } from "react-native-gesture-handler";
 import { Colors } from "@/constants/Colors";
+import { scheduleOnRN } from "react-native-worklets";
 
 export default function NotificationItemWrapper({
   children,
@@ -40,7 +40,7 @@ export default function NotificationItemWrapper({
     // Animate out
     opacity.value = withTiming(0, { duration: 500 });
     height.value = withTiming(0, { duration: 500 }, () => {
-      runOnJS(onDelete)();
+      scheduleOnRN(onDelete);
     });
   };
   const RightAction = () => {

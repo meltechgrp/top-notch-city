@@ -13,7 +13,7 @@ export default function ScreenContianer(props: Props) {
   const {
     children,
     style,
-    edges = ["bottom", "top"],
+    edges = ["top"],
     keyboardVerticalOffset = Platforms.isIOS() ? 100 : -290,
     ...others
   } = props;

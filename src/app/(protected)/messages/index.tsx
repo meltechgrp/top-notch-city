@@ -7,17 +7,10 @@ import React, { useEffect } from "react";
 import { RefreshControl } from "react-native";
 import { useChat } from "@/hooks/useChat";
 import { AppState } from "react-native";
-import { useIsFocused } from "@react-navigation/native";
 
 export default function MessagesScreen() {
   const { chats, loading, refreshing, refetch } = useChat();
-  const isFocused = useIsFocused();
 
-  useEffect(() => {
-    if (isFocused) {
-      refetch();
-    }
-  }, [isFocused]);
   useEffect(() => {
     const sub = AppState.addEventListener("change", (state) => {
       refetch();
