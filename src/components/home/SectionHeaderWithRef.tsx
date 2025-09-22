@@ -10,6 +10,7 @@ type Props = {
   style?: StyleProp<ViewStyle>;
   className?: string;
   titleClassName?: string;
+  hasData?: boolean;
 };
 export default function SectionHeaderWithRef(props: Props) {
   const {
@@ -20,9 +21,13 @@ export default function SectionHeaderWithRef(props: Props) {
     titleClassName,
     subTitle,
     className,
+    hasData = false,
   } = props;
   return (
-    <View style={[style]} className={cn("my-4 bg-transparent", className)}>
+    <View
+      style={[style]}
+      className={cn("my-4 bg-transparent hidden", hasData && "flex", className)}
+    >
       <View className="flex-row justify-between py-2 mb-1 px-4 items-center">
         <Heading
           className={cn("text-xl font-bold text-typography/80", titleClassName)}

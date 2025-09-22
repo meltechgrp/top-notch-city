@@ -14,6 +14,7 @@ const TopProperties = () => {
       title="Trending Properties"
       titleClassName="text-gray-400 text-base"
       subTitle="See More"
+      hasData={trending?.length > 0}
       onSeeAllPress={() => {
         router.push({
           pathname: "/search",

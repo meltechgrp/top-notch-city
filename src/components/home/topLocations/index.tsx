@@ -10,6 +10,7 @@ const TopLocations = () => {
       titleClassName="text-gray-400 text-base"
       subTitle="Explore"
       className=""
+      hasData
       onSeeAllPress={() => {
         router.push({
           pathname: "/search",

@@ -13,6 +13,7 @@ function RecentProperties() {
       title="Recently Added"
       titleClassName="text-gray-400 text-base"
       subTitle="See More"
+      hasData={latest?.length > 0}
       onSeeAllPress={() => {
         router.push({
           pathname: "/search",

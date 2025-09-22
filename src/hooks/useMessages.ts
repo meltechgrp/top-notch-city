@@ -1,5 +1,9 @@
 import { useEffect } from "react";
-import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { useChatStore } from "@/store/chatStore";
 import {
   getChatMessages,
@@ -12,6 +16,7 @@ import { useShallow } from "zustand/react/shallow";
 
 export function useMessages(chatId: string) {
   const { playSound } = useSound();
+  const query = useQueryClient();
   const {
     updateChatMessages,
     clearChatMessages,
@@ -76,6 +81,9 @@ export function useMessages(chatId: string) {
               status: "error",
             });
             playSound("MESSAGE_SENT");
+            query.invalidateQueries({
+              queryKey: ["chats"],
+            });
           },
         }
       );
@@ -112,6 +120,9 @@ export function useMessages(chatId: string) {
               read: m?.read,
             });
             playSound("MESSAGE_SENT");
+            query.invalidateQueries({
+              queryKey: ["chats"],
+            });
           },
         }
       );

@@ -13,6 +13,7 @@ function FeaturedProperties() {
       title="Featured Properties"
       titleClassName="text-gray-400 text-base"
       subTitle="See More"
+      hasData={featured?.length > 0}
       onSeeAllPress={() => {
         router.push({
           pathname: "/search",

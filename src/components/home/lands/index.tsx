@@ -14,6 +14,7 @@ const Lands = () => {
       title="Trending Lands"
       titleClassName="text-gray-400 text-base"
       subTitle="See More"
+      hasData={lands?.length > 0}
       onSeeAllPress={() => {
         router.push({
           pathname: "/search",
