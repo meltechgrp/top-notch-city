@@ -26,6 +26,8 @@ export function useWebSocketConnection(url: string | null) {
   const [isConnected, setIsConnected] = useState(false);
   const reconnectAttempts = useRef(0);
   const reconnectTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const subscribers = useRef<((data: any) => void)[]>([]);
+  const pingInterval = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const connect = () => {
     if (!url) return;
@@ -48,18 +50,23 @@ export function useWebSocketConnection(url: string | null) {
       // console.error("❌ WebSocket error:", error);
     };
 
+    socket.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        subscribers.current.forEach((h) => h(data));
+      } catch (err) {
+        console.error("❌ Failed to parse message:", event.data);
+      }
+    };
     ws.current = socket;
   };
 
   const attemptReconnect = () => {
-    const maxAttempts = 5;
-    if (reconnectAttempts.current < maxAttempts) {
-      const timeout = Math.min(1000 * 2 ** reconnectAttempts.current, 30000);
-      reconnectTimeout.current = setTimeout(() => {
-        reconnectAttempts.current += 1;
-        connect();
-      }, timeout);
-    }
+    const timeout = Math.min(1000 * 2 ** reconnectAttempts.current, 30000);
+    reconnectTimeout.current = setTimeout(() => {
+      reconnectAttempts.current += 1;
+      connect();
+    }, timeout);
   };
 
   const closeConnection = () => {
@@ -75,19 +82,37 @@ export function useWebSocketConnection(url: string | null) {
     }
   };
 
+  // const setOnMessage = (handler: (data: any) => void) => {
+  //   if (!ws.current) return;
+  //   ws.current.onmessage = (event) => {
+  //     try {
+  //       const raw = event.data;
+  //       const data = typeof raw === "string" ? JSON.parse(raw) : raw;
+
+  //       ws.current?.send("pong");
+  //       handler(data);
+  //     } catch (err) {
+  //       console.error("❌ Failed to parse message:", event.data);
+  //     }
+  //   };
+  // };
   const setOnMessage = (handler: (data: any) => void) => {
-    if (!ws.current) return;
-    ws.current.onmessage = (event) => {
-      try {
-        const raw = event.data;
-        const data = typeof raw === "string" ? JSON.parse(raw) : raw;
-        handler(data);
-      } catch (err) {
-        console.error("❌ Failed to parse message:", event.data);
-      }
-    };
+    subscribers.current.push(handler);
   };
 
+  useEffect(() => {
+    if (isConnected && ws.current) {
+      pingInterval.current = setInterval(() => {
+        if (ws.current?.readyState === WebSocket.OPEN) {
+          ws.current.send(JSON.stringify({ type: "ping" }));
+        }
+      }, 25000); // every 25s
+    }
+
+    return () => {
+      pingInterval.current && clearInterval(pingInterval.current);
+    };
+  }, [isConnected]);
   useEffect(() => {
     return () => {
       reconnectTimeout.current && clearTimeout(reconnectTimeout.current);

@@ -1,6 +1,6 @@
 import { Box } from "@/components/ui";
 import { ScrollView } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import {
   FileQuestion,
   MessageCircleMoreIcon,
@@ -9,9 +9,11 @@ import {
 import { MenuListItem } from "@/components/menu/MenuListItem";
 import { Divider } from "@/components/ui/divider";
 import { useRouter } from "expo-router";
+import CustomerCareBottomSheet from "@/components/modals/CustomerCareBottomSheet";
 
 export default function SupportScreen() {
   const router = useRouter();
+  const [staffs, setStaffs] = useState(false);
   return (
     <>
       <Box className={"flex-1"}>
@@ -32,14 +34,7 @@ export default function SupportScreen() {
           <MenuListItem
             title="Chat With Us"
             description="Send an in-app message"
-            onPress={() =>
-              router.replace({
-                pathname: "/message",
-                params: {
-                  chat: "new",
-                },
-              })
-            }
+            onPress={() => setStaffs(true)}
             icon={MessageCircleMoreIcon}
             iconColor="primary"
             className=" py-2"
@@ -55,6 +50,12 @@ export default function SupportScreen() {
           />
         </ScrollView>
       </Box>
+      <CustomerCareBottomSheet
+        visible={staffs}
+        onDismiss={() => {
+          setStaffs(false);
+        }}
+      />
     </>
   );
 }

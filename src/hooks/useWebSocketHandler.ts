@@ -20,7 +20,7 @@ export function useWebSocketHandler() {
     deleteChatMessage,
   } = useChatStore.getState();
   const { updatetotalUnreadChat } = useHomeFeed();
-  const { updateChatListDetails } = useChat();
+  const { updateChatListDetails, refetch } = useChat();
 
   const { connect, setOnMessage, ...rest } = useWebSocketConnection(url);
 
@@ -86,6 +86,7 @@ export function useWebSocketHandler() {
           break;
         case "chat_list_update":
           const chats = data?.chats as ChatList["details"][];
+          console.log(chats[0]);
           chats?.forEach((c) => {
             updateChatListDetails(c);
           });

@@ -105,7 +105,11 @@ function MessageListItem(props: MessageListItemProps) {
                 {!typing && chat?.recent_message && (
                   <View className="flex flex-row gap-4 w-full">
                     <View className="flex-1 flex-row gap-2 items-center overflow-hidden">
-                      {/* {isMine && <MessageStatusIcon status={chat?.recent_message?.status} />} */}
+                      {isMine && (
+                        <MessageStatusIcon
+                          status={chat?.recent_message?.status}
+                        />
+                      )}
                       <Text
                         className="text-typography/60 text-sm"
                         ellipsizeMode="tail"

@@ -18,6 +18,7 @@ interface Chat {
     content: string;
     created_at: string;
     read: string;
+    status: "pending" | "seen" | "delivered" | "sent" | "error";
     file_data: FileData[];
   };
   unread_count: number;

@@ -34,11 +34,28 @@ export function useChat() {
       updateChatList(chats);
     }
   }, [chatData]);
-
   const chats = useMemo(
     () => chatData?.chats || getChatList(),
     [chatData, getChatList]
   );
+  useEffect(() => {
+    chats.forEach((chat) => {
+      queryClient.prefetchInfiniteQuery({
+        queryKey: ["messages", chat.chat_id],
+        queryFn: async ({ pageParam = 1 }) => {
+          const messagesData = await getChatMessages({
+            pageParam,
+            chatId: chat.chat_id,
+          });
+          if (messagesData?.messages) {
+            updateChatMessages(chat.chat_id, messagesData.messages);
+          }
+          return messagesData;
+        },
+        initialPageParam: 1,
+      });
+    });
+  }, [chats]);
   return {
     chats,
     refetch: refetchChats,

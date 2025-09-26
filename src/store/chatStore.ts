@@ -175,23 +175,25 @@ export const useChatStore = create<ChatState>(
       },
       updateUserStatus: (chatId, status) => {
         set((state) => {
-          const chatList = state.chatList ? [...state.chatList] : [];
-          const index = chatList.findIndex(
+          if (!state.chatList) return {};
+
+          const index = state.chatList.findIndex(
             (c) => String(c.details.chat_id) === String(chatId)
           );
+          if (index === -1) return {};
 
-          if (index !== -1) {
-            chatList[index] = {
-              ...chatList[index],
-              details: {
-                ...chatList[index].details,
-                receiver: {
-                  ...chatList[index].details.receiver,
-                  status,
-                },
+          const chatList = [...state.chatList];
+          chatList[index] = {
+            ...chatList[index],
+            details: {
+              ...chatList[index].details,
+              receiver: {
+                ...(chatList[index].details.receiver ?? {}),
+                status,
               },
-            };
-          }
+            },
+          };
+
           return { chatList };
         });
       },
@@ -262,7 +264,6 @@ export const useChatStore = create<ChatState>(
           const exists = state.chatList.find(
             (c) => c.details.chat_id === data.chat_id
           );
-
           if (exists) {
             // Update existing chat details
             return {
