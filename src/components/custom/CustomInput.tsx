@@ -1,12 +1,14 @@
-import { View, Text, useResolvedTheme } from "@/components/ui";
+import { Icon, Pressable, Text, useResolvedTheme, View } from "@/components/ui";
 import { Colors } from "@/constants/Colors";
 import { cn } from "@/lib/utils";
-import { memo, useMemo } from "react";
+import { router } from "expo-router";
+import { Eye, EyeOff } from "lucide-react-native";
+import { memo, useMemo, useState } from "react";
 import { TextInput, TextInputProps } from "react-native";
 
 interface Props extends Partial<TextInputProps> {
   multiline?: boolean;
-  isBottomSheet?: boolean;
+  isLogin?: boolean;
   title?: string;
   onUpdate: (val: string) => void;
   errorMesssage?: string;
@@ -24,7 +26,7 @@ function CustomInputComponent({
   keyboardType,
   multiline,
   numberOfLines,
-  isBottomSheet = true,
+  isLogin = false,
   returnKeyType,
   className,
   returnKeyLabel,
@@ -35,16 +37,16 @@ function CustomInputComponent({
   ...props
 }: Props) {
   const theme = useResolvedTheme();
+  const [secure, setSecure] = useState(props.secureTextEntry || false);
   const multilineStyle = useMemo(
     () =>
       multiline
         ? {
             height: height || 120,
             textAlignVertical: "top" as const,
-            padding: isBottomSheet ? 10 : undefined,
           }
         : {},
-    [multiline, height, isBottomSheet]
+    [multiline, height]
   );
 
   const textColor = useMemo(() => ({ color: Colors[theme].text }), [theme]);
@@ -52,27 +54,42 @@ function CustomInputComponent({
   return (
     <View
       className={cn(
-        "py-px min-h-20 gap-2 rounded-xl",
-        !title && "min-h-14 sm:min-h-12",
+        "py-px min-h-[5rem] gap-2 rounded-xl",
+        !title && "min-h-[3.5rem]",
         containerClassName
       )}
     >
       {title && (
-        <View className="px-2">
-          <Text>{title}</Text>
+        <View className="px-2 flex-row items-center justify-between">
+          <Text className=" text-typography text-sm">{title}</Text>
+          {isLogin && (
+            <Pressable
+              onPress={() => {
+                router.push("/(auth)/reset-password");
+              }}
+            >
+              <Text className="text-sm text-primary">Forgotten Password?</Text>
+            </Pressable>
+          )}
         </View>
       )}
-      <View className="flex-1">
+      <View
+        className={cn(
+          " bg-background-muted flex-1 flex-row justify-between items-center px-4 h-[3.5rem] rounded-xl",
+          multiline && "px-1 pt-6",
+          className
+        )}
+      >
         <TextInput
           {...props}
           placeholder={placeholder}
           autoCapitalize="sentences"
           className={cn(
-            " bg-background-muted text-typography placeholder:text-typography flex-1 px-4 h-14 sm:h-12 rounded-xl",
-            multiline && "px-1 pt-6",
-            className
+            "text-typography placeholder:text-typography-muted focus:outline-none flex-1 h-full rounded-xl",
+            multiline && "px-1 pt-6"
           )}
           value={value}
+          secureTextEntry={secure}
           keyboardType={keyboardType}
           multiline={multiline}
           numberOfLines={numberOfLines}
@@ -81,6 +98,15 @@ function CustomInputComponent({
           returnKeyType={returnKeyType}
           style={[multilineStyle, textColor]}
         />
+        {props.secureTextEntry && (
+          <Pressable className="py-2 pl-2" onPress={() => setSecure((p) => !p)}>
+            {secure ? (
+              <Icon size={"sm"} as={EyeOff} />
+            ) : (
+              <Icon size={"sm"} as={Eye} />
+            )}
+          </Pressable>
+        )}
       </View>
     </View>
   );

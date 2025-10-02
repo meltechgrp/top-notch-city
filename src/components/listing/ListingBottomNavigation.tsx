@@ -10,12 +10,14 @@ type Props = {
   step: number;
   onUpdate: (step: number, back?: boolean) => void;
   uploaHandler: () => Promise<any>;
+  isEdit?: boolean;
 };
 
 export default function ListingBottomNavigation({
   step,
   onUpdate,
   uploaHandler,
+  isEdit,
 }: Props) {
   const colorSchemeName = useResolvedTheme();
   async function handleUpload() {
@@ -51,7 +53,7 @@ export default function ListingBottomNavigation({
             className="px-6"
             onPress={async () => await handleUpload()}
           >
-            <ButtonText>Upload</ButtonText>
+            <ButtonText>{isEdit ? "Update" : "Upload"}</ButtonText>
             <Icon size="sm" as={Upload} color="white" />
           </Button>
         ) : (

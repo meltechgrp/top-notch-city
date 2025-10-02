@@ -38,7 +38,7 @@ export default function AgentSuccessScreen() {
         <Button
           onPress={() => router.replace("/home")}
           size="xl"
-          className="mt-8 w-1/2 mx-auto rounded-full"
+          className="mt-8 self-center rounded-xl"
         >
           <ButtonText>Back to Home</ButtonText>
         </Button>

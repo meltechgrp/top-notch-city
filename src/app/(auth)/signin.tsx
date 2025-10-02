@@ -245,8 +245,8 @@ export default function SignIn() {
         </View>
         <CustomInput
           className="bg-background-muted"
-          isBottomSheet={true}
           value={form.email}
+          title="Email"
           autoCapitalize="words"
           autoComplete="email"
           onUpdate={(text) => setForm({ ...form, email: text })}
@@ -255,20 +255,12 @@ export default function SignIn() {
         <CustomInput
           className="bg-background-muted"
           value={form.password}
+          title="Password"
           secureTextEntry
-          isBottomSheet={true}
+          isLogin={true}
           onUpdate={(text) => setForm({ ...form, password: text })}
-          placeholder="Password"
+          placeholder="•••••••••"
         />
-        <View className=" items-end">
-          <Pressable
-            onPress={() => {
-              router.push("/(auth)/reset-password");
-            }}
-          >
-            <Text className="text-sm text-primary">Forgotten Password?</Text>
-          </Pressable>
-        </View>
         <Button className="w-full mt-2" size="xl" onPress={handleSubmit}>
           {loading && <SpinningLoader />}
           <ButtonText>Login</ButtonText>

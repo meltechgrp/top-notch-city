@@ -19,7 +19,6 @@ export default function ListingBasis() {
                 Price <Text className="text-primary">*</Text>
               </Text>
               <CustomInput
-                isBottomSheet={false}
                 keyboardType="numeric"
                 placeholder="Enter price"
                 value={formatNumber(listing.price)}

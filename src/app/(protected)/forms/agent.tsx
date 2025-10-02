@@ -106,7 +106,6 @@ export default function AgentFormScreen() {
                 </View>
               </TouchableOpacity>
               <CustomInput
-                isBottomSheet={false}
                 className=""
                 value={form.phone}
                 onUpdate={(text) => setForm({ ...form, phone: text })}
@@ -127,7 +126,7 @@ export default function AgentFormScreen() {
               />
 
               {/* <CustomInput
-                isBottomSheet={false}
+                
                 className=""
                 value={form.nin}
                 onUpdate={(text) => setForm({ ...form, nin: text })}
@@ -139,7 +138,6 @@ export default function AgentFormScreen() {
             {/* Location Information */}
             <View className="gap-4 mt-6">
               <CustomInput
-                isBottomSheet={false}
                 className=""
                 value={form.country}
                 onUpdate={(text) => setForm({ ...form, country: text })}
@@ -147,7 +145,6 @@ export default function AgentFormScreen() {
               />
 
               <CustomInput
-                isBottomSheet={false}
                 className=""
                 value={form.state}
                 onUpdate={(text) => setForm({ ...form, state: text })}
@@ -155,7 +152,6 @@ export default function AgentFormScreen() {
               />
 
               <CustomInput
-                isBottomSheet={false}
                 className=""
                 value={form.city}
                 onUpdate={(text) => setForm({ ...form, city: text })}

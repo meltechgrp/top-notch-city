@@ -60,16 +60,12 @@ function MessageActionsBottomSheet(props: Props) {
             },
           ]
         : []),
-      ...(isMine
-        ? [
-            {
-              label: "Delete for Me",
-              value: "delete" as const,
-              icon: <Icon as={Trash} />,
-              destructive: true,
-            },
-          ]
-        : []),
+      {
+        label: "Delete for Me",
+        value: "delete" as const,
+        icon: <Icon as={Trash} />,
+        destructive: true,
+      },
       ...(isMine
         ? [
             {

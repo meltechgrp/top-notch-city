@@ -185,7 +185,7 @@ export default function PropertyEdit() {
                     setEditingMode(false);
                   }}
                   size="md"
-                  className="mb-1"
+                  className="mb-1 min-w-16"
                 >
                   <ButtonText>Cancel</ButtonText>
                 </Button>
@@ -221,6 +221,7 @@ export default function PropertyEdit() {
               </Animated.View>
               <ListingBottomNavigation
                 step={listing.step}
+                isEdit
                 uploaHandler={uploaHandler}
                 onUpdate={handleNext}
               />

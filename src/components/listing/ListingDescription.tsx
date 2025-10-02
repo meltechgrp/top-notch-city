@@ -16,7 +16,6 @@ export default function ListingDescription() {
           </Text>
         </View>
         <CustomInput
-          isBottomSheet={false}
           height={200}
           placeholder="Enter property description"
           value={listing.description}

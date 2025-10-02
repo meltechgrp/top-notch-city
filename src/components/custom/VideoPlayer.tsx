@@ -20,6 +20,7 @@ import { ReelsShareSheet } from "@/components/modals/ReelsBottomsheet";
 import config from "@/config";
 import { hapticFeed } from "@/components/HapticTab";
 import { ReelViewsController } from "@/components/reel/ReelViewsController";
+import Platforms from "@/constants/Plaforms";
 
 export const VideoPlayer = memo(
   forwardRef<VideoPlayerHandle, VideoPlayerProps>(
@@ -199,6 +200,7 @@ export const VideoPlayer = memo(
                       setShowBottomSheet={() => setShowBottomSheet(true)}
                       currentTime={currentTime || 0}
                       length={length}
+                      showSlider={Platforms.isIOS()}
                       inTab={inTab}
                     />
                   )}

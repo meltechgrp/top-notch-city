@@ -60,14 +60,12 @@ const ReportReviewScreen = () => {
             </Text>
           </View>
           <CustomInput
-            isBottomSheet={false}
             title="Full Name"
             value={formData.full_name}
             onUpdate={handleUpdate("full_name")}
             placeholder="Enter your full name"
           />
           <CustomInput
-            isBottomSheet={false}
             title="Email"
             value={formData.email}
             onUpdate={handleUpdate("email")}
@@ -75,7 +73,6 @@ const ReportReviewScreen = () => {
             keyboardType="email-address"
           />
           <CustomInput
-            isBottomSheet={false}
             title="Message"
             value={formData.message}
             onUpdate={handleUpdate("message")}

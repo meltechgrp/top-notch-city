@@ -94,7 +94,6 @@ export default function ListingLocation({ height }: { height?: number }) {
               <CustomInput
                 placeholder={"Search property location..."}
                 value={text}
-                isBottomSheet={false}
                 containerClassName="flex-1"
                 className=" border-0 flex-1 h-full p-0"
                 inputClassName=" bg-transparent h-12 border-0 p-0"

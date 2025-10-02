@@ -82,7 +82,6 @@ function ListingAddressBottomSheet(props: Props) {
             <CustomInput
               placeholder="Search property location..."
               value={text}
-              isBottomSheet={false}
               className=" border-0 flex-1 h-full p-0"
               inputClassName=" bg-transparent h-12 border-0 p-0"
               onUpdate={onChangeText}

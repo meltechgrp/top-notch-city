@@ -58,7 +58,7 @@ function PlayerController({
     return `${min}:${sec < 10 ? "0" : ""}${sec}`;
   };
   return (
-    <View className="absolute bottom-0 w-full left-0 right-0 ">
+    <View className="absolute ios:bottom-0 bottom-10 w-full left-0 right-0 ">
       {/* Time */}
       <View className={cn("flex-1 gap-2 pb-1 android:pb-4", isLand && "pb-8")}>
         <View className="flex-row justify-between items-end gap-4 px-3">
