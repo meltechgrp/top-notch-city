@@ -1,7 +1,7 @@
 import { useState } from "react";
 import * as Haptics from "expo-haptics";
 import { Alert } from "react-native";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { deleteChatMessage } from "@/actions/message";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { useChatStore } from "@/store/chatStore";
@@ -123,13 +123,13 @@ export default function useMessageActions(args: Args) {
       ]
     );
   }
+  const [isEditing, setIsEditing] = useState(false);
 
   async function handleEdit() {
     setIsEditing(true);
     focusEditor();
     setEditorText(selectedMessage?.content || "");
   }
-  const [isEditing, setIsEditing] = useState(false);
   function exitEditMode() {
     setIsEditing(false);
     setEditorText("");

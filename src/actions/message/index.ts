@@ -22,10 +22,17 @@ export async function startChat({ property_id, member_id }: StartChat) {
     return result as string;
   }
 }
-export async function sendMessage({ chat_id, content, files }: SendMessage) {
+export async function sendMessage({
+  chat_id,
+  content,
+  files,
+  reply_to_message_id,
+}: SendMessage) {
   const formData = new FormData();
 
   if (chat_id) formData.append("chat_id", chat_id);
+  if (reply_to_message_id)
+    formData.append("reply_to_message_id", reply_to_message_id);
   if (content) formData.append("content", content);
   files?.forEach((item, index) => {
     formData.append("media", {

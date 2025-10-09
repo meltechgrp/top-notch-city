@@ -88,11 +88,11 @@ export function useMessages(chatId: string) {
         }
       );
     } else {
-      const { file_data, content } = data;
+      const { file_data, content, reply_to_message_id } = data;
       addPendingMessage(chatId, [data]);
 
       await send(
-        { chat_id: chatId, content, files: file_data },
+        { chat_id: chatId, content, files: file_data, reply_to_message_id },
         {
           onError: (e) => {
             updateMessageStatus(chatId, data.message_id, "error");

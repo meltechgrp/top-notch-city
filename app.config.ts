@@ -2,12 +2,12 @@ export default () => ({
   name: "TopNotch City",
   slug: "topnotch-city",
   newArchEnabled: true,
-  version: "1.0.1",
+  version: "1.0.2",
   orientation: "portrait",
   icon: "./src/assets/images/icon.png",
   scheme: "com.meltech.topnotchcity",
   userInterfaceStyle: "automatic",
-  runtimeVersion: "1.0.1",
+  runtimeVersion: "1.0.2",
   updates: {
     fallbackToCacheTimeout: 0,
     url: `https://u.expo.dev/d21cedf2-e98d-42e9-bf8b-6d52e1a7ef20`,
@@ -20,7 +20,7 @@ export default () => ({
     supportsTablet: false,
     usesAppleSignIn: true,
     bundleIdentifier: "com.meltech.topnotchcity",
-    runtimeVersion: "1.0.1",
+    runtimeVersion: "1.0.2",
     infoPlist: {
       NSLocationWhenInUseUsageDescription:
         "Allow $(PRODUCT_NAME) to access your location to show nearby properties and map search.",

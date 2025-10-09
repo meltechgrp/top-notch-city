@@ -265,11 +265,10 @@ export const useChatStore = create<ChatState>(
             (c) => c.details.chat_id === data.chat_id
           );
           if (exists) {
-            // Update existing chat details
             return {
               chatList: state.chatList.map((c) =>
                 c.details.chat_id === data.chat_id
-                  ? { ...c, details: { ...data } }
+                  ? { ...c, details: { ...c.details, ...data } }
                   : c
               ),
             };

@@ -1,9 +1,10 @@
 import { ChatRoomMessageProps } from "@/components/chat/ChatRoomMessage";
+import QuoteMessage from "@/components/chat/ChatRoomQuoteMessage";
 import Editor, { EditorComponentRefHandle } from "@/components/custom/Editor";
 import { guidGenerator } from "@/lib/utils";
 import { useStore } from "@/store";
 import { ImagePickerAsset } from "expo-image-picker";
-import React from "react";
+import React, { useCallback } from "react";
 import { View } from "react-native";
 
 type Props = View["props"] & {
@@ -48,6 +49,7 @@ const ChatRoomFooter = React.forwardRef<EditorComponentRefHandle, Props>(
           sender_info: {
             id: me.id,
           },
+          reply_to_message_id: activeQuoteMsg?.message_id,
           isMock: true,
           status: "pending",
           file_data: files?.map((f) => ({
@@ -62,11 +64,23 @@ const ChatRoomFooter = React.forwardRef<EditorComponentRefHandle, Props>(
         clearActiveQuoteMsg();
       }
     }
+    const Quote = useCallback(
+      () => (
+        <View className="px-4 pb-0 pt-2">
+          <QuoteMessage
+            quote={activeQuoteMsg!}
+            forEditor={true}
+            onClear={clearActiveQuoteMsg}
+          />
+        </View>
+      ),
+      [activeQuoteMsg, clearActiveQuoteMsg]
+    );
     return (
       <View>
         <Editor
           chatId={chatId}
-          headerComponent={null}
+          HeaderComponent={activeQuoteMsg ? Quote : null}
           onSend={onSubmit}
           placeholder={placeholder}
           className={className}

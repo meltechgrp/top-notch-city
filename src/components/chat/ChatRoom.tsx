@@ -24,6 +24,7 @@ import BackgroundView from "@/components/layouts/BackgroundView";
 import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
 import { useChat } from "@/hooks/useChat";
 import { TypingIndicator } from "@/components/chat/TypingIndicator";
+import EditOverlay from "@/components/chat/EditOverlay";
 
 const InitialNumToRender = 30;
 type Props = {
@@ -228,6 +229,12 @@ export default function ChatRoom(props: Props) {
           </View>
         ) : null}
         {!messages?.length && <EmptyScreen message={"This space is empty"} />}
+
+        {/* <EditOverlay
+          visible={isEditing}
+          onDismiss={() => exitEditMode()}
+          activeMessage={selectedMessage}
+        /> */}
       </View>
       {typing && (
         <View style={{ padding: 10 }}>

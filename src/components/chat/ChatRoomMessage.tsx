@@ -17,7 +17,8 @@ import { useLayout } from "@react-native-community/hooks";
 import { hapticFeed } from "@/components/HapticTab";
 import { MessageStatusIcon } from "@/components/chat/MessageStatus";
 import { router } from "expo-router";
-import { CircleAlert, RotateCcw } from "lucide-react-native";
+import { RotateCcw } from "lucide-react-native";
+import QuoteMessage from "@/components/chat/ChatRoomQuoteMessage";
 
 export type ChatRoomMessageProps = View["props"] & {
   me: Me;
@@ -197,25 +198,29 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
                 </Pressable>
               </View>
             )}
+
+            {!!message?.reply_to && (
+              <QuoteMessage quote={message.reply_to as any} />
+            )}
             <Pressable
-              // className={cn([
-              //   "rounded-lg overflow-hidden gap-2",
-              //   isMine
-              //     ? "bg-primary  active:bg-primary"
-              //     : "bg-background-muted active:bg-bg-background-info",
-              // ])}
+              className={cn([
+                "rounded-lg flex-row items-end overflow-hidden gap-1",
+                // isMine
+                //   ? "bg-primary  active:bg-primary"
+                //   : "bg-background-muted active:bg-bg-background-info",
+              ])}
               {...pressProps}
             >
               {message?.content && (
-                <View className="px-1 mb-1">
+                <View className="px-1">
                   <PostTextContent
                     text={message.content || ""}
                     isMine={isMine}
                   />
                 </View>
               )}
+              {messageInfo}
             </Pressable>
-            {messageInfo}
             {!isMine && <View className="flex-1" />}
           </View>
         </Pressable>

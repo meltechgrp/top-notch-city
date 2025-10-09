@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { useChat } from "@/hooks/useChat";
 import { useHomeFeed } from "@/hooks/useHomeFeed";
 import { getAuthToken } from "@/lib/secureStore";
 import { useWebSocketConnection } from "@/actions/utills";
@@ -18,9 +17,9 @@ export function useWebSocketHandler() {
     setTyping,
     updateUserStatus,
     deleteChatMessage,
+    updateChatListDetails,
   } = useChatStore.getState();
   const { updatetotalUnreadChat } = useHomeFeed();
-  const { updateChatListDetails, refetch } = useChat();
 
   const { connect, setOnMessage, ...rest } = useWebSocketConnection(url);
 
@@ -30,7 +29,7 @@ export function useWebSocketHandler() {
     connect();
 
     setOnMessage((data) => {
-      console.log("📨 Message:", data, data?.type);
+      // console.log("📨 Message:", data, data?.type);
 
       switch (data.type) {
         case "new_message":
@@ -86,8 +85,8 @@ export function useWebSocketHandler() {
           break;
         case "chat_list_update":
           const chats = data?.chats as ChatList["details"][];
-          console.log(chats[0]);
           chats?.forEach((c) => {
+            console.log(c);
             updateChatListDetails(c);
           });
           break;

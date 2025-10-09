@@ -46,11 +46,11 @@ function MessageActionsBottomSheet(props: Props) {
             },
           ]
         : []),
-      // {
-      //   label: "Reply",
-      //   value: "reply" as const,
-      //   icon: <Icon as={Reply} />,
-      // },
+      {
+        label: "Reply",
+        value: "reply" as const,
+        icon: <Icon as={Reply} />,
+      },
       ...(isMine && message?.content && message.content.trim().length > 0
         ? [
             {
@@ -94,9 +94,9 @@ function MessageActionsBottomSheet(props: Props) {
 
   const handleActionPress = (action: (typeof messageActions)[0]) => {
     switch (action.value) {
-      // case "reply":
-      //   handleReply();
-      //   break;
+      case "reply":
+        handleReply();
+        break;
 
       case "copy":
         handleCopy();

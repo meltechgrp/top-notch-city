@@ -29,7 +29,7 @@ type Props = View["props"] & {
   placeholder?: string;
   commentId?: string | null;
   value?: string;
-  headerComponent?: React.ReactNode;
+  HeaderComponent?: any;
   noMedia?: boolean;
   chatId: string;
 };
@@ -50,7 +50,7 @@ const EditorComponent = React.forwardRef<
     commentId,
     onBlur,
     className,
-    headerComponent,
+    HeaderComponent,
     fileLimit = 3,
     autoFocus,
     value = "",
@@ -118,7 +118,7 @@ const EditorComponent = React.forwardRef<
     <View
       className={cn("w-full relative border-t border-t-outline", className)}
     >
-      {headerComponent}
+      {HeaderComponent && <HeaderComponent />}
       <MediaPicker
         ref={mediaPickerRef as any}
         max={fileLimit}

@@ -2,6 +2,7 @@ import { useEffect, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useChatStore } from "@/store/chatStore";
 import { getChatMessages, getChats } from "@/actions/message";
+import { useShallow } from "zustand/react/shallow";
 
 export function useChat() {
   const {
@@ -34,10 +35,8 @@ export function useChat() {
       updateChatList(chats);
     }
   }, [chatData]);
-  const chats = useMemo(
-    () => chatData?.chats || getChatList(),
-    [chatData, getChatList]
-  );
+
+  const chats = useChatStore(useShallow((s) => s.getChatList()));
   useEffect(() => {
     chats.forEach((chat) => {
       queryClient.prefetchInfiniteQuery({

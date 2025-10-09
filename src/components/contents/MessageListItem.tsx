@@ -19,13 +19,17 @@ import { MessageStatusIcon } from "@/components/chat/MessageStatus";
 import { useMessages } from "@/hooks/useMessages";
 import { Link, router } from "expo-router";
 import { TypingIndicator } from "@/components/chat/TypingIndicator";
+import { useShallow } from "zustand/react/shallow";
+import { useChatStore } from "@/store/chatStore";
 
 type MessageListItemProps = {
   chat: Chat;
 };
 function MessageListItem(props: MessageListItemProps) {
   const { chat } = props;
-  const { message, typing } = useMessages(chat.chat_id);
+  const { message } = useMessages(chat.chat_id);
+
+  const typing = useChatStore(useShallow((s) => s.getTyping(chat.chat_id)));
   const queryClient = useQueryClient();
   const { me } = useStore();
   const { mutateAsync } = useMutation({
@@ -105,11 +109,11 @@ function MessageListItem(props: MessageListItemProps) {
                 {!typing && chat?.recent_message && (
                   <View className="flex flex-row gap-4 w-full">
                     <View className="flex-1 flex-row gap-2 items-center overflow-hidden">
-                      {isMine && (
-                        <MessageStatusIcon
-                          status={chat?.recent_message?.status}
-                        />
-                      )}
+                      {/* {isMine && ( */}
+                      <MessageStatusIcon
+                        status={chat?.recent_message?.status}
+                      />
+                      {/* )} */}
                       <Text
                         className="text-typography/60 text-sm"
                         ellipsizeMode="tail"

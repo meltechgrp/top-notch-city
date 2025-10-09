@@ -36,6 +36,13 @@ interface Message {
   updated_at?: string;
   deleted_at?: string;
   isMock?: boolean;
+  reply_to_message_id?: string;
+  reply_to?: {
+    message_id: string;
+    file_data: FileData[];
+    sender_info: SenderInfo;
+    created_at: string;
+  };
   property_info?: {
     id: string;
     title: string;
@@ -72,6 +79,7 @@ interface SendMessage {
   chat_id: string;
   content: string;
   files?: FileData[];
+  reply_to_message_id?: string;
 }
 
 interface FileData {

@@ -27,13 +27,12 @@ function EditOverlay(props: Props) {
       navigation.removeListener("beforeRemove", dismissEditOverlay);
     };
   }, [visible]);
-
   return (
     <View className="absolute top-0 right-0 left-0 bottom-0 flex-1">
       <View className="bg-black-900/60 flex-1 justify-end items-end pb-4">
         <View className="bg-primary p-3 rounded-lg mr-4 mt-4">
           <ScrollView fadingEdgeLength={30} style={{ flexGrow: 0 }}>
-            <Text className="">fgfgdhfd</Text>
+            <Text className="">{activeMessage?.content}</Text>
           </ScrollView>
         </View>
       </View>
