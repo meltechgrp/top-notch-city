@@ -29,7 +29,7 @@ export function useWebSocketHandler() {
     connect();
 
     setOnMessage((data) => {
-      // console.log("📨 Message:", data, data?.type);
+      console.log("📨 Message:", data, data?.type);
 
       switch (data.type) {
         case "new_message":
@@ -86,7 +86,6 @@ export function useWebSocketHandler() {
         case "chat_list_update":
           const chats = data?.chats as ChatList["details"][];
           chats?.forEach((c) => {
-            console.log(c);
             updateChatListDetails(c);
           });
           break;

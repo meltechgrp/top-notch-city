@@ -53,6 +53,7 @@ export function useWebSocketConnection(url: string | null) {
     socket.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
+        ws.current?.send("pong");
         subscribers.current.forEach((h) => h(data));
       } catch (err) {
         console.error("❌ Failed to parse message:", event.data);

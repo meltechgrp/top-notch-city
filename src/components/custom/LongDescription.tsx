@@ -29,7 +29,7 @@ export function LongDescription({
   };
 
   const onTextLayout = (e: any) => {
-    if (lineHeight === 0 && e.nativeEvent.lines.length > 0) {
+    if (e.nativeEvent.lines.length > 0) {
       setLineHeight(e.nativeEvent.lines[0].height);
     }
   };
@@ -37,7 +37,7 @@ export function LongDescription({
   useEffect(() => {
     if (lineHeight > 0) {
       const maxLinesHeight = lineHeight * numberOfLines;
-      setShowToggle(fullHeight > maxLinesHeight);
+      setShowToggle(fullHeight >= maxLinesHeight);
     }
   }, [fullHeight, lineHeight, numberOfLines]);
 
@@ -47,13 +47,13 @@ export function LongDescription({
         onLayout={onLayout}
         onTextLayout={onTextLayout}
         numberOfLines={!expanded ? numberOfLines : undefined}
-        className={cn("text-sm  sm:w-[60%]", textClassName)}
+        className={cn("text-sm", textClassName)}
       >
-        {description}
+        {description?.toLowerCase()}
       </Text>
 
       {showToggle && (
-        <Pressable onPress={toggleExpanded} className="mt-2 sm:hidden">
+        <Pressable onPress={toggleExpanded} className="mt-2">
           <Text className="text-primary text-sm font-bold">
             {expanded ? "View Less" : "View More"}
           </Text>

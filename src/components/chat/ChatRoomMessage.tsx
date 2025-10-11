@@ -41,7 +41,7 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
   const { width, onLayout } = useLayout();
   const images = useMemo(
     () =>
-      message.file_data.map((item) => ({
+      message?.file_data?.map((item) => ({
         id: item.file_id,
         url: item.file_url,
         media_type: "IMAGE",
@@ -131,14 +131,14 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
               isMine ? "items-end" : "items-start"
             )}
           >
-            {message.file_data?.length ? (
+            {message?.file_data?.length > 0 ? (
               <View
                 className={cn(
                   "gap-1 flex-row flex-wrap ",
                   isMine ? "items-end" : "items-start"
                 )}
               >
-                {chunk(message.file_data, 2).map((row, i) => (
+                {chunk(message?.file_data, 2).map((row, i) => (
                   <View key={i} className="flex-row gap-1">
                     {row.map((item, i) => (
                       <Pressable
@@ -204,7 +204,7 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
             )}
             <Pressable
               className={cn([
-                "rounded-lg flex-row items-end overflow-hidden gap-1",
+                "rounded-lg  justify-end overflow-hidden gap-1",
                 // isMine
                 //   ? "bg-primary  active:bg-primary"
                 //   : "bg-background-muted active:bg-bg-background-info",
@@ -223,19 +223,19 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
             </Pressable>
             {!isMine && <View className="flex-1" />}
           </View>
+          {message.status == "error" && (
+            <TouchableOpacity
+              onPress={() => {
+                if (resendMessage) {
+                  resendMessage(message);
+                }
+              }}
+              className="pr-2 w-6 pl-4 justify-center items-center"
+            >
+              <Icon as={RotateCcw} className="text-primary" />
+            </TouchableOpacity>
+          )}
         </Pressable>
-        {message.status == "pending" && (
-          <TouchableOpacity
-            onPress={() => {
-              if (resendMessage) {
-                resendMessage(message);
-              }
-            }}
-            className="pr-4  justify-start items-center"
-          >
-            <Icon as={RotateCcw} className="text-primary" />
-          </TouchableOpacity>
-        )}
       </View>
       <PropertyModalMediaViewer
         width={width}

@@ -27,30 +27,6 @@ export default function ProfileScreensLayout() {
   const { user } = useLocalSearchParams() as { user: string };
   const isOwner = useMemo(() => me?.id == user, [user, me]);
 
-  async function onInvite() {
-    try {
-      const message =
-        `📣 *Check out my profile on TopNotch City Estate!*\n\n` +
-        `Looking for your dream apartment or real estate deals? View my listings and let's get started.\n\n` +
-        `👉 Tap here to view my profile: ${config.websiteUrl}/profile/${user}\n\n` +
-        `Download the app for the best experience and updates.`;
-
-      const result = await Share.share({
-        title: "Visit My Profile on TopNotch City Estate",
-        message,
-      });
-
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-          // shared with activity type
-        }
-      } else if (result.action === Share.dismissedAction) {
-        // dismissed
-      }
-    } catch (error: any) {
-      alert(error.message);
-    }
-  }
   return (
     <Stack
       screenOptions={{
@@ -86,7 +62,16 @@ export default function ProfileScreensLayout() {
             headerRight: () => (
               <View className="flex-row gap-3 items-center">
                 {!isOwner && (
-                  <Pressable onPress={onInvite}>
+                  <Pressable
+                    onPress={() =>
+                      router.push({
+                        pathname: "/profile/[user]/qrcode",
+                        params: {
+                          user: user,
+                        },
+                      })
+                    }
+                  >
                     <Icon size="xl" as={Share2} />
                   </Pressable>
                 )}
@@ -119,6 +104,12 @@ export default function ProfileScreensLayout() {
         name="wishlist"
         options={{
           title: "Wishlist",
+        }}
+      />
+      <Stack.Screen
+        name="qrcode"
+        options={{
+          headerShown: false,
         }}
       />
     </Stack>

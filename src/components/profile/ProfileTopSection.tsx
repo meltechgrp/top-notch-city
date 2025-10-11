@@ -67,17 +67,17 @@ export function ProfileTopSection({
               <Text className="text-xl font-bold">
                 {agent?.followers_count}
               </Text>
-              <Text className="text-md font-light">Following</Text>
+              <Text className="text-sm font-light">Following</Text>
             </View>
             <View className="flex-1 gap-1">
               <Text className="text-xl font-bold">
                 {agent?.total_properties}
               </Text>
-              <Text className="text-md font-light">Listings</Text>
+              <Text className="text-sm font-light">Listings</Text>
             </View>
             <View className="flex-1 gap-1">
               <Text className="text-xl font-bold">{agent?.likes_count}</Text>
-              <Text className="text-md font-light">Likes</Text>
+              <Text className="text-sm font-light">Likes</Text>
             </View>
           </View>
         </View>
@@ -95,7 +95,7 @@ export function ProfileTopSection({
           >
             <ButtonText>Report</ButtonText>
           </Button>
-          <Button
+          {/* <Button
             onPress={() => setShowAgents(!showAgents)}
             className="bg-gray-500 active:bg-gray-600 h-10 px-4"
           >
@@ -103,7 +103,7 @@ export function ProfileTopSection({
               as={showAgents ? ChevronUp : ChevronDown}
               className={cn(" w-6 h-6", showAgents ? "text-primary" : "")}
             />
-          </Button>
+          </Button> */}
         </View>
       ) : (
         <View className="flex-row mt-6 gap-4 justify-center items-center">
@@ -121,7 +121,14 @@ export function ProfileTopSection({
             <ButtonText>Edit Profile</ButtonText>
           </Button>
           <Button
-            onPress={() => openAgentModal({ visible: true })}
+            onPress={() =>
+              router.push({
+                pathname: "/profile/[user]/qrcode",
+                params: {
+                  user: me?.id!,
+                },
+              })
+            }
             className="bg-gray-500 h-10 flex-1"
           >
             <ButtonText>Share Profile</ButtonText>

@@ -33,7 +33,7 @@ type ChatState = {
   replaceMockMessage: (
     chatId: string,
     tempId: string,
-    message: Message
+    message: Partial<Message>
   ) => void;
   resetChatStore: () => void;
 };
@@ -110,7 +110,7 @@ export const useChatStore = create<ChatState>(
             const existingMessages = chatList[index].messages || [];
 
             const updatedMessages = existingMessages.map((msg) =>
-              msg.message_id === tempId ? newMessage : msg
+              msg.message_id === tempId ? { ...msg, ...newMessage } : msg
             );
 
             chatList[index] = {

@@ -6,11 +6,11 @@ import { router } from "expo-router";
 import { memo } from "react";
 import { ScrollView } from "react-native";
 
-function RecentProperties() {
+function ApartmentsProperties() {
   const { latest } = useHomeFeed();
   return (
     <SectionHeaderWithRef
-      title="Recently Added"
+      title="Apartments"
       titleClassName="text-gray-400 text-base"
       subTitle="See More"
       hasData={latest?.length > 0}
@@ -57,4 +57,4 @@ function RecentProperties() {
   );
 }
 
-export default memo(RecentProperties);
+export default memo(ApartmentsProperties);

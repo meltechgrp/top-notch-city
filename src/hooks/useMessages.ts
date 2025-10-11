@@ -77,8 +77,9 @@ export function useMessages(chatId: string) {
         {
           onSuccess: (m) => {
             replaceMockMessage(chatId, data.message_id, {
-              ...data,
-              status: "error",
+              updated_at: m?.created_at,
+              content: m?.content,
+              status: m?.status,
             });
             playSound("MESSAGE_SENT");
             query.invalidateQueries({
@@ -99,9 +100,6 @@ export function useMessages(chatId: string) {
           },
           onSuccess: (m) => {
             replaceMockMessage(chatId, data.message_id, {
-              message_id: m?.message_id!,
-              created_at: m?.created_at,
-              updated_at: m?.created_at,
               content: m?.content,
               sender_info: {
                 id: m?.sender_id,

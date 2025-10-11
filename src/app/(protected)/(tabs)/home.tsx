@@ -11,7 +11,7 @@ import React, { useEffect, useState } from "react";
 import CustomerCareBottomSheet from "@/components/modals/CustomerCareBottomSheet";
 import { FlatList, ListRenderItem, RefreshControl } from "react-native";
 import FeaturedProperties from "@/components/home/featured";
-import RecentProperties from "@/components/home/recent";
+import ApartmentProperties from "@/components/home/recent";
 import Lands from "@/components/home/lands";
 const MAP_HEIGHT = 400;
 
@@ -37,9 +37,9 @@ export default function HomeScreen() {
       id: "trending",
       _typename: "Trending",
     } as any;
-    const recent = {
-      id: "recent",
-      _typename: "Recent",
+    const apartment = {
+      id: "apartment",
+      _typename: "Apartments",
     } as any;
     const lands = {
       id: "lands",
@@ -53,7 +53,7 @@ export default function HomeScreen() {
       topLocations,
       populerCommunities,
       trending,
-      recent,
+      apartment,
       lands,
       bottomPlaceHolder,
     ];
@@ -70,8 +70,8 @@ export default function HomeScreen() {
     if (item.id === "trending") {
       return <TopProperties />;
     }
-    if (item.id === "recent") {
-      return <RecentProperties />;
+    if (item.id === "apartment") {
+      return <ApartmentProperties />;
     }
     if (item.id === "lands") {
       return <Lands />;

@@ -5,6 +5,7 @@ import {
   Share,
   Alert,
   ScrollView,
+  ToastAndroid,
 } from "react-native";
 import {
   Facebook,
@@ -15,11 +16,11 @@ import {
   Twitter,
   MoreHorizontal,
 } from "lucide-react-native";
-import QRCode from "react-native-qrcode-svg";
 import { Icon, Text, View } from "@/components/ui";
-import { Divider } from "@/components/ui/divider";
-import logo from "@/assets/images/splash.png";
+import * as Clipboard from "expo-clipboard";
 import BottomSheet from "@/components/shared/BottomSheet";
+import Platforms from "@/constants/Plaforms";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
 
 const SHARE_OPTIONS = [
   { label: "Copy link", icon: LinkIcon, color: "bg-blue-500", action: "copy" },
@@ -53,13 +54,23 @@ const SHARE_OPTIONS = [
 
 export function AgentShareSheet({ visible, onDismiss, id }: AuthModalProps) {
   const url = `https://topnotchcity.com/profile/${id}`;
-
+  const message =
+    `📣 *Check out my profile on TopNotch City Estate!*\n\n` +
+    `Looking for your dream apartment or real estate deals? View my listings and let's get started.\n\n` +
+    `👉 Tap here to view my profile: ${url}\n\n` +
+    `Download the app for the best experience and updates.`;
   const handleShare = async (action: string) => {
     try {
       switch (action) {
         case "copy":
-          await navigator.clipboard.writeText(url);
-          Alert.alert("Copied", "Link copied to clipboard");
+          await Clipboard.setStringAsync(url);
+          ToastAndroid.show("Message copied to clipboard", 1500);
+          Platforms.isIOS() &&
+            showErrorAlert({
+              title: "Message copied to clipboard",
+              alertType: "success",
+              duration: 1500,
+            });
           break;
         case "facebook":
           Linking.openURL(
@@ -79,7 +90,11 @@ export function AgentShareSheet({ visible, onDismiss, id }: AuthModalProps) {
           Linking.openURL(`mailto:?subject=Check this property&body=${url}`);
           break;
         case "native":
-          Share.share({ message: url });
+          Share.share({
+            title: "Visit My Profile on TopNotch City Estate",
+            url,
+            message: message,
+          });
           break;
         default:
           break;
@@ -95,7 +110,7 @@ export function AgentShareSheet({ visible, onDismiss, id }: AuthModalProps) {
     <BottomSheet
       visible={visible}
       onDismiss={onDismiss}
-      snapPoint={["80%"]}
+      snapPoint={["40%"]}
       title="Share Property"
       withHeader
       withScroll
@@ -118,26 +133,6 @@ export function AgentShareSheet({ visible, onDismiss, id }: AuthModalProps) {
                 <Text className="mt-2 text-xs text-center">{opt.label}</Text>
               </TouchableOpacity>
             ))}
-          </View>
-
-          <Divider />
-
-          {/* QR Code Section */}
-          <View className="items-center py-6">
-            <Text className="text-sm  mb-2">Scan QR code to view Profile</Text>
-            <View className="border-2 border-black">
-              <QRCode
-                value={url}
-                size={240}
-                //   backgroundColor="white"
-                //   color="black"
-                logo={logo}
-                logoSize={40}
-                logoBackgroundColor="transparent"
-                //   linearGradient={["rgb(255,0,0)", "rgb(0,255,255)"]}
-                //   enableLinearGradient
-              />
-            </View>
           </View>
         </View>
       </ScrollView>
