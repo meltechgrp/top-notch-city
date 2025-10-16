@@ -18,7 +18,7 @@ export function PropertyTitle({
           <View className="bg-primary/80 rounded-md self-start py-1 px-2">
             <Text className={cn("text-base text-white")}>For Rent</Text>
           </View>
-          <View className="flex-row gap-2 items-center">
+          <View className="flex-row gap-1 items-center">
             <Icon size={"sm"} as={LandPlot} className="text-white" />
             <Text className={cn("text-md text-white font-bold")}>
               {FindAmenity("Total Plot", amenities)}{" "}
@@ -34,7 +34,7 @@ export function PropertyTitle({
           <View className="bg-primary/80 rounded-md self-start py-1 px-2">
             <Text className={cn("text-base text-white")}>For Rent</Text>
           </View>
-          <View className="flex-row gap-2 items-center">
+          <View className="flex-row gap-1 items-center">
             {!smallView && (
               <Icon size={"sm"} as={House} className="text-white" />
             )}
@@ -58,7 +58,7 @@ export function PropertyTitle({
           <View className="bg-primary/80 rounded-md self-start py-1 px-2">
             <Text className={cn("text-base text-white")}>For Sale</Text>
           </View>
-          <View className="flex-row gap-2 items-center">
+          <View className="flex-row gap-1 items-center">
             <Icon size={"sm"} as={LandPlot} />
             <Text className={cn("text-md text-white font-bold")}>
               {FindAmenity("Total Plot", amenities)}{" "}
@@ -74,7 +74,7 @@ export function PropertyTitle({
           <View className="bg-primary/80 rounded-md self-start py-1 px-2">
             <Text className={cn("text-base text-white")}>For Sale</Text>
           </View>
-          <View className="flex-row gap-2 items-center">
+          <View className="flex-row gap-1 items-center">
             {!smallView && (
               <Icon size={"sm"} as={House} className="text-white" />
             )}

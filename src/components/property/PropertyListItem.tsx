@@ -142,7 +142,7 @@ function PropertyListItem(props: Props) {
             !address && "pb-6"
           )}
         >
-          <View className="flex-1 gap-1">
+          <View className="flex-1">
             <View className="flex-row justify-between items-end">
               <PropertyTitle property={data} />
               {interaction && (
