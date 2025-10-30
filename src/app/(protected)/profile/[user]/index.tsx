@@ -118,7 +118,6 @@ export default function ProfileScreen() {
                   userData={userData}
                 />
               )}
-              {/* {showAgents && <AgentProfileList />} */}
             </View>
             <View onLayout={onTabBarLayout} className=" bg-background">
               {userData && (
