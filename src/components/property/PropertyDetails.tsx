@@ -1,6 +1,7 @@
 import {
   Avatar,
   AvatarFallbackText,
+  AvatarImage,
   Box,
   Button,
   ButtonText,
@@ -24,7 +25,7 @@ import {
 } from "lucide-react-native";
 import { useRouter } from "expo-router";
 import React, { memo, useMemo } from "react";
-import { generateMediaUrl } from "@/lib/api";
+import { generateMediaUrl, getImageUrl } from "@/lib/api";
 import { useLayout } from "@react-native-community/hooks";
 import { usePropertyStore } from "@/store/propertyStore";
 import { FindAmenity, fullName } from "@/lib/utils";
@@ -35,6 +36,7 @@ import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { LongDescription } from "@/components/custom/LongDescription";
 import { CustomCenterSheet } from "@/components/property/CustomMapCenterSheet";
 import { useStore } from "@/store";
+import PropertyNearbySection from "@/components/property/PropertyNearbySection";
 
 const PropertyDetailsBottomSheet = () => {
   const { details: property, getImages, getVideos } = usePropertyStore();
@@ -72,7 +74,7 @@ const PropertyDetailsBottomSheet = () => {
               <View className="flex-row flex-1 bg-background-muted rounded-xl p-4 items-center justify-center gap-2">
                 <Icon size="sm" as={LandPlot} className="text-primary" />
                 <Text size="sm">
-                  {FindAmenity("Area", property?.amenities)} Sq
+                  {FindAmenity("Land Area", property?.amenities)} Sq
                 </Text>
               </View>
             </View>
@@ -187,13 +189,16 @@ const PropertyDetailsBottomSheet = () => {
 
             {/* <Divider /> */}
 
-            {/* <PropertyNearbySection /> */}
+            <PropertyNearbySection />
             <View className="bg-background-muted p-4 rounded-xl gap-4">
               <Pressable className={"f items-center "}>
                 <Avatar className=" w-14 h-14">
                   <AvatarFallbackText>
                     {fullName(property?.owner)}
                   </AvatarFallbackText>
+                  <AvatarImage
+                    source={getImageUrl(property?.owner?.profile_image)}
+                  />
                 </Avatar>
                 <View className="flex-1 pl-3">
                   <Text className="text-lg text-typography font-medium">

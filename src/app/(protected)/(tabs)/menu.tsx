@@ -14,6 +14,7 @@ import React, { useMemo } from "react";
 import {
   Heart,
   HelpCircle,
+  House,
   LayoutDashboard,
   LogOut,
   MessageSquareMore,
@@ -161,6 +162,21 @@ export default function More() {
               />
             )}
             {me && <Divider className=" h-[0.3px] bg-background-info mb-4" />}
+            <MenuListItem
+              title="My Properties"
+              description="View all your saved properties"
+              onPress={() => {
+                if (!me?.id) {
+                  openAccessModal({ visible: true });
+                } else {
+                  router.push("/agent");
+                }
+              }}
+              icon={House}
+              iconColor="blue-500"
+              className=" py-2 pb-3"
+            />
+            <Divider className=" h-[0.3px] bg-background-info mb-4" />
             {me && (me?.role != "user" || isAdmin) && (
               <MenuListItem
                 title={
@@ -184,6 +200,7 @@ export default function More() {
             {me && me?.role != "user" && (
               <Divider className=" h-[0.3px] bg-background-info mb-4" />
             )}
+
             <MenuListItem
               title="Messages"
               description="View all your saved properties"

@@ -12,70 +12,83 @@ import { BodyScrollView } from "@/components/layouts/BodyScrollView";
 import DatePicker from "@/components/custom/DatePicker";
 import { useMutation } from "@tanstack/react-query";
 import { uploadAgentForm } from "@/actions/agent";
-import { z } from "zod";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import ProfileImageBottomSheet from "@/components/agent/ProfileImageBottomSheet";
-import { profileDefault } from "@/store";
+import { profileDefault, useStore } from "@/store";
 import { Edit } from "lucide-react-native";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
-
-const AgentFormSchema = z.object({
-  phone: z.string().min(1, "Phone number is required"),
-  // nin: z.string().min(1, "NIN is required"),
-  birthdate: z.date({
-    error: "Birthdate is required",
-  }),
-  country: z.string().min(1, "Country is required"),
-  state: z.string().min(1, "State is required"),
-  city: z.string().optional(),
-  photo: z.string().min(1, "At least one photo is required"),
-});
+import { generateMediaUrlSingle } from "@/lib/api";
 
 const minimumAge = new Date(Date.now() - 1000 * 60 * 60 * 24 * 365 * 13);
 export default function AgentFormScreen() {
+  const { me } = useStore((s) => s);
   const router = useRouter();
   const { mutateAsync, isPending } = useMutation({
     mutationFn: uploadAgentForm,
   });
   const [photosBottomSheet, setPhotosBottomSheet] = useState(false);
   const [form, setForm] = useState<AgentFormData>({
-    phone: "",
-    // nin: "",
-    birthdate: null,
-    country: "",
-    state: "",
-    city: "",
-    photo: "",
+    phone: me?.phone || "",
+    birthdate: me?.date_of_birth ? new Date(me?.date_of_birth) : null,
+    country: me?.address?.country || "",
+    state: me?.address?.state || "",
+    city: me?.address?.city || "",
+    photo: me?.profile_image ? generateMediaUrlSingle(me?.profile_image) : "",
   });
 
   async function handleForm() {
-    try {
-      // ✅ Validate using Zod
-      const validated = AgentFormSchema.parse({
-        ...form,
-        birthdate: form.birthdate ? new Date(form.birthdate) : null,
+    const missingFields: string[] = [];
+
+    if (!form.phone.trim()) missingFields.push("Phone number");
+    if (!form.birthdate) missingFields.push("Birthdate");
+    if (!form.country.trim()) missingFields.push("Country");
+    if (!form.state.trim()) missingFields.push("State");
+    if (!form.photo.trim()) missingFields.push("Profile photo");
+
+    // If there are missing fields, show an alert and stop
+    if (missingFields.length > 0) {
+      const message =
+        missingFields.length === 1
+          ? `${missingFields[0]} is required`
+          : `${missingFields.slice(0, -1).join(", ")} and ${
+              missingFields[missingFields.length - 1]
+            } are required`;
+
+      showErrorAlert({
+        title: message,
+        alertType: "error",
+        duration: 3000,
       });
 
-      // ✅ If valid, upload
-      await mutateAsync(validated, {
+      return; // stop execution
+    }
+    const phoneRegex = /^\+?\d{7,15}$/;
+    if (!phoneRegex.test(form.phone.trim())) {
+      showErrorAlert({
+        title: "Enter a valid phone number.",
+        alertType: "error",
+        duration: 2500,
+      });
+      return;
+    }
+
+    await mutateAsync(
+      {
+        ...form,
+        birthdate: new Date(form.birthdate as Date),
+      },
+      {
         onSuccess: () => {
           router.push("/forms/success");
         },
-      });
-    } catch (err) {
-      if (err instanceof z.ZodError) {
-        showErrorAlert({
-          title: "Something went wrong during upload.",
-          alertType: "error",
-          duration: 2000,
-        });
-      } else {
-        showErrorAlert({
-          title: "Something went wrong during upload.",
-          alertType: "error",
-        });
+        onError: () => {
+          showErrorAlert({
+            title: "Something went wrong during upload.",
+            alertType: "error",
+          });
+        },
       }
-    }
+    );
   }
   return (
     <Box className="flex-1">
@@ -170,7 +183,6 @@ export default function AgentFormScreen() {
                 >
                   Terms & Conditions
                 </Link>
-                .
               </Text>
             </View>
 

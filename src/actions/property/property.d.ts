@@ -141,3 +141,80 @@ type AmenityLabel = {
   id: string;
   category: string;
 };
+
+type POICategory =
+  | "religion"
+  | "education"
+  | "catering"
+  | "commercial"
+  | "healthcare";
+
+interface NearbyPOI {
+  name: string;
+  lat: number;
+  lon: number;
+  address: string;
+  category: POICategory;
+}
+
+interface GetNearbyOptions {
+  latitude?: number | string;
+  longitude?: number | string;
+  radiusMeters?: number;
+  limit?: number;
+}
+
+interface GeoapifyPlacesResponse {
+  type: "FeatureCollection";
+  features: GeoapifyPlaceFeature[];
+}
+
+interface GeoapifyPlaceFeature {
+  type: "Feature";
+  properties: GeoapifyPlaceProperties;
+  geometry: GeoapifyGeometry;
+}
+
+interface GeoapifyPlaceProperties {
+  name?: string;
+  country?: string;
+  country_code?: string;
+  state?: string;
+  county?: string;
+  city?: string;
+  postcode?: string | number;
+  street?: string;
+  housenumber?: string | number;
+  iso3166_2?: string;
+  lon: number;
+  lat: number;
+  formatted?: string;
+  address_line1?: string;
+  address_line2?: string;
+  categories?: string[];
+  details?: string[];
+  datasource?: {
+    sourcename: string;
+    attribution: string;
+    license: string;
+    url?: string;
+    raw?: Record<string, any>;
+  };
+  website?: string;
+  description?: string;
+  contact?: {
+    email?: string;
+    [key: string]: any;
+  };
+  building?: {
+    type?: string;
+    [key: string]: any;
+  };
+  place_id: string;
+  [key: string]: any; // for any other unexpected props
+}
+
+interface GeoapifyGeometry {
+  type: "Point";
+  coordinates: [number, number]; // [lon, lat]
+}

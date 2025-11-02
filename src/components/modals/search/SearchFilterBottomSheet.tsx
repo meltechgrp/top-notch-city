@@ -55,6 +55,8 @@ function SearchFilterBottomSheet({
               "min_price",
               "purpose",
               "amenities",
+              "sub_category",
+              "category",
             ])
           }
         >

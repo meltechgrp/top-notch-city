@@ -85,7 +85,6 @@ export function useHomeFeed() {
       use_geo_location: "true",
     },
     key: "nearby",
-    enabled: false,
   });
 
   const nearby = useMemo(
@@ -95,8 +94,13 @@ export function useHomeFeed() {
   useEffect(() => {
     if (!nearby.length) return;
     setNearbyProperties(nearby);
-  }, [nearby, setNearbyProperties]);
+  }, [nearby]);
 
+  useEffect(() => {
+    if (nearby?.length < 4 && location) {
+      refetchNearby();
+    }
+  }, [location, nearby]);
   /* Total unread count */
   const { data: totalCount, refetch: getTotalCount } = useQuery({
     queryKey: ["total"],

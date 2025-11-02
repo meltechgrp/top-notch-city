@@ -1,22 +1,18 @@
-import { FilterComponent } from "@/components/admin/shared/FilterComponent";
 import MainLayout from "@/components/admin/shared/MainLayout";
 import { openAccessModal } from "@/components/globals/AuthModals";
-import VerticalProperties from "@/components/property/VerticalProperties";
 import {
   Button,
   ButtonText,
   Heading,
   Icon,
   Image,
-  Pressable,
   Text,
   View,
 } from "@/components/ui";
 import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
 import { useStore } from "@/store";
-import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import { useRouter } from "expo-router";
-import { MoveRight, Plus } from "lucide-react-native";
+import { MoveRight } from "lucide-react-native";
 import { useMemo, useState } from "react";
 import { Dimensions } from "react-native";
 
@@ -27,72 +23,7 @@ export default function PropertiesScreen() {
   const { me, hasAuth } = useStore();
   const [ctaVisible, setCtaVisible] = useState(false);
   const [ctaType, setCtaType] = useState<"agent" | "admin" | "user">("user");
-  const [search, setSearch] = useState("");
-  const [actveTab, setActiveTab] = useState("all");
-  const {
-    data,
-    refetch,
-    isLoading,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useInfinityQueries({ type: "agent-property" });
-  const list = useMemo(
-    () => data?.pages.flatMap((page) => page.results) || [],
-    [data]
-  );
-  const filteredData = useMemo(() => {
-    let filtered = data?.pages.flatMap((page) => page.results) || [];
-
-    if (actveTab !== "all") {
-      filtered = filtered.filter((u) => u.status.toLowerCase() === actveTab);
-    }
-    if (search.trim() !== "") {
-      const regex = new RegExp(search.trim(), "i");
-      filtered = filtered.filter(
-        (u) =>
-          regex.test(u.category?.name) ||
-          regex.test(u.subcategory?.name) ||
-          regex.test(u.purpose) ||
-          regex.test(u.price.toString()) ||
-          regex.test(u.status) ||
-          regex.test(u.address.city) ||
-          regex.test(u.address.state)
-      );
-    }
-    return filtered;
-  }, [list, search, actveTab, data]);
-  const tabs = useMemo(() => {
-    const all = list.length;
-    const rejected = list.filter((item) => item.status == "rejected").length;
-    const approved = list.filter((item) => item.status === "approved").length;
-    const pending = list.filter((item) => item.status === "pending").length;
-    const sold = list.filter((item) => item.status === "sold").length;
-    const flagged = list.filter((item) => item.status === "flagged").length;
-
-    return [
-      { title: "all", total: all },
-      { title: "pending", total: pending },
-      { title: "approved", total: approved },
-      { title: "sold", total: sold },
-      { title: "rejected", total: rejected },
-      { title: "flagged", total: flagged },
-    ];
-  }, [list]);
-
-  const headerComponent = useMemo(() => {
-    return (
-      <FilterComponent
-        search={search}
-        onSearch={setSearch}
-        tabs={tabs}
-        tab={actveTab}
-        onUpdate={setActiveTab}
-        searchPlaceholder="Search by location, category or price "
-      />
-    );
-  }, [search, setSearch, tabs, actveTab]);
-  useRefreshOnFocus(refetch);
+  // useRefreshOnFocus();
 
   const isAdmin = useMemo(() => me?.role == "admin" || me?.is_superuser, [me]);
   function handleGetStarted() {
@@ -121,77 +52,52 @@ export default function PropertiesScreen() {
     <>
       <MainLayout
         isAgent
-        showNotification={false}
+        showNotification
+        rightHeaderComponent
         className="pt-4 px-2"
-        rightHeaderComponent={
-          filteredData?.length > 0 ? (
-            <Pressable
-              onPress={handleGetStarted}
-              both
-              className="flex-row items-center gap-1 p-2 px-4 rounded-xl bg-primary"
-            >
-              <Text className="text-white">Add</Text>
-              <Icon size="sm" as={Plus} className="text-white" />
-            </Pressable>
-          ) : (
-            <></>
-          )
-        }
       >
         <View className="flex-1">
-          {filteredData?.length > 0 ? (
-            <VerticalProperties
-              isLoading={isLoading}
-              data={filteredData}
-              showStatus={true}
-              showLike={false}
-              headerTopComponent={
-                filteredData.length > 0 ? headerComponent : undefined
-              }
-              onPress={(data) => {
-                router.push({
-                  pathname: "/property/[propertyId]",
-                  params: {
-                    propertyId: data.id,
-                  },
-                });
-              }}
-              refetch={async () => await refetch()}
-              hasNextPage={hasNextPage}
-              fetchNextPage={fetchNextPage}
-              className="pb-24"
-            />
-          ) : (
-            <View className="flex-1 gap-8">
-              <View
-                style={{ height: height / 2.5 }}
-                className="min-h-56 rounded-2xl overflow-hidden"
-              >
-                <Image
-                  source={require("@/assets/images/landing/agent.png")}
-                  alt="sell banner"
-                  className={`object-cover object-bottom w-full flex-1 rounded-2xl`}
-                />
-              </View>
-              <View className="bg-background-muted rounded-xl p-6 px-4 ">
-                <Heading size="xl" className="text-center">
-                  Ready to List Your Property?
-                </Heading>
-                <Text size="sm" className="font-light text-center mb-4 mt-2">
-                  Easily list your property, add details, photos, and reach
-                  thousands of potential buyers or renters.
-                </Text>
+          <View className="flex-1 gap-8">
+            <View
+              style={{ height: height / 2.5 }}
+              className="min-h-56 rounded-2xl overflow-hidden"
+            >
+              <Image
+                source={require("@/assets/images/landing/agent.png")}
+                alt="sell banner"
+                className={`object-cover object-bottom w-full flex-1 rounded-2xl`}
+              />
+            </View>
+            <View className="bg-background-muted rounded-xl p-6 px-4 ">
+              <Heading size="xl" className="text-center">
+                Ready to List Your Property?
+              </Heading>
+              <Text size="sm" className="font-light text-center mb-4 mt-2">
+                Easily list your property, add details, photos, and reach
+                thousands of potential buyers or renters.
+              </Text>
+              <View className="flex-row justify-center gap-4">
                 <Button
                   onPress={handleGetStarted}
                   size="xl"
-                  className="mt-6 self-center mx-auto rounded-md"
+                  className="mt-6 self-center rounded-md"
                 >
                   <ButtonText className="text-md">Get Started</ButtonText>
                   <Icon size="xl" as={MoveRight} className="text-white" />
                 </Button>
+                {me?.role == "agent" && (
+                  <Button
+                    onPress={() => router.push("/agent")}
+                    size="xl"
+                    className="mt-6 self-center bg-gray-500 rounded-md"
+                  >
+                    <ButtonText className="text-md">My Properties</ButtonText>
+                    <Icon size="xl" as={MoveRight} className="text-white" />
+                  </Button>
+                )}
               </View>
             </View>
-          )}
+          </View>
         </View>
       </MainLayout>
       {ctaVisible && (
