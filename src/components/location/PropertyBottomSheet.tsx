@@ -29,7 +29,7 @@ export default function PropertyBottomSheet(props: Props) {
             router.push({
               pathname: "/property/[propertyId]",
               params: {
-                propertyId: data.id,
+                propertyId: data.slug,
               },
             });
           }}

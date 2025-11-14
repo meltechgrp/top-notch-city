@@ -151,7 +151,7 @@ export default function More() {
                     router.push({
                       pathname: "/(protected)/profile/[user]/account",
                       params: {
-                        user: me?.id!,
+                        user: me?.slug!,
                       },
                     });
                   }

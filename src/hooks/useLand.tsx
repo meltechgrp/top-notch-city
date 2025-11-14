@@ -37,6 +37,7 @@ export function propertyToReelLand(properties: Property[]) {
           id: p.id,
           video: "",
           photos: v,
+          slug: p.slug,
           title: generateTitle(p),
           description: p.description || "",
           interations: {

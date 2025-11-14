@@ -212,7 +212,7 @@ export const VideoPlayer = memo(
             visible={showBottomSheet}
             id={reel.id}
             onDismiss={() => setShowBottomSheet(false)}
-            propertyUrl={`${config.websiteUrl}/property/${reel.id}`}
+            propertyUrl={`${config.websiteUrl}/property/${reel.slug}`}
           />
         </>
       );

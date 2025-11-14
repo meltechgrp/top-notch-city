@@ -61,7 +61,7 @@ export default function PropertyHeader({
     <>
       {isAgent && isOwner ? (
         <View className="pr-4 flex-row items-center gap-2">
-          <ReelShareButton title={generateTitle(property)} id={property.id} />
+          <ReelShareButton title={generateTitle(property)} id={property.slug} />
           <Pressable
             both
             onPress={() =>
@@ -99,7 +99,7 @@ export default function PropertyHeader({
         <View className="pr-4 flex-row items-center gap-4">
           <ReelShareButton
             hasScrolledToDetails={hasScrolledToDetails}
-            id={property.id}
+            id={property.slug}
             title={generateTitle(property)}
           />
           <LikeButton

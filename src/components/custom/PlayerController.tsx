@@ -105,7 +105,7 @@ function PlayerController({
                 router.push({
                   pathname: "/property/[propertyId]",
                   params: {
-                    propertyId: reel.id,
+                    propertyId: reel.slug,
                   },
                 })
               }

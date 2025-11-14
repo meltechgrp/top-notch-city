@@ -212,7 +212,7 @@ const PropertyDetailsBottomSheet = () => {
                   router.push({
                     pathname: "/profile/[user]",
                     params: {
-                      user: property?.owner.id!,
+                      user: property?.owner.slug!,
                     },
                   })
                 }

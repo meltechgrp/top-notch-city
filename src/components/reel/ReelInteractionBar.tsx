@@ -17,7 +17,7 @@ import { generateMediaUrl } from "@/lib/api";
 import { profileDefault } from "@/store";
 import { useMutation } from "@tanstack/react-query";
 import { router } from "expo-router";
-import { MessageSquareMore, MoreHorizontal, Plus } from "lucide-react-native";
+import { MessageSquareMore, MoreHorizontal } from "lucide-react-native";
 import { memo, useMemo } from "react";
 
 function ReelInteractionBar({
@@ -118,7 +118,7 @@ function ReelInteractionBar({
       )}
       {showShare && (
         <View className=" items-center">
-          <ReelShareButton title={reel.title} id={reel.id} />
+          <ReelShareButton title={reel.title} id={reel.slug} />
           <Text className="text-xs text-white">Share</Text>
         </View>
       )}

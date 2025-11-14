@@ -3,6 +3,7 @@ interface Reel {
   video: string;
   photos: Media[];
   title: string;
+  slug: string;
   description: string;
   interations: Interaction;
   owner_interaction: Owner_interaction;
@@ -56,6 +57,7 @@ interface Land {
   photos: Media[];
   title: string;
   description: string;
+  slug: string;
   interations: Interaction;
   owner_interaction: Owner_interaction;
   created_at: string;

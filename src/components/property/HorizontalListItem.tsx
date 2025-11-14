@@ -12,7 +12,7 @@ type Props = {
 };
 function HorizontalListItem(props: Props) {
   const { data, className } = props;
-  const { media, price, id, title, category } = data;
+  const { media, price, id, title, category, slug } = data;
   if (category.name == "Land") return null;
   const router = useRouter();
   return (
@@ -22,7 +22,7 @@ function HorizontalListItem(props: Props) {
         router.push({
           pathname: `/property/[propertyId]`,
           params: {
-            propertyId: id,
+            propertyId: slug,
           },
         });
       }}

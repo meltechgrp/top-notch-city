@@ -1,16 +1,14 @@
 import {
   Avatar,
-  AvatarBadge,
   AvatarFallbackText,
   AvatarImage,
-  Box,
   Image,
   Pressable,
   useResolvedTheme,
 } from "@/components/ui";
 import QRCode from "react-native-qrcode-svg";
 import { Icon, Text, View } from "@/components/ui";
-import { Alert, ToastAndroid, TouchableOpacity } from "react-native";
+import { ToastAndroid, TouchableOpacity } from "react-native";
 import { Link, ShareIcon } from "lucide-react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
@@ -30,7 +28,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { ChevronLeftIcon } from "lucide-react-native";
 import Platforms from "@/constants/Plaforms";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
-import { generateMediaUrlSingle, getImageUrl } from "@/lib/api";
+import { getImageUrl } from "@/lib/api";
 
 export default function QrCodeScreen() {
   const { user } = useLocalSearchParams() as { user: string };

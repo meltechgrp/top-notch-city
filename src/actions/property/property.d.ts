@@ -33,6 +33,7 @@ type PropertyResponse = {
 type Property = {
   id: string;
   title: string;
+  slug: string;
   description: string | null;
   price: number;
   created_at: string;
@@ -63,6 +64,7 @@ type Media = {
 type Owner = {
   id: string;
   email: string;
+  slug: string;
   phone: string;
   first_name: string;
   last_name: string;

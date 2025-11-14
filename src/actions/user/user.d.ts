@@ -3,6 +3,7 @@ type Me = {
   email: string;
   phone: string | null;
   first_name: string;
+  slug: string;
   last_name: string;
   middle_name: string | null;
   gender: "male" | "female" | null;

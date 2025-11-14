@@ -106,7 +106,7 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
             router.push({
               pathname: `/property/[propertyId]`,
               params: {
-                propertyId: data.id,
+                propertyId: data.slug,
               },
             });
           }}

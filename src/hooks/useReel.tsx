@@ -36,6 +36,7 @@ export function propertyToReelVideo(properties: Property[]) {
           id: p.id,
           video: generateMediaUrl(v).uri,
           photos: [],
+          slug: p.slug,
           title: generateTitle(p),
           description: p.description || "",
           interations: {

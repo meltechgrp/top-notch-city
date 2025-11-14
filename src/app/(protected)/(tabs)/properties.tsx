@@ -23,13 +23,11 @@ export default function PropertiesScreen() {
   const { me, hasAuth } = useStore();
   const [ctaVisible, setCtaVisible] = useState(false);
   const [ctaType, setCtaType] = useState<"agent" | "admin" | "user">("user");
-  // useRefreshOnFocus();
 
   const isAdmin = useMemo(() => me?.role == "admin" || me?.is_superuser, [me]);
   function handleGetStarted() {
     console.log("here");
     if (!hasAuth) {
-      // Not logged in — show CTA to become an agent
       setCtaType("user");
       return setCtaVisible(true);
     }
@@ -39,12 +37,10 @@ export default function PropertiesScreen() {
     }
 
     if (isAdmin) {
-      // Show warning modal
       setCtaType("admin");
       return setCtaVisible(true);
     }
 
-    // For any other role, show CTA to become an agent
     setCtaType("agent");
     setCtaVisible(true);
   }
