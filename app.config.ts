@@ -62,7 +62,17 @@ export default () => ({
           {
             scheme: "https",
             host: "topnotchcity.com",
-            pathPrefix: "/",
+            pathPrefix: "/property",
+          },
+          {
+            scheme: "https",
+            host: "topnotchcity.com",
+            pathPrefix: "/agents",
+          },
+          {
+            scheme: "https",
+            host: "topnotchcity.com",
+            pathPrefix: "/reels",
           },
           {
             scheme: "com.meltech.topnotchcity",
