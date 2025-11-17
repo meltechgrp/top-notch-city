@@ -10,29 +10,27 @@ import {
   View,
 } from "@/components/ui";
 import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
-import { useStore } from "@/store";
+import { useUser } from "@/hooks/useUser";
 import { useRouter } from "expo-router";
 import { MoveRight } from "lucide-react-native";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Dimensions } from "react-native";
 
 const { height } = Dimensions.get("window");
 
 export default function PropertiesScreen() {
   const router = useRouter();
-  const { me, hasAuth } = useStore();
+  const { me, hasAuth, isAdmin, isAgent } = useUser();
   const [ctaVisible, setCtaVisible] = useState(false);
   const [ctaType, setCtaType] = useState<"agent" | "admin" | "user">("user");
 
-  const isAdmin = useMemo(() => me?.role == "admin" || me?.is_superuser, [me]);
   function handleGetStarted() {
-    console.log("here");
     if (!hasAuth) {
       setCtaType("user");
       return setCtaVisible(true);
     }
 
-    if (me?.role === "agent") {
+    if (isAgent) {
       return router.push("/property/add");
     }
 
@@ -52,7 +50,7 @@ export default function PropertiesScreen() {
         rightHeaderComponent
         className="pt-4 px-2"
       >
-        <View className="flex-1">
+        <View className="flex-1 leading">
           <View className="flex-1 gap-8">
             <View
               style={{ height: height / 2.5 }}

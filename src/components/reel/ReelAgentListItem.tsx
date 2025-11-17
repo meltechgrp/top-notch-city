@@ -84,7 +84,7 @@ const ReelAgentListItem = ({ account }: { account: AgentInfo }) => {
     <TouchableOpacity
       onPress={() => {
         router.push({
-          pathname: "/profile/[user]",
+          pathname: "/agents/[user]",
           params: {
             user: account?.id!,
           },

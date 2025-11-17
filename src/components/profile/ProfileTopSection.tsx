@@ -110,7 +110,7 @@ export function ProfileTopSection({
           <Button
             onPress={() =>
               router.push({
-                pathname: "/profile/[user]/account",
+                pathname: "/agents/[user]/account",
                 params: {
                   user: agent.id,
                 },
@@ -123,7 +123,7 @@ export function ProfileTopSection({
           <Button
             onPress={() =>
               router.push({
-                pathname: "/profile/[user]/qrcode",
+                pathname: "/agents/[user]/qrcode",
                 params: {
                   user: me?.id!,
                 },

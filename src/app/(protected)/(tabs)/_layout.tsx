@@ -1,16 +1,24 @@
 import { Tabs } from "expo-router";
 import React from "react";
 import { HapticTab } from "@/components/HapticTab";
-import { Home, Menu, MonitorPlay, Plus, Search } from "lucide-react-native";
+import {
+  Home,
+  Menu,
+  MessageSquareMore,
+  MonitorPlay,
+  Plus,
+  Search,
+} from "lucide-react-native";
 import { Colors } from "@/constants/Colors";
 import { useResolvedTheme, Pressable } from "@/components/ui";
+import { useStore } from "@/store";
 
 export const unstable_settings = {
   initialRouteName: "/home",
 };
 export default function TabLayout() {
   const theme = useResolvedTheme();
-
+  const { me } = useStore((s) => s);
   return (
     <Tabs
       screenOptions={{
@@ -39,14 +47,14 @@ export default function TabLayout() {
         name="home"
         options={{
           title: "Home",
-          tabBarIcon: ({ color }) => <Home size={24} color={color} />,
+          tabBarIcon: ({ color }) => <Home size={20} color={color} />,
         }}
       />
       <Tabs.Screen
         name="search"
         options={{
           title: "Explore",
-          tabBarIcon: ({ color }) => <Search size={24} color={color} />,
+          tabBarIcon: ({ color }) => <Search size={20} color={color} />,
         }}
       />
       <Tabs.Screen
@@ -55,14 +63,24 @@ export default function TabLayout() {
           title: "Reels",
           headerShown: false,
           tabBarButton: (props) => <Pressable {...(props as any)} />,
-          tabBarIcon: ({ color }) => <MonitorPlay size={24} color={color} />,
+          tabBarIcon: ({ color }) => <MonitorPlay size={20} color={color} />,
         }}
       />
       <Tabs.Screen
         name="properties"
         options={() => ({
           title: "Properties",
-          tabBarIcon: ({ color }) => <Plus size={24} color={color} />,
+          tabBarIcon: ({ color }) => <Plus size={20} color={color} />,
+          href: me?.role == "admin" ? null : "/properties",
+        })}
+      />
+      <Tabs.Screen
+        name="chats"
+        options={() => ({
+          title: "Chats",
+          tabBarIcon: ({ color }) => (
+            <MessageSquareMore size={20} color={color} />
+          ),
         })}
       />
       <Tabs.Screen
@@ -70,7 +88,7 @@ export default function TabLayout() {
         options={{
           title: "Menu",
           headerShown: true,
-          tabBarIcon: ({ color }) => <Menu size={24} color={color} />,
+          tabBarIcon: ({ color }) => <Menu size={20} color={color} />,
         }}
       />
     </Tabs>

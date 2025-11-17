@@ -10,14 +10,12 @@ import {
 } from "@/components/ui";
 import { useRouter } from "expo-router";
 import { Alert, Share } from "react-native";
-import React, { useMemo } from "react";
 import {
   Heart,
   HelpCircle,
   House,
   LayoutDashboard,
   LogOut,
-  MessageSquareMore,
   NotebookText,
   Settings,
   Share2,
@@ -27,17 +25,17 @@ import { MenuListItem } from "@/components/menu/MenuListItem";
 import config from "@/config";
 import { Divider } from "@/components/ui/divider";
 import { cn, fullName } from "@/lib/utils";
-import { useStore } from "@/store";
 import { BodyScrollView } from "@/components/layouts/BodyScrollView";
 import { getImageUrl } from "@/lib/api";
 import { openAccessModal } from "@/components/globals/AuthModals";
 import useResetAppState from "@/hooks/useResetAppState";
 import { Fetch } from "@/actions/utills";
 import { getUniqueIdSync } from "react-native-device-info";
+import { useUser } from "@/hooks/useUser";
 
 export default function More() {
   const resetAppState = useResetAppState();
-  const { me, hasAuth } = useStore();
+  const { hasAuth, isAdmin, isAgent, isStaff, me } = useUser();
   const router = useRouter();
   const deviceId = getUniqueIdSync();
   const theme = useResolvedTheme();
@@ -91,8 +89,6 @@ export default function More() {
       alert(error.message);
     }
   }
-  const isAgent = false;
-  const isAdmin = useMemo(() => me?.role == "admin" || me?.is_superuser, [me]);
   return (
     <>
       <BodyScrollView withBackground={true}>
@@ -106,12 +102,12 @@ export default function More() {
         >
           <Pressable
             onPress={() => {
-              if (!me?.id) {
+              if (!hasAuth) {
                 router.replace("/signin");
-              } else if (me.role == "agent") {
+              } else if (isAgent) {
                 router.push({
-                  pathname: "/profile/[user]",
-                  params: { user: me.id },
+                  pathname: "/agents/[user]",
+                  params: { user: me?.id! },
                 });
               }
             }}
@@ -145,11 +141,11 @@ export default function More() {
                     : "View your dashboard"
                 }
                 onPress={() => {
-                  if (!me?.id) {
+                  if (!hasAuth) {
                     openAccessModal({ visible: true });
                   } else {
                     router.push({
-                      pathname: "/(protected)/profile/[user]/account",
+                      pathname: "/(protected)/agents/[user]/account",
                       params: {
                         user: me?.slug!,
                       },
@@ -161,29 +157,31 @@ export default function More() {
                 className=" py-2 pb-3"
               />
             )}
-            {me && <Divider className=" h-[0.3px] bg-background-info mb-4" />}
-            <MenuListItem
-              title="My Properties"
-              description="View all your saved properties"
-              onPress={() => {
-                if (!me?.id) {
-                  openAccessModal({ visible: true });
-                } else {
-                  router.push("/agent");
-                }
-              }}
-              icon={House}
-              iconColor="blue-500"
-              className=" py-2 pb-3"
-            />
-            <Divider className=" h-[0.3px] bg-background-info mb-4" />
-            {me && (me?.role != "user" || isAdmin) && (
+            {hasAuth && (
+              <Divider className=" h-[0.3px] bg-background-info mb-4" />
+            )}
+            {isAgent && (
               <MenuListItem
-                title={
-                  me?.role == "admin" || me?.is_superuser
-                    ? "Dashboard"
-                    : "Analytics"
-                }
+                title="My Properties"
+                description="View all your saved properties"
+                onPress={() => {
+                  if (!hasAuth) {
+                    openAccessModal({ visible: true });
+                  } else {
+                    router.push("/agent");
+                  }
+                }}
+                icon={House}
+                iconColor="blue-500"
+                className=" py-2 pb-3"
+              />
+            )}
+            {isAgent && (
+              <Divider className=" h-[0.3px] bg-background-info mb-4" />
+            )}
+            {(isAdmin || isAgent) && (
+              <MenuListItem
+                title={isAdmin ? "Dashboard" : "Analytics"}
                 description=""
                 onPress={() => {
                   if (isAdmin) {
@@ -197,34 +195,18 @@ export default function More() {
                 className=" py-2 pb-3"
               />
             )}
-            {me && me?.role != "user" && (
+            {(isAdmin || isAgent) && (
               <Divider className=" h-[0.3px] bg-background-info mb-4" />
             )}
-
-            <MenuListItem
-              title="Messages"
-              description="View all your saved properties"
-              onPress={() => {
-                if (!me?.id) {
-                  openAccessModal({ visible: true });
-                } else {
-                  router.push("/messages");
-                }
-              }}
-              icon={MessageSquareMore}
-              iconColor="primary"
-              className=" py-2 pb-3"
-            />
-            <Divider className=" h-[0.3px] bg-background-info mb-4" />
             <MenuListItem
               title="Wishlist"
               description="View all your saved properties"
               onPress={() => {
-                if (!me?.id) {
+                if (!hasAuth) {
                   openAccessModal({ visible: true });
                 } else {
                   router.push({
-                    pathname: "/(protected)/profile/[user]/wishlist",
+                    pathname: "/(protected)/agents/[user]/wishlist",
                     params: {
                       user: me?.id!,
                     },
@@ -265,7 +247,7 @@ export default function More() {
               onPress={onInvite}
             />
             <Divider className=" h-[0.3px] bg-background-info mb-4" />
-            {!isAgent && me?.role == "user" && (
+            {me?.role == "user" && (
               <MenuListItem
                 title="Become an Agent"
                 description={`Join us as an agent to earn more`}
@@ -273,7 +255,7 @@ export default function More() {
                 className="py-2"
                 iconColor="gray-600"
                 onPress={() => {
-                  if (!me?.id) {
+                  if (hasAuth) {
                     openAccessModal({ visible: true });
                   } else {
                     router.push("/forms/agent");
@@ -281,7 +263,7 @@ export default function More() {
                 }}
               />
             )}
-            {!isAgent && me?.role == "user" && (
+            {me?.role == "user" && (
               <Divider className=" h-[0.3px] bg-background-info mb-4" />
             )}
             <MenuListItem

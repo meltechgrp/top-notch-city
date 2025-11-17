@@ -53,7 +53,7 @@ const SHARE_OPTIONS = [
 ];
 
 export function AgentShareSheet({ visible, onDismiss, id }: AuthModalProps) {
-  const url = `https://topnotchcity.com/profile/${id}`;
+  const url = `https://topnotchcity.com/agents/${id}`;
   const message =
     `📣 *Check out my profile on TopNotch City Estate!*\n\n` +
     `Looking for your dream apartment or real estate deals? View my listings and let's get started.\n\n` +

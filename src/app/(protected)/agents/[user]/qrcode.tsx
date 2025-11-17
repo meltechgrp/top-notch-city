@@ -39,7 +39,7 @@ export default function QrCodeScreen() {
   });
 
   const theme = useResolvedTheme();
-  const url = `https://topnotchcity.com/profile/${user}`;
+  const url = `https://topnotchcity.com/agents/${user}`;
   const gradients = [
     ["#4158D0", "#C850C0", "#FFCC70"],
     ["#36D1DC", "#5B86E5"],

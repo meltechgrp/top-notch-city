@@ -65,7 +65,7 @@ export default function ProfileScreensLayout() {
                   <Pressable
                     onPress={() =>
                       router.push({
-                        pathname: "/profile/[user]/qrcode",
+                        pathname: "/agents/[user]/qrcode",
                         params: {
                           user: user,
                         },
@@ -79,7 +79,7 @@ export default function ProfileScreensLayout() {
                   <Pressable
                     className=" bg-gray-500 rounded-xl p-1 px-1.5"
                     onPress={() => {
-                      router.push("/(protected)/profile/[user]/account");
+                      router.push("/(protected)/agents/[user]/account");
                     }}
                   >
                     <Icon

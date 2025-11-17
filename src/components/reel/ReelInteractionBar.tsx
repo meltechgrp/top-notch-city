@@ -46,7 +46,7 @@ function ReelInteractionBar({
         className=" relative"
         onPress={() => {
           router.push({
-            pathname: "/profile/[user]",
+            pathname: "/agents/[user]",
             params: {
               user: reel?.owner?.id!,
             },

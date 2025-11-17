@@ -32,7 +32,7 @@ export default function UserProfileScreensLayout() {
       const message =
         `📣 *Check out my profile on TopNotch City Estate!*\n\n` +
         `Looking for your dream apartment or real estate deals? View my listings and let's get started.\n\n` +
-        `👉 Tap here to view my profile: ${config.websiteUrl}/profile/${userId}\n\n` +
+        `👉 Tap here to view my profile: ${config.websiteUrl}/agents/${userId}\n\n` +
         `Download the app for the best experience and updates.`;
 
       const result = await Share.share({
@@ -88,7 +88,7 @@ export default function UserProfileScreensLayout() {
                 <Pressable
                   className=" bg-gray-500 rounded-xl p-1 px-1.5"
                   onPress={() => {
-                    //   router.push("/(protected)/profile/[user]/account");
+                    //   router.push("/(protected)/agents/[user]/account");
                   }}
                 >
                   <Icon size="xl" as={MoreHorizontal} className="text-white" />
