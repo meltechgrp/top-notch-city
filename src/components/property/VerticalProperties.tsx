@@ -176,7 +176,7 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
                 title="No Properties Found"
                 description="You're all caught up. New properties will appear here soon."
                 buttonLabel="Try again"
-                onReset={refetch}
+                onPress={refetch}
               />
             )}
           </>

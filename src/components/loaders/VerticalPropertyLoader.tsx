@@ -22,7 +22,7 @@ export default function VerticalPropertyLoaderWrapper({
   if (loading) {
     return (
       <ScrollView
-        className="flex-1"
+        className="flex-1 px-4"
         contentContainerStyle={{
           gap: 16,
           paddingVertical: headerHeight,

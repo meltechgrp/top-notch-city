@@ -24,6 +24,7 @@ const Pressable = React.forwardRef<
     both = false,
     onDoublePress,
     onPress,
+    onLongPress,
     ...props
   },
   ref
@@ -61,6 +62,12 @@ const Pressable = React.forwardRef<
           await hapticFeed(both);
         }
         handlePress(e);
+      }}
+      onLongPress={async (e) => {
+        if (!disableHaptic) {
+          await hapticFeed(both);
+        }
+        onLongPress?.(e);
       }}
       className={cn(" disabled:opacity-40", className)}
     />

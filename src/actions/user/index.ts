@@ -121,6 +121,26 @@ export async function verifyEmail({ user_id }: { user_id: string }) {
   }
   return res as { message: string };
 }
+export async function updateRole({
+  user_id,
+  role,
+}: {
+  user_id: string;
+  role: Me["role"];
+}) {
+  const res = await Fetch(`/${user_id}/role`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: { new_role: role },
+  });
+
+  if (res?.detail) {
+    throw new Error("Failed to update user role");
+  }
+  return res as string;
+}
 export async function deleteUser({ user_id }: { user_id: string }) {
   try {
     const res = await Fetch(`/users/${user_id}`, {

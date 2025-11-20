@@ -19,10 +19,9 @@ import { showErrorAlert } from "@/components/custom/CustomNotification";
 type Props = {
   user: Me;
   onPress: (user: Props["user"]) => void;
-  onLongPress: (user: Props["user"]) => void;
 };
 
-export default function UserListItem({ user, onPress, onLongPress }: Props) {
+export default function UserListItem({ user, onPress }: Props) {
   const query = useQueryClient();
   const { mutateAsync, isPending } = useMutation({
     mutationFn: deleteUser,
@@ -50,8 +49,6 @@ export default function UserListItem({ user, onPress, onLongPress }: Props) {
             user_id: user?.id,
           })
         }
-        rightText="Verify"
-        rightAction={() => onLongPress(user)}
       >
         <Pressable
           both

@@ -9,7 +9,7 @@ interface EmptyStateProps {
   title?: string;
   description?: string;
   buttonLabel?: string;
-  onReset?: () => void;
+  onPress?: () => void;
   className?: string;
 }
 
@@ -18,11 +18,11 @@ export function PropertyEmptyState({
   title = "No Data Found",
   description = "New items will appear here soon.",
   buttonLabel = "Reset filters",
-  onReset,
+  onPress,
   className,
 }: EmptyStateProps) {
   return (
-    <View className={`h-full max-h-[60%] ${className}`}>
+    <View className={`h-full max-h-[60%] px-4 ${className}`}>
       <LinearGradient
         colors={["#2c2d30", "#1c1d1f"]}
         start={{ x: 0.5, y: 0 }}
@@ -44,9 +44,9 @@ export function PropertyEmptyState({
           <Text className="text-sm text-center px-4">{description}</Text>
         </View>
 
-        {onReset && (
+        {onPress && (
           <Button
-            onPress={onReset}
+            onPress={onPress}
             className="mt-6 px-4 py-2 border border-outline-100"
           >
             <Icon as={RefreshCcw} size={14} />

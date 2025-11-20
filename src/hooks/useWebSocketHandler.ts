@@ -3,6 +3,9 @@ import { useHomeFeed } from "@/hooks/useHomeFeed";
 import { getAuthToken } from "@/lib/secureStore";
 import { useWebSocketConnection } from "@/actions/utills";
 import { useChatStore } from "@/store/chatStore";
+import { getMe } from "@/actions/user";
+import { useStore } from "@/store";
+import { router } from "expo-router";
 
 export function useWebSocketHandler() {
   const authToken = getAuthToken();
@@ -28,8 +31,8 @@ export function useWebSocketHandler() {
 
     connect();
 
-    setOnMessage((data) => {
-      console.log("📨 Message:", data, data?.type);
+    setOnMessage(async (data) => {
+      // console.log("📨 Message:", data, data?.type);
 
       switch (data.type) {
         case "new_message":
@@ -88,6 +91,19 @@ export function useWebSocketHandler() {
           chats?.forEach((c) => {
             updateChatListDetails(c);
           });
+          break;
+        case "agent_application_review":
+          const me = await getMe();
+          if (me) {
+            useStore.setState((s) => ({
+              ...s,
+              me: me,
+              hasAuth: true,
+            }));
+            router.reload();
+          }
+          break;
+        default:
           break;
       }
     });

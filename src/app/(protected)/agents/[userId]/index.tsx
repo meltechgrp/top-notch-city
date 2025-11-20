@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { Box, Icon, Pressable, Text, View } from "@/components/ui";
 import PropertiesTabView from "@/components/profile/PropertiesTab";
@@ -7,13 +7,12 @@ import { useQuery } from "@tanstack/react-query";
 import { getUser } from "@/actions/user";
 import FullHeightLoaderWrapper from "@/components/loaders/FullHeightLoaderWrapper";
 import headerLeft from "@/components/shared/headerLeft";
-import { MoreHorizontal, Search, Share } from "lucide-react-native";
+import { MoreHorizontal, Share } from "lucide-react-native";
 import { FlashList } from "@shopify/flash-list";
 import { ProfileDetails } from "@/components/agents/ProfileDetails";
 import { ProfileTopSection } from "@/components/agents/ProfileTopSection";
 import ProfileTabHeaderSection from "@/components/profile/ProfileTabHeaderSection";
 import ReviewsTabView from "@/components/profile/ReviewsTabView";
-import SavedPropertiesTabView from "@/components/profile/SavedProperties";
 
 const TABS = ["All", "Houses", "Lands", "Reviews"] as const;
 export default function ProfileScreen() {

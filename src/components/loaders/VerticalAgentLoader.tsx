@@ -24,7 +24,7 @@ export default function VerticalAgentLoaderWrapper({
       <FlatList
         data={Array.from({ length: skeletonCount })}
         keyExtractor={(_, i) => `skeleton-${i}`}
-        className={"flex-1"}
+        className={"flex-1 px-4"}
         contentContainerClassName={cn("", className)}
         renderItem={() => <AgentSkeletonCard />}
         contentContainerStyle={{ gap: 8, paddingTop: headerHeight }}

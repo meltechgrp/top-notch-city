@@ -35,7 +35,7 @@ export default function SavedPropertiesTabView({ showStatus = false }: IProps) {
         description="New properties will appear here soon."
         className="px-4"
         buttonLabel="Explore Properties"
-        onReset={() => router.push("/explore")}
+        onPress={() => router.push("/explore")}
       />
     );
   }

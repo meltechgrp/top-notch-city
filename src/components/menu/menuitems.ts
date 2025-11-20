@@ -19,15 +19,15 @@ export const getQuickMenuItems = () => {
   const { me, isAdmin, isAgent } = useUser();
   const data: MenuProps[] = [
     // Users
-    { label: "Find Agents", icon: Users, link: "/agents", role: "user" },
+    { label: "Find Agents", icon: Users, link: "/agents", role: "all" },
     { label: "Saved", icon: Bookmark, link: `/profile`, role: "user" },
-    { label: "Reels", icon: Film, link: "/reels", role: "user" },
+    { label: "Reels", icon: Film, link: "/reels", role: "all" },
     { label: "Invite Friends", icon: Share2, link: "/invite", role: "all" },
     {
       label: "Messages",
       icon: MessageCircle,
       link: "/chats",
-      role: "all",
+      role: "user",
       badge: "",
     },
     {
@@ -42,6 +42,13 @@ export const getQuickMenuItems = () => {
       icon: LayoutDashboard,
       link: "/agent/dashboard",
       role: "agent",
+    },
+    {
+      label: "Messages",
+      icon: MessageCircle,
+      link: "/chats",
+      role: "agent",
+      badge: "",
     },
     {
       label: "My Properties",
@@ -85,8 +92,10 @@ export const getQuickMenuItems = () => {
     return data.filter((m) => m.role == "all" || m.role == "agent");
   } else if (isAdmin) {
     return data.filter((m) => m.role == "admin");
-  } else {
+  } else if (me) {
     return data.filter((m) => m.role == "all" || m.role == "user");
+  } else {
+    return data.filter((m) => m.role == "all");
   }
 };
 

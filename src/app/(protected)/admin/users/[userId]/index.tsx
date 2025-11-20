@@ -1,174 +1,162 @@
-import React, { useCallback, useMemo, useRef, useState } from "react";
-import { LayoutChangeEvent } from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  scrollTo,
-  useAnimatedRef,
-  useAnimatedReaction,
-  runOnJS,
-} from "react-native-reanimated";
-import PagerView from "react-native-pager-view";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { Box, Text, View } from "@/components/ui";
-import BeachPersonWaterParasolSingleColorIcon from "@/components/icons/BeachPersonWaterParasolIcon";
-import { useQuery } from "@tanstack/react-query";
-import { getUser } from "@/actions/user";
-import FullHeightLoaderWrapper from "@/components/loaders/FullHeightLoaderWrapper";
-import { ProfileTopSection } from "@/components/admin/users/ProfileTopSection";
-import ProfileTabHeaderSection from "@/components/admin/users/ProfileTabHeaderSection";
-import PropertiesTabView from "@/components/admin/users/PropertiesTab";
-import ActivityTabView from "@/components/admin/users/ActivityTab";
+import React, { useMemo, useState } from "react";
+import { FlashList } from "@shopify/flash-list";
 
-const TABS = ["Properties", "Activities"];
-export default function UserProfileScreen() {
-  const router = useRouter();
+import { Box, Icon, Pressable, Text, View } from "@/components/ui";
+import { useQuery } from "@tanstack/react-query";
+import { getMe, getUser } from "@/actions/user";
+import FullHeightLoaderWrapper from "@/components/loaders/FullHeightLoaderWrapper";
+
+import ProfileTabHeaderSection from "@/components/profile/ProfileTabHeaderSection";
+import PropertiesTabView from "@/components/profile/PropertiesTab";
+import BeachPersonWaterParasolIcon from "@/components/icons/BeachPersonWaterParasolIcon";
+import { Stack, useLocalSearchParams } from "expo-router";
+import { MoreHorizontal } from "lucide-react-native";
+import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
+import ReviewsTabView from "@/components/profile/ReviewsTabView";
+import ActivityTabView from "@/components/admin/users/ActivityTab";
+import { AdminProfileDetails } from "@/components/admin/users/ProfileDetails";
+import { AdminProfileTopSection } from "@/components/admin/users/ProfileTopSection";
+import { UserActionsBottomSheet } from "@/components/admin/users/UserBottomSheet";
+import { RefreshControl } from "react-native";
+
+const TABS = ["All", "Properties", "Reviews", "Activities"] as const;
+
+export default function AdminProfile() {
   const { userId } = useLocalSearchParams() as { userId: string };
-  const { data, refetch, isLoading, isFetching } = useQuery({
+  const { data, isLoading, refetch, isRefetching } = useQuery({
     queryKey: ["user", userId],
     queryFn: () => getUser(userId),
   });
-  const userData = useMemo(() => data || null, [data]);
-  const pagerRef = useRef<PagerView>(null);
-  const [currentPage, setCurrentPage] = useState(0);
-  const scrollYs = useRef(TABS.map(() => useSharedValue(0))).current;
-  const scrollRefs = useRef(TABS.map(() => useAnimatedRef())).current;
+  const user = useMemo(() => data ?? null, [data]);
+  const [showActions, setShowActions] = useState(false);
+  const [activeTab, setActiveTab] = useState<(typeof TABS)[number]>("All");
 
-  const [headerOnlyHeight, setHeaderOnlyHeight] = useState(0);
-  const [tabBarHeight, setTabBarHeight] = useState(0);
-  const fullHeaderHeight = headerOnlyHeight + tabBarHeight;
-  const onHeaderLayout = useCallback((e: LayoutChangeEvent) => {
-    setHeaderOnlyHeight(Math.round(e.nativeEvent.layout.height));
-  }, []);
+  if (!isLoading && !user) return <EmptyProfile />;
 
-  const lastTitleState = useSharedValue<"profile" | "name">("profile");
+  const dataForTab = useMemo(() => {
+    switch (activeTab) {
+      case "Properties":
+        return [{ type: "properties" }];
 
-  const onTabBarLayout = useCallback((e: LayoutChangeEvent) => {
-    setTabBarHeight(Math.round(e.nativeEvent.layout.height));
-  }, []);
+      case "Activities":
+        return [{ type: "activity" }];
 
-  const headerTranslateY = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          translateY: -Math.min(scrollYs[currentPage].value, headerOnlyHeight),
-        },
-      ],
-    };
-  }, [currentPage, headerOnlyHeight]);
+      case "Reviews":
+        return [{ type: "reviews" }];
 
-  const scrollToTop = React.useCallback((index: number) => {
-    const ref = scrollRefs[index];
-    if (ref) {
-      scrollTo(ref, 0, 0, true);
+      case "All":
+      default:
+        return [{ type: "all" }];
     }
-  }, []);
+  }, [activeTab]);
 
-  const onTabChange = React.useCallback(
-    (index: number) => {
-      setCurrentPage(index);
-      pagerRef.current?.setPage(index);
-      scrollToTop(index);
-    },
-    [scrollToTop]
-  );
-  useAnimatedReaction(
-    () => scrollYs[currentPage].value,
-    (scroll) => {
-      if (!userData) return;
+  const stickyHeaderIndices = [0, 1];
 
-      const threshold = headerOnlyHeight / 4;
-
-      if (scroll > threshold && lastTitleState.value !== "name") {
-        lastTitleState.value = "name";
-        runOnJS(router.setParams)({
-          title: userData.first_name + " " + userData.last_name,
-        });
-      } else if (scroll <= threshold && lastTitleState.value !== "profile") {
-        lastTitleState.value = "profile";
-        runOnJS(router.setParams)({
-          title: "Profile",
-        });
-      }
-    },
-    [currentPage, headerOnlyHeight, userData]
-  );
-  if (!isLoading && !userData) return <EmptyProfile />;
+  useRefreshOnFocus(refetch);
   return (
     <>
+      <Stack.Screen
+        options={{
+          headerRight: () => (
+            <View className="px-4 flex-row gap-6">
+              <Pressable onPress={() => setShowActions(true)}>
+                <Icon as={MoreHorizontal} className="w-6 h-6" />
+              </Pressable>
+            </View>
+          ),
+        }}
+      />
       <FullHeightLoaderWrapper loading={isLoading}>
         <Box className="flex-1">
-          <Animated.View
-            style={[
-              headerTranslateY,
-              {
-                zIndex: 10,
-                position: "absolute",
-                width: "100%",
-              },
-            ]}
-            pointerEvents="box-none"
-          >
-            <View onLayout={onHeaderLayout} pointerEvents="box-none">
-              {userData && <ProfileTopSection userData={userData} />}
-            </View>
-            <View onLayout={onTabBarLayout} className=" bg-background">
-              {userData && (
-                <ProfileTabHeaderSection
-                  activeIndex={currentPage}
-                  onTabChange={onTabChange}
-                  profile={userData}
-                />
-              )}
-            </View>
-          </Animated.View>
-
-          <PagerView
-            style={{ flex: 1 }}
-            initialPage={0}
-            ref={pagerRef}
-            onPageSelected={(e) => setCurrentPage(e.nativeEvent.position)}
-          >
-            {TABS.map((tab, index) => {
-              switch (tab) {
-                case "Properties":
+          <FlashList
+            data={dataForTab}
+            refreshControl={
+              <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+            }
+            keyExtractor={(_, idx) => `${activeTab}-${idx}`}
+            renderItem={({ item }) => {
+              switch (item.type) {
+                case "all":
                   return (
-                    <View style={{ flex: 1 }} key={index}>
-                      {userId && currentPage === index ? (
-                        <PropertiesTabView
-                          key={index}
-                          refetch={refetch}
-                          listRef={scrollRefs[index]}
-                          profileId={userId}
-                          scrollElRef={scrollRefs[index]}
-                          headerHeight={fullHeaderHeight}
-                          scrollY={scrollYs[index]}
-                        />
-                      ) : null}
+                    <View className="mt-4">
+                      <AdminProfileDetails me={user} />
                     </View>
                   );
-                case "Activities":
+
+                case "properties":
                   return (
-                    <View style={{ flex: 1 }} key={index}>
-                      {userId && currentPage === index ? (
-                        <ActivityTabView
-                          key={index}
-                          listRef={scrollRefs[index]}
-                          profileId={userId}
-                          scrollElRef={scrollRefs[index]}
-                          headerHeight={fullHeaderHeight}
-                          scrollY={scrollYs[index]}
-                        />
-                      ) : null}
+                    <View className="mt-4">
+                      {user && <PropertiesTabView profileId={user.id} />}
+                    </View>
+                  );
+
+                case "reviews":
+                  return (
+                    <View className="mt-4">
+                      {user && <ReviewsTabView profileId={user.id} />}
+                    </View>
+                  );
+
+                case "activity":
+                  return (
+                    <View className="mt-4">
+                      {user && <ActivityTabView profileId={user.id} />}
                     </View>
                   );
                 default:
                   return null;
               }
-            })}
-          </PagerView>
+            }}
+            ListHeaderComponent={
+              <View>
+                {user && (
+                  <AdminProfileTopSection
+                    setShowActions={() => setShowActions(true)}
+                    userData={user}
+                  />
+                )}
+
+                {user && (
+                  <ProfileTabHeaderSection
+                    activeIndex={TABS.indexOf(activeTab)}
+                    onTabChange={(index) => setActiveTab(TABS[index])}
+                    profile={user}
+                    profileTabs={[
+                      {
+                        label: "All",
+                        key: "all",
+                      },
+                      {
+                        label: "Properties",
+                        key: "houses",
+                      },
+                      {
+                        label: "Reviews",
+                        key: "reviews",
+                      },
+                      {
+                        label: "Activities",
+                        key: "activity",
+                      },
+                    ]}
+                  />
+                )}
+              </View>
+            }
+            stickyHeaderIndices={stickyHeaderIndices}
+            contentContainerStyle={{
+              paddingBottom: 50,
+            }}
+          />
         </Box>
       </FullHeightLoaderWrapper>
+      {user && (
+        <UserActionsBottomSheet
+          user={user}
+          visible={showActions}
+          onDismiss={() => setShowActions(false)}
+        />
+      )}
     </>
   );
 }
@@ -176,7 +164,7 @@ export default function UserProfileScreen() {
 function EmptyProfile() {
   return (
     <View className="flex-1 bg-background-muted justify-center items-center px-4">
-      <BeachPersonWaterParasolSingleColorIcon
+      <BeachPersonWaterParasolIcon
         width={64}
         height={64}
         className="text-gray-500"

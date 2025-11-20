@@ -34,12 +34,10 @@ export function Rating({
         />
       ))}
 
-      {/* Half Star */}
       {hasHalfStar && (
         <Icon as={StarHalf} size={size} className="text-primary fill-primary" />
       )}
 
-      {/* Empty Stars */}
       {Array.from({ length: emptyStars }).map((_, i) => (
         <Icon
           key={`empty-${i}`}
@@ -48,7 +46,7 @@ export function Rating({
           className="text-gray-400 fill-gray-400"
         />
       ))}
-      {showValue && total && (
+      {showValue && !!total && (
         <Pressable>
           <View className="ml-3 flex-row gap-2">
             <Text className="text-sm">{formatNumberCompact(total)}</Text>

@@ -6,7 +6,7 @@ import { ErrorBoundaryProps, Stack } from "expo-router";
 
 export const unstable_settings = {
   // Ensure any route can link back to `/`
-  initialRouteName: "dashboard",
+  initialRouteName: "users",
 };
 
 export default function ProtectedRoutesLayout() {

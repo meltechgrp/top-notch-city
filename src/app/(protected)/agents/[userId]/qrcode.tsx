@@ -4,7 +4,6 @@ import {
   AvatarImage,
   Image,
   Pressable,
-  useResolvedTheme,
 } from "@/components/ui";
 import QRCode from "react-native-qrcode-svg";
 import { Icon, Text, View } from "@/components/ui";
@@ -31,15 +30,13 @@ import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { getImageUrl } from "@/lib/api";
 
 export default function QrCodeScreen() {
-  const { user } = useLocalSearchParams() as { user: string };
+  const { userId } = useLocalSearchParams() as { userId: string };
 
-  const { data, refetch, isLoading, isFetching } = useQuery({
-    queryKey: ["user", user],
-    queryFn: () => getUser(user),
+  const { data } = useQuery({
+    queryKey: ["user", userId],
+    queryFn: () => getUser(userId),
   });
-
-  const theme = useResolvedTheme();
-  const url = `https://topnotchcity.com/agents/${user}`;
+  const url = `https://topnotchcity.com/agents/${data?.slug}`;
   const gradients = [
     ["#4158D0", "#C850C0", "#FFCC70"],
     ["#36D1DC", "#5B86E5"],
@@ -142,7 +139,7 @@ export default function QrCodeScreen() {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => openAgentModal({ visible: true, id: user })}
+                onPress={() => openAgentModal({ visible: true, id: userId })}
                 className="items-center flex-1 bg-white border border-gray-300 p-4 rounded-xl"
               >
                 <View>

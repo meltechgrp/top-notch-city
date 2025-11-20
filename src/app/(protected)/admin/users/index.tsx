@@ -1,4 +1,3 @@
-import UserDetailsBottomSheet from "@/components/admin/users/UserBottomSheet";
 import UserListItem from "@/components/admin/users/UserListItem";
 import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
 import { Box, View } from "@/components/ui";
@@ -8,19 +7,15 @@ import { FlashList } from "@shopify/flash-list";
 import { useMemo, useState } from "react";
 import { RefreshControl } from "react-native";
 import { FilterComponent } from "@/components/admin/shared/FilterComponent";
-import { User2, UserCog2, UserSearch } from "lucide-react-native";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { getUsers } from "@/actions/user";
 import { router } from "expo-router";
-import MainLayout from "@/components/admin/shared/MainLayout";
 
 export default function Users() {
   const [refreshing, setRefreshing] = useState(false);
-  const [activeUser, setActiveUser] = useState<Me | null>(null);
-  const [userBottomSheet, setUserBottomSheet] = useState(false);
   const [actveTab, setActiveTab] = useState("all");
   const [search, setSearch] = useState("");
-  const { data, refetch, hasNextPage, fetchNextPage, isLoading } =
+  const { data, refetch, hasNextPage, isRefetching, fetchNextPage, isLoading } =
     useInfiniteQuery({
       queryKey: ["users"],
       queryFn: ({ pageParam = 1 }) => getUsers({ pageParam }),
@@ -75,15 +70,6 @@ export default function Users() {
       { title: "user", total: users },
     ];
   }, [usersData]);
-  async function onRefresh() {
-    try {
-      setRefreshing(true);
-      await refetch();
-    } catch (error) {
-    } finally {
-      setRefreshing(false);
-    }
-  }
   const headerComponent = useMemo(() => {
     return (
       <FilterComponent
@@ -96,57 +82,38 @@ export default function Users() {
     );
   }, [tabs, actveTab, search, setSearch]);
 
-  const BUTTONS = [
-    { icon: User2, value: "user" },
-    { icon: UserCog2, value: "admin" },
-    { icon: UserSearch, value: "agent" },
-  ];
-  function handleButtonPress(val: string) {}
   useRefreshOnFocus(refetch);
   return (
-    <MainLayout>
-      <Box className=" flex-1 px-2 pt-2">
-        <View className="flex-1">
-          <FlashList
-            data={filteredData}
-            keyExtractor={(item) => item.id}
-            keyboardDismissMode="on-drag"
-            onScroll={() => eventBus.dispatchEvent("SWIPEABLE_OPEN", null)}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-            contentContainerClassName="pb-40"
-            ListEmptyComponent={<MiniEmptyState title="No user found" />}
-            ItemSeparatorComponent={() => <View className="h-2" />}
-            onEndReached={() => {
-              if (hasNextPage && !isLoading) fetchNextPage();
-            }}
-            renderItem={({ item }) => (
-              <UserListItem
-                user={item}
-                onPress={(user) => {
-                  router.push({
-                    pathname: "/admin/users/[userId]",
-                    params: { userId: user.id },
-                  });
-                }}
-                onLongPress={(user) => {
-                  setActiveUser(user);
-                  setUserBottomSheet(true);
-                }}
-              />
-            )}
-            ListHeaderComponent={headerComponent}
-          />
-        </View>
-        {activeUser && (
-          <UserDetailsBottomSheet
-            visible={userBottomSheet}
-            user={activeUser}
-            onDismiss={() => setUserBottomSheet(false)}
-          />
-        )}
-      </Box>
-    </MainLayout>
+    <Box className=" flex-1 px-2 pt-2">
+      <View className="flex-1">
+        <FlashList
+          data={filteredData}
+          keyExtractor={(item) => item.id}
+          keyboardDismissMode="on-drag"
+          onScroll={() => eventBus.dispatchEvent("SWIPEABLE_OPEN", null)}
+          refreshControl={
+            <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+          }
+          contentContainerClassName="pb-40"
+          ListEmptyComponent={<MiniEmptyState title="No user found" />}
+          ItemSeparatorComponent={() => <View className="h-2" />}
+          onEndReached={() => {
+            if (hasNextPage && !isLoading) fetchNextPage();
+          }}
+          renderItem={({ item }) => (
+            <UserListItem
+              user={item}
+              onPress={(user) => {
+                router.push({
+                  pathname: "/admin/users/[userId]",
+                  params: { userId: user.id },
+                });
+              }}
+            />
+          )}
+          ListHeaderComponent={headerComponent}
+        />
+      </View>
+    </Box>
   );
 }

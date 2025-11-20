@@ -1,105 +1,242 @@
-import * as React from "react";
+import {
+  Avatar,
+  AvatarFallbackText,
+  AvatarImage,
+  Icon,
+  Pressable,
+  Text,
+  useResolvedTheme,
+  View,
+} from "@/components/ui";
+import { useRouter } from "expo-router";
+import { Alert, Share } from "react-native";
+import {
+  Heart,
+  HelpCircle,
+  House,
+  LayoutDashboard,
+  LogOut,
+  NotebookText,
+  Settings,
+  Share2,
+  Sparkle,
+} from "lucide-react-native";
+import { MenuListItem } from "@/components/menu/MenuListItem";
+import config from "@/config";
+import { Divider } from "@/components/ui/divider";
+import { cn, fullName } from "@/lib/utils";
+import { BodyScrollView } from "@/components/layouts/BodyScrollView";
+import { getImageUrl } from "@/lib/api";
+import { openAccessModal } from "@/components/globals/AuthModals";
+import useResetAppState from "@/hooks/useResetAppState";
+import { Fetch } from "@/actions/utills";
+import { getUniqueIdSync } from "react-native-device-info";
+import { useUser } from "@/hooks/useUser";
 
-import { Pressable, View } from "react-native";
-import { router, useNavigation } from "expo-router";
-import SettingsItemList from "@/components/settings/SettingsItemList";
-import { useStore } from "@/store";
-import { Box } from "@/components/ui";
-import { storage } from "@/lib/asyncStorage";
+export default function Setting() {
+  const resetAppState = useResetAppState();
+  const { hasAuth, isAdmin, isAgent, isStaff, me } = useUser();
+  const router = useRouter();
+  const deviceId = getUniqueIdSync();
+  const theme = useResolvedTheme();
 
-export default function SettingsScreen() {
-  const { hasAuth } = useStore();
-  const [tapCount, setTapCount] = React.useState(0);
-  const navigation = useNavigation();
-  React.useEffect(() => {
-    const handleBlur = (e: any) => {
-      setTapCount(0);
-    };
+  async function logout() {
+    await Fetch("/logout", {
+      method: "POST",
+      data: { device_id: deviceId },
+    });
+    resetAppState();
+  }
+  async function onLogout() {
+    Alert.alert(
+      "Logout",
+      "Are you sure you want to logout?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Logout",
+          style: "destructive",
+          onPress: () => {
+            logout();
+          },
+        },
+      ],
+      {}
+    );
+  }
+  async function onInvite() {
+    try {
+      const message =
+        `🏘️ Invite your friends to join *TopNotch City Estate*.\n\n` +
+        `Discover amazing apartments and real estate opportunities near you.\n\n` +
+        `👉 Tap here to join: ${config.websiteUrl}/home `;
 
-    navigation.addListener("blur", handleBlur);
+      const result = await Share.share({
+        title: "Join TopNotch City Estate",
+        message,
+      });
 
-    return () => {
-      navigation.removeListener("blur", handleBlur);
-    };
-  }, [navigation]);
-  const handleClick = (e: any) => {
-    if (tapCount < 4) {
-      setTapCount((prev) => prev + 1);
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type
+        }
+      } else if (result.action === Share.dismissedAction) {
+      }
+    } catch (error: any) {
+      alert(error.message);
     }
-  };
+  }
   return (
     <>
-      <Box className=" flex-1">
-        <Pressable
-          onPress={handleClick}
-          className="flex-1 gap-6 w-full py-8 p-4"
-        >
-          <View className="bg-background-muted pl-4 rounded-xl">
-            <SettingsItemList
-              title="Notifcations"
-              onPress={async () => {
-                // showBounceNotification({
-                //   title: "Hello",
-                //   description: "i am here",
-                //   theme,
-                // });
-                // showErrorAlert({
-                //   title: "Hello",
-                //   description: "i am here",
-                //   alertType: "success",
-                // });
-                // router.push('/settings/email-address');
-              }}
-            />
-            <SettingsItemList
-              title="Chats"
-              onPress={() => {
-                // router.push('/settings/change-phone-number');
-              }}
-            />
-            <SettingsItemList
-              title="Theme"
-              withBorder={false}
-              onPress={() => {
-                router.push("/settings/theme");
-              }}
-            />
-          </View>
-          {tapCount > 3 && (
-            <View className="bg-background-muted pl-4 rounded-xl">
-              <SettingsItemList onPress={() => {}} title="Clear Basic Cache" />
-              <SettingsItemList
-                onPress={() => {
-                  useStore.getState().resetStore();
-                  storage.clearAll();
-                }}
-                title="Clear All Cache"
-                withBorder={false}
-              />
-            </View>
+      <BodyScrollView withBackground={true}>
+        <View
+          className={cn(
+            "px-4 py-2.5 mt-2 to-50%",
+            theme == "dark"
+              ? "bg-background-muted/95"
+              : "bg-background-muted/60"
           )}
-          <View className="bg-background-muted pl-4 rounded-xl">
-            {hasAuth && (
-              <SettingsItemList
-                onPress={() =>
-                  router.push("/(protected)/settings/change-password")
-                }
-                title="Change Password"
+        >
+          <Pressable
+            onPress={() => {
+              if (!hasAuth) {
+                router.replace("/signin");
+              } else if (isAgent) {
+              }
+            }}
+            className={"flex-row items-center"}
+          >
+            <Avatar className=" w-14 h-14">
+              <AvatarFallbackText>{fullName(me)}</AvatarFallbackText>
+              <AvatarImage source={getImageUrl(me?.profile_image)} />
+            </Avatar>
+            <View className="flex-1 pl-3">
+              <Text className="text-lg text-typography font-medium">
+                {me ? fullName(me) : "Let’s get you signed in"}
+              </Text>
+              <Text className="text-sm text-typography/80">
+                {me ? me?.email : "Welcome"}
+              </Text>
+            </View>
+          </Pressable>
+        </View>
+        <View className="pt-8 flex-1 px-4">
+          <Text className="text-base text-typography/80 uppercase px-4 mb-2">
+            Menu
+          </Text>
+          <View className="flex-1 mt-2">
+            {isAgent && (
+              <MenuListItem
+                title="My Properties"
+                description="View all your saved properties"
+                onPress={() => {
+                  if (!hasAuth) {
+                    openAccessModal({ visible: true });
+                  } else {
+                    router.push("/agent");
+                  }
+                }}
+                icon={House}
+                iconColor="blue-500"
+                className=" py-2 pb-3"
               />
             )}
-            {hasAuth && (
-              <SettingsItemList
-                title="Delete My Account"
-                withBorder={false}
-                onPress={() =>
-                  router.push("/(protected)/settings/delete-account")
-                }
-                textColor="text-primary"
+            {isAgent && (
+              <Divider className=" h-[0.3px] bg-background-info mb-4" />
+            )}
+            {(isAdmin || isAgent) && (
+              <MenuListItem
+                title={isAdmin ? "Dashboard" : "Analytics"}
+                description=""
+                onPress={() => {
+                  if (isAdmin) {
+                    router.dismissTo("/admin/analytics");
+                  } else {
+                    router.push("/dashboard");
+                  }
+                }}
+                icon={LayoutDashboard}
+                iconColor="gray-500"
+                className=" py-2 pb-3"
               />
+            )}
+            {(isAdmin || isAgent) && (
+              <Divider className=" h-[0.3px] bg-background-info mb-4" />
+            )}
+            <MenuListItem
+              title="Settings"
+              description="Change your theme and other settings"
+              onPress={() => {
+                router.push("/settings");
+              }}
+              icon={Settings}
+              iconColor="gray-500"
+              className=" py-2 pb-3"
+            />
+            <Divider className=" h-[0.3px] bg-background-info mb-4" />
+            <MenuListItem
+              title="Send us a feedback"
+              description="Let's improve the app"
+              onPress={() => router.push("/report")}
+              icon={NotebookText}
+              className="py-2"
+              iconColor="yellow-600"
+            />
+            <Divider className=" h-[0.3px] bg-background-info mb-4" />
+            <MenuListItem
+              title="Invite friends"
+              description={`Invite your friends to join ${config.appName} app`}
+              icon={Share2}
+              className=" py-2 pb-3"
+              iconColor="primary"
+              onPress={onInvite}
+            />
+            <Divider className=" h-[0.3px] bg-background-info mb-4" />
+            {me?.role == "user" && (
+              <MenuListItem
+                title="Become an Agent"
+                description={`Join us as an agent to earn more`}
+                icon={Sparkle}
+                className="py-2"
+                iconColor="gray-600"
+                onPress={() => {
+                  if (hasAuth) {
+                    openAccessModal({ visible: true });
+                  } else {
+                    router.push("/forms/agent");
+                  }
+                }}
+              />
+            )}
+            {me?.role == "user" && (
+              <Divider className=" h-[0.3px] bg-background-info mb-4" />
+            )}
+            <MenuListItem
+              title="Help and Support"
+              description="Get help and support"
+              onPress={() => {
+                router.push("/support");
+              }}
+              icon={HelpCircle}
+              className="py-2"
+              iconColor="yellow-600"
+            />
+
+            {hasAuth && (
+              <Pressable
+                onPress={onLogout}
+                className="bg-background-muted h-14 mt-8 rounded-xl px-4 flex-row justify-center items-center gap-2"
+              >
+                <Text size="lg">Sign Out</Text>
+                <Icon size="md" as={LogOut} className="text-primary" />
+              </Pressable>
             )}
           </View>
-        </Pressable>
-      </Box>
+        </View>
+      </BodyScrollView>
     </>
   );
 }
