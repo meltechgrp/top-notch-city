@@ -48,87 +48,33 @@ export default function ProfileScreen() {
     setTabBarHeight(Math.round(e.nativeEvent.layout.height));
   }, []);
 
-  const headerTranslateY = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          translateY: -Math.min(scrollYs[currentPage].value, headerOnlyHeight),
-        },
-      ],
-    };
-  }, [currentPage, headerOnlyHeight]);
-
-  const scrollToTop = React.useCallback((index: number) => {
-    const ref = scrollRefs[index];
-    if (ref) {
-      scrollTo(ref, 0, 0, true);
-    }
+  const onTabChange = React.useCallback((index: number) => {
+    setCurrentPage(index);
+    pagerRef.current?.setPage(index);
   }, []);
-
-  const onTabChange = React.useCallback(
-    (index: number) => {
-      setCurrentPage(index);
-      pagerRef.current?.setPage(index);
-      scrollToTop(index);
-    },
-    [scrollToTop]
-  );
-  useAnimatedReaction(
-    () => scrollYs[currentPage].value,
-    (scroll) => {
-      if (!userData) return;
-
-      const threshold = headerOnlyHeight / 4;
-
-      if (scroll > threshold && lastTitleState.value !== "name") {
-        lastTitleState.value = "name";
-        runOnJS(router.setParams)({
-          title: userData.first_name + " " + userData.last_name,
-        });
-      } else if (scroll <= threshold && lastTitleState.value !== "profile") {
-        lastTitleState.value = "profile";
-        runOnJS(router.setParams)({
-          title: "Profile",
-        });
-      }
-    },
-    [currentPage, headerOnlyHeight, userData]
-  );
   if (!isLoading && !userData) return <EmptyProfile />;
   return (
     <>
       <FullHeightLoaderWrapper loading={isLoading}>
         <Box className="flex-1">
-          <Animated.View
-            style={[
-              headerTranslateY,
-              {
-                zIndex: 10,
-                position: "absolute",
-                width: "100%",
-              },
-            ]}
-            pointerEvents="box-none"
-          >
-            <View onLayout={onHeaderLayout} pointerEvents="box-none">
-              {userData && (
-                <ProfileTopSection
-                  setShowAgents={setShowAgents}
-                  showAgents={showAgents}
-                  userData={userData}
-                />
-              )}
-            </View>
-            <View onLayout={onTabBarLayout} className=" bg-background">
-              {userData && (
-                <ProfileTabHeaderSection
-                  activeIndex={currentPage}
-                  onTabChange={onTabChange}
-                  profile={userData}
-                />
-              )}
-            </View>
-          </Animated.View>
+          <View>
+            {userData && (
+              <ProfileTopSection
+                setShowAgents={setShowAgents}
+                showAgents={showAgents}
+                userData={userData}
+              />
+            )}
+          </View>
+          <View>
+            {userData && (
+              <ProfileTabHeaderSection
+                activeIndex={currentPage}
+                onTabChange={onTabChange}
+                profile={userData}
+              />
+            )}
+          </View>
 
           <PagerView
             style={{ flex: 1 }}
@@ -145,11 +91,7 @@ export default function ProfileScreen() {
                         <PropertiesTabView
                           key={index}
                           refetch={refetch}
-                          listRef={scrollRefs[index]}
                           profileId={user}
-                          scrollElRef={scrollRefs[index]}
-                          headerHeight={fullHeaderHeight}
-                          scrollY={scrollYs[index]}
                         />
                       ) : null}
                     </View>
@@ -161,12 +103,8 @@ export default function ProfileScreen() {
                         <PropertiesTabView
                           key={index}
                           refetch={refetch}
-                          listRef={scrollRefs[index]}
                           profileId={user}
                           type={false}
-                          scrollElRef={scrollRefs[index]}
-                          headerHeight={fullHeaderHeight}
-                          scrollY={scrollYs[index]}
                         />
                       ) : null}
                     </View>

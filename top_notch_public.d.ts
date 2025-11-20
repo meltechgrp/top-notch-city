@@ -51,3 +51,17 @@ type AuthModalProps = {
   isAgentRequest?: boolean;
   id?: string;
 };
+
+type QueryType =
+  | "latest"
+  | "user"
+  | "admin"
+  | "search"
+  | "state"
+  | "pending"
+  | "reels"
+  | "lands"
+  | "featured"
+  | "trending"
+  | "trending-lands"
+  | "agent-property";

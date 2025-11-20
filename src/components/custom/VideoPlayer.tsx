@@ -6,10 +6,9 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { TouchableWithoutFeedback } from "react-native";
 import { useVideoPlayer, VideoView } from "expo-video";
 import { useEvent } from "expo";
-import { View, Icon, Text } from "../ui";
+import { View, Icon, Text, Pressable } from "../ui";
 import { Eye, Play } from "lucide-react-native";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import { cn } from "@/lib/utils";
@@ -21,6 +20,7 @@ import config from "@/config";
 import { hapticFeed } from "@/components/HapticTab";
 import { ReelViewsController } from "@/components/reel/ReelViewsController";
 import Platforms from "@/constants/Plaforms";
+import { useLike } from "@/hooks/useLike";
 
 export const VideoPlayer = memo(
   forwardRef<VideoPlayerHandle, VideoPlayerProps>(
@@ -40,6 +40,7 @@ export const VideoPlayer = memo(
       const [showControls, setShowControls] = useState(false);
       const [showBottomSheet, setShowBottomSheet] = useState(false);
       const mounted = useRef(true);
+      const { toggleLike } = useLike({ queryKey: ["reels"] });
       // Setup player
       const player = useVideoPlayer(
         { uri: reel.video, useCaching: true },
@@ -68,7 +69,6 @@ export const VideoPlayer = memo(
       const status = useEvent(player, "statusChange", {
         status: player.status,
       }).status;
-      // Auto-hide controls after 3s when playing
       useEffect(() => {
         if (isPlaying && showControls) {
           const timer = setTimeout(() => setShowControls(false), 1000);
@@ -134,7 +134,8 @@ export const VideoPlayer = memo(
       return (
         <>
           <View className="flex-1">
-            <TouchableWithoutFeedback
+            <Pressable
+              onDoublePress={() => toggleLike({ id: reel.id })}
               onPress={() => {
                 if (fullScreen) {
                   setShowControls(!showControls);
@@ -160,16 +161,15 @@ export const VideoPlayer = memo(
                   className={cn("w-full h-full", rounded && "rounded-xl")}
                 />
 
-                {/* Controls Overlay */}
                 <View className="absolute inset-0 z-10 bg-black/20 items-center justify-center">
-                  <View className=" absolute top-28 right-4 items-center flex-row gap-2">
-                    <Icon size={"sm"} as={Eye} />
+                  <View className=" absolute top-40 left-4 items-center flex-row gap-2">
+                    <Icon size={"md"} as={Eye} />
                     <Text className="font-bold">{reel.interations.viewed}</Text>
                   </View>
-                  {/* Play / Pause */}
                   {showControls && (
                     <View className="flex-row gap-4 items-center">
                       <AnimatedPressable
+                        onDoublePress={() => toggleLike({ id: reel.id })}
                         onPress={() => {
                           if (status == "readyToPlay") {
                             handleToggle();
@@ -192,7 +192,6 @@ export const VideoPlayer = memo(
                     </View>
                   )}
 
-                  {/* Bottom Controls */}
                   {fullScreen && (
                     <PlayerController
                       handleSkip={handleSkip}
@@ -206,7 +205,7 @@ export const VideoPlayer = memo(
                   )}
                 </View>
               </View>
-            </TouchableWithoutFeedback>
+            </Pressable>
           </View>
           <ReelsShareSheet
             visible={showBottomSheet}

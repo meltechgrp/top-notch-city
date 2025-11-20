@@ -19,6 +19,7 @@ export function useHomeFeed() {
     data: locationsData,
     refetch: refetchLocations,
     isRefetching: refetchingLocations,
+    isLoading: loadingLocations,
   } = useQuery({
     queryKey: ["locations"],
     queryFn: fetchTopLocations,
@@ -30,7 +31,12 @@ export function useHomeFeed() {
   );
 
   /** --- featured Properties --- */
-  const { data: allFeatured, refetch: refetchFeatured } = useInfinityQueries({
+  const {
+    data: allFeatured,
+    refetch: refetchFeatured,
+    isLoading: loadingFeatured,
+    isRefetching: refetchingFeatured,
+  } = useInfinityQueries({
     type: "featured",
     perPage: 5,
   });
@@ -41,7 +47,12 @@ export function useHomeFeed() {
   );
 
   /** --- trending Properties --- */
-  const { data: allTrending, refetch: refetchTrending } = useInfinityQueries({
+  const {
+    data: allTrending,
+    refetch: refetchTrending,
+    isLoading: loadingTrending,
+    isRefetching: refetchingTrending,
+  } = useInfinityQueries({
     type: "trending",
     perPage: 5,
   });
@@ -51,7 +62,12 @@ export function useHomeFeed() {
     [allTrending]
   );
   /** --- trending lands Properties --- */
-  const { data: allLands, refetch: refetchLands } = useInfinityQueries({
+  const {
+    data: allLands,
+    refetch: refetchLands,
+    isLoading: loadingLand,
+    isRefetching: refetchingLand,
+  } = useInfinityQueries({
     type: "trending-lands",
     perPage: 5,
   });
@@ -61,8 +77,13 @@ export function useHomeFeed() {
     [allLands]
   );
 
-  /** --- latest Properties --- */
-  const { data: allLatest, refetch: refetchLatest } = useInfinityQueries({
+  /** --- Apartments Properties --- */
+  const {
+    data: allLatest,
+    refetch: refetchLatest,
+    isLoading: loadingLatest,
+    isRefetching: refetchingLatest,
+  } = useInfinityQueries({
     type: "latest",
     perPage: 5,
   });
@@ -138,8 +159,18 @@ export function useHomeFeed() {
     featured,
     locations,
     nearby: nearbyProperties || [],
+    loadingFeatured,
+    loadingLand,
+    loadingLatest,
+    loadingTrending,
+    refetchingFeatured,
+    refetchingLand,
+    refetchingLatest,
+    refetchingTrending,
+    loadingLocations,
+    refetchingLocations,
     refreshAll,
-    refetching: refetchingLocations || refetchingNearby,
+    refetching: refetchingNearby,
     total: totalUnreadChat,
     getTotalCount,
     updatetotalUnreadChat,

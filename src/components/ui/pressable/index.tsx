@@ -29,16 +29,27 @@ const Pressable = React.forwardRef<
   ref
 ) {
   const lastPress = useRef<number>(0);
-  const delay = 300; // 300ms for double tap
-
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const delay = 250;
   const handlePress = (e: GestureResponderEvent) => {
-    const time = Date.now();
-    if (time - lastPress.current < delay) {
+    const now = Date.now();
+
+    const isDouble = now - lastPress.current < delay;
+    lastPress.current = now;
+
+    if (isDouble) {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+
       onDoublePress?.(e);
     } else {
-      onPress?.(e);
+      timeoutRef.current = setTimeout(() => {
+        onPress?.(e);
+        timeoutRef.current = null;
+      }, delay);
     }
-    lastPress.current = time;
   };
 
   return (

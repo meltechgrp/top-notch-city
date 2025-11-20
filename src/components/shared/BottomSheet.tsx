@@ -206,14 +206,16 @@ export default function BottomSheet(props: BottomSheetProps) {
             contentClassName
           )}
         >
-          <SafeAreaView
-            style={{
-              flex: 1,
-            }}
-            edges={["bottom"]}
-          >
-            {props.children}
-          </SafeAreaView>
+          <KeyboardDismissPressable>
+            <SafeAreaView
+              style={{
+                flex: 1,
+              }}
+              edges={["bottom"]}
+            >
+              {props.children}
+            </SafeAreaView>
+          </KeyboardDismissPressable>
         </BottomSheetKeyboardAwareScrollView>
       ) : (
         <BottomSheetView

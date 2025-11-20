@@ -28,13 +28,13 @@ const DiscoverProperties = (props: Props) => {
           // scrollEnabled={false}
           onDoublePress={() =>
             router.push({
-              pathname: "/search",
+              pathname: "/explore",
             })
           }
           height={mapHeight}
           onMarkerPress={(data) =>
             router.push({
-              pathname: "/search",
+              pathname: "/explore",
               params: {
                 propertyId: data.id,
               },

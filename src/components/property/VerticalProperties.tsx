@@ -14,10 +14,11 @@ import { MiniEmptyState } from "../shared/MiniEmptyState";
 import { useRouter } from "expo-router";
 import { useAnimatedScrollHandler } from "react-native-reanimated";
 import { AnimatedFlashList } from "../shared/AnimatedFlashList";
-import FullHeightLoaderWrapper from "../loaders/FullHeightLoaderWrapper";
 import { cn, deduplicate } from "@/lib/utils";
-import LoadingLine from "@/components/custom/HorizontalLoader";
 import BackgroundView from "@/components/layouts/BackgroundView";
+import VerticalPropertyLoaderWrapper from "@/components/loaders/VerticalPropertyLoader";
+import { PropertyEmptyState } from "@/components/property/EmptyPropertyCard";
+import { House } from "lucide-react-native";
 
 interface Props {
   category?: string;
@@ -131,7 +132,11 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
   });
 
   return (
-    <FullHeightLoaderWrapper loading={isLoading || false}>
+    <VerticalPropertyLoaderWrapper
+      className={className}
+      headerHeight={headerHeight}
+      loading={isLoading || isRefetching || false}
+    >
       <AnimatedFlashList
         data={deduplicate(data, "id")}
         renderItem={renderItem}
@@ -166,22 +171,22 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
             {ListEmptyComponent ? (
               ListEmptyComponent
             ) : (
-              <BackgroundView style={{ height }} className="flex-1">
-                <MiniEmptyState
-                  className=" mt-10"
-                  title={isEmptyTitle || "No property found"}
-                />
-              </BackgroundView>
+              <PropertyEmptyState
+                icon={House}
+                title="No Properties Found"
+                description="You're all caught up. New properties will appear here soon."
+                buttonLabel="Try again"
+                onReset={refetch}
+              />
             )}
           </>
         )}
-        ListFooterComponent={() => (isRefetching ? <LoadingLine /> : undefined)}
         viewabilityConfig={{
           itemVisiblePercentThreshold: 50,
         }}
         removeClippedSubviews={false}
       />
-    </FullHeightLoaderWrapper>
+    </VerticalPropertyLoaderWrapper>
   );
 });
 

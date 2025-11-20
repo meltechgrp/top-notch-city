@@ -1,7 +1,8 @@
 import { ScrollView } from "react-native";
 import TopLocation from "./TopLocation";
 import { useHomeFeed } from "@/hooks/useHomeFeed";
-import { memo } from "react";
+import { memo, useMemo } from "react";
+import { TopLocationSkeleton } from "@/components/home/topLocations/TopLocationSkeleton";
 
 type Props = {
   category?: string;
@@ -10,8 +11,10 @@ type Props = {
 };
 
 function TopLocationsHorizontalList(props: Props) {
-  const { locations } = useHomeFeed();
+  const { locations, loadingLocations, refetchingLocations } = useHomeFeed();
 
+  const skeletonItems = useMemo(() => Array.from({ length: 5 }), []);
+  const isBusy = loadingLocations || refetchingLocations;
   return (
     <ScrollView
       horizontal
@@ -22,9 +25,11 @@ function TopLocationsHorizontalList(props: Props) {
       snapToAlignment="center"
       decelerationRate="fast"
     >
-      {locations?.map((location) => (
-        <TopLocation key={location.state} location={location} />
-      ))}
+      {isBusy
+        ? skeletonItems.map((_, i) => <TopLocationSkeleton key={i} />)
+        : locations.map((location) => (
+            <TopLocation key={location.state} location={location} />
+          ))}
     </ScrollView>
   );
 }

@@ -11,7 +11,10 @@ function HomeNavigation() {
       <Pressable
         onPress={() =>
           router.push({
-            pathname: "/search",
+            pathname: "/explore",
+            params: {
+              locate: "true",
+            },
           })
         }
         className="flex-1 h-14 p-2 pl-4 flex-row bg-background-muted rounded-full items-center gap-1"

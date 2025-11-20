@@ -1,4 +1,9 @@
-import { SearchIcon, Settings2 } from "lucide-react-native";
+import {
+  ChevronLeftIcon,
+  Mic,
+  SearchIcon,
+  Settings2,
+} from "lucide-react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -7,10 +12,11 @@ import Animated, {
 } from "react-native-reanimated";
 import { Icon, Pressable, Text, View } from "@/components/ui";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ScrollView, ViewProps } from "react-native";
+import { ScrollView, TouchableOpacity, ViewProps } from "react-native";
 import { memo, useEffect } from "react";
 import { cn, composeFullAddress } from "@/lib/utils";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
+import { router } from "expo-router";
 
 interface Props extends Partial<ViewProps> {
   setLocationBottomSheet: () => void;
@@ -60,10 +66,20 @@ function SearchHeader({
               <View className="flex-row items-center gap-x-4 px-4 w-full">
                 <View className={"flex-1 flex-row gap-3"}>
                   <Pressable
+                    onPress={() => {
+                      if (router.canGoBack()) router.back();
+                      else router.push("/");
+                    }}
+                    style={[[props?.style]]}
+                    className="py-px flex-row items-center p-2.5 bg-background-muted rounded-full"
+                  >
+                    <Icon className=" w-7 h-7" as={ChevronLeftIcon} />
+                  </Pressable>
+                  <Pressable
                     onPress={setLocationBottomSheet}
                     className="h-12 bg-background-muted flex-1 rounded-full flex-row items-center px-2 py-1"
                   >
-                    <Text numberOfLines={1} className="flex-1 px-2">
+                    <Text numberOfLines={1} className="flex-1 text-sm px-2">
                       {filter?.state
                         ? composeFullAddress(filter, true)
                         : "Search for a state, city or location..."}
@@ -72,12 +88,12 @@ function SearchHeader({
                       <Icon as={SearchIcon} color="white" />
                     </View>
                   </Pressable>
-                  {/* <TouchableOpacity
-                    className=" p-3 flex items-center justify-center rounded-full bg-background-muted" // consistent width
+                  <TouchableOpacity
+                    className=" p-3 flex items-center justify-center rounded-full bg-background-muted"
                     onPress={setActivateVoice}
                   >
                     <Icon as={Mic} className={cn("w-6 h-6")} />
-                  </TouchableOpacity> */}
+                  </TouchableOpacity>
                 </View>
               </View>
             </View>

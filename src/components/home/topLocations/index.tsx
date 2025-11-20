@@ -13,7 +13,7 @@ const TopLocations = () => {
       hasData
       onSeeAllPress={() => {
         router.push({
-          pathname: "/search",
+          pathname: "/explore",
           params: {
             locate: "true",
           },

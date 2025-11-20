@@ -124,7 +124,9 @@ export async function deleteApplication({
 }
 
 export async function getAgents({ pageParam }: { pageParam: number }) {
-  return (await Fetch("/agents/info")) as AgentResult2;
+  return (await Fetch(
+    `/agents/search?per_page=20&page=${pageParam}&sort_by_top_properties=true`
+  )) as AgentResult2;
 }
 
 export async function followAgent(id: string) {

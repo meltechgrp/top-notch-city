@@ -3,22 +3,22 @@ import React from "react";
 import { HapticTab } from "@/components/HapticTab";
 import {
   Home,
-  Menu,
+  LayoutDashboard,
   MessageSquareMore,
   MonitorPlay,
   Plus,
-  Search,
+  UserCircle,
 } from "lucide-react-native";
 import { Colors } from "@/constants/Colors";
-import { useResolvedTheme, Pressable } from "@/components/ui";
-import { useStore } from "@/store";
+import { useResolvedTheme } from "@/components/ui";
+import { useUser } from "@/hooks/useUser";
 
 export const unstable_settings = {
   initialRouteName: "/home",
 };
 export default function TabLayout() {
   const theme = useResolvedTheme();
-  const { me } = useStore((s) => s);
+  const { isAdmin, isAgent } = useUser();
   return (
     <Tabs
       screenOptions={{
@@ -47,49 +47,43 @@ export default function TabLayout() {
         name="home"
         options={{
           title: "Home",
-          tabBarIcon: ({ color }) => <Home size={20} color={color} />,
+          tabBarIcon: ({ color }) => <Home size={22} color={color} />,
         }}
       />
       <Tabs.Screen
-        name="search"
-        options={{
-          title: "Explore",
-          tabBarIcon: ({ color }) => <Search size={20} color={color} />,
-        }}
+        name="chats"
+        options={() => ({
+          title: "Messages",
+          tabBarIcon: ({ color }) => (
+            <MessageSquareMore size={22} color={color} />
+          ),
+        })}
       />
       <Tabs.Screen
         name="reels"
         options={{
           title: "Reels",
           headerShown: false,
-          tabBarButton: (props) => <Pressable {...(props as any)} />,
-          tabBarIcon: ({ color }) => <MonitorPlay size={20} color={color} />,
+          tabBarIcon: ({ color }) => <MonitorPlay size={22} color={color} />,
         }}
       />
       <Tabs.Screen
-        name="properties"
-        options={() => ({
-          title: "Properties",
-          tabBarIcon: ({ color }) => <Plus size={20} color={color} />,
-          href: me?.role == "admin" ? null : "/properties",
-        })}
-      />
-      <Tabs.Screen
-        name="chats"
-        options={() => ({
-          title: "Chats",
-          tabBarIcon: ({ color }) => (
-            <MessageSquareMore size={20} color={color} />
-          ),
-        })}
+        name="profile"
+        options={{
+          tabBarIcon: ({ color }) => <UserCircle size={22} color={color} />,
+          title: "Profile",
+        }}
       />
       <Tabs.Screen
         name="menu"
-        options={{
-          title: "Menu",
-          headerShown: true,
-          tabBarIcon: ({ color }) => <Menu size={20} color={color} />,
-        }}
+        options={() => ({
+          tabBarIcon: ({ color }) =>
+            isAdmin ? (
+              <LayoutDashboard size={22} color={color} />
+            ) : (
+              <Plus size={22} color={color} />
+            ),
+        })}
       />
     </Tabs>
   );

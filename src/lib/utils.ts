@@ -1,9 +1,6 @@
 import { format, isThisYear, isToday, subDays, subMonths } from "date-fns";
 import { type ClassValue, clsx } from "clsx";
-import { TZDate } from "@date-fns/tz";
 import { twMerge } from "tailwind-merge";
-// import { toZonedTime, format } from "date-fns-tz";
-import eventBus from "./eventBus";
 import { useEffect, useState } from "react";
 
 export function cn(...inputs: ClassValue[]) {
@@ -29,11 +26,8 @@ export function formatMessageTime(
   };
   const localDate = typeof time === "string" ? new Date(time) : time;
 
-  // Detect the user's local timezone automatically
   const timeZone = Intl.DateTimeFormat().resolvedOptions();
 
-  // Convert UTC/server date into user's timezone
-  // const localDate = new TZDate(date, "+02:00");
   if (opt?.onlyTime) {
     return format(localDate, "h:mm");
   }
@@ -81,7 +75,6 @@ export function formatNumberCompact(amount: number = 0) {
   return `${(amount / 1000000).toFixed(1)}M`;
 }
 
-// fullName of a user
 export function fullName(user: any) {
   return !user?.first_name ? "" : `${user.first_name} ${user.last_name}`;
 }
@@ -202,7 +195,6 @@ export function useTimeAgo(date: string) {
   return timeAgo;
 }
 
-// Calculate the bounding region for all markers
 export function getRegionForMarkers(
   markers: { latitude: number; longitude: number }[]
 ) {
@@ -230,8 +222,7 @@ export function getRegionForMarkers(
   const latitude = (minLat + maxLat) / 2;
   const longitude = (minLng + maxLng) / 2;
 
-  // Add padding to the deltas
-  const latitudeDelta = (maxLat - minLat) * 1.5 || 0.05; // fallback if markers are close together
+  const latitudeDelta = (maxLat - minLat) * 1.5 || 0.05;
   const longitudeDelta = (maxLng - minLng) * 1.5 || 0.05;
 
   return {
@@ -243,13 +234,10 @@ export function getRegionForMarkers(
 }
 
 type EntryKeyMap = {
-  dateKey: string; // e.g. "date" or "day"
-  valueKey: string; // e.g. "views" or "count"
+  dateKey: string;
+  valueKey: string;
 };
 
-/**
- * Fill missing dates for the last 30 days dynamically
- */
 export function fillMissingTimeSeries<T extends Record<string, any>>(
   data: T[],
   { dateKey, valueKey }: EntryKeyMap
@@ -285,7 +273,7 @@ export function fillMissingTimeSeries<T extends Record<string, any>>(
 }
 
 type MonthlyData = {
-  month: string; // ISO date string like "2025-06-01"
+  month: string;
   count: number;
 };
 
@@ -375,12 +363,10 @@ export function deduplicate<T>(arr: T[], key: keyof T) {
   return Array.from(map.values());
 }
 
-// Format number with commas
 export function formatNumber(num?: string) {
   return num?.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-// Remove commas from formatted number
 export function unformatNumber(str: string) {
   return str.replace(/,/g, "");
 }
@@ -405,11 +391,10 @@ export function calculateFeedDisplayDimensions(
   let displayWidth: number;
   let displayHeight: number;
 
-  // Scale down while maintaining aspect ratio, respecting maxWidth and maxHeight
   if (originalWidth > maxWidth || originalHeight > maxHeight) {
     const widthScale = maxWidth / originalWidth;
     const heightScale = maxHeight / originalHeight;
-    const scale = Math.min(widthScale, heightScale); // Use the smaller scale to fit within both constraints
+    const scale = Math.min(widthScale, heightScale);
 
     displayWidth = Math.min(originalWidth * scale, maxWidth);
     displayHeight = Math.min(originalHeight * scale, maxHeight);
@@ -418,7 +403,6 @@ export function calculateFeedDisplayDimensions(
     displayHeight = originalHeight;
   }
 
-  // Apply X's cropping rule for very portrait images if needed
   if (
     aspectRatio < minAspectRatioForNoCrop &&
     displayHeight > (4 / 3) * displayWidth
@@ -439,7 +423,6 @@ export function shallowCompareProperties(
     const oldItem = oldArr[i];
     const newItem = newArr[i];
 
-    // Compare core fields that would make a property "different"
     if (
       oldItem.id !== newItem.id ||
       oldItem.updated_at !== newItem.updated_at ||

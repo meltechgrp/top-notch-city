@@ -25,7 +25,7 @@ function CustomInputComponent({
   placeholder,
   keyboardType,
   multiline,
-  numberOfLines,
+  numberOfLines = 10,
   isLogin = false,
   returnKeyType,
   className,
@@ -75,8 +75,8 @@ function CustomInputComponent({
       )}
       <View
         className={cn(
-          " bg-background-muted flex-1 flex-row justify-between items-center px-4 h-[3.5rem] rounded-xl",
-          multiline && "px-1 pt-6",
+          " bg-background-muted flex-1 flex-row justify-between items-center px-4 rounded-xl",
+          multiline ? "" : "h-[3.5rem]",
           className
         )}
       >
@@ -86,7 +86,7 @@ function CustomInputComponent({
           autoCapitalize="sentences"
           className={cn(
             "text-typography placeholder:text-typography-muted focus:outline-none flex-1 h-full rounded-xl",
-            multiline && "px-1 pt-6"
+            multiline && "px-1 pt-2"
           )}
           value={value}
           secureTextEntry={secure}

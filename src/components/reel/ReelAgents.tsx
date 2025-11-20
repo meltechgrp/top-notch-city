@@ -1,6 +1,7 @@
 import { getAgents } from "@/actions/agent";
 import BackgroundView from "@/components/layouts/BackgroundView";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
+import VerticalAgentLoaderWrapper from "@/components/loaders/VerticalAgentLoader";
 import ReelAgentListItem from "@/components/reel/ReelAgentListItem";
 import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
 import { View } from "@/components/ui";
@@ -33,41 +34,41 @@ function AgentList({ visible }: { visible: boolean }) {
     [data]
   );
   return (
-    <SafeAreaView
-      edges={["bottom", "top"]}
-      className="flex-1 mt-12 android:pt-12"
-    >
-      <FlashList
-        data={agents}
-        refreshControl={
-          <RefreshControl
-            progressViewOffset={30}
-            colors={["#fff"]}
-            refreshing={false}
-            onRefresh={refetch}
-          />
-        }
-        decelerationRate="fast"
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <ReelAgentListItem account={item} />}
-        onEndReached={() => {
-          if (hasNextPage && !loading) fetchNextPage?.();
-        }}
-        contentContainerStyle={{ paddingBottom: 20 }}
-        ListEmptyComponent={() =>
-          loading ? (
-            <BackgroundView style={{ height: height }}>
-              <View className="flex-1 bg-black/20 justify-center items-center">
-                <SpinningLoader color="#FF4C00" size={40} />
-              </View>
-            </BackgroundView>
-          ) : (
-            <BackgroundView style={{ height: height }}>
-              <MiniEmptyState title="No Agent Found" />
-            </BackgroundView>
-          )
-        }
-      />
+    <SafeAreaView edges={["top"]} className="flex-1 mt-12 android:pt-12">
+      <VerticalAgentLoaderWrapper loading={loading || fetching || false}>
+        <FlashList
+          data={agents}
+          refreshControl={
+            <RefreshControl
+              progressViewOffset={30}
+              colors={["#fff"]}
+              refreshing={false}
+              onRefresh={refetch}
+            />
+          }
+          decelerationRate="fast"
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => <ReelAgentListItem account={item} />}
+          onEndReached={() => {
+            if (hasNextPage && !loading) fetchNextPage?.();
+          }}
+          ItemSeparatorComponent={() => <View className="h-1" />}
+          contentContainerStyle={{ paddingTop: 20 }}
+          ListEmptyComponent={() =>
+            loading ? (
+              <BackgroundView style={{ height: height }}>
+                <View className="flex-1 bg-black/20 justify-center items-center">
+                  <SpinningLoader color="#FF4C00" size={40} />
+                </View>
+              </BackgroundView>
+            ) : (
+              <BackgroundView style={{ height: height }}>
+                <MiniEmptyState title="No Agent Found" />
+              </BackgroundView>
+            )
+          }
+        />
+      </VerticalAgentLoaderWrapper>
     </SafeAreaView>
   );
 }

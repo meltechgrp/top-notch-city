@@ -23,19 +23,7 @@ export function useInfinityQueries({
   state,
   perPage = 20,
 }: {
-  type:
-    | "latest"
-    | "user"
-    | "admin"
-    | "search"
-    | "state"
-    | "pending"
-    | "reels"
-    | "lands"
-    | "featured"
-    | "trending"
-    | "trending-lands"
-    | "agent-property";
+  type: QueryType;
   profileId?: string;
   filter?: SearchFilters;
   enabled?: boolean;

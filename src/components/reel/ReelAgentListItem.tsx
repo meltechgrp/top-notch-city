@@ -61,17 +61,11 @@ const ReelAgentListItem = ({ account }: { account: AgentInfo }) => {
 
       return { previousData };
     },
-    // If the request fails, rollback
     onError: (_err, _vars, ctx) => {
       console.log(_err);
       if (ctx?.previousData) {
         client.setQueryData(["agents"], ctx.previousData);
       }
-    },
-
-    // After success, refetch in background to ensure sync
-    onSettled: () => {
-      client.invalidateQueries({ queryKey: ["agents"] });
     },
   });
   const handlePress = () => {
@@ -90,9 +84,8 @@ const ReelAgentListItem = ({ account }: { account: AgentInfo }) => {
           },
         });
       }}
-      className="flex-row items-center justify-between px-4 py-3"
+      className="flex-row bg-background-muted items-center justify-between px-4 py-3"
     >
-      {/* Avatar */}
       <Avatar size="lg">
         {account?.profile_image ? (
           <AvatarImage
@@ -111,7 +104,7 @@ const ReelAgentListItem = ({ account }: { account: AgentInfo }) => {
       {/* Info */}
       <View className="flex-1 ml-3">
         <View className="flex-row items-center">
-          <Text className="text-lg">
+          <Text className="text-base">
             {account.first_name} {account.last_name}
           </Text>
           <View className="ml-1 bg-green-500 rounded-full p-px">
@@ -120,17 +113,17 @@ const ReelAgentListItem = ({ account }: { account: AgentInfo }) => {
         </View>
         <View className="flex flex-row gap-2 items-center">
           <Text>{account.total_property_count}</Text>
-          <Text className=" text-sm text-gray-400">Properties</Text>
+          <Text className=" text-xs text-gray-400">Properties</Text>
         </View>
         <View className="flex flex-row items-center">
           <View className="flex flex-row items-center gap-2">
             <Text className=" text-sm">{account.followers_count}</Text>
-            <Text className=" text-sm text-gray-400">Followers</Text>
+            <Text className=" text-xs text-gray-400">Followers</Text>
           </View>
           <Icon as={Dot} />
           <View className="flex flex-row items-center gap-2">
             <Text className=" text-sm">{account.total_likes}</Text>
-            <Text className=" text-sm text-gray-400">Likes</Text>
+            <Text className=" text-xs text-gray-400">Likes</Text>
           </View>
         </View>
       </View>
@@ -142,7 +135,7 @@ const ReelAgentListItem = ({ account }: { account: AgentInfo }) => {
           account.is_following ? "bg-gray-500" : "bg-primary"
         }`}
       >
-        <Text className={`font-semibold`}>
+        <Text className={`font-semibold text-xs`}>
           {account.is_following ? "Following" : "Follow"}
         </Text>
       </AnimatedPressable>

@@ -1,7 +1,6 @@
 import { cn } from "@/lib/utils";
-import { Pressable, View } from "react-native";
-import { Icon } from "../ui";
-import { House, LandPlot } from "lucide-react-native";
+import { Pressable, ScrollView, View } from "react-native";
+import { Text } from "../ui";
 
 type IProps = {
   profile: Me;
@@ -12,40 +11,48 @@ export default function ProfileTabHeaderSection(props: IProps) {
   const { profile, onTabChange, activeIndex } = props;
   // if (profile?.isBlocked) return null
   return (
-    <View className="  w-[70%] mx-auto rounded-xl my-4">
-      <View className="flex-row justify-between flex-1">
-        {profileTabs.map(({ label, icon }, index) => (
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      className="my-4 w-full"
+    >
+      <View className="flex-row px-4 flex-1 gap-2">
+        {profileTabs.map(({ label }, index) => (
           <Pressable
             key={label}
             onPress={() => {
               onTabChange(index);
             }}
             className={cn(
-              "h-full flex-row gap-1 w-20 border-b border-background pb-1 items-center justify-center mt-0.5",
-              activeIndex === index && `border-white`
+              "h-full flex-row gap-1 py-2 px-4 rounded-full items-center",
+              activeIndex === index && `bg-primary/10`
             )}
           >
-            <Icon
-              size={"xl"}
-              as={icon}
-              className={cn(activeIndex === index ? `text-white` : ` `)}
-            />
+            <Text className={cn(activeIndex === index && `text-primary`)}>
+              {label}
+            </Text>
           </Pressable>
         ))}
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
 export const profileTabs = [
   {
-    label: "Houses",
-    icon: House,
+    label: "All",
+    key: "all",
+  },
+  {
+    label: "Properties",
     key: "houses",
   },
   {
-    label: "Lands",
-    icon: LandPlot,
-    key: "land",
+    label: "Saved",
+    key: "saved",
+  },
+  {
+    label: "Reviews",
+    key: "reviews",
   },
 ];

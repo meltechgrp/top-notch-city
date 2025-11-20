@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import { View } from "react-native";
 import BottomSheet from "../shared/BottomSheet";
 import { CustomInput } from "../custom/CustomInput";
-import { Button, ButtonText, Text } from "../ui";
+import { Button, ButtonText } from "../ui";
 import { useMutation } from "@tanstack/react-query";
 import { sendEquiry } from "@/actions/equiry";
 import { SpinningLoader } from "../loaders/SpinningLoader";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
-import CustomSelect from "@/components/custom/CustomSelect";
-import OptionsBottomSheet from "@/components/shared/OptionsBottomSheet";
+import { useStore } from "@/store";
+import { fullName } from "@/lib/utils";
 
 type Props = {
   visible: boolean;
@@ -21,6 +21,7 @@ const EnquiriesFormBottomSheet: React.FC<Props> = ({
   onDismiss,
   id,
 }) => {
+  const { me } = useStore((s) => s);
   const { mutateAsync, isPending } = useMutation({
     mutationFn: sendEquiry,
     onSuccess: () =>
@@ -35,10 +36,10 @@ const EnquiriesFormBottomSheet: React.FC<Props> = ({
       }),
   });
   const [formData, setFormData] = useState<Enquiry>({
-    full_name: "",
-    email: "",
+    full_name: me ? fullName(me) : "",
+    email: me?.email || "",
     message: "",
-    type: "enquiry",
+    type: "general",
     address: "",
     property_id: id,
   });
@@ -65,7 +66,7 @@ const EnquiriesFormBottomSheet: React.FC<Props> = ({
     <BottomSheet
       visible={visible}
       onDismiss={onDismiss}
-      snapPoint={["90%"]}
+      snapPoint={["75%"]}
       title="Send a Message"
       withHeader
       withScroll
@@ -91,10 +92,10 @@ const EnquiriesFormBottomSheet: React.FC<Props> = ({
           value={formData.message}
           onUpdate={handleUpdate("message")}
           placeholder="Your message"
-          className="pt-3 px-4"
+          className="pt-2 px-4"
           multiline
         />
-        <View className="gap-2">
+        {/* <View className="gap-2">
           <Text>Type</Text>
           <CustomSelect
             withDropIcon
@@ -107,7 +108,7 @@ const EnquiriesFormBottomSheet: React.FC<Props> = ({
             }))}
             BottomSheet={OptionsBottomSheet}
           />
-        </View>
+        </View> */}
         <CustomInput
           title="Address"
           value={formData.address}

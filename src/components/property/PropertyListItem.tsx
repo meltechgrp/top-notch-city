@@ -1,7 +1,7 @@
 import { cn, composeFullAddress, formatMoney, useTimeAgo } from "@/lib/utils";
 import { StyleProp, View, ViewStyle } from "react-native";
 import { Icon, Text, Pressable } from "../ui";
-import { Heart, MapPin } from "lucide-react-native";
+import { MapPin } from "lucide-react-native";
 import { memo, useMemo } from "react";
 import Layout from "@/constants/Layout";
 import { useLayout } from "@react-native-community/hooks";
@@ -10,10 +10,9 @@ import PropertyInteractions from "./PropertyInteractions";
 import { PropertyTitle } from "./PropertyTitle";
 import { useStore } from "@/store";
 import PropertyMedia from "@/components/property/PropertyMedia";
-import AnimatedPressable from "@/components/custom/AnimatedPressable";
 import { openAccessModal } from "@/components/globals/AuthModals";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { likeProperty } from "@/actions/property";
+import { AnimatedLikeButton } from "@/components/custom/AnimatedLikeButton";
+import { useLike } from "@/hooks/useLike";
 
 type Props = {
   data: Property;
@@ -23,18 +22,7 @@ type Props = {
   isList?: boolean;
   isFeatured?: boolean;
   showLike?: boolean;
-  listType?:
-    | "latest"
-    | "user"
-    | "admin"
-    | "search"
-    | "state"
-    | "pending"
-    | "reels"
-    | "lands"
-    | "featured"
-    | "trending"
-    | "trending-lands";
+  listType?: QueryType;
   rounded?: boolean;
   isHorizontal?: boolean;
   withPagination?: boolean;
@@ -50,16 +38,12 @@ function PropertyListItem(props: Props) {
     style,
     onPress,
     showStatus,
-    rounded,
-    isList,
-    enabled,
-    withPagination,
     isFeatured,
     showLike,
     listType,
   } = props;
   const me = useStore((s) => s.me);
-  const client = useQueryClient();
+  const { toggleLike } = useLike({ queryKey: [listType || "trending"] });
   const hasAuth = useStore((s) => s.hasAuth);
   const { bannerHeight } = Layout;
   const { price, media, address, interaction, status, owner } = data;
@@ -69,12 +53,6 @@ function PropertyListItem(props: Props) {
     [media]
   );
 
-  const { mutate } = useMutation({
-    mutationFn: () => likeProperty({ id: data.id }),
-    onSuccess: () => {
-      client.invalidateQueries({ queryKey: [listType] });
-    },
-  });
   const isMine = useMemo(() => me?.id === owner?.id, [me, owner]);
   const isAdmin = useMemo(() => me?.role == "admin", [me]);
   const Actions = () => {
@@ -93,7 +71,7 @@ function PropertyListItem(props: Props) {
     if (!hasAuth) {
       return openAccessModal({ visible: true });
     } else {
-      mutate();
+      toggleLike({ id: data.id });
     }
   }
   const liked = useMemo(
@@ -122,18 +100,15 @@ function PropertyListItem(props: Props) {
         <View className={cn(" flex-row p-4 pb-0 items-start justify-between")}>
           <Actions />
           {showLike && (
-            <AnimatedPressable
+            <Pressable
               onPress={handleLike}
-              className={"p-2 rounded-full bg-white/80"}
+              className={"p-1 rounded-full bg-black/10"}
             >
-              <Icon
-                as={Heart}
-                className={cn(
-                  "text-black fill-black w-6 h-6",
-                  liked && "text-primary fill-primary"
-                )}
+              <AnimatedLikeButton
+                liked={liked}
+                className="w-7 h-7 text-white"
               />
-            </AnimatedPressable>
+            </Pressable>
           )}
         </View>
         <View

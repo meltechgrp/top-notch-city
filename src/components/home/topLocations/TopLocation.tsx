@@ -22,7 +22,7 @@ function TopLocation({
       onPress={() => {
         hapticFeed();
         router.push({
-          pathname: `/search`,
+          pathname: `/explore`,
           params: {
             longitude,
             latitude,

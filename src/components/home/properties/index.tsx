@@ -1,59 +1,33 @@
 import SectionHeaderWithRef from "@/components/home/SectionHeaderWithRef";
 import { router } from "expo-router";
-import { View } from "@/components/ui";
 import { memo } from "react";
 import { useHomeFeed } from "@/hooks/useHomeFeed";
-import { ScrollView } from "react-native";
-import PropertyListItem from "@/components/property/PropertyListItem";
+import HorizontalProperties from "@/components/property/HorizontalProperties";
 
 const TopProperties = () => {
-  const { trending } = useHomeFeed();
+  const { trending, loadingTrending, refetchingTrending } = useHomeFeed();
 
   return (
     <SectionHeaderWithRef
       title="Trending Properties"
       titleClassName="text-gray-400 text-base"
       subTitle="See More"
-      hasData={trending?.length > 0}
+      hasData={trending?.length > 0 || loadingTrending || refetchingTrending}
       onSeeAllPress={() => {
         router.push({
-          pathname: "/search",
+          pathname: "/explore",
           params: {
             list: "true",
           },
         });
       }}
     >
-      <View className="">
-        <ScrollView
-          horizontal
-          contentContainerClassName="gap-x-4 px-4"
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          snapToInterval={344}
-          snapToAlignment="center"
-          decelerationRate="fast"
-        >
-          {trending?.map((data) => (
-            <PropertyListItem
-              key={data.id}
-              showLike
-              listType="trending"
-              onPress={(data) => {
-                router.push({
-                  pathname: `/property/[propertyId]`,
-                  params: {
-                    propertyId: data.id,
-                  },
-                });
-              }}
-              isHorizontal={true}
-              data={data}
-              rounded={true}
-            />
-          ))}
-        </ScrollView>
-      </View>
+      <HorizontalProperties
+        data={trending}
+        isLoading={loadingTrending}
+        isRefetching={refetchingTrending}
+        listType="trending"
+      />
     </SectionHeaderWithRef>
   );
 };

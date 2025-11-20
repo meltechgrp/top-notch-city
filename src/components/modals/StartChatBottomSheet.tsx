@@ -129,7 +129,7 @@ export default function ConnectionsListSelectBottomSheet(props: Props) {
               <TouchableOpacity
                 onPress={() => {
                   router.push({
-                    pathname: "/search",
+                    pathname: "/explore",
                     params: {
                       list: "true",
                     },

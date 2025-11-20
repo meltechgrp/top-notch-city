@@ -1,7 +1,6 @@
 import { startChat } from "@/actions/message";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
-import { FollowAgent } from "@/components/reel/FollowAgent";
 import ReelLikeButton from "@/components/reel/ReelLikeButton";
 import ReelShareButton from "@/components/reel/ReelShareButton";
 import ReelWishListButton from "@/components/reel/ReelWishListButton";
@@ -41,7 +40,7 @@ function ReelInteractionBar({
   );
   const record = useMemo(() => reel?.interations, [reel?.interations]);
   return (
-    <View className=" gap-6 ml-auto items-center">
+    <View className=" gap-4 ml-auto items-center">
       <AnimatedPressable
         className=" relative"
         onPress={() => {
@@ -73,7 +72,6 @@ function ReelInteractionBar({
             {reel.owner?.first_name} {reel.owner?.last_name}
           </AvatarFallbackText>
         </Avatar>
-        <FollowAgent id={reel.owner?.id!} following={reel.is_following} />
       </AnimatedPressable>
       <View className=" items-center">
         <ReelLikeButton liked={isLiked} isLand={isLand} id={reel.id} />
@@ -111,7 +109,7 @@ function ReelInteractionBar({
               );
             }}
           >
-            <Icon as={MessageSquareMore} className=" text-white w-8 h-8" />
+            <Icon as={MessageSquareMore} className=" text-white w-7 h-7" />
           </AnimatedPressable>
           <Text className="text-xs text-white">Chat</Text>
         </View>
@@ -128,7 +126,7 @@ function ReelInteractionBar({
           onPress={setShowBottomSheet}
           className=" w-12 h-12 rounded-full bg-gray-500/60 items-center justify-center"
         >
-          <Icon as={MoreHorizontal} className="text-white w-8 h-8" />
+          <Icon as={MoreHorizontal} className="text-white w-7 h-7" />
         </AnimatedPressable>
       )}
     </View>
