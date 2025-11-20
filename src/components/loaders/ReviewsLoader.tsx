@@ -1,6 +1,6 @@
+import { ReviewSkeleton } from "@/components/skeleton/ReviewSkeleton";
 import React from "react";
 import { ScrollView, View } from "react-native";
-import { PropertySkeletonCard } from "@/components/property/PropertyCardSkeleton";
 
 type Props = View["props"] & {
   loading: boolean;
@@ -10,7 +10,7 @@ type Props = View["props"] & {
   headerHeight?: number;
 };
 
-export default function VerticalPropertyLoaderWrapper({
+export default function ReviewsLoaderWrapper({
   loading,
   skeletonCount = 5,
   children,
@@ -31,7 +31,7 @@ export default function VerticalPropertyLoaderWrapper({
         {...rest}
       >
         {Array.from({ length: skeletonCount }).map((_, i) => (
-          <PropertySkeletonCard key={`skeleton-${i}`} />
+          <ReviewSkeleton key={`skeleton-${i}`} />
         ))}
       </ScrollView>
     );

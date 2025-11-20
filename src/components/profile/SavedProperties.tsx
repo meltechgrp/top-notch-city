@@ -6,34 +6,20 @@ import PropertyListItem from "@/components/property/PropertyListItem";
 import { router } from "expo-router";
 import { PropertyEmptyState } from "@/components/property/EmptyPropertyCard";
 import { House } from "lucide-react-native";
+import { useQuery } from "@tanstack/react-query";
+import { fetchWishlist } from "@/actions/property";
+import { deduplicate } from "@/lib/utils";
 
 type IProps = {
-  profileId: string;
   showStatus?: boolean;
-  type?: "houses" | "lands";
 };
 
-export default function PropertiesTabView({
-  profileId,
-  showStatus = false,
-  type = "houses",
-}: IProps) {
-  const { data, isLoading } = useInfinityQueries({
-    type: "user",
-    profileId,
+export default function SavedPropertiesTabView({ showStatus = false }: IProps) {
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["wishlist"],
+    queryFn: fetchWishlist,
   });
-
-  const list = useMemo(
-    () => (data?.pages ? data.pages.flatMap((page) => page.results) : []),
-    [data]
-  );
-  const filtered = useMemo(() => {
-    if (type == "lands") {
-      return list.filter((p) => p.category.name == "Land");
-    } else {
-      return list;
-    }
-  }, [list, type]);
+  const list = useMemo(() => data || [], [data]);
   const handlePress = useCallback((property: { slug: string }) => {
     router.push({
       pathname: `/property/[propertyId]`,
@@ -41,14 +27,15 @@ export default function PropertiesTabView({
     });
   }, []);
 
-  if (!isLoading && filtered.length === 0) {
+  if (!isLoading && list.length === 0) {
     return (
       <PropertyEmptyState
         icon={House}
-        title="No Properties Found"
+        title="No Saved Properties"
         description="New properties will appear here soon."
         className="px-4"
-        buttonLabel="Try again"
+        buttonLabel="Explore Properties"
+        onReset={() => router.push("/explore")}
       />
     );
   }
@@ -56,7 +43,7 @@ export default function PropertiesTabView({
   return (
     <VerticalPropertyLoaderWrapper className="flex-1" loading={isLoading}>
       <View className="gap-4 px-4">
-        {filtered.map((property) => (
+        {deduplicate(list, "id").map((property) => (
           <PropertyListItem
             key={property.id}
             onPress={() => handlePress(property)}

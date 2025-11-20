@@ -1,43 +1,40 @@
-import React, { useMemo, useState } from "react";
-import { FlashList } from "@shopify/flash-list";
-
+import React, { useCallback, useMemo, useRef, useState } from "react";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { Box, Icon, Pressable, Text, View } from "@/components/ui";
-import { useQuery } from "@tanstack/react-query";
-import { getMe } from "@/actions/user";
-import FullHeightLoaderWrapper from "@/components/loaders/FullHeightLoaderWrapper";
-
-import { ProfileTopSection } from "@/components/profile/ProfileTopSection";
-import ProfileTabHeaderSection from "@/components/profile/ProfileTabHeaderSection";
 import PropertiesTabView from "@/components/profile/PropertiesTab";
-import BeachPersonWaterParasolIcon from "@/components/icons/BeachPersonWaterParasolIcon";
-import { ProfileDetails } from "@/components/profile/ProfileDetails";
-import { router, Stack } from "expo-router";
-import { Plus, Search, Settings } from "lucide-react-native";
-import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
-import SavedPropertiesTabView from "@/components/profile/SavedProperties";
+import BeachPersonWaterParasolSingleColorIcon from "@/components/icons/BeachPersonWaterParasolIcon";
+import { useQuery } from "@tanstack/react-query";
+import { getUser } from "@/actions/user";
+import FullHeightLoaderWrapper from "@/components/loaders/FullHeightLoaderWrapper";
+import headerLeft from "@/components/shared/headerLeft";
+import { MoreHorizontal, Search, Share } from "lucide-react-native";
+import { FlashList } from "@shopify/flash-list";
+import { ProfileDetails } from "@/components/agents/ProfileDetails";
+import { ProfileTopSection } from "@/components/agents/ProfileTopSection";
+import ProfileTabHeaderSection from "@/components/profile/ProfileTabHeaderSection";
 import ReviewsTabView from "@/components/profile/ReviewsTabView";
+import SavedPropertiesTabView from "@/components/profile/SavedProperties";
 
-const TABS = ["All", "Properties", "Saved", "Reviews"] as const;
-
+const TABS = ["All", "Houses", "Lands", "Reviews"] as const;
 export default function ProfileScreen() {
-  const { data, isLoading, refetch } = useQuery({
-    queryKey: ["user"],
-    queryFn: getMe,
+  const router = useRouter();
+  const { userId } = useLocalSearchParams() as { userId: string };
+  const { data, refetch, isLoading, isFetching } = useQuery({
+    queryKey: ["user", userId],
+    queryFn: () => getUser(userId),
   });
-
-  const me = useMemo(() => data ?? null, [data]);
-
+  const user = useMemo(() => data || null, [data]);
   const [activeTab, setActiveTab] = useState<(typeof TABS)[number]>("All");
 
-  if (!isLoading && !me) return <EmptyProfile />;
+  if (!isLoading && !user) return <EmptyProfile />;
 
   const dataForTab = useMemo(() => {
     switch (activeTab) {
-      case "Properties":
-        return [{ type: "properties" }];
+      case "Houses":
+        return [{ type: "houses" }];
 
-      case "Saved":
-        return [{ type: "saved" }];
+      case "Lands":
+        return [{ type: "lands" }];
 
       case "Reviews":
         return [{ type: "reviews" }];
@@ -50,25 +47,27 @@ export default function ProfileScreen() {
 
   const stickyHeaderIndices = [0, 1];
 
-  useRefreshOnFocus(refetch);
   return (
     <>
       <Stack.Screen
         options={{
-          headerLeft: () => (
-            <View className="px-4 flex-row gap-6">
-              <Pressable onPress={() => {}}>
-                <Icon as={Plus} className="w-6 h-6" />
-              </Pressable>
-            </View>
-          ),
+          headerLeft: headerLeft(),
           headerRight: () => (
             <View className="px-4 flex-row gap-6">
-              <Pressable onPress={() => router.push("/(protected)/explore")}>
-                <Icon as={Search} className="w-6 h-6" />
+              <Pressable
+                onPress={() =>
+                  router.push({
+                    pathname: "/agents/[userId]/qrcode",
+                    params: {
+                      userId,
+                    },
+                  })
+                }
+              >
+                <Icon as={Share} className="w-6 h-6" />
               </Pressable>
-              <Pressable onPress={() => router.push("/(protected)/settings")}>
-                <Icon as={Settings} className="w-6 h-6" />
+              <Pressable onPress={() => {}}>
+                <Icon as={MoreHorizontal} className="w-6 h-6" />
               </Pressable>
             </View>
           ),
@@ -84,28 +83,29 @@ export default function ProfileScreen() {
                 case "all":
                   return (
                     <View className="mt-4">
-                      <ProfileDetails me={me} />
+                      <ProfileDetails me={user} />
                     </View>
                   );
 
-                case "properties":
+                case "houses":
                   return (
                     <View className="mt-4">
-                      {me && <PropertiesTabView profileId={me.id} />}
+                      {user && <PropertiesTabView profileId={user.id} />}
                     </View>
                   );
-
-                case "saved":
+                case "lands":
                   return (
                     <View className="mt-4">
-                      {me && <SavedPropertiesTabView />}
+                      {user && (
+                        <PropertiesTabView profileId={user.id} type="lands" />
+                      )}
                     </View>
                   );
 
                 case "reviews":
                   return (
                     <View className="mt-4">
-                      {me && <ReviewsTabView profileId={me.id} />}
+                      {user && <ReviewsTabView profileId={user.id} />}
                     </View>
                   );
 
@@ -115,25 +115,25 @@ export default function ProfileScreen() {
             }}
             ListHeaderComponent={
               <View>
-                {me && <ProfileTopSection userData={me} />}
+                {user && <ProfileTopSection userData={user} />}
 
-                {me && (
+                {user && (
                   <ProfileTabHeaderSection
                     activeIndex={TABS.indexOf(activeTab)}
                     onTabChange={(index) => setActiveTab(TABS[index])}
-                    profile={me}
+                    profile={user}
                     profileTabs={[
                       {
                         label: "All",
                         key: "all",
                       },
                       {
-                        label: "Properties",
+                        label: "Houses",
                         key: "houses",
                       },
                       {
-                        label: "Saved",
-                        key: "saved",
+                        label: "Lands",
+                        key: "lands",
                       },
                       {
                         label: "Reviews",
@@ -158,7 +158,7 @@ export default function ProfileScreen() {
 function EmptyProfile() {
   return (
     <View className="flex-1 bg-background-muted justify-center items-center px-4">
-      <BeachPersonWaterParasolIcon
+      <BeachPersonWaterParasolSingleColorIcon
         width={64}
         height={64}
         className="text-gray-500"

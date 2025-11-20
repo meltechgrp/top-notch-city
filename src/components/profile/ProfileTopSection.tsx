@@ -56,22 +56,22 @@ export function ProfileTopSection({ userData: user }: { userData: Me }) {
               {fullName(user)}
             </Text>
           </View>
-          <View className="flex-row gap-4 mt-3 items-center">
-            <View className="flex-1 gap-1 items-center flex-row">
+          <View className="flex-row gap-2 mt-3 items-center">
+            <View className="gap-1 items-center flex-row">
               <Text className="text-sm font-medium">
                 {formatNumberCompact(user?.followers_count || 0)}
               </Text>
               <Text className="text-xs">Following</Text>
             </View>
             <Icon as={Dot} className="w-3 h-3" />
-            <View className="flex-1 gap-1 items-center flex-row">
+            <View className="gap-1 items-center flex-row">
               <Text className="text-sm font-medium">
                 {formatNumberCompact(user?.total_properties || 0)}
               </Text>
               <Text className="text-xs">Listings</Text>
             </View>
             <Icon as={Dot} className="w-3 h-3" />
-            <View className="flex-1 gap-1 items-center flex-row">
+            <View className="gap-1 items-center flex-row">
               <Text className="text-sm font-medium">
                 {formatNumberCompact(user?.likes_count || 0)}
               </Text>

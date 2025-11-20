@@ -16,7 +16,7 @@ interface EmptyStateProps {
 export function PropertyEmptyState({
   icon,
   title = "No Data Found",
-  description = "You're all caught up. New items will appear here soon.",
+  description = "New items will appear here soon.",
   buttonLabel = "Reset filters",
   onReset,
   className,
@@ -33,10 +33,11 @@ export function PropertyEmptyState({
           justifyContent: "center",
           alignItems: "center",
           padding: 24,
+          paddingVertical: 32,
         }}
       >
         <View className="items-center gap-3">
-          <Icon as={icon} size={32} />
+          <Icon as={icon} size={28} />
           <Text className="text-lg font-semibold text-typography text-center">
             {title}
           </Text>

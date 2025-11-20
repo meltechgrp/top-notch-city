@@ -6,9 +6,13 @@ type IProps = {
   profile: Me;
   activeIndex: number;
   onTabChange: (index: number) => void;
+  profileTabs: {
+    label: string;
+    key: string;
+  }[];
 };
 export default function ProfileTabHeaderSection(props: IProps) {
-  const { profile, onTabChange, activeIndex } = props;
+  const { profile, onTabChange, activeIndex, profileTabs } = props;
   // if (profile?.isBlocked) return null
   return (
     <ScrollView
@@ -37,22 +41,3 @@ export default function ProfileTabHeaderSection(props: IProps) {
     </ScrollView>
   );
 }
-
-export const profileTabs = [
-  {
-    label: "All",
-    key: "all",
-  },
-  {
-    label: "Properties",
-    key: "houses",
-  },
-  {
-    label: "Saved",
-    key: "saved",
-  },
-  {
-    label: "Reviews",
-    key: "reviews",
-  },
-];

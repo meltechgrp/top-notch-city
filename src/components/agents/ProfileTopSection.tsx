@@ -1,4 +1,4 @@
-import { cn, fullName } from "@/lib/utils";
+import { cn, formatNumberCompact, fullName } from "@/lib/utils";
 import {
   Avatar,
   AvatarFallbackText,
@@ -10,7 +10,6 @@ import {
   View,
 } from "../ui";
 import { getImageUrl } from "@/lib/api";
-import { ChevronDown, ChevronUp } from "lucide-react-native";
 import {
   openAccessModal,
   openAgentModal,
@@ -21,6 +20,8 @@ import { followAgent, unFollowAgent } from "@/actions/agent";
 import { useStore } from "@/store";
 import { useMemo } from "react";
 import { router } from "expo-router";
+import { Dot } from "lucide-react-native";
+import { Rating } from "@/components/agent/Rating";
 
 export function ProfileTopSection({ userData: agent }: { userData: Me }) {
   const client = useQueryClient();
@@ -60,30 +61,49 @@ export function ProfileTopSection({ userData: agent }: { userData: Me }) {
         <View className="flex-1">
           <View className="">
             <Text className="text-lg font-semibold">{fullName(agent)}</Text>
-            <Text>{agent.email}</Text>
+            {isAgent ? (
+              <View className="flex-row gap-1 items-center">
+                <Text className="text-sm">
+                  {me?.years_of_experience || "-"}
+                </Text>
+                <Text className="text-sm text-typography/80">
+                  Years of Experience
+                </Text>
+              </View>
+            ) : (
+              <Text className="text-sm text-typography/80">{agent.email}</Text>
+            )}
           </View>
-          {isAgent && (
-            <View className="flex-row gap-4 mt-3">
-              <View className="flex-1 gap-1">
-                <Text className="text-xl font-bold">
-                  {agent?.followers_count}
-                </Text>
-                <Text className="text-sm font-light">Following</Text>
-              </View>
-              <View className="flex-1 gap-1">
-                <Text className="text-xl font-bold">
-                  {agent?.total_properties}
-                </Text>
-                <Text className="text-sm font-light">Listings</Text>
-              </View>
-              <View className="flex-1 gap-1">
-                <Text className="text-xl font-bold">{agent?.likes_count}</Text>
-                <Text className="text-sm font-light">Likes</Text>
-              </View>
+          {isAgent && <Rating size={14} rating={0} total={0} />}
+          <View className="flex-row gap-2 mt-3 items-center">
+            <View className="gap-1 items-center flex-row">
+              <Text className="text-sm font-medium">
+                {formatNumberCompact(agent?.followers_count || 0)}
+              </Text>
+              <Text className="text-xs">Following</Text>
             </View>
-          )}
+            <Icon as={Dot} className="w-3 h-3" />
+            <View className="gap-1 items-center flex-row">
+              <Text className="text-sm font-medium">
+                {formatNumberCompact(agent?.total_properties || 0)}
+              </Text>
+              <Text className="text-xs">Listings</Text>
+            </View>
+            <Icon as={Dot} className="w-3 h-3" />
+            <View className="gap-1 items-center flex-row">
+              <Text className="text-sm font-medium">
+                {formatNumberCompact(agent?.likes_count || 0)}
+              </Text>
+              <Text className="text-xs">Likes</Text>
+            </View>
+          </View>
         </View>
       </View>
+      {isAgent && agent?.about && (
+        <View className="mt-2">
+          <Text className="text-sm">{agent.about}</Text>
+        </View>
+      )}
       {!isOwner ? (
         <View className="flex-row mt-6 gap-4 justify-center items-center">
           <Button onPress={handlePress} className=" h-10 flex-1">
@@ -116,9 +136,9 @@ export function ProfileTopSection({ userData: agent }: { userData: Me }) {
           <Button
             onPress={() =>
               router.push({
-                pathname: "/agents/[user]/qrcode",
+                pathname: "/agents/[userId]/qrcode",
                 params: {
-                  user: me?.id!,
+                  userId: me?.id!,
                 },
               })
             }

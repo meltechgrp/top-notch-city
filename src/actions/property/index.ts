@@ -22,7 +22,7 @@ export async function fetchWishlist() {
       throw new Error("Failed to fetch wishlist");
     }
 
-    return res as Wishlist[];
+    return res as Property[];
   } catch (error) {
     throw new Error("Failed to fetch wishlist");
   }

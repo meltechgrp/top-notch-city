@@ -210,9 +210,9 @@ const PropertyDetailsBottomSheet = () => {
                 className="h-12 gap-1 bg-green-600"
                 onPress={() =>
                   router.push({
-                    pathname: "/agents/[user]",
+                    pathname: "/agents/[userId]",
                     params: {
-                      user: property?.owner.slug!,
+                      userId: property?.owner.slug!,
                     },
                   })
                 }

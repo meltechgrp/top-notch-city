@@ -1,20 +1,16 @@
 import { Button, Icon, Pressable, Text, View } from "@/components/ui";
 import { composeFullAddress } from "@/lib/utils";
-import { format } from "date-fns";
-import { Link, router } from "expo-router";
+import { Link } from "expo-router";
 import {
-  Calendar,
   CalendarCog,
   Clock,
   CreativeCommons,
   Dot,
-  Edit,
   Globe,
   Key,
   Mail,
   MapPin,
   Phone,
-  User,
 } from "lucide-react-native";
 
 interface ProfileDetailsProps {
@@ -25,62 +21,26 @@ export function ProfileDetails({ me }: ProfileDetailsProps) {
   return (
     <View className="px-4 gap-6">
       <View className="gap-1">
-        <View className="flex-row items-center justify-between">
-          <Text className="text-lg font-medium">Personal Details</Text>
-          <Pressable
-            onPress={() => router.push("/profile/account")}
-            className="px-2"
-          >
-            <Icon as={Edit} className="w-5 h-5" />
-          </Pressable>
-        </View>
+        <Text className="text-base font-medium">Personal Details</Text>
         <View className="gap-4 p-4 bg-background-muted rounded-2xl">
           <View className="flex-row gap-4 items-center">
             <Icon as={Mail} />
-            <Text>{me?.email || "N/A"}</Text>
+            <Text numberOfLines={1}>{me?.email || "-"}</Text>
           </View>
           <View className="flex-row gap-4 items-center">
             <Icon as={MapPin} />
-            <Text>{me?.address ? composeFullAddress(me.address) : "N/A"}</Text>
+            <Text numberOfLines={1}>
+              {me?.address ? composeFullAddress(me.address) : "-"}
+            </Text>
           </View>
           <View className="flex-row gap-4 items-center">
             <Icon as={Phone} />
-            <Text>{me?.phone || "N/A"}</Text>
-          </View>
-          <View className="flex-row gap-4 items-center">
-            <Icon as={User} />
-            <Text>{me?.gender || "N/A"}</Text>
-          </View>
-          <View className="flex-row gap-4 items-center">
-            <Icon as={Calendar} />
-            <Text>
-              {me?.date_of_birth
-                ? format(new Date(me.date_of_birth), "dd MMM")
-                : "N/A"}
-            </Text>
+            <Text numberOfLines={1}>{me?.phone || "-"}</Text>
           </View>
         </View>
       </View>
       <View className="gap-1">
-        <View className="flex-row items-center justify-between">
-          <Text className="text-lg font-medium">Bio</Text>
-          <Pressable className="px-2">
-            <Icon as={Edit} className="w-5 h-5" />
-          </Pressable>
-        </View>
-        <View className="gap-4 p-4 bg-background-muted rounded-2xl">
-          <Text className="text-sm">
-            {me?.about || "Add an intresting bio about yourself to stand out."}
-          </Text>
-        </View>
-      </View>
-      <View className="gap-1">
-        <View className="flex-row items-center justify-between">
-          <Text className="text-lg font-medium">Contact Details</Text>
-          <Pressable className="px-2">
-            <Icon as={Edit} className="w-5 h-5" />
-          </Pressable>
-        </View>
+        <Text className="text-base font-medium">Contact Details</Text>
         <View className="gap-4 p-4 bg-background-muted rounded-2xl">
           <View className="flex-row  gap-2">
             <View className="mt-1">
@@ -108,21 +68,25 @@ export function ProfileDetails({ me }: ProfileDetailsProps) {
               </View>
             </View>
           </View>
-          <View className="flex-row gap-2">
-            <View className="mt-1">
-              <Icon
-                as={CreativeCommons}
-                className="w-4 h-4 text-typography/80"
-              />
+          {me?.license_number && (
+            <View className="flex-row gap-2">
+              <View className="mt-1">
+                <Icon
+                  as={CreativeCommons}
+                  className="w-4 h-4 text-typography/80"
+                />
+              </View>
+              <View className="gap-2">
+                <Text className="text-sm text-typography/80">
+                  License Number
+                </Text>
+                <Text className="text-sm">{me.license_number}</Text>
+              </View>
             </View>
-            <View className="gap-2">
-              <Text className="text-sm text-typography/80">License Number</Text>
-              <Text className="text-sm">{me?.license_number || "N/A"}</Text>
-            </View>
-          </View>
-          <View className="flex-row items-center gap-2">
-            <Icon as={Globe} className="w-4 h-4" />
-            {me?.website ? (
+          )}
+          {me?.website && (
+            <View className="flex-row items-center gap-2">
+              <Icon as={Globe} className="w-4 h-4" />
               <Link
                 target="_blank"
                 className=" text-sm text-blue-500"
@@ -130,16 +94,12 @@ export function ProfileDetails({ me }: ProfileDetailsProps) {
               >
                 {me.website}
               </Link>
-            ) : (
-              <Text className="text-sm">N/A</Text>
-            )}
-          </View>
+            </View>
+          )}
           <View className=" flex-row items-center gap-2">
             <Icon as={CalendarCog} className="w-4 h-4 text-typography/80" />
             <View className="flex-row gap-1 items-center">
-              <Text className="text-sm">
-                {me?.years_of_experience || "N/A"}
-              </Text>
+              <Text className="text-sm">{me?.years_of_experience || "-"}</Text>
               <Text className="text-sm text-typography/80">
                 Years of Experience
               </Text>

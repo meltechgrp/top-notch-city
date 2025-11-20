@@ -4,6 +4,14 @@ type Me = {
   phone: string | null;
   first_name: string;
   slug: string;
+  about: string;
+  website?: string;
+  license_number?: string;
+  languages?: string;
+  specialties?: string;
+  years_of_experience?: string;
+  working_hours?: string;
+  social_links?: string;
   last_name: string;
   middle_name: string | null;
   gender: "male" | "female" | null;
@@ -13,6 +21,7 @@ type Me = {
   profile_image: string | null;
   wallet_balance: number;
   is_active: boolean;
+  is_available?: boolean;
   is_superuser: boolean;
   role: "user" | "admin" | "agent" | "staff" | "staff_agent";
   id: string;

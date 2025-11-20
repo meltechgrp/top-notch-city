@@ -11,9 +11,7 @@ import {
   useLocalSearchParams,
   useRouter,
 } from "expo-router";
-import { MoreHorizontal, Share2 } from "lucide-react-native";
 import { useMemo } from "react";
-import { Share } from "react-native";
 
 export const unstable_settings = {
   // Ensure any route can link back to `/`
@@ -51,47 +49,8 @@ export default function ProfileScreensLayout() {
     >
       <Stack.Screen
         name="index"
-        options={({ route }) => {
-          const params = route.params as any;
-          const title = params?.title ?? "Profile";
-
-          return {
-            headerTitle: () => (
-              <AnimatedHeaderTitle defaultTitle="Profile" title={title} />
-            ),
-            headerRight: () => (
-              <View className="flex-row gap-3 items-center">
-                {!isOwner && (
-                  <Pressable
-                    onPress={() =>
-                      router.push({
-                        pathname: "/agents/[user]/qrcode",
-                        params: {
-                          user: user,
-                        },
-                      })
-                    }
-                  >
-                    <Icon size="xl" as={Share2} />
-                  </Pressable>
-                )}
-                {/* {isOwner && (
-                  <Pressable
-                    className=" bg-gray-500 rounded-xl p-1 px-1.5"
-                    onPress={() => {
-                      router.push("/(protected)/agents/[user]/account");
-                    }}
-                  >
-                    <Icon
-                      size="xl"
-                      as={MoreHorizontal}
-                      className="text-white"
-                    />
-                  </Pressable>
-                )} */}
-              </View>
-            ),
-          };
+        options={{
+          headerTitle: "Profile",
         }}
       />
       <Stack.Screen

@@ -103,20 +103,6 @@ type FlatSubcategoryItem = {
 };
 type FlatItem = FlatCategoryItem | FlatSubcategoryItem;
 
-type Wishlist = {
-  id: string;
-  title: string;
-  description: string | null;
-  price: number;
-  currency: Currency;
-  status: PropertyStatus;
-  purpose: PropertyPurpose;
-  category: string;
-  subcategory: string;
-  // address: Address;
-  media: string[];
-};
-
 type PropertyStatus =
   | "pending"
   | "approved"
