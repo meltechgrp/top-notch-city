@@ -10,19 +10,17 @@ const videoSource = require("@/assets/images/splash-video.mp4");
 export default function SplashScreen() {
   const { hasAuth } = useStore();
   const player = useVideoPlayer(videoSource, (player) => {
-    // Remove looping so it ends
     player.loop = false;
     player.play();
   });
 
-  // Navigate when video ends
   React.useEffect(() => {
     if (!player) return;
     const onEnded = () => {
       if (hasAuth) {
         router.replace("/home");
       } else {
-        router.replace("/onboarding");
+        router.replace("/signin");
       }
     };
 

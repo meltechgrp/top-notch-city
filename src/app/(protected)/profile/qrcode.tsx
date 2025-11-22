@@ -61,7 +61,6 @@ export default function QrCodeScreen() {
   };
 
   const animatedStyle = useAnimatedStyle(() => {
-    // this is just to re-render and trigger withTiming transitions
     return {};
   });
 
@@ -105,18 +104,13 @@ export default function QrCodeScreen() {
                   {fullName(data)}
                 </Text>
               </View>
-              <QRCode
-                value={url}
-                size={240}
-                backgroundColor="white"
-                // color={theme == "dark" ? "white" : "black"}
-              />
+              <QRCode value={url} size={240} backgroundColor="white" />
               <View className="mt-4 flex-row gap-2 items-center">
                 <View className="w-8 h-8 rounded-full">
                   <Image source={logo} rounded />
                 </View>
                 <Text className=" text-lg text-black font-bold">
-                  Top-Notch City
+                  TopNotch City
                 </Text>
               </View>
             </View>

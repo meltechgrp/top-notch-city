@@ -9,11 +9,9 @@ import FullHeightLoaderWrapper from "@/components/loaders/FullHeightLoaderWrappe
 import { ProfileTopSection } from "@/components/profile/ProfileTopSection";
 import ProfileTabHeaderSection from "@/components/profile/ProfileTabHeaderSection";
 import PropertiesTabView from "@/components/profile/PropertiesTab";
-import BeachPersonWaterParasolIcon from "@/components/icons/BeachPersonWaterParasolIcon";
 import { ProfileDetails } from "@/components/profile/ProfileDetails";
 import { router, Stack } from "expo-router";
 import { LogIn, Plus, Search, Settings, User } from "lucide-react-native";
-import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
 import SavedPropertiesTabView from "@/components/profile/SavedProperties";
 import ReviewsTabView from "@/components/profile/ReviewsTabView";
 
@@ -47,26 +45,35 @@ export default function ProfileScreen() {
 
   const stickyHeaderIndices = [0, 1];
 
-  useRefreshOnFocus(refetch);
   if (!isLoading && !me) return <NotLoggedInProfile />;
   return (
     <>
       <Stack.Screen
         options={{
-          headerLeft: () => (
-            <View className="px-4 flex-row gap-6">
-              <Pressable onPress={() => {}}>
-                <Icon as={Plus} className="w-6 h-6" />
-              </Pressable>
-            </View>
-          ),
+          headerLeft: () =>
+            me ? (
+              <View className="px-4 flex-row gap-6">
+                <Pressable
+                  className="p-2 bg-background-muted rounded-full"
+                  onPress={() => {}}
+                >
+                  <Icon as={Plus} className="w-6 h-6" />
+                </Pressable>
+              </View>
+            ) : undefined,
           headerRight: () => (
-            <View className="px-4 flex-row gap-6">
-              <Pressable onPress={() => router.push("/(protected)/explore")}>
+            <View className="px-4 flex-row gap-4">
+              <Pressable
+                className="p-2 bg-background-muted rounded-full"
+                onPress={() => router.push("/(protected)/explore")}
+              >
                 <Icon as={Search} className="w-6 h-6" />
               </Pressable>
               {me && (
-                <Pressable onPress={() => router.push("/(protected)/settings")}>
+                <Pressable
+                  className="p-2 bg-background-muted rounded-full"
+                  onPress={() => router.push("/(protected)/settings")}
+                >
                   <Icon as={Settings} className="w-6 h-6" />
                 </Pressable>
               )}

@@ -17,7 +17,6 @@ export function ReviewSkeleton({
         className
       )}
     >
-      {/* Header: Avatar + Name + Date */}
       <View className="flex-row items-center mb-3 justify-between">
         <View className="flex-row items-center gap-3">
           <Skeleton colorMode="dark" width={40} height={40} radius={999} />
@@ -26,7 +25,6 @@ export function ReviewSkeleton({
         <Skeleton colorMode="dark" width={80} height={14} radius={6} />
       </View>
 
-      {/* Rating stars */}
       <View className="flex-row mb-3 gap-2">
         {Array.from({ length: 5 }).map((_, i) => (
           <Skeleton
@@ -39,7 +37,6 @@ export function ReviewSkeleton({
         ))}
       </View>
 
-      {/* Comment text */}
       <View className="gap-2">
         <Skeleton colorMode="dark" width={"90%"} height={14} radius={6} />
         <Skeleton colorMode="dark" width={"80%"} height={14} radius={6} />

@@ -21,10 +21,7 @@ import useSuppressChatPushNotification from "@/components/chat/useSuppressChatPu
 import MessageActionsBottomSheet from "@/components/chat/MessageActionsBottomSheet";
 import { useMessages } from "@/hooks/useMessages";
 import BackgroundView from "@/components/layouts/BackgroundView";
-import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
-import { useChat } from "@/hooks/useChat";
 import { TypingIndicator } from "@/components/chat/TypingIndicator";
-import EditOverlay from "@/components/chat/EditOverlay";
 
 const InitialNumToRender = 30;
 type Props = {
@@ -34,7 +31,6 @@ type Props = {
 export default function ChatRoom(props: Props) {
   const { ChatRoomFooterProps = {}, chatId } = props;
   const me = useStore((s) => s.me);
-  const { refetch } = useChat();
   const {
     handleSendMessage,
     hasNextPage,
@@ -45,7 +41,6 @@ export default function ChatRoom(props: Props) {
     refreshing,
     loading,
     typing,
-    refetchMessages,
     markAsRead,
   } = useMessages(chatId);
   const [currentTitle, setCurrentTitle] = React.useState("");
@@ -151,18 +146,10 @@ export default function ChatRoom(props: Props) {
     }
   );
   React.useEffect(() => {
-    if (chatId && !messages?.length) {
-      refetch();
-    }
-  }, [chatId]);
-  React.useEffect(() => {
     if (chatId && messages?.length) {
       markAsRead({ chatId });
     }
   }, [messages.length, chatId, me]);
-  useRefreshOnFocus(async () => {
-    refetchMessages();
-  });
   return (
     <BackgroundView className="flex-1 w-full">
       <Animated.View

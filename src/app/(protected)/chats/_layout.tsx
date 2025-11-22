@@ -1,3 +1,4 @@
+import headerLeft from "@/components/shared/headerLeft";
 import { useResolvedTheme } from "@/components/ui";
 import { Colors } from "@/constants/Colors";
 import { Stack } from "expo-router";
@@ -7,7 +8,6 @@ export default function ChatsLayout() {
   return (
     <Stack
       screenOptions={{
-        headerShown: false,
         headerBackVisible: false,
         headerTitleStyle: {
           color: theme == "dark" ? Colors.dark.text : Colors.light.text,
@@ -19,18 +19,10 @@ export default function ChatsLayout() {
       }}
     >
       <Stack.Screen
-        name="index"
-        options={{
-          headerShown: true,
-          headerTitle: "Messages",
-        }}
-      />
-      <Stack.Screen
         name="[chatId]/index"
         options={{
-          headerShown: false,
+          headerLeft: headerLeft(),
           headerTitle: "Messages",
-          headerLeft: undefined,
           animation: "none",
         }}
       />

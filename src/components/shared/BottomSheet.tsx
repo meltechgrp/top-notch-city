@@ -21,7 +21,6 @@ import { cn } from "@/lib/utils";
 import { Heading, Icon, Text, useResolvedTheme } from "../ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardDismissPressable } from "./KeyboardDismissPressable";
-import { Colors } from "@/constants/Colors";
 import BottomSheetKeyboardAwareScrollView from "@/components/custom/BottomSheetKeyboardAwareScrollView";
 import { X } from "lucide-react-native";
 
@@ -133,7 +132,6 @@ export default function BottomSheet(props: BottomSheetProps) {
       ref={bottomSheetModalRef}
       snapPoints={snapPoints}
       onDismiss={handleDismiss}
-      // key={sheetKey || undefined}
       android_keyboardInputMode={android_keyboardInputMode}
       backdropComponent={renderBackdrop}
       enableBlurKeyboardOnGesture

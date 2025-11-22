@@ -46,7 +46,6 @@ export function useMessages(chatId: string) {
       } = lastPage;
       return page < total_pages ? page + 1 : undefined;
     },
-    enabled: false,
   });
 
   // Sync messages into Zustand

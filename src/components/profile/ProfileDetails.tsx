@@ -1,14 +1,13 @@
-import { Button, Icon, Pressable, Text, View } from "@/components/ui";
+import { Button, Icon, Text, View } from "@/components/ui";
 import { composeFullAddress } from "@/lib/utils";
 import { format } from "date-fns";
-import { Link, router } from "expo-router";
+import { Link } from "expo-router";
 import {
   Calendar,
   CalendarCog,
   Clock,
   CreativeCommons,
   Dot,
-  Edit,
   Globe,
   Key,
   Mail,
@@ -27,12 +26,6 @@ export function ProfileDetails({ me }: ProfileDetailsProps) {
       <View className="gap-1">
         <View className="flex-row items-center justify-between">
           <Text className="text-lg font-medium">Personal Details</Text>
-          <Pressable
-            onPress={() => router.push("/profile/account")}
-            className="px-2"
-          >
-            <Icon as={Edit} className="w-5 h-5" />
-          </Pressable>
         </View>
         <View className="gap-4 p-4 bg-background-muted rounded-2xl">
           <View className="flex-row gap-4 items-center">
@@ -64,9 +57,6 @@ export function ProfileDetails({ me }: ProfileDetailsProps) {
       <View className="gap-1">
         <View className="flex-row items-center justify-between">
           <Text className="text-lg font-medium">Bio</Text>
-          <Pressable className="px-2">
-            <Icon as={Edit} className="w-5 h-5" />
-          </Pressable>
         </View>
         <View className="gap-4 p-4 bg-background-muted rounded-2xl">
           <Text className="text-sm">
@@ -77,9 +67,6 @@ export function ProfileDetails({ me }: ProfileDetailsProps) {
       <View className="gap-1">
         <View className="flex-row items-center justify-between">
           <Text className="text-lg font-medium">Contact Details</Text>
-          <Pressable className="px-2">
-            <Icon as={Edit} className="w-5 h-5" />
-          </Pressable>
         </View>
         <View className="gap-4 p-4 bg-background-muted rounded-2xl">
           <View className="flex-row  gap-2">

@@ -25,7 +25,7 @@ export default function OnboardingScreen() {
     }
   }, []);
   function skipHandler() {
-    router.push("/home");
+    router.replace("/signin");
   }
   useFocusEffect(
     React.useCallback(() => {

@@ -33,8 +33,6 @@ import {
   makeRedirectUri,
   useAuthRequest,
 } from "expo-auth-session";
-import { FacebookIcon } from "lucide-react-native";
-import { ExternalLink } from "@/components/ExternalLink";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -228,12 +226,7 @@ export default function SignIn() {
     AppleAuthentication.isAvailableAsync().then(setIsAppleAvailable);
   }, []);
   return (
-    <OnboardingScreenContainer
-      withScroll={false}
-      skip
-      allowBack
-      onBack={onBack}
-    >
+    <OnboardingScreenContainer withScroll={false} skip allowBack={false}>
       <Box className="w-[98%] bg-background/90 max-w-[26rem] gap-4 mt-4 mx-auto rounded-xl p-6">
         <View className=" gap-2">
           <Text className=" text-2xl text-primary font-semibold font-heading text-center">

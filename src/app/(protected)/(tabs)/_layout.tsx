@@ -23,7 +23,7 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: "#FF4C00",
-        headerShown: false,
+        headerShown: true,
         tabBarButton: HapticTab,
         headerTitleAlign: "center",
         tabBarHideOnKeyboard: true,
@@ -46,6 +46,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="home"
         options={{
+          headerShown: false,
           title: "Home",
           tabBarIcon: ({ color }) => <Home size={22} color={color} />,
         }}
@@ -77,6 +78,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="menu"
         options={() => ({
+          title: isAdmin ? "Dashboard" : "Menu",
           tabBarIcon: ({ color }) =>
             isAdmin ? (
               <LayoutDashboard size={22} color={color} />

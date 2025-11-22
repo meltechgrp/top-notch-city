@@ -4,6 +4,7 @@ import { router } from "expo-router";
 import { Pressable, ScrollView, View } from "react-native";
 import { Box, Image, ImageBackground, Text } from "../ui";
 import { ChevronLeft } from "lucide-react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 type Props = {
   children: React.ReactNode;
   allowBack?: boolean;
@@ -43,55 +44,51 @@ export default function OnboardingScreenContainer(props: Props) {
         className="flex-1 bg-cover w-full md:max-w-[1400px]"
       >
         <View className="flex-1 bg-black/30">
-          {/* <ScreenContianer
-            edges={edges}
-            style={{ flex: 1 }}
-            keyboardVerticalOffset={Platforms.isIOS() ? 20 : 0}
-          > */}
-          <View className="py-6 flex-1 ">
-            <View className="flex-row mt-2 items-center pb-4 px-6">
-              {allowBack && (
-                <Pressable
-                  onPress={_onBack}
-                  className=" bg-outline-100/60 p-1.5 rounded-full"
-                >
-                  <ChevronLeft strokeWidth={2} color={"#fff"} />
-                </Pressable>
-              )}
-              {showHeader && (
-                <View className="flex-1 gap-2 justify-center flex-row items-center ">
-                  <View className="w-12 h-12">
-                    <Image
-                      source={require("@/assets/images/splash.png")}
-                      alt="Logo"
-                    />
+          <SafeAreaView edges={edges} style={{ flex: 1 }}>
+            <View className="py-6 flex-1 ">
+              <View className="flex-row  items-center pb-4 px-6">
+                {allowBack && (
+                  <Pressable
+                    onPress={_onBack}
+                    className=" bg-outline-100/60 p-1.5 rounded-full"
+                  >
+                    <ChevronLeft strokeWidth={2} color={"#fff"} />
+                  </Pressable>
+                )}
+                {showHeader && (
+                  <View className="flex-1 gap-2 justify-center flex-row items-center ">
+                    <View className="w-12 h-12">
+                      <Image
+                        source={require("@/assets/images/splash.png")}
+                        alt="Logo"
+                      />
+                    </View>
                   </View>
-                </View>
-              )}
-              {skip && (
-                <Pressable
-                  onPress={() => router.push("/home")}
-                  className="ml-auto"
-                >
-                  <Text className="text-lg">Skip</Text>
-                </Pressable>
-              )}
+                )}
+                {skip && (
+                  <Pressable
+                    onPress={() => router.push("/home")}
+                    className="ml-auto"
+                  >
+                    <Text className="text-lg">Skip</Text>
+                  </Pressable>
+                )}
+              </View>
+              <ScrollView
+                keyboardShouldPersistTaps="handled"
+                contentInsetAdjustmentBehavior="automatic"
+                automaticallyAdjustsScrollIndicatorInsets={true}
+                showsVerticalScrollIndicator={false}
+                alwaysBounceVertical
+                contentInset={{ bottom: 0 }}
+                scrollIndicatorInsets={{ bottom: 0 }}
+                automaticallyAdjustKeyboardInsets={true}
+                contentContainerClassName="pt-2 px-6"
+              >
+                {children}
+              </ScrollView>
             </View>
-            <ScrollView
-              keyboardShouldPersistTaps="handled"
-              contentInsetAdjustmentBehavior="automatic"
-              automaticallyAdjustsScrollIndicatorInsets={true}
-              showsVerticalScrollIndicator={false}
-              alwaysBounceVertical
-              contentInset={{ bottom: 0 }}
-              scrollIndicatorInsets={{ bottom: 0 }}
-              automaticallyAdjustKeyboardInsets={true}
-              contentContainerClassName="pt-2 px-6"
-            >
-              {children}
-            </ScrollView>
-          </View>
-          {/* </ScreenContianer> */}
+          </SafeAreaView>
         </View>
       </ImageBackground>
     </Box>

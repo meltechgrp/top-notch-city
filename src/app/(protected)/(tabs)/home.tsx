@@ -19,7 +19,7 @@ export default function HomeScreen() {
   const { me } = useStore();
   const { refreshAll, total, refetching } = useHomeFeed();
   useEffect(() => {
-    setTimeout(() => eventBus.dispatchEvent("REFRESH_PROFILE", null), 500);
+    setTimeout(() => eventBus.dispatchEvent("REFRESH_PROFILE", null), 1000);
   }, []);
 
   const [friendsModal, setFriendsModal] = React.useState(false);

@@ -38,11 +38,12 @@ export const getQuickMenuItems = () => {
     },
     // Agent
     {
-      label: "Dashboard",
-      icon: LayoutDashboard,
-      link: "/agent/dashboard",
+      label: "Analytics",
+      icon: ChartColumn,
+      link: "/agent/analytics",
       role: "agent",
     },
+    { label: "Invite Friends", icon: Share2, link: "/invite", role: "agent" },
     {
       label: "Messages",
       icon: MessageCircle,
@@ -89,7 +90,7 @@ export const getQuickMenuItems = () => {
     },
   ];
   if (isAgent) {
-    return data.filter((m) => m.role == "all" || m.role == "agent");
+    return data.filter((m) => m.role == "agent");
   } else if (isAdmin) {
     return data.filter((m) => m.role == "admin");
   } else if (me) {

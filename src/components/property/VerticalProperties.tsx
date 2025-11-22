@@ -10,12 +10,10 @@ import React, {
   useState,
 } from "react";
 import PropertyListItem from "./PropertyListItem";
-import { MiniEmptyState } from "../shared/MiniEmptyState";
 import { useRouter } from "expo-router";
 import { useAnimatedScrollHandler } from "react-native-reanimated";
 import { AnimatedFlashList } from "../shared/AnimatedFlashList";
 import { cn, deduplicate } from "@/lib/utils";
-import BackgroundView from "@/components/layouts/BackgroundView";
 import VerticalPropertyLoaderWrapper from "@/components/loaders/VerticalPropertyLoader";
 import { PropertyEmptyState } from "@/components/property/EmptyPropertyCard";
 import { House } from "lucide-react-native";

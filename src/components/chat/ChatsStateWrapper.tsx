@@ -1,12 +1,14 @@
 import React from "react";
 import EmptyState, { EmptyStateProps } from "@/components/shared/EmptyState";
+import { ScrollView } from "react-native";
+import { ChatItemSkeleton } from "@/components/skeleton/ChatItemSkeleton";
 
 type Props = EmptyStateProps & {
   children: React.ReactNode;
   isEmpty?: Boolean;
 };
 
-export default function EmptyStateWrapper({
+export default function ChatsStateWrapper({
   children,
   loading,
   isEmpty,
@@ -17,7 +19,22 @@ export default function EmptyStateWrapper({
   contentWrapperStyle,
   contentWrapperClassName,
 }: Props) {
-  if (loading) return <>{children}</>;
+  if (loading) {
+    return (
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{
+          gap: 16,
+          paddingVertical: 4,
+        }}
+        showsVerticalScrollIndicator={false}
+      >
+        {Array.from({ length: 10 }).map((_, i) => (
+          <ChatItemSkeleton key={`skeleton-${i}`} />
+        ))}
+      </ScrollView>
+    );
+  }
 
   if (isEmpty) {
     return (

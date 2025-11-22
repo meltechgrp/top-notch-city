@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useChatStore } from "@/store/chatStore";
 import { getChatMessages, getChats } from "@/actions/message";
 import { useShallow } from "zustand/react/shallow";
+import { useStore } from "@/store";
 
 export function useChat() {
   const {
@@ -12,6 +13,7 @@ export function useChat() {
     updateChatMessages,
     getChatList,
   } = useChatStore.getState();
+  const me = useStore((s) => s?.me);
 
   const queryClient = useQueryClient();
   const {
@@ -22,9 +24,9 @@ export function useChat() {
   } = useQuery({
     queryKey: ["chats"],
     queryFn: getChats,
+    enabled: !!me,
   });
 
-  // Sync chat list into Zustand
   useEffect(() => {
     if (chatData) {
       const chats = chatData?.chats?.filter(Boolean).map((c) => ({
@@ -56,10 +58,11 @@ export function useChat() {
     });
   }, [chats]);
   return {
-    chats,
+    chats: me ? chats : [],
     refetch: refetchChats,
-    loading: loadingChats,
+    loading: me ? loadingChats : false,
     refreshing: refreshingChats,
     updateChatListDetails,
+    me,
   };
 }

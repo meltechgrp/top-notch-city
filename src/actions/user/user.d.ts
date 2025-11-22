@@ -56,3 +56,9 @@ type Activity = {
   object_type: string;
   description: string;
 };
+
+type FieldConfig = {
+  label: string;
+  fields: (keyof Me)[];
+  inputs: { key: keyof Me; placeholder: string; multiline?: boolean }[];
+};

@@ -75,7 +75,15 @@ function MessageListItem(props: MessageListItemProps) {
   return (
     <SwipeableWrapper leftAction={handleDelete}>
       <Pressable
-        onPress={() => router.push(`/(protected)/messages/${chat.chat_id}`)}
+        onPress={() =>
+          router.push({
+            pathname: "/chats/[chatId]",
+            params: {
+              chatId: chat.chat_id,
+              userId: chat.receiver.id,
+            },
+          })
+        }
         className=" h-[70px] flex-1 bg-background"
       >
         <View className=" h-full w-full px-4">
@@ -109,11 +117,11 @@ function MessageListItem(props: MessageListItemProps) {
                 {!typing && chat?.recent_message && (
                   <View className="flex flex-row gap-4 w-full">
                     <View className="flex-1 flex-row gap-2 items-center overflow-hidden">
-                      {/* {isMine && ( */}
-                      <MessageStatusIcon
-                        status={chat?.recent_message?.status}
-                      />
-                      {/* )} */}
+                      {isMine && (
+                        <MessageStatusIcon
+                          status={chat?.recent_message?.status}
+                        />
+                      )}
                       <Text
                         className="text-typography/60 text-sm"
                         ellipsizeMode="tail"
