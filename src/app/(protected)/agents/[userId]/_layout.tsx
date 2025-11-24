@@ -1,30 +1,16 @@
-import { AnimatedHeaderTitle } from "@/components/custom/AnimatedHeaderTitle";
 import AppCrashScreen from "@/components/shared/AppCrashScreen";
 import headerLeft from "@/components/shared/headerLeft";
-import { Icon, Pressable, Text, useResolvedTheme, View } from "@/components/ui";
-import config from "@/config";
+import { useResolvedTheme } from "@/components/ui";
 import { Colors } from "@/constants/Colors";
-import { useStore } from "@/store";
-import {
-  ErrorBoundaryProps,
-  Stack,
-  useLocalSearchParams,
-  useRouter,
-} from "expo-router";
-import { useMemo } from "react";
+import Platforms from "@/constants/Plaforms";
+import { ErrorBoundaryProps, Stack } from "expo-router";
 
 export const unstable_settings = {
-  // Ensure any route can link back to `/`
   initialRouteName: "index",
 };
 
 export default function ProfileScreensLayout() {
   const theme = useResolvedTheme();
-  const router = useRouter();
-  const { me } = useStore();
-  const { user } = useLocalSearchParams() as { user: string };
-  const isOwner = useMemo(() => me?.id == user, [user, me]);
-
   return (
     <Stack
       screenOptions={{
@@ -54,21 +40,41 @@ export default function ProfileScreensLayout() {
         }}
       />
       <Stack.Screen
+        name="qrcode"
+        options={{
+          headerShown: false,
+          headerTitle: "qrcode",
+        }}
+      />
+      <Stack.Screen
         name="account"
         options={{
-          title: "Account",
+          headerTitle: "Edit profile",
+        }}
+      />
+      <Stack.Screen
+        name="edit"
+        options={{
+          headerTitle: "Edit",
+          presentation: Platforms.isAndroid() ? "modal" : "formSheet",
+          sheetAllowedDetents: [0.75, 1],
+          gestureEnabled: false,
+          sheetGrabberVisible: false,
+          sheetExpandsWhenScrolledToEdge: false,
+          contentStyle: {
+            flex: 1,
+            paddingBottom: 0,
+            backgroundColor:
+              theme == "dark"
+                ? Colors.light.background
+                : Colors.dark.background,
+          },
         }}
       />
       <Stack.Screen
         name="wishlist"
         options={{
-          title: "Wishlist",
-        }}
-      />
-      <Stack.Screen
-        name="qrcode"
-        options={{
-          headerShown: false,
+          headerTitle: "Wishlist",
         }}
       />
     </Stack>

@@ -19,7 +19,6 @@ type Props = NotifierProps & {
   entity_id?: string;
 };
 
-// ❌ Alert-style error notification
 export function showErrorAlert({
   title,
   description,
@@ -43,7 +42,6 @@ export function showErrorAlert({
   });
 }
 
-// 🧠 Advanced example with callbacks and bounce
 export function showBounceNotification({
   title,
   description,

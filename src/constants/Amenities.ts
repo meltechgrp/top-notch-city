@@ -6,7 +6,7 @@ export const Amenities: string[] = [
   "Electricity",
   "Swimming Pool",
   "GYM",
-];
+] as const;
 
 export const Durations = [
   { label: "Monthly", value: "30" },
@@ -15,4 +15,4 @@ export const Durations = [
   { label: "Yearly", value: "365" },
   { label: "2 Years", value: "730" },
   { label: "3 Years", value: "1095" },
-];
+] as const;

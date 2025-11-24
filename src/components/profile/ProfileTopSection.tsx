@@ -103,9 +103,9 @@ export function ProfileTopSection({ userData: user }: { userData: Me }) {
                   size={"sm"}
                   onPress={() =>
                     router.push({
-                      pathname: "/profile/account",
+                      pathname: "/agents/[userId]/account",
                       params: {
-                        user: user.id,
+                        userId: user.id,
                       },
                     })
                   }
@@ -123,9 +123,9 @@ export function ProfileTopSection({ userData: user }: { userData: Me }) {
             <Button
               onPress={() =>
                 router.push({
-                  pathname: "/profile/account",
+                  pathname: "/agents/[userId]/account",
                   params: {
-                    user: user.id,
+                    userId: user.id,
                   },
                 })
               }
@@ -137,7 +137,10 @@ export function ProfileTopSection({ userData: user }: { userData: Me }) {
             <Button
               onPress={() =>
                 router.push({
-                  pathname: "/profile/qrcode",
+                  pathname: "/agents/[userId]/qrcode",
+                  params: {
+                    userId: user.id,
+                  },
                 })
               }
               className="bg-gray-500 h-10 flex-1"

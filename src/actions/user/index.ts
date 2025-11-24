@@ -81,7 +81,7 @@ export async function setProfileImage(image: string) {
 }
 
 export async function updateProfileField(
-  form: { field: keyof Me; value: any }[]
+  form: { field: keyof ProfileUpdate; value: string }[]
 ) {
   try {
     const formData = new FormData();

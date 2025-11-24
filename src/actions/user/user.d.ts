@@ -4,14 +4,9 @@ type Me = {
   phone: string | null;
   first_name: string;
   slug: string;
-  about: string;
+  is_blocked_by_admin: boolean;
   website?: string;
-  license_number?: string;
-  languages?: string;
-  specialties?: string;
-  years_of_experience?: string;
-  working_hours?: string;
-  social_links?: string;
+  agent_profile?: AgentProfile;
   last_name: string;
   middle_name: string | null;
   gender: "male" | "female" | null;
@@ -32,7 +27,7 @@ type Me = {
   total_properties: number;
   followers_count: number;
   is_following?: boolean;
-  address: {
+  address?: {
     street: string;
     city: string;
     state: string;
@@ -44,6 +39,33 @@ type Me = {
     id: string;
   };
 };
+
+interface AgentProfile {
+  license_number?: string;
+  languages?: string[];
+  specialties?: string[];
+  years_of_experience?: string;
+  working_hours?: Record<string, string>;
+  social_links?: Record<string, string>;
+  about?: string;
+  is_available: boolean;
+  average_rating: number;
+  total_reviews: number;
+  certifications: Record<string, string>;
+  working_hours: Record<string, string>;
+  reviews: Review[];
+  companies: Company[];
+}
+
+interface Company {
+  id: string;
+  name: string;
+  address?: string;
+  website?: string;
+  email?: string;
+  description?: string;
+  phone?: string;
+}
 
 type Activity = {
   id: string;
@@ -59,6 +81,49 @@ type Activity = {
 
 type FieldConfig = {
   label: string;
-  fields: (keyof Me)[];
-  inputs: { key: keyof Me; placeholder: string; multiline?: boolean }[];
+  context?: string;
+  isAgent?: boolean;
+  fields: (keyof ProfileUpdate)[];
+  inputs: {
+    key: keyof ProfileUpdate;
+    placeholder: string;
+    multiline?: boolean;
+  }[];
+  inputType?: keyof ProfileUpdate;
+  isCompany?: boolean;
+  isAddress?: boolean;
+  showAddBtn?: boolean;
+  maxLength?: number;
+  isArray?: boolean;
+};
+
+type ProfileUpdate = {
+  email: string;
+  phone: string;
+  first_name: string;
+  about: string;
+  website: string;
+  license_number: string;
+  languages: string[];
+  specialties: string[];
+  years_of_experience: string;
+  working_hours: Record<string, string>;
+  social_links: Record<string, string>;
+  last_name: string;
+  middle_name: string;
+  gender: "male" | "female";
+  date_of_birth: string;
+  profile_image: string;
+  street: string;
+  city: string;
+  state: string;
+  postal_code?: string;
+  country_code?: string;
+  country: string;
+  latitude: number;
+  longitude: number;
+  name: string;
+  address: string;
+  description: string;
+  companies: string;
 };

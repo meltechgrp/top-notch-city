@@ -33,7 +33,7 @@
 //         alertType: "warn",
 //       });
 //     }
-//     await mutateAsync(format(dob, "yyyy-MM-dd"), {
+//     await mutateAsync(, {
 //       onSuccess: () => onDismiss(),
 //     });
 //   }
@@ -47,18 +47,7 @@
 //     >
 //       <SafeAreaView edges={["bottom"]} className="flex-1">
 //         <View className="flex-1 gap-4 p-4 pb-8 bg-background">
-//           <View className=" items-center mb-8">
-//             <DatePicker
-//               label="Date of Birth"
-//               placeholder="Day/Month/Year"
-//               value={dob as any}
-//               onChange={(val) => setDob(new Date(val))}
-//               mode="date"
-//               modal={false}
-//               maximumDate={minimumAge}
-//               startDate={minimumAge}
-//             />
-//           </View>
+
 //           <View className="flex-row gap-4">
 //             <Button
 //               className="h-11 flex-1"

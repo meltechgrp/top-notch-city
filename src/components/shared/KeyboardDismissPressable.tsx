@@ -8,7 +8,10 @@ import {
   Platform,
 } from "react-native";
 
-export const KeyboardDismissPressable = ({ children }: PropsWithChildren) => {
+export const KeyboardDismissPressable = ({
+  children,
+  className,
+}: PropsWithChildren & { className?: string }) => {
   const dismissKeyboard = (event: any) => {
     const target = event?.target;
 
@@ -30,9 +33,12 @@ export const KeyboardDismissPressable = ({ children }: PropsWithChildren) => {
     <TouchableWithoutFeedback
       onPress={dismissKeyboard}
       touchSoundDisabled={true}
+      style={styles.container}
       className="flex-1"
     >
-      <View style={styles.container}>{children}</View>
+      <View style={styles.container} className={className}>
+        {children}
+      </View>
     </TouchableWithoutFeedback>
   );
 };

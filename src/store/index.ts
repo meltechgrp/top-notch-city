@@ -35,7 +35,7 @@ type Actions = {
   getDeviceId: () => string;
   setIsAdmin: (isAdmin: boolean) => void;
   setIsOnboarded: (isOnboarded: boolean) => void;
-  updateProfile: (data: Me) => void;
+  updateProfile: (data: Partial<Me>) => void;
   updateLocation: (data: LocationObjectCoords) => void;
   setMediaViewer: (
     mediaViewer: Media[],
@@ -107,7 +107,18 @@ export const useStore = create<StateAndActions>(
         set((state) => ({ ...state, isOnboarded }));
       },
       updateProfile: (data) =>
-        set((state) => ({ ...state, me: { ...state.me, ...data } })),
+        set((state) => {
+          if (!state.me) {
+            return { me: { ...data } as Me };
+          }
+
+          return {
+            me: {
+              ...state.me,
+              ...data,
+            },
+          };
+        }),
 
       // 🔹 Property list actions
       setTopProperties: (properties) =>

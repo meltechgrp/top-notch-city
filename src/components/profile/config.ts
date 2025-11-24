@@ -1,16 +1,9 @@
-export const PROFILE_FORM_CONFIG: Record<keyof Me, FieldConfig> = {
-  first_name: {
-    label: "Update Name",
-    fields: ["first_name", "last_name"],
-    inputs: [
-      { key: "first_name", placeholder: "Enter first name" },
-      { key: "last_name", placeholder: "Enter last name" },
-    ],
-  },
-
-  last_name: {
-    label: "Update Name",
-    fields: ["first_name", "last_name"],
+export const PROFILE_FORM_CONFIG: Record<string, FieldConfig> = {
+  name: {
+    label: "Full Name",
+    context:
+      "We request all parts of your name for better verification and to ensure users can correctly identify you.",
+    fields: ["first_name", "middle_name", "last_name"],
     inputs: [
       { key: "first_name", placeholder: "Enter first name" },
       { key: "last_name", placeholder: "Enter last name" },
@@ -19,24 +12,23 @@ export const PROFILE_FORM_CONFIG: Record<keyof Me, FieldConfig> = {
 
   phone: {
     label: "Phone Number",
+    context: "Used for verification, notifications, and password recovery.",
     fields: ["phone"],
-    inputs: [{ key: "phone", placeholder: "Enter phone" }],
+    inputs: [{ key: "phone", placeholder: "Enter phone number" }],
   },
 
   email: {
     label: "Email Address",
+    context: "Required for verification and receiving important updates.",
     fields: ["email"],
-    inputs: [{ key: "email", placeholder: "Enter email" }],
-  },
-
-  username: {
-    label: "Username",
-    fields: ["username"],
-    inputs: [{ key: "username", placeholder: "Enter username" }],
+    inputs: [{ key: "email", placeholder: "Enter email address" }],
   },
 
   about: {
     label: "Bio",
+    context:
+      "Tell users about yourself to build trust and show your personality.",
+    isAgent: true,
     fields: ["about"],
     inputs: [
       { key: "about", placeholder: "Write about yourself", multiline: true },
@@ -47,84 +39,117 @@ export const PROFILE_FORM_CONFIG: Record<keyof Me, FieldConfig> = {
     label: "Gender",
     fields: ["gender"],
     inputs: [{ key: "gender", placeholder: "Enter gender (male/female)" }],
+    inputType: "gender",
   },
 
   date_of_birth: {
     label: "Date of Birth",
     fields: ["date_of_birth"],
     inputs: [{ key: "date_of_birth", placeholder: "YYYY-MM-DD" }],
+    inputType: "date_of_birth",
   },
 
   languages: {
     label: "Languages",
+    context: "Used to improve your discoverability.",
     fields: ["languages"],
-    inputs: [{ key: "languages", placeholder: "Enter languages" }],
+    isAgent: true,
+    inputs: [{ key: "languages", placeholder: "Enter spoken languages" }],
+    showAddBtn: true,
+    isArray: true,
+    maxLength: 3,
+    inputType: "languages",
   },
 
   specialties: {
-    label: "Specialties",
+    label: "Services",
+    context: "Helps users understand your strengths.",
     fields: ["specialties"],
-    inputs: [{ key: "specialties", placeholder: "Enter specialties" }],
+    isAgent: true,
+    inputs: [{ key: "specialties", placeholder: "Select a service" }],
+    inputType: "specialties",
+    showAddBtn: true,
+    isArray: true,
+    maxLength: 6,
   },
 
   years_of_experience: {
     label: "Years of Experience",
+    context: "Clients rely on this to determine your expertise level.",
     fields: ["years_of_experience"],
+    isAgent: true,
     inputs: [
-      { key: "years_of_experience", placeholder: "Enter experience years" },
+      { key: "years_of_experience", placeholder: "Enter number of years" },
     ],
   },
 
   working_hours: {
-    label: "Working Hours",
+    label: "Bussiness Hours",
+    context: "Add multiple availability entries.",
     fields: ["working_hours"],
-    inputs: [{ key: "working_hours", placeholder: "Working hours" }],
+    isAgent: true,
+    inputs: [{ key: "working_hours", placeholder: "Enter working hours" }],
+    inputType: "working_hours",
   },
 
   website: {
     label: "Website",
     fields: ["website"],
     inputs: [{ key: "website", placeholder: "Enter website URL" }],
+    isAgent: true,
   },
 
   social_links: {
-    label: "Social Links",
+    label: "Social Media Links",
+    context: "Stored as a JSON record. Useful for trust verification.",
     fields: ["social_links"],
-    inputs: [
-      {
-        key: "social_links",
-        placeholder: "Enter social links",
-        multiline: true,
-      },
-    ],
+    isAgent: true,
+    inputs: [{ key: "social_links", placeholder: "Enter social URL" }],
+    inputType: "social_links",
   },
+
+  license_number: {
+    label: "License Number",
+    context: "This may be required for verification.",
+    fields: ["license_number"],
+    inputs: [{ key: "license_number", placeholder: "Enter license number" }],
+    isAgent: true,
+  },
+
+  profile_image: {
+    label: "Profile Picture",
+    context: "Used for identity verification.",
+    fields: ["profile_image"],
+    inputs: [{ key: "profile_image", placeholder: "Upload image URL" }],
+    inputType: "profile_image",
+  },
+
   address: {
     label: "Address",
-    fields: ["address"],
+    context:
+      "You will select your location on the next screen using a map or search.",
+    isAddress: true,
+    fields: [
+      "street",
+      "city",
+      "state",
+      "postal_code",
+      "country",
+      "latitude",
+      "longitude",
+    ],
+    inputType: "address",
     inputs: [],
   },
 
-  middle_name: {
-    label: "Middle Name",
-    fields: ["middle_name"],
-    inputs: [{ key: "middle_name", placeholder: "Enter middle name" }],
+  companies: {
+    label: "Companies",
+    context: "Add companies you own or work with for better visibility",
+    isCompany: true,
+    fields: ["companies"],
+    inputs: [{ key: "companies", placeholder: "" }],
+    inputType: "companies",
+    showAddBtn: true,
+    maxLength: 2,
   },
-  role: { label: "", fields: [], inputs: [] },
-  id: { label: "", fields: [], inputs: [] },
-  created_at: { label: "", fields: [], inputs: [] },
-  updated_at: { label: "", fields: [], inputs: [] },
-  status: { label: "", fields: [], inputs: [] },
-  verified: { label: "", fields: [], inputs: [] },
-  is_active: { label: "", fields: [], inputs: [] },
-  is_available: { label: "", fields: [], inputs: [] },
-  is_superuser: { label: "", fields: [], inputs: [] },
-  profile_image: { label: "", fields: [], inputs: [] },
-  wallet_balance: { label: "", fields: [], inputs: [] },
-  slug: { label: "", fields: [], inputs: [] },
-  followers_count: { label: "", fields: [], inputs: [] },
-  likes_count: { label: "", fields: [], inputs: [] },
-  total_properties: { label: "", fields: [], inputs: [] },
-  views_count: { label: "", fields: [], inputs: [] },
-  is_following: { label: "", fields: [], inputs: [] },
-  license_number: { label: "", fields: [], inputs: [] },
 };
