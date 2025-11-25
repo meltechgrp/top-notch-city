@@ -1,10 +1,9 @@
 import React, { useMemo, useCallback } from "react";
 import { View } from "react-native";
-import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import VerticalPropertyLoaderWrapper from "@/components/loaders/VerticalPropertyLoader";
 import PropertyListItem from "@/components/property/PropertyListItem";
 import { router } from "expo-router";
-import { PropertyEmptyState } from "@/components/property/EmptyPropertyCard";
+import { EmptyState } from "@/components/property/EmptyPropertyCard";
 import { House } from "lucide-react-native";
 import { useQuery } from "@tanstack/react-query";
 import { fetchWishlist } from "@/actions/property";
@@ -29,7 +28,7 @@ export default function SavedPropertiesTabView({ showStatus = false }: IProps) {
 
   if (!isLoading && list.length === 0) {
     return (
-      <PropertyEmptyState
+      <EmptyState
         icon={House}
         title="No Saved Properties"
         description="New properties will appear here soon."

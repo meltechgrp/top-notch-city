@@ -57,9 +57,28 @@ export default function ProfileScreensLayout() {
         options={{
           headerTitle: "Edit",
           presentation: Platforms.isAndroid() ? "modal" : "formSheet",
-          sheetAllowedDetents: [0.75, 1],
+          sheetAllowedDetents: [0.8, 1],
           gestureEnabled: false,
-          sheetGrabberVisible: false,
+          sheetGrabberVisible: true,
+          sheetExpandsWhenScrolledToEdge: false,
+          contentStyle: {
+            flex: 1,
+            paddingBottom: 0,
+            backgroundColor:
+              theme == "dark"
+                ? Colors.light.background
+                : Colors.dark.background,
+          },
+        }}
+      />
+      <Stack.Screen
+        name="image/[key]"
+        options={{
+          headerTitle: "Image",
+          presentation: Platforms.isAndroid() ? "modal" : "formSheet",
+          sheetAllowedDetents: [0.8, 1],
+          gestureEnabled: false,
+          sheetGrabberVisible: true,
           sheetExpandsWhenScrolledToEdge: false,
           contentStyle: {
             flex: 1,

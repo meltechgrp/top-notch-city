@@ -4,7 +4,7 @@ import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import VerticalPropertyLoaderWrapper from "@/components/loaders/VerticalPropertyLoader";
 import PropertyListItem from "@/components/property/PropertyListItem";
 import { router } from "expo-router";
-import { PropertyEmptyState } from "@/components/property/EmptyPropertyCard";
+import { EmptyState } from "@/components/property/EmptyPropertyCard";
 import { House } from "lucide-react-native";
 
 type IProps = {
@@ -50,7 +50,7 @@ export default function PropertiesTabView({
 
     if (isAgent) {
       return (
-        <PropertyEmptyState
+        <EmptyState
           icon={House}
           title={`You don't have any ${propertyLabel} listed yet`}
           description="Start listing properties to reach potential buyers and renters."
@@ -62,7 +62,7 @@ export default function PropertiesTabView({
 
     if (isOwner && !isAgent) {
       return (
-        <PropertyEmptyState
+        <EmptyState
           icon={House}
           title={`You don't have any ${propertyLabel} yet`}
           description="Become an agent to start listing your properties."
@@ -74,7 +74,7 @@ export default function PropertiesTabView({
 
     if (!isOwner) {
       return (
-        <PropertyEmptyState
+        <EmptyState
           icon={House}
           title={`No ${propertyLabel} Found`}
           description="New listings will appear here soon."
@@ -85,7 +85,7 @@ export default function PropertiesTabView({
     }
 
     return (
-      <PropertyEmptyState
+      <EmptyState
         icon={House}
         title={`No ${propertyLabel} Found`}
         description="New properties will appear here soon."

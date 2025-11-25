@@ -113,7 +113,7 @@ type ProfileUpdate = {
   middle_name: string;
   gender: "male" | "female";
   date_of_birth: string;
-  profile_image: string;
+  profile_image_id: string;
   street: string;
   city: string;
   state: string;

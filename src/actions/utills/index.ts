@@ -162,7 +162,7 @@ export async function fetchPlaceFromTextQuery(
   try {
     const res = await fetch(endpoint, {
       headers: {
-        "User-Agent": "topnotchapp/1.0 meltechnologiessolution@gmail.com", // required by OSM
+        "User-Agent": "topnotchapp/1.0 meltechnologiessolution@gmail.com",
       },
     });
 

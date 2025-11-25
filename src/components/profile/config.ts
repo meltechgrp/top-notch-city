@@ -119,15 +119,15 @@ export const PROFILE_FORM_CONFIG: Record<string, FieldConfig> = {
   profile_image: {
     label: "Profile Picture",
     context: "Used for identity verification.",
-    fields: ["profile_image"],
-    inputs: [{ key: "profile_image", placeholder: "Upload image URL" }],
-    inputType: "profile_image",
+    fields: ["profile_image_id"],
+    inputs: [{ key: "profile_image_id", placeholder: "Upload image URL" }],
+    inputType: "profile_image_id",
   },
 
   address: {
     label: "Address",
     context:
-      "You will select your location on the next screen using a map or search.",
+      "Add your location to get a better experience with property around you",
     isAddress: true,
     fields: [
       "street",
@@ -139,7 +139,8 @@ export const PROFILE_FORM_CONFIG: Record<string, FieldConfig> = {
       "longitude",
     ],
     inputType: "address",
-    inputs: [],
+    showAddBtn: true,
+    inputs: [{ key: "address", placeholder: "" }],
   },
 
   companies: {

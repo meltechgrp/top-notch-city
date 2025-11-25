@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { getUserActivities } from "@/actions/user";
 import ActivityListItem from "@/components/admin/users/ActivityListItem";
-import { PropertyEmptyState } from "@/components/property/EmptyPropertyCard";
+import { EmptyState } from "@/components/property/EmptyPropertyCard";
 import ReviewsLoaderWrapper from "@/components/loaders/ReviewsLoader";
 import { Activity } from "lucide-react-native";
 
@@ -29,7 +29,7 @@ const ActivityTabView = ({ profileId }: IProps) => {
 
   if (!isLoading && activities.length === 0) {
     return (
-      <PropertyEmptyState
+      <EmptyState
         icon={Activity}
         title="No Activity Found"
         description="Activity will appear here soon."

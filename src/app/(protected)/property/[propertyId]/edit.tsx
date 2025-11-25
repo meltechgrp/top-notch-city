@@ -139,7 +139,7 @@ export default function PropertyEdit() {
         .map((item) => ({ id: item.id, uri: generateMediaUrl(item).uri })),
       address: {
         displayName: property?.address
-          ? composeFullAddress(property?.address, true, "long")
+          ? composeFullAddress(property?.address)
           : "",
         location: {
           latitude: Number(property?.address.latitude),

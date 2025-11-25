@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { View } from "react-native";
-import { PropertyEmptyState } from "@/components/property/EmptyPropertyCard";
+import { EmptyState } from "@/components/property/EmptyPropertyCard";
 import { MessageSquare } from "lucide-react-native";
 import { useQuery } from "@tanstack/react-query";
 import { getAgentReviews } from "@/actions/review";
@@ -21,7 +21,7 @@ export default function ReviewsTabView({ profileId }: IProps) {
 
   if (!isLoading && list.length === 0) {
     return (
-      <PropertyEmptyState
+      <EmptyState
         icon={MessageSquare}
         title="No Reviews Found"
         description="Reviews will appear here once users leave feedback."

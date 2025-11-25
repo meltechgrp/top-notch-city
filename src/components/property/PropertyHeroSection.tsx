@@ -35,7 +35,7 @@ export function PropertyHeroSection({ property, width }: Props) {
               <View className="flex-row items-center gap-2">
                 <Icon size="sm" as={MapPin} className="" />
                 <Text className="text-sm text-white">
-                  {composeFullAddress(property?.address, true, "long")}
+                  {composeFullAddress(property?.address)}
                 </Text>
               </View>
 

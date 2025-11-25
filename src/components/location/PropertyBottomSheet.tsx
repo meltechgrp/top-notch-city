@@ -67,7 +67,7 @@ export default function PropertyBottomSheet(props: Props) {
                   <View className="flex-row items-center gap-1">
                     <Icon as={MapPin} size="sm" className="text-white" />
                     <Text className="text-white text-sm">
-                      {composeFullAddress(data.address, false, "short")}
+                      {composeFullAddress(data.address)}
                     </Text>
                   </View>
                 )}

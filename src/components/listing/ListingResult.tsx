@@ -49,9 +49,7 @@ export default function ListingResult() {
             <InfoRow
               label="Address"
               value={composeFullAddress(
-                property?.address?.addressComponents || {},
-                true,
-                "long"
+                property?.address?.addressComponents || {}
               )}
             />
           </View>

@@ -68,7 +68,7 @@ export function ProfileDetails({ me }: ProfileDetailsProps) {
               </View>
             </View>
           </View>
-          {me?.license_number && (
+          {me?.agent_profile?.license_number && (
             <View className="flex-row gap-2">
               <View className="mt-1">
                 <Icon
@@ -80,7 +80,9 @@ export function ProfileDetails({ me }: ProfileDetailsProps) {
                 <Text className="text-sm text-typography/80">
                   License Number
                 </Text>
-                <Text className="text-sm">{me.license_number}</Text>
+                <Text className="text-sm">
+                  {me?.agent_profile?.license_number}
+                </Text>
               </View>
             </View>
           )}
@@ -99,7 +101,9 @@ export function ProfileDetails({ me }: ProfileDetailsProps) {
           <View className=" flex-row items-center gap-2">
             <Icon as={CalendarCog} className="w-4 h-4 text-typography/80" />
             <View className="flex-row gap-1 items-center">
-              <Text className="text-sm">{me?.years_of_experience || "-"}</Text>
+              <Text className="text-sm">
+                {me?.agent_profile?.years_of_experience || "-"}
+              </Text>
               <Text className="text-sm text-typography/80">
                 Years of Experience
               </Text>

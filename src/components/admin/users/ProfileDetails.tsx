@@ -55,7 +55,7 @@ export function AdminProfileDetails({ me }: ProfileDetailsProps) {
       <View className="gap-1">
         <Text className="text-base font-medium">Bio</Text>
         <View className="gap-4 p-4 bg-background-muted rounded-2xl">
-          <Text className="text-sm">{me?.about || "N/A"}</Text>
+          <Text className="text-sm">{me?.agent_profile?.about || "N/A"}</Text>
         </View>
       </View>
       <View className="gap-1">
@@ -96,7 +96,9 @@ export function AdminProfileDetails({ me }: ProfileDetailsProps) {
             </View>
             <View className="gap-2">
               <Text className="text-sm text-typography/80">License Number</Text>
-              <Text className="text-sm">{me?.license_number || "N/A"}</Text>
+              <Text className="text-sm">
+                {me?.agent_profile?.license_number || "N/A"}
+              </Text>
             </View>
           </View>
           <View className="flex-row items-center gap-2">
@@ -117,7 +119,7 @@ export function AdminProfileDetails({ me }: ProfileDetailsProps) {
             <Icon as={CalendarCog} className="w-4 h-4 text-typography/80" />
             <View className="flex-row gap-1 items-center">
               <Text className="text-sm">
-                {me?.years_of_experience || "N/A"}
+                {me?.agent_profile?.years_of_experience || "N/A"}
               </Text>
               <Text className="text-sm text-typography/80">
                 Years of Experience

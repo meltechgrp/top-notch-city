@@ -11,10 +11,7 @@ import { useSharedValue } from "react-native-reanimated";
 import { Dimensions, ScrollView } from "react-native";
 import { ImageContentFit } from "expo-image";
 import { generateMediaUrl } from "@/lib/api";
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const INTERACTIVE_ZONE_WIDTH = SCREEN_WIDTH / 2.8;

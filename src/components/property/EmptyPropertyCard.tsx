@@ -13,7 +13,7 @@ interface EmptyStateProps {
   className?: string;
 }
 
-export function PropertyEmptyState({
+export function EmptyState({
   icon,
   title = "No Data Found",
   description = "New items will appear here soon.",

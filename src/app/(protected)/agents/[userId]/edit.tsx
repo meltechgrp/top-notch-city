@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 import { useProfileMutations } from "@/tanstack/mutations/useProfileMutations";
 import { useQuery } from "@tanstack/react-query";
 import { router, Stack, useGlobalSearchParams } from "expo-router";
-import { Plus, Save } from "lucide-react-native";
+import { Plus, Save, Search } from "lucide-react-native";
 import { useMemo, useState } from "react";
 
 export default function Edit() {
@@ -24,108 +24,146 @@ export default function Edit() {
     key: keyof ProfileUpdate;
     userId: string;
   };
+
   const [showModal, setShowModal] = useState(false);
-  const { data } = useQuery({
+  const { data: user } = useQuery({
     queryKey: ["user", userId],
     queryFn: () => getUser(userId),
   });
-  const me = useMemo(() => data ?? null, [data]);
+
+  const me = user ?? null;
+
   if (!key || !PROFILE_FORM_CONFIG[key]) {
     return router.push(`/agents/${userId}/account`);
   }
+
   const config = PROFILE_FORM_CONFIG[key];
   const { mutation } = useProfileMutations(userId);
 
-  const initialState: Record<string, any> = {};
-  config.fields.forEach((f) => {
-    if (config.isCompany) {
-      initialState[f] = JSON.stringify(
-        // @ts-ignore
-        me?.agent_profile?.companies?.[f] || ""
-      );
-    } else if (config.isAgent) {
-      if (config.isArray) {
-        // @ts-ignore
-        initialState[f] = me?.agent_profile?.[f]?.join(",") || "";
-      } else if (config.inputType) {
-        initialState[f] = JSON.stringify(
-          // @ts-ignore
-          me?.agent_profile?.[f] || ""
-        );
-      } else {
-        // @ts-ignore
-        initialState[f] = me?.agent_profile?.[f] || "";
-      }
-    } else {
-      // @ts-ignore
-      initialState[f] = me?.[f] || "";
+  const parseValue = (field: string): any => {
+    const source = config.isCompany
+      ? // @ts-ignore
+        me?.agent_profile?.companies?.[field]
+      : config.isAgent
+        ? // @ts-ignore
+          me?.agent_profile?.[field]
+        : // @ts-ignore
+          me?.[field];
+
+    if (config.isArray) {
+      return Array.isArray(source) ? source.join(",") : "";
     }
-  });
+    if (config.isCompany || config.inputType) {
+      return JSON.stringify(source || "");
+    }
+
+    return source || "";
+  };
+
+  const initialState = useMemo(() => {
+    const out: Record<string, any> = {};
+    config.fields.forEach((f) => {
+      out[f] = parseValue(f);
+    });
+    return out;
+  }, [me]);
 
   const [form, setForm] = useState(initialState);
 
-  function updateField(field: string, value: string) {
+  const updateField = (field: string, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
-  }
+  };
 
-  async function handleSave() {
-    const payload = Object.entries(form).map(([field, value]) => ({
-      field: field as keyof ProfileUpdate,
-      value,
-    }));
+  const parsedValue = useMemo(() => {
+    if (!config.inputType) return null;
 
-    await mutation.mutateAsync(payload, { onSuccess: () => router.back() });
-  }
-  function addItem() {
-    setShowModal(true);
-  }
+    try {
+      if (config.isArray) {
+        return form[key]
+          .split(",")
+          .map((v: string) => v.trim())
+          .filter((v: string) => v.length > 0);
+      }
+      return JSON.parse(form[key]);
+    } catch {
+      return null;
+    }
+  }, [form[key]]);
+
   const disabled = useMemo(() => {
-    try {
-      if (!config.inputType) return false;
-      const val = JSON.parse(form[key]);
-      const max = config?.maxLength || 0;
-      if (Array.isArray(val)) {
-        return val?.length >= max;
-      }
-      return false;
-    } catch (error) {
-      return false;
-    }
-  }, [form, config]);
+    if (!config.inputType || !Array.isArray(parsedValue)) return false;
+
+    const max = config.maxLength || 0;
+    return parsedValue.length >= max;
+  }, [parsedValue]);
+
   const hideSave = useMemo(() => {
-    try {
-      if (!config.inputType) return false;
-      const val = JSON.parse(form[key]);
-      if (config?.showAddBtn && !Array.isArray(val)) {
-        return true;
-      } else if (Array.isArray(val)) {
-        return val?.length < 0;
-      }
-      return false;
-    } catch (error) {
-      return false;
+    if (!config.inputType) return false;
+
+    if (config.isAddress && parsedValue) return false;
+    if (config.showAddBtn && !Array.isArray(parsedValue)) return true;
+
+    if (Array.isArray(parsedValue)) {
+      return parsedValue.length < 1;
     }
-  }, [form, config]);
+
+    return false;
+  }, [parsedValue]);
+
+  const handleSave = async () => {
+    let payload: {
+      field: keyof ProfileUpdate;
+      value: any;
+    }[] = [];
+    if (config.isAddress) {
+      const data = JSON.parse(form[key]);
+      payload = Object.entries(data?.addressComponents).map(
+        ([field, value]) => ({
+          field: field as keyof ProfileUpdate,
+          value,
+        })
+      );
+    } else {
+      payload = Object.entries(form).map(([field, value]) => ({
+        field: field as keyof ProfileUpdate,
+        value,
+      }));
+    }
+    await mutation.mutateAsync(payload, {
+      onSuccess: () => router.back(),
+    });
+  };
+
   return (
     <>
       <Stack.Screen
         options={{
-          headerTitle: "Update Profile",
+          headerTitle: "Update",
+          headerTitleAlign: "center",
           headerRight: () =>
             config?.showAddBtn ? (
               <Pressable
-                className="items-center gap-2 px-3 flex-row"
+                className={cn(
+                  "items-center w-20 and gap-2 px-3 flex-row",
+                  config.isAddress && "w-28"
+                )}
                 disabled={disabled}
-                onPress={addItem}
+                onPress={() => setShowModal(true)}
               >
-                <Text className="text-base font-bold">Add</Text>
-                <Icon className=" w-6 h-6 text-primary" as={Plus} />
+                <Text className="text-base font-bold">
+                  {config.isAddress ? "Search" : "Add"}
+                </Text>
+                <Icon
+                  className="w-6 h-6 text-primary"
+                  as={config.isAddress ? Search : Plus}
+                />
               </Pressable>
             ) : undefined,
         }}
       />
+
       <Box className="flex-1 android:border-t border-outline-100">
-        <KeyboardDismissPressable className=" gap-2 flex flex-col p-4">
+        <KeyboardDismissPressable className="gap-2 flex flex-col p-4">
           <View className="mb-4">
             <Text className="text-2xl font-medium">
               {config.label || `Update ${key}`}
@@ -149,7 +187,12 @@ export default function Edit() {
               />
             ))}
           </View>
-          <Button size="xl" className={cn("mt-6")} onPress={handleSave}>
+
+          <Button
+            size="xl"
+            className={cn("mt-6", hideSave && "hidden")}
+            onPress={handleSave}
+          >
             {mutation.isPending ? <SpinningLoader /> : <Icon as={Save} />}
             <ButtonText>Save</ButtonText>
           </Button>

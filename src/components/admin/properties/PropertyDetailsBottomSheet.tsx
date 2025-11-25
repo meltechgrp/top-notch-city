@@ -77,7 +77,7 @@ function PropertyDetailsBottomSheet(props: PropertyBottomSheetProps) {
             />
             <InfoRow
               label="Address"
-              value={composeFullAddress(property.address, true, "long")}
+              value={composeFullAddress(property.address)}
             />
             <InfoRow
               label="Created"

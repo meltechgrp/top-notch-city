@@ -15,7 +15,7 @@ import { useAnimatedScrollHandler } from "react-native-reanimated";
 import { AnimatedFlashList } from "../shared/AnimatedFlashList";
 import { cn, deduplicate } from "@/lib/utils";
 import VerticalPropertyLoaderWrapper from "@/components/loaders/VerticalPropertyLoader";
-import { PropertyEmptyState } from "@/components/property/EmptyPropertyCard";
+import { EmptyState } from "@/components/property/EmptyPropertyCard";
 import { House } from "lucide-react-native";
 
 interface Props {
@@ -169,7 +169,7 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
             {ListEmptyComponent ? (
               ListEmptyComponent
             ) : (
-              <PropertyEmptyState
+              <EmptyState
                 icon={House}
                 title="No Properties Found"
                 description="You're all caught up. New properties will appear here soon."

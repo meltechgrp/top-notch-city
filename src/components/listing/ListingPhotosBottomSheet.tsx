@@ -33,11 +33,11 @@ function ListingPhotosBottomSheet(props: Props) {
     return photos?.length || 0;
   }, [photos]);
 
-  const { loading, pickMedia, takeMedia } = useMediaUpload({
-    type: "image",
-    onSuccess: onUpdate,
-    maxSelection: 16 - currentCount,
-  });
+  // const { loading, pickMedia, takeMedia } = useMediaUpload({
+  //   type: "image",
+  //   onSuccess: () => {},
+  //   maxSelection: 16 - currentCount,
+  // });
 
   const ListHeader = useMemo(
     () => (
@@ -48,7 +48,7 @@ function ListingPhotosBottomSheet(props: Props) {
             isDisabled={currentCount >= MAX}
             size="xl"
             className="flex-1 items-center"
-            onPress={pickMedia}
+            // onPress={pickMedia}
           >
             <ButtonText size="sm">Choose photos</ButtonText>
             <Icon as={Images} />
@@ -58,7 +58,7 @@ function ListingPhotosBottomSheet(props: Props) {
             isDisabled={currentCount >= MAX}
             size="xl"
             className="flex-1  items-center"
-            onPress={takeMedia}
+            // onPress={takeMedia}
             variant="outline"
           >
             <ButtonText size="sm">Take photos</ButtonText>
@@ -72,7 +72,7 @@ function ListingPhotosBottomSheet(props: Props) {
         )}
       </View>
     ),
-    [takeMedia, pickMedia]
+    []
   );
   const RenderItem = ({
     item,
@@ -122,7 +122,7 @@ function ListingPhotosBottomSheet(props: Props) {
         onLayout={onLayout}
         className="flex-1 gap-2 py-4 pb-8 bg-background"
       >
-        <FullHeightLoaderWrapper loading={loading}>
+        <FullHeightLoaderWrapper loading={false}>
           <FlatList
             data={photos}
             numColumns={4}

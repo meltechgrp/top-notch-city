@@ -54,7 +54,7 @@ export function propertyToReelLand(properties: Property[]) {
           owner: p?.owner,
           price: p.price,
           is_following: p.is_following || false,
-          location: composeFullAddress(p.address, false, "short"),
+          location: composeFullAddress(p.address),
           purpose: p.purpose,
         };
       }

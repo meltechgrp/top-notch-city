@@ -112,30 +112,21 @@ export function generateTitle({
   }
 }
 
-export function composeFullAddress(
-  address: ParsedAddress,
-  cityOnly?: boolean,
-  type: "long" | "short" = "short"
-) {
-  if (cityOnly && type === "short") {
-    return joinWithComma(address?.state, address?.country);
-  } else if (cityOnly && type === "long") {
+export function composeFullAddress(address: ParsedAddress, cityOnly?: boolean) {
+  if (cityOnly) {
     return joinWithComma(
       address?.street,
       address?.city,
       address?.lga,
-      address?.state,
-      address?.country
+      address?.state
     );
-  }
-  if (!address?.street) {
-    return joinWithComma(address?.city, address?.lga, address?.state);
   }
   return joinWithComma(
     address?.street,
     address?.city,
     address?.lga,
-    address?.state
+    address?.state,
+    address?.country
   );
 }
 export function joinWithComma(...arr: Array<string | undefined | null>) {
@@ -453,4 +444,30 @@ export function guidGenerator() {
     S4() +
     S4()
   );
+}
+
+export function uploadWithFakeProgress(
+  uploadFn: () => Promise<Media[]>,
+  onProgress: (val: number) => void
+) {
+  let progress = 0;
+
+  const interval = setInterval(() => {
+    progress += Math.random() * 5;
+
+    if (progress > 90) progress = 90;
+    onProgress(Math.round(progress));
+  }, 100);
+
+  return uploadFn()
+    .then((res) => {
+      clearInterval(interval);
+      onProgress(100);
+      return res;
+    })
+    .catch((err) => {
+      clearInterval(interval);
+      onProgress(0);
+      throw err;
+    });
 }

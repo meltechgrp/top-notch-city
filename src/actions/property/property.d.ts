@@ -58,7 +58,7 @@ type Property = {
 type Media = {
   id: string;
   url: string;
-  media_type: "IMAGE" | "VIDEO";
+  media_type: "IMAGE" | "VIDEO" | "AUDIO";
 };
 
 type Owner = {

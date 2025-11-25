@@ -29,11 +29,10 @@ interface Staff {
   first_name: string;
   last_name: string;
   profile_image: string | null;
-  status: string; // online/offline
+  status: string;
   last_seen: string;
 }
 
-// Fetch staff API
 async function fetchStaff(): Promise<Staff[]> {
   const res = await Fetch("/users/staff");
   return res?.results || [];
@@ -85,7 +84,7 @@ export default function CustomerCareBottomSheet({
                   },
                   onSuccess: (data) => {
                     router.replace({
-                      pathname: "/messages/[chatId]",
+                      pathname: "/chats/[chatId]",
                       params: {
                         chatId: data,
                       },
@@ -132,7 +131,6 @@ export default function CustomerCareBottomSheet({
         }
         ItemSeparatorComponent={() => <Divider />}
       />
-      {/* )} */}
     </BottomSheet>
   );
 }

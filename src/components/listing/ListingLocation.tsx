@@ -11,7 +11,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { KeyboardDismissPressable } from "../shared/KeyboardDismissPressable";
 import { Pressable } from "react-native";
-import { MapPin } from "lucide-react-native";
+import { Loader, MapPin } from "lucide-react-native";
 import { useTempStore } from "@/store";
 import { debounce } from "lodash-es";
 import useGetLocation from "@/hooks/useGetLocation";
@@ -21,6 +21,7 @@ import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
 import { composeFullAddress } from "@/lib/utils";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import { getReverseGeocode } from "@/hooks/useReverseGeocode";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
 
 export default function ListingLocation({ height }: { height?: number }) {
   const { location, retryGetLocation } = useGetLocation();
@@ -160,7 +161,7 @@ export default function ListingLocation({ height }: { height?: number }) {
           </View>
         </KeyboardDismissPressable>
       </Box>
-      {/* <View className=" px-4 py-2 absolute bottom-4 w-full">
+      <View className=" px-4 py-2 absolute bottom-4 w-full">
         <Button
           className=" h-12 self-center rounded-full"
           onPress={async () => {
@@ -168,16 +169,16 @@ export default function ListingLocation({ height }: { height?: number }) {
             const location = await retryGetLocation();
             if (!location)
               return showErrorAlert({
-                message: "Unable to get location, try again!",
-                type: "warning",
+                title: "Unable to get location, try again!",
+                alertType: "warn",
               });
             const result = await getReverseGeocode(location);
             if (result) {
               const { address, addressComponents } = result;
               if (!address) {
                 showErrorAlert({
-                  message: "Unable to get location, try again!",
-                  type: "warning",
+                  title: "Unable to get location, try again!",
+                  alertType: "warn",
                 });
                 return setLoading(false);
               }
@@ -191,8 +192,8 @@ export default function ListingLocation({ height }: { height?: number }) {
               });
             } else {
               showErrorAlert({
-                message: "Unable to get location, try again!",
-                type: "warning",
+                title: "Unable to get location, try again!",
+                alertType: "warn",
               });
             }
             setLoading(false);
@@ -205,7 +206,7 @@ export default function ListingLocation({ height }: { height?: number }) {
             <ButtonIcon as={MapPin} color="white" />
           )}
         </Button>
-      </View> */}
+      </View>
     </>
   );
 }

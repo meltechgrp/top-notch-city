@@ -81,7 +81,7 @@ function SearchHeader({
                   >
                     <Text numberOfLines={1} className="flex-1 text-sm px-2">
                       {filter?.state
-                        ? composeFullAddress(filter, true)
+                        ? composeFullAddress(filter)
                         : "Search for a state, city or location..."}
                     </Text>
                     <View className=" p-2 bg-primary rounded-full">

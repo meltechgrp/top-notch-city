@@ -1,102 +1,167 @@
 import { useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { uniqueId } from "lodash-es";
-// import { useMediaCompressor } from "./useMediaCompressor";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
+import { ImageManipulator, SaveFormat } from "expo-image-manipulator";
+import { uploadToBucket } from "@/actions/bucket";
+import { uploadWithFakeProgress } from "@/lib/utils";
 
-type MediaType = "image" | "video";
-
-export type UploadResult = { uri: string; id: string }[];
+type MediaType = "image" | "video" | "audio";
 
 type UseMediaUploadOptions = {
-  onSuccess: (media: UploadResult) => void;
+  onSuccess: (media: Media[]) => void;
+  onFiles: (media: Media[]) => void;
   type: MediaType;
   maxSelection?: number;
+  apply_watermark?: boolean;
 };
 
 export function useMediaUpload({
   onSuccess,
   type,
   maxSelection,
+  onFiles,
+  apply_watermark = false,
 }: UseMediaUploadOptions) {
   const [loading, setLoading] = useState(false);
-  // const { compress } = useMediaCompressor();
+  const [progress, setProgress] = useState<number>(0);
 
-  const compressor = async (data: { uri: string }[]) => {
-    // const result = await Promise.all(
-    //   data.map((file) =>
-    //     compress({
-    //       type,
-    //       uri: file.uri,
-    //       compressionRate: type === "image" ? 0.2 : undefined,
-    //     })
-    //   )
-    // );
+  const processBeforeUpload = async (files: { url: string }[]) => {
+    if (type === "audio") {
+      return files.map((f) => f.url);
+    }
 
-    const compressed = data.map((item) => ({
-      uri: item.uri!,
-      id: uniqueId("media"),
-    }));
+    if (type === "image") {
+      const compressed = await Promise.all(
+        files.map(async (f) => {
+          try {
+            const context = ImageManipulator.manipulate(f.url);
+            context.resize({ width: 1080 });
 
-    setLoading(false);
+            const file = await context.renderAsync();
+            const result = await file.saveAsync({
+              compress: 0.5,
+              format: SaveFormat.JPEG,
+            });
 
-    if (compressed.length === 0) {
+            return result.uri;
+          } catch (e) {
+            console.log("Image compression error:", e);
+            return f.url;
+          }
+        })
+      );
+
+      return compressed;
+    }
+
+    if (type === "video") {
+      return files.map((f) => f.url);
+    }
+
+    return files.map((f) => f.url);
+  };
+
+  const handleUpload = async (urls: string[]) => {
+    try {
+      const payload = urls.map((url) => ({ url }));
+      const result = await uploadWithFakeProgress(
+        () =>
+          uploadToBucket({
+            data: payload,
+            type,
+            apply_watermark,
+          }),
+        (p) => setProgress(p)
+      );
+      onSuccess(result);
+    } catch (error) {
+      console.log(error);
       showErrorAlert({
-        title: "Failed to upload.. try again",
+        title: "Upload failed. Try again.",
         alertType: "warn",
       });
-    } else {
-      onSuccess(compressed);
+    } finally {
+      setLoading(false);
+      setProgress(0);
     }
   };
 
-  const pickMedia = async () => {
+  const processFiles = async (files: { url: string }[]) => {
     setLoading(true);
+
+    const compressedurls = await processBeforeUpload(files);
+    await handleUpload(compressedurls);
+  };
+  const pickMedia = async () => {
+    if (type === "audio") {
+      showErrorAlert({
+        title: "Audio picking is not supported via system picker yet.",
+        alertType: "warn",
+      });
+      return;
+    }
+
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: type === "image" ? ["images"] : ["videos"],
       selectionLimit: maxSelection,
-      orderedSelection: true,
       allowsMultipleSelection: type === "image",
+      orderedSelection: true,
       quality: type === "video" ? 1 : undefined,
-      aspect: [4, 3],
-      videoMaxDuration: 1200,
-      videoQuality:
-        type === "video"
-          ? ImagePicker.UIImagePickerControllerQualityType.Low
-          : undefined,
     });
+
+    setLoading(true);
+
     if (!result.canceled) {
-      await compressor(result.assets.map((asset) => ({ uri: asset.uri })));
+      const files = result.assets.map((a) => ({
+        url: a.uri,
+        id: uniqueId("media_"),
+        media_type: type.toUpperCase() as Media["media_type"],
+      })) as Media[];
+      onFiles(files);
     } else {
       setLoading(false);
     }
   };
 
   const takeMedia = async () => {
+    if (type === "audio") {
+      showErrorAlert({
+        title: "Audio recording not implemented in this hook.",
+        alertType: "warn",
+      });
+      return;
+    }
+
     const permitted = await ImagePicker.getCameraPermissionsAsync();
-    if (
-      permitted.status === ImagePicker.PermissionStatus.DENIED ||
-      permitted.status === ImagePicker.PermissionStatus.UNDETERMINED
-    ) {
+    if (permitted.status !== ImagePicker.PermissionStatus.GRANTED) {
       await ImagePicker.requestCameraPermissionsAsync();
     }
+
     const result = await ImagePicker.launchCameraAsync({
       mediaTypes: type === "image" ? ["images"] : ["videos"],
       cameraType: ImagePicker.CameraType.back,
-      aspect: [4, 3],
-      videoMaxDuration: 1200,
+      quality: 1,
     });
+
     setLoading(true);
     if (!result.canceled) {
-      await compressor(result.assets.map((asset) => ({ uri: asset.uri })));
+      const files = result.assets.map((a) => ({
+        url: a.uri,
+        id: uniqueId("media_"),
+        media_type: type.toUpperCase() as Media["media_type"],
+      })) as Media[];
+      onFiles(files);
     } else {
       setLoading(false);
     }
   };
-
   return {
     loading,
+    progress,
     pickMedia,
     takeMedia,
+    processFiles,
+    setLoading,
   };
 }

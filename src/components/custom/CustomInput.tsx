@@ -1,15 +1,31 @@
+import { showErrorAlert } from "@/components/custom/CustomNotification";
 import DatePicker from "@/components/custom/DatePicker";
 import { AgentServicesModal } from "@/components/modals/profile/AgentServicesModal";
 import {
   Company,
   CompanyModal,
 } from "@/components/modals/profile/CompanyModal";
+import ImageOptionBottomSheet from "@/components/modals/profile/ImageOptionBottomSheet";
 import { LanguageModal } from "@/components/modals/profile/LanguageModal";
+import { LocationModal } from "@/components/modals/profile/LocationModal";
+import { MediaPreviewModal } from "@/components/modals/profile/MediaPreviewModal";
 import { SocialLinkModal } from "@/components/modals/profile/SocialLinksModal";
 import { WorkingDayDialog } from "@/components/modals/profile/WorkingDayDialog";
-import { Icon, Pressable, Text, useResolvedTheme, View } from "@/components/ui";
+import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
+import OptionsBottomSheet from "@/components/shared/OptionsBottomSheet";
+import {
+  Icon,
+  Image,
+  Pressable,
+  Text,
+  useResolvedTheme,
+  View,
+} from "@/components/ui";
 import { Colors } from "@/constants/Colors";
 import { DAYS, GENDERS, minimumAge, SOCIAL_PLATFORMS } from "@/constants/user";
+import useGetLocation from "@/hooks/useGetLocation";
+import { useMediaUpload } from "@/hooks/useMediaUpload";
+import { getReverseGeocode } from "@/hooks/useReverseGeocode";
 import { cn } from "@/lib/utils";
 import { format, isDate } from "date-fns";
 import { router } from "expo-router";
@@ -18,18 +34,21 @@ import {
   Edit,
   Eye,
   EyeOff,
+  MapPin,
+  Music,
+  Play,
   Plus,
   Trash2,
   X,
 } from "lucide-react-native";
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { TextInput, TextInputProps, TouchableOpacity } from "react-native";
 
 interface Props extends Partial<TextInputProps> {
   multiline?: boolean;
   isLogin?: boolean;
   title?: string;
-  inputType?: keyof ProfileUpdate;
+  inputType?: any;
   onUpdate: (val: string) => void;
   errorMesssage?: string;
   inputClassName?: string;
@@ -99,9 +118,20 @@ function CustomInputComponent({
         );
       case "date_of_birth":
         return <DateInput value={value} onUpdate={onUpdate} />;
+      case "date_of_birth":
+        return <DateInput value={value} onUpdate={onUpdate} />;
       case "specialties":
         return (
           <AgentServiceInput
+            showModal={showModal}
+            setShowModal={setShowModal}
+            value={value}
+            onUpdate={onUpdate}
+          />
+        );
+      case "address":
+        return (
+          <LocationInput
             showModal={showModal}
             setShowModal={setShowModal}
             value={value}
@@ -221,7 +251,11 @@ export function DateInput({ value, onUpdate }: CustomInputProps) {
       <DatePicker
         label="Date of Birth"
         placeholder="Day/Month/Year"
-        value={value && isDate(new Date(value)) ? new Date(value) : null}
+        value={
+          value && isDate(new Date(value))
+            ? format(new Date(value), "yyyy-MM-dd")
+            : null
+        }
         onChange={(val) => onUpdate(format(new Date(val), "yyyy-MM-dd"))}
         mode="date"
         modal={false}
@@ -446,7 +480,7 @@ export function LanguagesInput({
   );
 }
 
-export default function AgentServiceInput({
+export function AgentServiceInput({
   value,
   onUpdate,
   showModal,
@@ -460,7 +494,6 @@ export default function AgentServiceInput({
         .split(",")
         .map((v) => v.trim())
         .filter((v) => v.length > 0);
-
       setSelected(raw);
     }
   }, []);
@@ -583,5 +616,203 @@ export function CompaniesInput({
         onSave={addCompany}
       />
     </>
+  );
+}
+export function LocationInput({
+  value,
+  onUpdate,
+  showModal,
+  setShowModal,
+}: CustomInputProps) {
+  const { retryGetLocation } = useGetLocation();
+  const [loading, setLoading] = useState(false);
+
+  const address = useMemo<GooglePlace | null>(() => {
+    if (!value) return null;
+    try {
+      return JSON.parse(value);
+    } catch {
+      return null;
+    }
+  }, [value]);
+
+  const updateAddress = useCallback(
+    (addr: GooglePlace | null) => {
+      onUpdate(addr ? JSON.stringify(addr) : "");
+    },
+    [onUpdate]
+  );
+
+  const handleUseLocation = useCallback(async () => {
+    setLoading(true);
+
+    const location = await retryGetLocation();
+    if (!location) {
+      showErrorAlert({
+        title: "Unable to get location, try again!",
+        alertType: "warn",
+      });
+      return setLoading(false);
+    }
+
+    const result = await getReverseGeocode(location);
+
+    if (!result?.address) {
+      showErrorAlert({
+        title: "Unable to get location, try again!",
+        alertType: "warn",
+      });
+      return setLoading(false);
+    }
+
+    const payload: GooglePlace = {
+      displayName: result.address,
+      addressComponents: result.addressComponents!,
+      location,
+    };
+
+    updateAddress(payload);
+    setLoading(false);
+  }, [retryGetLocation, updateAddress]);
+
+  return (
+    <View className="gap-4">
+      <View className="gap-3">
+        {address && (
+          <View className="gap-4">
+            {Object.entries(address.addressComponents)
+              .filter(([_, b]) => !!b)
+              .map(([key, val]) => (
+                <View
+                  key={key}
+                  className="flex-row items-center justify-between bg-background-muted px-4 py-3 rounded-xl"
+                >
+                  <Text className="text-sm capitalize">{key}:</Text>
+                  <Text className="text-lg text-typography">{val}</Text>
+                </View>
+              ))}
+          </View>
+        )}
+
+        {!address && (
+          <MiniEmptyState
+            className="mt-8"
+            description="location will be displayed here"
+            subIcon={MapPin}
+            loading={loading}
+            buttonLabel="Current location"
+            onPress={() => {
+              handleUseLocation();
+            }}
+            title="Add location"
+          />
+        )}
+      </View>
+
+      <LocationModal
+        open={showModal || false}
+        handleUseLocation={handleUseLocation}
+        onClose={() => setShowModal?.(false)}
+        onSelect={(place) => updateAddress(place)}
+      />
+    </View>
+  );
+}
+
+type MediaInputProps = {
+  label?: string;
+  type: "image" | "video" | "audio";
+  value: Media[];
+  maxSelection: number;
+  onChange: (files: Media[]) => void;
+};
+export function MediaInput({
+  label,
+  type,
+  value,
+  onChange,
+  maxSelection = 10,
+}: MediaInputProps) {
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewFiles, setPreviewFiles] = useState<Media[]>([]);
+
+  const { pickMedia, takeMedia, loading, progress, processFiles } =
+    useMediaUpload({
+      type,
+      maxSelection,
+
+      onFiles: (files) => {
+        setPreviewFiles(files);
+        setPreviewOpen(true);
+      },
+
+      onSuccess: (uploadedMedia) => {
+        onChange([...value, ...uploadedMedia]);
+        setPreviewOpen(false);
+        setPreviewFiles([]);
+      },
+    });
+
+  const removeItem = (id: string) => {
+    onChange(value.filter((item) => item.id !== id));
+  };
+
+  return (
+    <View className="gap-3">
+      {label && <Text className="text-lg font-medium">{label}</Text>}
+
+      <TouchableOpacity
+        onPress={pickMedia}
+        className="p-4 bg-gray-200 rounded-xl"
+      >
+        <Text>Select {type}</Text>
+      </TouchableOpacity>
+
+      <View className="flex-row flex-wrap gap-3">
+        {value.map((item) => (
+          <TouchableOpacity
+            key={item.id}
+            onPress={() => {
+              setPreviewFiles(value);
+              setPreviewOpen(true);
+            }}
+            className="relative"
+          >
+            {item.media_type === "IMAGE" ? (
+              <Image
+                source={{ uri: item.url }}
+                className="w-20 h-20 rounded-xl"
+                resizeMode="cover"
+              />
+            ) : (
+              <View className="w-20 h-20 bg-black/40 items-center justify-center rounded-xl">
+                <Icon
+                  as={item.media_type === "VIDEO" ? Play : Music}
+                  size={26}
+                  color="white"
+                />
+              </View>
+            )}
+
+            <TouchableOpacity
+              onPress={() => removeItem(item.id)}
+              className="absolute top-1 right-1 bg-black/50 p-1 rounded-full"
+            >
+              <Trash2 size={14} color="white" />
+            </TouchableOpacity>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      <MediaPreviewModal
+        open={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        data={previewFiles}
+        onDelete={removeItem}
+        loading={loading}
+        progress={progress}
+        processFiles={processFiles}
+      />
+    </View>
   );
 }

@@ -185,7 +185,7 @@ function SearchLocationBottomSheet({
                   </View>
                   <View className="flex-1">
                     <Text className="text-lg text-typography">
-                      {item.displayName || composeFullAddress(item, false)}
+                      {item.displayName || composeFullAddress(item)}
                     </Text>
                     <Text className="text-sm text-wrap text-typography/90">
                       Properties in {item?.city} {item?.state}

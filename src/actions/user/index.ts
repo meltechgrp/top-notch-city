@@ -55,31 +55,6 @@ export async function getUsers({ pageParam }: { pageParam: number }) {
   return res as UserResult;
 }
 
-export async function setProfileImage(image: string) {
-  if (!image) return;
-  const formData = new FormData();
-  formData.append("profile_image", {
-    uri: image,
-    name: `user.jpg`,
-    type: "image/jpeg",
-  } as any);
-
-  const res = await Fetch("/users/me", {
-    method: "PUT",
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-    data: formData,
-  });
-  eventBus.dispatchEvent("REFRESH_PROFILE", null);
-
-  if (res?.detail) {
-    throw new Error("Failed to update profile");
-  }
-
-  return res;
-}
-
 export async function updateProfileField(
   form: { field: keyof ProfileUpdate; value: string }[]
 ) {
