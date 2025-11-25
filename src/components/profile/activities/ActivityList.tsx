@@ -11,7 +11,7 @@ type IProps = {
   profileId: string;
   className?: string;
 };
-const ActivityTabView = ({ profileId }: IProps) => {
+const ActivityList = ({ profileId }: IProps) => {
   const { data, isLoading } = useInfiniteQuery({
     queryKey: ["activities", profileId],
     queryFn: ({ pageParam = 1 }) =>
@@ -53,4 +53,4 @@ const ActivityTabView = ({ profileId }: IProps) => {
   );
 };
 
-export default ActivityTabView;
+export default ActivityList;

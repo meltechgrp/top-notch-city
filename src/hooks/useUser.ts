@@ -2,7 +2,7 @@ import { useStore } from "@/store";
 import { useMemo } from "react";
 
 export function useUser() {
-  const { me, hasAuth: auth } = useStore((s) => s);
+  const { me, hasAuth: auth } = useStore.getState();
   if (!me) {
     return {
       isAdmin: false,

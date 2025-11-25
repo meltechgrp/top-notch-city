@@ -93,7 +93,14 @@ export function ProfileTopSection({ userData: user }: { userData: Me }) {
               <View className="flex-row mt-4 gap-6 justify-center items-center">
                 <Button
                   size={"sm"}
-                  onPress={handlePress}
+                  onPress={() =>
+                    router.push({
+                      pathname: "/agents/[userId]/activities",
+                      params: {
+                        userId: user.id,
+                      },
+                    })
+                  }
                   className=" bg-background h-8 flex-1"
                 >
                   <ButtonText>Following</ButtonText>

@@ -13,7 +13,7 @@ import { Stack, useLocalSearchParams } from "expo-router";
 import { MoreHorizontal } from "lucide-react-native";
 import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
 import ReviewsTabView from "@/components/profile/ReviewsTabView";
-import ActivityTabView from "@/components/admin/users/ActivityTab";
+import ActivityTabView from "@/components/profile/activities/ActivityList";
 import { AdminProfileDetails } from "@/components/admin/users/ProfileDetails";
 import { AdminProfileTopSection } from "@/components/admin/users/ProfileTopSection";
 import { UserActionsBottomSheet } from "@/components/admin/users/UserBottomSheet";

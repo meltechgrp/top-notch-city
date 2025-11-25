@@ -127,3 +127,57 @@ type ProfileUpdate = {
   description: string;
   companies: string;
 };
+
+type FollowedAgent = {
+  count: number;
+  followed_agents: Agent[];
+  page: number;
+  per_page: number;
+  pages: number;
+};
+
+type Agent = {
+  id: string;
+  agent: {
+    id: string;
+    slug: string;
+    profile_image: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    phone: string;
+  };
+  properties: {
+    id: string;
+    slug: string;
+    title: string;
+    price: number;
+    thumbnail: string;
+  }[];
+  total_properties: number;
+  total_followers: number;
+  total_likes: number;
+  is_following: boolean;
+};
+
+type Person = {
+  id: string;
+  first_name: string;
+  last_name: string;
+  profile_image: string;
+  is_following: boolean;
+};
+
+type AgentFollowersData = {
+  agent: Person;
+  followers_count: number;
+  followers: Person[];
+};
+
+interface Blocked {
+  id: string;
+  first_name: string;
+  last_name: string;
+  profile_image: string;
+  email: string;
+}

@@ -7,6 +7,7 @@ import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
 import { View } from "@/components/ui";
 import { FlashList } from "@shopify/flash-list";
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { UserCog } from "lucide-react-native";
 import { memo, useMemo } from "react";
 import { Dimensions, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -63,7 +64,7 @@ function AgentList({ visible }: { visible: boolean }) {
               </BackgroundView>
             ) : (
               <BackgroundView style={{ height: height }}>
-                <MiniEmptyState title="No Agent Found" />
+                <MiniEmptyState icon={UserCog} title="No Agent Found" />
               </BackgroundView>
             )
           }

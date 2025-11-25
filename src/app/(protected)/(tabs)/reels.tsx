@@ -38,17 +38,14 @@ export default function ReelScreen() {
           offscreenPageLimit={1}
           onPageSelected={(e) => setCurrentPage(e.nativeEvent.position)}
         >
-          {/* Lands */}
           <View key="lands" style={{ flex: 1 }}>
             <ReelPhotoList visible={currentPage == 0} />
           </View>
 
-          {/* Videos */}
           <View key="videos" style={{ flex: 1 }}>
             <ReelList visible={currentPage == 1} />
           </View>
 
-          {/* Agents */}
           <View key="agents" style={{ flex: 1 }}>
             <AgentList visible={currentPage == 2} />
           </View>

@@ -45,7 +45,7 @@ export default function UserAccount() {
   const { pickMedia, takeMedia, setLoading, loading, progress, processFiles } =
     useMediaUpload({
       type: "image",
-      maxSelection: 1,
+      maxSelection: 7,
       onSuccess: (media) => {
         setPreviewOpen(false);
         mutation.mutateAsync([
@@ -247,7 +247,7 @@ export default function UserAccount() {
                         }
                         className="flex-row justify-between items-center py-4 flex-1"
                       >
-                        <WrokingDays
+                        <WorkingDays
                           days={user?.agent_profile?.working_hours}
                         />
                         <View className="ml-10 flex-row gap-2 items-center">
@@ -350,7 +350,7 @@ export default function UserAccount() {
 
 type DayValue = string | undefined;
 
-export function WrokingDays({ days }: { days?: Record<string, string> }) {
+export function WorkingDays({ days }: { days?: Record<string, string> }) {
   const [record, setRecord] = useState<Record<string, DayValue>>({});
 
   useEffect(() => {

@@ -162,10 +162,10 @@ export function useTimeAgo(date: string) {
 
   useEffect(() => {
     function getIntervalMs(label: string) {
-      if (label.includes("s")) return 1000; // update every second
-      if (label.includes("m")) return 60 * 1000; // update every minute
-      if (label.includes("h")) return 60 * 60 * 1000; // update every hour
-      return 60 * 60 * 1000; // default: hourly
+      if (label.includes("s")) return 1000;
+      if (label.includes("m")) return 60 * 1000;
+      if (label.includes("h")) return 60 * 60 * 1000;
+      return 60 * 60 * 1000;
     }
 
     const update = () => {
