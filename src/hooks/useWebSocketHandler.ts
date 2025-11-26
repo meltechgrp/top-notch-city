@@ -22,8 +22,8 @@ export function useWebSocketHandler() {
     deleteChatMessage,
     updateChatListDetails,
   } = useChatStore.getState();
-  const { updatetotalUnreadChat } = useHomeFeed();
 
+  const { updatetotalUnreadChat } = useHomeFeed();
   const { connect, setOnMessage, ...rest } = useWebSocketConnection(url);
 
   useEffect(() => {
@@ -32,80 +32,64 @@ export function useWebSocketHandler() {
     connect();
 
     setOnMessage(async (data) => {
-      // console.log("📨 Message:", data, data?.type);
+      if (data.type !== "ping") {
+        console.log("📨 Message:", data);
+      }
 
-      switch (data.type) {
-        case "new_message":
+      const handlers: Record<string, () => Promise<void> | void> = {
+        new_message: () => {
           setTyping(data.chat_id, false);
           addIncomingMessage(data.chat_id, {
-            message_id: data?.message_id!,
-            created_at: data?.created_at,
-            content: data?.content,
+            message_id: data.message_id!,
+            created_at: data.created_at,
+            content: data.content,
             sender_info: {
-              id: data?.sender_id,
+              id: data.sender_id,
               first_name: "",
               last_name: "",
               profile_image: "",
               status: "offline",
             },
-            status: data?.status,
-            file_data: data?.media?.map((f: any) => ({
+            status: data.status,
+            file_data: data.media?.map((f: any) => ({
               file_id: f.id,
               file_url: f.file_url,
               file_type: f.file_type,
               file_name: f.file_name,
             })),
-            read: data?.read,
+            read: data.read,
           });
-          break;
+        },
 
-        case "read_receipt":
-          updateMessageStatus(data.chat_id, data.message_id, "seen");
-          break;
-
-        case "message_edited":
-          updateMessage(data.chat_id, data.message_id, data.content);
-          break;
-
-        case "unread_count_update":
-          updatetotalUnreadChat(data?.total_unread);
-          break;
-        case "typing":
-          setTyping(data.chat_id, data.is_typing);
-          break;
-        case "message_deleted":
+        read_receipt: () =>
+          updateMessageStatus(data.chat_id, data.message_id, "seen"),
+        message_edited: () =>
+          updateMessage(data.chat_id, data.message_id, data.content),
+        unread_count_update: () => updatetotalUnreadChat(data.total_unread),
+        typing: () => setTyping(data.chat_id, data.is_typing),
+        message_deleted: () =>
           deleteChatMessage(
             data.chat_id,
-            data?.message_id,
+            data.message_id,
             data.deleted_for_everyone
-          );
-          break;
-        case "presence":
-          updateUserStatus(
-            data.chat_id,
-            data?.is_online ? "online" : "offline"
-          );
-          break;
-        case "chat_list_update":
-          const chats = data?.chats as ChatList["details"][];
-          chats?.forEach((c) => {
-            updateChatListDetails(c);
-          });
-          break;
-        case "agent_application_review":
+          ),
+        presence: () =>
+          updateUserStatus(data.chat_id, data.is_online ? "online" : "offline"),
+
+        chat_list_update: () => {
+          (data.chats as ChatList["details"][])?.forEach(updateChatListDetails);
+        },
+
+        agent_application_review: async () => {
           const me = await getMe();
           if (me) {
-            useStore.setState((s) => ({
-              ...s,
-              me: me,
-              hasAuth: true,
-            }));
+            useStore.setState((s) => ({ ...s, me, hasAuth: true }));
             router.reload();
           }
-          break;
-        default:
-          break;
-      }
+        },
+      };
+
+      await handlers[data.type]?.();
     });
   }, [url]);
 

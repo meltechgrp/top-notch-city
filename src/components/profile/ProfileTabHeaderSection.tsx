@@ -13,7 +13,7 @@ type IProps = {
 };
 export default function ProfileTabHeaderSection(props: IProps) {
   const { profile, onTabChange, activeIndex, profileTabs } = props;
-  // if (profile?.isBlocked) return null
+  if (profile?.is_blocked_by_admin) return null;
   return (
     <ScrollView
       horizontal

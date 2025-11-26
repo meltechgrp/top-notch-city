@@ -85,6 +85,8 @@ export default function ProfileScreensLayout() {
         name="activities"
         options={{
           headerTitle: me ? fullName(me) : "Activities",
+          animation: "slide_from_bottom",
+          presentation: "fullScreenModal",
         }}
       />
     </Stack>

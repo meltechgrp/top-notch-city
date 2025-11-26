@@ -16,6 +16,7 @@ interface Chat {
   recent_message: {
     message_id: string;
     content: string;
+    sender_id: string;
     created_at: string;
     read: string;
     status: "pending" | "seen" | "delivered" | "sent" | "error";

@@ -34,7 +34,7 @@ export async function getUser(id: string) {
   return res as Me;
 }
 export async function fetchFollowedAgents() {
-  const res = await Fetch(`/users/me/following?&per_page=${20}`, {});
+  const res = await Fetch(`/users/me/following?&per_page=${40}`, {});
 
   if (res?.detail) {
     throw new Error("Failed to get agents you followed");
@@ -46,7 +46,7 @@ export async function fetchFollowersAgents({ agent_id }: { agent_id: string }) {
   const res = await Fetch(`/api/agents/${agent_id}/followers`, {});
 
   if (res?.detail) {
-    throw new Error("Failed to get agents you followed");
+    throw new Error("Failed to get followers");
   }
 
   return res as AgentFollowersData;
@@ -55,10 +55,32 @@ export async function fetchBlockedUsers() {
   const res = await Fetch(`/all/users/blocked/by/me`, {});
 
   if (res?.detail) {
-    throw new Error("Failed to get agents you followed");
+    throw new Error("Failed to get blocked users");
   }
 
   return res?.blocked_users as Blocked[];
+}
+export async function blockedUser(user_id: string) {
+  const res = await Fetch(`/users/${user_id}/block`, {
+    method: "POST",
+  });
+
+  if (res?.detail) {
+    throw new Error("Failed to get block user");
+  }
+
+  return res?.blocked_users as Blocked[];
+}
+export async function unBlockedUser(user_id: string) {
+  const res = await Fetch(`/users/${user_id}/block`, {
+    method: "DELETE",
+  });
+
+  if (res?.detail) {
+    throw new Error("Failed to unblock user");
+  }
+
+  return res as string;
 }
 export async function getUserActivities({
   userId,

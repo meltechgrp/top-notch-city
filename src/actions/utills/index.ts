@@ -20,14 +20,15 @@ export async function Fetch(url: string, options: AxiosRequestConfig = {}) {
   });
   return res.data;
 }
-
 export function useWebSocketConnection(url: string | null) {
   const ws = useRef<WebSocket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
+
   const reconnectAttempts = useRef(0);
   const reconnectTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const subscribers = useRef<((data: any) => void)[]>([]);
   const pingInterval = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const subscribers = useRef<Array<(data: any) => void>>([]);
 
   const connect = () => {
     if (!url) return;
@@ -43,27 +44,28 @@ export function useWebSocketConnection(url: string | null) {
     socket.onclose = (event) => {
       console.log("🚪 WebSocket closed:", event.reason);
       setIsConnected(false);
-      attemptReconnect();
+      scheduleReconnect();
     };
 
     socket.onerror = (error) => {
-      // console.error("❌ WebSocket error:", error);
+      console.error("❌ WebSocket error:", error);
     };
 
     socket.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
         ws.current?.send("pong");
-        subscribers.current.forEach((h) => h(data));
-      } catch (err) {
+        subscribers.current.forEach((handler) => handler(data));
+      } catch {
         console.error("❌ Failed to parse message:", event.data);
       }
     };
+
     ws.current = socket;
   };
 
-  const attemptReconnect = () => {
-    const timeout = Math.min(1000 * 2 ** reconnectAttempts.current, 30000);
+  const scheduleReconnect = () => {
+    const timeout = Math.min(1000 * 2 ** reconnectAttempts.current, 30000); // exponential backoff capped at 30s
     reconnectTimeout.current = setTimeout(() => {
       reconnectAttempts.current += 1;
       connect();
@@ -71,7 +73,8 @@ export function useWebSocketConnection(url: string | null) {
   };
 
   const closeConnection = () => {
-    reconnectTimeout.current && clearTimeout(reconnectTimeout.current);
+    if (reconnectTimeout.current) clearTimeout(reconnectTimeout.current);
+    if (pingInterval.current) clearInterval(pingInterval.current);
     ws.current?.close();
   };
 
@@ -83,20 +86,6 @@ export function useWebSocketConnection(url: string | null) {
     }
   };
 
-  // const setOnMessage = (handler: (data: any) => void) => {
-  //   if (!ws.current) return;
-  //   ws.current.onmessage = (event) => {
-  //     try {
-  //       const raw = event.data;
-  //       const data = typeof raw === "string" ? JSON.parse(raw) : raw;
-
-  //       ws.current?.send("pong");
-  //       handler(data);
-  //     } catch (err) {
-  //       console.error("❌ Failed to parse message:", event.data);
-  //     }
-  //   };
-  // };
   const setOnMessage = (handler: (data: any) => void) => {
     subscribers.current.push(handler);
   };
@@ -107,23 +96,21 @@ export function useWebSocketConnection(url: string | null) {
         if (ws.current?.readyState === WebSocket.OPEN) {
           ws.current.send(JSON.stringify({ type: "ping" }));
         }
-      }, 25000); // every 25s
+      }, 25000);
     }
-
     return () => {
-      pingInterval.current && clearInterval(pingInterval.current);
+      if (pingInterval.current) clearInterval(pingInterval.current);
     };
   }, [isConnected]);
+
   useEffect(() => {
     return () => {
-      reconnectTimeout.current && clearTimeout(reconnectTimeout.current);
-      ws.current?.close();
+      closeConnection();
     };
   }, []);
 
   return { connect, closeConnection, sendMessage, setOnMessage, isConnected };
 }
-
 export async function updatePushNotificationToken(token: string) {
   try {
     const res = await Fetch(`/notifications/save-token/`, {

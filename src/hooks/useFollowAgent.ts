@@ -17,7 +17,7 @@ export function useFollowAgent({
   const { mutateAsync, isPending } = useMutation({
     mutationFn: () =>
       is_following ? unFollowAgent(agentId) : followAgent(agentId),
-    onMutate: async () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({
         queryKey,
       });

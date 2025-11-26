@@ -69,13 +69,6 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="profile"
-        options={{
-          tabBarIcon: ({ color }) => <UserCircle size={22} color={color} />,
-          title: "Profile",
-        }}
-      />
-      <Tabs.Screen
         name="menu"
         options={() => ({
           title: isAdmin ? "Dashboard" : "Menu",
@@ -86,6 +79,13 @@ export default function TabLayout() {
               <Plus size={22} color={color} />
             ),
         })}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          tabBarIcon: ({ color }) => <UserCircle size={22} color={color} />,
+          title: "Profile",
+        }}
       />
     </Tabs>
   );

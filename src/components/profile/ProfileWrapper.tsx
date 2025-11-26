@@ -11,11 +11,21 @@ import ProfileTabHeaderSection from "@/components/profile/ProfileTabHeaderSectio
 import PropertiesTabView from "@/components/profile/PropertiesTab";
 import { ProfileDetails } from "@/components/profile/ProfileDetails";
 import { router, Stack } from "expo-router";
-import { LogIn, Plus, Search, Settings, User } from "lucide-react-native";
+import {
+  ChevronLeftIcon,
+  LogIn,
+  MoreHorizontal,
+  Plus,
+  Search,
+  Settings,
+  User,
+} from "lucide-react-native";
 import SavedPropertiesTabView from "@/components/profile/SavedProperties";
 import ReviewsTabView from "@/components/profile/ReviewsTabView";
 import ProfileSkeleton from "@/components/skeleton/ProfileSkeleton";
 import { RefreshControl } from "react-native";
+import { UserActionsBottomSheet } from "@/components/admin/users/UserBottomSheet";
+import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
 
 export type UserType = "visitor" | "owner" | "admin";
 
@@ -35,6 +45,7 @@ export function ProfileWrapper({
   userId,
   isAgent = false,
 }: ProfileWrapperProps) {
+  const [showActions, setShowActions] = useState(false);
   const [activeTab, setActiveTab] = useState<(typeof tabs)[number]>(tabs[0]);
   const { data, isLoading, refetch, isRefetching } = useQuery({
     queryKey: ["user", userId],
@@ -66,30 +77,65 @@ export function ProfileWrapper({
 
   const stickyHeaderIndices = [0, 1];
 
+  useRefreshOnFocus(refetch);
   if (!isLoading && !user) return <NotLoggedInProfile userType={userType} />;
   return (
     <>
       <Stack.Screen
         options={{
-          headerLeft: () =>
-            user && userType == "owner" ? (
-              <View className="px-4 flex-row gap-6">
+          headerLeft: user
+            ? () => {
+                switch (userType) {
+                  case "owner":
+                    return (
+                      <View className="px-4 flex-row gap-6">
+                        <Pressable
+                          className="p-2 bg-background-muted rounded-full"
+                          onPress={() => {}}
+                        >
+                          <Icon as={Plus} className="w-6 h-6" />
+                        </Pressable>
+                      </View>
+                    );
+                    return (
+                      <View className="px-4 flex-row gap-6">
+                        <Pressable
+                          className="p-2 bg-background-muted rounded-full"
+                          onPress={() => {}}
+                        >
+                          <Icon as={Plus} className="w-6 h-6" />
+                        </Pressable>
+                      </View>
+                    );
+                  default:
+                    return (
+                      <Pressable
+                        onPress={() => {
+                          if (router.canGoBack()) router.back();
+                          else router.push("/");
+                        }}
+                        className="py-1 flex-row items-center pr-2 android:pr-4"
+                      >
+                        <Icon className=" w-8 h-8" as={ChevronLeftIcon} />
+                      </Pressable>
+                    );
+                }
+              }
+            : undefined,
+          headerRight: () => (
+            <View className="px-2 flex-row gap-4">
+              {userType == "owner" ? (
                 <Pressable
                   className="p-2 bg-background-muted rounded-full"
-                  onPress={() => {}}
+                  onPress={() => router.push("/(protected)/explore")}
                 >
-                  <Icon as={Plus} className="w-6 h-6" />
+                  <Icon as={Search} className="w-6 h-6" />
                 </Pressable>
-              </View>
-            ) : undefined,
-          headerRight: () => (
-            <View className="px-4 flex-row gap-4">
-              <Pressable
-                className="p-2 bg-background-muted rounded-full"
-                onPress={() => router.push("/(protected)/explore")}
-              >
-                <Icon as={Search} className="w-6 h-6" />
-              </Pressable>
+              ) : (
+                <Pressable className="p-2 android:bg-background-muted rounded-full">
+                  <Icon as={MoreHorizontal} className="w-6 h-6" />
+                </Pressable>
+              )}
               {user && userType == "owner" && (
                 <Pressable
                   className="p-2 bg-background-muted rounded-full"
@@ -104,7 +150,7 @@ export function ProfileWrapper({
       />
       <FullHeightLoaderWrapper
         LoaderComponent={<ProfileSkeleton />}
-        loading={isLoading || isRefetching}
+        loading={isLoading}
       >
         <Box className="flex-1">
           <FlashList
@@ -163,7 +209,14 @@ export function ProfileWrapper({
             }}
             ListHeaderComponent={
               <View>
-                {user && <ProfileTopSection userData={user} />}
+                {user && (
+                  <ProfileTopSection
+                    user={user}
+                    userType={userType}
+                    isAgent={isAgent}
+                    setShowActions={() => {}}
+                  />
+                )}
 
                 {user && (
                   <ProfileTabHeaderSection
@@ -182,6 +235,14 @@ export function ProfileWrapper({
           />
         </Box>
       </FullHeightLoaderWrapper>
+
+      {user && (
+        <UserActionsBottomSheet
+          user={user}
+          visible={showActions}
+          onDismiss={() => setShowActions(false)}
+        />
+      )}
     </>
   );
 }

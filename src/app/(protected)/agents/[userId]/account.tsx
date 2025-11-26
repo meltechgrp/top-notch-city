@@ -10,7 +10,7 @@ import {
   Icon,
 } from "@/components/ui";
 import { RefreshControl, ScrollView } from "react-native";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { Suspense, useEffect, useMemo, useState } from "react";
 import { cn, composeFullAddress, fullName } from "@/lib/utils";
 import { useStore } from "@/store";
 import { ChevronRight, Clock, Edit } from "lucide-react-native";
@@ -102,7 +102,7 @@ export default function UserAccount() {
     {
       label: "Social Links",
       value: user?.agent_profile?.social_links
-        ? `${Object.values(user.agent_profile.social_links).length} social links added`
+        ? `${Object.values(user.agent_profile.social_links).filter((s) => s.length > 1).length} social links added`
         : "Add social links to your profile",
       field: "social_links",
     },
@@ -135,11 +135,17 @@ export default function UserAccount() {
         : "Add languages to your profile",
     },
     {
+      label: "Website",
+      field: "website",
+      value: user?.agent_profile?.website || "Add your webiste URL",
+    },
+    {
       label: "License",
       field: "license_number",
       value: user?.agent_profile?.license_number || "Add a license number",
     },
   ];
+
   return (
     <>
       <ImageBackground
@@ -194,7 +200,9 @@ export default function UserAccount() {
                           i == personal.length - 1 && "border-b-0"
                         )}
                       >
-                        <Text className=" font-medium">{info.value}</Text>
+                        <Text className=" font-medium flex-1">
+                          {info.value}
+                        </Text>
                         <Icon as={ChevronRight} />
                       </Pressable>
                     </View>
@@ -209,10 +217,11 @@ export default function UserAccount() {
                       onPress={() =>
                         router.push(`/agents/${userId}/edit?key=about`)
                       }
-                      className="bg-background-muted border border-outline-100 rounded-xl h-20 p-4 py-2 flex-row items-center gap-2"
+                      className="bg-background-muted border border-outline-100 rounded-xl p-4 min-h-20 py-2 flex-row items-center gap-2"
                     >
                       <View className=" flex-1 ">
                         <Text
+                          numberOfLines={4}
                           className={cn(
                             " flex-1 text-base",
                             !user?.agent_profile?.about &&
@@ -223,12 +232,12 @@ export default function UserAccount() {
                             "Tell users about yourself to build trust and show your personality."}
                         </Text>
                       </View>
-                      <View className="h-full justify-center">
+                      <View className=" justify-center">
                         <Icon as={ChevronRight} />
                       </View>
                     </Pressable>
                   </View>
-                  <View className=" gap-2 mt-2">
+                  <View className=" gap-2 my-2">
                     <View className="gap-2 flex-row justify-between">
                       <Text className="text-typography/80">
                         Bussiness hours
@@ -247,9 +256,11 @@ export default function UserAccount() {
                         }
                         className="flex-row justify-between items-center py-4 flex-1"
                       >
-                        <WorkingDays
-                          days={user?.agent_profile?.working_hours}
-                        />
+                        <Suspense>
+                          <WorkingDays
+                            days={user?.agent_profile?.working_hours}
+                          />
+                        </Suspense>
                         <View className="ml-10 flex-row gap-2 items-center">
                           <Icon as={ChevronRight} />
                         </View>
@@ -278,8 +289,7 @@ export default function UserAccount() {
                               )
                             }
                             className={cn(
-                              "flex-row flex-1 justify-between items-center border-b border-b-outline-100 py-4",
-                              i == personal.length - 1 && "border-b-0"
+                              "flex-row flex-1 justify-between items-center border-b border-b-outline-100 py-4"
                             )}
                           >
                             <Text className="text-sm text-typography/80">
@@ -351,22 +361,19 @@ export default function UserAccount() {
 type DayValue = string | undefined;
 
 export function WorkingDays({ days }: { days?: Record<string, string> }) {
-  const [record, setRecord] = useState<Record<string, DayValue>>({});
-
-  useEffect(() => {
+  const record = useMemo(() => {
     const base: Record<string, DayValue> = {};
-    DAYS.forEach((d) => (base[d] = undefined));
+    DAYS.forEach((d) => (base[d.toLowerCase()] = undefined));
 
     if (days) {
-      Object.entries(days).forEach((pair) => {
-        const [day, val] = pair.map((x) => x.trim());
-        if (base.hasOwnProperty(day)) {
-          base[day] = val || undefined;
+      Object.entries(days).forEach(([day, val]) => {
+        const normalizedDay = day.trim().toLowerCase();
+        if (base.hasOwnProperty(normalizedDay)) {
+          base[normalizedDay] = val?.trim() || undefined;
         }
       });
     }
-
-    setRecord(base);
+    return base;
   }, [days]);
   return (
     <View className="gap-1 flex-1">

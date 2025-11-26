@@ -5,15 +5,20 @@ import { generateMediaUrlSingle } from "@/lib/api";
 import { profileDefault, useStore } from "@/store";
 import { fullName } from "@/lib/utils";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
-import { useFollowAgent } from "@/hooks/useFollowAgent";
 import { openAccessModal } from "@/components/globals/AuthModals";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { unBlockedUser } from "@/actions/user";
 
-export function UserListItem({ user }: { user: Person }) {
+export function BlockListItem({ user }: { user: Blocked }) {
   const { me } = useStore();
-  const { mutateAsync } = useFollowAgent({
-    queryKey: ["following"],
-    is_following: user.is_following,
-    agentId: user.id,
+  const queryClient = useQueryClient();
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: () => unBlockedUser(user.id),
+    onSuccess: async () => {
+      queryClient.invalidateQueries({
+        queryKey: ["blocked"],
+      });
+    },
   });
   const handlePress = () => {
     if (!me) {
@@ -46,13 +51,9 @@ export function UserListItem({ user }: { user: Person }) {
         </View>
         <AnimatedPressable
           onPress={handlePress}
-          className={`px-5 py-1.5 rounded-md ${
-            user.is_following ? "bg-gray-500" : "bg-primary"
-          }`}
+          className={`px-5 py-1.5 rounded-md  bg-primary`}
         >
-          <Text className={`font-semibold text-xs`}>
-            {user.is_following ? "Following" : "Follow"}
-          </Text>
+          <Text className={`font-semibold text-xs`}>Blocked</Text>
         </AnimatedPressable>
       </TouchableOpacity>
     </>

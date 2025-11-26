@@ -13,6 +13,7 @@ type Props = {
   searchPlaceholder?: string;
   onSearch: (search: string) => void;
   onUpdate?: (tab: string) => void;
+  className?: string;
 };
 
 export function FilterComponent({
@@ -22,9 +23,10 @@ export function FilterComponent({
   onSearch,
   onUpdate,
   search,
+  className,
 }: Props) {
   return (
-    <View className="gap-5 mb-4">
+    <View className={cn("gap-3 mb-4", className)}>
       <View className="gap-4">
         <View>
           <CustomInput

@@ -11,7 +11,7 @@ export function ActivitiesTabs(props: IProps) {
   return (
     <View className={cn("w-full h-12")}>
       <View className="flex-row justify-center relative items-center">
-        <View className="flex-row flex-1 justify-center p-1">
+        <View className="flex-row flex-1 justify-center py-1">
           {tabs.map((tab, index) => (
             <TouchableOpacity
               key={tab}
@@ -25,7 +25,7 @@ export function ActivitiesTabs(props: IProps) {
             >
               <Heading
                 className={cn(
-                  " text-md",
+                  " text-md text-typography/80",
                   currentPage === index && "text-white"
                 )}
               >

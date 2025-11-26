@@ -1,5 +1,6 @@
+import agents from "@/components/profile/agents";
 import { UserType } from "@/components/profile/ProfileWrapper";
-import { Button, Icon, Text, View } from "@/components/ui";
+import { Badge, Button, Icon, Text, View } from "@/components/ui";
 import { DAYS } from "@/constants/user";
 import { composeFullAddress } from "@/lib/utils";
 import { format } from "date-fns";
@@ -14,6 +15,7 @@ import {
   Dot,
   Globe,
   Key,
+  Languages,
   Mail,
   MapPin,
   Phone,
@@ -68,111 +70,158 @@ export function ProfileDetails({
   ].filter((p) => !!p);
   return (
     <View className="px-4 gap-6">
+      {(userType !== "owner" || isAgent) && (
+        <View className=" gap-2 mt-2">
+          <View className="gap-2 flex-row justify-between">
+            <Text className="text-typography/80">Bussiness hours</Text>
+          </View>
+          <WorkingDays days={user?.agent_profile?.working_hours} />
+        </View>
+      )}
+      {(userType !== "owner" || isAgent) && (
+        <View className="gap-1">
+          <View className="flex-row items-center justify-between">
+            <Text className="text-lg font-medium">Bio</Text>
+          </View>
+          <View className="gap-4 p-4 bg-background-muted min-h-20 rounded-2xl">
+            <Text className="text-sm">
+              {user.agent_profile?.about
+                ? user.agent_profile?.about
+                : userType == "owner"
+                  ? "Add an intresting bio about yourself to stand out."
+                  : "N/A"}
+            </Text>
+          </View>
+        </View>
+      )}
+      {(userType !== "owner" || isAgent) && (
+        <View>
+          {user.agent_profile?.specialties?.slice() ? (
+            <View className="gap-1">
+              <View className="flex-row items-center justify-between">
+                <Text className="text-lg font-medium">Services</Text>
+              </View>
+              <View className="gap-4 flex-row p-4 bg-background-muted rounded-2xl">
+                {user.agent_profile?.specialties?.map((s) => (
+                  <Badge
+                    className="bg-background rounded-2xl px-3 border border-primary"
+                    key={s}
+                  >
+                    <Text className="text-sm">{s}</Text>
+                  </Badge>
+                ))}
+              </View>
+            </View>
+          ) : undefined}
+        </View>
+      )}
+      {(userType !== "owner" || isAgent) && (
+        <View className="gap-1">
+          <View className="gap-4 p-4 bg-background-muted rounded-2xl">
+            <View className="flex-row gap-2">
+              <View className="mt-1">
+                <Icon as={Languages} className="w-4 h-4 text-typography/80" />
+              </View>
+              <View className=" gap-2">
+                <Text className="text-sm text-typography/80">Languages</Text>
+                <View className="flex-row flex-wrap items-center gap-2">
+                  {user.agent_profile?.languages?.slice(0, 3).map((l) => (
+                    <Text key={l} className="text-sm capitalize">
+                      {l}
+                    </Text>
+                  ))}
+                </View>
+              </View>
+            </View>
+            <View className="flex-row gap-2">
+              <View className="mt-1">
+                <Icon
+                  as={CreativeCommons}
+                  className="w-4 h-4 text-typography/80"
+                />
+              </View>
+              <View className="gap-2">
+                <Text className="text-sm text-typography/80">
+                  License Number
+                </Text>
+                <Text className="text-sm">
+                  {user.agent_profile?.license_number || "N/A"}
+                </Text>
+              </View>
+            </View>
+            <View className="flex-row items-center gap-2">
+              <Icon as={Globe} className="w-4 h-4" />
+              {user.agent_profile?.website ? (
+                <Link
+                  target="_blank"
+                  className=" text-sm text-blue-500"
+                  href={user.agent_profile?.website as any}
+                >
+                  {user.agent_profile?.website}
+                </Link>
+              ) : (
+                <Text className="text-sm">N/A</Text>
+              )}
+            </View>
+            <View className=" flex-row items-center gap-2">
+              <Icon as={CalendarCog} className="w-4 h-4 text-typography/80" />
+              <View className="flex-row gap-1 items-center">
+                <Text className="text-sm">
+                  {user.agent_profile?.years_of_experience || "N/A"}
+                </Text>
+                <Text className="text-sm text-typography/80">
+                  Years of Experience
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>
+      )}
+      {(userType !== "owner" || isAgent) && (
+        <View>
+          {user.agent_profile?.companies?.slice().length ? (
+            <View className="gap-1">
+              <View className="flex-row items-center justify-between">
+                <Text className="text-lg font-medium">Companies</Text>
+              </View>
+              <View className="gap-4 bg-background-muted p-4 rounded-xl">
+                {user.agent_profile?.companies?.slice(0, 1).map((c) => (
+                  <View
+                    key={c.id}
+                    className=" flex-row justify-between items-center"
+                  >
+                    <View className="flex-1">
+                      <Text className="font-semibold">{c.name}</Text>
+                      {!!c.address && (
+                        <Text className="text-typography/80">{c.address}</Text>
+                      )}
+                      {!!c.phone && (
+                        <Text className="text-typography/80">{c.phone}</Text>
+                      )}
+                      {!!c.email && (
+                        <Text className="text-typography/80">{c.email}</Text>
+                      )}
+                    </View>
+                  </View>
+                ))}
+              </View>
+            </View>
+          ) : undefined}
+        </View>
+      )}
       <View className="gap-1">
         <View className="flex-row items-center justify-between">
-          <Text className="text-lg font-medium">Personal Details</Text>
+          <Text className="text-md text-typography/80 font-medium">
+            Contact Details
+          </Text>
         </View>
         <View className="gap-4 p-4 bg-background-muted rounded-2xl">
           {personal.map((p) => (
             <View key={p.label} className="flex-row gap-4 items-center">
-              <Icon as={p.icon} />
+              <Icon size={"sm"} as={p.icon} />
               <Text>{p.value}</Text>
             </View>
           ))}
-        </View>
-      </View>
-      <View className="gap-1">
-        <View className="flex-row items-center justify-between">
-          <Text className="text-lg font-medium">Bio</Text>
-        </View>
-        <View className="gap-4 p-4 bg-background-muted rounded-2xl">
-          <Text className="text-sm">
-            {user.agent_profile?.about ||
-              "Add an intresting bio about yourself to stand out."}
-          </Text>
-        </View>
-      </View>
-      <View className=" gap-2 mt-2">
-        <View className="gap-2 flex-row justify-between">
-          <Text className="text-typography/80">Bussiness hours</Text>
-        </View>
-
-        <View className="gap-2 flex-row items bg-background-muted px-4 border border-outline-100 rounded-xl">
-          <View className="flex-row justify-between items-center py-4 flex-1">
-            <WorkingDays days={user?.agent_profile?.working_hours} />
-          </View>
-        </View>
-      </View>
-      <View className="gap-1">
-        <View className="flex-row items-center justify-between">
-          <Text className="text-lg font-medium">Contact Details</Text>
-        </View>
-        <View className="gap-4 p-4 bg-background-muted rounded-2xl">
-          <View className="flex-row  gap-2">
-            <View className="mt-1">
-              <Icon as={Clock} className="w-4 h-4 text-typography/80" />
-            </View>
-            <View className="gap-2">
-              <Text className="text-sm text-typography/80">Working Hours</Text>
-              <Button className="h-9 bg-background">
-                <Text className="text-sm">Always Open</Text>
-              </Button>
-            </View>
-          </View>
-          <View className="flex-row gap-2">
-            <View className="mt-1">
-              <Icon as={Key} className="w-4 h-4 text-typography/80" />
-            </View>
-            <View className=" gap-2">
-              <Text className="text-sm text-typography/80">Specialties</Text>
-              <View className="flex-row flex-wrap items-center gap-2">
-                <Text className="text-sm">Apartments</Text>
-                <Icon as={Dot} className="w-4 h-4" />
-                <Text className="text-sm">Shortlets</Text>
-                <Icon as={Dot} className="w-4 h-4" />
-                <Text className="text-sm">Lands</Text>
-              </View>
-            </View>
-          </View>
-          <View className="flex-row gap-2">
-            <View className="mt-1">
-              <Icon
-                as={CreativeCommons}
-                className="w-4 h-4 text-typography/80"
-              />
-            </View>
-            <View className="gap-2">
-              <Text className="text-sm text-typography/80">License Number</Text>
-              <Text className="text-sm">
-                {user.agent_profile?.license_number || "N/A"}
-              </Text>
-            </View>
-          </View>
-          <View className="flex-row items-center gap-2">
-            <Icon as={Globe} className="w-4 h-4" />
-            {user.website ? (
-              <Link
-                target="_blank"
-                className=" text-sm text-blue-500"
-                href={user.website as any}
-              >
-                {user.website}
-              </Link>
-            ) : (
-              <Text className="text-sm">N/A</Text>
-            )}
-          </View>
-          <View className=" flex-row items-center gap-2">
-            <Icon as={CalendarCog} className="w-4 h-4 text-typography/80" />
-            <View className="flex-row gap-1 items-center">
-              <Text className="text-sm">
-                {user.agent_profile?.years_of_experience || "N/A"}
-              </Text>
-              <Text className="text-sm text-typography/80">
-                Years of Experience
-              </Text>
-            </View>
-          </View>
         </View>
       </View>
     </View>
@@ -205,20 +254,20 @@ export function WorkingDays({ days }: { days?: Record<string, string> }) {
   const orderedDays = [today, ...DAYS.filter((d) => d.toLowerCase() !== today)];
 
   return (
-    <View className="flex-1">
+    <View className="flex-1 bg-background-muted rounded-xl pb-3">
       <TouchableOpacity
         onPress={() => setExpanded((prev) => !prev)}
-        className="flex-row items-center justify-between p-3 bg-[#1a1a1a] rounded-lg"
+        className="flex-row items-center justify-between p-3 pb-0"
       >
         <View className="flex-row items-center gap-2">
           <Icon as={Clock} className=" text-primary" />
           <Text className="text-base font-medium capitalize">{today}</Text>
         </View>
-        <View className="flex-row gap-2 items-center">
+        <View className="flex-row gap-4 items-center">
           {record[today] ? (
             <Text>{record[today]}</Text>
           ) : (
-            <View className=" py-1 px-2 rounded-md bg-[#2a1200]">
+            <View className=" py-1 px-4 rounded-md bg-[#2a1200]">
               <Text className="text-primary">Closed</Text>
             </View>
           )}
@@ -226,7 +275,7 @@ export function WorkingDays({ days }: { days?: Record<string, string> }) {
         </View>
       </TouchableOpacity>
       {expanded && (
-        <View className="mt-2 ml-7 mr-6 gap-1">
+        <View className="mt-2 ml-7 mr-9 gap-1">
           {orderedDays.slice(1).map((day) => {
             const val = record[day.toLowerCase()];
             return (
@@ -238,7 +287,7 @@ export function WorkingDays({ days }: { days?: Record<string, string> }) {
                 {val ? (
                   <Text>{val}</Text>
                 ) : (
-                  <View className="px-3 py-1 rounded-xl bg-[#2a1200]">
+                  <View className="px-4 py-1 rounded-md bg-[#2a1200]">
                     <Text className="text-primary">Closed</Text>
                   </View>
                 )}

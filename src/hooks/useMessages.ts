@@ -16,7 +16,8 @@ import { useShallow } from "zustand/react/shallow";
 
 export function useMessages(chatId: string) {
   const { playSound } = useSound();
-  const query = useQueryClient();
+  const queryClient = useQueryClient();
+
   const {
     updateChatMessages,
     clearChatMessages,
@@ -40,18 +41,16 @@ export function useMessages(chatId: string) {
     queryKey: ["messages", chatId],
     queryFn: ({ pageParam = 1 }) => getChatMessages({ pageParam, chatId }),
     initialPageParam: 1,
-    getNextPageParam: (lastPage) => {
-      const {
-        pagination: { total_pages, page },
-      } = lastPage;
-      return page < total_pages ? page + 1 : undefined;
-    },
+    getNextPageParam: ({ pagination }) =>
+      pagination.page < pagination.total_pages
+        ? pagination.page + 1
+        : undefined,
   });
 
   // Sync messages into Zustand
   useEffect(() => {
-    if (messageData && chatId) {
-      const messages = messageData?.pages.flatMap((p) => p.messages) || [];
+    if (messageData?.pages && chatId) {
+      const messages = messageData.pages.flatMap((p) => p.messages);
       updateChatMessages(chatId, messages);
     }
   }, [messageData, chatId]);
@@ -67,12 +66,14 @@ export function useMessages(chatId: string) {
     mutationFn: makeMessageReadAndDelivered,
   });
 
+  const invalidateChats = () =>
+    queryClient.invalidateQueries({ queryKey: ["chats"] });
+
   async function handleSendMessage(data: Message, isEdit: boolean) {
     if (isEdit) {
-      const { message_id, content } = data;
       updateMessage(chatId, data.message_id, data.content);
       await edit(
-        { message_id, content },
+        { message_id: data.message_id, content: data.content },
         {
           onSuccess: (m) => {
             replaceMockMessage(chatId, data.message_id, {
@@ -81,49 +82,47 @@ export function useMessages(chatId: string) {
               status: m?.status,
             });
             playSound("MESSAGE_SENT");
-            query.invalidateQueries({
-              queryKey: ["chats"],
-            });
+            invalidateChats();
           },
         }
       );
-    } else {
-      const { file_data, content, reply_to_message_id } = data;
-      addPendingMessage(chatId, [data]);
-
-      await send(
-        { chat_id: chatId, content, files: file_data, reply_to_message_id },
-        {
-          onError: (e) => {
-            updateMessageStatus(chatId, data.message_id, "error");
-          },
-          onSuccess: (m) => {
-            replaceMockMessage(chatId, data.message_id, {
-              content: m?.content,
-              sender_info: {
-                id: m?.sender_id,
-                first_name: "",
-                last_name: "",
-                profile_image: "",
-                status: "offline",
-              },
-              status: m?.status,
-              file_data: m?.media?.map((f: any) => ({
-                file_id: f.id,
-                file_url: f.file_url,
-                file_type: f.file_type,
-                file_name: f.file_name,
-              })),
-              read: m?.read,
-            });
-            playSound("MESSAGE_SENT");
-            query.invalidateQueries({
-              queryKey: ["chats"],
-            });
-          },
-        }
-      );
+      return;
     }
+
+    addPendingMessage(chatId, [data]);
+    await send(
+      {
+        chat_id: chatId,
+        content: data.content,
+        files: data.file_data,
+        reply_to_message_id: data.reply_to_message_id,
+      },
+      {
+        onError: () => updateMessageStatus(chatId, data.message_id, "error"),
+        onSuccess: (m) => {
+          replaceMockMessage(chatId, data.message_id, {
+            content: m?.content,
+            sender_info: {
+              id: m?.sender_id,
+              first_name: "",
+              last_name: "",
+              profile_image: "",
+              status: "offline",
+            },
+            status: m?.status,
+            file_data: m?.media?.map((f: any) => ({
+              file_id: f.id,
+              file_url: f.file_url,
+              file_type: f.file_type,
+              file_name: f.file_name,
+            })),
+            read: m?.read,
+          });
+          playSound("MESSAGE_SENT");
+          invalidateChats();
+        },
+      }
+    );
   }
 
   return {

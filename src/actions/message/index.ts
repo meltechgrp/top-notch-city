@@ -28,38 +28,41 @@ export async function sendMessage({
   files,
   reply_to_message_id,
 }: SendMessage) {
-  const formData = new FormData();
-
-  if (chat_id) formData.append("chat_id", chat_id);
-  if (reply_to_message_id)
-    formData.append("reply_to_message_id", reply_to_message_id);
-  if (content) formData.append("content", content);
-  files?.forEach((item, index) => {
-    formData.append("media", {
-      uri: item.file_url,
-      name: `image.jpg`,
-      type: "image/jpeg",
-    } as any);
-  });
-  const result = await Fetch(`/send/messages`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-    data: formData,
-  });
-  return result as {
-    type: string;
-    chat_id: string;
-    message_id: string;
-    content: string;
-    media: FileData[];
-    created_at: string;
-    sender_id: string;
-    sender_name: string;
-    read: boolean;
-    status: Message["status"];
-  };
+  try {
+    const formData = new FormData();
+    if (chat_id) formData.append("chat_id", chat_id);
+    if (reply_to_message_id)
+      formData.append("reply_to_message_id", reply_to_message_id);
+    if (content) formData.append("content", content);
+    files?.forEach((item, index) => {
+      formData.append("media", {
+        uri: item.file_url,
+        name: `image.jpg`,
+        type: "image/jpeg",
+      } as any);
+    });
+    const result = await Fetch(`/send/messages`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      data: formData,
+    });
+    return result as {
+      type: string;
+      chat_id: string;
+      message_id: string;
+      content: string;
+      media: FileData[];
+      created_at: string;
+      sender_id: string;
+      sender_name: string;
+      read: boolean;
+      status: Message["status"];
+    };
+  } catch (error) {
+    throw Error("something went wrong");
+  }
 }
 export async function editMessage({
   message_id,

@@ -1,4 +1,4 @@
-import { formatNumberCompact, fullName } from "@/lib/utils";
+import { cn, formatNumberCompact, fullName } from "@/lib/utils";
 import {
   Avatar,
   AvatarFallbackText,
@@ -6,67 +6,165 @@ import {
   Button,
   ButtonText,
   Icon,
-  Pressable,
   Text,
   View,
 } from "../ui";
 import { getImageUrl } from "@/lib/api";
-import { ChevronDown, Dot, Edit, Share } from "lucide-react-native";
+import {
+  BadgeCheck,
+  Check,
+  ChevronDown,
+  Dot,
+  Edit,
+  MessageCircle,
+  Share2,
+} from "lucide-react-native";
 import { openAccessModal } from "@/components/globals/AuthModals";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { followAgent, unFollowAgent } from "@/actions/agent";
-import { useMemo, useState } from "react";
 import { router } from "expo-router";
+import { useFollowAgent } from "@/hooks/useFollowAgent";
+import { UserType } from "@/components/profile/ProfileWrapper";
+import { Rating } from "@/components/agent/Rating";
 
-export function ProfileTopSection({ userData: user }: { userData: Me }) {
-  const [imageBottomSheet, setImageBottomSheet] = useState(false);
-  const client = useQueryClient();
-  const { mutate } = useMutation({
-    mutationFn: () =>
-      user?.is_following ? unFollowAgent(user.id) : followAgent(user.id),
-
-    onSuccess: () => {
-      client.invalidateQueries({ queryKey: ["user", user.id] });
-    },
+export function ProfileTopSection({
+  user,
+  userType,
+  isAgent,
+  setShowActions,
+}: {
+  user: Me;
+  userType: UserType;
+  isAgent?: boolean;
+  setShowActions: () => void;
+}) {
+  const { mutateAsync } = useFollowAgent({
+    queryKey: ["user", user.id],
+    agentId: user.id,
+    is_following: user.is_following || false,
   });
   const handlePress = () => {
     if (!user) {
       return openAccessModal({ visible: true });
     }
-    mutate();
+    mutateAsync();
   };
-  const isAgent = useMemo(() => {
-    if (user?.role == "agent" || user?.role == "staff_agent") {
-      return true;
-    } else {
-      return false;
-    }
-  }, [user]);
+
+  const ActionButtons = {
+    visitor: [
+      {
+        action: handlePress,
+        label: user?.is_following ? "Unfollow" : "Follow",
+        icon: Check,
+      },
+      {
+        action: handlePress,
+        label: "Message",
+        icon: MessageCircle,
+      },
+    ],
+    admin: [
+      {
+        action: setShowActions,
+        label: user.role.toUpperCase(),
+        icon: ChevronDown,
+      },
+      {
+        action: () =>
+          router.push({
+            pathname: "/agents/[userId]/qrcode",
+            params: {
+              userId: user.id,
+            },
+          }),
+        label: "Share",
+        icon: Share2,
+      },
+    ],
+    owner: [
+      ...[
+        isAgent
+          ? {
+              action: () =>
+                router.push({
+                  pathname: "/agents/[userId]/qrcode",
+                  params: {
+                    userId: user.id,
+                  },
+                }),
+              label: "Share",
+              icon: Share2,
+            }
+          : {
+              action: () =>
+                router.push({
+                  pathname: "/agents/[userId]/activities",
+                  params: {
+                    userId: user.id,
+                  },
+                }),
+              label: "Following",
+              icon: ChevronDown,
+            },
+      ],
+      {
+        action: () =>
+          router.push({
+            pathname: "/agents/[userId]/account",
+            params: {
+              userId: user.id,
+            },
+          }),
+        label: "Edit",
+        icon: Edit,
+      },
+    ],
+  };
   return (
     <>
-      <View className={"px-4 py-2 mt-2 bg-background"}>
-        <View className={"flex-row gap-4 bg-background-muted p-4 rounded-2xl"}>
-          <Pressable
-            onPress={() => setImageBottomSheet(true)}
-            className=" relative"
-          >
-            <Avatar className=" w-24 h-24 rounded-full">
-              <AvatarFallbackText>{fullName(user)}</AvatarFallbackText>
-              <AvatarImage
-                className="rounded-full"
-                source={getImageUrl(user?.profile_image)}
-              />
-            </Avatar>
-            <View className=" absolute bottom-3 right-3">
-              <Icon size="sm" as={Edit} />
-            </View>
-          </Pressable>
+      <View className={"px-4 py-2 mt-2"}>
+        <View className={"flex-row gap-4 rounded-2xl"}>
+          <Avatar className=" w-28 h-28 rounded-full">
+            <AvatarFallbackText>{fullName(user)}</AvatarFallbackText>
+            <AvatarImage
+              className="rounded-full"
+              source={getImageUrl(user?.profile_image)}
+            />
+          </Avatar>
           <View className="flex-1">
             <View className="">
-              <Text numberOfLines={1} className="text-lg font-semibold">
-                {fullName(user)}
-              </Text>
+              <View className="flex-row justify-between items-center">
+                <Text
+                  numberOfLines={1}
+                  className="text-lg flex-1 font-semibold"
+                >
+                  {fullName(user)}
+                </Text>
+                {userType == "admin" && (
+                  <Icon
+                    as={BadgeCheck}
+                    className="fill-green-500 text-background-muted"
+                  />
+                )}
+              </View>
+              {userType == "visitor" ? (
+                <View className="flex-row gap-1 items-center">
+                  <Text className="text-sm">
+                    {user?.agent_profile?.years_of_experience || "-"}
+                  </Text>
+                  <Text className="text-sm text-typography/80">
+                    Years of Experience
+                  </Text>
+                </View>
+              ) : (
+                <Text className="text-xs text-typography/80">{user.email}</Text>
+              )}
             </View>
+            {!isAgent && (
+              <Rating
+                size={14}
+                rating={user.agent_profile?.average_rating || 0}
+                total={user.agent_profile?.total_reviews || 0}
+              />
+            )}
             <View className="flex-row gap-2 mt-3 items-center">
               <View className="gap-1 items-center flex-row">
                 <Text className="text-sm font-medium">
@@ -89,79 +187,21 @@ export function ProfileTopSection({ userData: user }: { userData: Me }) {
                 <Text className="text-xs">Likes</Text>
               </View>
             </View>
-            {!isAgent && (
-              <View className="flex-row mt-4 gap-6 justify-center items-center">
-                <Button
-                  size={"sm"}
-                  onPress={() =>
-                    router.push({
-                      pathname: "/agents/[userId]/activities",
-                      params: {
-                        userId: user.id,
-                      },
-                    })
-                  }
-                  className=" bg-background h-8 flex-1"
-                >
-                  <ButtonText>Following</ButtonText>
-                  <Icon as={ChevronDown} className="w-5 h-5" />
-                </Button>
-                <Button
-                  size={"sm"}
-                  onPress={() =>
-                    router.push({
-                      pathname: "/agents/[userId]/account",
-                      params: {
-                        userId: user.id,
-                      },
-                    })
-                  }
-                  className=" h-8 flex-1"
-                >
-                  <Icon as={Edit} className="w-4 h-4" />
-                  <ButtonText>Edit</ButtonText>
-                </Button>
-              </View>
-            )}
           </View>
         </View>
-        {isAgent && (
-          <View className="flex-row mt-6 gap-4 justify-center items-center">
+        <View className="flex-row mt-6 gap-4 justify-center items-center">
+          {ActionButtons[userType].map((a, i) => (
             <Button
-              onPress={() =>
-                router.push({
-                  pathname: "/agents/[userId]/account",
-                  params: {
-                    userId: user.id,
-                  },
-                })
-              }
-              className=" h-10 flex-1"
+              key={a.label}
+              onPress={a.action}
+              className={cn(" h-10 flex-1", i == 0 && "bg-background-muted")}
             >
-              <Icon as={Edit} className="w-4 h-4" />
-              <ButtonText>Edit</ButtonText>
+              <ButtonText>{a.label}</ButtonText>
+              <Icon as={a.icon} className="w-4 h-4" />
             </Button>
-            <Button
-              onPress={() =>
-                router.push({
-                  pathname: "/agents/[userId]/qrcode",
-                  params: {
-                    userId: user.id,
-                  },
-                })
-              }
-              className="bg-gray-500 h-10 flex-1"
-            >
-              <Icon as={Share} className="w-4 h-4" />
-              <ButtonText>Share</ButtonText>
-            </Button>
-          </View>
-        )}
+          ))}
+        </View>
       </View>
-      {/* <ProfileImageBottomSheet
-        visible={imageBottomSheet}
-        onDismiss={() => setImageBottomSheet(false)}
-      /> */}
     </>
   );
 }

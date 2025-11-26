@@ -5,14 +5,12 @@ import {
   Company,
   CompanyModal,
 } from "@/components/modals/profile/CompanyModal";
-import ImageOptionBottomSheet from "@/components/modals/profile/ImageOptionBottomSheet";
 import { LanguageModal } from "@/components/modals/profile/LanguageModal";
 import { LocationModal } from "@/components/modals/profile/LocationModal";
 import { MediaPreviewModal } from "@/components/modals/profile/MediaPreviewModal";
 import { SocialLinkModal } from "@/components/modals/profile/SocialLinksModal";
 import { WorkingDayDialog } from "@/components/modals/profile/WorkingDayDialog";
 import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
-import OptionsBottomSheet from "@/components/shared/OptionsBottomSheet";
 import {
   Icon,
   Image,
@@ -546,7 +544,6 @@ export function CompaniesInput({
   setShowModal,
 }: CustomInputProps) {
   const [companies, setCompanies] = useState<Company[]>([]);
-
   useEffect(() => {
     if (!value) {
       setCompanies([]);

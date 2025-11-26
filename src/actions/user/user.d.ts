@@ -17,6 +17,7 @@ type Me = {
   wallet_balance: number;
   is_active: boolean;
   is_available?: boolean;
+  is_blocked_by_admin?: boolean;
   is_superuser: boolean;
   role: "user" | "admin" | "agent" | "staff" | "staff_agent";
   id: string;
@@ -48,6 +49,7 @@ interface AgentProfile {
   working_hours?: Record<string, string>;
   social_links?: Record<string, string>;
   about?: string;
+  website: string;
   is_available: boolean;
   average_rating: number;
   total_reviews: number;

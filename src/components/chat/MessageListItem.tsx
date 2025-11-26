@@ -16,8 +16,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteChat } from "@/actions/message";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { MessageStatusIcon } from "@/components/chat/MessageStatus";
-import { useMessages } from "@/hooks/useMessages";
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
 import { TypingIndicator } from "@/components/chat/TypingIndicator";
 import { useShallow } from "zustand/react/shallow";
 import { useChatStore } from "@/store/chatStore";
@@ -27,7 +26,6 @@ type MessageListItemProps = {
 };
 function MessageListItem(props: MessageListItemProps) {
   const { chat } = props;
-  const { message } = useMessages(chat.chat_id);
 
   const typing = useChatStore(useShallow((s) => s.getTyping(chat.chat_id)));
   const queryClient = useQueryClient();
@@ -41,8 +39,8 @@ function MessageListItem(props: MessageListItemProps) {
   }, [chat]);
 
   const isMine = React.useMemo(
-    () => message?.sender_info.id === me?.id,
-    [me, message]
+    () => chat?.recent_message.sender_id === me?.id,
+    [me, chat]
   );
   const formatedTime = React.useMemo(
     () =>
