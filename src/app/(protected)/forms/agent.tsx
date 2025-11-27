@@ -13,7 +13,6 @@ import DatePicker from "@/components/custom/DatePicker";
 import { useMutation } from "@tanstack/react-query";
 import { uploadAgentForm } from "@/actions/agent";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
-import ProfileImageBottomSheet from "@/components/agent/ProfileImageBottomSheet";
 import { profileDefault, useStore } from "@/store";
 import { Edit } from "lucide-react-native";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
@@ -200,12 +199,6 @@ export default function AgentFormScreen() {
           </View>
         </BodyScrollView>
       </KeyboardAvoidingView>
-
-      <ProfileImageBottomSheet
-        visible={photosBottomSheet}
-        onSave={(file) => setForm({ ...form, photo: file[0].uri })}
-        onDismiss={() => setPhotosBottomSheet(false)}
-      />
     </Box>
   );
 }

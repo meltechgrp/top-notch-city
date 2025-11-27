@@ -5,7 +5,7 @@ import { useChatStore } from "@/store/chatStore";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback } from "react";
 
-export default function useResetAppState(isDelete?: boolean) {
+export default function useResetAppState() {
   const queryClient = useQueryClient();
   const resetAppState = useCallback(async () => {
     removeAuthToken();
@@ -13,6 +13,7 @@ export default function useResetAppState(isDelete?: boolean) {
     useStore.getState().resetStore();
     useChatStore.getState().resetChatStore();
     useTempStore.getState().resetStore();
+    queryClient.removeQueries();
     queryClient.clear();
   }, []);
 

@@ -3,7 +3,7 @@ import { Stack } from "expo-router";
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { reloadAppAsync } from "expo";
-import BeachPersonWaterParasolIcon from "@/components/icons/BeachPersonWaterParasolIcon";
+import { Bomb } from "lucide-react-native";
 
 export default function AppCrashScreen() {
   return (
@@ -17,7 +17,7 @@ export default function AppCrashScreen() {
         <View className="py-6 flex-1 pt-20">
           <View className="flex-1 justify-center px-4">
             <View className="items-center mb-8">
-              <BeachPersonWaterParasolIcon width={64} height={64} />
+              <Bomb width={64} height={64} />
             </View>
             <Text className="text-center text-typography text-2xl font-semibold">
               Something went wrong!

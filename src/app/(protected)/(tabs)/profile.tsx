@@ -1,8 +1,10 @@
 import { ProfileWrapper } from "@/components/profile/ProfileWrapper";
 import { useUser } from "@/hooks/useUser";
+import { getAuthToken } from "@/lib/secureStore";
 
 export default function ProfileScreen() {
   const { me, isAgent } = useUser();
+  const auth = getAuthToken();
   const tabs = [
     {
       label: "All",
@@ -29,7 +31,7 @@ export default function ProfileScreen() {
         tabs={tabs}
         isAgent={isAgent}
         userType="owner"
-        userId={me?.id}
+        userId={auth ? me?.id : undefined}
       />
     </>
   );

@@ -62,7 +62,7 @@ function FollowersList({ userId }: { userId: string }) {
             icon={Users}
             className="mt-8"
             title="No followers Found"
-            description="Become an agent to see your followers"
+            description="Followers will be displayed here"
           />
         )}
       />

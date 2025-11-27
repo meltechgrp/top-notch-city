@@ -32,6 +32,7 @@ import useResetAppState from "@/hooks/useResetAppState";
 import { Fetch } from "@/actions/utills";
 import { getUniqueIdSync } from "react-native-device-info";
 import { useUser } from "@/hooks/useUser";
+import LogoutButton from "@/components/settings/LogoutButton";
 
 export default function Setting() {
   const resetAppState = useResetAppState();
@@ -46,6 +47,7 @@ export default function Setting() {
       data: { device_id: deviceId },
     });
     resetAppState();
+    router.dismissTo("/home");
   }
   async function onLogout() {
     Alert.alert(
@@ -225,15 +227,7 @@ export default function Setting() {
               iconColor="yellow-600"
             />
 
-            {hasAuth && (
-              <Pressable
-                onPress={onLogout}
-                className="bg-background-muted h-14 mt-8 rounded-xl px-4 flex-row justify-center items-center gap-2"
-              >
-                <Text size="lg">Sign Out</Text>
-                <Icon size="md" as={LogOut} className="text-primary" />
-              </Pressable>
-            )}
+            {hasAuth && <LogoutButton onLogout={onLogout} />}
           </View>
         </View>
       </BodyScrollView>

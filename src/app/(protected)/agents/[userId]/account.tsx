@@ -10,9 +10,8 @@ import {
   Icon,
 } from "@/components/ui";
 import { RefreshControl, ScrollView } from "react-native";
-import React, { Suspense, useEffect, useMemo, useState } from "react";
+import React, { Suspense, useMemo, useState } from "react";
 import { cn, composeFullAddress, fullName } from "@/lib/utils";
-import { useStore } from "@/store";
 import { ChevronRight, Clock, Edit } from "lucide-react-native";
 import { format } from "date-fns";
 import { getImageUrl } from "@/lib/api";
@@ -41,7 +40,6 @@ export default function UserAccount() {
   const [previewOpen, setPreviewOpen] = useState(false);
   const { mutation } = useProfileMutations(userId);
   const [showOptions, setShowOptions] = useState(false);
-  const updateProfile = useStore.getState().updateProfile;
   const { pickMedia, takeMedia, setLoading, loading, progress, processFiles } =
     useMediaUpload({
       type: "image",
@@ -61,18 +59,6 @@ export default function UserAccount() {
       },
     });
   const user = useMemo(() => data ?? null, [data]);
-  useEffect(() => {
-    if (user) {
-      updateProfile({
-        role: user.role,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        address: user.address,
-        gender: user.gender,
-        phone: user.phone,
-      });
-    }
-  }, [user]);
 
   const personal = [
     {

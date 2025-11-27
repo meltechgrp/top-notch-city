@@ -3,13 +3,13 @@ import CategoryBottomSheet from "@/components/admin/properties/CategoryBottomShe
 import CategoryItem from "@/components/admin/properties/CategoryItem";
 import SubCategoryItem from "@/components/admin/properties/SubCategoryItem";
 import AdminCreateButton from "@/components/admin/shared/AdminCreateButton";
-import BeachPersonWaterParasolIcon from "@/components/icons/BeachPersonWaterParasolIcon";
 import EmptyStateWrapper from "@/components/shared/EmptyStateWrapper";
 import { Box, Heading, View } from "@/components/ui";
 import { useCategoryMutations } from "@/tanstack/mutations/useCategoryMutations";
 import { useCategoryQueries } from "@/tanstack/queries/useCategoryQueries";
 import { FlashList } from "@shopify/flash-list";
 import { useQuery } from "@tanstack/react-query";
+import { ChartColumnStacked } from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { RefreshControl } from "react-native";
 
@@ -95,7 +95,7 @@ export default function CategoriesScreen() {
         <EmptyStateWrapper
           isEmpty={!flatData.length}
           loading={loading}
-          illustration={<BeachPersonWaterParasolIcon />}
+          illustration={<ChartColumnStacked />}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
           }

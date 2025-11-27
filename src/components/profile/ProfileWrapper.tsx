@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
 
 import { Box, Button, Icon, Pressable, Text, View } from "@/components/ui";
@@ -26,6 +26,7 @@ import ProfileSkeleton from "@/components/skeleton/ProfileSkeleton";
 import { RefreshControl } from "react-native";
 import { UserActionsBottomSheet } from "@/components/admin/users/UserBottomSheet";
 import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
+import { useStore } from "@/store";
 
 export type UserType = "visitor" | "owner" | "admin";
 
@@ -45,6 +46,7 @@ export function ProfileWrapper({
   userId,
   isAgent = false,
 }: ProfileWrapperProps) {
+  const updateProfile = useStore.getState().updateProfile;
   const [showActions, setShowActions] = useState(false);
   const [activeTab, setActiveTab] = useState<(typeof tabs)[number]>(tabs[0]);
   const { data, isLoading, refetch, isRefetching } = useQuery({
@@ -76,7 +78,18 @@ export function ProfileWrapper({
   }, [activeTab]);
 
   const stickyHeaderIndices = [0, 1];
-
+  useEffect(() => {
+    if (user && userType == "owner") {
+      updateProfile({
+        role: user.role,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        address: user.address,
+        gender: user.gender,
+        phone: user.phone,
+      });
+    }
+  }, [user]);
   useRefreshOnFocus(refetch);
   if (!isLoading && !user) return <NotLoggedInProfile userType={userType} />;
   return (

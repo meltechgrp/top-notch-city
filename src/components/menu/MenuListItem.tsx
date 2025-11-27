@@ -5,8 +5,8 @@ import { ChevronRight } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
 
 type MenuListItemProps = V["props"] & {
-  title: React.ReactNode;
-  description: string;
+  title: string;
+  description?: string;
   icon: any;
   rightComponent?: React.ReactNode;
   withArrow?: boolean;
@@ -14,6 +14,7 @@ type MenuListItemProps = V["props"] & {
   iconBgColor?: string;
   onPress?: () => void;
   className?: string;
+  withBorder?: boolean;
 };
 export function MenuListItem(props: MenuListItemProps) {
   const {
@@ -27,6 +28,7 @@ export function MenuListItem(props: MenuListItemProps) {
     withArrow = true,
     iconColor,
     iconBgColor,
+    withBorder = true,
   } = props;
   return (
     <TouchableOpacity
@@ -35,19 +37,31 @@ export function MenuListItem(props: MenuListItemProps) {
         onPress?.();
       }}
     >
-      <View style={[style]} className={cn("flex-row items-center", className)}>
+      <View
+        style={[style]}
+        className={cn("flex-row items-center gap-3", className)}
+      >
         <View
           className={cn(
-            "w-10 h-10 rounded-full items-center justify-center bg-gray-600"
+            "w-9 h-9 rounded-full items-center justify-center bg-gray-600"
           )}
         >
           <Icon as={icon} className={cn("text-white")} />
         </View>
-        <View className="flex-1 pl-3">
-          <Text className="text-lg font-medium">{title}</Text>
-          {/* <Text className="text-sm text-typography/80">{description}</Text> */}
+        <View
+          className={cn(
+            "flex-1 flex-row gap-3 items-center pb-1",
+            withBorder && "border-b border-b-outline-100"
+          )}
+        >
+          <View className={"flex-1"}>
+            <Text className="text-lg font-medium">{title}</Text>
+            {description && (
+              <Text className="text-sm text-typography/50">{description}</Text>
+            )}
+          </View>
+          {withArrow && <Icon as={ChevronRight} className="text-primary" />}
         </View>
-        {withArrow && <Icon as={ChevronRight} className="text-primary" />}
       </View>
     </TouchableOpacity>
   );

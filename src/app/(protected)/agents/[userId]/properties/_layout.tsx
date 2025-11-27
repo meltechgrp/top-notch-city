@@ -3,7 +3,7 @@ import { useResolvedTheme } from "@/components/ui";
 import { Colors } from "@/constants/Colors";
 import { Stack } from "expo-router";
 
-export default function PropertysLayout() {
+export default function PropertiesLayout() {
   const theme = useResolvedTheme();
   return (
     <Stack
@@ -21,43 +21,18 @@ export default function PropertysLayout() {
       }}
     >
       <Stack.Screen
-        name="[propertyId]/index"
+        name="add"
         options={{
-          headerTransparent: true,
+          headerTitle: "",
+          animation: "slide_from_right",
+        }}
+      />
+      <Stack.Screen
+        name="success"
+        options={{
           headerShown: false,
-          headerTitleStyle: { color: "white", fontSize: 20 },
-          gestureEnabled: true,
-          fullScreenGestureEnabled: true,
-        }}
-      />
-      <Stack.Screen
-        name="[propertyId]/images"
-        options={{
-          title: "Images",
-        }}
-      />
-      <Stack.Screen
-        name="[propertyId]/videos"
-        options={{
-          title: "Video",
-        }}
-      />
-      <Stack.Screen
-        name="[propertyId]/edit"
-        options={{
-          title: "Edit",
-        }}
-      />
-      <Stack.Screen
-        name="[propertyId]/3d-view"
-        options={{
-          title: "Visual Tour",
-        }}
-      />
-      <Stack.Screen
-        name="[propertyId]/booking"
-        options={{
-          title: "Booking",
+          headerTitle: "",
+          animation: "slide_from_right",
         }}
       />
     </Stack>

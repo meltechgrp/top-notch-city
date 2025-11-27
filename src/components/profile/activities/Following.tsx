@@ -65,8 +65,8 @@ function FollowingList({ userId }: { userId: string }) {
           <MiniEmptyState
             icon={Users}
             className="mt-8"
-            title="No followers Found"
-            description="Become an agent to see your followers"
+            title="No user found"
+            description=""
           />
         )}
       />

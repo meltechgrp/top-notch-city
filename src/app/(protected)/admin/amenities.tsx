@@ -2,12 +2,12 @@ import { fetchAllAmenities } from "@/actions/property/amenity";
 import AmenityBottomSheet from "@/components/admin/properties/AmenityBottomSheet";
 import AmenityItem from "@/components/admin/properties/amenityItem";
 import AdminCreateButton from "@/components/admin/shared/AdminCreateButton";
-import BeachPersonWaterParasolIcon from "@/components/icons/BeachPersonWaterParasolIcon";
 import EmptyStateWrapper from "@/components/shared/EmptyStateWrapper";
 import { Box, Heading, Text, View } from "@/components/ui";
 import { useAmenityMutations } from "@/tanstack/mutations/useAmenityMutation";
 import { FlashList } from "@shopify/flash-list";
 import { useQuery } from "@tanstack/react-query";
+import { Bath } from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { RefreshControl } from "react-native";
 
@@ -87,7 +87,7 @@ export default function AmenitiesScreen() {
         <EmptyStateWrapper
           isEmpty={!flatAmenities.length}
           loading={isLoading}
-          illustration={<BeachPersonWaterParasolIcon />}
+          illustration={<Bath />}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
           }

@@ -1,4 +1,5 @@
 import agents from "@/components/profile/agents";
+import CampaignCard from "@/components/profile/CampaignCard";
 import { UserType } from "@/components/profile/ProfileWrapper";
 import { Badge, Button, Icon, Text, View } from "@/components/ui";
 import { DAYS } from "@/constants/user";
@@ -14,11 +15,13 @@ import {
   CreativeCommons,
   Dot,
   Globe,
+  Home,
   Key,
   Languages,
   Mail,
   MapPin,
   Phone,
+  PlusCircle,
   User,
 } from "lucide-react-native";
 import { useMemo, useState } from "react";
@@ -70,6 +73,23 @@ export function ProfileDetails({
   ].filter((p) => !!p);
   return (
     <View className="px-4 gap-6">
+      {userType == "owner" && !isAgent && (
+        <CampaignCard
+          title="Become an agent"
+          subtitle="Join TopNotch City and start connecting with clients."
+          actionLabel="Apply now"
+          actionRoute="/forms/agent"
+        />
+      )}
+      {userType == "owner" && isAgent && (
+        <CampaignCard
+          title="Upload your property"
+          subtitle="List your property for sale or rent today."
+          icon={PlusCircle}
+          actionLabel="Upload"
+          actionRoute="/property/add"
+        />
+      )}
       {(userType !== "owner" || isAgent) && (
         <View className=" gap-2 mt-2">
           <View className="gap-2 flex-row justify-between">
@@ -94,6 +114,7 @@ export function ProfileDetails({
           </View>
         </View>
       )}
+
       {(userType !== "owner" || isAgent) && (
         <View>
           {user.agent_profile?.specialties?.slice() ? (

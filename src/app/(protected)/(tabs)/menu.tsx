@@ -1,20 +1,23 @@
-"use client";
-
-import { AgentCTA } from "@/components/menu/AgentCTA";
-import { Box, Icon, Pressable, Text, View } from "@/components/ui";
+import { Icon, Pressable, Text, View } from "@/components/ui";
 import { useUser } from "@/hooks/useUser";
 import { Stack, useRouter } from "expo-router";
-import { MoreHorizontal, Search, Settings } from "lucide-react-native";
-import { chunk } from "lodash-es";
-import { FeatureCard } from "@/components/menu/FeaturedCard";
+import {
+  MoreHorizontal,
+  PlusCircle,
+  Search,
+  Share2,
+  User,
+  UserPlus,
+} from "lucide-react-native";
 import { getQuickMenuItems } from "@/components/menu/menuitems";
-import { cn } from "@/lib/utils";
 import { BodyScrollView } from "@/components/layouts/BodyScrollView";
 import AdminCards from "@/components/admin/dashboard/AdminCards";
+import AgentCards from "@/components/agent/dashboard/AgentCards";
+import { MenuListItem } from "@/components/menu/MenuListItem";
 
 export default function Menu() {
   const router = useRouter();
-  const { me, hasAuth, isAdmin, isAgent } = useUser();
+  const { me, isAdmin, isAgent } = useUser();
   const quickMenuItems = getQuickMenuItems();
   return (
     <>
@@ -30,6 +33,17 @@ export default function Menu() {
                   <Icon as={MoreHorizontal} className="w-6 h-6" />
                 </Pressable>
               </View>
+            ) : isAgent ? (
+              <View className={"px-4 flex-row gap-6"}>
+                <Pressable
+                  className="p-2 bg-background-muted rounded-full"
+                  onPress={() =>
+                    router.push(`/agents/${me?.id}/properties/add`)
+                  }
+                >
+                  <Icon as={PlusCircle} className="w-6 h-6" />
+                </Pressable>
+              </View>
             ) : undefined,
           headerRight: () => (
             <View className="px-4 flex-row gap-4">
@@ -39,40 +53,77 @@ export default function Menu() {
               >
                 <Icon as={Search} className="w-6 h-6" />
               </Pressable>
-              {me && (
-                <Pressable
-                  className="p-2 bg-background-muted rounded-full"
-                  onPress={() => router.push("/(protected)/settings")}
-                >
-                  <Icon as={Settings} className="w-6 h-6" />
-                </Pressable>
-              )}
             </View>
           ),
         }}
       />
       <BodyScrollView withBackground className="pt-2">
-        <AgentCTA />
         {isAdmin && <AdminCards />}
-        <View className="mt-6">
-          <Text className="mb-2 px-4">Shortcuts</Text>
-          <View className="flex-wrap gap-4">
-            {chunk(quickMenuItems, 2).map((row, i) => (
-              <View className={cn("flex-row gap-4 px-4")} key={i}>
-                {row.map((item) => (
-                  <FeatureCard
-                    key={item.label}
-                    label={item.label}
-                    icon={item.icon}
-                    onPress={() => {
-                      router.push(item.link as any);
-                    }}
-                  />
-                ))}
-              </View>
+        {isAgent && <AgentCards userId={me?.id!} />}
+        <View className="mt-6 px-4">
+          <Text className="mb-2 font-medium">
+            {isAgent ? "Grow your bussiness" : "Shortcuts"}
+          </Text>
+          <View className="gap-4 bg-background-muted p-4 rounded-xl border border-outline-100">
+            {quickMenuItems.map((item, i) => (
+              <MenuListItem
+                key={item.label}
+                title={item.label}
+                icon={item.icon}
+                description={item.description}
+                withBorder={i != quickMenuItems.length - 1}
+                onPress={() => item.link && router.push(item.link as any)}
+              />
             ))}
           </View>
         </View>
+        {isAgent && (
+          <View className="mt-6 px-4">
+            <Text className="mb-2 font-medium">Manage your account</Text>
+            <View className="gap-4 bg-background-muted p-4 rounded-xl border border-outline-100">
+              <MenuListItem
+                title="Profile"
+                icon={User}
+                description="Manage address, hours, websites"
+                onPress={() =>
+                  router.push({
+                    pathname: "/agents/[userId]/edit",
+                    params: {
+                      userId: me?.id!,
+                    },
+                  })
+                }
+              />
+              <MenuListItem
+                title="Followers"
+                icon={UserPlus}
+                description="View followers, following and activities"
+                onPress={() =>
+                  router.push({
+                    pathname: "/agents/[userId]/activities",
+                    params: {
+                      userId: me?.id!,
+                    },
+                  })
+                }
+              />
+              <MenuListItem
+                title="Share profile Link"
+                icon={Share2}
+                description="Invite clients and grow your network."
+                withBorder={false}
+                onPress={() =>
+                  router.push({
+                    pathname: "/agents/[userId]/qrcode",
+                    params: {
+                      userId: me?.id!,
+                    },
+                  })
+                }
+              />
+            </View>
+          </View>
+        )}
       </BodyScrollView>
     </>
   );

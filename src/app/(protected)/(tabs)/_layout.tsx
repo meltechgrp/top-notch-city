@@ -7,6 +7,7 @@ import {
   MessageSquareMore,
   MonitorPlay,
   Plus,
+  PlusCircle,
   UserCircle,
 } from "lucide-react-native";
 import { Colors } from "@/constants/Colors";
@@ -71,10 +72,12 @@ export default function TabLayout() {
       <Tabs.Screen
         name="menu"
         options={() => ({
-          title: isAdmin ? "Dashboard" : "Menu",
+          title: isAdmin ? "Dashboard" : isAgent ? "Tools" : "Menu",
           tabBarIcon: ({ color }) =>
             isAdmin ? (
               <LayoutDashboard size={22} color={color} />
+            ) : isAgent ? (
+              <PlusCircle size={22} color={color} />
             ) : (
               <Plus size={22} color={color} />
             ),

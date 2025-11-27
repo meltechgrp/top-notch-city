@@ -1,5 +1,4 @@
 import MessageListItem from "@/components/chat/MessageListItem";
-import SmartphoneChatIcon from "@/components/icons/SmartphoneChatIcon";
 import StartChatBottomSheet from "@/components/modals/StartChatBottomSheet";
 import CustomerCareBottomSheet from "@/components/modals/CustomerCareBottomSheet";
 import { Box, Icon, Pressable, View } from "@/components/ui";
@@ -8,7 +7,13 @@ import React, { useMemo, useState } from "react";
 import { RefreshControl } from "react-native";
 import { useChat } from "@/hooks/useChat";
 import { router, Tabs } from "expo-router";
-import { MoreHorizontal, Plus, Search, Users } from "lucide-react-native";
+import {
+  MessageSquare,
+  MoreHorizontal,
+  Plus,
+  Search,
+  Users,
+} from "lucide-react-native";
 import ChatsStateWrapper from "@/components/chat/ChatsStateWrapper";
 import { FilterComponent } from "@/components/admin/shared/FilterComponent";
 import { cn } from "@/lib/utils";
@@ -84,7 +89,7 @@ export default function MessagesScreen() {
         <ChatsStateWrapper
           loading={isFetching}
           isEmpty={!isFetching && (!chats || chats?.length < 1)}
-          illustration={<SmartphoneChatIcon className="relative left-4" />}
+          illustration={<MessageSquare className="relative left-4" />}
           text={
             me
               ? "You don't have any message in your inbox"
