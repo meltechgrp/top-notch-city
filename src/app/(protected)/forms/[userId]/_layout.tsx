@@ -3,6 +3,7 @@ import AppCrashScreen from "@/components/shared/AppCrashScreen";
 import headerLeft from "@/components/shared/headerLeft";
 import { useResolvedTheme } from "@/components/ui";
 import { Colors } from "@/constants/Colors";
+import Platforms from "@/constants/Plaforms";
 import { ErrorBoundaryProps, Stack } from "expo-router";
 
 export const unstable_settings = {
@@ -38,6 +39,25 @@ export default function AgentScreensLayout() {
         name="agent"
         options={{
           title: "Agent Application",
+        }}
+      />
+      <Stack.Screen
+        name="fields/[key]"
+        options={{
+          title: "Application form",
+          presentation: Platforms.isAndroid() ? "modal" : "formSheet",
+          sheetAllowedDetents: [0.8, 1],
+          gestureEnabled: false,
+          sheetGrabberVisible: true,
+          sheetExpandsWhenScrolledToEdge: false,
+          contentStyle: {
+            flex: 1,
+            paddingBottom: 0,
+            backgroundColor:
+              theme == "dark"
+                ? Colors.light.background
+                : Colors.dark.background,
+          },
         }}
       />
       <Stack.Screen

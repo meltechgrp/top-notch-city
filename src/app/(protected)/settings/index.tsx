@@ -205,7 +205,7 @@ export default function Setting() {
                   if (hasAuth) {
                     openAccessModal({ visible: true });
                   } else {
-                    router.push("/forms/agent");
+                    router.push(`/forms/${me?.id}/agent`);
                   }
                 }}
               />

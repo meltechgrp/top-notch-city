@@ -106,9 +106,6 @@ export default function SignIn() {
               me: me,
               hasAuth: true,
             }));
-            if (isAgentRequest && me.role == "user") {
-              router.push("/forms/agent");
-            }
           }
         }
         return router.push(path ? path : ("/home" as any));
@@ -138,9 +135,6 @@ export default function SignIn() {
               me: me,
               hasAuth: true,
             }));
-            if (isAgentRequest && me.role == "user") {
-              router.push("/forms/agent");
-            }
           }
         }
         return router.push(path ? path : ("/home" as any));

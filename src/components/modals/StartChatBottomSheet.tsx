@@ -115,7 +115,7 @@ export default function ConnectionsListSelectBottomSheet(props: Props) {
             <View className=" mt-6 px-6 shadow py-6 gap-4 bg-background-muted rounded-3xl">
               <TouchableOpacity
                 onPress={() => {
-                  router.push("/messages");
+                  router.push("/chats");
                   onDismiss();
                 }}
                 className="flex-row justify-between items-center"

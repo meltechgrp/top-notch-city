@@ -14,38 +14,48 @@ import {
 } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import { useTempStore } from "@/store";
-import { router, Stack, useLocalSearchParams } from "expo-router";
+import { router, Stack, useGlobalSearchParams } from "expo-router";
 import { Plus, Save, Search } from "lucide-react-native";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-export default function Edit() {
-  const { key } = useLocalSearchParams() as {
+export default function AgentApplication() {
+  const { key, userId } = useGlobalSearchParams() as {
     key: keyof ProfileUpdate;
+    userId: string;
   };
+  const { application, updateApplication } = useTempStore.getState();
+
   const [showModal, setShowModal] = useState(false);
-  const { application: user, updateApplication } = useTempStore((s) => s);
-  const me = user ?? null;
+
+  const me = application ?? null;
   const config = key ? PROFILE_FORM_CONFIG[key] : null;
 
-  if (!config) {
+  useEffect(() => {
+    if (!config) {
+      router.canGoBack()
+        ? router.back()
+        : router.push({
+            pathname: "/forms/[userId]/agent",
+            params: {
+              userId,
+            },
+          });
+    }
+  }, [config, userId]);
+
+  if (!config || !userId) {
     return <View />;
   }
 
   const parseValue = (field: string): any => {
-    const source = config.isCompany
-      ? // @ts-ignore
-        me?.agent_profile?.companies
-      : config.isAgent
-        ? // @ts-ignore
-          me?.agent_profile?.[field]
-        : // @ts-ignore
-          me?.[field];
+    // @ts-ignore
+    const source = me?.[field];
 
     if (config.isArray) {
       return Array.isArray(source) ? source.join(",") : "";
     }
     if (key == "date_of_birth") {
-      return source;
+      return source || "";
     }
     if (config.isCompany || config.inputType) {
       return JSON.stringify(source || "");
@@ -68,68 +78,38 @@ export default function Edit() {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  const parsedValue = useMemo(() => {
-    if (!config.inputType) return null;
-
-    try {
-      if (config.isArray) {
-        return form[key]
-          .split(",")
-          .map((v: string) => v.trim())
-          .filter((v: string) => v.length > 0);
-      }
-      return JSON.parse(form[key]);
-    } catch {
-      return null;
-    }
-  }, [form[key]]);
-
-  const disabled = useMemo(() => {
-    if (!config.inputType || !Array.isArray(parsedValue)) return false;
-
-    const max = config.maxLength || 0;
-    return parsedValue.length >= max;
-  }, [parsedValue]);
-
-  const hideSave = useMemo(() => {
-    if (!config.inputType) return false;
-
-    if (config.isAddress && parsedValue) return false;
-    if (config.showAddBtn && !Array.isArray(parsedValue)) return true;
-
-    if (Array.isArray(parsedValue)) {
-      return parsedValue.length < 1;
-    }
-
-    return false;
-  }, [parsedValue]);
-
   const handleSave = async () => {
-    let payload: {
-      field: keyof ProfileUpdate;
-      value: any;
-    }[] = [];
     if (config.isAddress) {
       const data = JSON.parse(form[key]);
-      payload = Object.entries(data?.addressComponents).map(
-        ([field, value]) => ({
-          field: field as keyof ProfileUpdate,
-          value,
-        })
-      );
+      let address: any = {};
+      Object.entries(data?.addressComponents).forEach(([field, value]) => {
+        address[field] = value;
+      });
+      address["latitude"] = data?.location?.latitude;
+      address["longitude"] = data?.location?.longitude;
+      updateApplication({
+        address: address,
+      });
+    } else if (config.isDocument) {
+      const data = JSON.parse(form[key]);
+      console.log(data);
+      updateApplication({
+        documents: data,
+      });
+    } else if (config.isArray) {
+      const data = form[key].split(", ");
+      updateApplication({
+        [key]: data,
+      });
     } else {
-      payload = Object.entries(form).map(([field, value]) => ({
-        field: field as keyof ProfileUpdate,
-        value,
-      }));
+      Object.entries(form).forEach(([field, value]) => {
+        updateApplication({
+          [field]: value as string,
+        });
+      });
     }
-    // await mutation.mutateAsync(payload, {
-    //   onSuccess: () => {
-    //     router.back();
-    //   },
-    // });
+    router.back();
   };
-
   return (
     <>
       <Stack.Screen
@@ -143,7 +123,6 @@ export default function Edit() {
                   "items-center w-20 and gap-2 px-3 flex-row",
                   config.isAddress && "w-28"
                 )}
-                disabled={disabled}
                 onPress={() => setShowModal(true)}
               >
                 <Text className="text-base font-bold">
@@ -184,11 +163,7 @@ export default function Edit() {
             ))}
           </View>
 
-          <Button
-            size="xl"
-            className={cn("mt-6", hideSave && "hidden")}
-            onPress={handleSave}
-          >
+          <Button size="xl" className={cn("mt-6")} onPress={handleSave}>
             <Icon as={Save} />
             <ButtonText>Save</ButtonText>
           </Button>

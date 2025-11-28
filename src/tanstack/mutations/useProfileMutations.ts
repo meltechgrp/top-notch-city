@@ -4,7 +4,7 @@ import { showErrorAlert } from "@/components/custom/CustomNotification";
 
 type UpdatePayload = { field: keyof ProfileUpdate; value: any }[];
 
-export const useProfileMutations = (userId: string) => {
+export const useProfileMutations = (userId: string, disableToast?: boolean) => {
   const queryClient = useQueryClient();
 
   const invalidateUser = () =>
@@ -16,10 +16,12 @@ export const useProfileMutations = (userId: string) => {
     },
 
     onSuccess: () => {
-      showErrorAlert({
-        title: "Profile updated successfully",
-        alertType: "success",
-      });
+      if (!disableToast) {
+        showErrorAlert({
+          title: "Profile updated successfully",
+          alertType: "success",
+        });
+      }
       invalidateUser();
     },
 

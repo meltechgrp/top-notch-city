@@ -5,6 +5,7 @@ import CustomerCareBottomSheet from "@/components/modals/CustomerCareBottomSheet
 import { ContentAccessModal } from "@/components/modals/ContentAccessModal";
 import { AgentShareSheet } from "@/components/modals/agent/AgentShareSheet";
 import { AppShareSheet } from "@/components/modals/AppShareSheet";
+import AgentApplicationBottomSheet from "@/components/modals/agent/AgentApplicationBottomSheet";
 
 export default function AuthModals() {
   const [enquiry, setEnquiry] = useState<AuthModalProps | null>(null);

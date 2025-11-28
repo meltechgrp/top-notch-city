@@ -1,5 +1,7 @@
 import eventBus from "@/lib/eventBus";
 import { Fetch } from "../utills";
+import { getUniqueIdSync } from "react-native-device-info";
+import { Platform } from "react-native";
 
 type UserResult = {
   total: number;
@@ -145,6 +147,26 @@ export async function verifyEmail({ user_id }: { user_id: string }) {
   }
   return res as { message: string };
 }
+
+export async function registerDevice() {
+  const deviceId = getUniqueIdSync();
+  const res = await Fetch(`/device/mobile/register`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: {
+      device_id: deviceId,
+      platform: Platform.OS == "ios" ? "ios" : "android",
+    },
+  });
+
+  if (res?.detail) {
+    throw new Error("Failed to update profile");
+  }
+  console.log(res);
+  return res as string;
+}
 export async function updateRole({
   user_id,
   role,
@@ -177,5 +199,16 @@ export async function deleteUser({ user_id }: { user_id: string }) {
     return res as { message: string };
   } catch (error) {
     throw new Error("Failed to DELETE profile");
+  }
+}
+
+export async function fetchDocumentTypes() {
+  try {
+    const res = await Fetch(`/document_type/read/all`, {});
+    if (res?.detail) throw new Error("Failed to Fetch Document types");
+    return res as DocumentTypes[];
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to fetch document types");
   }
 }

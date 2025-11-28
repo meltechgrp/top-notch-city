@@ -1,3 +1,4 @@
+import { fetchDocumentTypes } from "@/actions/user";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
 import DatePicker from "@/components/custom/DatePicker";
 import { AgentServicesModal } from "@/components/modals/profile/AgentServicesModal";
@@ -5,6 +6,7 @@ import {
   Company,
   CompanyModal,
 } from "@/components/modals/profile/CompanyModal";
+import { DocumentModal } from "@/components/modals/profile/DocumentModal";
 import { LanguageModal } from "@/components/modals/profile/LanguageModal";
 import { LocationModal } from "@/components/modals/profile/LocationModal";
 import { MediaPreviewModal } from "@/components/modals/profile/MediaPreviewModal";
@@ -25,6 +27,7 @@ import useGetLocation from "@/hooks/useGetLocation";
 import { useMediaUpload } from "@/hooks/useMediaUpload";
 import { getReverseGeocode } from "@/hooks/useReverseGeocode";
 import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
 import { format, isDate } from "date-fns";
 import { router } from "expo-router";
 import {
@@ -116,6 +119,8 @@ function CustomInputComponent({
         );
       case "date_of_birth":
         return <DateInput value={value} onUpdate={onUpdate} />;
+      case "documents":
+        return <DocumentsInput value={value} onUpdate={onUpdate} />;
       case "date_of_birth":
         return <DateInput value={value} onUpdate={onUpdate} />;
       case "specialties":
@@ -154,7 +159,6 @@ function CustomInputComponent({
         return <></>;
     }
   }
-
   return (
     <View
       className={cn(
@@ -249,7 +253,7 @@ export function DateInput({ value, onUpdate }: CustomInputProps) {
       <DatePicker
         label="Date of Birth"
         placeholder="Day/Month/Year"
-        value={value}
+        value={isDate(value) ? value : null}
         onChange={(val) => onUpdate(format(new Date(val), "yyyy-MM-dd"))}
         mode="date"
         modal={false}
@@ -807,5 +811,96 @@ export function MediaInput({
         processFiles={processFiles}
       />
     </View>
+  );
+}
+
+export function DocumentsInput({
+  value,
+  onUpdate,
+  showModal,
+  setShowModal,
+}: CustomInputProps) {
+  const [documents, setDocuments] = useState<AgentDocument[]>([]);
+  const [selectedDoc, setSelectedDoc] = useState<string | null>(null);
+  const { data } = useQuery({
+    queryKey: ["documents"],
+    queryFn: fetchDocumentTypes,
+  });
+  const documentData = data || [];
+
+  useEffect(() => {
+    if (!value) {
+      setDocuments([]);
+      return;
+    }
+
+    try {
+      const parsed = JSON.parse(value);
+
+      if (Array.isArray(parsed)) {
+        setDocuments(parsed);
+      } else {
+        setDocuments([]);
+      }
+    } catch (err) {
+      console.log("Invalid documents value", err);
+      setDocuments([]);
+    }
+  }, [value]);
+
+  const addDocument = (d: AgentDocument) => {
+    const updated = [...documents, d];
+    setDocuments(updated);
+    onUpdate(JSON.stringify(updated));
+  };
+
+  const removeDocument = (name: string) => {
+    const updated = documents.filter((c) => c.document_types !== name);
+    setDocuments(updated);
+    onUpdate(JSON.stringify(updated));
+  };
+  return (
+    <>
+      <View className="gap-4">
+        {documentData.map(({ name, id }) => {
+          const file = documents.find((d) => d.document_types == name);
+          return (
+            <View key={id} className="flex-row items-center justify-between ">
+              <View className="flex-row items-center gap-2">
+                <Text className="text-sm capitalize font-medium">{name}</Text>
+              </View>
+
+              <Pressable
+                onPress={() => {
+                  if (file) {
+                    removeDocument(name);
+                  }
+                  setSelectedDoc(name);
+                }}
+                className="p-2.5 rounded-xl bg-background-muted border border-outline-100"
+              >
+                {file ? (
+                  <View className="flex-row gap-3 items-center">
+                    <Text>Uploaded</Text>
+                    <Icon as={Trash2} size={"md"} color="#fff" />
+                  </View>
+                ) : (
+                  <View className="flex-row gap-3 items-center">
+                    <Text className="text-sm">Upload</Text>
+                    <Icon as={Plus} size={"md"} color="#fff" />
+                  </View>
+                )}
+              </Pressable>
+            </View>
+          );
+        })}
+      </View>
+      <DocumentModal
+        visible={!!selectedDoc}
+        onClose={() => setSelectedDoc?.(null)}
+        onSave={addDocument}
+        selected={selectedDoc || ""}
+      />
+    </>
   );
 }

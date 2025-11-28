@@ -97,6 +97,7 @@ type FieldConfig = {
   showAddBtn?: boolean;
   maxLength?: number;
   isArray?: boolean;
+  isDocument?: boolean;
 };
 
 type ProfileUpdate = {
@@ -128,6 +129,7 @@ type ProfileUpdate = {
   address: string;
   description: string;
   companies: string;
+  documents: string;
 };
 
 type FollowedAgent = {
@@ -203,14 +205,10 @@ type Application = {
     description?: string;
     phone?: string;
   }[];
-  document?: {
-    document_types?: string;
-    documents?: string;
-    documents_ids?: string;
-  };
+  documents?: AgentDocument[];
   gender?: "male" | "female" | null;
   date_of_birth?: string | null;
-  profile_image?: string | null;
+  profile_image?: Media;
   address?: {
     street?: string;
     city?: string;
@@ -219,4 +217,16 @@ type Application = {
     latitude?: number;
     longitude?: number;
   };
+};
+
+type AgentDocument = {
+  document_types: string;
+  documents?: string;
+  documents_ids?: string;
+};
+
+type DocumentTypes = {
+  id: string;
+  name: string;
+  description: string;
 };

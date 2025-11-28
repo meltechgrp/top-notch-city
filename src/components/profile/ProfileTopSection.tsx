@@ -123,7 +123,13 @@ export function ProfileTopSection({
     <>
       <View className={"px-4 py-2 mt-2"}>
         <View className={"flex-row gap-4 rounded-2xl"}>
-          <ProfileImageTrigger image={getImageUrl(user?.profile_image)}>
+          <ProfileImageTrigger
+            image={{
+              url: user?.profile_image!,
+              id: user.id,
+              media_type: "IMAGE",
+            }}
+          >
             <Avatar className="w-28 h-28 rounded-full">
               <AvatarFallbackText>{fullName(user)}</AvatarFallbackText>
               <AvatarImage

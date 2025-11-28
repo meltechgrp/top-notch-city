@@ -78,7 +78,7 @@ export function ProfileDetails({
           title="Become an agent"
           subtitle="Join TopNotch City and start connecting with clients."
           actionLabel="Apply now"
-          actionRoute="/forms/agent"
+          actionRoute={`/forms/${user?.id}/agent`}
         />
       )}
       {userType == "owner" && isAgent && (

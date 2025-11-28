@@ -1,6 +1,5 @@
 import {
   Avatar,
-  AvatarFallbackText,
   AvatarImage,
   Box,
   ImageBackground,
@@ -8,42 +7,121 @@ import {
   View,
   Text,
   Icon,
+  Button,
 } from "@/components/ui";
 import { ScrollView } from "react-native";
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { cn, composeFullAddress, fullName } from "@/lib/utils";
-import { ChevronRight, Clock, Edit } from "lucide-react-native";
-import { format } from "date-fns";
+import { ChevronRight, Edit, Upload } from "lucide-react-native";
 import { getImageUrl } from "@/lib/api";
-import { router } from "expo-router";
-import { DAYS } from "@/constants/user";
+import { router, useLocalSearchParams, useRouter } from "expo-router";
 import { useMediaUpload } from "@/hooks/useMediaUpload";
-import ImageOptionBottomSheet from "@/components/modals/profile/ImageOptionBottomSheet";
-import { MediaPreviewModal } from "@/components/modals/profile/MediaPreviewModal";
+import { format } from "date-fns";
 import { useTempStore } from "@/store";
+import { useShallow } from "zustand/react/shallow";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
+import { useMutation } from "@tanstack/react-query";
+import { uploadAgentForm } from "@/actions/agent";
+import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 
 export default function AgentFormScreen() {
-  const { application: user, updateApplication } = useTempStore((s) => s);
-  const [previewFiles, setFiles] = useState<Media[]>([]);
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const [showOptions, setShowOptions] = useState(false);
+  const { userId } = useLocalSearchParams() as {
+    userId: string;
+  };
+  const { application, updateApplication } = useTempStore(useShallow((s) => s));
+
+  const router = useRouter();
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: uploadAgentForm,
+  });
   const { pickMedia, takeMedia, setLoading, loading, progress, processFiles } =
     useMediaUpload({
       type: "image",
       maxSelection: 1,
       onSuccess: (media) => {
-        setPreviewOpen(false);
+        updateApplication({
+          profile_image: media[0],
+        });
       },
       onFiles: (media) => {
-        setFiles(media);
-        setPreviewOpen(true);
+        processFiles([{ url: media[0].url }]);
       },
     });
+
+  const user = application ?? null;
+
+  async function handleForm() {
+    if (!application)
+      return showErrorAlert({
+        title: "Please in the application form.",
+        alertType: "error",
+        duration: 2500,
+      });
+    const missingFields: string[] = [];
+
+    if (!application?.phone?.trim()) missingFields.push("Phone number");
+    if (!application?.date_of_birth) missingFields.push("Birthdate");
+    if (!application?.address) missingFields.push("Address");
+    if (!application?.gender?.trim()) missingFields.push("Gender");
+    if (!application?.about?.trim()) missingFields.push("Bio");
+    if (!application?.years_of_experience?.trim())
+      missingFields.push("Experience");
+    if (!application?.specialties) missingFields.push("Services");
+    if (!application?.documents) missingFields.push("Documents");
+
+    if (missingFields.length > 0) {
+      const message =
+        missingFields.length === 1
+          ? `${missingFields[0]} is required`
+          : `${missingFields.slice(0, -1).join(", ")} and ${
+              missingFields[missingFields.length - 1]
+            } are required`;
+
+      showErrorAlert({
+        title: message,
+        alertType: "error",
+        duration: 3000,
+      });
+
+      return;
+    }
+    const phoneRegex = /^\+?\d{7,15}$/;
+    if (!phoneRegex.test(application?.phone?.trim() || "")) {
+      showErrorAlert({
+        title: "Enter a valid phone number.",
+        alertType: "error",
+        duration: 2500,
+      });
+      return;
+    }
+
+    await mutateAsync(application, {
+      onSuccess: () => {
+        router.push({
+          pathname: "/forms/[userId]/success",
+          params: {
+            userId,
+          },
+        });
+      },
+      onError: () => {
+        showErrorAlert({
+          title: "Something went wrong during upload.",
+          alertType: "error",
+        });
+      },
+    });
+  }
   const personal = [
     {
       label: "Phone",
       value: user?.phone || "Add your phone number",
       field: "phone",
+    },
+    {
+      label: "Gender",
+      value: user?.gender || "Select your gender",
+      field: "gender",
     },
     {
       label: "Birthday",
@@ -60,13 +138,6 @@ export default function AgentFormScreen() {
   ];
   const professional = [
     {
-      label: "Social Links",
-      value: user?.social_links
-        ? `${Object.values(user.social_links).filter((s) => s.length > 1).length} social links added`
-        : "Add social links to your profile",
-      field: "social_links",
-    },
-    {
       label: "Experience",
       value: user?.years_of_experience
         ? `${user.years_of_experience} years of experience`
@@ -74,11 +145,30 @@ export default function AgentFormScreen() {
       field: "years_of_experience",
     },
     {
-      label: "Companies",
-      field: "companies",
-      value: user?.companies
-        ? `${user.companies.length} ${user.companies.length > 1 ? "companies" : "company"} added`
-        : "Add companies you work with",
+      label: "Services",
+      field: "specialties",
+      value: user?.specialties
+        ? `${user.specialties.length} services added`
+        : "Add services you offer",
+    },
+    {
+      label: "Documents",
+      field: "documents",
+      value: user?.documents
+        ? `${user.documents.length} ${user.documents.length > 1 ? "documents" : "document"} added`
+        : "Add documents for verification",
+    },
+    {
+      label: "Languages",
+      field: "languages",
+      value: user?.languages
+        ? `${user.languages.length} languages added`
+        : "Add languages to your profile",
+    },
+    {
+      label: "Website",
+      field: "website",
+      value: user?.website || "Add your webiste URL",
     },
     {
       label: "License",
@@ -86,7 +176,6 @@ export default function AgentFormScreen() {
       value: user?.license_number || "Add a license number",
     },
   ];
-
   return (
     <>
       <ImageBackground
@@ -101,13 +190,15 @@ export default function AgentFormScreen() {
             contentContainerClassName="pb-40 pt-2 gap-4"
           >
             <View className=" items-center">
-              <Pressable
-                onPress={() => setShowOptions(true)}
-                className=" gap-2 items-center"
-              >
-                <Avatar className=" w-28 h-28">
-                  <AvatarFallbackText>{fullName(user)}</AvatarFallbackText>
-                  <AvatarImage source={getImageUrl(user?.profile_image)} />
+              <Pressable onPress={pickMedia} className=" gap-2 items-center">
+                <Avatar
+                  className={cn(" w-28 h-28", loading && "bg-background-muted")}
+                >
+                  {!loading && (
+                    <AvatarImage
+                      source={getImageUrl(user?.profile_image?.url)}
+                    />
+                  )}
                 </Avatar>
                 <View className="flex-row items-center gap-1 ">
                   <Text className="text-primary">Edit picture</Text>
@@ -129,7 +220,13 @@ export default function AgentFormScreen() {
                       </View>
                       <Pressable
                         onPress={() =>
-                          router.push(`/forms/fields/${info.field}`)
+                          router.push({
+                            pathname: "/forms/[userId]/fields/[key]",
+                            params: {
+                              userId,
+                              key: info.field,
+                            },
+                          })
                         }
                         className={cn(
                           "flex-row flex-1 justify-between items-center border-b border-b-outline-100 py-4",
@@ -149,7 +246,15 @@ export default function AgentFormScreen() {
                 <View className=" gap-2 mt-2">
                   <Text className="text-typography/80">Bio</Text>
                   <Pressable
-                    onPress={() => router.push(`/forms/fields/about`)}
+                    onPress={() =>
+                      router.push({
+                        pathname: "/forms/[userId]/fields/[key]",
+                        params: {
+                          userId,
+                          key: "about",
+                        },
+                      })
+                    }
                     className="bg-background-muted border border-outline-100 rounded-xl p-4 min-h-20 py-2 flex-row items-center gap-2"
                   >
                     <View className=" flex-1 ">
@@ -186,7 +291,13 @@ export default function AgentFormScreen() {
                         </View>
                         <Pressable
                           onPress={() =>
-                            router.push(`/forms/fields/${pro.field}`)
+                            router.push({
+                              pathname: "/forms/[userId]/fields/[key]",
+                              params: {
+                                userId,
+                                key: pro.field,
+                              },
+                            })
                           }
                           className={cn(
                             "flex-row flex-1 justify-between items-center border-b border-b-outline-100 py-4"
@@ -205,24 +316,15 @@ export default function AgentFormScreen() {
                 </View>
               </View>
             </View>
+            <View className="px-4">
+              <Button onPress={handleForm} className="h-12">
+                {isPending ? <SpinningLoader /> : <Icon as={Upload} />}
+                <Text>Submit Application</Text>
+              </Button>
+            </View>
           </ScrollView>
         </Box>
       </ImageBackground>
-      <MediaPreviewModal
-        open={previewOpen || loading}
-        onClose={() => {
-          setFiles([]);
-          setPreviewOpen(false);
-          setLoading(false);
-        }}
-        data={previewFiles}
-        onDelete={(id: string) => {
-          setFiles(previewFiles.filter((item) => item.id !== id));
-        }}
-        loading={loading}
-        progress={progress}
-        processFiles={processFiles}
-      />
     </>
   );
 }

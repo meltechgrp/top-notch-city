@@ -101,11 +101,20 @@ export const PROFILE_FORM_CONFIG: Record<string, FieldConfig> = {
 
   social_links: {
     label: "Social Media Links",
-    context: "Stored as a JSON record. Useful for trust verification.",
+    context: "Useful for trust verification.",
     fields: ["social_links"],
     isAgent: true,
     inputs: [{ key: "social_links", placeholder: "Enter social URL" }],
     inputType: "social_links",
+  },
+  documents: {
+    label: "Document",
+    context: "Use for verification purpose",
+    fields: ["documents"],
+    isAgent: true,
+    inputs: [{ key: "documents", placeholder: "Enter a valid document" }],
+    inputType: "documents",
+    isDocument: true,
   },
 
   license_number: {

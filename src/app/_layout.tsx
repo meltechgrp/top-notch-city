@@ -2,14 +2,14 @@ import "./global.css";
 import React, { useEffect } from "react";
 import { GluestackUIProvider } from "@/components/ui";
 import "react-native-reanimated";
-import { ErrorBoundaryProps, router, Slot } from "expo-router";
+import { ErrorBoundaryProps, Slot } from "expo-router";
 import AppCrashScreen from "@/components/shared/AppCrashScreen";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import GlobalManager from "@/components/shared/GlobalManager";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { KeyboardProvider } from "react-native-keyboard-controller";
-import { Linking, LogBox, Platform } from "react-native";
+import { LogBox, Platform } from "react-native";
 import { cacheStorage } from "@/lib/asyncStorage";
 import { NotifierWrapper } from "react-native-notifier";
 import * as Notifications from "expo-notifications";
@@ -25,6 +25,7 @@ import {
 } from "react-native-reanimated";
 import { enableScreens } from "react-native-screens";
 import { ImageViewerProvider } from "@/components/custom/ImageViewerProvider";
+import { registerDevice } from "@/actions/user";
 enableScreens(true);
 const query = new QueryClient({
   defaultOptions: {
@@ -57,6 +58,7 @@ export default function RootLayout() {
   useMountPushNotificationToken();
   useEffect(() => {
     SplashScreen.hide();
+    (async () => await registerDevice())();
   }, []);
   return (
     <>

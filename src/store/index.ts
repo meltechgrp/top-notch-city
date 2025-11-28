@@ -163,7 +163,7 @@ type TempState = {
     buttonTitle: string;
     description?: string;
   };
-  application?: Application;
+  application?: Partial<Application>;
   totalUnreadChat: number;
   pinSetupOptions?: {
     onSuccessRoute?: string;
@@ -185,7 +185,7 @@ type TempState = {
   updateFullScreenLoading: (fullScreenLoading: boolean) => void;
   resetStore: () => void;
   resetListing: () => void;
-  updateApplication: (data: Application) => void;
+  updateApplication: (data: Partial<Application>) => void;
   resetEmail: () => void;
   saveEmail: (email: string) => void;
   updateListing: (data: Listing) => void;
@@ -228,5 +228,6 @@ export const useTempStore = create<TempState>((set, get) => ({
     })),
   updatetotalUnreadChat: (data) =>
     set((s) => ({ ...s, totalUnreadChat: data })),
-  updateApplication: (data) => set((s) => ({ ...s, application: data })),
+  updateApplication: (data) =>
+    set((s) => ({ ...s, application: { ...s.application, ...data } })),
 }));
