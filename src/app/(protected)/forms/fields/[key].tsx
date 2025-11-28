@@ -13,35 +13,19 @@ import {
   View,
 } from "@/components/ui";
 import { cn } from "@/lib/utils";
-import { useProfileMutations } from "@/tanstack/mutations/useProfileMutations";
-import { useQuery } from "@tanstack/react-query";
-import { router, Stack, useGlobalSearchParams } from "expo-router";
+import { useTempStore } from "@/store";
+import { router, Stack, useLocalSearchParams } from "expo-router";
 import { Plus, Save, Search } from "lucide-react-native";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 export default function Edit() {
-  const { key, userId } = useGlobalSearchParams() as {
+  const { key } = useLocalSearchParams() as {
     key: keyof ProfileUpdate;
-    userId: string;
   };
-  const { mutation } = useProfileMutations(userId);
-
   const [showModal, setShowModal] = useState(false);
-  const { data: user } = useQuery({
-    queryKey: ["user", userId],
-    queryFn: () => getUser(userId),
-  });
-
+  const { application: user, updateApplication } = useTempStore((s) => s);
   const me = user ?? null;
   const config = key ? PROFILE_FORM_CONFIG[key] : null;
-
-  useEffect(() => {
-    if (!config) {
-      router.canGoBack()
-        ? router.back()
-        : router.push(`/agents/${userId}/account`);
-    }
-  }, [config, userId]);
 
   if (!config) {
     return <View />;
@@ -139,11 +123,11 @@ export default function Edit() {
         value,
       }));
     }
-    await mutation.mutateAsync(payload, {
-      onSuccess: () => {
-        router.back();
-      },
-    });
+    // await mutation.mutateAsync(payload, {
+    //   onSuccess: () => {
+    //     router.back();
+    //   },
+    // });
   };
 
   return (
@@ -205,7 +189,7 @@ export default function Edit() {
             className={cn("mt-6", hideSave && "hidden")}
             onPress={handleSave}
           >
-            {mutation.isPending ? <SpinningLoader /> : <Icon as={Save} />}
+            <Icon as={Save} />
             <ButtonText>Save</ButtonText>
           </Button>
         </KeyboardDismissPressable>

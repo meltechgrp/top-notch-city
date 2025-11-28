@@ -17,7 +17,7 @@ export default function AppCrashScreen() {
         <View className="py-6 flex-1 pt-20">
           <View className="flex-1 justify-center px-4">
             <View className="items-center mb-8">
-              <Bomb width={64} height={64} />
+              <Bomb color={"white"} width={64} height={64} />
             </View>
             <Text className="text-center text-typography text-2xl font-semibold">
               Something went wrong!

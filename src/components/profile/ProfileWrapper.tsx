@@ -26,7 +26,8 @@ import ProfileSkeleton from "@/components/skeleton/ProfileSkeleton";
 import { RefreshControl } from "react-native";
 import { UserActionsBottomSheet } from "@/components/admin/users/UserBottomSheet";
 import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
-import { useStore } from "@/store";
+import eventBus from "@/lib/eventBus";
+import { useUser } from "@/hooks/useUser";
 
 export type UserType = "visitor" | "owner" | "admin";
 
@@ -44,15 +45,15 @@ export function ProfileWrapper({
   tabs,
   userType = "visitor",
   userId,
-  isAgent = false,
 }: ProfileWrapperProps) {
-  const updateProfile = useStore.getState().updateProfile;
+  const { isAgent } = useUser();
   const [showActions, setShowActions] = useState(false);
   const [activeTab, setActiveTab] = useState<(typeof tabs)[number]>(tabs[0]);
   const { data, isLoading, refetch, isRefetching } = useQuery({
     queryKey: ["user", userId],
     queryFn: () => getUser(userId!),
     enabled: !!userId,
+    staleTime: 0,
   });
 
   const user = useMemo(() => data ?? null, [data]);
@@ -79,19 +80,9 @@ export function ProfileWrapper({
 
   const stickyHeaderIndices = [0, 1];
   useEffect(() => {
-    if (user && userType == "owner") {
-      updateProfile({
-        role: user.role,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        address: user.address,
-        gender: user.gender,
-        phone: user.phone,
-      });
-    }
-  }, [user]);
+    eventBus.dispatchEvent("REFRESH_PROFILE", null);
+  }, [data?.role]);
   useRefreshOnFocus(refetch);
-  if (!isLoading && !user) return <NotLoggedInProfile userType={userType} />;
   return (
     <>
       <Stack.Screen
@@ -100,16 +91,6 @@ export function ProfileWrapper({
             ? () => {
                 switch (userType) {
                   case "owner":
-                    return (
-                      <View className="px-4 flex-row gap-6">
-                        <Pressable
-                          className="p-2 bg-background-muted rounded-full"
-                          onPress={() => {}}
-                        >
-                          <Icon as={Plus} className="w-6 h-6" />
-                        </Pressable>
-                      </View>
-                    );
                     return (
                       <View className="px-4 flex-row gap-6">
                         <Pressable
@@ -169,7 +150,7 @@ export function ProfileWrapper({
           <FlashList
             data={dataForTab}
             refreshControl={
-              <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+              <RefreshControl refreshing={false} onRefresh={refetch} />
             }
             keyExtractor={(_, idx) => `${activeTab}-${idx}`}
             renderItem={({ item }) => {
@@ -260,7 +241,7 @@ export function ProfileWrapper({
   );
 }
 
-function NotLoggedInProfile({ userType }: { userType: UserType }) {
+export function NotLoggedInProfile({ userType }: { userType: UserType }) {
   return (
     <View className="flex-1 items-center justify-center p-6 bg-background">
       <View className="bg-background-muted p-6 items-center justify-center border border-outline-100 rounded-2xl">

@@ -3,7 +3,7 @@ export const PROFILE_FORM_CONFIG: Record<string, FieldConfig> = {
     label: "Full Name",
     context:
       "We request all parts of your name for better verification and to ensure users can correctly identify you.",
-    fields: ["first_name", "middle_name", "last_name"],
+    fields: ["first_name", "last_name"],
     inputs: [
       { key: "first_name", placeholder: "Enter first name" },
       { key: "last_name", placeholder: "Enter last name" },

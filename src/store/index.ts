@@ -35,7 +35,7 @@ type Actions = {
   getDeviceId: () => string;
   setIsAdmin: (isAdmin: boolean) => void;
   setIsOnboarded: (isOnboarded: boolean) => void;
-  updateProfile: (data: Partial<Me>) => void;
+  updateProfile: (data: Me) => void;
   updateLocation: (data: LocationObjectCoords) => void;
   setMediaViewer: (
     mediaViewer: Media[],
@@ -43,7 +43,6 @@ type Actions = {
     isVideoReady?: boolean
   ) => void;
 
-  // 🔹 New Actions for property lists
   setTopProperties: (properties: Property[]) => void;
   clearTopProperties: () => void;
 
@@ -106,19 +105,7 @@ export const useStore = create<StateAndActions>(
       setIsOnboarded(isOnboarded) {
         set((state) => ({ ...state, isOnboarded }));
       },
-      updateProfile: (data) =>
-        set((state) => {
-          if (!state.me) {
-            return { me: { ...data } as Me };
-          }
-
-          return {
-            me: {
-              ...state.me,
-              ...data,
-            },
-          };
-        }),
+      updateProfile: (data) => set((state) => ({ ...state, me: data })),
 
       // 🔹 Property list actions
       setTopProperties: (properties) =>
@@ -176,6 +163,7 @@ type TempState = {
     buttonTitle: string;
     description?: string;
   };
+  application?: Application;
   totalUnreadChat: number;
   pinSetupOptions?: {
     onSuccessRoute?: string;
@@ -197,6 +185,7 @@ type TempState = {
   updateFullScreenLoading: (fullScreenLoading: boolean) => void;
   resetStore: () => void;
   resetListing: () => void;
+  updateApplication: (data: Application) => void;
   resetEmail: () => void;
   saveEmail: (email: string) => void;
   updateListing: (data: Listing) => void;
@@ -213,7 +202,6 @@ const initialTempState = {
   },
   totalUnreadChat: 0,
 };
-// temporary store
 export const useTempStore = create<TempState>((set, get) => ({
   ...initialTempState,
   updateFullScreenLoading: (fullScreenLoading: boolean) =>
@@ -240,4 +228,5 @@ export const useTempStore = create<TempState>((set, get) => ({
     })),
   updatetotalUnreadChat: (data) =>
     set((s) => ({ ...s, totalUnreadChat: data })),
+  updateApplication: (data) => set((s) => ({ ...s, application: data })),
 }));

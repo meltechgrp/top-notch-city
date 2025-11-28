@@ -58,7 +58,6 @@ export default function QrCodeScreen() {
   };
 
   const animatedStyle = useAnimatedStyle(() => {
-    // this is just to re-render and trigger withTiming transitions
     return {};
   });
 

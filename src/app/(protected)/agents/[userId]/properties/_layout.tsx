@@ -21,6 +21,12 @@ export default function PropertiesLayout() {
       }}
     >
       <Stack.Screen
+        name="index"
+        options={{
+          headerTitle: "My Properties",
+        }}
+      />
+      <Stack.Screen
         name="add"
         options={{
           headerTitle: "",

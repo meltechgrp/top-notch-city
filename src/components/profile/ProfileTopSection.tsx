@@ -24,6 +24,7 @@ import { router } from "expo-router";
 import { useFollowAgent } from "@/hooks/useFollowAgent";
 import { UserType } from "@/components/profile/ProfileWrapper";
 import { Rating } from "@/components/agent/Rating";
+import { ProfileImageTrigger } from "@/components/custom/ImageViewerProvider";
 
 export function ProfileTopSection({
   user,
@@ -122,13 +123,16 @@ export function ProfileTopSection({
     <>
       <View className={"px-4 py-2 mt-2"}>
         <View className={"flex-row gap-4 rounded-2xl"}>
-          <Avatar className=" w-28 h-28 rounded-full">
-            <AvatarFallbackText>{fullName(user)}</AvatarFallbackText>
-            <AvatarImage
-              className="rounded-full"
-              source={getImageUrl(user?.profile_image)}
-            />
-          </Avatar>
+          <ProfileImageTrigger image={getImageUrl(user?.profile_image)}>
+            <Avatar className="w-28 h-28 rounded-full">
+              <AvatarFallbackText>{fullName(user)}</AvatarFallbackText>
+              <AvatarImage
+                className="rounded-full"
+                source={getImageUrl(user?.profile_image)}
+              />
+            </Avatar>
+          </ProfileImageTrigger>
+
           <View className="flex-1">
             <View className="">
               <View className="flex-row justify-between items-center">

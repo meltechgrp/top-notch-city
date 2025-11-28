@@ -24,6 +24,7 @@ import {
   ReanimatedLogLevel,
 } from "react-native-reanimated";
 import { enableScreens } from "react-native-screens";
+import { ImageViewerProvider } from "@/components/custom/ImageViewerProvider";
 enableScreens(true);
 const query = new QueryClient({
   defaultOptions: {
@@ -65,7 +66,9 @@ export default function RootLayout() {
             <KeyboardProvider>
               <BottomSheetModalProvider>
                 <QueryClientProvider client={query}>
-                  <Slot />
+                  <ImageViewerProvider>
+                    <Slot />
+                  </ImageViewerProvider>
                   <GlobalManager />
                 </QueryClientProvider>
               </BottomSheetModalProvider>

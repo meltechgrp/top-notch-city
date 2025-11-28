@@ -18,27 +18,27 @@ export function useUser() {
     } else {
       return false;
     }
-  }, [me]);
+  }, [me?.role, auth]);
   const isAgent = useMemo(() => {
     if (me?.role == "agent" || me?.role == "staff_agent") {
       return true;
     } else {
       return false;
     }
-  }, [me]);
+  }, [me?.role, auth]);
   const isStaff = useMemo(() => {
     if (me?.role == "staff") {
       return true;
     } else {
       return false;
     }
-  }, [me]);
+  }, [me?.role, auth]);
   const hasAuth = useMemo(() => {
     if (me?.role == "user" || auth) {
       return true;
     } else {
       return false;
     }
-  }, [me]);
+  }, [me?.role, auth]);
   return { isAdmin, isAgent, isStaff, hasAuth, me };
 }

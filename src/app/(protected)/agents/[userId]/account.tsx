@@ -10,7 +10,7 @@ import {
   Icon,
 } from "@/components/ui";
 import { RefreshControl, ScrollView } from "react-native";
-import React, { Suspense, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { cn, composeFullAddress, fullName } from "@/lib/utils";
 import { ChevronRight, Clock, Edit } from "lucide-react-native";
 import { format } from "date-fns";
@@ -43,7 +43,7 @@ export default function UserAccount() {
   const { pickMedia, takeMedia, setLoading, loading, progress, processFiles } =
     useMediaUpload({
       type: "image",
-      maxSelection: 7,
+      maxSelection: 1,
       onSuccess: (media) => {
         setPreviewOpen(false);
         mutation.mutateAsync([
@@ -70,6 +70,11 @@ export default function UserAccount() {
       label: "Phone",
       value: user?.phone,
       field: "phone",
+    },
+    {
+      label: "Gender",
+      value: user?.gender,
+      field: "gender",
     },
     {
       label: "Birthday",
@@ -242,11 +247,9 @@ export default function UserAccount() {
                         }
                         className="flex-row justify-between items-center py-4 flex-1"
                       >
-                        <Suspense>
-                          <WorkingDays
-                            days={user?.agent_profile?.working_hours}
-                          />
-                        </Suspense>
+                        <WorkingDays
+                          days={user?.agent_profile?.working_hours}
+                        />
                         <View className="ml-10 flex-row gap-2 items-center">
                           <Icon as={ChevronRight} />
                         </View>
@@ -349,11 +352,10 @@ type DayValue = string | undefined;
 export function WorkingDays({ days }: { days?: Record<string, string> }) {
   const record = useMemo(() => {
     const base: Record<string, DayValue> = {};
-    DAYS.forEach((d) => (base[d.toLowerCase()] = undefined));
-
+    DAYS.forEach((d) => (base[d] = undefined));
     if (days) {
       Object.entries(days).forEach(([day, val]) => {
-        const normalizedDay = day.trim().toLowerCase();
+        const normalizedDay = day.trim();
         if (base.hasOwnProperty(normalizedDay)) {
           base[normalizedDay] = val?.trim() || undefined;
         }

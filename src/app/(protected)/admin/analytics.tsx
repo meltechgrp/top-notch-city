@@ -9,7 +9,7 @@ import { useRefresh } from "@react-native-community/hooks";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 
-export default function OverView() {
+export default function AdminAnalytics() {
   const { data, refetch, isFetching, isLoading } = useQuery({
     queryKey: ["admin-dashboard"],
     queryFn: fetchAdminDashboardStats,

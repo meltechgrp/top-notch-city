@@ -1,4 +1,7 @@
-import { ProfileWrapper } from "@/components/profile/ProfileWrapper";
+import {
+  NotLoggedInProfile,
+  ProfileWrapper,
+} from "@/components/profile/ProfileWrapper";
 import { useUser } from "@/hooks/useUser";
 import { getAuthToken } from "@/lib/secureStore";
 
@@ -25,6 +28,8 @@ export default function ProfileScreen() {
       },
     ],
   ].filter((s) => !!s);
+
+  if (!auth && !me) return <NotLoggedInProfile userType={"owner"} />;
   return (
     <>
       <ProfileWrapper

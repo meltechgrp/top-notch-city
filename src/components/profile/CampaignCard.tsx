@@ -3,6 +3,7 @@ import { View } from "react-native";
 import { Box, Text, Pressable, Icon } from "@/components/ui";
 import { Megaphone } from "lucide-react-native";
 import { router } from "expo-router";
+import { cn } from "@/lib/utils";
 
 type CampaignCardProps = {
   title: string;
@@ -10,6 +11,7 @@ type CampaignCardProps = {
   icon?: any;
   actionLabel?: string;
   actionRoute: string;
+  className?: string;
 };
 
 export default function CampaignCard({
@@ -18,9 +20,15 @@ export default function CampaignCard({
   icon = Megaphone,
   actionLabel = "Get started",
   actionRoute,
+  className,
 }: CampaignCardProps) {
   return (
-    <Box className="bg-background-muted rounded-xl p-4 flex-row items-center justify-between shadow-md">
+    <Box
+      className={cn(
+        "bg-background-muted rounded-xl p-4 flex-row items-center justify-between shadow-md",
+        className
+      )}
+    >
       <View className="bg-primary/10 p-3 rounded-full">
         <Icon as={icon} className="text-primary w-6 h-6" />
       </View>

@@ -249,11 +249,7 @@ export function DateInput({ value, onUpdate }: CustomInputProps) {
       <DatePicker
         label="Date of Birth"
         placeholder="Day/Month/Year"
-        value={
-          value && isDate(new Date(value))
-            ? format(new Date(value), "yyyy-MM-dd")
-            : null
-        }
+        value={value}
         onChange={(val) => onUpdate(format(new Date(val), "yyyy-MM-dd"))}
         mode="date"
         modal={false}

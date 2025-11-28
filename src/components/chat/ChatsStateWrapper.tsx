@@ -2,22 +2,20 @@ import React from "react";
 import EmptyState, { EmptyStateProps } from "@/components/shared/EmptyState";
 import { ScrollView } from "react-native";
 import { ChatItemSkeleton } from "@/components/skeleton/ChatItemSkeleton";
+import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
+import { LogIn, MessageSquare } from "lucide-react-native";
+import { router } from "expo-router";
 
-type Props = EmptyStateProps & {
+type Props = {
   children: React.ReactNode;
   isEmpty?: Boolean;
+  loading?: Boolean;
 };
 
 export default function ChatsStateWrapper({
   children,
   loading,
   isEmpty,
-  refreshControl,
-  text,
-  cta,
-  illustration,
-  contentWrapperStyle,
-  contentWrapperClassName,
 }: Props) {
   if (loading) {
     return (
@@ -38,13 +36,14 @@ export default function ChatsStateWrapper({
 
   if (isEmpty) {
     return (
-      <EmptyState
-        illustration={illustration}
-        text={text}
-        cta={cta}
-        refreshControl={refreshControl}
-        contentWrapperStyle={contentWrapperStyle}
-        contentWrapperClassName={contentWrapperClassName}
+      <MiniEmptyState
+        icon={MessageSquare}
+        className="pt-8"
+        title="Account needed"
+        description="Login to enjoy our messaging feature"
+        onPress={() => router.push("/signin")}
+        subIcon={LogIn}
+        buttonLabel="Login / Signup"
       />
     );
   }

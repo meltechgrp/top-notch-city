@@ -55,16 +55,18 @@ export default function MessagesScreen() {
     <>
       <Tabs.Screen
         options={{
-          headerLeft: () => (
-            <View className="px-4 flex-row gap-4">
-              <Pressable
-                className="p-2 bg-background-muted rounded-full"
-                onPress={() => setFriendsModal(true)}
-              >
-                <Icon as={Plus} className="w-6 h-6" />
-              </Pressable>
-            </View>
-          ),
+          headerLeft: me
+            ? () => (
+                <View className="px-4 flex-row gap-4">
+                  <Pressable
+                    className="p-2 bg-background-muted rounded-full"
+                    onPress={() => setFriendsModal(true)}
+                  >
+                    <Icon as={Plus} className="w-6 h-6" />
+                  </Pressable>
+                </View>
+              )
+            : undefined,
           headerRight: () => (
             <View className="px-4 flex-row gap-4">
               <Pressable
@@ -86,19 +88,7 @@ export default function MessagesScreen() {
         }}
       />
       <Box className="flex-1">
-        <ChatsStateWrapper
-          loading={isFetching}
-          isEmpty={!isFetching && (!chats || chats?.length < 1)}
-          illustration={<MessageSquare className="relative left-4" />}
-          text={
-            me
-              ? "You don't have any message in your inbox"
-              : "Login to enjoy our messaging feature"
-          }
-          refreshControl={
-            <RefreshControl refreshing={loading} onRefresh={refetch} />
-          }
-        >
+        <ChatsStateWrapper loading={loading} isEmpty={!me}>
           <View className="flex-1">
             <FlashList
               data={filteredData}

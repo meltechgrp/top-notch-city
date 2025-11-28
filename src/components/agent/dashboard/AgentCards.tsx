@@ -8,7 +8,7 @@ import CampaignCard from "@/components/profile/CampaignCard";
 
 export default function AgentCards({ userId }: { userId: string }) {
   const { data } = useQuery({
-    queryKey: ["admin-dashboard"],
+    queryKey: ["agent-dashboard"],
     queryFn: fetchAgentDashboardStats,
   });
   const router = useRouter();

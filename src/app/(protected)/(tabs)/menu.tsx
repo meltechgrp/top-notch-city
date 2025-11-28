@@ -14,6 +14,7 @@ import { BodyScrollView } from "@/components/layouts/BodyScrollView";
 import AdminCards from "@/components/admin/dashboard/AdminCards";
 import AgentCards from "@/components/agent/dashboard/AgentCards";
 import { MenuListItem } from "@/components/menu/MenuListItem";
+import CampaignCard from "@/components/profile/CampaignCard";
 
 export default function Menu() {
   const router = useRouter();
@@ -60,9 +61,18 @@ export default function Menu() {
       <BodyScrollView withBackground className="pt-2">
         {isAdmin && <AdminCards />}
         {isAgent && <AgentCards userId={me?.id!} />}
+        {!me && (
+          <CampaignCard
+            title="Ready to buy/rent/sell?"
+            subtitle="Upload listings / explore amazing properties around you with one account."
+            actionLabel="Login"
+            className="mt-8 mx-4"
+            actionRoute={`/signin`}
+          />
+        )}
         <View className="mt-6 px-4">
           <Text className="mb-2 font-medium">
-            {isAgent ? "Grow your bussiness" : "Shortcuts"}
+            {isAgent ? "Grow your bussiness" : "Explore"}
           </Text>
           <View className="gap-4 bg-background-muted p-4 rounded-xl border border-outline-100">
             {quickMenuItems.map((item, i) => (

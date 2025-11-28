@@ -16,3 +16,11 @@ export const fetchAgentDashboardStats = async () => {
     throw new Error("Failed to fetch subcategories");
   }
 };
+export const fetchAgentFullDashboardStats = async () => {
+  try {
+    const res = await Fetch(`/dashboard/web/agent/summary`, {});
+    return res as AgentAnalyticsResponse;
+  } catch (error) {
+    throw new Error("Failed to fetch subcategories");
+  }
+};

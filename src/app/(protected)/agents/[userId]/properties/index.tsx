@@ -1,12 +1,14 @@
 import { FilterComponent } from "@/components/admin/shared/FilterComponent";
 import VerticalProperties from "@/components/property/VerticalProperties";
-import { Box } from "@/components/ui";
+import { Box, Icon, Pressable, View } from "@/components/ui";
 import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
 import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
-import { useRouter } from "expo-router";
+import { Stack, useGlobalSearchParams, useRouter } from "expo-router";
+import { PlusCircle } from "lucide-react-native";
 import { useMemo, useState } from "react";
 
 export default function AgentProperties() {
+  const { userId } = useGlobalSearchParams() as { userId: string };
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [actveTab, setActiveTab] = useState("all");
@@ -70,7 +72,28 @@ export default function AgentProperties() {
   }, [search, setSearch, tabs, actveTab]);
   return (
     <>
-      <Box className="flex-1 px-4">
+      <Stack.Screen
+        options={{
+          headerRight: () => (
+            <View className=" flex-row">
+              <Pressable
+                className="p-2 bg-background-muted rounded-full"
+                onPress={() =>
+                  router.push({
+                    pathname: "/agents/[userId]/properties/add",
+                    params: {
+                      userId,
+                    },
+                  })
+                }
+              >
+                <Icon as={PlusCircle} className="w-6 text-primary h-6" />
+              </Pressable>
+            </View>
+          ),
+        }}
+      />
+      <Box className="flex-1 px-4 py-2">
         <VerticalProperties
           isLoading={isLoading}
           data={filteredData}

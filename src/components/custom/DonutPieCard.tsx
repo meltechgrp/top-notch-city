@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, useResolvedTheme } from "@/components/ui";
 import { PieChart } from "react-native-gifted-charts";
-import { cn } from "@/lib/utils"; // if you're using class merging utility like clsx or cn()
+import { cn, formatNumberCompact } from "@/lib/utils";
 import { Colors } from "@/constants/Colors";
 
 interface PieInput {
@@ -21,6 +21,11 @@ const predefinedColors = [
   { color: "#FFA5BA", gradientCenterColor: "#FF7F97" },
   { color: "#6CFF6C", gradientCenterColor: "#3FBF3F" },
   { color: "#FFC93C", gradientCenterColor: "#FFB800" },
+  { color: "#FF6F61", gradientCenterColor: "#E63946" },
+  { color: "#00C2FF", gradientCenterColor: "#0096C7" },
+  { color: "#9D4EDD", gradientCenterColor: "#7B2CBF" },
+  { color: "#FF9F1C", gradientCenterColor: "#FF6F00" },
+  { color: "#06D6A0", gradientCenterColor: "#118C7E" },
 ];
 
 export default function DonutPieChart({ title = "Performance", data }: Props) {
@@ -49,12 +54,16 @@ export default function DonutPieChart({ title = "Performance", data }: Props) {
   );
 
   const renderLegendComponent = () => (
-    <View className="flex-row flex-wrap justify-center gap-x-6 gap-y-2">
+    <View className="flex-row flex-wrap justify-between gap-x-2 gap-y-2">
       {pieData.map((item, index) => (
-        <View key={index} className="flex-row gap-2 items-center w-36">
+        <View key={index} className="flex-row gap-1 items-center w-[31%]">
           {renderDot(item.gradientCenterColor)}
-          <Text className=" capitalize">{item.label}:</Text>
-          <Text>{item.value}%</Text>
+          <Text className="text-sm text-typography/80 capitalize">
+            {item.label}:
+          </Text>
+          <Text className="text-sm font-medium">
+            {formatNumberCompact(item.value)}
+          </Text>
         </View>
       ))}
     </View>
@@ -81,7 +90,7 @@ export default function DonutPieChart({ title = "Performance", data }: Props) {
             centerLabelComponent={() => (
               <View className="items-center justify-center">
                 <Text className=" text-xl font-bold">
-                  {focusedItem?.value}%
+                  {formatNumberCompact(focusedItem?.value)}%
                 </Text>
                 <Text className=" text-sm">{focusedItem?.label}</Text>
               </View>

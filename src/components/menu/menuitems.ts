@@ -78,7 +78,7 @@ export const getQuickMenuItems = () => {
     {
       label: "Analytics",
       icon: ChartColumn,
-      link: "/agents/analytics",
+      link: `/agents/${me?.id}/analytics`,
       role: "agent",
       description: "Track your performance and insights.",
     },
@@ -100,7 +100,7 @@ export const getQuickMenuItems = () => {
     {
       label: "My Properties",
       icon: ReceiptText,
-      link: "/agents/properties",
+      link: `/agents/${me?.id}/properties`,
       role: "agent",
       description: "Manage all your listed properties.",
     },

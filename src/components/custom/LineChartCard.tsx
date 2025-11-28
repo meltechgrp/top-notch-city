@@ -1,3 +1,4 @@
+import { Dropdown } from "@/components/custom/Dropdown";
 import { Text, useResolvedTheme, View } from "@/components/ui";
 import { Colors } from "@/constants/Colors";
 import { cn } from "@/lib/utils";
@@ -32,10 +33,10 @@ export default function LineChartCard({
         value: item.views || 1,
         dataPointText: item.views.toString(),
         labelComponent:
-          index % 3 === 0
+          index % 2 === 0
             ? () => (
-                <View style={{ width: 70, marginLeft: 7 }}>
-                  <Text className="text-lg font-normal">
+                <View style={{ width: 50, marginLeft: 7 }}>
+                  <Text className="text-sm font-normal">
                     {format(new Date(item.date), "dd MMM")}
                   </Text>
                 </View>
@@ -50,7 +51,7 @@ export default function LineChartCard({
         onLayout={onLayout}
         className="flex-1 bg-background-muted rounded-xl gap-4 p-4 px-2"
       >
-        <View className="px-2">
+        <View className="px-2 flex-row justify-between">
           <Text className="text-xl">{title}</Text>
         </View>
         <View>

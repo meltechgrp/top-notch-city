@@ -1,11 +1,10 @@
-import AppCrashScreen from "@/components/shared/AppCrashScreen";
 import headerLeft from "@/components/shared/headerLeft";
 import { useResolvedTheme } from "@/components/ui";
 import { Colors } from "@/constants/Colors";
 import Platforms from "@/constants/Plaforms";
 import { fullName } from "@/lib/utils";
 import { useStore } from "@/store";
-import { ErrorBoundaryProps, Stack } from "expo-router";
+import { Stack } from "expo-router";
 
 export const unstable_settings = {
   initialRouteName: "index",
@@ -82,6 +81,18 @@ export default function ProfileScreensLayout() {
         }}
       />
       <Stack.Screen
+        name="properties"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="analytics"
+        options={{
+          headerTitle: "Analytics",
+        }}
+      />
+      <Stack.Screen
         name="activities"
         options={{
           headerTitle: me ? fullName(me) : "Activities",
@@ -91,9 +102,4 @@ export default function ProfileScreensLayout() {
       />
     </Stack>
   );
-}
-
-// todo: move to app root layout
-export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
-  return <AppCrashScreen />;
 }

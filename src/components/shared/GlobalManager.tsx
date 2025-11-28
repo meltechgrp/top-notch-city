@@ -5,10 +5,12 @@ import { useStore, useTempStore } from "@/store";
 import React, { useEffect } from "react";
 import AuthModals from "../globals/AuthModals";
 import config from "@/config";
+import useResetAppState from "@/hooks/useResetAppState";
 
 export default function GlobalManager() {
   const setMe = useStore((s) => s.updateProfile);
   const hasAuth = useStore((s) => s.hasAuth);
+  const resetAppState = useResetAppState();
   async function unsetAuthToken() {
     useStore.setState((s) => ({ me: undefined, hasAuth: false }));
     useTempStore.getState().resetStore();
@@ -25,14 +27,14 @@ export default function GlobalManager() {
         },
       });
       if (resp.status >= 400) {
-        return await unsetAuthToken();
+        return await resetAppState();
       }
       const res = await resp.json();
       if (
         res?.detail?.includes("expired") ||
         res?.detail?.includes("Not authenticated")
       ) {
-        return await unsetAuthToken();
+        return await resetAppState();
       }
       if (!res?.detail) {
         setMe(res);
@@ -42,7 +44,7 @@ export default function GlobalManager() {
         err?.detail?.includes("expired") ||
         err?.detail?.includes("Not authenticated")
       ) {
-        return await unsetAuthToken();
+        return await resetAppState();
       }
     }
   }

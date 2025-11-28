@@ -142,7 +142,6 @@ export function useInfinityQueries({
           const { page, pages } = lastPage;
           return page < pages ? page + 1 : undefined;
         },
-        enabled: !!profileId && enabled,
       });
     }
     case "admin": {

@@ -73,7 +73,7 @@ export function ProfileDetails({
   ].filter((p) => !!p);
   return (
     <View className="px-4 gap-6">
-      {userType == "owner" && !isAgent && (
+      {userType == "owner" && user?.role == "user" && (
         <CampaignCard
           title="Become an agent"
           subtitle="Join TopNotch City and start connecting with clients."

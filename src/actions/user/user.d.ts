@@ -183,3 +183,40 @@ interface Blocked {
   profile_image: string;
   email: string;
 }
+
+type Application = {
+  phone?: string | null;
+  license_number?: string;
+  languages?: string[];
+  specialties?: string[];
+  years_of_experience?: string;
+  working_hours?: Record<string, string>;
+  social_links?: Record<string, string>;
+  about?: string;
+  website?: string;
+  working_hours?: Record<string, string>;
+  companies?: {
+    name: string;
+    address?: string;
+    website?: string;
+    email?: string;
+    description?: string;
+    phone?: string;
+  }[];
+  document?: {
+    document_types?: string;
+    documents?: string;
+    documents_ids?: string;
+  };
+  gender?: "male" | "female" | null;
+  date_of_birth?: string | null;
+  profile_image?: string | null;
+  address?: {
+    street?: string;
+    city?: string;
+    state?: string;
+    country?: string;
+    latitude?: number;
+    longitude?: number;
+  };
+};

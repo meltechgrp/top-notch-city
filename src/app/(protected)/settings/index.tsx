@@ -2,7 +2,6 @@ import {
   Avatar,
   AvatarFallbackText,
   AvatarImage,
-  Icon,
   Pressable,
   Text,
   useResolvedTheme,
@@ -11,11 +10,9 @@ import {
 import { useRouter } from "expo-router";
 import { Alert, Share } from "react-native";
 import {
-  Heart,
   HelpCircle,
   House,
   LayoutDashboard,
-  LogOut,
   NotebookText,
   Settings,
   Share2,
