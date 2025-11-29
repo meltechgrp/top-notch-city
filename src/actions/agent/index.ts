@@ -1,15 +1,9 @@
-import axios from "axios";
-import { getAuthToken } from "@/lib/secureStore";
-import config from "@/config";
 import { format } from "date-fns";
 import { Fetch } from "../utills";
-import { getUniqueIdSync } from "react-native-device-info";
 
 export async function uploadAgentForm(form: Partial<Application>) {
   try {
     const data = new FormData();
-    const authToken = getAuthToken();
-    const deviceId = getUniqueIdSync();
 
     form?.phone && data.append("phone", form.phone);
     form?.about && data.append("about", form.about);

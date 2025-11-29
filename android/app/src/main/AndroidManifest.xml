@@ -50,7 +50,9 @@
       </intent-filter>
       <intent-filter android:autoVerify="true" data-generated="true">
         <action android:name="android.intent.action.VIEW"/>
-        <data android:scheme="https" android:host="topnotchcity.com" android:pathPrefix="/"/>
+        <data android:scheme="https" android:host="topnotchcity.com" android:pathPrefix="/property"/>
+        <data android:scheme="https" android:host="topnotchcity.com" android:pathPrefix="/agents"/>
+        <data android:scheme="https" android:host="topnotchcity.com" android:pathPrefix="/reels"/>
         <data android:scheme="com.meltech.topnotchcity"/>
         <category android:name="android.intent.category.BROWSABLE"/>
         <category android:name="android.intent.category.DEFAULT"/>

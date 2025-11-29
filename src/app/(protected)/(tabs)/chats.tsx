@@ -46,7 +46,7 @@ export default function MessagesScreen() {
       <FilterComponent
         search={search}
         onSearch={setSearch}
-        className={cn("mt-1 px-1", chats?.length < 1 && " hidden")}
+        className={cn("mt-1 px-1 mx-2", chats?.length < 1 && " hidden")}
         searchPlaceholder="Search by name"
       />
     );
