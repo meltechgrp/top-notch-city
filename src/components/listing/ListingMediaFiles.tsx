@@ -11,7 +11,6 @@ export default function ListingMediaFiles() {
   const { listing, updateListing } = useTempStore();
   const [photosBottomSheet, setPhotosBottomSheet] = useState(false);
   const [videosBottomSheet, setVideosBottomSheet] = useState(false);
-  const [modelBottomSheet, setModelBottomSheet] = useState(false);
 
   return (
     <>
@@ -63,31 +62,14 @@ export default function ListingMediaFiles() {
                 </Avatar>
               </View>
             </TouchableOpacity>
-            {/* <TouchableOpacity className=" h-20" onPress={() => {}}>
-							<View
-								className={cn(
-									' gap-4 p-6 py-3 flex-row items-center rounded-2xl border border-outline-300',
-									listing.modelImages &&
-										listing.modelImages.length > 0 &&
-										'border border-primary'
-								)}>
-								<Icon as={Images} className="text-primary" />
-								<Text>Create a 3D visual tour</Text>
-								<Avatar className=" ml-auto">
-									<Text size="lg" className="text-white">
-										{listing?.modelImages ? listing?.modelImages.length : 0}
-									</Text>
-								</Avatar>
-							</View>
-						</TouchableOpacity> */}
           </View>
         </View>
         <ListingPhotosBottomSheet
           visible={photosBottomSheet}
           photos={listing.photos}
           onDismiss={() => setPhotosBottomSheet(false)}
-          deleteFile={(id) => {
-            let newData = listing.photos?.filter((_, i) => i + 1 != id);
+          deleteFile={(key) => {
+            let newData = listing.photos?.filter(({ id }) => id != key);
             updateListing({ ...listing, photos: newData });
           }}
           deleteAllFile={() => updateListing({ ...listing, photos: [] })}
@@ -97,8 +79,8 @@ export default function ListingMediaFiles() {
           }}
         />
         <ListingVideosBottomSheet
-          deleteFile={(id) => {
-            let newData = listing.videos?.filter((_, i) => i + 1 != id);
+          deleteFile={(key) => {
+            let newData = listing.videos?.filter(({ id }) => id != key);
             updateListing({ ...listing, videos: newData });
           }}
           deleteAllFile={() => updateListing({ ...listing, videos: [] })}

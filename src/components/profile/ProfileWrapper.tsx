@@ -171,14 +171,25 @@ export function ProfileWrapper({
                 case "properties":
                   return (
                     <View className="mt-4">
-                      {user && <PropertiesTabView profileId={user.id} />}
+                      {user && (
+                        <PropertiesTabView
+                          isAgent={isAgent}
+                          isOwner={userType == "owner"}
+                          profileId={user.id}
+                        />
+                      )}
                     </View>
                   );
                 case "lands":
                   return (
                     <View className="mt-4">
                       {user && (
-                        <PropertiesTabView profileId={user.id} type="lands" />
+                        <PropertiesTabView
+                          isAgent={isAgent}
+                          isOwner={userType == "owner"}
+                          profileId={user.id}
+                          type="lands"
+                        />
                       )}
                     </View>
                   );
@@ -208,7 +219,7 @@ export function ProfileWrapper({
                     user={user}
                     userType={userType}
                     isAgent={isAgent}
-                    setShowActions={() => {}}
+                    setShowActions={() => setShowActions(true)}
                   />
                 )}
 
@@ -246,7 +257,7 @@ export function NotLoggedInProfile({ userType }: { userType: UserType }) {
     <View className="flex-1 items-center justify-center p-6 bg-background">
       <View className="bg-background-muted p-6 items-center justify-center border border-outline-100 rounded-2xl">
         <View className="mb-6">
-          <Icon as={User} size={64} className="text-gray-400" />
+          <Icon as={User} size={"xl"} className="text-gray-400" />
         </View>
         <Text className="text-xl font-semibold text-typography mb-2">
           {userType !== "owner" ? "Account not found" : "You’re not logged in"}

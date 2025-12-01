@@ -186,7 +186,8 @@ function CustomInputComponent({
         className={cn(
           "bg-background-muted ios:flex-1 flex-row justify-between items-center border border-outline-100 px-4 rounded-xl",
           multiline ? "min-h-40" : "h-[3.5rem]",
-          inputType && "hidden"
+          inputType && "hidden",
+          className
         )}
       >
         <TextInput
@@ -247,18 +248,33 @@ export function GenderInput({ value, onUpdate }: CustomInputProps) {
   );
 }
 
-export function DateInput({ value, onUpdate }: CustomInputProps) {
+export function DateInput({
+  value,
+  onUpdate,
+  modal = false,
+  label,
+  className,
+  containerClassName,
+  withMinDate = true,
+}: CustomInputProps & {
+  modal?: boolean;
+  label?: string;
+  className?: string;
+  containerClassName?: string;
+  withMinDate?: boolean;
+}) {
   return (
-    <View className="items-center mb-8">
+    <View className={cn("items-center mb-8", containerClassName)}>
       <DatePicker
-        label="Date of Birth"
+        label={label || "Date of Birth"}
         placeholder="Day/Month/Year"
         value={isDate(value) ? value : null}
         onChange={(val) => onUpdate(format(new Date(val), "yyyy-MM-dd"))}
         mode="date"
-        modal={false}
-        maximumDate={minimumAge}
-        startDate={minimumAge}
+        modal={modal}
+        className={className}
+        maximumDate={withMinDate ? minimumAge : undefined}
+        startDate={withMinDate ? minimumAge : undefined}
       />
     </View>
   );
@@ -711,104 +727,6 @@ export function LocationInput({
         handleUseLocation={handleUseLocation}
         onClose={() => setShowModal?.(false)}
         onSelect={(place) => updateAddress(place)}
-      />
-    </View>
-  );
-}
-
-type MediaInputProps = {
-  label?: string;
-  type: "image" | "video" | "audio";
-  value: Media[];
-  maxSelection: number;
-  onChange: (files: Media[]) => void;
-};
-export function MediaInput({
-  label,
-  type,
-  value,
-  onChange,
-  maxSelection = 10,
-}: MediaInputProps) {
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewFiles, setPreviewFiles] = useState<Media[]>([]);
-
-  const { pickMedia, takeMedia, loading, progress, processFiles } =
-    useMediaUpload({
-      type,
-      maxSelection,
-
-      onFiles: (files) => {
-        setPreviewFiles(files);
-        setPreviewOpen(true);
-      },
-
-      onSuccess: (uploadedMedia) => {
-        onChange([...value, ...uploadedMedia]);
-        setPreviewOpen(false);
-        setPreviewFiles([]);
-      },
-    });
-
-  const removeItem = (id: string) => {
-    onChange(value.filter((item) => item.id !== id));
-  };
-
-  return (
-    <View className="gap-3">
-      {label && <Text className="text-lg font-medium">{label}</Text>}
-
-      <TouchableOpacity
-        onPress={pickMedia}
-        className="p-4 bg-gray-200 rounded-xl"
-      >
-        <Text>Select {type}</Text>
-      </TouchableOpacity>
-
-      <View className="flex-row flex-wrap gap-3">
-        {value.map((item) => (
-          <TouchableOpacity
-            key={item.id}
-            onPress={() => {
-              setPreviewFiles(value);
-              setPreviewOpen(true);
-            }}
-            className="relative"
-          >
-            {item.media_type === "IMAGE" ? (
-              <Image
-                source={{ uri: item.url }}
-                className="w-20 h-20 rounded-xl"
-                resizeMode="cover"
-              />
-            ) : (
-              <View className="w-20 h-20 bg-black/40 items-center justify-center rounded-xl">
-                <Icon
-                  as={item.media_type === "VIDEO" ? Play : Music}
-                  size={26}
-                  color="white"
-                />
-              </View>
-            )}
-
-            <TouchableOpacity
-              onPress={() => removeItem(item.id)}
-              className="absolute top-1 right-1 bg-black/50 p-1 rounded-full"
-            >
-              <Trash2 size={14} color="white" />
-            </TouchableOpacity>
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      <MediaPreviewModal
-        open={previewOpen}
-        onClose={() => setPreviewOpen(false)}
-        data={previewFiles}
-        onDelete={removeItem}
-        loading={loading}
-        progress={progress}
-        processFiles={processFiles}
       />
     </View>
   );

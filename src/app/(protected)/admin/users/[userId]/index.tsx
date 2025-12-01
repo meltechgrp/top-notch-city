@@ -20,10 +20,10 @@ export default function AdminProfile() {
             label: "Reviews",
             key: "reviews",
           },
-          {
-            label: "Activities",
-            key: "activity",
-          },
+          // {
+          //   label: "Activities",
+          //   key: "activity",
+          // },
         ]}
         userType="admin"
         userId={userId}

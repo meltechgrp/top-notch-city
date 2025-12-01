@@ -65,3 +65,8 @@ type QueryType =
   | "trending"
   | "trending-lands"
   | "agent-property";
+
+type UploadedFile = Media & {
+  loading?: boolean;
+  progress?: number;
+};

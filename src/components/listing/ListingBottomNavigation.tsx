@@ -62,7 +62,7 @@ export default function ListingBottomNavigation({
             className={cn("px-6")}
             onPress={() => onUpdate(step + 1)}
           >
-            <ButtonText>Next</ButtonText>
+            <ButtonText>Continue</ButtonText>
             <Icon size="sm" as={ChevronRight} color="white" />
           </Button>
         )}

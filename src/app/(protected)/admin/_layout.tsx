@@ -14,7 +14,7 @@ export default function ProtectedRoutesLayout() {
   return (
     <Stack
       screenOptions={{
-        headerShown: false,
+        headerShown: true,
         gestureEnabled: true,
         animationDuration: 1000,
         animationTypeForReplace: "push",
@@ -32,7 +32,56 @@ export default function ProtectedRoutesLayout() {
         },
         statusBarStyle: theme == "dark" ? "light" : "dark",
       }}
-    ></Stack>
+    >
+      <Stack.Screen
+        name="users"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="properties"
+        options={{
+          headerTitle: "All Properties",
+        }}
+      />
+      <Stack.Screen
+        name="pending"
+        options={{
+          headerTitle: "Pending Properties",
+        }}
+      />
+      <Stack.Screen
+        name="analytics"
+        options={{
+          headerTitle: "Admin Analytics",
+        }}
+      />
+      <Stack.Screen
+        name="amenities"
+        options={{
+          headerTitle: "Amenities",
+        }}
+      />
+      <Stack.Screen
+        name="categories"
+        options={{
+          headerTitle: "Categories",
+        }}
+      />
+      <Stack.Screen
+        name="reports"
+        options={{
+          headerTitle: "Reports",
+        }}
+      />
+      <Stack.Screen
+        name="requests"
+        options={{
+          headerTitle: "Requests",
+        }}
+      />
+    </Stack>
   );
 }
 

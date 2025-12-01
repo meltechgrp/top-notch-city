@@ -113,7 +113,6 @@ type PropertyStatus =
   | "featured";
 
 type PropertyPurpose = "rent" | "sell";
-type Currency = "ngn" | "usd";
 
 type TopLocation = {
   state: string;
@@ -199,10 +198,17 @@ interface GeoapifyPlaceProperties {
     [key: string]: any;
   };
   place_id: string;
-  [key: string]: any; // for any other unexpected props
+  [key: string]: any;
 }
 
 interface GeoapifyGeometry {
   type: "Point";
-  coordinates: [number, number]; // [lon, lat]
+  coordinates: [number, number];
+}
+
+interface Currency {
+  id: string;
+  code: string;
+  name: string;
+  symbol: string;
 }

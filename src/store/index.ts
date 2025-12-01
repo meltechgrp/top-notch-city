@@ -137,6 +137,7 @@ export const useStore = create<StateAndActions>(
 );
 
 export type Listing = {
+  title?: string;
   step: number;
   purpose?: string;
   category?: string;
@@ -147,9 +148,13 @@ export type Listing = {
     label: string;
     value: any;
   }[];
-  photos?: UploadedFile[];
-  videos?: UploadedFile[];
-  modelImages?: UploadedFile[];
+  photos?: Media[];
+  videos?: Media[];
+  modelImages?: Media[];
+  availabilityPeriod?: {
+    start: string;
+    end: string;
+  }[];
   duration?: string;
   description?: string;
   price?: string;
@@ -196,8 +201,8 @@ const initialTempState = {
   fullScreenLoading: false,
   pin: "",
   listing: {
+    purpose: "sell",
     step: 1,
-    currency: "ngn",
     totalSteps: 7,
   },
   totalUnreadChat: 0,

@@ -9,8 +9,8 @@ import { uploadWithFakeProgress } from "@/lib/utils";
 type MediaType = "image" | "video" | "audio";
 
 type UseMediaUploadOptions = {
-  onSuccess: (media: Media[]) => void;
-  onFiles: (media: Media[]) => void;
+  onSuccess: (media: UploadedFile[]) => void;
+  onFiles: (media: UploadedFile[]) => void;
   type: MediaType;
   maxSelection?: number;
   apply_watermark?: boolean;
@@ -24,79 +24,98 @@ export function useMediaUpload({
   apply_watermark = false,
 }: UseMediaUploadOptions) {
   const [loading, setLoading] = useState(false);
-  const [progress, setProgress] = useState<number>(0);
+  const [progressMap, setProgressMap] = useState<Record<string, number>>({});
+
+  const updateProgress = (id: string, value: number) => {
+    setProgressMap((prev) => ({ ...prev, [id]: value }));
+  };
 
   const processBeforeUpload = async (files: { url: string }[]) => {
-    if (type === "audio") {
-      return files.map((f) => f.url);
-    }
+    if (type === "audio") return files.map((f) => f.url);
 
     if (type === "image") {
       const compressed = await Promise.all(
         files.map(async (f) => {
           try {
-            const context = ImageManipulator.manipulate(f.url);
-            context.resize({ width: 1080 });
+            const ctx = ImageManipulator.manipulate(f.url);
+            ctx.resize({ width: 1080 });
 
-            const file = await context.renderAsync();
-            const result = await file.saveAsync({
+            const file = await ctx.renderAsync();
+            const output = await file.saveAsync({
               compress: 0.5,
               format: SaveFormat.JPEG,
             });
-
-            return result.uri;
-          } catch (e) {
-            console.log("Image compression error:", e);
+            return output.uri;
+          } catch {
             return f.url;
           }
         })
       );
-
       return compressed;
-    }
-
-    if (type === "video") {
-      return files.map((f) => f.url);
     }
 
     return files.map((f) => f.url);
   };
 
-  const handleUpload = async (urls: string[]) => {
+  const handleUpload = async (media: UploadedFile[]) => {
     try {
-      const payload = urls.map((url) => ({ url }));
-      const result = await uploadWithFakeProgress(
-        () =>
-          uploadToBucket({
-            data: payload,
-            type,
-            apply_watermark,
-          }),
-        (p) => setProgress(p)
+      const results = await Promise.all(
+        media.map(
+          (item) =>
+            new Promise(async (resolve, reject) => {
+              try {
+                const uploaded = await uploadWithFakeProgress(
+                  () =>
+                    uploadToBucket({
+                      data: [{ url: item.url }],
+                      type,
+                      apply_watermark,
+                    }),
+                  (p) => updateProgress(item.id, p)
+                );
+
+                resolve(uploaded[0]);
+              } catch (e) {
+                reject(e);
+              }
+            })
+        )
       );
-      onSuccess(result);
+      const uploaded = media.map((m, index) => ({
+        ...m,
+        // @ts-ignore
+        url: results[index].url,
+        loading: false,
+        progress: 100,
+      }));
+
+      onSuccess(uploaded);
     } catch (error) {
-      console.log(error);
       showErrorAlert({
         title: "Upload failed. Try again.",
         alertType: "warn",
       });
     } finally {
       setLoading(false);
-      setProgress(0);
+      setProgressMap({});
     }
   };
 
-  const processFiles = async (files: { url: string }[]) => {
+  const processFiles = async (files: UploadedFile[]) => {
     setLoading(true);
 
-    const compressedurls = await processBeforeUpload(files);
-    await handleUpload(compressedurls);
+    const urls = await processBeforeUpload(files);
+    const updated = files.map((f, i) => ({ ...f, url: urls[i] }));
+
+    updated.forEach((f) => updateProgress(f.id, 0));
+
+    await handleUpload(updated);
   };
+
   const pickMedia = async () => {
     if (type === "audio") {
       showErrorAlert({
-        title: "Audio picking is not supported via system picker yet.",
+        title: "Audio picking is not supported.",
         alertType: "warn",
       });
       return;
@@ -105,38 +124,37 @@ export function useMediaUpload({
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: type === "image" ? ["images"] : ["videos"],
       selectionLimit: maxSelection,
-      allowsMultipleSelection: type === "image",
+      allowsMultipleSelection: true,
       orderedSelection: true,
       quality: type === "video" ? 1 : undefined,
     });
 
+    if (result.canceled) return;
+
     setLoading(true);
 
-    if (!result.canceled) {
-      const files = result.assets.map((a) => ({
-        url: a.uri,
-        id: uniqueId("media_"),
-        media_type: type.toUpperCase() as Media["media_type"],
-      })) as Media[];
-      onFiles(files);
-    } else {
-      setLoading(false);
-    }
+    const files = result.assets.map((a) => ({
+      url: a.uri,
+      id: uniqueId("media_"),
+      media_type: type.toUpperCase() as Media["media_type"],
+      loading: true,
+      progress: 0,
+    })) as UploadedFile[];
+
+    onFiles(files);
   };
 
   const takeMedia = async () => {
     if (type === "audio") {
       showErrorAlert({
-        title: "Audio recording not implemented in this hook.",
+        title: "Audio recording not supported.",
         alertType: "warn",
       });
       return;
     }
 
     const permitted = await ImagePicker.getCameraPermissionsAsync();
-    if (permitted.status !== ImagePicker.PermissionStatus.GRANTED) {
-      await ImagePicker.requestCameraPermissionsAsync();
-    }
+    if (!permitted.granted) await ImagePicker.requestCameraPermissionsAsync();
 
     const result = await ImagePicker.launchCameraAsync({
       mediaTypes: type === "image" ? ["images"] : ["videos"],
@@ -144,21 +162,24 @@ export function useMediaUpload({
       quality: 1,
     });
 
+    if (result.canceled) return;
+
     setLoading(true);
-    if (!result.canceled) {
-      const files = result.assets.map((a) => ({
-        url: a.uri,
-        id: uniqueId("media_"),
-        media_type: type.toUpperCase() as Media["media_type"],
-      })) as Media[];
-      onFiles(files);
-    } else {
-      setLoading(false);
-    }
+
+    const files = result.assets.map((a) => ({
+      url: a.uri,
+      id: uniqueId("media_"),
+      media_type: type.toUpperCase() as Media["media_type"],
+      loading: true,
+      progress: 0,
+    })) as UploadedFile[];
+
+    onFiles(files);
   };
+
   return {
     loading,
-    progress,
+    progressMap,
     pickMedia,
     takeMedia,
     processFiles,

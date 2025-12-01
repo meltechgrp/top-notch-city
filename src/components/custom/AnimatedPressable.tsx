@@ -13,10 +13,12 @@ const AnimatedPressable = ({
   onPress,
   className,
   onDoublePress,
+  containerClassName,
   ...props
 }: ViewProps & {
   onPress: () => void;
   onDoublePress?: () => void;
+  containerClassName?: string;
 }) => {
   const scale = useSharedValue(1);
 
@@ -34,6 +36,7 @@ const AnimatedPressable = ({
         scale.value = withSpring(1, { damping: 10, stiffness: 200 });
       }}
       onPress={onPress}
+      className={containerClassName}
     >
       <Animated.View style={animatedStyle} className={className} {...props}>
         {children}

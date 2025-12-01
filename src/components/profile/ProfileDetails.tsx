@@ -87,7 +87,7 @@ export function ProfileDetails({
           subtitle="List your property for sale or rent today."
           icon={PlusCircle}
           actionLabel="Upload"
-          actionRoute="/property/add"
+          actionRoute={`/agents/${user?.id}/properties/add`}
         />
       )}
       {(userType !== "owner" || isAgent) && (

@@ -47,7 +47,7 @@ export default function ShareAppScreen() {
   const currentGradient = gradients[index] as any;
 
   return (
-    <Pressable onPress={handleBackgroundTap} className="flex-1">
+    <Pressable onPress={handleBackgroundTap} className="flex-1 bg-background">
       <Animated.View style={[{ flex: 1 }, animatedStyle]}>
         <LinearGradient
           colors={currentGradient}

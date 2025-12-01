@@ -90,7 +90,6 @@ export default function Users() {
           data={filteredData}
           keyExtractor={(item) => item.id}
           keyboardDismissMode="on-drag"
-          onScroll={() => eventBus.dispatchEvent("SWIPEABLE_OPEN", null)}
           refreshControl={
             <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
           }

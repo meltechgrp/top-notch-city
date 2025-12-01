@@ -29,8 +29,7 @@ export default function PropertiesLayout() {
       <Stack.Screen
         name="add"
         options={{
-          headerTitle: "",
-          animation: "slide_from_right",
+          headerTitle: "Add Property",
         }}
       />
       <Stack.Screen

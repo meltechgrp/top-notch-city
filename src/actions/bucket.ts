@@ -49,7 +49,7 @@ export async function uploadToBucket({
     return response.data?.files?.map((f: any) => ({
       id: f.id,
       url: f.file_url,
-      media_type: f.file_type.toUpperCase,
+      media_type: f.file_type,
     })) as Media[];
   } catch (error: any) {
     throw Error(error?.message);

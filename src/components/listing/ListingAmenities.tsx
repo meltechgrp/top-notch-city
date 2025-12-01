@@ -137,9 +137,7 @@ export default function ListingAmenities() {
   return (
     <Box className="py-2 flex-1 px-4 gap-4">
       <View className="gap-1">
-        <Text className="text-2xl font-medium">
-          Property Features <Text className="text-primary">*</Text>
-        </Text>
+        <Text className="text-2xl font-medium">Features</Text>
         <Text className="text-sm font-light text-typography/90">
           Showcase the key features of your property
         </Text>

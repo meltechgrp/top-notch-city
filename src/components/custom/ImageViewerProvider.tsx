@@ -4,6 +4,7 @@ import React, {
   useContext,
   createContext,
   ReactNode,
+  useEffect,
 } from "react";
 import {
   Modal,
@@ -27,11 +28,16 @@ import Animated, {
 } from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons";
-import { Image } from "@/components/ui";
+import { Icon, Image, View } from "@/components/ui";
 import { scheduleOnRN } from "react-native-worklets";
 import { Colors } from "@/constants/Colors";
 import { generateMediaUrlSingle } from "@/lib/api";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
+import PagerView from "react-native-pager-view";
+import { VideoPlayer } from "@/components/custom/VideoPlayer";
+import { MiniVideoPlayer } from "@/components/custom/MiniVideoPlayer";
+import { X } from "lucide-react-native";
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
 
@@ -109,11 +115,13 @@ export const ProfileImageTrigger = ({
   index = 0,
   children,
   style,
+  className,
 }: {
-  image: Media;
+  image: Media[];
   index?: number;
   children: React.ReactNode;
   style?: any;
+  className?: string;
 }) => {
   const ref = useRef<any>(null);
   const ctx = useProfileImageViewer();
@@ -140,16 +148,25 @@ export const ProfileImageTrigger = ({
       ref={ref}
       onPress={() =>
         requestAnimationFrame(() => {
-          if (!image?.url) return;
-          measure((layout) => ctx.open([image], index, layout));
+          if (!image?.length) return;
+          measure((layout) => ctx.open(image, index, layout));
         })
       }
       style={style}
+      className={className}
     >
       {children}
     </Pressable>
   );
 };
+
+type Media = {
+  id: string;
+  url: string;
+  media_type?: "IMAGE" | "VIDEO" | "AUDIO";
+};
+
+const CLOSE_THRESHOLD = 140;
 
 const ProfileImageViewer = ({
   visible,
@@ -165,9 +182,11 @@ const ProfileImageViewer = ({
   onClose: () => void;
 }) => {
   const [index, setIndex] = useState(initialIndex || 0);
+  const [isVideo, setIsVideo] = useState(false);
+  const carouselRef = useRef<ICarouselInstance | null>(null);
+
   const progress = useSharedValue(0);
   const translateY = useSharedValue(0);
-  const translateX = useSharedValue(0);
   const scaleGesture = useSharedValue(1);
   const radius = useSharedValue(0);
   const zoom = useSharedValue(1);
@@ -175,10 +194,7 @@ const ProfileImageViewer = ({
   const offsetY = useSharedValue(0);
   const backdropOpacity = useSharedValue(0);
 
-  const SWIPE_THRESHOLD = 80;
-  const CLOSE_THRESHOLD = 140;
-
-  React.useEffect(() => {
+  useEffect(() => {
     if (visible && images && images.length > 0) {
       progress.value = 0;
       translateY.value = 0;
@@ -187,22 +203,22 @@ const ProfileImageViewer = ({
       radius.value = 0;
       offsetX.value = 0;
       offsetY.value = 0;
-      progress.value = withTiming(1, { duration: 100 });
-      backdropOpacity.value = withTiming(1, { duration: 100 });
+      progress.value = withTiming(1, { duration: 140 });
+      backdropOpacity.value = withTiming(1, { duration: 140 });
       const safeIndex = Math.max(
         0,
         Math.min(initialIndex || 0, images.length - 1)
       );
       setIndex(safeIndex);
+      requestAnimationFrame(() => {
+        carouselRef.current?.scrollTo({
+          index: safeIndex,
+          animated: false,
+        } as any);
+      });
     }
   }, [visible, initialIndex, images.length]);
 
-  const closeViewer = () => {
-    backdropOpacity.value = withTiming(0, { duration: 180 });
-    progress.value = withTiming(0, { duration: 180 }, () => {
-      scheduleOnRN(onClose);
-    });
-  };
   const doubleTap = Gesture.Tap()
     .numberOfTaps(2)
     .onEnd(() => {
@@ -211,10 +227,11 @@ const ProfileImageViewer = ({
         offsetX.value = withTiming(0);
         offsetY.value = withTiming(0);
       } else {
-        zoom.value = withTiming(2.5);
+        zoom.value = withTiming(2.2);
       }
     });
-  const pan = Gesture.Pan()
+
+  const verticalPan = Gesture.Pan()
     .onChange((e) => {
       if (zoom.value > 1) {
         offsetX.value = e.translationX;
@@ -226,23 +243,16 @@ const ProfileImageViewer = ({
 
       if (absY > absX) {
         translateY.value = e.translationY;
-        translateX.value = 0;
-
         const drag = absY / SCREEN_H;
-        scaleGesture.value = clamp(1 - drag, 0.15, 1);
-
+        scaleGesture.value = Math.max(0.12, 1 - drag);
         const circleBase = SCREEN_W * 0.5;
         radius.value = interpolate(
           scaleGesture.value,
-          [1, 0],
+          [1, 0.12],
           [0, circleBase],
           Extrapolation.CLAMP
         );
-
-        backdropOpacity.value = clamp(1 - drag * 1.2, 0, 1);
-      } else {
-        translateX.value = e.translationX;
-        translateY.value = 0;
+        backdropOpacity.value = Math.max(0, 1 - drag * 1.2);
       }
     })
     .onEnd(() => {
@@ -251,75 +261,30 @@ const ProfileImageViewer = ({
         offsetY.value = withSpring(0);
         return;
       }
-
-      if (translateX.value < -SWIPE_THRESHOLD) {
-        if (index < images.length - 1) {
-          scheduleOnRN(setIndex, index + 1);
-        }
-      }
-      if (translateX.value > SWIPE_THRESHOLD) {
-        if (index > 0) {
-          scheduleOnRN(setIndex, index - 1);
-        }
-      }
       if (Math.abs(translateY.value) > CLOSE_THRESHOLD) {
-        scheduleOnRN(closeViewer);
+        scheduleOnRN(onClose);
         return;
       }
-      translateX.value = withSpring(0);
       translateY.value = withSpring(0);
       radius.value = withSpring(0);
       scaleGesture.value = withSpring(1);
-      backdropOpacity.value = withTiming(1, { duration: 100 });
+      backdropOpacity.value = withTiming(1, { duration: 160 });
     });
-  const gesture = Gesture.Simultaneous(pan, doubleTap);
+
+  const gesture = Gesture.Simultaneous(verticalPan, doubleTap);
 
   const animatedStyle = useAnimatedStyle(() => {
-    const startX = originLayout?.x ?? SCREEN_W / 2;
-    const startY = originLayout?.y ?? SCREEN_H / 2;
-    const startW = originLayout?.width ?? 120;
-    const startH = originLayout?.height ?? 120;
-
-    const finalW = SCREEN_W;
-    const finalH = SCREEN_H;
-
-    const leftBase = interpolate(progress.value, [0, 1], [startX, 0]);
-    const topBase = interpolate(progress.value, [0, 1], [startY, 0]);
-    const baseWidth = interpolate(progress.value, [0, 1], [startW, finalW]);
-    const baseHeight = interpolate(progress.value, [0, 1], [startH, finalH]);
-
-    const shrinkFactor = scaleGesture.value;
-    const width = baseWidth * shrinkFactor;
-    const height = baseHeight * shrinkFactor;
-
-    const left = leftBase + (baseWidth - width) / 2;
-    const top = topBase + (baseHeight - height) / 2;
     return {
-      position: "absolute",
-      top,
-      left,
-      width,
-      height,
       borderRadius: radius.value,
+      overflow: "hidden",
       transform:
         zoom.value > 1
-          ? [
-              { translateX: offsetX.value },
-              { translateY: offsetY.value },
-              { scale: zoom.value },
-            ]
-          : [
-              { translateX: translateX.value },
-              { translateY: translateY.value },
-            ],
+          ? [{ scale: zoom.value }]
+          : [{ translateY: translateY.value }, { scale: scaleGesture.value }],
       opacity: backdropOpacity.value,
     };
   });
 
-  React.useEffect(() => {
-    progress.value = 0;
-    progress.value = withTiming(1, { duration: 10 });
-  }, [index]);
   const backdropStyle = useAnimatedStyle(() => {
     return {
       ...StyleSheet.absoluteFillObject,
@@ -328,79 +293,105 @@ const ProfileImageViewer = ({
     };
   });
 
+  useEffect(() => {
+    progress.value = 0;
+    progress.value = withTiming(1, { duration: 10 });
+  }, [index]);
+
+  useEffect(() => {
+    if (images[index]?.media_type == "VIDEO") {
+      setIsVideo(true);
+    }
+  }, [index, images, setIsVideo]);
   if (!visible || !images || images.length === 0) return null;
 
-  const currentImage = images[index];
+  const renderSlide = (item: Media, i: number) => {
+    if (item.media_type === "IMAGE" || !item.media_type) {
+      return (
+        <Image
+          source={{ uri: generateMediaUrlSingle(item.url) }}
+          contentFit="contain"
+          style={{ width: SCREEN_W, height: SCREEN_H }}
+        />
+      );
+    } else if (item.media_type === "VIDEO" || !item.media_type) {
+      return (
+        <MiniVideoPlayer
+          canPlay={i == index}
+          autoPlay
+          uri={generateMediaUrlSingle(item.url)}
+        />
+      );
+    }
+    return <></>;
+  };
   return (
     <Modal visible={visible} transparent statusBarTranslucent>
       <GestureDetector gesture={gesture}>
         <Animated.View style={{ flex: 1 }}>
           <Animated.View style={backdropStyle} pointerEvents="none" />
-
-          <Animated.View style={[styles.animatedImage, animatedStyle]}>
-            <SafeAreaView className="flex-1 py-16" edges={["bottom", "top"]}>
-              <Image
-                source={{
-                  uri: generateMediaUrlSingle(currentImage.url),
-                  cacheKey: currentImage.id,
-                }}
-                contentFit="contain"
-              />
-            </SafeAreaView>
+          <Animated.View
+            style={[
+              {
+                width: SCREEN_W,
+                height: SCREEN_H,
+              },
+              animatedStyle,
+            ]}
+          >
+            <PagerView
+              initialPage={index}
+              style={{ width: SCREEN_W, height: SCREEN_H }}
+              onPageSelected={(e) => setIndex(e.nativeEvent.position)}
+            >
+              {images.map((item, i) => (
+                <View key={i} style={{ width: SCREEN_W, height: SCREEN_H }}>
+                  {renderSlide(item, i)}
+                </View>
+              ))}
+            </PagerView>
           </Animated.View>
 
           <RNView style={styles.topBar} pointerEvents="box-none">
-            <Pressable
-              onPress={() => {
-                backdropOpacity.value = withTiming(0, { duration: 150 });
-                progress.value = withTiming(0, { duration: 150 }, () =>
-                  scheduleOnRN(onClose)
-                );
-              }}
-              style={styles.iconBtn}
-            >
-              <Ionicons name="close" size={26} color="#fff" />
-            </Pressable>
+            {!isVideo && (
+              <Pressable
+                onPress={() => {
+                  backdropOpacity.value = withTiming(0, { duration: 150 });
+                  progress.value = withTiming(0, { duration: 150 }, () =>
+                    scheduleOnRN(onClose)
+                  );
+                }}
+                className="bg-background-muted border border-outline-100"
+                style={styles.iconBtn}
+              >
+                <Icon as={X} size="xl" className="text-primary" />
+              </Pressable>
+            )}
 
             <RNView style={{ flex: 1 }} />
-
-            {images.length > 1 && (
-              <RNView style={styles.controls}>
-                <Pressable
-                  onPress={() => setIndex((i) => Math.max(0, i - 1))}
-                  style={styles.iconBtn}
-                  disabled={index === 0}
-                >
-                  <Ionicons name="chevron-back" size={26} color="#fff" />
-                </Pressable>
-
-                <Pressable
-                  onPress={() =>
-                    setIndex((i) => Math.min(images.length - 1, i + 1))
-                  }
-                  style={styles.iconBtn}
-                  disabled={index === images.length - 1}
-                >
-                  <Ionicons name="chevron-forward" size={26} color="#fff" />
-                </Pressable>
-              </RNView>
-            )}
           </RNView>
 
-          {images.length > 1 && (
+          {images.length > 1 && !isVideo && (
             <RNView style={styles.bottomStrip} pointerEvents="box-none">
               <ScrollView
-                decelerationRate={"fast"}
+                decelerationRate="fast"
                 showsHorizontalScrollIndicator={false}
-                snapToAlignment="center"
-                centerContent
                 horizontal
-                className="gap-4"
+                contentContainerStyle={{
+                  paddingLeft: 12,
+                  paddingRight: 12,
+                }}
               >
-                {images.map((img, i) => (
+                {images.map((item, i) => (
                   <Pressable
-                    key={i}
-                    onPress={() => setIndex(i)}
+                    key={item.id}
+                    onPress={() => {
+                      setIndex(i);
+                      carouselRef.current?.scrollTo({
+                        index: i,
+                        animated: true,
+                      } as any);
+                    }}
                     style={[
                       styles.thumbWrap,
                       i === index
@@ -408,13 +399,19 @@ const ProfileImageViewer = ({
                         : { borderColor: "rgba(255,255,255,0.2)" },
                     ]}
                   >
-                    <Image
-                      source={{
-                        uri: generateMediaUrlSingle(img.url),
-                        cacheKey: img.id,
-                      }}
-                      style={styles.thumb}
-                    />
+                    {item.media_type == "IMAGE" ? (
+                      <Image
+                        source={{ uri: generateMediaUrlSingle(item.url) }}
+                        style={styles.thumb}
+                      />
+                    ) : (
+                      <MiniVideoPlayer
+                        showPlayBtn
+                        canPlay={false}
+                        showLoading={false}
+                        uri={generateMediaUrlSingle(item.url)}
+                      />
+                    )}
                   </Pressable>
                 ))}
               </ScrollView>
@@ -425,22 +422,11 @@ const ProfileImageViewer = ({
     </Modal>
   );
 };
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  fullscreenWrapper: {
-    flex: 1,
-  },
-  animatedImage: {
-    position: "absolute",
-    borderRadius: 12,
-    overflow: "hidden",
-    backgroundColor: "#111",
-  },
   topBar: {
     position: "absolute",
-    top: Platform.OS === "ios" ? 45 : 20,
+    top: Platform.OS === "ios" ? 48 : 20,
     left: 12,
     right: 12,
     zIndex: 40,
@@ -450,9 +436,7 @@ const styles = StyleSheet.create({
   iconBtn: {
     padding: 6,
     borderRadius: 999,
-    backgroundColor: "rgba(0,0,0,0.35)",
   },
-  spacer: { flex: 1 },
   controls: {
     flexDirection: "row",
     gap: 12,
@@ -465,19 +449,13 @@ const styles = StyleSheet.create({
     zIndex: 40,
     alignItems: "center",
   },
-  thumbnailRow: {
-    flexDirection: "row",
-    gap: 8,
-    alignItems: "center",
-    justifyContent: "center",
-  },
   thumbWrap: {
     width: 56,
     height: 56,
     borderRadius: 8,
     overflow: "hidden",
     borderWidth: 2,
-    marginHorizontal: 6,
+    marginHorizontal: 4,
   },
   thumb: {
     width: "100%",

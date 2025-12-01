@@ -23,7 +23,7 @@ export default function PropertiesTabView({
   isAgent = false,
 }: IProps) {
   const { data, isLoading, refetch } = useInfinityQueries({
-    type: "user",
+    type: isOwner && isAgent ? "agent-property" : "user",
     profileId,
   });
 

@@ -97,7 +97,7 @@ export default function Menu() {
                 description="Manage address, hours, websites"
                 onPress={() =>
                   router.push({
-                    pathname: "/agents/[userId]/edit",
+                    pathname: "/agents/[userId]/account",
                     params: {
                       userId: me?.id!,
                     },

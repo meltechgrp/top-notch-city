@@ -112,7 +112,7 @@ export default function QrCodeScreen() {
                   <Image source={logo} rounded />
                 </View>
                 <Text className=" text-lg text-black font-bold">
-                  Top-Notch City
+                  TopNotch City
                 </Text>
               </View>
             </View>

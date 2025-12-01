@@ -40,24 +40,30 @@ export default function UserAccount() {
   const [previewOpen, setPreviewOpen] = useState(false);
   const { mutation } = useProfileMutations(userId);
   const [showOptions, setShowOptions] = useState(false);
-  const { pickMedia, takeMedia, setLoading, loading, progress, processFiles } =
-    useMediaUpload({
-      type: "image",
-      maxSelection: 1,
-      onSuccess: (media) => {
-        setPreviewOpen(false);
-        mutation.mutateAsync([
-          {
-            field: "profile_image_id",
-            value: media[0].id,
-          },
-        ]);
-      },
-      onFiles: (media) => {
-        setFiles(media);
-        setPreviewOpen(true);
-      },
-    });
+  const {
+    pickMedia,
+    takeMedia,
+    setLoading,
+    loading,
+    progressMap,
+    processFiles,
+  } = useMediaUpload({
+    type: "image",
+    maxSelection: 1,
+    onSuccess: (media) => {
+      setPreviewOpen(false);
+      mutation.mutateAsync([
+        {
+          field: "profile_image_id",
+          value: media[0].id,
+        },
+      ]);
+    },
+    onFiles: (media) => {
+      setFiles(media);
+      setPreviewOpen(true);
+    },
+  });
   const user = useMemo(() => data ?? null, [data]);
 
   const personal = [
@@ -339,8 +345,6 @@ export default function UserAccount() {
         onDelete={(id: string) => {
           setFiles(previewFiles.filter((item) => item.id !== id));
         }}
-        loading={loading}
-        progress={progress}
         processFiles={processFiles}
       />
     </>

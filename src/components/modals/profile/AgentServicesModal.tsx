@@ -29,7 +29,7 @@ export function AgentServicesModal({
           <View className="flex-row items-center justify-between mb-4">
             <Text className=" text-lg font-semibold">Add Service</Text>
             <TouchableOpacity onPress={onClose}>
-              <Icon as={X} size={22} />
+              <Icon as={X} size={"xl"} />
             </TouchableOpacity>
           </View>
 

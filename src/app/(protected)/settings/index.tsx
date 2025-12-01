@@ -91,41 +91,7 @@ export default function Setting() {
   return (
     <>
       <BodyScrollView withBackground={true}>
-        <View
-          className={cn(
-            "px-4 py-2.5 mt-2 to-50%",
-            theme == "dark"
-              ? "bg-background-muted/95"
-              : "bg-background-muted/60"
-          )}
-        >
-          <Pressable
-            onPress={() => {
-              if (!hasAuth) {
-                router.replace("/signin");
-              } else if (isAgent) {
-              }
-            }}
-            className={"flex-row items-center"}
-          >
-            <Avatar className=" w-14 h-14">
-              <AvatarFallbackText>{fullName(me)}</AvatarFallbackText>
-              <AvatarImage source={getImageUrl(me?.profile_image)} />
-            </Avatar>
-            <View className="flex-1 pl-3">
-              <Text className="text-lg text-typography font-medium">
-                {me ? fullName(me) : "Let’s get you signed in"}
-              </Text>
-              <Text className="text-sm text-typography/80">
-                {me ? me?.email : "Welcome"}
-              </Text>
-            </View>
-          </Pressable>
-        </View>
         <View className="pt-8 flex-1 px-4">
-          <Text className="text-base text-typography/80 uppercase px-4 mb-2">
-            Menu
-          </Text>
           <View className="flex-1 mt-2">
             {isAgent && (
               <MenuListItem
@@ -143,29 +109,10 @@ export default function Setting() {
                 className=" py-2 pb-3"
               />
             )}
-            {isAgent && (
-              <Divider className=" h-[0.3px] bg-background-info mb-4" />
-            )}
-            {(isAdmin || isAgent) && (
-              <MenuListItem
-                title={isAdmin ? "Dashboard" : "Analytics"}
-                description=""
-                onPress={() => {
-                  if (isAdmin) {
-                    router.dismissTo("/admin/analytics");
-                  } else {
-                    router.push("/dashboard");
-                  }
-                }}
-                icon={LayoutDashboard}
-                iconColor="gray-500"
-                className=" py-2 pb-3"
-              />
-            )}
             {(isAdmin || isAgent) && (
               <Divider className=" h-[0.3px] bg-background-info mb-4" />
             )}
-            <MenuListItem
+            {/* <MenuListItem
               title="Settings"
               description="Change your theme and other settings"
               onPress={() => {
@@ -175,7 +122,7 @@ export default function Setting() {
               iconColor="gray-500"
               className=" py-2 pb-3"
             />
-            <Divider className=" h-[0.3px] bg-background-info mb-4" />
+            <Divider className=" h-[0.3px] bg-background-info mb-4" /> */}
             <MenuListItem
               title="Send us a feedback"
               description="Let's improve the app"
@@ -191,7 +138,7 @@ export default function Setting() {
               icon={Share2}
               className=" py-2 pb-3"
               iconColor="primary"
-              onPress={onInvite}
+              onPress={() => router.push("/share")}
             />
             <Divider className=" h-[0.3px] bg-background-info mb-4" />
             {me?.role == "user" && (
