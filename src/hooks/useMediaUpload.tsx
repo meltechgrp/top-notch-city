@@ -71,7 +71,8 @@ export function useMediaUpload({
                       type,
                       apply_watermark,
                     }),
-                  (p) => updateProgress(item.id, p)
+                  (p) => updateProgress(item.id, p),
+                  type == "video"
                 );
 
                 resolve(uploaded[0]);
@@ -83,6 +84,8 @@ export function useMediaUpload({
       );
       const uploaded = media.map((m, index) => ({
         ...m,
+        // @ts-ignore
+        id: results[index].id,
         // @ts-ignore
         url: results[index].url,
         loading: false,

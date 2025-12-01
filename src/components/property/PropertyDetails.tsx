@@ -37,9 +37,15 @@ import { LongDescription } from "@/components/custom/LongDescription";
 import { CustomCenterSheet } from "@/components/property/CustomMapCenterSheet";
 import { useStore } from "@/store";
 import PropertyNearbySection from "@/components/property/PropertyNearbySection";
+import { ProfileImageTrigger } from "@/components/custom/ImageViewerProvider";
 
-const PropertyDetailsBottomSheet = () => {
-  const { details: property, getImages, getVideos } = usePropertyStore();
+interface PropertyDetailsBottomSheetProps {
+  property: Property;
+}
+
+const PropertyDetailsBottomSheet = ({
+  property,
+}: PropertyDetailsBottomSheetProps) => {
   const { me } = useStore();
   const { mutateAsync } = useMutation({
     mutationFn: startChat,
@@ -147,29 +153,32 @@ const PropertyDetailsBottomSheet = () => {
                 <Icon size="md" as={Images} className="text-primary" />
                 <Heading size="lg">Images</Heading>
               </View>
-              <Pressable
-                disabled={getImages().length < 1}
-                onPress={() => {
-                  router.push("/(protected)/property/[propertyId]/images");
-                }}
-                className="bg-background-muted rounded-xl p-4"
+
+              <ProfileImageTrigger
+                image={
+                  property?.media?.filter((i) => i.media_type == "IMAGE") || []
+                }
+                index={0}
               >
-                <ImageGrid width={(width - 110) / 5} />
-              </Pressable>
+                <View className="bg-background-muted rounded-xl p-4">
+                  <ImageGrid width={(width - 110) / 5} />
+                </View>
+              </ProfileImageTrigger>
             </View>
-            <Pressable
-              disabled={getVideos().length < 1}
-              onPress={() => {
-                router.push("/(protected)/property/[propertyId]/videos");
-              }}
-              className="flex-row gap-4 bg-background-muted p-4 rounded-xl items-center justify-between"
+            <ProfileImageTrigger
+              image={
+                property?.media?.filter((i) => i.media_type == "VIDEO") || []
+              }
+              index={0}
             >
-              <Icon as={Video} className="text-primary" />
-              <Text size="lg" className=" mr-auto">
-                Video
-              </Text>
-              <Icon as={ChevronRight} />
-            </Pressable>
+              <View className="flex-row gap-4 bg-background-muted p-4 rounded-xl items-center justify-between">
+                <Icon as={Video} className="text-primary" />
+                <Text size="lg" className=" mr-auto">
+                  Video
+                </Text>
+                <Icon as={ChevronRight} />
+              </View>
+            </ProfileImageTrigger>
             <Pressable
               disabled
               onPress={() => {

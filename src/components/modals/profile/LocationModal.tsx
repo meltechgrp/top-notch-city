@@ -71,15 +71,23 @@ export function LocationModal({
           <View className="flex-row items-center justify-between mb-4">
             <Text className=" text-lg font-semibold">Search locations</Text>
             <TouchableOpacity onPress={onClose}>
-              <Icon as={X} size={22} />
+              <Icon as={X} size={"xl"} />
             </TouchableOpacity>
           </View>
 
           <TextInput
-            placeholder="Search service..."
+            placeholder="Search for a location..."
             placeholderTextColor="#777"
             value={query}
             onChangeText={onChangeText}
+            onSubmitEditing={() => {
+              handleSelect(locations[0]);
+              onClose();
+            }}
+            submitBehavior={"blurAndSubmit"}
+            enablesReturnKeyAutomatically
+            returnKeyLabel="Done"
+            returnKeyType="done"
             className="bg-background-muted  h-12 rounded-xl text-typography px-3 mb-4"
           />
 
@@ -103,9 +111,7 @@ export function LocationModal({
                     <Pressable
                       key={item.placeId}
                       onPress={() => {
-                        handleSelect({
-                          ...item,
-                        });
+                        handleSelect(item);
                         onClose();
                       }}
                     >

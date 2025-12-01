@@ -234,14 +234,14 @@ export function VideoScreen({
   return (
     <View
       className={cn(
-        " overflow-hidden p-2 relative",
-        rounded && "rounded-xl p-0"
+        " overflow-hidden bg-background-muted ml-2 border border-outline-100 p-1 relative rounded-xl"
       )}
     >
       <VideoView
         style={{
           width: size || width / 2.2,
           height: size || 120,
+          borderRadius: 8,
         }}
         contentFit="cover"
         nativeControls={false}

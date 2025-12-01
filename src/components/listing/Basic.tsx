@@ -57,12 +57,12 @@ export default function PropertyListingBasic() {
       location,
     };
 
-    updateListing({ ...listing, address: payload });
+    updateListing({ address: payload });
     setLoading(false);
   }, [retryGetLocation, updateListing]);
   return (
     <>
-      <Box className="flex-1 px-4">
+      <Box className="flex-1 px-4 py-4">
         <KeyboardDismissPressable>
           <View className="gap-2">
             <Text className="text-base font-medium text-typography/80">
@@ -73,7 +73,7 @@ export default function PropertyListingBasic() {
                 <AnimatedPressable
                   key={tab.label}
                   onPress={() => {
-                    updateListing({ ...listing, purpose: tab.value });
+                    updateListing({ purpose: tab.value });
                   }}
                   containerClassName={"flex-1 h-12"}
                   className={cn(
@@ -101,16 +101,19 @@ export default function PropertyListingBasic() {
               <CustomInput
                 placeholder="Enter title"
                 value={listing.title}
-                onUpdate={(val) => updateListing({ ...listing, title: val })}
+                onUpdate={(val) => updateListing({ title: val })}
               />
               <CustomInput
                 placeholder="Enter description here"
                 value={listing.description}
-                onUpdate={(val) =>
-                  updateListing({ ...listing, description: val })
-                }
+                onUpdate={(val) => updateListing({ description: val })}
                 multiline
               />
+            </View>
+            <View className="gap-2">
+              <Text className="text-base font-medium text-typography/80">
+                Property location
+              </Text>
               <AnimatedPressable
                 containerClassName="h-16 bg-background-muted border border-outline-100  rounded-2xl"
                 className=" flex-row flex-1 gap-4 items-center px-2 py-1"
@@ -142,7 +145,7 @@ export default function PropertyListingBasic() {
         open={showModal || false}
         handleUseLocation={handleUseLocation}
         onClose={() => setShowModal?.(false)}
-        onSelect={(place) => updateListing({ ...listing, address: place })}
+        onSelect={(place) => updateListing({ address: place })}
       />
     </>
   );

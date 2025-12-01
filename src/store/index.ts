@@ -193,7 +193,7 @@ type TempState = {
   updateApplication: (data: Partial<Application>) => void;
   resetEmail: () => void;
   saveEmail: (email: string) => void;
-  updateListing: (data: Listing) => void;
+  updateListing: (data: Partial<Listing>) => void;
   updateListingStep: () => void;
   updatetotalUnreadChat: (data: number) => void;
 };
@@ -203,6 +203,7 @@ const initialTempState = {
   listing: {
     purpose: "sell",
     step: 1,
+    currency: "NGN",
     totalSteps: 7,
   },
   totalUnreadChat: 0,

@@ -59,7 +59,7 @@ export function formatMoney(
 ) {
   return new Intl.NumberFormat("en-NG", {
     style: "currency",
-    currency,
+    currency: "NGN",
     minimumFractionDigits: fractionDigits,
     maximumFractionDigits: fractionDigits,
     currencyDisplay: "symbol",
@@ -448,12 +448,13 @@ export function guidGenerator() {
 
 export function uploadWithFakeProgress(
   uploadFn: () => Promise<Media[]>,
-  onProgress: (val: number) => void
+  onProgress: (val: number) => void,
+  isVideo: boolean
 ) {
   let progress = 0;
 
   const interval = setInterval(() => {
-    progress += Math.random() * 5;
+    progress += Math.random() * (isVideo ? 1 : 5);
 
     if (progress > 90) progress = 90;
     onProgress(Math.round(progress));

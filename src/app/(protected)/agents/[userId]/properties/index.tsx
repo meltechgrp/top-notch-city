@@ -93,7 +93,7 @@ export default function AgentProperties() {
           ),
         }}
       />
-      <Box className="flex-1 px-4 py-2">
+      <Box className="flex-1 px-2 py-2">
         <VerticalProperties
           isLoading={isLoading}
           data={filteredData}

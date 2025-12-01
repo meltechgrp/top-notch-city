@@ -3,11 +3,8 @@ import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { BodyScrollView } from "@/components/layouts/BodyScrollView";
 import PropertyListingBasic from "@/components/listing/Basic";
 import ListingAmenities from "@/components/listing/ListingAmenities";
-import ListingBasis from "@/components/listing/ListingBasis";
 import ListingBottomNavigation from "@/components/listing/ListingBottomNavigation";
 import ListingCategory from "@/components/listing/ListingCategory";
-import ListingDescription from "@/components/listing/ListingDescription";
-import ListingLocation from "@/components/listing/ListingLocation";
 import ListingMediaFiles from "@/components/listing/ListingMediaFiles";
 import ListingResult from "@/components/listing/ListingResult";
 import FullHeightLoaderWrapper from "@/components/loaders/FullHeightLoaderWrapper";
@@ -21,24 +18,34 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 interface ListingWrapperProps {
   type: "edit" | "add";
+  userId: string;
+  propertyId?: string;
 }
 
-export function ListingWrapper({}: ListingWrapperProps) {
+export function ListingWrapper({
+  userId,
+  type,
+  propertyId,
+}: ListingWrapperProps) {
   const router = useRouter();
   const { onLayout, height } = useLayout();
   const {
     uploadProperty,
     uploading: loading,
     error,
-    success,
-  } = useUploadProperty();
+  } = useUploadProperty(type, propertyId);
   const { listing, updateListing, updateListingStep, resetListing } =
     useTempStore();
 
   async function uploaHandler() {
     await uploadProperty(listing, {
       onSuccess: () => {
-        router.dismissTo("/property/success");
+        router.dismissTo({
+          pathname: "/(protected)/agents/[userId]/properties/success",
+          params: {
+            userId,
+          },
+        });
         resetListing();
       },
       onError: () =>
@@ -59,12 +66,6 @@ export function ListingWrapper({}: ListingWrapperProps) {
       case 4:
         return <ListingMediaFiles />;
       case 5:
-        return <ListingLocation height={height} />;
-      case 6:
-        return <ListingMediaFiles />;
-      case 7:
-        return <ListingBasis />;
-      case 8:
         return <ListingResult />;
       default:
         return null;
@@ -79,23 +80,22 @@ export function ListingWrapper({}: ListingWrapperProps) {
           title: "Please select your purpose",
           alertType: "warn",
         });
+      } else if (!listing?.title || listing.title?.length < 2) {
+        return showErrorAlert({
+          title: "Please add property title",
+          alertType: "warn",
+        });
+      } else if (!listing?.description) {
+        return showErrorAlert({
+          title: "Please add a detailed description",
+          alertType: "warn",
+        });
+      } else if (!listing?.address) {
+        return showErrorAlert({
+          title: "Please add property location",
+          alertType: "warn",
+        });
       }
-      //   else if (!listing?.title || listing.title?.length < 2) {
-      //     return showErrorAlert({
-      //       title: "Please add property title",
-      //       alertType: "warn",
-      //     });
-      //   } else if (!listing?.description || listing.title?.length < 10) {
-      //     return showErrorAlert({
-      //       title: "Please add a detailed description",
-      //       alertType: "warn",
-      //     });
-      //   } else if (!listing?.address) {
-      //     return showErrorAlert({
-      //       title: "Please add property location",
-      //       alertType: "warn",
-      //     });
-      //   }
     } else if (listing.step == 2) {
       if (!listing?.purpose) {
         return showErrorAlert({
@@ -107,31 +107,31 @@ export function ListingWrapper({}: ListingWrapperProps) {
           title: "Please select the kind of property",
           alertType: "warn",
         });
-      }
-      //   else if (!listing?.description || listing.title?.length < 10) {
-      //     return showErrorAlert({
-      //       title: "Please add a detailed description",
-      //       alertType: "warn",
-      //     });
-      //   } else if (!listing?.address) {
-      //     return showErrorAlert({
-      //       title: "Please add property location",
-      //       alertType: "warn",
-      //     });
-      //   }
-      //   return showErrorAlert({
-      //     title: "Please select a category",
-      //     alertType: "warn",
-      //   });
-    } else if (listing.step == 5 && !listing?.address?.displayName) {
-      //   return showErrorAlert({
-      //     title: "Please enter property location!",
-      //     alertType: "warn",
-      //   });
-    } else if (listing.step == 6) {
-      if (listing?.photos && listing?.photos?.length < 1)
+      } else if (!listing?.currency) {
         return showErrorAlert({
-          title: "Select at least 1 images",
+          title: "Please select a currency",
+          alertType: "warn",
+        });
+      } else if (!listing?.price) {
+        return showErrorAlert({
+          title: "Please add property price",
+          alertType: "warn",
+        });
+      } else if (listing?.purpose == "rent" && !listing?.duration) {
+        return showErrorAlert({
+          title: "Please select rentage duration",
+          alertType: "warn",
+        });
+      }
+    } else if (listing.step == 3 && !listing?.facilities?.length) {
+      return showErrorAlert({
+        title: "Please select at least 2 amenities",
+        alertType: "warn",
+      });
+    } else if (listing.step == 4) {
+      if (listing?.photos && listing?.photos?.length < 2)
+        return showErrorAlert({
+          title: "Upload at least 2 images",
           alertType: "warn",
         });
       else if (!listing?.photos?.length)
@@ -139,20 +139,6 @@ export function ListingWrapper({}: ListingWrapperProps) {
           title: "Add some images to proceed!",
           alertType: "warn",
         });
-    }
-    if (listing.step == 7) {
-      if (!listing?.price) {
-        return showErrorAlert({
-          title: "Please enter property price!",
-          alertType: "warn",
-        });
-      }
-      if (listing.purpose == "rent" && !listing?.duration) {
-        return showErrorAlert({
-          title: "Please enter rentage duration",
-          alertType: "warn",
-        });
-      }
     }
     updateListingStep();
   }
@@ -175,6 +161,7 @@ export function ListingWrapper({}: ListingWrapperProps) {
               step={listing.step}
               uploaHandler={uploaHandler}
               onUpdate={handleNext}
+              isEdit={type == "edit"}
             />
           </SafeAreaView>
         </FullHeightLoaderWrapper>

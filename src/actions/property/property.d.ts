@@ -48,6 +48,7 @@ type Property = {
   address: Address;
   media: Media[];
   owner: Owner;
+  availabilities: Availabilities[];
   is_following: boolean;
   amenities: Amenity[];
   interaction: Interaction;
@@ -59,6 +60,12 @@ type Media = {
   id: string;
   url: string;
   media_type: "IMAGE" | "VIDEO" | "AUDIO";
+};
+
+type Availabilities = {
+  id: string;
+  start: string;
+  end: string;
 };
 
 type Owner = {

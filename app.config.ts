@@ -93,6 +93,7 @@ export default () => ({
   },
   jsEngine: "hermes",
   plugins: [
+    "expo-asset",
     "expo-router",
     "expo-apple-authentication",
     [

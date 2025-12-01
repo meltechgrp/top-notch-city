@@ -1,8 +1,9 @@
 import { ListingWrapper } from "@/components/listing/ListingWrapper";
 import headerLeft from "@/components/shared/headerLeft";
-import { Stack } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
 
 export default function SellAddScreen() {
+  const { userId } = useLocalSearchParams() as { userId: string };
   return (
     <>
       <Stack.Screen
@@ -11,7 +12,7 @@ export default function SellAddScreen() {
           headerTitleAlign: "center",
         }}
       />
-      <ListingWrapper type="add" />
+      <ListingWrapper userId={userId} type="add" />
     </>
   );
 }

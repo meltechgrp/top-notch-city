@@ -1,4 +1,4 @@
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import {
   Box,
   Button,
@@ -8,10 +8,11 @@ import {
   Text,
   View,
 } from "@/components/ui";
-import React, { useRef } from "react";
+import React from "react";
 import { CheckCircle } from "lucide-react-native";
 
 export default function ListingSuccess() {
+  const { userId } = useLocalSearchParams() as { userId: string };
   const router = useRouter();
   return (
     <>
@@ -37,7 +38,14 @@ export default function ListingSuccess() {
               variant="outline"
               className="flex-1 h-12 mt-4"
               size="md"
-              onPress={() => router.dismissTo("/property/add")}
+              onPress={() =>
+                router.dismissTo({
+                  pathname: "/agents/[userId]/properties/add",
+                  params: {
+                    userId,
+                  },
+                })
+              }
             >
               <ButtonText>Upload again</ButtonText>
             </Button>
@@ -45,7 +53,14 @@ export default function ListingSuccess() {
               variant="solid"
               className="flex-1 h-12 mt-4"
               size="md"
-              onPress={() => router.dismissTo("/properties")}
+              onPress={() =>
+                router.dismissTo({
+                  pathname: "/agents/[userId]/properties",
+                  params: {
+                    userId,
+                  },
+                })
+              }
             >
               <ButtonText>My Properties</ButtonText>
             </Button>

@@ -56,9 +56,12 @@ export const MiniVideoPlayer = ({
       player.pause();
     }
   }, [canPlay, isPlaying]);
-
+  function togglePlay() {
+    if (isPlaying) player.pause();
+    else player.play();
+  }
   return (
-    <Pressable style={[{ width: "100%" }, style]}>
+    <Pressable onPress={togglePlay} style={[{ width: "100%" }, style]}>
       <View
         style={{
           width: "100%",
@@ -68,13 +71,12 @@ export const MiniVideoPlayer = ({
           backgroundColor: "#000",
         }}
       >
-        <SafeAreaView edges={["bottom", "top"]} className="flex-1">
-          <VideoView
-            player={player}
-            contentFit="cover"
-            style={{ width: "100%", height: "100%" }}
-          />
-        </SafeAreaView>
+        <VideoView
+          player={player}
+          contentFit="cover"
+          style={{ width: "100%", height: "100%" }}
+          nativeControls={false}
+        />
 
         {status !== "readyToPlay" && showLoading && (
           <View

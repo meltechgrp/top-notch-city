@@ -10,11 +10,11 @@ import {
   Button,
 } from "@/components/ui";
 import { ScrollView } from "react-native";
-import React, { useMemo } from "react";
-import { cn, composeFullAddress, fullName } from "@/lib/utils";
+import React from "react";
+import { cn, composeFullAddress } from "@/lib/utils";
 import { ChevronRight, Edit, Upload } from "lucide-react-native";
 import { getImageUrl } from "@/lib/api";
-import { router, useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useMediaUpload } from "@/hooks/useMediaUpload";
 import { format } from "date-fns";
 import { useTempStore } from "@/store";
@@ -34,19 +34,18 @@ export default function AgentFormScreen() {
   const { mutateAsync, isPending } = useMutation({
     mutationFn: uploadAgentForm,
   });
-  const { pickMedia, takeMedia, setLoading, loading, progress, processFiles } =
-    useMediaUpload({
-      type: "image",
-      maxSelection: 1,
-      onSuccess: (media) => {
-        updateApplication({
-          profile_image: media[0],
-        });
-      },
-      onFiles: (media) => {
-        processFiles([{ url: media[0].url }]);
-      },
-    });
+  const { pickMedia, loading, processFiles } = useMediaUpload({
+    type: "image",
+    maxSelection: 1,
+    onSuccess: (media) => {
+      updateApplication({
+        profile_image: media[0],
+      });
+    },
+    onFiles: (media) => {
+      processFiles(media);
+    },
+  });
 
   const user = application ?? null;
 

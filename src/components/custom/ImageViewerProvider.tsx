@@ -24,18 +24,13 @@ import Animated, {
   withSpring,
   interpolate,
   Extrapolation,
-  clamp,
 } from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import { Ionicons } from "@expo/vector-icons";
 import { Icon, Image, View } from "@/components/ui";
 import { scheduleOnRN } from "react-native-worklets";
 import { Colors } from "@/constants/Colors";
 import { generateMediaUrlSingle } from "@/lib/api";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
 import PagerView from "react-native-pager-view";
-import { VideoPlayer } from "@/components/custom/VideoPlayer";
 import { MiniVideoPlayer } from "@/components/custom/MiniVideoPlayer";
 import { X } from "lucide-react-native";
 
@@ -182,8 +177,6 @@ const ProfileImageViewer = ({
   onClose: () => void;
 }) => {
   const [index, setIndex] = useState(initialIndex || 0);
-  const [isVideo, setIsVideo] = useState(false);
-  const carouselRef = useRef<ICarouselInstance | null>(null);
 
   const progress = useSharedValue(0);
   const translateY = useSharedValue(0);
@@ -210,12 +203,6 @@ const ProfileImageViewer = ({
         Math.min(initialIndex || 0, images.length - 1)
       );
       setIndex(safeIndex);
-      requestAnimationFrame(() => {
-        carouselRef.current?.scrollTo({
-          index: safeIndex,
-          animated: false,
-        } as any);
-      });
     }
   }, [visible, initialIndex, images.length]);
 
@@ -298,11 +285,6 @@ const ProfileImageViewer = ({
     progress.value = withTiming(1, { duration: 10 });
   }, [index]);
 
-  useEffect(() => {
-    if (images[index]?.media_type == "VIDEO") {
-      setIsVideo(true);
-    }
-  }, [index, images, setIsVideo]);
   if (!visible || !images || images.length === 0) return null;
 
   const renderSlide = (item: Media, i: number) => {
@@ -345,7 +327,11 @@ const ProfileImageViewer = ({
               onPageSelected={(e) => setIndex(e.nativeEvent.position)}
             >
               {images.map((item, i) => (
-                <View key={i} style={{ width: SCREEN_W, height: SCREEN_H }}>
+                <View
+                  key={i}
+                  style={{ width: SCREEN_W, height: SCREEN_H }}
+                  className="bg-black/20"
+                >
                   {renderSlide(item, i)}
                 </View>
               ))}
@@ -353,25 +339,23 @@ const ProfileImageViewer = ({
           </Animated.View>
 
           <RNView style={styles.topBar} pointerEvents="box-none">
-            {!isVideo && (
-              <Pressable
-                onPress={() => {
-                  backdropOpacity.value = withTiming(0, { duration: 150 });
-                  progress.value = withTiming(0, { duration: 150 }, () =>
-                    scheduleOnRN(onClose)
-                  );
-                }}
-                className="bg-background-muted border border-outline-100"
-                style={styles.iconBtn}
-              >
-                <Icon as={X} size="xl" className="text-primary" />
-              </Pressable>
-            )}
+            <Pressable
+              onPress={() => {
+                backdropOpacity.value = withTiming(0, { duration: 150 });
+                progress.value = withTiming(0, { duration: 150 }, () =>
+                  scheduleOnRN(onClose)
+                );
+              }}
+              className="bg-background-muted border border-outline-100"
+              style={styles.iconBtn}
+            >
+              <Icon as={X} size="xl" className="text-primary" />
+            </Pressable>
 
             <RNView style={{ flex: 1 }} />
           </RNView>
 
-          {images.length > 1 && !isVideo && (
+          {images.length > 1 && (
             <RNView style={styles.bottomStrip} pointerEvents="box-none">
               <ScrollView
                 decelerationRate="fast"
@@ -387,10 +371,6 @@ const ProfileImageViewer = ({
                     key={item.id}
                     onPress={() => {
                       setIndex(i);
-                      carouselRef.current?.scrollTo({
-                        index: i,
-                        animated: true,
-                      } as any);
                     }}
                     style={[
                       styles.thumbWrap,
