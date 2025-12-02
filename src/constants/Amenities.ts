@@ -1,13 +1,3 @@
-export const Amenities: string[] = [
-  "Parking Area",
-  "Garden",
-  "Laundry Room",
-  "Water Supply",
-  "Electricity",
-  "Swimming Pool",
-  "GYM",
-] as const;
-
 export const Durations = [
   { label: "Weekly", value: "7" },
   { label: "Bi-Weekly", value: "14" },

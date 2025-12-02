@@ -27,7 +27,6 @@ import { useRouter } from "expo-router";
 import React, { memo, useMemo } from "react";
 import { generateMediaUrl, getImageUrl } from "@/lib/api";
 import { useLayout } from "@react-native-community/hooks";
-import { usePropertyStore } from "@/store/propertyStore";
 import { FindAmenity, fullName } from "@/lib/utils";
 import { openAccessModal, openEnquiryModal } from "../globals/AuthModals";
 import { useMutation } from "@tanstack/react-query";
@@ -161,7 +160,13 @@ const PropertyDetailsBottomSheet = ({
                 index={0}
               >
                 <View className="bg-background-muted rounded-xl p-4">
-                  <ImageGrid width={(width - 110) / 5} />
+                  <ImageGrid
+                    images={
+                      property?.media?.filter((i) => i.media_type == "IMAGE") ||
+                      []
+                    }
+                    width={(width - 110) / 5}
+                  />
                 </View>
               </ProfileImageTrigger>
             </View>
@@ -194,11 +199,11 @@ const PropertyDetailsBottomSheet = ({
             </Pressable>
           </View>
           <View className="px-4 gap-6">
-            <CustomCenterSheet />
+            <CustomCenterSheet address={property.address} />
 
             {/* <Divider /> */}
 
-            <PropertyNearbySection />
+            <PropertyNearbySection address={property.address} />
             <View className="bg-background-muted p-4 rounded-xl gap-4">
               <Pressable className={"f items-center "}>
                 <Avatar className=" w-14 h-14">
@@ -237,34 +242,31 @@ const PropertyDetailsBottomSheet = ({
   );
 };
 
-function ImageGrid({ width }: { width: number }) {
-  const { getImages } = usePropertyStore();
+function ImageGrid({ width, images }: { width: number; images: Media[] }) {
   return (
     <View className=" flex-row gap-3">
-      {getImages()
-        ?.slice(0, 4)
-        .map((img) => {
-          const { uri, id } = generateMediaUrl(img);
-          return (
-            <View
-              key={img.id}
-              style={{ width, height: width }}
-              className=" rounded-xl overflow-hidden"
-            >
-              <Image
-                source={{ uri, cacheKey: id }}
-                className="w-full h-full object-cover"
-                alt="images"
-              />
-            </View>
-          );
-        })}
-      {getImages()?.length > 4 && (
+      {images.slice(0, 4).map((img) => {
+        const { uri, id } = generateMediaUrl(img);
+        return (
+          <View
+            key={img.id}
+            style={{ width, height: width }}
+            className=" rounded-xl overflow-hidden"
+          >
+            <Image
+              source={{ uri, cacheKey: id }}
+              className="w-full h-full object-cover"
+              alt="images"
+            />
+          </View>
+        );
+      })}
+      {images?.length > 4 && (
         <View
           style={{ width: width + 3, height: width + 3 }}
           className=" rounded-xl bg-background items-center justify-center overflow-hidden"
         >
-          <Text size="lg">+{getImages().length - 4}</Text>
+          <Text size="lg">+{images.length - 4}</Text>
         </View>
       )}
     </View>

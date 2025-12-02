@@ -3,17 +3,12 @@ import { FilterComponent } from "@/components/admin/shared/FilterComponent";
 import { useMemo, useState } from "react";
 import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
 import VerticalProperties from "@/components/property/VerticalProperties";
-import { useStore } from "@/store";
 import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
-import PropertyDetailsBottomSheet from "@/components/admin/properties/PropertyDetailsBottomSheet";
 
 export default function AdminProperties() {
   const [search, setSearch] = useState("");
-  const [activeProperty, setActiveProperty] = useState<Property | null>(null);
-  const [propertyBottomSheet, setPropertyBottomSheet] = useState(false);
 
   const [actveTab, setActiveTab] = useState("all");
-  const { me } = useStore();
   const {
     data,
     refetch,
@@ -92,24 +87,12 @@ export default function AdminProperties() {
             showStatus
             isLoading={isLoading || isFetchingNextPage}
             className="pb-40"
-            onPress={(data) => {
-              setActiveProperty(data);
-              setPropertyBottomSheet(true);
-            }}
             hasNextPage={hasNextPage}
             fetchNextPage={fetchNextPage}
             refetch={refetch}
           />
         </View>
       </Box>
-      {activeProperty && me && (
-        <PropertyDetailsBottomSheet
-          visible={propertyBottomSheet}
-          property={activeProperty}
-          user={me}
-          onDismiss={() => setPropertyBottomSheet(false)}
-        />
-      )}
     </>
   );
 }

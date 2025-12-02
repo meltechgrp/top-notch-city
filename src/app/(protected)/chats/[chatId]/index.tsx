@@ -7,7 +7,6 @@ import { cn, formatMessageTime, fullName } from "@/lib/utils";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import Platforms from "@/constants/Plaforms";
 import { SafeAreaView } from "react-native-safe-area-context";
-import CustomScreenHeader from "@/components/layouts/CustomScreenHeader";
 import {
   Avatar,
   AvatarBadge,

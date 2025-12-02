@@ -10,7 +10,6 @@ import {
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
 import PropertyHeader from "@/components/property/PropertyHeader";
-import { usePropertyStore } from "@/store/propertyStore";
 import PropertyDetails from "@/components/property/PropertyDetails";
 import { useLayout } from "@react-native-community/hooks";
 import FullHeightLoaderWrapper from "@/components/loaders/FullHeightLoaderWrapper";
@@ -35,7 +34,6 @@ const HERO_HEIGHT = height / 2.2;
 
 export default function PropertyItem() {
   const { propertyId } = useLocalSearchParams() as { propertyId: string };
-  const { updateProperty } = usePropertyStore();
   const { width, onLayout } = useLayout();
   const theme = useResolvedTheme();
   const detailsY = useSharedValue(0);
@@ -65,7 +63,6 @@ export default function PropertyItem() {
 
   useEffect(() => {
     if (property) {
-      updateProperty(property);
       mutate();
     }
   }, [property]);

@@ -1,4 +1,3 @@
-// components/CustomNotification.tsx
 import React from "react";
 import {
   Notifier,
@@ -8,7 +7,6 @@ import {
 } from "react-native-notifier";
 import { Colors } from "@/constants/Colors";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { router } from "expo-router";
 
 type Props = NotifierProps & {
   title: string;
@@ -46,8 +44,6 @@ export function showBounceNotification({
   title,
   description,
   onPress,
-  entity_id,
-  entity_type,
   onHidden,
   theme = "dark",
 }: Props) {

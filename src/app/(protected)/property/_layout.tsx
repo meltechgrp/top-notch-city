@@ -31,18 +31,6 @@ export default function PropertysLayout() {
         }}
       />
       <Stack.Screen
-        name="[propertyId]/images"
-        options={{
-          title: "Images",
-        }}
-      />
-      <Stack.Screen
-        name="[propertyId]/videos"
-        options={{
-          title: "Video",
-        }}
-      />
-      <Stack.Screen
         name="[propertyId]/edit"
         options={{
           title: "Edit",
@@ -52,12 +40,6 @@ export default function PropertysLayout() {
         name="[propertyId]/3d-view"
         options={{
           title: "Visual Tour",
-        }}
-      />
-      <Stack.Screen
-        name="[propertyId]/booking"
-        options={{
-          title: "Booking",
         }}
       />
     </Stack>

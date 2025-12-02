@@ -4,16 +4,17 @@ import Layout from "@/constants/Layout";
 import { Modal, Pressable, View } from "react-native";
 import { Icon } from "../ui";
 import { X } from "lucide-react-native";
-import { usePropertyStore } from "@/store/propertyStore";
 
-export function CustomCenterSheet() {
+interface CustomCenterSheetProps {
+  address: Property["address"];
+}
+
+export function CustomCenterSheet({ address }: CustomCenterSheetProps) {
   const [open, setOpen] = useState(false);
-  const { details } = usePropertyStore();
-  if (!details) return null;
   function handleDismiss() {
     setOpen(false);
   }
-  const { longitude, latitude } = details.address;
+  const { longitude, latitude } = address;
   const MODAL_WIDTH = Math.round(Layout.window.width * 0.85);
   const MODAL_HEIGHT = Math.round(Layout.window.height * 0.7);
   const MINI_HEIGHT = Math.round(Layout.window.height * 0.3);

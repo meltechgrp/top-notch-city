@@ -5,7 +5,6 @@ import { Button, ButtonText, Icon, Text } from "../ui";
 import { Camera, MoreHorizontal, Video } from "lucide-react-native";
 import { useVideoPlayer, VideoView } from "expo-video";
 import { useMemo, useState } from "react";
-import FullHeightLoaderWrapper from "../loaders/FullHeightLoaderWrapper";
 import { MiniEmptyState } from "../shared/MiniEmptyState";
 import OptionsBottomSheet from "../shared/OptionsBottomSheet";
 import { useLayout } from "@react-native-community/hooks";
@@ -148,9 +147,11 @@ function ListingVideosBottomSheet(props: Props) {
               data={videos}
               numColumns={2}
               contentContainerClassName=""
-              ListEmptyComponent={() => (
-                <MiniEmptyState title="Pick or take videos" />
-              )}
+              ListEmptyComponent={() =>
+                previewFiles.length == 0 ? (
+                  <MiniEmptyState title="Pick or take videos" />
+                ) : undefined
+              }
               keyExtractor={(item) => item.id!}
               ListHeaderComponent={ListHeader}
               ItemSeparatorComponent={() => <View className=" h-4" />}

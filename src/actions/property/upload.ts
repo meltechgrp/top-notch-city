@@ -64,40 +64,35 @@ export function useUploadProperty(type: "edit" | "add", propertyId?: string) {
         formData.append("amenity_values", fac.value.toString());
       });
 
-      let res: any = null;
-      if (type == "edit") {
-        res = await axios.put(
-          `${config.origin}/api/properties/${propertyId}`,
-          formData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "multipart/form-data",
-              Accept: "application/json",
-            },
-          }
-        );
-      } else {
-        await axios.post(`${config.origin}/api/properties/`, formData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-            Accept: "application/json",
-          },
-        });
+      try {
+        if (type == "edit") {
+          return await axios.put(
+            `${config.origin}/api/properties/${propertyId}`,
+            formData,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "multipart/form-data",
+                Accept: "application/json",
+              },
+            }
+          );
+        } else {
+          return await axios.post(
+            `${config.origin}/api/properties/`,
+            formData,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "multipart/form-data",
+                Accept: "application/json",
+              },
+            }
+          );
+        }
+      } catch (error: any) {
+        throw Error(error?.message || "Something went wrong");
       }
-
-      const result = res.data;
-
-      if (result?.detail) {
-        throw new Error("Please verify your property details");
-      }
-
-      if (result?.property_id) {
-        return result;
-      }
-
-      throw new Error("Something went wrong, please try again");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["properties"] });

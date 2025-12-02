@@ -216,12 +216,6 @@ export default function ChatRoom(props: Props) {
           </View>
         ) : null}
         {!messages?.length && <EmptyScreen message={"This space is empty"} />}
-
-        {/* <EditOverlay
-          visible={isEditing}
-          onDismiss={() => exitEditMode()}
-          activeMessage={selectedMessage}
-        /> */}
       </View>
       {typing && (
         <View style={{ padding: 10 }}>

@@ -53,7 +53,7 @@ function handleNotificationResponseByType(
   switch (notificationType) {
     case "chat": {
       navigateTo({
-        pathname: "/(protected)/messages/[chatId]",
+        pathname: "/(protected)/chats/[chatId]",
         params: {
           chatId: notificationData?.entity_id as string,
         },

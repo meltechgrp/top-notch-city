@@ -1,5 +1,3 @@
-import ScreenContianer from "@/components/shared/ScreenContianer";
-import Platforms from "@/constants/Plaforms";
 import { router } from "expo-router";
 import { Pressable, ScrollView, View } from "react-native";
 import { Box, Image, ImageBackground, Text } from "../ui";

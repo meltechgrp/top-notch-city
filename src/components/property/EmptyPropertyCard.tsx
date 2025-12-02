@@ -37,7 +37,7 @@ export function EmptyState({
         }}
       >
         <View className="items-center gap-3">
-          <Icon as={icon} size={28} />
+          <Icon as={icon} size={"xl"} />
           <Text className="text-lg font-semibold text-typography text-center">
             {title}
           </Text>
@@ -49,7 +49,7 @@ export function EmptyState({
             onPress={onPress}
             className="mt-6 px-4 py-2 border border-outline-100"
           >
-            <Icon as={RefreshCcw} size={14} />
+            <Icon as={RefreshCcw} size={"sm"} />
             <Text className="text-sm font-medium">{buttonLabel}</Text>
           </Button>
         )}

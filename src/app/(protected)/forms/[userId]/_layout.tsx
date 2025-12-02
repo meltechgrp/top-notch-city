@@ -1,4 +1,3 @@
-import { AnimatedHeaderTitle } from "@/components/custom/AnimatedHeaderTitle";
 import AppCrashScreen from "@/components/shared/AppCrashScreen";
 import headerLeft from "@/components/shared/headerLeft";
 import { useResolvedTheme } from "@/components/ui";
@@ -7,7 +6,6 @@ import Platforms from "@/constants/Plaforms";
 import { ErrorBoundaryProps, Stack } from "expo-router";
 
 export const unstable_settings = {
-  // Ensure any route can link back to `/`
   initialRouteName: "index",
 };
 
@@ -69,9 +67,4 @@ export default function AgentScreensLayout() {
       />
     </Stack>
   );
-}
-
-// todo: move to app root layout
-export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
-  return <AppCrashScreen />;
 }

@@ -4,10 +4,8 @@ import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import { Colors } from "@/constants/Colors";
 import Layout from "@/constants/Layout";
 import { ActivityIndicator, ScrollView } from "react-native";
-import { usePropertyStore } from "@/store/propertyStore";
 import {
   Church,
-  Fuel,
   Hospital,
   MapPin,
   School,
@@ -92,8 +90,11 @@ const NearbyCategory = ({
   );
 };
 
-const PropertyNearbySection = () => {
-  const { details } = usePropertyStore();
+interface PropertyNearbySectionProps {
+  address: Property["address"];
+}
+
+const PropertyNearbySection = ({ address }: PropertyNearbySectionProps) => {
   const [index, setIndex] = useState(0);
   const theme = useResolvedTheme();
   const routes = Object.keys(categories).map((key) => ({
@@ -107,8 +108,8 @@ const PropertyNearbySection = () => {
         () => (
           <NearbyCategory
             type={categories[key as keyof typeof categories]}
-            latitude={details?.address.latitude!}
-            longitude={details?.address.longitude!}
+            latitude={address.latitude!}
+            longitude={address.longitude!}
           />
         ),
       ])

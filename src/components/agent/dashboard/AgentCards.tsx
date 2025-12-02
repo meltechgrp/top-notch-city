@@ -1,4 +1,4 @@
-import { Eye, Heart, House, Target } from "lucide-react-native";
+import { Heart, House, Target } from "lucide-react-native";
 import { Text, View } from "@/components/ui";
 import { useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
@@ -15,7 +15,7 @@ export default function AgentCards({ userId }: { userId: string }) {
   return (
     <View className="gap-4 px-4">
       <View className="gap-4">
-        <Text className="text-typography/80">Property Insights</Text>
+        <Text className="text-typography font-medium">Property Insights</Text>
         <View className="flex-row gap-4">
           <AgentCard
             title="Properties"

@@ -1,4 +1,3 @@
-import { Dropdown } from "@/components/custom/Dropdown";
 import { Text, useResolvedTheme, View } from "@/components/ui";
 import { Colors } from "@/constants/Colors";
 import { cn } from "@/lib/utils";

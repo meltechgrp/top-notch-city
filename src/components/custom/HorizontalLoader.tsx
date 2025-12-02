@@ -16,8 +16,7 @@ export default function LoadingLine() {
   }, []);
 
   const animatedStyle = useAnimatedStyle(() => {
-    // Animate width from 0% to 50% (centered = outward expansion)
-    const scaleX = 0.85 + progress.value * 0.85; // from 25% to 50%
+    const scaleX = 0.85 + progress.value * 0.85;
 
     const backgroundColor = interpolateColor(
       progress.value,
@@ -26,7 +25,7 @@ export default function LoadingLine() {
     );
 
     return {
-      transform: [{ scaleX }], // expands/shrinks from center
+      transform: [{ scaleX }],
       backgroundColor,
     };
   });
@@ -37,7 +36,7 @@ export default function LoadingLine() {
         className="h-full rounded"
         style={[
           {
-            width: "50%", // base width, scaling will handle animation
+            width: "50%",
           },
           animatedStyle,
         ]}
