@@ -14,14 +14,20 @@ export default function useResetAppState() {
   const queryClient = useQueryClient();
 
   const resetAppState = useCallback(
-    async (options?: { logoutAll?: boolean; onlyCache?: boolean }) => {
+    async (options?: {
+      logoutAll?: boolean;
+      onlyCache?: boolean;
+      withStore?: boolean;
+    }) => {
       if (options?.logoutAll) {
         await clearAllAccounts();
       } else if (!options?.onlyCache) {
         const activeId = await getActiveUserId();
         if (activeId) await removeAccount(activeId);
       }
-      useStore.getState().resetStore();
+      if (!options?.withStore) {
+        useStore.getState().resetStore();
+      }
       useChatStore.getState().resetChatStore();
       useTempStore.getState().resetStore();
 

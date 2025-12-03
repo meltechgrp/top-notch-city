@@ -25,12 +25,14 @@ import { useProfileMutations } from "@/tanstack/mutations/useProfileMutations";
 import OptionsBottomSheet from "@/components/shared/OptionsBottomSheet";
 import { MediaPreviewModal } from "@/components/modals/profile/MediaPreviewModal";
 import { useUser } from "@/hooks/useUser";
+import { useStore } from "@/store";
 
 export default function UserAccount() {
   const { userId } = useLocalSearchParams() as {
     userId: string;
   };
-  const { isAgent } = useUser();
+  const { me } = useStore();
+  const { isAgent } = useUser({ me });
   const { data, isLoading, refetch, isRefetching } = useQuery({
     queryKey: ["user", userId],
     queryFn: () => getUser(userId),

@@ -19,7 +19,7 @@ export async function uploadToBucket({
   apply_watermark?: boolean;
 }) {
   try {
-    const token = getActiveToken();
+    const token = await getActiveToken();
     if (!token) throw new Error("Authentication token missing");
 
     const formData = new FormData();

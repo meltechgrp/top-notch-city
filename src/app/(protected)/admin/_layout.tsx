@@ -78,7 +78,7 @@ export default function ProtectedRoutesLayout() {
       <Stack.Screen
         name="requests"
         options={{
-          headerTitle: "Requests",
+          headerTitle: "Agent Applications",
         }}
       />
     </Stack>

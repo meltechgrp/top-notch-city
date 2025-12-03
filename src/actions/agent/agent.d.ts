@@ -1,35 +1,23 @@
-interface AgentFormData {
-  phone: string;
-  // nin: string;
-  birthdate: Date | null;
-  country: string;
-  state: string;
-  city?: string;
-  photo: string;
-}
 interface AgentReview {
-  id: string;
-  user_id: string;
-  reviewed_by: string;
-  country: string;
-  state: string;
-  city: string;
-  nin: string;
-  firstname: string;
-  lastname: string;
-  middlename: string;
-  phone: string;
-  birthdate: string; // e.g. "2025-07-07"
-  photo: string;
-  first_name_match: boolean;
-  last_name_match: boolean;
-  dob_match: boolean;
-  additional_fields: {
-    [key: string]: any; // adjust if you know the structure
+  application_id: string;
+  user: {
+    id: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    phone: string;
+    gender: null;
+    profile_image: string;
   };
-  status: "pending" | "approved" | "rejected"; // assuming possible statuses
-  reviewed_at: string; // ISO datetime string
-  rejection_reason: string;
+  profile: {
+    years_of_experience: string;
+    specialties: string[];
+    languages: string[];
+    certifications: string[];
+    website: "https://wsadasdasd";
+    companies_count: 0;
+  };
+  status: "pending" | "approved" | "rejected";
   created_at: string;
   updated_at: string;
 }
@@ -50,7 +38,7 @@ type AgentResult = {
   total: number;
   page: number;
   per_page: number;
-  pages: number;
+  total_pages: number;
   results: AgentReview[];
 };
 type AgentResult2 = {

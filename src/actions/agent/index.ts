@@ -61,7 +61,9 @@ export async function getAgentApplications({
 }: {
   pageParam: number;
 }) {
-  const res = await Fetch(`/admin/agent/applications?page=${pageParam}`);
+  const res = await Fetch(
+    `/admin/agent/applications?page=${pageParam}&per_page=20`
+  );
   return res as AgentResult;
 }
 export async function getMyApplications() {
@@ -74,15 +76,19 @@ export async function getMyApplications() {
 }
 export async function acceptApplication({
   application_id,
+  reason,
+  status,
 }: {
   application_id: string;
+  reason?: string;
+  status: string;
 }) {
   const res = await Fetch(`/admin/agent/${application_id}/review`, {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
     },
-    data: { status: "approved" },
+    data: reason ? { status, reason } : { status },
   });
 
   if (res?.detail) {

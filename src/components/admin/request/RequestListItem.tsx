@@ -1,10 +1,12 @@
-import { Text, View } from "@/components/ui";
+import { Avatar, AvatarImage, Text, View } from "@/components/ui";
 import SwipeableWrapper from "@/components/shared/SwipeableWrapper";
 import { Pressable } from "react-native";
-import { composeFullAddress } from "@/lib/utils";
+import { composeFullAddress, fullName } from "@/lib/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteApplication } from "@/actions/agent";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
+import { generateMediaUrlSingle } from "@/lib/api";
+import { router } from "expo-router";
 
 type Props = {
   request: AgentReview;
@@ -30,7 +32,7 @@ export default function RequestListItem({ request, onPress }: Props) {
                 if (request.status !== "pending") return null;
                 await mutateAsync(
                   {
-                    application_id: request?.id,
+                    application_id: request.application_id,
                   },
                   {
                     onSettled: () =>
@@ -53,27 +55,47 @@ export default function RequestListItem({ request, onPress }: Props) {
           onPress={() => {
             onPress(request);
           }}
-          className="bg-background-muted rounded-xl p-4 border border-outline"
+          className="bg-background-muted flex-row gap-4 items-center rounded-xl p-4 border border-outline"
         >
-          <View className="flex-row justify-between items-center mb-2">
-            <Text className="text-lg font-semibold">
-              {request.firstname} {request.lastname}
-            </Text>
-            <Text
-              className={`text-xs px-2 py-1 rounded-full ${
-                request.status === "pending"
-                  ? "bg-primary text-white"
-                  : request.status === "approved"
-                    ? "bg-green-500 text-white"
-                    : "bg-red-500 text-white"
-              }`}
-            >
-              {request.status.toUpperCase()}
+          <Pressable
+            onPress={() =>
+              router.push({
+                pathname: "/admin/users/[userId]",
+                params: {
+                  userId: request.user.id,
+                },
+              })
+            }
+          >
+            <Avatar>
+              <AvatarImage
+                source={{
+                  uri: generateMediaUrlSingle(request.user.profile_image),
+                }}
+              />
+            </Avatar>
+          </Pressable>
+          <View className=" flex-1">
+            <View className="flex-row justify-between items-center mb-2">
+              <Text className="text-lg font-semibold">
+                {fullName(request.user)}
+              </Text>
+              <Text
+                className={`text-xs px-2 py-1 rounded-full ${
+                  request.status === "pending"
+                    ? "bg-primary text-white"
+                    : request.status === "approved"
+                      ? "bg-green-500 text-white"
+                      : "bg-red-500 text-white"
+                }`}
+              >
+                {request.status.toUpperCase()}
+              </Text>
+            </View>
+            <Text className="text-sm text-typography">
+              {request.user.email}
             </Text>
           </View>
-          <Text className="text-sm text-typography">
-            {composeFullAddress(request)}
-          </Text>
         </Pressable>
       </SwipeableWrapper>
     </>

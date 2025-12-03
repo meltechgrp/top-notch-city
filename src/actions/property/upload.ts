@@ -9,7 +9,7 @@ export function useUploadProperty(type: "edit" | "add", propertyId?: string) {
 
   const mutation = useMutation({
     mutationFn: async (listing: Listing) => {
-      const token = getActiveToken();
+      const token = await getActiveToken();
       const formData = new FormData();
 
       const {
@@ -27,7 +27,6 @@ export function useUploadProperty(type: "edit" | "add", propertyId?: string) {
         availabilityPeriod,
         currency,
       } = listing;
-
       if (title) formData.append("title", title);
       if (description) formData.append("description", description);
       if (currency) formData.append("currency_code", currency);
@@ -91,12 +90,17 @@ export function useUploadProperty(type: "edit" | "add", propertyId?: string) {
           );
         }
       } catch (error: any) {
+        console.log(error);
         throw Error(error?.message || "Something went wrong");
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["properties"] });
+      if (propertyId) {
+        queryClient.invalidateQueries({ queryKey: ["properties", propertyId] });
+      }
     },
+    onError: (e) => console.log(e),
   });
 
   return {

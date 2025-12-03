@@ -40,6 +40,12 @@ export default function SettingsLayout() {
         }}
       />
       <Stack.Screen
+        name="permissions"
+        options={{
+          headerTitle: "Permissions",
+        }}
+      />
+      <Stack.Screen
         name="manager"
         options={{
           headerShown: false,

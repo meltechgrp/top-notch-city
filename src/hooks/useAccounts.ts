@@ -62,7 +62,7 @@ export function useMultiAccount() {
   }
   async function switchToAccount(id: string) {
     await setActiveUserId(id);
-    await resetAppState({ onlyCache: true });
+    await resetAppState({ onlyCache: true, withStore: true });
     const user = await getActiveAccount();
     user && updateProfile(user);
   }

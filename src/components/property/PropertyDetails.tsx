@@ -24,7 +24,7 @@ import {
   Video,
 } from "lucide-react-native";
 import { useRouter } from "expo-router";
-import React, { memo, useMemo } from "react";
+import React, { memo, useMemo, useState } from "react";
 import { generateMediaUrl, getImageUrl } from "@/lib/api";
 import { useLayout } from "@react-native-community/hooks";
 import { FindAmenity, fullName } from "@/lib/utils";
@@ -37,6 +37,9 @@ import { CustomCenterSheet } from "@/components/property/CustomMapCenterSheet";
 import { useStore } from "@/store";
 import PropertyNearbySection from "@/components/property/PropertyNearbySection";
 import { ProfileImageTrigger } from "@/components/custom/ImageViewerProvider";
+import PropertyActionsBottomSheet from "@/components/modals/property/PropertyActionsBottomSheet";
+import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
+import { usePropertyActions } from "@/hooks/usePropertyActions";
 
 interface PropertyDetailsBottomSheetProps {
   property: Property;

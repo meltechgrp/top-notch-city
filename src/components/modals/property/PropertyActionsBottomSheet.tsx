@@ -2,7 +2,7 @@ import * as React from "react";
 import { TouchableWithoutFeedback, View } from "react-native";
 import BottomSheetPlain from "@/components/shared/BottomSheetPlain";
 import { FlashList } from "@shopify/flash-list";
-import { Heading, Icon, Pressable, Text } from "@/components/ui";
+import { Heading } from "@/components/ui";
 
 type OptionProps = {
   option: ConfirmationActionConfig;

@@ -21,10 +21,12 @@ import { useUser } from "@/hooks/useUser";
 import LogoutButton from "@/components/settings/LogoutButton";
 import { useMultiAccount } from "@/hooks/useAccounts";
 import { NotLoggedInProfile } from "@/components/profile/ProfileWrapper";
+import { useStore } from "@/store";
 
 export default function Setting() {
   const { removeAcc } = useMultiAccount();
-  const { isAgent, me } = useUser();
+  const { me } = useStore();
+  const { isAgent } = useUser({ me });
   const router = useRouter();
   const deviceId = getUniqueIdSync();
 
@@ -136,6 +138,12 @@ export default function Setting() {
                 title="Notifications"
                 withBorder={false}
                 onPress={() => router.push("/notification")}
+                icon={Bell}
+              />
+              <MenuListItem
+                title="Permissions"
+                withBorder={false}
+                onPress={() => router.push("/settings/permissions")}
                 icon={Bell}
               />
             </View>

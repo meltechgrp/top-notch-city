@@ -2,13 +2,15 @@ import { Icon, Pressable, useResolvedTheme, View } from "@/components/ui";
 import ReelShareButton from "../reel/ReelShareButton";
 import { usePropertyActions } from "@/hooks/usePropertyActions";
 import { router } from "expo-router";
-import { Edit, Trash2 } from "lucide-react-native";
+import { Edit, MoreHorizontal, Trash2 } from "lucide-react-native";
 import { cn, generateTitle } from "@/lib/utils";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Alert } from "react-native";
 import { usePropertyStatusMutations } from "@/tanstack/mutations/usePropertyStatusMutations";
 import LikeButton from "@/components/property/LikeButton";
 import WishListButton from "@/components/property/WishListButton";
+import PropertyActionsBottomSheet from "@/components/modals/property/PropertyActionsBottomSheet";
+import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 
 interface Props {
   property: Property;
@@ -20,7 +22,10 @@ export default function PropertyHeader({
   hasScrolledToDetails,
 }: Props) {
   const theme = useResolvedTheme();
-  const { isAdmin, isOwner, isAgent } = usePropertyActions({ property });
+  const { isAdmin, isOwner, isAgent, actions } = usePropertyActions({
+    property,
+  });
+  const [openActions, setOpenActions] = useState(false);
   const { mutate } = usePropertyStatusMutations().softDeleteMutation;
   const isLiked = useMemo(
     () => !!property.owner_interaction?.liked,
@@ -107,13 +112,40 @@ export default function PropertyHeader({
             id={property.id}
             hasScrolledToDetails={hasScrolledToDetails}
           />
-          <WishListButton
-            id={property.id}
-            isAdded={wishlisted}
-            hasScrolledToDetails={hasScrolledToDetails}
-          />
+          {property.status == "approved" && !isAdmin ? (
+            <WishListButton
+              id={property.id}
+              isAdded={wishlisted}
+              hasScrolledToDetails={hasScrolledToDetails}
+            />
+          ) : (
+            <Pressable className="p-2" onPress={() => setOpenActions(true)}>
+              <Icon className="w-7 h-7" as={MoreHorizontal} />
+            </Pressable>
+          )}
         </View>
       )}
+      <PropertyActionsBottomSheet
+        isOpen={openActions}
+        onDismiss={() => setOpenActions(false)}
+        options={actions.filter((action) => action.visible)}
+        OptionComponent={({ index, option, onPress }) => (
+          <ConfirmationModal
+            key={index}
+            visible={option.visible}
+            index={index}
+            header={option.header}
+            description={option.description}
+            actionText={option.actionText}
+            requireReason={option.requireReason}
+            onConfirm={option.onConfirm}
+            propertyId={property.id}
+            className={option.className}
+            onDismiss={() => setOpenActions(false)}
+            onPress={onPress}
+          />
+        )}
+      />
     </>
   );
 }

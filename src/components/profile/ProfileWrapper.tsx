@@ -29,6 +29,7 @@ import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
 import eventBus from "@/lib/eventBus";
 import { useUser } from "@/hooks/useUser";
 import { openAccountsModal } from "@/components/globals/AuthModals";
+import { useStore } from "@/store";
 
 export type UserType = "visitor" | "owner" | "admin";
 
@@ -47,7 +48,8 @@ export function ProfileWrapper({
   userType = "visitor",
   userId,
 }: ProfileWrapperProps) {
-  const { isAgent } = useUser();
+  const { me } = useStore.getState();
+  const { isAgent } = useUser({ me });
   const [showActions, setShowActions] = useState(false);
   const [activeTab, setActiveTab] = useState<(typeof tabs)[number]>(tabs[0]);
   const { data, isLoading, refetch, isRefetching } = useQuery({

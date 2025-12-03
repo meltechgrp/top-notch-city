@@ -42,7 +42,7 @@ export function useMediaUpload({
 
             const file = await ctx.renderAsync();
             const output = await file.saveAsync({
-              compress: 0.5,
+              compress: 0.7,
               format: SaveFormat.JPEG,
             });
             return output.uri;

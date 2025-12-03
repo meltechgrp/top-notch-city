@@ -1,6 +1,6 @@
 import { Button, Text, View } from "@/components/ui";
 import { useRouter } from "expo-router";
-import { Bell, House, Link, Users } from "lucide-react-native";
+import { Bell, House, Link, Lock, Trash2, Users } from "lucide-react-native";
 import { MenuListItem } from "@/components/menu/MenuListItem";
 import { Divider } from "@/components/ui/divider";
 import { BodyScrollView } from "@/components/layouts/BodyScrollView";
@@ -19,16 +19,14 @@ export default function Setting() {
         <View className="pt-4 flex-1 gap-4">
           <View className="gap-4 px-4">
             <Text className="font-medium text-typography/80">Your account</Text>
-            <View className="gap-4">
+            <View className="gap-4 bg-background-muted p-4 rounded-xl border border-outline-100">
               <MenuListItem
                 title="Linked accounts"
-                withBorder={false}
                 onPress={() => openAccountsModal({ visible: true })}
                 icon={Link}
               />
               <MenuListItem
                 title="Update profile"
-                withBorder={false}
                 onPress={() =>
                   router.push({
                     pathname: "/agents/[userId]/account",
@@ -37,30 +35,28 @@ export default function Setting() {
                     },
                   })
                 }
+                withBorder={false}
                 icon={Users}
               />
               {/* <MenuListItem
                 title="Devices"
-                withBorder={false}
                 onPress={() => router.push("/notification")}
                 icon={Bell}
               /> */}
             </View>
-          </View>
-          <Divider className="h-2 bg-background-muted" />
-          <View className="gap-4 px-4 mt-4">
-            <Button
-              onPress={() => router.push("/settings/manager/change-password")}
-              className="h-12 bg-background-muted"
-            >
-              <Text>Change Password</Text>
-            </Button>
-            <Button
-              onPress={() => router.push("/settings/manager/delete-account")}
-              className="h-12"
-            >
-              <Text>Delete Account</Text>
-            </Button>
+            <View className="gap-4 p-4 bg-background-muted border border-outline-100 rounded-xl">
+              <MenuListItem
+                title="Change Password"
+                onPress={() => router.push("/settings/manager/change-password")}
+                icon={Lock}
+              />
+              <MenuListItem
+                title="Delete Account"
+                onPress={() => router.push("/settings/manager/delete-account")}
+                icon={Trash2}
+                withBorder={false}
+              />
+            </View>
           </View>
         </View>
       </BodyScrollView>

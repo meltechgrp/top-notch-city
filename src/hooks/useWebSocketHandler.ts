@@ -4,8 +4,10 @@ import { getActiveToken } from "@/lib/secureStore";
 import { useWebSocketConnection } from "@/actions/utills";
 import { useChatStore } from "@/store/chatStore";
 import { useMultiAccount } from "@/hooks/useAccounts";
+import { useStore } from "@/store";
 
 export function useWebSocketHandler() {
+  const { me } = useStore();
   const [url, setUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { updateAccount } = useMultiAccount();
@@ -35,7 +37,7 @@ export function useWebSocketHandler() {
       }
     }
     fetchToken();
-  }, []);
+  }, [me]);
   useEffect(() => {
     if (!url || isLoading) return;
 

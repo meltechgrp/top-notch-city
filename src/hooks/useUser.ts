@@ -1,8 +1,10 @@
-import { useStore } from "@/store";
 import { useMemo } from "react";
 
-export function useUser() {
-  const { me } = useStore.getState();
+interface Props {
+  me: StoredAccount | undefined;
+}
+
+export function useUser({ me }: Props) {
   if (!me) {
     return {
       isAdmin: false,

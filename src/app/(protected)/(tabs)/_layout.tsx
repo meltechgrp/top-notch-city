@@ -13,13 +13,15 @@ import {
 import { Colors } from "@/constants/Colors";
 import { useResolvedTheme } from "@/components/ui";
 import { useUser } from "@/hooks/useUser";
+import { useStore } from "@/store";
 
 export const unstable_settings = {
   initialRouteName: "/home",
 };
 export default function TabLayout() {
   const theme = useResolvedTheme();
-  const { isAdmin, isAgent } = useUser();
+  const { me } = useStore.getState();
+  const { isAdmin, isAgent } = useUser({ me });
   return (
     <Tabs
       screenOptions={{

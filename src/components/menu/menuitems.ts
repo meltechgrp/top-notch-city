@@ -25,8 +25,12 @@ type MenuProps = {
   description?: string;
 };
 
-export const getQuickMenuItems = () => {
-  const { me, isAdmin, isAgent } = useUser();
+interface QuickMenuItemsProps {
+  me: StoredAccount | undefined;
+}
+
+export const getQuickMenuItems = ({ me }: QuickMenuItemsProps) => {
+  const { isAdmin, isAgent } = useUser({ me });
 
   const data: MenuProps[] = [
     // Users

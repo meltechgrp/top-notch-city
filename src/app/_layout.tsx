@@ -87,7 +87,7 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
 }
 
 function useMountPushNotificationToken() {
-  const hasAuth = useStore((v) => v.hasAuth);
+  const hasAuth = useStore((v) => v.me);
 
   if (Platform.OS === "web") {
     return;
