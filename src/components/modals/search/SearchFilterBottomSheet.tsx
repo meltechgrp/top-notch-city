@@ -4,7 +4,6 @@ import { Text, Button, ButtonText, Pressable, Heading } from "@/components/ui";
 import BottomSheet from "@/components/shared/BottomSheet";
 import { CustomSlider } from "@/components/custom/CustomSlider";
 import { cn } from "@/lib/utils";
-import { Amenities } from "@/constants/Amenities";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
 
 type Props = {
@@ -129,7 +128,7 @@ function SearchFilterBottomSheet({
                 maximumValue={10}
               />
             </View>
-            <View className="gap-1.5">
+            {/* <View className="gap-1.5">
               <Text className="text-base">Amenities</Text>
               <View className="gap-y-3 bg-background-muted rounded-xl p-4">
                 {Amenities.map((label) => {
@@ -163,7 +162,7 @@ function SearchFilterBottomSheet({
                   );
                 })}
               </View>
-            </View>
+            </View> */}
 
             {/* <View className="gap-1.5">
               <Text className="text-sm">Others</Text>

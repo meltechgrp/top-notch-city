@@ -24,15 +24,16 @@ import ImageOptionBottomSheet from "@/components/modals/profile/ImageOptionBotto
 import { useProfileMutations } from "@/tanstack/mutations/useProfileMutations";
 import OptionsBottomSheet from "@/components/shared/OptionsBottomSheet";
 import { MediaPreviewModal } from "@/components/modals/profile/MediaPreviewModal";
-import { useUser } from "@/hooks/useUser";
 import { useStore } from "@/store";
+import { useShallow } from "zustand/react/shallow";
 
 export default function UserAccount() {
   const { userId } = useLocalSearchParams() as {
     userId: string;
   };
-  const { me } = useStore();
-  const { isAgent } = useUser({ me });
+  const { me, isAdmin, isAgent } = useStore(
+    useShallow((s) => s.getCurrentUser())
+  );
   const { data, isLoading, refetch, isRefetching } = useQuery({
     queryKey: ["user", userId],
     queryFn: () => getUser(userId),

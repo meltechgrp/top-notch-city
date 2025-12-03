@@ -1,4 +1,3 @@
-import { useUser } from "@/hooks/useUser";
 import {
   Users,
   Film,
@@ -27,11 +26,15 @@ type MenuProps = {
 
 interface QuickMenuItemsProps {
   me: StoredAccount | undefined;
+  isAgent: boolean;
+  isAdmin: boolean;
 }
 
-export const getQuickMenuItems = ({ me }: QuickMenuItemsProps) => {
-  const { isAdmin, isAgent } = useUser({ me });
-
+export const getQuickMenuItems = ({
+  me,
+  isAdmin,
+  isAgent,
+}: QuickMenuItemsProps) => {
   const data: MenuProps[] = [
     // Users
     {

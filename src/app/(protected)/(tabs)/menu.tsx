@@ -1,5 +1,4 @@
 import { Icon, Pressable, Text, View } from "@/components/ui";
-import { useUser } from "@/hooks/useUser";
 import { Stack, useRouter } from "expo-router";
 import {
   MoreHorizontal,
@@ -16,12 +15,14 @@ import AgentCards from "@/components/agent/dashboard/AgentCards";
 import { MenuListItem } from "@/components/menu/MenuListItem";
 import CampaignCard from "@/components/profile/CampaignCard";
 import { useStore } from "@/store";
+import { useShallow } from "zustand/react/shallow";
 
 export default function Menu() {
   const router = useRouter();
-  const { me } = useStore.getState();
-  const { isAdmin, isAgent } = useUser({ me });
-  const quickMenuItems = getQuickMenuItems({ me });
+  const { me, isAdmin, isAgent } = useStore(
+    useShallow((s) => s.getCurrentUser())
+  );
+  const quickMenuItems = getQuickMenuItems({ me, isAdmin, isAgent });
   return (
     <>
       <Stack.Screen

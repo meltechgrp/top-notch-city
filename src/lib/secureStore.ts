@@ -41,7 +41,6 @@ export async function getActiveAccount(): Promise<StoredAccount | null> {
   const accounts = await getAccounts();
   return accounts.find((a) => a.id === id) ?? null;
 }
-
 export async function getActiveToken(): Promise<string | null> {
   const acc = await getActiveAccount();
   return acc?.token ?? null;

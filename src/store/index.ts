@@ -18,6 +18,12 @@ type State = {
   muted: boolean;
 };
 
+export type CurrentUser = {
+  me?: StoredAccount;
+  isAdmin: boolean;
+  isAgent: boolean;
+};
+
 type Actions = {
   resetStore: () => void;
   getDeviceId: () => string;
@@ -28,6 +34,7 @@ type Actions = {
   setNearbyProperties: (properties: Property[]) => void;
   clearNearbyProperties: () => void;
   updateMuted: () => void;
+  getCurrentUser: () => CurrentUser;
   // Search
   updateSearchProperties: (data: Property[]) => void;
   updateSavedSearch: (data: SearchHistory[]) => void;
@@ -60,6 +67,14 @@ export const useStore = create<StateAndActions>(
           ...initialState,
           isOnboarded: isOnboarded,
         }));
+      },
+      getCurrentUser: () => {
+        const me = get()?.me;
+        return {
+          me,
+          isAgent: me?.role == "agent" || me?.role == "staff_agent",
+          isAdmin: me?.role == "admin" || me?.is_superuser || false,
+        };
       },
       updateLocation: (data) => set((p) => ({ ...p, location: data })),
       setIsOnboarded(isOnboarded) {

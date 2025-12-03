@@ -12,16 +12,17 @@ import {
 } from "lucide-react-native";
 import { Colors } from "@/constants/Colors";
 import { useResolvedTheme } from "@/components/ui";
-import { useUser } from "@/hooks/useUser";
 import { useStore } from "@/store";
+import { useShallow } from "zustand/react/shallow";
 
 export const unstable_settings = {
   initialRouteName: "/home",
 };
 export default function TabLayout() {
   const theme = useResolvedTheme();
-  const { me } = useStore.getState();
-  const { isAdmin, isAgent } = useUser({ me });
+  const { me, isAdmin, isAgent } = useStore(
+    useShallow((s) => s.getCurrentUser())
+  );
   return (
     <Tabs
       screenOptions={{

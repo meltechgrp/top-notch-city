@@ -3,10 +3,12 @@ import {
   ProfileWrapper,
 } from "@/components/profile/ProfileWrapper";
 import { useStore } from "@/store";
+import { useShallow } from "zustand/react/shallow";
 
 export default function ProfileScreen() {
-  const { me } = useStore();
-  const isAgent = me?.role == "agent" || me?.role == "staff_agent";
+  const { me, isAdmin, isAgent } = useStore(
+    useShallow((s) => s.getCurrentUser())
+  );
   const tabs = [
     {
       label: "All",

@@ -17,16 +17,17 @@ import { BodyScrollView } from "@/components/layouts/BodyScrollView";
 import { openAccessModal } from "@/components/globals/AuthModals";
 import { Fetch } from "@/actions/utills";
 import { getUniqueIdSync } from "react-native-device-info";
-import { useUser } from "@/hooks/useUser";
 import LogoutButton from "@/components/settings/LogoutButton";
 import { useMultiAccount } from "@/hooks/useAccounts";
 import { NotLoggedInProfile } from "@/components/profile/ProfileWrapper";
 import { useStore } from "@/store";
+import { useShallow } from "zustand/react/shallow";
 
 export default function Setting() {
   const { removeAcc } = useMultiAccount();
-  const { me } = useStore();
-  const { isAgent } = useUser({ me });
+  const { me, isAdmin, isAgent } = useStore(
+    useShallow((s) => s.getCurrentUser())
+  );
   const router = useRouter();
   const deviceId = getUniqueIdSync();
 
