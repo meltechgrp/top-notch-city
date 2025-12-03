@@ -4,12 +4,7 @@ import React, { memo, useMemo } from "react";
 import { ImageStyle, StyleProp, ViewProps } from "react-native";
 import type { AnimatedProps } from "react-native-reanimated";
 import Animated from "react-native-reanimated";
-import { Icon, Image, Pressable, View } from "../ui";
-import { Trash } from "lucide-react-native";
-import { ConfirmationModal } from "../modals/ConfirmationModal";
-import { usePropertyDataMutations } from "@/tanstack/mutations/usePropertyDataMutations";
-import { showErrorAlert } from "@/components/custom/CustomNotification";
-import { SpinningLoader } from "@/components/loaders/SpinningLoader";
+import { Image, Pressable, View } from "../ui";
 import { ImageContentFit } from "expo-image";
 
 interface Props extends AnimatedProps<ViewProps> {

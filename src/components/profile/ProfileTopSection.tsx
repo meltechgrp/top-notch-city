@@ -136,7 +136,7 @@ export function ProfileTopSection({
                 },
               ]}
             >
-              <Avatar className="w-28 h-28 rounded-full">
+              <Avatar className="w-24 h-24 rounded-full">
                 <AvatarFallbackText>{fullName(user)}</AvatarFallbackText>
                 <AvatarImage
                   className="rounded-full"

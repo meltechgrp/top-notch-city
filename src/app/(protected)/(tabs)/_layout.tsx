@@ -40,7 +40,7 @@ export default function TabLayout() {
         headerTitleStyle: {
           color: theme == "dark" ? Colors.dark.text : Colors.light.text,
           fontWeight: 600,
-          fontSize: 22,
+          fontSize: 18,
         },
       }}
     >

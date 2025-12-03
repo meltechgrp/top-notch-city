@@ -11,15 +11,17 @@ import {
 } from "@/components/ui";
 import React, { useState } from "react";
 import { Loader } from "lucide-react-native";
-import { removeAuthToken, saveAuthToken } from "@/lib/secureStore";
-import { useStore, useTempStore } from "@/store";
+import { useTempStore } from "@/store";
 import { AuthSignupInput } from "@/lib/schema";
 import { authSignup } from "@/actions/auth";
 import { CustomInput } from "@/components/custom/CustomInput";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
+import { useMultiAccount } from "@/hooks/useAccounts";
+import { getCurrent } from "@/actions/user";
 
 export default function SignUp() {
   const [loading, setLoading] = useState(false);
+  const { addAccount } = useMultiAccount();
   const [form, setForm] = React.useState<AuthSignupInput>({
     email: "",
     first_name: "",
@@ -28,6 +30,43 @@ export default function SignUp() {
     comfirmPassword: "",
   });
 
+  const handleSave = async (token?: string, message?: string) => {
+    try {
+      if (!token) {
+        showErrorAlert({
+          title: message || "Something went wrong. Try again",
+          alertType: "warn",
+        });
+        return;
+      }
+      const me = await getCurrent(token);
+
+      if (!me) {
+        showErrorAlert({
+          title: "Unable to fetch account details",
+          alertType: "error",
+        });
+        return;
+      }
+      return addAccount({
+        token: token,
+        id: me.id,
+        first_name: me.first_name,
+        last_name: me.last_name,
+        profile_image: me?.profile_image,
+        role: me.role,
+        email: me.email,
+        verified: me.verified,
+        is_superuser: me?.is_superuser,
+        lastLogin: Date.now(),
+      });
+    } catch (error) {
+      showErrorAlert({
+        title: "Something went wrong. Try again",
+        alertType: "error",
+      });
+    }
+  };
   const handleSubmit = async () => {
     setLoading(true);
     try {
@@ -44,18 +83,16 @@ export default function SignUp() {
           alertType: "error",
         });
       } else if (state?.data) {
-        const { email, message, access_token } = state.data as {
+        const { message, access_token } = state.data as {
           access_token: string;
           message: string;
           email: string;
         };
+        await handleSave(access_token);
         showErrorAlert({
           title: message,
           alertType: "success",
         });
-        if (access_token) {
-          saveAuthToken(access_token);
-        }
 
         useTempStore.setState((v) => ({
           ...v,
@@ -73,9 +110,6 @@ export default function SignUp() {
     if (router.canGoBack()) {
       router.back();
     } else {
-      removeAuthToken();
-      useStore.getState().resetStore();
-      useTempStore.getState().resetStore();
       router.replace("/onboarding");
     }
   }

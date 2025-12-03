@@ -1,6 +1,4 @@
-import { getUser } from "@/actions/user";
 import { CustomInput } from "@/components/custom/CustomInput";
-import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import { PROFILE_FORM_CONFIG } from "@/components/profile/config";
 import { KeyboardDismissPressable } from "@/components/shared/KeyboardDismissPressable";
 import {
@@ -19,9 +17,8 @@ import { Plus, Save, Search } from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
 
 export default function AgentApplication() {
-  const { key, userId } = useGlobalSearchParams() as {
+  const { key } = useGlobalSearchParams() as {
     key: keyof ProfileUpdate;
-    userId: string;
   };
   const { application, updateApplication } = useTempStore.getState();
 
@@ -32,18 +29,11 @@ export default function AgentApplication() {
 
   useEffect(() => {
     if (!config) {
-      router.canGoBack()
-        ? router.back()
-        : router.push({
-            pathname: "/forms/[userId]/agent",
-            params: {
-              userId,
-            },
-          });
+      router.canGoBack() ? router.back() : router.push("/forms/agent");
     }
-  }, [config, userId]);
+  }, [config]);
 
-  if (!config || !userId) {
+  if (!config) {
     return <View />;
   }
 

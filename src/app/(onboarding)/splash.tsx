@@ -3,12 +3,13 @@ import { useVideoPlayer, VideoView } from "expo-video";
 import { router } from "expo-router";
 import { StyleSheet } from "react-native";
 import { View } from "react-native";
+import { getActiveToken } from "@/lib/secureStore";
 import { useStore } from "@/store";
 
 const videoSource = require("@/assets/images/splash-video.mp4");
 
 export default function SplashScreen() {
-  const { hasAuth } = useStore();
+  const { isOnboarded } = useStore();
   const player = useVideoPlayer(videoSource, (player) => {
     player.loop = false;
     player.play();
@@ -16,11 +17,14 @@ export default function SplashScreen() {
 
   React.useEffect(() => {
     if (!player) return;
-    const onEnded = () => {
+    const onEnded = async () => {
+      const hasAuth = await getActiveToken();
       if (hasAuth) {
         router.replace("/home");
-      } else {
+      } else if (isOnboarded) {
         router.replace("/signin");
+      } else {
+        router.replace("/onboarding");
       }
     };
 

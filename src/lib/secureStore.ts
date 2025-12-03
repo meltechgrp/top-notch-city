@@ -1,65 +1,69 @@
-import eventBus from "@/lib/eventBus";
-import { MMKV } from "react-native-mmkv";
-import * as Crypto from "expo-crypto";
-import { storage } from "@/lib/asyncStorage";
+import * as SecureStore from "expo-secure-store";
 
-const secureStorage = new MMKV({
-  id: "gDE9BjzFrNneOgVLBQg2hYID2vXzDQBdh2EqJEWrC",
-});
+const ACCOUNTS_KEY = "tnc_accounts";
+const ACTIVE_KEY = "tnc_active";
 
-// UT = USER TOKEN
-export function saveAuthToken(token: string) {
-  secureStorage.set("__UT__", token);
-  eventBus.dispatchEvent("TOKEN_CHANGE", token);
+export async function getAccounts(): Promise<StoredAccount[]> {
+  const raw = await SecureStore.getItemAsync(ACCOUNTS_KEY);
+  return raw ? JSON.parse(raw) : [];
 }
 
-export function hasAuthToken() {
-  return !!secureStorage.getString("__UT__");
+export async function saveAccounts(list: StoredAccount[]) {
+  await SecureStore.setItemAsync(ACCOUNTS_KEY, JSON.stringify(list));
 }
 
-export function getAuthToken() {
-  return secureStorage.getString("__UT__");
+export async function addAccountToStorage(acc: StoredAccount) {
+  const accounts = await getAccounts();
+
+  const exists = accounts.find((a) => a.id === acc.id);
+
+  let updated = exists
+    ? accounts.map((a) => (a.id === acc.id ? acc : a))
+    : [...accounts, acc];
+
+  await saveAccounts(updated);
+
+  await setActiveUserId(acc.id);
 }
 
-export function removeAuthToken() {
-  console.log("removing auth token");
-  secureStorage.delete("__UT__");
-  storage.clearAll();
-  eventBus.dispatchEvent("TOKEN_CHANGE", null);
+export async function setActiveUserId(id: string) {
+  await SecureStore.setItemAsync(ACTIVE_KEY, id);
 }
 
-// save app pin code
-export async function saveAppPinCode(pinCode: string) {
-  // hash pin code
-  const hash = await Crypto.digestStringAsync(
-    Crypto.CryptoDigestAlgorithm.SHA256,
-    pinCode
-  );
-  return secureStorage.set("__APP_PIN_CODE__", hash);
+export async function getActiveUserId(): Promise<string | null> {
+  return await SecureStore.getItemAsync(ACTIVE_KEY);
 }
-// get app pin code
-export function getAppPinCode() {
-  return secureStorage.getString("__APP_PIN_CODE__");
+
+export async function getActiveAccount(): Promise<StoredAccount | null> {
+  const id = await getActiveUserId();
+  if (!id) return null;
+
+  const accounts = await getAccounts();
+  return accounts.find((a) => a.id === id) ?? null;
 }
-// check if app pin code is set
-export function hasAppPinCode() {
-  return !!secureStorage.getString("__APP_PIN_CODE__");
+
+export async function getActiveToken(): Promise<string | null> {
+  const acc = await getActiveAccount();
+  return acc?.token ?? null;
 }
-// remove app pin code
-export function removeAppPinCode() {
-  return secureStorage.delete("__APP_PIN_CODE__");
-}
-// verify app pin code
-export async function verifyAppPinCode(pinCode: string) {
-  const appPinHash = getAppPinCode();
-  if (!appPinHash) {
-    return false;
+
+export async function removeAccount(id: string) {
+  const accounts = await getAccounts();
+  const updated = accounts.filter((a) => a.id !== id);
+
+  await saveAccounts(updated);
+
+  const activeId = await getActiveUserId();
+  if (activeId === id) {
+    await SecureStore.deleteItemAsync(ACTIVE_KEY);
+
+    if (updated.length > 0) {
+      await setActiveUserId(updated[0].id);
+    }
   }
-  const hash = await Crypto.digestStringAsync(
-    Crypto.CryptoDigestAlgorithm.SHA256,
-    pinCode
-  );
-  return appPinHash === hash;
 }
 
-export default secureStorage;
+export async function clearAllAccounts() {
+  await SecureStore.deleteItemAsync(ACCOUNTS_KEY);
+  await SecureStore.deleteItemAsync(ACTIVE_KEY);
+}

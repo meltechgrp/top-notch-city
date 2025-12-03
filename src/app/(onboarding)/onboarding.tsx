@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useStore } from "@/store";
-import { router, useFocusEffect } from "expo-router";
+import { router } from "expo-router";
 import { cn } from "@/lib/utils";
 import TabView from "@/components/shared/TabView";
 import {
@@ -17,7 +17,7 @@ import SystemNavigationBar from "react-native-system-navigation-bar";
 
 export default function OnboardingScreen() {
   const [activeIndex, setActiveIndex] = React.useState(0);
-  const hasAuth = useStore((v) => v.hasAuth);
+  const { setIsOnboarded } = useStore();
 
   React.useEffect(() => {
     if (Platform.OS == "android") {
@@ -27,13 +27,9 @@ export default function OnboardingScreen() {
   function skipHandler() {
     router.replace("/signin");
   }
-  useFocusEffect(
-    React.useCallback(() => {
-      if (hasAuth) {
-        router.replace("/home");
-      }
-    }, [hasAuth])
-  );
+  React.useEffect(() => {
+    setIsOnboarded(true);
+  }, []);
   return (
     <View className="flex-1 bg-background">
       <TabView activeTab={activeIndex} onTabSelected={setActiveIndex}>

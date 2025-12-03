@@ -1,7 +1,7 @@
 global.XMLHttpRequest = global.XMLHttpRequest;
 
 import config from "@/config";
-import { getAuthToken } from "@/lib/secureStore";
+import { getActiveToken } from "@/lib/secureStore";
 import axios from "axios";
 
 export type UploadedFile = {
@@ -19,7 +19,7 @@ export async function uploadToBucket({
   apply_watermark?: boolean;
 }) {
   try {
-    const token = getAuthToken();
+    const token = getActiveToken();
     if (!token) throw new Error("Authentication token missing");
 
     const formData = new FormData();

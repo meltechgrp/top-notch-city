@@ -2,7 +2,7 @@ import { useStore } from "@/store";
 import { useMemo } from "react";
 
 export function useUser() {
-  const { me, hasAuth: auth } = useStore.getState();
+  const { me } = useStore.getState();
   if (!me) {
     return {
       isAdmin: false,
@@ -18,27 +18,20 @@ export function useUser() {
     } else {
       return false;
     }
-  }, [me?.role, auth]);
+  }, [me?.role]);
   const isAgent = useMemo(() => {
     if (me?.role == "agent" || me?.role == "staff_agent") {
       return true;
     } else {
       return false;
     }
-  }, [me?.role, auth]);
+  }, [me?.role]);
   const isStaff = useMemo(() => {
     if (me?.role == "staff") {
       return true;
     } else {
       return false;
     }
-  }, [me?.role, auth]);
-  const hasAuth = useMemo(() => {
-    if (me?.role == "user" || auth) {
-      return true;
-    } else {
-      return false;
-    }
-  }, [me?.role, auth]);
-  return { isAdmin, isAgent, isStaff, hasAuth, me };
+  }, [me?.role]);
+  return { isAdmin, isAgent, isStaff, me };
 }

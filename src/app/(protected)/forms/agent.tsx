@@ -25,9 +25,6 @@ import { uploadAgentForm } from "@/actions/agent";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 
 export default function AgentFormScreen() {
-  const { userId } = useLocalSearchParams() as {
-    userId: string;
-  };
   const { application, updateApplication } = useTempStore(useShallow((s) => s));
 
   const router = useRouter();
@@ -96,12 +93,7 @@ export default function AgentFormScreen() {
 
     await mutateAsync(application, {
       onSuccess: () => {
-        router.push({
-          pathname: "/forms/[userId]/success",
-          params: {
-            userId,
-          },
-        });
+        router.push("/forms/success");
       },
       onError: () => {
         showErrorAlert({
@@ -220,9 +212,8 @@ export default function AgentFormScreen() {
                       <Pressable
                         onPress={() =>
                           router.push({
-                            pathname: "/forms/[userId]/fields/[key]",
+                            pathname: "/forms/fields/[key]",
                             params: {
-                              userId,
                               key: info.field,
                             },
                           })
@@ -247,9 +238,8 @@ export default function AgentFormScreen() {
                   <Pressable
                     onPress={() =>
                       router.push({
-                        pathname: "/forms/[userId]/fields/[key]",
+                        pathname: "/forms/fields/[key]",
                         params: {
-                          userId,
                           key: "about",
                         },
                       })
@@ -291,9 +281,8 @@ export default function AgentFormScreen() {
                         <Pressable
                           onPress={() =>
                             router.push({
-                              pathname: "/forms/[userId]/fields/[key]",
+                              pathname: "/forms/fields/[key]",
                               params: {
-                                userId,
                                 key: pro.field,
                               },
                             })

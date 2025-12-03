@@ -10,9 +10,9 @@ export const getImageUrl = (url?: string | null) => {
 };
 export const generateMediaUrl = (media: Media) => {
   return {
-    uri: `${config.origin}${media.url}`,
-    isImage: media.media_type == "IMAGE",
-    id: media.id,
+    uri: `${config.origin}${media?.url}`,
+    isImage: media?.media_type == "IMAGE",
+    id: media?.id,
   };
 };
 export const generateMediaUrlSingle = (media: string) => {

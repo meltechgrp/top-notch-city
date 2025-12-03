@@ -9,7 +9,6 @@ import {
 import { DocumentModal } from "@/components/modals/profile/DocumentModal";
 import { LanguageModal } from "@/components/modals/profile/LanguageModal";
 import { LocationModal } from "@/components/modals/profile/LocationModal";
-import { MediaPreviewModal } from "@/components/modals/profile/MediaPreviewModal";
 import { SocialLinkModal } from "@/components/modals/profile/SocialLinksModal";
 import { WorkingDayDialog } from "@/components/modals/profile/WorkingDayDialog";
 import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
@@ -24,7 +23,6 @@ import {
 import { Colors } from "@/constants/Colors";
 import { DAYS, GENDERS, minimumAge, SOCIAL_PLATFORMS } from "@/constants/user";
 import useGetLocation from "@/hooks/useGetLocation";
-import { useMediaUpload } from "@/hooks/useMediaUpload";
 import { getReverseGeocode } from "@/hooks/useReverseGeocode";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
@@ -36,8 +34,6 @@ import {
   Eye,
   EyeOff,
   MapPin,
-  Music,
-  Play,
   Plus,
   Trash2,
   X,
@@ -195,7 +191,7 @@ function CustomInputComponent({
           placeholder={placeholder}
           autoCapitalize="sentences"
           className={cn(
-            "text-typography placeholder:text-typography-muted focus:outline-none flex-1 h-full rounded-xl",
+            "text-typography placeholder:text-typography/80 focus:outline-none flex-1 h-full rounded-xl",
             multiline && "px-1 pt-2"
           )}
           value={value}

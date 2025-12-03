@@ -1,49 +1,48 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { MMKV } from 'react-native-mmkv';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const storage = new MMKV({ id: 'hYID2vXzDQBdh2EqJEpQ' });
-
-export function saveToStorage(key: string, data: any) {
-  data = JSON.stringify(data)
-  storage.set(key, data)
-}
-
-export function getFromStorage(key: string) {
-  let d = storage.getString(key)
-  try {
-    // @ts-ignore
-    return JSON.parse(d)
-  } catch (error) {
-    return d
-  }
-}
-
-export function delFromStorage(key: string) {
-  storage.delete(key)
-}
+const CACHE_PREFIX = "CACHE__";
 
 class CacheStorage {
-	set(key: string, data: any, ttl: number) {
-		data = JSON.stringify({ data, ttl: Date.now() + ttl });
-		AsyncStorage.setItem(key, data);
-	}
+  makeKey(key: string) {
+    return `${CACHE_PREFIX}${key}`;
+  }
 
-	async get(key: string) {
-		let str = await AsyncStorage.getItem(key);
-		if (!str) {
-			return null;
-		}
-		try {
-			const d = JSON.parse(str) as { data: any; ttl: number };
-			if (d.ttl && d.ttl < Date.now()) {
-				AsyncStorage.removeItem(key);
-				return null;
-			}
-			return d.data;
-		} catch (error) {
-			return null;
-		}
-	}
+  async set(key: string, data: any, ttl: number) {
+    const value = JSON.stringify({ data, ttl: Date.now() + ttl });
+    await AsyncStorage.setItem(this.makeKey(key), value);
+  }
+
+  async get(key: string) {
+    const str = await AsyncStorage.getItem(this.makeKey(key));
+    if (!str) return null;
+
+    try {
+      const parsed = JSON.parse(str) as { data: any; ttl: number };
+      if (parsed.ttl && parsed.ttl < Date.now()) {
+        await AsyncStorage.removeItem(this.makeKey(key));
+        return null;
+      }
+      return parsed.data;
+    } catch {
+      return null;
+    }
+  }
+
+  async remove(key: string) {
+    await AsyncStorage.removeItem(this.makeKey(key));
+  }
+
+  async reset() {
+    const keys = await AsyncStorage.getAllKeys();
+    const cacheKeys = keys.filter((k) => k.startsWith(CACHE_PREFIX));
+
+    if (cacheKeys.length > 0) {
+      await AsyncStorage.multiRemove(cacheKeys);
+    }
+  }
+  async resetAll() {
+    await AsyncStorage.clear();
+  }
 }
 
 export const cacheStorage = new CacheStorage();

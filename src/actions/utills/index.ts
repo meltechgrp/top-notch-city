@@ -1,4 +1,4 @@
-import { getAuthToken } from "@/lib/secureStore";
+import { getActiveToken } from "@/lib/secureStore";
 import config from "@/config";
 import axios, { AxiosRequestConfig } from "axios";
 import { getUniqueIdSync } from "react-native-device-info";
@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 
 export async function Fetch(url: string, options: AxiosRequestConfig = {}) {
   try {
-    const authToken = getAuthToken();
+    const authToken = await getActiveToken();
     const deviceId = getUniqueIdSync();
     const res = await axios({
       baseURL: `${config.origin}/api`,

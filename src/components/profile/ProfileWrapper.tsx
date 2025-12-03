@@ -28,6 +28,7 @@ import { UserActionsBottomSheet } from "@/components/admin/users/UserBottomSheet
 import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
 import eventBus from "@/lib/eventBus";
 import { useUser } from "@/hooks/useUser";
+import { openAccountsModal } from "@/components/globals/AuthModals";
 
 export type UserType = "visitor" | "owner" | "admin";
 
@@ -95,7 +96,7 @@ export function ProfileWrapper({
                       <View className="px-4 flex-row gap-6">
                         <Pressable
                           className="p-2 bg-background-muted rounded-full"
-                          onPress={() => {}}
+                          onPress={() => openAccountsModal({ visible: true })}
                         >
                           <Icon as={Plus} className="w-6 h-6" />
                         </Pressable>

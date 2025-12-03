@@ -21,13 +21,10 @@ export function MenuListItem(props: MenuListItemProps) {
     title,
     description,
     icon,
-    rightComponent,
     onPress,
     style,
     className,
     withArrow = true,
-    iconColor,
-    iconBgColor,
     withBorder = true,
   } = props;
   return (
@@ -55,7 +52,9 @@ export function MenuListItem(props: MenuListItemProps) {
           )}
         >
           <View className={"flex-1"}>
-            <Text className="text-lg font-medium">{title}</Text>
+            <Text className="text-lg font-medium text-typography/90">
+              {title}
+            </Text>
             {description && (
               <Text className="text-sm text-typography/50">{description}</Text>
             )}

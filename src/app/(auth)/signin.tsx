@@ -1,7 +1,5 @@
 import OnboardingScreenContainer from "@/components/onboarding/OnboardingScreenContainer";
-import * as Google from "expo-auth-session/providers/google";
 import * as WebBrowser from "expo-web-browser";
-import * as Facebook from "expo-auth-session/providers/facebook";
 import * as AppleAuthentication from "expo-apple-authentication";
 import {
   Button,
@@ -15,24 +13,21 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import { hapticFeed } from "@/components/HapticTab";
 import { authLogin, loginWithSocial } from "@/actions/auth";
-import { saveAuthToken } from "@/lib/secureStore";
-import { useStore } from "@/store";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import GoogleIcon from "@/components/icons/GoogleIcon";
 import { Divider } from "@/components/ui/divider";
 import { CustomInput } from "@/components/custom/CustomInput";
-import { getMe } from "@/actions/user";
+import { getCurrent } from "@/actions/user";
 import { router, useGlobalSearchParams } from "expo-router";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
 import config from "@/config";
 import {
-  AuthError,
   AuthRequestConfig,
   DiscoveryDocument,
-  exchangeCodeAsync,
   makeRedirectUri,
   useAuthRequest,
 } from "expo-auth-session";
+import { useMultiAccount } from "@/hooks/useAccounts";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -41,20 +36,11 @@ const configs: AuthRequestConfig = {
   scopes: ["openid", "profile", "email"],
   redirectUri: makeRedirectUri(),
 };
-const fConfigs: AuthRequestConfig = {
-  clientId: "1964809884362173",
-  scopes: ["email", "public_profile"],
-  redirectUri: makeRedirectUri(),
-};
 
 const discovery: DiscoveryDocument = {
   authorizationEndpoint: `${config.origin}/api/auth-url/google`,
   tokenEndpoint: `${config.origin}/api/auth/google/callback`,
 };
-// const fDiscovery: DiscoveryDocument = {
-//   authorizationEndpoint: `${config.origin}/api/auth-url/facebook`,
-//   tokenEndpoint: `${config.origin}/api/auth/facebook/callback`,
-// };
 interface AuthRedirectResult {
   authentication: null;
   error: [Error] | null;
@@ -69,18 +55,58 @@ interface AuthRedirectResult {
 }
 export default function SignIn() {
   const [isAppleAvailable, setIsAppleAvailable] = useState(false);
-  const { isAgentRequest, path } = useGlobalSearchParams() as {
-    isAgentRequest: string;
-    path: string;
+  const { redirect } = useGlobalSearchParams() as {
+    redirect: string;
   };
+  const { addAccount } = useMultiAccount();
   const [g, response, promptAsync] = useAuthRequest(configs, discovery);
-  // const [f, fResponse, FPromptAsync] = useAuthRequest(fConfigs, fDiscovery);
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(false);
   const [form, setForm] = React.useState({
     email: "",
     password: "",
   });
+
+  const handleSave = async (token?: string, message?: string) => {
+    try {
+      if (!token) {
+        showErrorAlert({
+          title: message || "Something went wrong. Try again",
+          alertType: "warn",
+        });
+        return;
+      }
+      const me = await getCurrent(token);
+
+      if (!me) {
+        showErrorAlert({
+          title: "Unable to fetch account details",
+          alertType: "error",
+        });
+        return;
+      }
+      addAccount({
+        token: token,
+        id: me.id,
+        first_name: me.first_name,
+        last_name: me.last_name,
+        profile_image: me?.profile_image,
+        role: me.role,
+        email: me.email,
+        verified: me.verified,
+        is_superuser: me?.is_superuser,
+        lastLogin: Date.now(),
+      });
+      return router.push((redirect ?? "/home") as any);
+    } catch (error) {
+      showErrorAlert({
+        title: "Something went wrong. Try again",
+        alertType: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
   const handleSubmit = async () => {
     hapticFeed();
     setLoading(true);
@@ -92,23 +118,12 @@ export default function SignIn() {
           alertType: "warn",
         });
       } else if (state?.data) {
-        const { email, message, access_token } = state.data as {
+        const { access_token, message } = state.data as {
           access_token: string;
           message: string;
           email: string;
         };
-        if (access_token) {
-          saveAuthToken(access_token);
-          const me = await getMe();
-          if (me) {
-            useStore.setState((s) => ({
-              ...s,
-              me: me,
-              hasAuth: true,
-            }));
-          }
-        }
-        return router.push(path ? path : ("/home" as any));
+        await handleSave(access_token, message);
       }
     } catch (error) {
       showErrorAlert({
@@ -119,28 +134,17 @@ export default function SignIn() {
       setLoading(false);
     }
   };
-  //  Social handler (common logic)
   const handleSocialLogin = useCallback(
     async (socialData: { provider: string; token: string }) => {
       try {
         setFetching(true);
         const res = await loginWithSocial(socialData);
         console.log(res);
-        if (res?.access_token) {
-          saveAuthToken(res.access_token);
-          const me = await getMe();
-          if (me) {
-            useStore.setState((s) => ({
-              ...s,
-              me: me,
-              hasAuth: true,
-            }));
-          }
-        }
-        return router.push(path ? path : ("/home" as any));
+        await handleSave(res?.access_token, res?.message);
       } catch (error) {
+        console.log(error);
         showErrorAlert({
-          title: "Error occurred during. Please try again.",
+          title: "Failed to login. Please try again.",
           alertType: "error",
         });
       } finally {
@@ -155,27 +159,11 @@ export default function SignIn() {
       handleGoogleLogin();
     }
   }, [response]);
-  // useEffect(() => {
-  //   if (fResponse) {
-  //     handleGoogleLogin();
-  //   }
-  // }, [fResponse]);
   const handleGoogleLogin = async () => {
     try {
       setFetching(true);
       const res = response as AuthRedirectResult;
-      if (res?.params.token) {
-        saveAuthToken(res.params.token);
-        const me = await getMe();
-        if (me) {
-          useStore.setState((s) => ({
-            ...s,
-            me: me,
-            hasAuth: true,
-          }));
-        }
-        return router.push("/home");
-      }
+      await handleSave(res?.params.token);
     } catch (error) {
       showErrorAlert({
         title: "Error occurred during. Please try again.",
@@ -186,14 +174,6 @@ export default function SignIn() {
     }
   };
 
-  function onBack() {
-    if (router.canGoBack()) {
-      router.back();
-    } else {
-      router.replace("/home");
-    }
-  }
-  // ✅ Apple sign-in
   const handleAppleSignIn = async () => {
     try {
       const credential = await AppleAuthentication.signInAsync({
@@ -275,19 +255,6 @@ export default function SignIn() {
               Sign in with Google
             </ButtonText>
           </Button>
-          {/* <ExternalLink
-            className="flex-1"
-            href={`${config.origin}/api/auth-url/facebook` as any}
-          >
-            <Text>Continue with Facebook</Text>
-          </ExternalLink> */}
-          {/* <Button
-            className="flex-1 h-12 bg-background-muted gap-2"
-            onPress={() => FPromptAsync()}
-          >
-            <Icon size={"sm"} as={FacebookIcon} />
-            <ButtonText>Continue with Facebook</ButtonText>
-          </Button> */}
           {isAppleAvailable && (
             <AppleAuthentication.AppleAuthenticationButton
               buttonType={

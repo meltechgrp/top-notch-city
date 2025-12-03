@@ -1,17 +1,14 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useHomeFeed } from "@/hooks/useHomeFeed";
-import { getAuthToken } from "@/lib/secureStore";
+import { getActiveToken } from "@/lib/secureStore";
 import { useWebSocketConnection } from "@/actions/utills";
 import { useChatStore } from "@/store/chatStore";
-import { getMe } from "@/actions/user";
-import { useStore } from "@/store";
-import { router } from "expo-router";
+import { useMultiAccount } from "@/hooks/useAccounts";
 
 export function useWebSocketHandler() {
-  const authToken = getAuthToken();
-  const url = authToken
-    ? `wss://app.topnotchcity.com/ws/?token=${authToken}`
-    : null;
+  const [url, setUrl] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const { updateAccount } = useMultiAccount();
 
   const {
     addIncomingMessage,
@@ -27,7 +24,20 @@ export function useWebSocketHandler() {
   const { connect, setOnMessage, ...rest } = useWebSocketConnection(url);
 
   useEffect(() => {
-    if (!url) return;
+    async function fetchToken() {
+      try {
+        const authToken = await getActiveToken();
+        setUrl(`wss://app.topnotchcity.com/ws/?token=${authToken}`);
+      } catch (error) {
+        console.error("❌ Failed to get WebSocket token:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchToken();
+  }, []);
+  useEffect(() => {
+    if (!url || isLoading) return;
 
     connect();
 
@@ -81,17 +91,13 @@ export function useWebSocketHandler() {
         },
 
         agent_application_review: async () => {
-          const me = await getMe();
-          if (me) {
-            useStore.setState((s) => ({ ...s, me, hasAuth: true }));
-            router.reload();
-          }
+          await updateAccount();
         },
       };
 
       await handlers[data.type]?.();
     });
-  }, [url]);
+  }, [url, isLoading]);
 
   return { ...rest };
 }

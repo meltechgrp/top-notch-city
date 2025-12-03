@@ -2,6 +2,7 @@ import eventBus from "@/lib/eventBus";
 import { Fetch } from "../utills";
 import { getUniqueIdSync } from "react-native-device-info";
 import { Platform } from "react-native";
+import config from "@/config";
 
 type UserResult = {
   total: number;
@@ -22,6 +23,18 @@ type ActivityResult = {
 export async function getMe() {
   const res = await Fetch("/users/me", {});
 
+  if (res?.detail) {
+    throw new Error("Failed to get profile");
+  }
+  return res as Me;
+}
+export async function getCurrent(token: string) {
+  const data = await fetch(`${config.origin}/api/users/me`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  const res = await data.json();
   if (res?.detail) {
     throw new Error("Failed to get profile");
   }

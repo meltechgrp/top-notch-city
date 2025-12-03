@@ -1,5 +1,5 @@
 import { Listing } from "@/store";
-import { getAuthToken } from "@/lib/secureStore";
+import { getActiveToken } from "@/lib/secureStore";
 import config from "@/config";
 import axios from "axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -9,7 +9,7 @@ export function useUploadProperty(type: "edit" | "add", propertyId?: string) {
 
   const mutation = useMutation({
     mutationFn: async (listing: Listing) => {
-      const token = getAuthToken();
+      const token = getActiveToken();
       const formData = new FormData();
 
       const {

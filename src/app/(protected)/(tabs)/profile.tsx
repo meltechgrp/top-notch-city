@@ -2,12 +2,11 @@ import {
   NotLoggedInProfile,
   ProfileWrapper,
 } from "@/components/profile/ProfileWrapper";
-import { useUser } from "@/hooks/useUser";
-import { getAuthToken } from "@/lib/secureStore";
+import { useStore } from "@/store";
 
 export default function ProfileScreen() {
-  const { me, isAgent } = useUser();
-  const auth = getAuthToken();
+  const { me } = useStore();
+  const isAgent = me?.role == "agent" || me?.role == "staff_agent";
   const tabs = [
     {
       label: "All",
@@ -29,14 +28,14 @@ export default function ProfileScreen() {
     ],
   ].filter((s) => !!s);
 
-  if (!auth && !me) return <NotLoggedInProfile userType={"owner"} />;
+  if (!me) return <NotLoggedInProfile userType={"owner"} />;
   return (
     <>
       <ProfileWrapper
         tabs={tabs}
         isAgent={isAgent}
         userType="owner"
-        userId={auth ? me?.id : undefined}
+        userId={me?.id}
       />
     </>
   );

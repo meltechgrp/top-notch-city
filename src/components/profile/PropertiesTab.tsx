@@ -103,7 +103,7 @@ export default function PropertiesTabView({
             key={property.id}
             onPress={() => handlePress(property)}
             isList
-            showStatus={showStatus}
+            showStatus={isOwner && isAgent}
             data={property}
             rounded
           />

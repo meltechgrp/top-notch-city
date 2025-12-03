@@ -5,7 +5,7 @@ import CustomerCareBottomSheet from "@/components/modals/CustomerCareBottomSheet
 import { ContentAccessModal } from "@/components/modals/ContentAccessModal";
 import { AgentShareSheet } from "@/components/modals/agent/AgentShareSheet";
 import { AppShareSheet } from "@/components/modals/AppShareSheet";
-import AgentApplicationBottomSheet from "@/components/modals/agent/AgentApplicationBottomSheet";
+import SwitchAccountSheet from "@/components/modals/SwitchAccount";
 
 export default function AuthModals() {
   const [enquiry, setEnquiry] = useState<AuthModalProps | null>(null);
@@ -13,6 +13,7 @@ export default function AuthModals() {
   const [access, setAccess] = useState<AuthModalProps | null>(null);
   const [agent, setAgent] = useState<AuthModalProps | null>(null);
   const [app, setApp] = useState<AuthModalProps | null>(null);
+  const [accounts, setAccounts] = useState<AuthModalProps | null>(null);
 
   useEffect(() => {
     eventBus.addEventListener("openAccessModal", setAccess);
@@ -20,6 +21,7 @@ export default function AuthModals() {
     eventBus.addEventListener("openStaffs", setStaffs);
     eventBus.addEventListener("openAgentModal", setAgent);
     eventBus.addEventListener("openAppModal", setApp);
+    eventBus.addEventListener("openAccounts", setAccounts);
   }, []);
 
   return (
@@ -69,6 +71,15 @@ export default function AuthModals() {
           }}
         />
       )}
+      {!!accounts && (
+        <SwitchAccountSheet
+          {...accounts}
+          onDismiss={() => {
+            accounts.onDismiss?.();
+            setAccounts(null);
+          }}
+        />
+      )}
     </>
   );
 }
@@ -87,4 +98,7 @@ export function openAgentModal(props: AuthModalProps) {
 }
 export function openAppModal(props: AuthModalProps) {
   eventBus.dispatchEvent("openAppModal", props);
+}
+export function openAccountsModal(props: AuthModalProps) {
+  eventBus.dispatchEvent("openAccounts", props);
 }

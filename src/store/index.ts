@@ -4,22 +4,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getUniqueIdSync } from "react-native-device-info";
 import { LocationObjectCoords } from "expo-location";
 
-export type Profile = {
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  phoneNumber?: string;
-  gender?: string;
-  dob?: any;
-  photo?: any;
-};
-
 export const profileDefault = require("@/assets/images/Avatar.png");
 
 type State = {
-  hasAuth: boolean;
-  isAdmin: boolean;
-  me?: Me;
+  me?: StoredAccount;
   location?: LocationObjectCoords;
   isOnboarded: boolean;
   topProperties: Property[];
@@ -33,24 +21,12 @@ type State = {
 type Actions = {
   resetStore: () => void;
   getDeviceId: () => string;
-  setIsAdmin: (isAdmin: boolean) => void;
   setIsOnboarded: (isOnboarded: boolean) => void;
-  updateProfile: (data: Me) => void;
+  updateProfile: (data: StoredAccount) => void;
   updateLocation: (data: LocationObjectCoords) => void;
-  setMediaViewer: (
-    mediaViewer: Media[],
-    currentIndex: number,
-    isVideoReady?: boolean
-  ) => void;
-
-  setTopProperties: (properties: Property[]) => void;
-  clearTopProperties: () => void;
 
   setNearbyProperties: (properties: Property[]) => void;
   clearNearbyProperties: () => void;
-
-  setTopLocations: (locations: TopLocation[]) => void;
-  clearTopLocations: () => void;
   updateMuted: () => void;
   // Search
   updateSearchProperties: (data: Property[]) => void;
@@ -59,8 +35,6 @@ type Actions = {
 
 const initialState: State = {
   me: undefined,
-  hasAuth: false,
-  isAdmin: false,
   muted: false,
   isOnboarded: false,
   topLocations: [],
@@ -79,9 +53,6 @@ export const useStore = create<StateAndActions>(
   (persist as MyPersist)(
     (set, get) => ({
       ...initialState,
-      setIsAdmin: (isAdmin) => {
-        set((state) => ({ ...state, isAdmin }));
-      },
       getDeviceId: getUniqueIdSync,
       resetStore: () => {
         const isOnboarded = get().isOnboarded;
@@ -91,28 +62,12 @@ export const useStore = create<StateAndActions>(
         }));
       },
       updateLocation: (data) => set((p) => ({ ...p, location: data })),
-      setMediaViewer: (mediaViewer, currentIndex, isVideoReady) =>
-        set((state) => ({
-          ...state,
-          mediaViewer: {
-            media: mediaViewer,
-            currentIndex,
-            isVideoReady,
-          },
-        })),
-      unsetMediaViewer: () =>
-        set((state) => ({ ...state, mediaViewer: undefined })),
       setIsOnboarded(isOnboarded) {
         set((state) => ({ ...state, isOnboarded }));
       },
-      updateProfile: (data) => set((state) => ({ ...state, me: data })),
-
-      // 🔹 Property list actions
-      setTopProperties: (properties) =>
-        set((state) => ({ ...state, topProperties: properties })),
-
-      clearTopProperties: () =>
-        set((state) => ({ ...state, topProperties: [] })),
+      updateProfile(data) {
+        set({ me: data });
+      },
 
       setNearbyProperties: (properties) =>
         set((state) => ({ ...state, nearbyProperties: properties })),
@@ -120,10 +75,6 @@ export const useStore = create<StateAndActions>(
       clearNearbyProperties: () =>
         set((state) => ({ ...state, nearbyProperties: [] })),
 
-      setTopLocations: (locations) =>
-        set((state) => ({ ...state, topLocations: locations })),
-
-      clearTopLocations: () => set((state) => ({ ...state, topLocations: [] })),
       updateMuted: () => set((s) => ({ ...s, muted: !s.muted })),
       updateSearchProperties: (searchProperties) =>
         set((s) => ({ ...s, searchProperties })),

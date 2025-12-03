@@ -3,7 +3,7 @@ import { useResolvedTheme } from "@/components/ui";
 import { Colors } from "@/constants/Colors";
 import { Stack } from "expo-router";
 
-export default function SettingsLayout() {
+export default function ManagerLayout() {
   const theme = useResolvedTheme();
   return (
     <Stack
@@ -30,19 +30,19 @@ export default function SettingsLayout() {
       <Stack.Screen
         name="index"
         options={{
-          headerTitle: "Settings",
+          headerTitle: "Account Setting",
         }}
       />
       <Stack.Screen
-        name="theme"
+        name="delete-account"
         options={{
-          headerTitle: "Themes",
+          headerTitle: "Delete Account",
         }}
       />
       <Stack.Screen
-        name="manager"
+        name="change-password"
         options={{
-          headerShown: false,
+          headerTitle: "Change Password",
         }}
       />
     </Stack>

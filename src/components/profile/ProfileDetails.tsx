@@ -1,7 +1,6 @@
-import agents from "@/components/profile/agents";
 import CampaignCard from "@/components/profile/CampaignCard";
 import { UserType } from "@/components/profile/ProfileWrapper";
-import { Badge, Button, Icon, Text, View } from "@/components/ui";
+import { Badge, Icon, Text, View } from "@/components/ui";
 import { DAYS } from "@/constants/user";
 import { composeFullAddress } from "@/lib/utils";
 import { format } from "date-fns";
@@ -13,10 +12,7 @@ import {
   ChevronUp,
   Clock,
   CreativeCommons,
-  Dot,
   Globe,
-  Home,
-  Key,
   Languages,
   Mail,
   MapPin,
@@ -78,7 +74,7 @@ export function ProfileDetails({
           title="Become an agent"
           subtitle="Join TopNotch City and start connecting with clients."
           actionLabel="Apply now"
-          actionRoute={`/forms/${user?.id}/agent`}
+          actionRoute={`/forms/agent`}
         />
       )}
       {userType == "owner" && isAgent && (
@@ -122,7 +118,7 @@ export function ProfileDetails({
               <View className="flex-row items-center justify-between">
                 <Text className="text-lg font-medium">Services</Text>
               </View>
-              <View className="gap-4 flex-row p-4 bg-background-muted rounded-2xl">
+              <View className="gap-4 flex-row flex-wrap p-4 bg-background-muted rounded-2xl">
                 {user.agent_profile?.specialties?.map((s) => (
                   <Badge
                     className="bg-background rounded-2xl px-3 border border-primary"

@@ -3,16 +3,16 @@ import { Button, ButtonText, Icon, Text } from "@/components/ui";
 import { TriangleAlert } from "lucide-react-native";
 import { useStore } from "@/store";
 import { useRouter } from "expo-router";
-import useResetAppState from "@/hooks/useResetAppState";
 import { useMutation } from "@tanstack/react-query";
 import { deleteUser } from "@/actions/user";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
+import { useMultiAccount } from "@/hooks/useAccounts";
 
 export default function DeleteAccount() {
   const { me } = useStore();
   const router = useRouter();
-  const resetAppState = useResetAppState(true);
+  const { removeAcc } = useMultiAccount();
   const { mutateAsync, isPending } = useMutation({
     mutationFn: deleteUser,
     onSuccess: async () => {
@@ -21,8 +21,8 @@ export default function DeleteAccount() {
         alertType: "success",
       });
 
-      await resetAppState();
-      router.dismissTo("/onboarding");
+      await removeAcc();
+      router.dismissTo("/home");
     },
     onError: () => {
       showErrorAlert({

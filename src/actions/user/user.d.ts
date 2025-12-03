@@ -230,3 +230,17 @@ type DocumentTypes = {
   name: string;
   description: string;
 };
+
+type StoredAccount = {
+  id: string;
+  role: Me["role"];
+  token: string;
+  refreshToken?: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  profile_image: string | null;
+  lastLogin: number;
+  verified: boolean;
+  is_superuser: boolean;
+};

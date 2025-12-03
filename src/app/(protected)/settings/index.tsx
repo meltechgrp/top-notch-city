@@ -1,49 +1,39 @@
-import {
-  Avatar,
-  AvatarFallbackText,
-  AvatarImage,
-  Pressable,
-  Text,
-  useResolvedTheme,
-  View,
-} from "@/components/ui";
+import { Text, View } from "@/components/ui";
 import { useRouter } from "expo-router";
-import { Alert, Share } from "react-native";
+import { Alert } from "react-native";
 import {
+  Bell,
   HelpCircle,
   House,
-  LayoutDashboard,
   NotebookText,
-  Settings,
   Share2,
   Sparkle,
+  UserCircle,
+  Users,
 } from "lucide-react-native";
 import { MenuListItem } from "@/components/menu/MenuListItem";
-import config from "@/config";
 import { Divider } from "@/components/ui/divider";
-import { cn, fullName } from "@/lib/utils";
 import { BodyScrollView } from "@/components/layouts/BodyScrollView";
-import { getImageUrl } from "@/lib/api";
 import { openAccessModal } from "@/components/globals/AuthModals";
-import useResetAppState from "@/hooks/useResetAppState";
 import { Fetch } from "@/actions/utills";
 import { getUniqueIdSync } from "react-native-device-info";
 import { useUser } from "@/hooks/useUser";
 import LogoutButton from "@/components/settings/LogoutButton";
+import { useMultiAccount } from "@/hooks/useAccounts";
+import { NotLoggedInProfile } from "@/components/profile/ProfileWrapper";
 
 export default function Setting() {
-  const resetAppState = useResetAppState();
-  const { hasAuth, isAdmin, isAgent, isStaff, me } = useUser();
+  const { removeAcc } = useMultiAccount();
+  const { isAgent, me } = useUser();
   const router = useRouter();
   const deviceId = getUniqueIdSync();
-  const theme = useResolvedTheme();
 
   async function logout() {
     await Fetch("/logout", {
       method: "POST",
       data: { device_id: deviceId },
     });
-    resetAppState();
+    removeAcc();
     router.dismissTo("/home");
   }
   async function onLogout() {
@@ -66,112 +56,133 @@ export default function Setting() {
       {}
     );
   }
-  async function onInvite() {
-    try {
-      const message =
-        `🏘️ Invite your friends to join *TopNotch City Estate*.\n\n` +
-        `Discover amazing apartments and real estate opportunities near you.\n\n` +
-        `👉 Tap here to join: ${config.websiteUrl}/home `;
-
-      const result = await Share.share({
-        title: "Join TopNotch City Estate",
-        message,
-      });
-
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-          // shared with activity type
-        }
-      } else if (result.action === Share.dismissedAction) {
-      }
-    } catch (error: any) {
-      alert(error.message);
-    }
-  }
+  if (!me) return <NotLoggedInProfile userType={"owner"} />;
   return (
     <>
-      <BodyScrollView withBackground={true}>
-        <View className="pt-8 flex-1 px-4">
-          <View className="flex-1 mt-2">
-            {isAgent && (
+      <BodyScrollView>
+        <View className="pt-4 flex-1 gap-4">
+          <View className="gap-3 px-4">
+            <Text className="font-medium text-typography/80">Your account</Text>
+            <MenuListItem
+              title="Account Manager"
+              description="Password, email, personal details, linked accounts and devices"
+              onPress={() => {
+                if (!me) {
+                  openAccessModal({ visible: true });
+                } else {
+                  router.push("/settings/manager");
+                }
+              }}
+              withBorder={false}
+              icon={UserCircle}
+            />
+            <Text className="text-sm text-typography/80">
+              Manage your connected accounts, password and devices accross
+              TopNotch City Applications
+            </Text>
+          </View>
+          <Divider className="h-2 bg-background-muted" />
+          <View className="gap-4 px-4">
+            <Text className="font-medium text-typography/80">
+              Your activities
+            </Text>
+            <View className="gap-4">
+              {isAgent && (
+                <MenuListItem
+                  title="My Properties"
+                  onPress={() => {
+                    if (!me) {
+                      openAccessModal({ visible: true });
+                    } else {
+                      router.push({
+                        pathname: "/agents/[userId]/properties",
+                        params: {
+                          userId: me.id,
+                        },
+                      });
+                    }
+                  }}
+                  icon={House}
+                  withBorder={false}
+                />
+              )}
               <MenuListItem
-                title="My Properties"
-                description="View all your saved properties"
-                onPress={() => {
-                  if (!hasAuth) {
-                    openAccessModal({ visible: true });
-                  } else {
-                    router.push("/agent");
-                  }
-                }}
+                title="Followers"
+                withBorder={false}
+                onPress={() =>
+                  router.push({
+                    pathname: "/agents/[userId]/activities",
+                    params: {
+                      userId: me.id,
+                    },
+                  })
+                }
+                icon={Users}
+              />
+              <MenuListItem
+                title="Saved"
+                withBorder={false}
+                onPress={() =>
+                  router.push({
+                    pathname: "/agents/[userId]/wishlist",
+                    params: {
+                      userId: me.id,
+                    },
+                  })
+                }
                 icon={House}
-                iconColor="blue-500"
-                className=" py-2 pb-3"
               />
-            )}
-            {(isAdmin || isAgent) && (
-              <Divider className=" h-[0.3px] bg-background-info mb-4" />
-            )}
-            {/* <MenuListItem
-              title="Settings"
-              description="Change your theme and other settings"
-              onPress={() => {
-                router.push("/settings");
-              }}
-              icon={Settings}
-              iconColor="gray-500"
-              className=" py-2 pb-3"
-            />
-            <Divider className=" h-[0.3px] bg-background-info mb-4" /> */}
-            <MenuListItem
-              title="Send us a feedback"
-              description="Let's improve the app"
-              onPress={() => router.push("/report")}
-              icon={NotebookText}
-              className="py-2"
-              iconColor="yellow-600"
-            />
-            <Divider className=" h-[0.3px] bg-background-info mb-4" />
-            <MenuListItem
-              title="Invite friends"
-              description={`Invite your friends to join ${config.appName} app`}
-              icon={Share2}
-              className=" py-2 pb-3"
-              iconColor="primary"
-              onPress={() => router.push("/share")}
-            />
-            <Divider className=" h-[0.3px] bg-background-info mb-4" />
-            {me?.role == "user" && (
               <MenuListItem
-                title="Become an Agent"
-                description={`Join us as an agent to earn more`}
-                icon={Sparkle}
-                className="py-2"
-                iconColor="gray-600"
-                onPress={() => {
-                  if (hasAuth) {
-                    openAccessModal({ visible: true });
-                  } else {
-                    router.push(`/forms/${me?.id}/agent`);
-                  }
-                }}
+                title="Notifications"
+                withBorder={false}
+                onPress={() => router.push("/notification")}
+                icon={Bell}
               />
-            )}
-            {me?.role == "user" && (
-              <Divider className=" h-[0.3px] bg-background-info mb-4" />
-            )}
-            <MenuListItem
-              title="Help and Support"
-              description="Get help and support"
-              onPress={() => {
-                router.push("/support");
-              }}
-              icon={HelpCircle}
-              className="py-2"
-              iconColor="yellow-600"
-            />
-
-            {hasAuth && <LogoutButton onLogout={onLogout} />}
+            </View>
+          </View>
+          <Divider className="h-2 bg-background-muted" />
+          <View className="gap-4 px-4">
+            <Text className="font-medium text-typography/80">Help center</Text>
+            <View className="gap-4">
+              <MenuListItem
+                title="Send us a feedback"
+                withBorder={false}
+                onPress={() => router.push("/report")}
+                icon={NotebookText}
+              />
+              <MenuListItem
+                title="Invite friends"
+                withBorder={false}
+                icon={Share2}
+                onPress={() => router.push("/share")}
+              />
+              {me?.role == "user" && (
+                <MenuListItem
+                  title="Become an Agent"
+                  withBorder={false}
+                  icon={Sparkle}
+                  onPress={() => {
+                    if (me) {
+                      openAccessModal({ visible: true });
+                    } else {
+                      router.push(`/forms/agent`);
+                    }
+                  }}
+                />
+              )}
+              <MenuListItem
+                title="Help and Support"
+                withBorder={false}
+                onPress={() => {
+                  router.push("/support");
+                }}
+                icon={HelpCircle}
+              />
+            </View>
+          </View>
+          <Divider className="h-2 bg-background-muted" />
+          <View className="px-4">
+            {me && <LogoutButton onLogout={onLogout} />}
           </View>
         </View>
       </BodyScrollView>

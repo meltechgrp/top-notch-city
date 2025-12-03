@@ -68,7 +68,9 @@ export default function RootLayout() {
             <KeyboardProvider>
               <BottomSheetModalProvider>
                 <QueryClientProvider client={query}>
-                  <Slot />
+                  <ImageViewerProvider>
+                    <Slot />
+                  </ImageViewerProvider>
                   <GlobalManager />
                 </QueryClientProvider>
               </BottomSheetModalProvider>
