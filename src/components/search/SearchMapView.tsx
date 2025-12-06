@@ -9,6 +9,8 @@ type Props = {
   propertyId?: string;
   latitude?: number;
   longitude?: number;
+  onUpdate: (values: Partial<SearchFilters>) => void;
+  onApply: () => void;
 };
 
 function SearchMapView({
@@ -17,6 +19,8 @@ function SearchMapView({
   propertyId,
   latitude,
   longitude,
+  onUpdate,
+  onApply,
 }: Props) {
   const [selectedItem, setSeletedItem] = useState<Property | null>(null);
 
@@ -34,6 +38,10 @@ function SearchMapView({
           latitude={latitude}
           longitude={longitude}
           markers={properties}
+          onRegionChange={(latitude, longitude) => {
+            onUpdate({ latitude, longitude });
+            onApply();
+          }}
           showSmallMarker={false}
           onMarkerPress={(marker) => setSeletedItem(marker)}
         />

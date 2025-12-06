@@ -8,12 +8,14 @@ import {
   MonitorPlay,
   Plus,
   PlusCircle,
+  Search,
   UserCircle,
 } from "lucide-react-native";
 import { Colors } from "@/constants/Colors";
 import { useResolvedTheme } from "@/components/ui";
 import { useStore } from "@/store";
 import { useShallow } from "zustand/react/shallow";
+import { useHomeFeed } from "@/hooks/useHomeFeed";
 
 export const unstable_settings = {
   initialRouteName: "/home",
@@ -23,6 +25,7 @@ export default function TabLayout() {
   const { me, isAdmin, isAgent } = useStore(
     useShallow((s) => s.getCurrentUser())
   );
+  const { total } = useHomeFeed();
   return (
     <Tabs
       screenOptions={{
@@ -32,7 +35,8 @@ export default function TabLayout() {
         headerTitleAlign: "center",
         tabBarHideOnKeyboard: true,
         tabBarStyle: {
-          position: "static",
+          position: "absolute",
+          zIndex: 10000,
           backgroundColor:
             theme == "dark" ? Colors.light.background : Colors.dark.background,
         },
@@ -62,6 +66,8 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <MessageSquareMore size={22} color={color} />
           ),
+          tabBarBadge: (total > 99 ? "99+" : total) || undefined,
+          tabBarBadgeStyle: { fontSize: 10 },
         })}
       />
       <Tabs.Screen

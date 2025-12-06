@@ -13,7 +13,7 @@ function DropdownSelect({
   format,
   icon,
 }: {
-  value: string;
+  value?: string;
   onChange: (val: string) => void;
   options: string[];
   className?: string;
@@ -32,14 +32,14 @@ function DropdownSelect({
         )}
       >
         {!icon && <Text>{value?.toString() || "Select"}</Text>}
-        <Icon className="" as={icon || ChevronDownIcon} />
+        <Icon size="xl" className="" as={icon || ChevronDownIcon} />
       </TouchableOpacity>
       <OptionsBottomSheet
         isOpen={show}
         format={format}
         onDismiss={() => setShow(false)}
         onChange={async (val) => onChange(val.value)}
-        value={{ label: value, value: value }}
+        value={{ label: value ?? "Select", value: value }}
         options={options?.map((op) => ({
           label: op,
           value: op,

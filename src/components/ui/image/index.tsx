@@ -3,13 +3,13 @@ import React, { memo } from "react";
 import { Image as ExpoImage, ImageSource, useImage } from "expo-image";
 import { cn } from "@/lib/utils";
 
-const blurhash =
-  "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
+const blurhash = "L13Iny%y%ztQ_Nx[x[kUXgSvScS0";
 type ImageProps = React.ComponentProps<typeof ExpoImage> & {
   className?: string;
   rounded?: boolean;
   cacheKey?: string;
   size?: string;
+  withHash?: boolean;
 };
 
 const Image = memo(
@@ -23,6 +23,7 @@ const Image = memo(
         source,
         cacheKey,
         style,
+        withHash = true,
         ...props
       },
       ref
@@ -43,8 +44,11 @@ const Image = memo(
             rounded && { borderRadius: 10 },
             style,
           ]}
+          allowDownscaling={false}
+          enforceEarlyResizing
           onLoadEnd={onLoadEnd}
-          // placeholder={{ blurhash }}
+          placeholderContentFit="cover"
+          placeholder={withHash ? { blurhash } : undefined}
           cachePolicy={"memory-disk"}
           contentFit={props.contentFit || "cover"}
           transition={props.transition || 800}

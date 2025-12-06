@@ -2,7 +2,7 @@ import { Icon, Image, Text } from "@/components/ui";
 import { chunk } from "lodash-es";
 import { cn } from "@/lib/utils";
 import { formatMessageTime } from "@/lib/utils";
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import {
   Keyboard,
   TextInput,
@@ -12,13 +12,13 @@ import {
 } from "react-native";
 import PostTextContent from "./PostTextContent";
 import { generateMediaUrl } from "@/lib/api";
-import { PropertyModalMediaViewer } from "@/components/modals/property/PropertyModalMediaViewer";
 import { useLayout } from "@react-native-community/hooks";
 import { hapticFeed } from "@/components/HapticTab";
 import { MessageStatusIcon } from "@/components/chat/MessageStatus";
 import { router } from "expo-router";
 import { RotateCcw } from "lucide-react-native";
 import QuoteMessage from "@/components/chat/ChatRoomQuoteMessage";
+import { ProfileImageTrigger } from "@/components/custom/ImageViewerProvider";
 
 export type ChatRoomMessageProps = View["props"] & {
   me: Me;
@@ -49,7 +49,6 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
     [message]
   ) as Media[];
   const isMine = React.useMemo(() => message.sender_info?.id === me.id, []);
-  const [visible, setVisible] = useState(false);
   const formatedTime = React.useMemo(
     () =>
       formatMessageTime(message.created_at as unknown as Date, {
@@ -58,7 +57,6 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
     []
   );
 
-  const [selectedIndex, setSelectedIndex] = useState(0);
   const messageInfo = React.useMemo(
     () => (
       <View
@@ -88,12 +86,6 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
       onLongPress(message);
     },
     delayLongPress: 400,
-  };
-
-  const handleOpen = (index: number) => {
-    hapticFeed(true);
-    setSelectedIndex(index);
-    setVisible(true);
   };
 
   const dismissKeyboard = (event: any) => {
@@ -131,40 +123,40 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
               isMine ? "items-end" : "items-start"
             )}
           >
-            {message?.file_data?.length > 0 ? (
-              <View
+            {images ? (
+              <ProfileImageTrigger
+                image={images}
                 className={cn(
                   "gap-1 flex-row flex-wrap ",
                   isMine ? "items-end" : "items-start"
                 )}
               >
-                {chunk(message?.file_data, 2).map((row, i) => (
+                {chunk(images, 2).map((row, i) => (
                   <View key={i} className="flex-row gap-1">
                     {row.map((item, i) => (
                       <Pressable
-                        key={item.file_id}
-                        onPress={() => handleOpen(i)}
+                        key={item.id}
                         className={cn(["rounded-2xl mb-1 flex-1 h-40"])}
                       >
                         <Image
                           source={{
                             uri: message.isMock
-                              ? item.file_url
+                              ? item.url
                               : generateMediaUrl({
-                                  url: item.file_url,
+                                  url: item.url,
                                   media_type: "IMAGE",
-                                  id: item.file_id,
+                                  id: item.id,
                                 }).uri,
-                            cacheKey: item.file_id,
+                            cacheKey: item.id,
                           }}
                           rounded
-                          alt={item.file_name}
+                          alt={"chat image"}
                         />
                       </Pressable>
                     ))}
                   </View>
                 ))}
-              </View>
+              </ProfileImageTrigger>
             ) : null}
             {message?.property_info && (
               <View
@@ -237,17 +229,6 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
           )}
         </Pressable>
       </View>
-      <PropertyModalMediaViewer
-        width={width}
-        media={images}
-        factor={1.7}
-        showImages
-        stackMode={false}
-        visible={visible}
-        contentFit="cover"
-        setVisible={setVisible}
-        selectedIndex={selectedIndex}
-      />
     </>
   );
 }

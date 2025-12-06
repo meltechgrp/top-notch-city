@@ -4,7 +4,6 @@ import { useVideoPlayer, VideoView } from "expo-video";
 import { useEvent } from "expo";
 import { Icon } from "@/components/ui";
 import { Play } from "lucide-react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export const MiniVideoPlayer = ({
   uri,
@@ -25,7 +24,7 @@ export const MiniVideoPlayer = ({
 }) => {
   const autoplayDone = useRef(false);
   const player = useVideoPlayer({ uri, useCaching: true }, (player) => {
-    player.loop = false;
+    player.loop = true;
     player.muted = false;
   });
 
@@ -90,7 +89,7 @@ export const MiniVideoPlayer = ({
             <ActivityIndicator size="large" />
           </View>
         )}
-        {showPlayBtn && (
+        {(showPlayBtn || !isPlaying) && (
           <View
             style={{
               ...StyleSheet.absoluteFillObject,
@@ -99,7 +98,11 @@ export const MiniVideoPlayer = ({
               backgroundColor: "rgba(0,0,0,0.3)",
             }}
           >
-            <Icon as={Play} size="sm" className="text-primary" />
+            <Icon
+              as={Play}
+              size={showPlayBtn ? "sm" : "xl"}
+              className="text-primary"
+            />
           </View>
         )}
       </View>

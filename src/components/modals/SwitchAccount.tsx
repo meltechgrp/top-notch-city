@@ -42,7 +42,7 @@ export default function SwitchAccountSheet({
       enableOverDrag
     >
       <Box className="flex-1 p-4 gap-6">
-        <View className="border border-outline-100 bg-background-muted/70 rounded-2xl">
+        <View className="border border-outline-100 bg-background-muted/70 overflow-hidden rounded-2xl">
           {list.map((acc) => (
             <Pressable
               key={acc.id}
@@ -110,10 +110,7 @@ export default function SwitchAccountSheet({
             </Pressable>
           )}
         </View>
-        <Button variant="outline" className="h-12 mt-16 rounded-2xl">
-          <Text>Manage your Accounts</Text>
-        </Button>
-        <View className=" items-center">
+        <View className=" items-center mt-16">
           <Text className="text-base font-medium">TopNotch City</Text>
         </View>
       </Box>

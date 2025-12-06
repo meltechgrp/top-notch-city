@@ -34,7 +34,7 @@ function NotificationBarButton({ className, isAdmin }: Props) {
       onPress={() => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         router.push({
-          pathname: isAdmin ? "/admin/notification" : "/notification",
+          pathname: "/notification",
         });
       }}
       className={cn(

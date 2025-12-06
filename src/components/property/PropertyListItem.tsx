@@ -43,8 +43,7 @@ function PropertyListItem(props: Props) {
     listType,
   } = props;
   const me = useStore((s) => s.me);
-  const { toggleLike } = useLike({ queryKey: [listType || "trending"] });
-  const hasAuth = useStore((s) => s.hasAuth);
+  // const { toggleLike } = useLike({ queryKey: [listType || "trending"] });
   const { bannerHeight } = Layout;
   const { price, media, address, interaction, status, owner } = data;
   const { width, onLayout } = useLayout();
@@ -67,13 +66,13 @@ function PropertyListItem(props: Props) {
     }
   };
 
-  function handleLike() {
-    if (!hasAuth) {
-      return openAccessModal({ visible: true });
-    } else {
-      toggleLike({ id: data.id });
-    }
-  }
+  // function handleLike() {
+  //   if (!hasAuth) {
+  //     return openAccessModal({ visible: true });
+  //   } else {
+  //     toggleLike({ id: data.id });
+  //   }
+  // }
   const liked = useMemo(
     () => data?.owner_interaction?.liked,
     [data?.owner_interaction?.liked]
@@ -101,7 +100,7 @@ function PropertyListItem(props: Props) {
           <Actions />
           {showLike && (
             <Pressable
-              onPress={handleLike}
+              // onPress={handleLike}
               className={"p-1 rounded-full bg-black/10"}
             >
               <AnimatedLikeButton

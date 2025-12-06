@@ -24,7 +24,7 @@ function searchReducer(
       return newState;
     }
     case "RESET_FILTERS":
-      return { perPage: 100000 };
+      return { perPage: 90 };
     default:
       return state;
   }
@@ -35,7 +35,8 @@ export function useSearch() {
   const { retryGetLocation, location } = useGetLocation();
   const { searchProperties, updateSearchProperties } = useStore();
   const [search, dispatch] = useReducer(searchReducer, {
-    perPage: 100000,
+    perPage: 90,
+    purpose: "rent",
     latitude: location?.latitude?.toString(),
     longitude: location?.longitude?.toString(),
   });

@@ -1,6 +1,5 @@
 import CreateButton from "@/components/custom/CreateButton";
 import DiscoverProperties from "@/components/home/DiscoverProperties";
-import TopProperties from "@/components/home/properties";
 import TopLocations from "@/components/home/topLocations";
 import { Box, View } from "@/components/ui";
 import StartChatBottomSheet from "@/components/modals/StartChatBottomSheet";
@@ -17,7 +16,7 @@ const MAP_HEIGHT = 400;
 
 export default function HomeScreen() {
   const { me } = useStore();
-  const { refreshAll, total, refetching } = useHomeFeed();
+  const { refreshAll, refetching } = useHomeFeed();
   useEffect(() => {
     setTimeout(() => eventBus.dispatchEvent("REFRESH_PROFILE", null), 1000);
   }, []);
@@ -32,10 +31,6 @@ export default function HomeScreen() {
     const populerCommunities = {
       id: "featured",
       __typename: "Featured",
-    } as any;
-    const trending = {
-      id: "trending",
-      _typename: "Trending",
     } as any;
     const apartment = {
       id: "apartment",
@@ -52,7 +47,6 @@ export default function HomeScreen() {
     return [
       topLocations,
       populerCommunities,
-      trending,
       apartment,
       lands,
       bottomPlaceHolder,
@@ -66,9 +60,6 @@ export default function HomeScreen() {
     }
     if (item.id === "featured") {
       return <FeaturedProperties />;
-    }
-    if (item.id === "trending") {
-      return <TopProperties />;
     }
     if (item.id === "apartment") {
       return <ApartmentProperties />;
@@ -102,7 +93,7 @@ export default function HomeScreen() {
           )}
         />
       </Box>
-      {me && <CreateButton className="" total={total} onPress={onNewChat} />}
+      {me && <CreateButton className="" onPress={onNewChat} />}
       {me && friendsModal && (
         <StartChatBottomSheet
           visible={friendsModal}

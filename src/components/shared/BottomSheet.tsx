@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import React, { FC, useCallback, useEffect, useMemo, useRef } from "react";
 import {
   BackHandler,
   Keyboard,
@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import {
   BottomSheetBackdropProps,
+  BottomSheetFooterProps,
   BottomSheetModal,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
@@ -40,9 +41,9 @@ type BottomSheetProps = Modal["props"] & {
   plain?: boolean;
   addBackground?: boolean;
   enableOverDrag?: boolean;
-  enableClose?: boolean;
-  sheetKey?: string;
   enablePanDownToClose?: boolean;
+  footerComponent?: FC<BottomSheetFooterProps>;
+  enableClose?: boolean;
   onAnimate?: (fromIndex: number, toIndex: number) => void;
   android_keyboardInputMode?: "adjustResize" | "adjustPan";
 };
@@ -62,9 +63,9 @@ export default function BottomSheet(props: BottomSheetProps) {
     contentClassName,
     enableClose = true,
     withScroll = false,
-    sheetKey,
     onAnimate,
     enablePanDownToClose,
+    footerComponent,
   } = props;
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   // variables
@@ -102,8 +103,6 @@ export default function BottomSheet(props: BottomSheetProps) {
         handleDismiss();
         return true;
       }
-      // this is necessary to allow default back button behaviour to work
-      // when modal is not visible
       return false;
     };
 
@@ -126,7 +125,6 @@ export default function BottomSheet(props: BottomSheetProps) {
       ) : undefined,
     []
   );
-
   return (
     <BottomSheetModal
       ref={bottomSheetModalRef}
@@ -143,6 +141,7 @@ export default function BottomSheet(props: BottomSheetProps) {
       enableDismissOnClose={enableClose}
       enablePanDownToClose={enablePanDownToClose}
       backgroundComponent={null}
+      footerComponent={footerComponent}
       style={{
         backgroundColor: addBackground
           ? theme == "dark"
@@ -174,7 +173,7 @@ export default function BottomSheet(props: BottomSheetProps) {
                       </View>
                     ) : (
                       withCloseButton && (
-                        <View className="flex-row justify-center p-1.5 bg-background-info rounded-full items-center">
+                        <View className="flex-row justify-center p-1.5 border border-outline-100 bg-background-info rounded-full items-center">
                           <Icon size="xl" as={X} />
                         </View>
                       )

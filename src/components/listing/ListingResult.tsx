@@ -4,10 +4,7 @@ import { useTempStore } from "@/store";
 import { capitalize } from "lodash-es";
 import { Check } from "lucide-react-native";
 import { composeFullAddress, formatMoney } from "@/lib/utils";
-import {
-  ImageViewerProvider,
-  ProfileImageTrigger,
-} from "@/components/custom/ImageViewerProvider";
+import { ProfileImageTrigger } from "@/components/custom/ImageViewerProvider";
 import { generateMediaUrlSingle } from "@/lib/api";
 
 export default function ListingResult() {
@@ -49,52 +46,47 @@ export default function ListingResult() {
           </View>
         </View>
 
-        <ImageViewerProvider>
-          <View className="bg-background-muted items-center rounded-2xl px-4 py-3 shadow-sm flex-row justify-between">
-            <Text>Media files</Text>
-            <View className="flex-row gap-4">
-              <ProfileImageTrigger
-                image={[
-                  ...(property?.photos || []),
-                  ...(property?.videos || []),
-                ]}
-                index={0}
-                className="flex-row gap-4"
-              >
-                {property?.photos?.slice(0, 2).map((img) => (
-                  <View
-                    key={img.id}
-                    className={
-                      " bg-primary border border-outline-100 rounded-xl h-16 w-16 justify-center items-center"
-                    }
-                  >
-                    <Image
-                      rounded
-                      source={{
-                        uri: generateMediaUrlSingle(img.url),
-                        cacheKey: img.id,
-                      }}
-                      alt="image"
-                    />
-                  </View>
-                ))}
+        <View className="bg-background-muted items-center rounded-2xl px-4 py-3 shadow-sm flex-row justify-between">
+          <Text>Media files</Text>
+          <View className="flex-row gap-4">
+            <ProfileImageTrigger
+              image={[...(property?.photos || []), ...(property?.videos || [])]}
+              index={0}
+              className="flex-row gap-4"
+            >
+              {property?.photos?.slice(0, 2).map((img) => (
                 <View
+                  key={img.id}
                   className={
                     " bg-primary border border-outline-100 rounded-xl h-16 w-16 justify-center items-center"
                   }
                 >
-                  <Text className="font-bold text-lg">
-                    +
-                    {
-                      [...(property?.photos || []), ...(property?.videos || [])]
-                        .length
-                    }
-                  </Text>
+                  <Image
+                    rounded
+                    source={{
+                      uri: generateMediaUrlSingle(img.url),
+                      cacheKey: img.id,
+                    }}
+                    alt="image"
+                  />
                 </View>
-              </ProfileImageTrigger>
-            </View>
+              ))}
+              <View
+                className={
+                  " bg-primary border border-outline-100 rounded-xl h-16 w-16 justify-center items-center"
+                }
+              >
+                <Text className="font-bold text-lg">
+                  +
+                  {
+                    [...(property?.photos || []), ...(property?.videos || [])]
+                      .length
+                  }
+                </Text>
+              </View>
+            </ProfileImageTrigger>
           </View>
-        </ImageViewerProvider>
+        </View>
 
         <View className="bg-background-muted rounded-2xl p-4 shadow-sm">
           <Text className="mb-3">Description</Text>

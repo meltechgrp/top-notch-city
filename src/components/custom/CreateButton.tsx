@@ -14,7 +14,7 @@ function CreateButton({ total = 0, ...props }: CreateButtonProps) {
   const exceeds9 = total > 9;
   const _count = exceeds9 ? "9+" : total;
   return (
-    <View className={cn("absolute bottom-16 right-3", props.className)}>
+    <View className={cn("absolute bottom-28 right-3", props.className)}>
       <Pressable
         className="bg-primary/80 relative rounded-2xl p-1 flex w-16 h-16 flex-row items-center justify-center z-30 shadow "
         accessibilityRole="button"

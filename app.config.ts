@@ -163,6 +163,12 @@ export default () => ({
       {
         image: "./src/assets/images/splash.png",
         resizeMode: "contain",
+        backgroundColor: "#161819",
+        dark: {
+          image: "./src/assets/images/splash.png",
+          backgroundColor: "#161819",
+        },
+        imageWidth: 200,
       },
     ],
     [

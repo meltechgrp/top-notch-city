@@ -53,7 +53,7 @@ export default function Menu() {
             <View className="px-4 flex-row gap-4">
               <Pressable
                 className="p-2 bg-background-muted rounded-full"
-                onPress={() => router.push("/(protected)/explore")}
+                onPress={() => router.push("/explore")}
               >
                 <Icon as={Search} className="w-6 h-6" />
               </Pressable>

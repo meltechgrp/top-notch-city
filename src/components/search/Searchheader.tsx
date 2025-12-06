@@ -1,9 +1,4 @@
-import {
-  ChevronLeftIcon,
-  Mic,
-  SearchIcon,
-  Settings2,
-} from "lucide-react-native";
+import { ChevronLeftIcon, Settings2 } from "lucide-react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -12,33 +7,21 @@ import Animated, {
 } from "react-native-reanimated";
 import { Icon, Pressable, Text, View } from "@/components/ui";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ScrollView, TouchableOpacity, ViewProps } from "react-native";
+import { ViewProps } from "react-native";
 import { memo, useEffect } from "react";
-import { cn, composeFullAddress } from "@/lib/utils";
+import { composeFullAddress } from "@/lib/utils";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
 import { router } from "expo-router";
 
 interface Props extends Partial<ViewProps> {
   setLocationBottomSheet: () => void;
   setShowFilter: () => void;
-  setRoomsFilter: () => void;
-  setPriceFilter: () => void;
-  setTypesFilter: () => void;
-  setActivateVoice: () => void;
-  refetchAndApply: () => Promise<void>;
-  onUpdate: (values: Partial<SearchFilters>) => void;
   filter: SearchFilters;
 }
 function SearchHeader({
   setShowFilter,
-  setActivateVoice,
   setLocationBottomSheet,
   filter,
-  setRoomsFilter,
-  setPriceFilter,
-  setTypesFilter,
-  onUpdate,
-  refetchAndApply,
   ...props
 }: Props) {
   const translateY = useSharedValue(50);
@@ -63,18 +46,19 @@ function SearchHeader({
         >
           <Animated.View style={animatedStyle}>
             <View className=" w-full android:pt-2">
-              <View className="flex-row items-center gap-x-4 px-4 w-full">
+              <View className="flex-row items-center gap-x-2 px-4 w-full">
+                <Pressable
+                  onPress={() => {
+                    if (router.canGoBack()) router.back();
+                    else router.push("/");
+                  }}
+                  style={[[props?.style]]}
+                  className="py-px flex-row items-center p-2.5 bg-background-muted rounded-full"
+                >
+                  <Icon className=" w-7 h-7" as={ChevronLeftIcon} />
+                </Pressable>
+
                 <View className={"flex-1 flex-row gap-3"}>
-                  <Pressable
-                    onPress={() => {
-                      if (router.canGoBack()) router.back();
-                      else router.push("/");
-                    }}
-                    style={[[props?.style]]}
-                    className="py-px flex-row items-center p-2.5 bg-background-muted rounded-full"
-                  >
-                    <Icon className=" w-7 h-7" as={ChevronLeftIcon} />
-                  </Pressable>
                   <Pressable
                     onPress={setLocationBottomSheet}
                     className="h-12 bg-background-muted flex-1 rounded-full flex-row items-center px-2 py-1"
@@ -84,62 +68,18 @@ function SearchHeader({
                         ? composeFullAddress(filter)
                         : "Search for a state, city or location..."}
                     </Text>
-                    <View className=" p-2 bg-primary rounded-full">
-                      <Icon as={SearchIcon} color="white" />
-                    </View>
                   </Pressable>
-                  <TouchableOpacity
-                    className=" p-3 flex items-center justify-center rounded-full bg-background-muted"
-                    onPress={setActivateVoice}
-                  >
-                    <Icon as={Mic} className={cn("w-6 h-6")} />
-                  </TouchableOpacity>
                 </View>
-              </View>
-            </View>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <View className="px-4 pt-4 gap-4 flex-row">
+
                 <AnimatedPressable
                   className=" py-2 px-4 flex-row gap-2 items-center justify-center rounded-full bg-primary"
                   onPress={setShowFilter}
                 >
                   <Icon as={Settings2} size="md" className="text-white" />
-                  <Text className="text-white">Filter</Text>
-                </AnimatedPressable>
-                <AnimatedPressable
-                  className=" py-2 px-6 flex-row gap-2 items-center justify-center rounded-full bg-background-muted"
-                  onPress={setPriceFilter}
-                >
-                  <Text>Price</Text>
-                </AnimatedPressable>
-                <AnimatedPressable
-                  className=" py-2 px-5 flex-row gap-2 items-center justify-center rounded-full bg-background-muted"
-                  onPress={setRoomsFilter}
-                >
-                  <Text>Rooms</Text>
-                </AnimatedPressable>
-                <AnimatedPressable
-                  className={cn(
-                    " py-2 px-5 flex-row gap-2 items-center justify-center rounded-full bg-background-muted",
-                    filter.category == "Land" && "bg-primary"
-                  )}
-                  onPress={async () => {
-                    filter?.category
-                      ? onUpdate({ category: "" })
-                      : onUpdate({ category: "Land" });
-                    await refetchAndApply();
-                  }}
-                >
-                  <Text>Lands</Text>
-                </AnimatedPressable>
-                <AnimatedPressable
-                  className=" py-2 px-4 flex-row gap-2 items-center justify-center rounded-full bg-background-muted"
-                  onPress={setTypesFilter}
-                >
-                  <Text>Property Type</Text>
+                  <Text className="text-white text-sm">Filter</Text>
                 </AnimatedPressable>
               </View>
-            </ScrollView>
+            </View>
           </Animated.View>
         </SafeAreaView>
       </View>

@@ -24,10 +24,7 @@ import { router } from "expo-router";
 import { useFollowAgent } from "@/hooks/useFollowAgent";
 import { UserType } from "@/components/profile/ProfileWrapper";
 import { Rating } from "@/components/agent/Rating";
-import {
-  ImageViewerProvider,
-  ProfileImageTrigger,
-} from "@/components/custom/ImageViewerProvider";
+import { ProfileImageTrigger } from "@/components/custom/ImageViewerProvider";
 
 export function ProfileTopSection({
   user,
@@ -126,25 +123,23 @@ export function ProfileTopSection({
     <>
       <View className={"px-4 py-2 mt-2"}>
         <View className={"flex-row gap-4 rounded-2xl"}>
-          <ImageViewerProvider>
-            <ProfileImageTrigger
-              image={[
-                {
-                  url: user?.profile_image!,
-                  id: user.id,
-                  media_type: "IMAGE",
-                },
-              ]}
-            >
-              <Avatar className="w-24 h-24 rounded-full">
-                <AvatarFallbackText>{fullName(user)}</AvatarFallbackText>
-                <AvatarImage
-                  className="rounded-full"
-                  source={getImageUrl(user?.profile_image)}
-                />
-              </Avatar>
-            </ProfileImageTrigger>
-          </ImageViewerProvider>
+          <ProfileImageTrigger
+            image={[
+              {
+                url: user?.profile_image!,
+                id: user.id,
+                media_type: "IMAGE",
+              },
+            ]}
+          >
+            <Avatar className="w-24 h-24 rounded-full">
+              <AvatarFallbackText>{fullName(user)}</AvatarFallbackText>
+              <AvatarImage
+                className="rounded-full"
+                source={getImageUrl(user?.profile_image)}
+              />
+            </Avatar>
+          </ProfileImageTrigger>
 
           <View className="flex-1">
             <View className="">

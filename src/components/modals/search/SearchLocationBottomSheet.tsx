@@ -1,34 +1,55 @@
-import { FlatList, Pressable, View } from "react-native";
+import { FlatList, View } from "react-native";
 import BottomSheet from "@/components/shared/BottomSheet";
-import { useEffect, useMemo, useState } from "react";
-import { Icon, Text } from "@/components/ui";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Icon, Text, Pressable, Heading } from "@/components/ui";
 import { debounce } from "lodash-es";
-import { History, MapPin, SearchIcon, Send } from "lucide-react-native";
+import { History, MapPin, SearchIcon } from "lucide-react-native";
 import { fetchPlaceFromTextQuery } from "@/actions/utills";
-import { composeFullAddress } from "@/lib/utils";
+import { cn, composeFullAddress } from "@/lib/utils";
 import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
 import { CustomInput } from "@/components/custom/CustomInput";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import { useStore } from "@/store";
+import { useMutation } from "@tanstack/react-query";
+import useGetLocation from "@/hooks/useGetLocation";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
+import { getReverseGeocode } from "@/hooks/useReverseGeocode";
 
 type Props = {
   show: boolean;
+  filter: SearchFilters;
   onDismiss: () => void;
   onUpdate: (values: Partial<SearchFilters>) => void;
   refetchAndApply: () => void;
 };
 
+const options = [
+  { label: "Rent", value: "rent" },
+  { label: "Buy", value: "sell" },
+];
 function SearchLocationBottomSheet({
   show,
   onDismiss,
+  filter,
   onUpdate,
   refetchAndApply,
 }: Props) {
+  const { retryGetLocation } = useGetLocation();
   const [text, setText] = useState("");
   const [locations, setLocations] = useState<GooglePlace[]>([]);
   const { savedSearches, updateSavedSearch } = useStore();
   const [typing, setTyping] = useState(false);
   const [locating, setLocating] = useState(false);
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: fetchPlaceFromTextQuery,
+    mutationKey: [text],
+    onSuccess: (data) => {
+      setLocations(data);
+    },
+    onError: () => {
+      setLocations([]);
+    },
+  });
 
   const debouncedAutocompleteSearch = useMemo(
     () =>
@@ -38,8 +59,7 @@ function SearchLocationBottomSheet({
           return;
         }
         try {
-          const result = await fetchPlaceFromTextQuery(query);
-          setLocations(result);
+          await mutateAsync(query);
         } catch (error) {}
       }, 500),
     []
@@ -83,7 +103,6 @@ function SearchLocationBottomSheet({
       latitude: item.latitude as string,
     };
 
-    // Save to history if not already present
     const exists = savedSearches.some(
       (h) =>
         h.city === newSearch.city &&
@@ -101,6 +120,32 @@ function SearchLocationBottomSheet({
     setText("");
     setLocations([]);
   };
+
+  const handleUseLocation = useCallback(async () => {
+    setTyping(true);
+
+    const locationData = await retryGetLocation();
+    if (!locationData) {
+      showErrorAlert({
+        title: "Unable to get location, try again!",
+        alertType: "warn",
+      });
+      return setTyping(false);
+    }
+
+    const result = await getReverseGeocode(locationData);
+
+    if (!result?.address) {
+      showErrorAlert({
+        title: "Unable to get location, try again!",
+        alertType: "warn",
+      });
+      return setTyping(false);
+    }
+
+    handleSelect({ ...result.addressComponents, ...locationData } as any);
+    setTyping(false);
+  }, [retryGetLocation, handleSelect]);
   const displayData: SearchHistory[] = typing
     ? locations.map((item) => ({
         city: item?.addressComponents?.city || "",
@@ -112,6 +157,7 @@ function SearchLocationBottomSheet({
         latitude: item.location.latitude.toString(),
       }))
     : savedSearches;
+
   return (
     <BottomSheet
       withHeader={false}
@@ -126,8 +172,8 @@ function SearchLocationBottomSheet({
             <CustomInput
               placeholder="Search for a state, city or location..."
               value={text}
-              containerClassName=" min-h-12 flex-1"
-              className="h-12"
+              containerClassName=" border-0 min-h-12 flex-1"
+              className="h-12 border-0"
               autoFocus
               onUpdate={onChangeText}
               onSubmitEditing={() => {
@@ -141,6 +187,28 @@ function SearchLocationBottomSheet({
             <View className=" ml-auto p-2 bg-primary rounded-full">
               {locating ? <SpinningLoader /> : <Icon as={SearchIcon} />}
             </View>
+          </View>
+          <View className="flex-row py-0.5 h-14 rounded-xl gap-5">
+            {options.map(({ label, value }) => (
+              <Pressable
+                both
+                key={label}
+                onPress={() => onUpdate({ purpose: value })}
+                className={cn(
+                  "px-10 flex-1 border border-outline-100 rounded-2xl py-1 bg-background-muted justify-center flex-row gap-1 items-center",
+                  filter.purpose === value && "bg-primary"
+                )}
+              >
+                <Heading
+                  className={cn(
+                    "text-base",
+                    filter.purpose === value && "text-white"
+                  )}
+                >
+                  {label}
+                </Heading>
+              </Pressable>
+            ))}
           </View>
         </View>
 

@@ -27,7 +27,6 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
-import { ImageViewerProvider } from "@/components/custom/ImageViewerProvider";
 
 const { height } = Dimensions.get("window");
 const HERO_HEIGHT = height / 2.2;
@@ -192,28 +191,26 @@ export default function PropertyItem() {
         </Animated.View>
       )}
       <FullHeightLoaderWrapper loading={isLoading}>
-        <ImageViewerProvider>
-          <Box onLayout={onLayout} className="flex-1 relative">
-            <Animated.ScrollView
-              scrollEventThrottle={16}
-              onScroll={scrollHandler}
-              showsVerticalScrollIndicator={false}
-            >
-              {property && (
-                <Animated.View
-                  style={[{ width, height: HERO_HEIGHT }, heroAnimatedStyle]}
-                >
-                  <PropertyHeroSection property={property} width={width} />
-                </Animated.View>
-              )}
-              {property && (
-                <View onLayout={onDetailsLayout}>
-                  <PropertyDetails property={property} />
-                </View>
-              )}
-            </Animated.ScrollView>
-          </Box>
-        </ImageViewerProvider>
+        <Box onLayout={onLayout} className="flex-1 relative">
+          <Animated.ScrollView
+            scrollEventThrottle={16}
+            onScroll={scrollHandler}
+            showsVerticalScrollIndicator={false}
+          >
+            {property && (
+              <Animated.View
+                style={[{ width, height: HERO_HEIGHT }, heroAnimatedStyle]}
+              >
+                <PropertyHeroSection property={property} width={width} />
+              </Animated.View>
+            )}
+            {property && (
+              <View onLayout={onDetailsLayout}>
+                <PropertyDetails property={property} />
+              </View>
+            )}
+          </Animated.ScrollView>
+        </Box>
       </FullHeightLoaderWrapper>
     </>
   );

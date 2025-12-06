@@ -26,11 +26,12 @@ import {
 import { enableScreens } from "react-native-screens";
 import { ImageViewerProvider } from "@/components/custom/ImageViewerProvider";
 import { registerDevice } from "@/actions/user";
+
 enableScreens(true);
 const query = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 60 * 24, // 24 hours
+      staleTime: 1000 * 60 * 60 * 1,
     },
   },
 });
@@ -38,18 +39,15 @@ const query = new QueryClient({
 export const unstable_settings = {
   initialRouteName: "(onboarding)/splash",
 };
-// Optional: Ignore the warning in React Native’s LogBox too
 LogBox.ignoreLogs([
   "[Reanimated] Reading from `value` during component render.",
 ]);
 
-// Disable strict mode logging
 configureReanimatedLogger({
-  level: ReanimatedLogLevel.error, // only show errors
-  strict: false, // disables strict mode warnings
+  level: ReanimatedLogLevel.error,
+  strict: false,
 });
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {

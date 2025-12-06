@@ -291,7 +291,7 @@ const ProfileImageViewer = ({
     if (item.media_type === "IMAGE" || !item.media_type) {
       return (
         <Image
-          source={{ uri: generateMediaUrlSingle(item.url) }}
+          source={{ uri: generateMediaUrlSingle(item.url), cacheKey: item.id }}
           contentFit="contain"
           style={{ width: SCREEN_W, height: SCREEN_H }}
         />
@@ -323,6 +323,7 @@ const ProfileImageViewer = ({
           >
             <PagerView
               initialPage={index}
+              pageMargin={4}
               style={{ width: SCREEN_W, height: SCREEN_H }}
               onPageSelected={(e) => setIndex(e.nativeEvent.position)}
             >
@@ -330,7 +331,7 @@ const ProfileImageViewer = ({
                 <View
                   key={i}
                   style={{ width: SCREEN_W, height: SCREEN_H }}
-                  className="bg-black/20"
+                  className="bg-black/40"
                 >
                   {renderSlide(item, i)}
                 </View>

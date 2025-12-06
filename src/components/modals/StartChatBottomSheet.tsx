@@ -29,7 +29,7 @@ type Props = {
   visible: boolean;
   onDismiss: () => void;
   setStaffs?: () => void;
-  me: Me;
+  me: StoredAccount;
 };
 export default function ConnectionsListSelectBottomSheet(props: Props) {
   const { onDismiss, visible, setStaffs, me } = props;
