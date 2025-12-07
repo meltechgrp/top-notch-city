@@ -55,8 +55,9 @@ export default function RootLayout() {
   useSuppressChatPushNotification();
   useMountPushNotificationToken();
   useEffect(() => {
-    SplashScreen.hide();
-    (async () => await registerDevice())();
+    (async () => await registerDevice())().finally(() => {
+      SplashScreen.hide();
+    });
   }, []);
   return (
     <>
