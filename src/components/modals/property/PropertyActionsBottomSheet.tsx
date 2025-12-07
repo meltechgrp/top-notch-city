@@ -32,20 +32,20 @@ export default function PropertyActionsBottomSheet(props: Props) {
       onDismiss={onDismiss}
     >
       <View
-        style={{ height: (options.length + 1) * 58 }}
+        style={{ height: options.length * 58 }}
         className={" p-4 py-2 bg-background-muted rounded-xl overflow-hidden "}
       >
         <FlashList
           data={options}
           showsVerticalScrollIndicator={false}
           keyExtractor={(item) => item.actionText}
-          ListHeaderComponent={() => (
-            <>
-              <View className=" items-center py-3 mb-2 border-outline border-b">
-                <Heading>Property Actions</Heading>
-              </View>
-            </>
-          )}
+          // ListHeaderComponent={() => (
+          //   <>
+          //     <View className=" items-center py-3 mb-2 border-outline border-b">
+          //       <Heading>Property Actions</Heading>
+          //     </View>
+          //   </>
+          // )}
           ItemSeparatorComponent={() => <View className=" h-2" />}
           renderItem={({ item: option, index }) => (
             <OptionComponent

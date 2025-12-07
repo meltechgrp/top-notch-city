@@ -1,4 +1,4 @@
-import { Share2 } from "lucide-react-native";
+import { LucideIcon, Share2 } from "lucide-react-native";
 import { Icon, Pressable, useResolvedTheme } from "../ui";
 import { cn } from "@/lib/utils";
 import { memo } from "react";
@@ -8,9 +8,17 @@ interface Props {
   title: string;
   id: string;
   hasScrolledToDetails?: boolean;
+  className?: string;
+  icon?: LucideIcon;
 }
 
-const PropertyShareButton = ({ title, id, hasScrolledToDetails }: Props) => {
+const PropertyShareButton = ({
+  title,
+  id,
+  hasScrolledToDetails,
+  className,
+  icon,
+}: Props) => {
   const theme = useResolvedTheme();
   return (
     <Pressable
@@ -24,10 +32,11 @@ const PropertyShareButton = ({ title, id, hasScrolledToDetails }: Props) => {
       style={{ padding: 8 }}
     >
       <Icon
-        as={Share2}
+        as={icon || Share2}
         className={cn(
           " text-white w-7 h-7",
-          hasScrolledToDetails && theme == "light" && "text-black"
+          hasScrolledToDetails && theme == "light" && "text-black",
+          className
         )}
       />
     </Pressable>

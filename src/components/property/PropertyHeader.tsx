@@ -2,12 +2,9 @@ import { Icon, Pressable, useResolvedTheme, View } from "@/components/ui";
 import ReelShareButton from "../reel/ReelShareButton";
 import { usePropertyActions } from "@/hooks/usePropertyActions";
 import { router } from "expo-router";
-import { Edit, MoreHorizontal, Trash2 } from "lucide-react-native";
+import { Edit, MoreHorizontal, Share } from "lucide-react-native";
 import { cn, generateTitle } from "@/lib/utils";
 import { useMemo, useState } from "react";
-import { Alert } from "react-native";
-import { usePropertyStatusMutations } from "@/tanstack/mutations/usePropertyStatusMutations";
-import LikeButton from "@/components/property/LikeButton";
 import WishListButton from "@/components/property/WishListButton";
 import PropertyActionsBottomSheet from "@/components/modals/property/PropertyActionsBottomSheet";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
@@ -22,51 +19,23 @@ export default function PropertyHeader({
   hasScrolledToDetails,
 }: Props) {
   const theme = useResolvedTheme();
-  const { isAdmin, isOwner, isAgent, actions } = usePropertyActions({
+  const { isOwner, actions } = usePropertyActions({
     property,
   });
   const [openActions, setOpenActions] = useState(false);
-  const { mutate } = usePropertyStatusMutations().softDeleteMutation;
-  const isLiked = useMemo(
-    () => !!property.owner_interaction?.liked,
-    [property]
-  );
-  const wishlisted = useMemo(
-    () => !!property.owner_interaction?.added_to_wishlist,
-    [property]
-  );
-  async function onDelete() {
-    Alert.alert(
-      "Delete",
-      "Are you sure you want to delete this property?",
-      [
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: async () => {
-            mutate(
-              { propertyId: property.id },
-              {
-                onSuccess: () => {
-                  router.back();
-                },
-              }
-            );
-          },
-        },
-      ],
-      {}
-    );
-  }
+  const liked = useMemo(() => !!property.owner_interaction?.liked, [property]);
   return (
     <>
-      {isAgent && isOwner ? (
-        <View className="pr-4 flex-row items-center gap-2">
-          <ReelShareButton title={generateTitle(property)} id={property.slug} />
+      <View className="pr-4 flex-row bg-background/50 px-4 rounded-full mr-4 items-center gap-2">
+        {property.status == "approved" && (
+          <WishListButton
+            id={property.id}
+            slug={property.slug}
+            isAdded={liked}
+            hasScrolledToDetails={hasScrolledToDetails}
+          />
+        )}
+        {isOwner && (
           <Pressable
             both
             onPress={() =>
@@ -90,41 +59,17 @@ export default function PropertyHeader({
               )}
             />
           </Pressable>
-          <Pressable
-            both
-            onPress={onDelete}
-            className={
-              "px-4 h-14 flex-row border-outline border-b justify-between rounded-xl items-center"
-            }
-          >
-            <Icon size="xl" as={Trash2} className={cn(" text-white w-7 h-7")} />
-          </Pressable>
-        </View>
-      ) : (
-        <View className="pr-4 flex-row items-center gap-4">
-          <ReelShareButton
-            hasScrolledToDetails={hasScrolledToDetails}
-            id={property.slug}
-            title={generateTitle(property)}
-          />
-          <LikeButton
-            liked={isLiked}
-            id={property.id}
-            hasScrolledToDetails={hasScrolledToDetails}
-          />
-          {property.status == "approved" && !isAdmin ? (
-            <WishListButton
-              id={property.id}
-              isAdded={wishlisted}
-              hasScrolledToDetails={hasScrolledToDetails}
-            />
-          ) : (
-            <Pressable className="p-2" onPress={() => setOpenActions(true)}>
-              <Icon className="w-7 h-7" as={MoreHorizontal} />
-            </Pressable>
-          )}
-        </View>
-      )}
+        )}
+        <ReelShareButton
+          icon={Share}
+          className="h-7 w-7"
+          title={generateTitle(property)}
+          id={property.slug}
+        />
+        <Pressable className="p-2" onPress={() => setOpenActions(true)}>
+          <Icon className="w-7 h-7" as={MoreHorizontal} />
+        </Pressable>
+      </View>
       <PropertyActionsBottomSheet
         isOpen={openActions}
         onDismiss={() => setOpenActions(false)}

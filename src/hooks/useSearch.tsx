@@ -1,4 +1,5 @@
 import useGetLocation from "@/hooks/useGetLocation";
+import { getReverseGeocode } from "@/hooks/useReverseGeocode";
 import { useStore } from "@/store";
 import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import { useReducer, useMemo, useEffect, useCallback } from "react";
@@ -102,6 +103,12 @@ export function useSearch() {
         longitude: location.longitude.toString(),
       });
       refetchAndApply();
+      const address = await getReverseGeocode(location);
+      setFilters({
+        country: address?.addressComponents?.country,
+        state: address?.addressComponents?.state,
+        city: address?.addressComponents?.city,
+      });
     } else {
       const locate = await retryGetLocation();
       setFilters({
@@ -109,6 +116,14 @@ export function useSearch() {
         longitude: locate?.longitude.toString(),
       });
       refetchAndApply();
+      if (locate) {
+        const address = await getReverseGeocode(locate);
+        setFilters({
+          country: address?.addressComponents?.country,
+          state: address?.addressComponents?.state,
+          city: address?.addressComponents?.city,
+        });
+      }
     }
   }
   useEffect(() => {

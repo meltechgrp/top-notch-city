@@ -46,7 +46,7 @@ export function usePropertyStatusMutations() {
       deleteProperty(propertyId),
     onSuccess: ({ propertyId }) => {
       showErrorAlert({
-        title: "Property permanently deleted",
+        title: "Property deleted",
         alertType: "success",
         duration: 3000,
       });
@@ -64,7 +64,7 @@ export function usePropertyStatusMutations() {
       softDeleteProperty(propertyId),
     onSuccess: ({ propertyId }) => {
       showErrorAlert({
-        title: "Property soft deleted",
+        title: "Property deleted successfully",
         alertType: "success",
         duration: 3000,
       });
@@ -72,7 +72,7 @@ export function usePropertyStatusMutations() {
     },
     onError: () =>
       showErrorAlert({
-        title: "Failed to soft delete",
+        title: "Failed to delete property",
         alertType: "error",
         duration: 3000,
       }),

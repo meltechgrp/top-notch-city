@@ -27,6 +27,7 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
+import { PropertyFooter } from "@/components/property/PropertyFooter";
 
 const { height } = Dimensions.get("window");
 const HERO_HEIGHT = height / 2.2;
@@ -44,12 +45,10 @@ export default function PropertyItem() {
     queryKey: ["properties", propertyId],
     queryFn: () => fetchProperty({ id: propertyId }),
   });
-
   const { mutate } = useMutation({
     mutationFn: () => viewProperty({ id: propertyId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["properties", propertyId] });
-      queryClient.invalidateQueries({ queryKey: ["properties"] });
     },
   });
 
@@ -138,7 +137,7 @@ export default function PropertyItem() {
                         if (router.canGoBack()) router.back();
                         else router.push("/");
                       }}
-                      className="p-1 bg-black/20 rounded-full flex-row items-center"
+                      className="p-1.5 bg-background/50 rounded-full flex-row items-center"
                     >
                       <Icon
                         className="w-8 h-8"
@@ -176,7 +175,7 @@ export default function PropertyItem() {
                   if (router.canGoBack()) router.back();
                   else router.push("/");
                 }}
-                className="p-1 bg-black/20 rounded-full flex-row items-center"
+                className="p-1.5 bg-background/50 rounded-full flex-row items-center"
               >
                 <Icon className="w-8 h-8" as={ChevronLeftIcon} color="white" />
               </Pressable>
@@ -210,6 +209,7 @@ export default function PropertyItem() {
               </View>
             )}
           </Animated.ScrollView>
+          {property && <PropertyFooter property={property} />}
         </Box>
       </FullHeightLoaderWrapper>
     </>

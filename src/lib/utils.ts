@@ -1,7 +1,7 @@
 import { format, isThisYear, isToday, subDays, subMonths } from "date-fns";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -25,8 +25,6 @@ export function formatMessageTime(
     hideTimeForFullDate: false,
   };
   const localDate = typeof time === "string" ? new Date(time) : time;
-
-  const timeZone = Intl.DateTimeFormat().resolvedOptions();
 
   if (opt?.onlyTime) {
     return format(localDate, "h:mm");
@@ -59,7 +57,7 @@ export function formatMoney(
 ) {
   return new Intl.NumberFormat("en-NG", {
     style: "currency",
-    currency: "NGN",
+    currency: currency || "NGN",
     minimumFractionDigits: fractionDigits,
     maximumFractionDigits: fractionDigits,
     currencyDisplay: "symbol",
@@ -114,12 +112,7 @@ export function generateTitle({
 
 export function composeFullAddress(address: ParsedAddress, cityOnly?: boolean) {
   if (cityOnly) {
-    return joinWithComma(
-      address?.street,
-      address?.city,
-      address?.lga,
-      address?.state
-    );
+    return joinWithComma(address?.street, address?.city, address?.lga);
   }
   return joinWithComma(
     address?.street,
@@ -133,57 +126,28 @@ export function joinWithComma(...arr: Array<string | undefined | null>) {
   return arr.filter(Boolean).join(", ").trim();
 }
 
-export function formatDateDistance(date: string) {
+export function formatDateDistance(date: string, full?: boolean) {
   const seconds = Math.floor(
     (new Date().getTime() - new Date(date).getTime()) / 1000
   );
   let interval = Math.floor(seconds / 31536000);
   if (interval > 1) {
-    return `${interval}y ago`;
+    return `${interval}${full ? " years" : "y"} ago`;
   }
 
   interval = Math.floor(seconds / 86400);
   if (interval >= 1) {
-    return `${interval}d ago`;
+    return `${interval}${full ? " days" : "d"} ago`;
   }
   interval = Math.floor(seconds / 3600);
   if (interval > 1) {
-    return `${interval}h ago`;
+    return `${interval}${full ? " hours" : "h"} ago`;
   }
   interval = Math.floor(seconds / 60);
   if (interval >= 1) {
-    return `${interval}m ago`;
+    return `${interval}${full ? " minutes" : "m"} ago`;
   }
   return `${Math.floor(seconds)}s ago`;
-}
-
-export function useTimeAgo(date: string) {
-  const [timeAgo, setTimeAgo] = useState(() => formatDateDistance(date));
-
-  useEffect(() => {
-    function getIntervalMs(label: string) {
-      if (label.includes("s")) return 1000;
-      if (label.includes("m")) return 60 * 1000;
-      if (label.includes("h")) return 60 * 60 * 1000;
-      return 60 * 60 * 1000;
-    }
-
-    const update = () => {
-      const newTimeAgo = formatDateDistance(date);
-      setTimeAgo(newTimeAgo);
-      return getIntervalMs(newTimeAgo);
-    };
-
-    let intervalMs = update();
-
-    const intervalId = setInterval(() => {
-      intervalMs = update();
-    }, intervalMs);
-
-    return () => clearInterval(intervalId);
-  }, [date]);
-
-  return timeAgo;
 }
 
 export function getRegionForMarkers(
@@ -403,30 +367,6 @@ export function calculateFeedDisplayDimensions(
 
   return { width: Math.floor(displayWidth), height: Math.floor(displayHeight) };
 }
-
-export function shallowCompareProperties(
-  oldArr: Property[],
-  newArr: Property[]
-): boolean {
-  if (oldArr.length !== newArr.length) return false;
-
-  for (let i = 0; i < oldArr.length; i++) {
-    const oldItem = oldArr[i];
-    const newItem = newArr[i];
-
-    if (
-      oldItem.id !== newItem.id ||
-      oldItem.updated_at !== newItem.updated_at ||
-      oldItem.price !== newItem.price ||
-      oldItem.status !== newItem.status
-    ) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
 export function guidGenerator() {
   const S4 = () =>
     (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
@@ -446,7 +386,7 @@ export function guidGenerator() {
   );
 }
 
-export function uploadWithFakeProgress(
+export async function uploadWithFakeProgress(
   uploadFn: () => Promise<Media[]>,
   onProgress: (val: number) => void,
   isVideo: boolean

@@ -1,6 +1,6 @@
 import eventBus from "@/lib/eventBus";
 import { Fetch } from "../utills";
-import { getUniqueIdSync } from "react-native-device-info";
+import { getUniqueIdSync, getDeviceName } from "react-native-device-info";
 import { Platform } from "react-native";
 import config from "@/config";
 
@@ -163,6 +163,7 @@ export async function verifyEmail({ user_id }: { user_id: string }) {
 
 export async function registerDevice() {
   const deviceId = getUniqueIdSync();
+  const name = await getDeviceName();
   const res = await Fetch(`/device/mobile/register`, {
     method: "POST",
     headers: {
@@ -171,6 +172,7 @@ export async function registerDevice() {
     data: {
       device_id: deviceId,
       platform: Platform.OS == "ios" ? "ios" : "android",
+      name,
     },
   });
 

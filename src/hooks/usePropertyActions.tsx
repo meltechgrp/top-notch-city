@@ -1,9 +1,14 @@
 import { useStore } from "@/store";
 import { usePropertyStatusMutations } from "@/tanstack/mutations/usePropertyStatusMutations";
 import { useMemo } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 export function usePropertyActions({ property }: { property: Property }) {
-  const user = useStore((s) => s.me);
+  const {
+    me: user,
+    isAdmin,
+    isAgent,
+  } = useStore(useShallow((s) => s.getCurrentUser()));
   const { mutateAsync: approve } = usePropertyStatusMutations().approveMutation;
   const { mutateAsync: reject } = usePropertyStatusMutations().rejectMutation;
   const { mutateAsync: permanentDelete } =
@@ -19,8 +24,6 @@ export function usePropertyActions({ property }: { property: Property }) {
     () => property?.owner?.id === user?.id,
     [property, user]
   );
-  const isAgent = useMemo(() => user?.role == "agent", [user]);
-  const isAdmin = useMemo(() => user?.role == "admin", [user]);
 
   const actions: ConfirmationActionConfig[] = [
     {
@@ -43,7 +46,7 @@ export function usePropertyActions({ property }: { property: Property }) {
       header: "Mark as Flagged",
       actionText: "Flag",
       description:
-        "This will flag the property. Please provide a valid reason.",
+        "This will flag this property. Please provide a valid reason.",
       requireReason: true,
       onConfirm: flag,
     },
@@ -87,6 +90,17 @@ export function usePropertyActions({ property }: { property: Property }) {
       description:
         "This action is irreversible. Are you sure you want to permanently delete this property?",
       onConfirm: permanentDelete,
+      className: "text-primary",
+      iconClassName: "text-primary",
+    },
+    {
+      visible: !isAdmin || !isOwner,
+      header: "Report Property",
+      actionText: "Report",
+      description:
+        "This will flag this property. Please provide a valid reason.",
+      onConfirm: flag,
+      requireReason: true,
       className: "text-primary",
       iconClassName: "text-primary",
     },

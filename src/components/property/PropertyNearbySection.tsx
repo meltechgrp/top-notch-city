@@ -3,7 +3,7 @@ import { Heading, Icon, Text, useResolvedTheme, View } from "../ui";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import { Colors } from "@/constants/Colors";
 import Layout from "@/constants/Layout";
-import { ActivityIndicator, ScrollView } from "react-native";
+import { ActivityIndicator } from "react-native";
 import {
   Church,
   Hospital,
@@ -31,9 +31,8 @@ const NearbyCategory = ({
   longitude: number;
 }) => {
   const { data, isLoading } = useQuery({
-    queryKey: [type, latitude, latitude],
-    queryFn: () =>
-      getNearbyPlaces({ latitude, longitude, radiusMeters: 5000, limit: 5 }),
+    queryKey: [latitude, latitude],
+    queryFn: () => getNearbyPlaces({ latitude, longitude, radiusMeters: 5000 }),
   });
   const nearby = useMemo(() => data?.slice() || [], [data]);
 
@@ -59,33 +58,32 @@ const NearbyCategory = ({
     religion: Church,
   };
   return (
-    <View className="flex-1 py-2">
-      <ScrollView className="flex-1 pb-12">
-        <View className="flex-1 gap-2">
-          {nearby
-            .filter((n) => n.category == type)
-            .map((item, i) => (
-              <View
-                key={i}
-                className="p-4 py-2 bg-background-muted min-h-16 gap-1 rounded-xl"
-              >
-                <View className="flex-row gap-2 items-center">
-                  <Icon
-                    as={categoryIcons[type as keyof typeof categoryIcons]}
-                    className="text-primary w-4 h-4"
-                  />
-                  <Text className="font-medium">{item.name}</Text>
-                </View>
-                <View className="flex-row gap-2 items-center">
-                  <Icon as={MapPin} className="w-4 h-4" />
-                  <Text className="text-xs flex-1" numberOfLines={2}>
-                    {item.address}
-                  </Text>
-                </View>
+    <View className="flex-1 p-2">
+      <View className="flex-1 gap-2">
+        {nearby
+          .filter((n) => n.category == type)
+          .slice(0, 4)
+          .map((item, i) => (
+            <View
+              key={i}
+              className="p-4 py-2 bg-background min-h-16 gap-1 rounded-xl"
+            >
+              <View className="flex-row gap-2 items-center">
+                <Icon
+                  as={categoryIcons[type as keyof typeof categoryIcons]}
+                  className="text-primary w-4 h-4"
+                />
+                <Text className="font-medium">{item.name}</Text>
               </View>
-            ))}
-        </View>
-      </ScrollView>
+              <View className="flex-row gap-2 items-center">
+                <Icon as={MapPin} className="w-4 h-4" />
+                <Text className="text-xs flex-1" numberOfLines={2}>
+                  {item.address}
+                </Text>
+              </View>
+            </View>
+          ))}
+      </View>
     </View>
   );
 };
@@ -116,15 +114,17 @@ const PropertyNearbySection = ({ address }: PropertyNearbySectionProps) => {
     )
   );
   return (
-    <View className=" gap-4">
-      <Heading size="lg">Nearby Places</Heading>
-      <View>
+    <View className=" gap-2 bg-background-muted border border-outline-100 rounded-xl py-4 mx-4">
+      <Heading size="lg" className="px-4">
+        Nearby Places
+      </Heading>
+      <View className="">
         <TabView
-          style={{ height: 434 }}
+          style={{ height: 360 }}
           navigationState={{ index, routes }}
           renderScene={renderScene}
           onIndexChange={setIndex}
-          initialLayout={{ width: Layout.window.width }}
+          initialLayout={{ width: Layout.window.width - 120 }}
           renderTabBar={(props) => (
             <TabBar
               {...props}

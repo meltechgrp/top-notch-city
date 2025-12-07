@@ -41,7 +41,6 @@ export default () => ({
   },
   android: {
     edgeToEdgeEnabled: true,
-    predictiveBackGestureEnabled: true,
     googleServicesFile: "./google-services.json",
     package: "com.meltech.topnotchcity",
     adaptiveIcon: {
@@ -83,7 +82,7 @@ export default () => ({
     ],
     config: {
       googleMaps: {
-        apiKey: process.env.EXPO_PUBLIC_ANDROID_MAPS_API_KEY,
+        apiKey: "AIzaSyCi6UmiBotzTMWS9NTg9vkMBaID7MYZ2i0",
       },
     },
   },

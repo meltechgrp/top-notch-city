@@ -1,13 +1,16 @@
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { LayoutChangeEvent } from "react-native";
-import { Pressable, Text, View } from "../ui";
+import { Icon, Pressable, Text, View } from "../ui";
+import { ChevronDown, ChevronUp } from "lucide-react-native";
+import { format } from "date-fns";
 
 interface LongDescriptionProps {
   description?: string;
   numberOfLines?: number;
   className?: string;
   textClassName?: string;
+  updated: string;
 }
 
 export function LongDescription({
@@ -15,6 +18,7 @@ export function LongDescription({
   numberOfLines = 6,
   className,
   textClassName,
+  updated,
 }: LongDescriptionProps) {
   const [expanded, setExpanded] = useState(false);
   const [showToggle, setShowToggle] = useState(false);
@@ -42,23 +46,39 @@ export function LongDescription({
   }, [fullHeight, lineHeight, numberOfLines]);
 
   return (
-    <View className={cn("", !description && " hidden", className)}>
-      <Text
-        onLayout={onLayout}
-        onTextLayout={onTextLayout}
-        numberOfLines={!expanded ? numberOfLines : undefined}
-        className={cn("text-sm", textClassName)}
-      >
-        {description?.toLowerCase()}
-      </Text>
-
-      {showToggle && (
-        <Pressable onPress={toggleExpanded} className="mt-2">
-          <Text className="text-primary text-sm font-bold">
-            {expanded ? "View Less" : "View More"}
+    <>
+      <View className={cn("", !description && " hidden", className)}>
+        <View>
+          <Text
+            onLayout={onLayout}
+            onTextLayout={onTextLayout}
+            numberOfLines={!expanded ? numberOfLines : undefined}
+            className={cn("text-sm", textClassName)}
+          >
+            {description?.toLowerCase()}
           </Text>
-        </Pressable>
-      )}
-    </View>
+          {expanded && (
+            <Text className="text-sm mt-2 text-typography/80">
+              Last updated: {format(new Date(updated), "dd-MMM")}
+            </Text>
+          )}
+        </View>
+
+        {showToggle && (
+          <Pressable
+            onPress={toggleExpanded}
+            className="mt-2 flex-row items-center"
+          >
+            <Text className="text-primary text-sm font-bold">
+              {expanded ? "Show Less" : "Show More"}
+            </Text>
+            <Icon
+              as={expanded ? ChevronUp : ChevronDown}
+              className="text-primary w-6 h-6"
+            />
+          </Pressable>
+        )}
+      </View>
+    </>
   );
 }

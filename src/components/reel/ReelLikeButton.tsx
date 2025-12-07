@@ -14,13 +14,13 @@ interface Props {
 }
 
 const ReelLikeButton = ({ liked, id, className, isLand }: Props) => {
-  const { hasAuth } = useStore();
+  const { me } = useStore();
   const { toggleLike, isPending } = useLike({
     queryKey: [isLand ? "lands" : "reels"],
   });
 
   function handleLike() {
-    if (!hasAuth) {
+    if (!me) {
       return openAccessModal({ visible: true });
     } else if (!isPending) {
       toggleLike({ id });

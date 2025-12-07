@@ -16,6 +16,7 @@ import MapView, {
 } from "react-native-maps";
 import Layout from "@/constants/Layout";
 import CustomPropertyMarker from "./CustomPropertyMarker";
+import CustomNearbyMarker from "./CustomNearby";
 import Platforms from "@/constants/Plaforms";
 import PropertyMedia from "@/assets/images/property.png";
 import { Colors } from "@/constants/Colors";
@@ -36,6 +37,7 @@ interface MapProps {
   zoomControlEnabled?: boolean;
   markers?: Property[];
   marker?: LocationData;
+  nearby?: NearbyPOI[];
   showRadius?: boolean;
   showSmallMarker?: boolean;
   radiusInMeters?: number;
@@ -84,6 +86,7 @@ const Map = forwardRef<MapController, MapProps>((props, ref) => {
     initialMapType = "standard",
     onMapTypeChange,
     onRegionChange,
+    nearby,
   } = props;
   const theme = useResolvedTheme();
   const [center, setCenter] = useState({
@@ -192,17 +195,19 @@ const Map = forwardRef<MapController, MapProps>((props, ref) => {
         mapType={mapType as MapViewProps["mapType"]}
         zoomEnabled={true}
         loadingEnabled
-        onDoublePress={onDoublePress}
+        onPress={onDoublePress}
         loadingBackgroundColor={
           theme == "dark" ? Colors.light.background : Colors.dark.background
         }
         loadingIndicatorColor={
           theme == "dark" ? Colors.dark.tint : Colors.light.tint
         }
+        showsBuildings
+        showsTraffic
         showsCompass={false}
-        onRegionChangeComplete={({ latitude, longitude }) =>
-          onRegionChange?.(latitude.toString(), longitude.toString())
-        }
+        // onRegionChangeComplete={({ latitude, longitude }) =>
+        //   onRegionChange?.(latitude.toString(), longitude.toString())
+        // }
         zoomControlEnabled={zoomControlEnabled}
         compassOffset={{ x: 10, y: 50 }}
         scrollEnabled={scrollEnabled}
@@ -247,6 +252,13 @@ const Map = forwardRef<MapController, MapProps>((props, ref) => {
             key={place.id + i}
             onPress={(data) => onMarkerPress && onMarkerPress(data)}
             property={place}
+          />
+        ))}
+        {nearby?.map((nearby, i) => (
+          <CustomNearbyMarker
+            key={nearby.name + i}
+            onPress={(data) => {}}
+            nearby={nearby}
           />
         ))}
       </MapView>

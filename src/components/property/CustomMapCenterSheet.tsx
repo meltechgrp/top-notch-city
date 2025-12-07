@@ -1,9 +1,15 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Map from "../location/map";
 import Layout from "@/constants/Layout";
 import { Modal, Pressable, View } from "react-native";
 import { Icon } from "../ui";
-import { X } from "lucide-react-native";
+import { Layers, X } from "lucide-react-native";
+import { useQuery } from "@tanstack/react-query";
+import { getNearbyPlaces } from "@/actions/property";
+import { SafeAreaView } from "react-native-safe-area-context";
+import DropdownSelect from "@/components/custom/DropdownSelect";
+import eventBus from "@/lib/eventBus";
+import Platforms from "@/constants/Plaforms";
 
 interface CustomCenterSheetProps {
   address: Property["address"];
@@ -15,15 +21,21 @@ export function CustomCenterSheet({ address }: CustomCenterSheetProps) {
     setOpen(false);
   }
   const { longitude, latitude } = address;
-  const MODAL_WIDTH = Math.round(Layout.window.width * 0.85);
-  const MODAL_HEIGHT = Math.round(Layout.window.height * 0.7);
-  const MINI_HEIGHT = Math.round(Layout.window.height * 0.3);
+  const { data, isLoading } = useQuery({
+    queryKey: [latitude, latitude],
+    queryFn: () => getNearbyPlaces({ latitude, longitude, radiusMeters: 5000 }),
+    enabled: Platforms.isAndroid(),
+  });
+  const nearby = useMemo(() => data?.slice() || [], [data]);
+  const MODAL_WIDTH = Math.round(Layout.window.width);
+  const MODAL_HEIGHT = Math.round(Layout.window.height);
+  const MINI_HEIGHT = Math.round(Layout.window.height * 0.4);
   return (
     <>
       <Pressable
         onPress={() => setOpen(true)}
         style={{ height: MINI_HEIGHT }}
-        className="flex-1 bg-background-muted h-40 relative overflow-hidden"
+        className="flex-1 bg-background-muted h-48 relative overflow-hidden"
       >
         <Map
           height={MINI_HEIGHT}
@@ -31,8 +43,9 @@ export function CustomCenterSheet({ address }: CustomCenterSheetProps) {
           longitude={longitude}
           scrollEnabled={false}
           showRadius
-          radiusInMeters={500}
-          delta={0.02}
+          nearby={nearby}
+          radiusInMeters={50}
+          delta={0.006}
         />
       </Pressable>
 
@@ -60,16 +73,32 @@ export function CustomCenterSheet({ address }: CustomCenterSheetProps) {
               height={MODAL_HEIGHT}
               scrollEnabled={true}
               showRadius
-              radiusInMeters={600}
-              delta={0.02}
+              nearby={nearby}
+              radiusInMeters={60}
+              delta={0.002}
             />
 
-            <Pressable
-              onPress={handleDismiss}
-              className="absolute top-3 right-3 bg-background-muted p-2 rounded-full items-center justify-center z-10"
-            >
-              <Icon as={X} />
-            </Pressable>
+            <View className=" absolute top-12 z-10 left-0 w-full">
+              <SafeAreaView
+                edges={["top"]}
+                className="flex-row justify-between items-center flex-1 px-4 pt-2"
+              >
+                <DropdownSelect
+                  options={["standard", "satellite", "hybrid"]}
+                  onChange={(val) => {
+                    eventBus.dispatchEvent("MAP_SET_TYPE", val);
+                  }}
+                  className=" rounded-full bg-background-muted/90"
+                  icon={Layers}
+                />
+                <Pressable
+                  onPress={handleDismiss}
+                  className=" bg-background-muted p-3 border border-primary rounded-full items-center justify-center "
+                >
+                  <Icon as={X} />
+                </Pressable>
+              </SafeAreaView>
+            </View>
           </View>
         </View>
       </Modal>

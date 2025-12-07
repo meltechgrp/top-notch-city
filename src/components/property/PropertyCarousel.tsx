@@ -40,6 +40,7 @@ type Props = {
   contentFit?: ImageContentFit;
   property?: Property;
   showImages?: boolean;
+  onPress?: (index: number) => void;
 };
 
 function PropertyCarousel({
@@ -66,6 +67,7 @@ function PropertyCarousel({
   fullScreen = false,
   showImages = false,
   property,
+  onPress,
 }: Props) {
   const { bannerHeight, window } = Layout;
   const theme = useResolvedTheme();
@@ -122,11 +124,11 @@ function PropertyCarousel({
           onSnapToItem={setSelectedIndex}
           style={{ width: width }}
           data={media}
-          renderItem={(props) => (
+          renderItem={({ item, index }) => (
             <PropertyMedia
               style={{ height: 500, flex: 1 }}
               withBackdrop={withBackdrop}
-              source={props.item}
+              source={item}
               isOwner={isOwner}
               isVisible
               fullScreen={fullScreen}
@@ -134,7 +136,7 @@ function PropertyCarousel({
               rounded={rounded}
               property={property}
               canPlayVideo={canPlayVideo}
-              {...props}
+              onPress={() => onPress?.(index)}
             />
           )}
           pagingEnabled={true}

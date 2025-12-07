@@ -46,7 +46,7 @@ function SearchListBottomSheet({
   filter,
 }: Props) {
   const sheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ["10%", "50%", "60%", "90%"], []);
+  const snapPoints = useMemo(() => ["10%", "40%", "60%", "90%"], []);
 
   const renderItem = useCallback(
     ({ item }: { item: Property }) => (
@@ -88,6 +88,7 @@ function SearchListBottomSheet({
           {...props}
           filter={filter}
           total={total}
+          isLoading={isLoading}
           useMyLocation={useMyLocation}
           toggleList={() => sheetRef.current?.snapToIndex(0)}
         />
@@ -146,6 +147,7 @@ export const CustomHandle = ({
   useMyLocation,
   filter,
   toggleList,
+  isLoading,
 }: any) => {
   const { animatedIndex } = useBottomSheetInternal();
 
@@ -185,8 +187,8 @@ export const CustomHandle = ({
   const wrapperStyle = useAnimatedStyle(() => {
     const height = interpolate(
       animatedIndex.value,
-      [1, 2, 3],
-      [80, 40, 20],
+      [0.8, 1.2, 3],
+      [80, 40, 25],
       Extrapolation.CLAMP
     );
 
@@ -239,16 +241,22 @@ export const CustomHandle = ({
         style={titleStyle}
         className="absolute inset-0 items-center justify-center pt-2"
       >
-        <Text className="text-xl flex-row flex font-medium">
-          {formatNumber(total?.toString())} Properties for{" "}
-          <Text className=" capitalize text-xl font-medium">
-            {filter?.purpose}
+        {isLoading ? (
+          <Text className="text-xl font-medium text-typography/80">
+            Loading...
           </Text>
-        </Text>
+        ) : (
+          <Text className="text-xl flex-row flex font-medium">
+            {formatNumber(total?.toString())} Properties for{" "}
+            <Text className=" capitalize text-xl font-medium">
+              {filter?.purpose}
+            </Text>
+          </Text>
+        )}
       </Animated.View>
 
       <View className="justify-center items-center pt-2">
-        <View className="h-1.5 w-[54px] rounded-md bg-outline-200" />
+        <View className="h-1.5 w-[60px] rounded-md bg-primary" />
       </View>
     </Animated.View>
   );

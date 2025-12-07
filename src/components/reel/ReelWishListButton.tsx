@@ -15,12 +15,12 @@ interface Props {
 }
 
 const ReelWishListButton = ({ isAdded, id, isLand, className }: Props) => {
-  const { hasAuth } = useStore();
+  const { me } = useStore();
   const { toggleWishlist, isPending } = useWishlist({
     queryKey: [isLand ? "lands" : "reels"],
   });
   function hnadleWishList() {
-    if (!hasAuth) {
+    if (!me) {
       return openAccessModal({ visible: true });
     } else if (!isPending) {
       toggleWishlist({ id, isAdded });

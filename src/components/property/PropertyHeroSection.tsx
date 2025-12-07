@@ -3,7 +3,6 @@ import { Icon, Text, View } from "../ui";
 import PropertyCarousel from "./PropertyCarousel";
 import { MapPin } from "lucide-react-native";
 import { PropertyTitle } from "./PropertyTitle";
-import PropertyInteractions from "@/components/property/PropertyInteractions";
 import { ProfileImageTrigger } from "@/components/custom/ImageViewerProvider";
 
 interface Props {
@@ -32,7 +31,6 @@ export function PropertyHeroSection({ property, width }: Props) {
             <View className="gap-1 flex-1">
               <View className=" flex-row justify-between items-end">
                 <PropertyTitle property={property} />
-                <PropertyInteractions interaction={property.interaction} />
               </View>
               <View className="flex-row items-center gap-2">
                 <Icon size="sm" as={MapPin} className="" />

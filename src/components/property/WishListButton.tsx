@@ -1,78 +1,69 @@
-import { Icon, useResolvedTheme } from "../ui";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { addToWishList, removeFromWishList } from "@/actions/property";
+import {
+  addToWishList,
+  likeProperty,
+  removeFromWishList,
+} from "@/actions/property";
 import { memo } from "react";
 import { cn } from "@/lib/utils";
 import { useStore } from "@/store";
 import { openAccessModal } from "@/components/globals/AuthModals";
-import { Bookmark } from "lucide-react-native";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
+import { AnimatedLikeButton } from "@/components/custom/AnimatedLikeButton";
 
 interface Props {
   isAdded: boolean;
   id: string;
+  slug: string;
   className?: string;
   hasScrolledToDetails?: boolean;
 }
 
-const PropertyWishListButton = ({
-  isAdded,
-  id,
-  hasScrolledToDetails,
-  className,
-}: Props) => {
-  const theme = useResolvedTheme();
+const PropertyWishListButton = ({ isAdded, id, className, slug }: Props) => {
   const client = useQueryClient();
-  const { hasAuth } = useStore();
+  const { me } = useStore();
   const { mutate } = useMutation({
-    mutationFn: () =>
-      isAdded ? removeFromWishList({ id }) : addToWishList({ id }),
+    mutationFn: async () => {
+      await likeProperty({ id });
+      isAdded ? await removeFromWishList({ id }) : await addToWishList({ id });
+    },
 
     onMutate: async () => {
-      await client.cancelQueries({ queryKey: ["properties", id] });
+      await client.cancelQueries({ queryKey: ["properties", slug] });
 
       const previousData = client.getQueryData<Property | undefined>([
         "properties",
-        id,
+        slug,
       ]);
 
-      client.setQueryData<Property | undefined>(["properties", id], (old) => {
+      client.setQueryData<Property | undefined>(["properties", slug], (old) => {
         if (!old) return old;
-        const added = old.owner_interaction?.added_to_wishlist ?? false;
         return {
           ...old,
           owner_interaction: {
-            ...old?.owner_interaction,
-            added_to_wishlist: !added,
+            ...old.owner_interaction,
+            liked: !old.owner_interaction?.liked,
           },
           interaction: {
-            ...old?.interaction,
-            added_to_wishlist: old.interaction
-              ? old.interaction.added_to_wishlist + (added ? -1 : 1)
-              : added
-                ? -1
-                : 1,
+            ...old.interaction,
+            liked: old.owner_interaction?.liked
+              ? old.interaction.liked - 1
+              : old.interaction.liked + 1,
           },
         };
       });
 
       return { previousData };
     },
-    // If the request fails, rollback
     onError: (_err, _vars, ctx) => {
       console.log(_err);
       if (ctx?.previousData) {
-        client.setQueryData(["properties", id], ctx.previousData);
+        client.setQueryData(["properties", slug], ctx.previousData);
       }
-    },
-
-    // After success, refetch in background to ensure sync
-    onSettled: () => {
-      client.invalidateQueries({ queryKey: ["properties", id] });
     },
   });
   function hnadleWishList() {
-    if (!hasAuth) {
+    if (!me) {
       return openAccessModal({ visible: true });
     } else {
       mutate();
@@ -83,14 +74,7 @@ const PropertyWishListButton = ({
       onPress={hnadleWishList}
       className={cn("px-2", className)}
     >
-      <Icon
-        as={Bookmark}
-        className={cn(
-          "text-white w-9 h-9",
-          hasScrolledToDetails && theme == "light" && "text-black",
-          isAdded && "text-primary fill-primary"
-        )}
-      />
+      <AnimatedLikeButton className="h-7 w-7" liked={isAdded} />
     </AnimatedPressable>
   );
 };

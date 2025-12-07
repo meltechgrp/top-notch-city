@@ -14,7 +14,7 @@ import React from "react";
 import { cn, composeFullAddress } from "@/lib/utils";
 import { ChevronRight, Edit, Upload } from "lucide-react-native";
 import { getImageUrl } from "@/lib/api";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useMediaUpload } from "@/hooks/useMediaUpload";
 import { format } from "date-fns";
 import { useTempStore } from "@/store";

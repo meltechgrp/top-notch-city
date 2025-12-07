@@ -1,4 +1,9 @@
-import { cn, composeFullAddress, formatMoney, useTimeAgo } from "@/lib/utils";
+import {
+  cn,
+  composeFullAddress,
+  formatMoney,
+  formatDateDistance,
+} from "@/lib/utils";
 import { StyleProp, View, ViewStyle } from "react-native";
 import { Icon, Text, Pressable } from "../ui";
 import { MapPin } from "lucide-react-native";
@@ -61,7 +66,9 @@ function PropertyListItem(props: Props) {
       return <PropertyStatus status={status} />;
     } else {
       return (
-        <Text className="text-gray-300">{useTimeAgo(data.created_at)}</Text>
+        <Text className="text-gray-300">
+          {formatDateDistance(data.created_at)}
+        </Text>
       );
     }
   };
