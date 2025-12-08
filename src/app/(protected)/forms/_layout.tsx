@@ -1,9 +1,8 @@
-import AppCrashScreen from "@/components/shared/AppCrashScreen";
 import headerLeft from "@/components/shared/headerLeft";
 import { useResolvedTheme } from "@/components/ui";
 import { Colors } from "@/constants/Colors";
 import Platforms from "@/constants/Plaforms";
-import { ErrorBoundaryProps, Stack } from "expo-router";
+import { Stack } from "expo-router";
 
 export const unstable_settings = {
   initialRouteName: "index",

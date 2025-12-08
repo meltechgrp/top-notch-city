@@ -2,6 +2,7 @@
 import React, { memo } from "react";
 import { Image as ExpoImage, ImageSource, useImage } from "expo-image";
 import { cn } from "@/lib/utils";
+import { View } from "@/components/ui/view";
 
 const blurhash = "L13Iny%y%ztQ_Nx[x[kUXgSvScS0";
 type ImageProps = React.ComponentProps<typeof ExpoImage> & {
@@ -38,7 +39,7 @@ const Image = memo(
           ref={ref}
           className={cn(size, className)}
           {...props}
-          source={image}
+          source={source}
           style={[
             { flex: 1, width: "100%" },
             rounded && { borderRadius: 10 },
@@ -48,7 +49,7 @@ const Image = memo(
           enforceEarlyResizing
           onLoadEnd={onLoadEnd}
           placeholderContentFit="cover"
-          placeholder={withHash ? { blurhash } : undefined}
+          // placeholder={withHash ? { blurhash } : undefined}
           cachePolicy={"memory-disk"}
           contentFit={props.contentFit || "cover"}
           transition={props.transition || 800}

@@ -41,26 +41,6 @@ export async function fetchFeaturedProperties({
   }
 }
 // 🏠 Fetch all trending properties (paginated)
-export async function fetchTrendingProperties({
-  pageParam,
-  perPage,
-}: {
-  pageParam: number;
-  perPage?: number;
-}) {
-  try {
-    const res = await Fetch(
-      `/properties/most-liked?page=${pageParam}&per_page=${perPage}`,
-      {}
-    );
-    if (res?.detail) throw new Error("Failed to fetch properties");
-    return res as Result;
-  } catch (error) {
-    console.log(error);
-    throw new Error("Failed to fetch properties");
-  }
-}
-// 🏠 Fetch all trending properties (paginated)
 export async function fetchTrendingLandsProperties({
   pageParam,
   perPage,

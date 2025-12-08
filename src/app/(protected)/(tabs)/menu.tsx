@@ -73,6 +73,15 @@ export default function Menu() {
             actionRoute={`/signin`}
           />
         )}
+        {me && me?.role == "user" && (
+          <CampaignCard
+            title="Want to Rent or Sell?"
+            subtitle="Easily upload your property and reach verified buyers and renters."
+            actionLabel="Get Started"
+            className="mt-8 mx-4 py-8"
+            actionRoute={`/forms/agent`}
+          />
+        )}
         <View className="mt-6 px-4">
           <Text className="mb-2 font-medium">
             {isAgent ? "Grow your bussiness" : "Explore"}

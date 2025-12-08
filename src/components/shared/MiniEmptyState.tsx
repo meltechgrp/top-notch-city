@@ -42,7 +42,7 @@ export function MiniEmptyState({
         }}
       >
         <View className="items-center gap-3">
-          <Icon as={icon || House} size={28} />
+          <Icon as={icon || House} size={"xl"} />
           <Text className="text-lg font-semibold text-typography text-center">
             {title}
           </Text>
@@ -57,7 +57,7 @@ export function MiniEmptyState({
             {loading ? (
               <SpinningLoader />
             ) : (
-              <Icon as={subIcon || RefreshCcw} size={14} />
+              <Icon as={subIcon || RefreshCcw} size={"sm"} />
             )}
             <Text className="text-sm font-medium">{buttonLabel}</Text>
           </Button>

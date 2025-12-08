@@ -1,7 +1,5 @@
 import { Fetch } from "../utills";
 
-const API_KEY = process.env.EXPO_PUBLIC_ANDROID_MAPS_API_KEY;
-
 export async function fetchProperty({ id }: { id: string }) {
   try {
     const res = await Fetch(`/properties/${id}`, {});
@@ -12,6 +10,7 @@ export async function fetchProperty({ id }: { id: string }) {
 
     return res as Property;
   } catch (error) {
+    console.log(error);
     throw new Error("Failed to fetch property");
   }
 }

@@ -177,7 +177,97 @@ const ProfileImageViewer = ({
   onClose: () => void;
 }) => {
   const [index, setIndex] = useState(initialIndex || 0);
+  if (Platform.OS === "android") {
+    if (!visible) return null;
 
+    return (
+      <Modal visible={visible} transparent statusBarTranslucent>
+        <View style={styles.androidContainer}>
+          {/* Top Close Button */}
+          <Pressable style={styles.androidCloseBtn} onPress={onClose}>
+            <X size={24} color="#fff" />
+          </Pressable>
+
+          {/* Simple Scroll View */}
+          <ScrollView
+            pagingEnabled
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentOffset={{ x: SCREEN_W * index, y: 0 }}
+            onMomentumScrollEnd={(e) => {
+              const newIndex = Math.round(
+                e.nativeEvent.contentOffset.x / SCREEN_W
+              );
+              setIndex(newIndex);
+            }}
+          >
+            {images.map((item, i) => (
+              <View
+                key={i}
+                style={{
+                  width: SCREEN_W,
+                  height: SCREEN_H,
+                  backgroundColor: "black",
+                  justifyContent: "center",
+                }}
+              >
+                {item.media_type === "VIDEO" ? (
+                  <MiniVideoPlayer
+                    canPlay={i === index}
+                    uri={generateMediaUrlSingle(item.url)}
+                    autoPlay
+                  />
+                ) : (
+                  <Image
+                    source={{ uri: generateMediaUrlSingle(item.url) }}
+                    style={{ width: SCREEN_W, height: SCREEN_H }}
+                    contentFit="contain"
+                  />
+                )}
+              </View>
+            ))}
+          </ScrollView>
+
+          {/* Bottom Thumbnail Strip */}
+          {images.length > 1 && (
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.androidThumbScroll}
+              contentContainerStyle={{ paddingHorizontal: 12 }}
+            >
+              {images.map((item, i) => (
+                <Pressable
+                  key={item.id}
+                  onPress={() => setIndex(i)}
+                  style={[
+                    styles.thumbWrap,
+                    i === index
+                      ? { borderColor: "#fff" }
+                      : { borderColor: "rgba(255,255,255,0.3)" },
+                  ]}
+                >
+                  {item.media_type === "VIDEO" ? (
+                    <MiniVideoPlayer
+                      showPlayBtn
+                      canPlay={false}
+                      showLoading={false}
+                      uri={generateMediaUrlSingle(item.url)}
+                    />
+                  ) : (
+                    <Image
+                      source={{ uri: generateMediaUrlSingle(item.url) }}
+                      style={styles.thumb}
+                    />
+                  )}
+                </Pressable>
+              ))}
+            </ScrollView>
+          )}
+        </View>
+      </Modal>
+    );
+  }
   const progress = useSharedValue(0);
   const translateY = useSharedValue(0);
   const scaleGesture = useSharedValue(1);
@@ -405,6 +495,36 @@ const ProfileImageViewer = ({
 };
 
 const styles = StyleSheet.create({
+  androidContainer: {
+    flex: 1,
+    backgroundColor: "black",
+  },
+  androidCloseBtn: {
+    position: "absolute",
+    top: 50,
+    right: 20,
+    zIndex: 10,
+    padding: 10,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    borderRadius: 50,
+  },
+  androidThumbScroll: {
+    position: "absolute",
+    bottom: 24,
+    width: "100%",
+  },
+  thumbWrap: {
+    width: 60,
+    height: 60,
+    borderWidth: 2,
+    borderRadius: 10,
+    overflow: "hidden",
+    marginRight: 8,
+  },
+  thumb: {
+    width: "100%",
+    height: "100%",
+  },
   topBar: {
     position: "absolute",
     top: Platform.OS === "ios" ? 48 : 20,
@@ -429,18 +549,6 @@ const styles = StyleSheet.create({
     right: 12,
     zIndex: 40,
     alignItems: "center",
-  },
-  thumbWrap: {
-    width: 56,
-    height: 56,
-    borderRadius: 8,
-    overflow: "hidden",
-    borderWidth: 2,
-    marginHorizontal: 4,
-  },
-  thumb: {
-    width: "100%",
-    height: "100%",
   },
 });
 

@@ -83,10 +83,6 @@ export function ProfileWrapper({
   }, [activeTab]);
 
   const stickyHeaderIndices = [0, 1];
-  useEffect(() => {
-    eventBus.dispatchEvent("REFRESH_PROFILE", null);
-  }, [data?.role]);
-  useRefreshOnFocus(refetch);
   return (
     <>
       <Stack.Screen
@@ -150,7 +146,7 @@ export function ProfileWrapper({
         LoaderComponent={<ProfileSkeleton />}
         loading={isLoading}
       >
-        <Box className="flex-1">
+        <Box className="flex-1 pb-24">
           <FlashList
             data={dataForTab}
             refreshControl={

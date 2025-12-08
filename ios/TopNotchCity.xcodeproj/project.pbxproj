@@ -7,41 +7,41 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		006B3DDCFAAE48B8B4CA138B /* Satoshi-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = D0BEBE65112144A8946FFD0D /* Satoshi-Black.otf */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		1739A8A085E84F55ABBD85EC /* Satoshi-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = FA7DB2D0D0124C3FACC8AACE /* Satoshi-Black.otf */; };
+		2121AAAC18814755AC34F529 /* Satoshi-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 52B5C1BF516048DFAE3A5659 /* Satoshi-Italic.otf */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		548A95340A5740F0BF93DBF9 /* Satoshi-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = C149D4D952424091B7439E57 /* Satoshi-Bold.otf */; };
-		5E2D9BBF51EB112E504E99F9 /* libPods-TopNotchCity.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C9420F1F1A8331BA2838048 /* libPods-TopNotchCity.a */; };
-		626FD12A6CB344E7B6335E07 /* Satoshi-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 7BEC74637175480A8306C4D1 /* Satoshi-Light.otf */; };
-		7825D6E48680463482BE2300 /* Satoshi-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 04FE94EC45D24AAE9151B132 /* Satoshi-Italic.otf */; };
-		9771958B704746E79C132367 /* Satoshi-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6876527B6EAD471A95A01E84 /* Satoshi-Regular.otf */; };
+		4D573964074248DBBA3B095A /* Satoshi-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5B6F496090E54228ABF4849A /* Satoshi-Light.otf */; };
+		74495B5A55425887602CE704 /* libPods-TopNotchCity.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D1493C48A5963BB6C7E8C439 /* libPods-TopNotchCity.a */; };
+		94FEEAAD58C0443FB7964A08 /* Satoshi-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = E898E77E1C8E433FA5E9301B /* Satoshi-Bold.otf */; };
+		9A28D52D766C456FB9B8A92D /* Satoshi-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 10D5659B67BC4E6DB5D19BD9 /* Satoshi-Medium.otf */; };
+		B5BE6C657EA79C21DFF7C757 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 88958731D0C63678406CDE7A /* PrivacyInfo.xcprivacy */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		D010653301B3F86482ADC1A0 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A74A1BD89D3351D282DF2074 /* ExpoModulesProvider.swift */; };
-		D327B4C120B04809973463F4 /* Satoshi-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = B01A17AA0FC947D986A8AE91 /* Satoshi-Medium.otf */; };
+		D1C3F9F6E5664BA0B46DBF27 /* Satoshi-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 395E375031D04EF59E7DCB32 /* Satoshi-Regular.otf */; };
+		D86F3EABCDB488FED10ECA1C /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833E398B0AA5274F5C40CACB /* ExpoModulesProvider.swift */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
-		F2B7158C234BDADD62F71EB6 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5728BA5A63F7B17E4B4530FA /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		04FE94EC45D24AAE9151B132 /* Satoshi-Italic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Satoshi-Italic.otf"; path = "../src/assets/fonts/Satoshi-Italic.otf"; sourceTree = "<group>"; };
-		080742AF318AE095A79CCBA7 /* Pods-TopNotchCity.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TopNotchCity.release.xcconfig"; path = "Target Support Files/Pods-TopNotchCity/Pods-TopNotchCity.release.xcconfig"; sourceTree = "<group>"; };
-		104ADBE0CFB7FE2C8AE21958 /* Pods-TopNotchCity.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TopNotchCity.debug.xcconfig"; path = "Target Support Files/Pods-TopNotchCity/Pods-TopNotchCity.debug.xcconfig"; sourceTree = "<group>"; };
+		10D5659B67BC4E6DB5D19BD9 /* Satoshi-Medium.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Satoshi-Medium.otf"; path = "../src/assets/fonts/Satoshi-Medium.otf"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* TopNotchCity.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TopNotchCity.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = TopNotchCity/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = TopNotchCity/Info.plist; sourceTree = "<group>"; };
-		5728BA5A63F7B17E4B4530FA /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = TopNotchCity/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		6876527B6EAD471A95A01E84 /* Satoshi-Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Satoshi-Regular.otf"; path = "../src/assets/fonts/Satoshi-Regular.otf"; sourceTree = "<group>"; };
-		7BEC74637175480A8306C4D1 /* Satoshi-Light.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Satoshi-Light.otf"; path = "../src/assets/fonts/Satoshi-Light.otf"; sourceTree = "<group>"; };
-		7C9420F1F1A8331BA2838048 /* libPods-TopNotchCity.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TopNotchCity.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		A74A1BD89D3351D282DF2074 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-TopNotchCity/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		395E375031D04EF59E7DCB32 /* Satoshi-Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Satoshi-Regular.otf"; path = "../src/assets/fonts/Satoshi-Regular.otf"; sourceTree = "<group>"; };
+		438D593B0BF6CAF02571A830 /* Pods-TopNotchCity.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TopNotchCity.release.xcconfig"; path = "Target Support Files/Pods-TopNotchCity/Pods-TopNotchCity.release.xcconfig"; sourceTree = "<group>"; };
+		52B5C1BF516048DFAE3A5659 /* Satoshi-Italic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Satoshi-Italic.otf"; path = "../src/assets/fonts/Satoshi-Italic.otf"; sourceTree = "<group>"; };
+		5B6F496090E54228ABF4849A /* Satoshi-Light.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Satoshi-Light.otf"; path = "../src/assets/fonts/Satoshi-Light.otf"; sourceTree = "<group>"; };
+		833E398B0AA5274F5C40CACB /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-TopNotchCity/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		88958731D0C63678406CDE7A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = TopNotchCity/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = TopNotchCity/SplashScreen.storyboard; sourceTree = "<group>"; };
-		B01A17AA0FC947D986A8AE91 /* Satoshi-Medium.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Satoshi-Medium.otf"; path = "../src/assets/fonts/Satoshi-Medium.otf"; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		C149D4D952424091B7439E57 /* Satoshi-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Satoshi-Bold.otf"; path = "../src/assets/fonts/Satoshi-Bold.otf"; sourceTree = "<group>"; };
+		D0BEBE65112144A8946FFD0D /* Satoshi-Black.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Satoshi-Black.otf"; path = "../src/assets/fonts/Satoshi-Black.otf"; sourceTree = "<group>"; };
+		D1493C48A5963BB6C7E8C439 /* libPods-TopNotchCity.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TopNotchCity.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D4E2F4E354FE2E82ACF4A55C /* Pods-TopNotchCity.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TopNotchCity.debug.xcconfig"; path = "Target Support Files/Pods-TopNotchCity/Pods-TopNotchCity.debug.xcconfig"; sourceTree = "<group>"; };
+		E898E77E1C8E433FA5E9301B /* Satoshi-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Satoshi-Bold.otf"; path = "../src/assets/fonts/Satoshi-Bold.otf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = TopNotchCity/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* TopNotchCity-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "TopNotchCity-Bridging-Header.h"; path = "TopNotchCity/TopNotchCity-Bridging-Header.h"; sourceTree = "<group>"; };
-		FA7DB2D0D0124C3FACC8AACE /* Satoshi-Black.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Satoshi-Black.otf"; path = "../src/assets/fonts/Satoshi-Black.otf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,29 +49,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5E2D9BBF51EB112E504E99F9 /* libPods-TopNotchCity.a in Frameworks */,
+				74495B5A55425887602CE704 /* libPods-TopNotchCity.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		05616DB4AC49B2DA16798B99 /* Pods */ = {
+		07EC8965B277FF4D13ACDC3E /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				104ADBE0CFB7FE2C8AE21958 /* Pods-TopNotchCity.debug.xcconfig */,
-				080742AF318AE095A79CCBA7 /* Pods-TopNotchCity.release.xcconfig */,
+				D4E2F4E354FE2E82ACF4A55C /* Pods-TopNotchCity.debug.xcconfig */,
+				438D593B0BF6CAF02571A830 /* Pods-TopNotchCity.release.xcconfig */,
 			);
 			name = Pods;
 			path = Pods;
-			sourceTree = "<group>";
-		};
-		0B914A9558AFDA387E96D863 /* TopNotchCity */ = {
-			isa = PBXGroup;
-			children = (
-				A74A1BD89D3351D282DF2074 /* ExpoModulesProvider.swift */,
-			);
-			name = TopNotchCity;
 			sourceTree = "<group>";
 		};
 		13B07FAE1A68108700A75B9A /* TopNotchCity */ = {
@@ -83,7 +75,7 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				5728BA5A63F7B17E4B4530FA /* PrivacyInfo.xcprivacy */,
+				88958731D0C63678406CDE7A /* PrivacyInfo.xcprivacy */,
 			);
 			name = TopNotchCity;
 			sourceTree = "<group>";
@@ -92,23 +84,25 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				7C9420F1F1A8331BA2838048 /* libPods-TopNotchCity.a */,
+				D1493C48A5963BB6C7E8C439 /* libPods-TopNotchCity.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		6E7D56B0270F4AF79BF59177 /* Resources */ = {
+		2DC18EF3264873EBD84045E2 /* ExpoModulesProviders */ = {
 			isa = PBXGroup;
 			children = (
-				FA7DB2D0D0124C3FACC8AACE /* Satoshi-Black.otf */,
-				C149D4D952424091B7439E57 /* Satoshi-Bold.otf */,
-				B01A17AA0FC947D986A8AE91 /* Satoshi-Medium.otf */,
-				6876527B6EAD471A95A01E84 /* Satoshi-Regular.otf */,
-				04FE94EC45D24AAE9151B132 /* Satoshi-Italic.otf */,
-				7BEC74637175480A8306C4D1 /* Satoshi-Light.otf */,
+				6E6802DB60B08D632FA51AD5 /* TopNotchCity */,
 			);
-			name = Resources;
-			path = "";
+			name = ExpoModulesProviders;
+			sourceTree = "<group>";
+		};
+		6E6802DB60B08D632FA51AD5 /* TopNotchCity */ = {
+			isa = PBXGroup;
+			children = (
+				833E398B0AA5274F5C40CACB /* ExpoModulesProvider.swift */,
+			);
+			name = TopNotchCity;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -125,9 +119,9 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				6E7D56B0270F4AF79BF59177 /* Resources */,
-				05616DB4AC49B2DA16798B99 /* Pods */,
-				B6591FC52490F91BB2988F32 /* ExpoModulesProviders */,
+				AF3F8AC738C2442FA7596356 /* Resources */,
+				07EC8965B277FF4D13ACDC3E /* Pods */,
+				2DC18EF3264873EBD84045E2 /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -142,12 +136,18 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		B6591FC52490F91BB2988F32 /* ExpoModulesProviders */ = {
+		AF3F8AC738C2442FA7596356 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				0B914A9558AFDA387E96D863 /* TopNotchCity */,
+				D0BEBE65112144A8946FFD0D /* Satoshi-Black.otf */,
+				E898E77E1C8E433FA5E9301B /* Satoshi-Bold.otf */,
+				10D5659B67BC4E6DB5D19BD9 /* Satoshi-Medium.otf */,
+				395E375031D04EF59E7DCB32 /* Satoshi-Regular.otf */,
+				52B5C1BF516048DFAE3A5659 /* Satoshi-Italic.otf */,
+				5B6F496090E54228ABF4849A /* Satoshi-Light.otf */,
 			);
-			name = ExpoModulesProviders;
+			name = Resources;
+			path = "";
 			sourceTree = "<group>";
 		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
@@ -167,13 +167,13 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "TopNotchCity" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				6A61A8E1C39E1A7EB945A8D4 /* [Expo] Configure project */,
+				67F755DD1834D0D726232C14 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				DC1DE20894DC2A38E2B4A2AA /* [CP] Embed Pods Frameworks */,
+				7D28AB6EBBBCAD5B40D8A3AA /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -193,8 +193,8 @@
 				LastUpgradeCheck = 1130;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = PRH5WVK858;
 						LastSwiftMigration = 1250;
+						DevelopmentTeam = "PRH5WVK858";
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -225,13 +225,13 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				1739A8A085E84F55ABBD85EC /* Satoshi-Black.otf in Resources */,
-				548A95340A5740F0BF93DBF9 /* Satoshi-Bold.otf in Resources */,
-				D327B4C120B04809973463F4 /* Satoshi-Medium.otf in Resources */,
-				9771958B704746E79C132367 /* Satoshi-Regular.otf in Resources */,
-				7825D6E48680463482BE2300 /* Satoshi-Italic.otf in Resources */,
-				626FD12A6CB344E7B6335E07 /* Satoshi-Light.otf in Resources */,
-				F2B7158C234BDADD62F71EB6 /* PrivacyInfo.xcprivacy in Resources */,
+				006B3DDCFAAE48B8B4CA138B /* Satoshi-Black.otf in Resources */,
+				94FEEAAD58C0443FB7964A08 /* Satoshi-Bold.otf in Resources */,
+				9A28D52D766C456FB9B8A92D /* Satoshi-Medium.otf in Resources */,
+				D1C3F9F6E5664BA0B46DBF27 /* Satoshi-Regular.otf in Resources */,
+				2121AAAC18814755AC34F529 /* Satoshi-Italic.otf in Resources */,
+				4D573964074248DBBA3B095A /* Satoshi-Light.otf in Resources */,
+				B5BE6C657EA79C21DFF7C757 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -277,7 +277,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		6A61A8E1C39E1A7EB945A8D4 /* [Expo] Configure project */ = {
+		67F755DD1834D0D726232C14 /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -300,6 +300,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-TopNotchCity/expo-configure-project.sh\"\n";
+		};
+		7D28AB6EBBBCAD5B40D8A3AA /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TopNotchCity/Pods-TopNotchCity-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/React-Core-prebuilt/React.framework/React",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ReactNativeDependencies/ReactNativeDependencies.framework/ReactNativeDependencies",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/React.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactNativeDependencies.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TopNotchCity/Pods-TopNotchCity-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -353,28 +375,6 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TopNotchCity/Pods-TopNotchCity-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		DC1DE20894DC2A38E2B4A2AA /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TopNotchCity/Pods-TopNotchCity-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/React-Core-prebuilt/React.framework/React",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ReactNativeDependencies/ReactNativeDependencies.framework/ReactNativeDependencies",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/React.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactNativeDependencies.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TopNotchCity/Pods-TopNotchCity-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -383,7 +383,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				D010653301B3F86482ADC1A0 /* ExpoModulesProvider.swift in Sources */,
+				D86F3EABCDB488FED10ECA1C /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -392,15 +392,12 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 104ADBE0CFB7FE2C8AE21958 /* Pods-TopNotchCity.debug.xcconfig */;
+			baseConfigurationReference = D4E2F4E354FE2E82ACF4A55C /* Pods-TopNotchCity.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = TopNotchCity/TopNotchCity.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = PRH5WVK858;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -426,20 +423,20 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1";
 				VERSIONING_SYSTEM = "apple-generic";
+				DEVELOPMENT_TEAM = "PRH5WVK858";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 			};
 			name = Debug;
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 080742AF318AE095A79CCBA7 /* Pods-TopNotchCity.release.xcconfig */;
+			baseConfigurationReference = 438D593B0BF6CAF02571A830 /* Pods-TopNotchCity.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = TopNotchCity/TopNotchCity.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = PRH5WVK858;
 				INFOPLIST_FILE = TopNotchCity/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -459,6 +456,9 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1";
 				VERSIONING_SYSTEM = "apple-generic";
+				DEVELOPMENT_TEAM = "PRH5WVK858";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 			};
 			name = Release;
 		};

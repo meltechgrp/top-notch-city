@@ -6,7 +6,6 @@ import {
   fetchPendingProperties,
   fetchReels,
   fetchLands,
-  fetchTrendingProperties,
   fetchFeaturedProperties,
   fetchTrendingLandsProperties,
   fetchAgentProperties,
@@ -50,19 +49,6 @@ export function useInfinityQueries({
         queryKey: ["featured"],
         queryFn: ({ pageParam = 1 }) =>
           fetchFeaturedProperties({ pageParam, perPage }),
-        initialPageParam: 1,
-        getNextPageParam: (lastPage) => {
-          const { page, pages } = lastPage;
-          return page < pages ? page + 1 : undefined;
-        },
-        enabled,
-      });
-    }
-    case "trending": {
-      return useInfiniteQuery({
-        queryKey: ["trending"],
-        queryFn: ({ pageParam = 1 }) =>
-          fetchTrendingProperties({ pageParam, perPage }),
         initialPageParam: 1,
         getNextPageParam: (lastPage) => {
           const { page, pages } = lastPage;

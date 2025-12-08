@@ -22,7 +22,7 @@ export default function PropertyBottomSheet(props: Props) {
   const { visible, onDismiss, data } = props;
   const Actions = () => {
     return (
-      <Text className="text-gray-300">
+      <Text className="text-base">
         {formatDateDistance(data.created_at, true)}
       </Text>
     );
@@ -34,7 +34,7 @@ export default function PropertyBottomSheet(props: Props) {
       visible={visible}
       title={`${generateTitle(data)} for ${data.purpose.charAt(0).toUpperCase()}${data.purpose.slice(1)}`}
       onDismiss={onDismiss}
-      snapPoint="50%"
+      snapPoint="45%"
     >
       <View className=" px-4 py-1 flex-1">
         <Pressable
@@ -89,12 +89,12 @@ export default function PropertyBottomSheet(props: Props) {
 
                 {data?.address && (
                   <View className="flex-row items-center gap-1">
-                    <Text className="text-white text-sm">
+                    <Text className="text-white ">
                       {composeFullAddress(data.address)}
                     </Text>
                   </View>
                 )}
-                <Text className="text-white text-xl font-bold">
+                <Text className="text-white text-2xl font-bold">
                   {formatMoney(data.price, "NGN", 0)}
                 </Text>
               </View>

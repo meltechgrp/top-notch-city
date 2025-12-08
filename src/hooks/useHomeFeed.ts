@@ -46,21 +46,6 @@ export function useHomeFeed() {
     [allFeatured]
   );
 
-  /** --- trending Properties --- */
-  const {
-    data: allTrending,
-    refetch: refetchTrending,
-    isLoading: loadingTrending,
-    isRefetching: refetchingTrending,
-  } = useInfinityQueries({
-    type: "trending",
-    perPage: 5,
-  });
-
-  const trending = useMemo(
-    () => allTrending?.pages.flatMap((page) => page.results) || [],
-    [allTrending]
-  );
   /** --- trending lands Properties --- */
   const {
     data: allLands,
@@ -134,7 +119,6 @@ export function useHomeFeed() {
       refetchFeatured(),
       refetchLands(),
       refetchLatest(),
-      refetchTrending(),
       refetchLocations(),
       refetchNearby(),
       getTotalCount(),
@@ -144,7 +128,6 @@ export function useHomeFeed() {
     refetchLands,
     refetchLatest,
     refetchFeatured,
-    refetchTrending,
     refetchLocations,
     refetchNearby,
     getTotalCount,
@@ -153,7 +136,6 @@ export function useHomeFeed() {
     updatetotalUnreadChat(totalCount?.total_unread || 0);
   }, [totalCount]);
   return {
-    trending,
     lands,
     latest,
     featured,
@@ -162,11 +144,9 @@ export function useHomeFeed() {
     loadingFeatured,
     loadingLand,
     loadingLatest,
-    loadingTrending,
     refetchingFeatured,
     refetchingLand,
     refetchingLatest,
-    refetchingTrending,
     loadingLocations,
     refetchingLocations,
     refreshAll,

@@ -5,7 +5,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { reloadAppAsync } from "expo";
 import { Bomb } from "lucide-react-native";
 
-export default function AppCrashScreen() {
+export default function AppCrashScreen({ err }: { err?: any }) {
+  console.log(err);
   return (
     <Box className="flex-1">
       <Stack.Screen
@@ -24,6 +25,9 @@ export default function AppCrashScreen() {
             </Text>
             <Text className="text-center text-typography mt-2 mb-6">
               Please reload to try again!
+            </Text>
+            <Text className="text-center text-typography mt-2 mb-6">
+              {JSON.stringify(err)}
             </Text>
           </View>
 

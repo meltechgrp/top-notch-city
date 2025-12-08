@@ -61,7 +61,7 @@ export const getQuickMenuItems = ({
     {
       label: "Invite Friends",
       icon: Share2,
-      link: "/invite",
+      link: "/share",
       role: "all",
       description: "Share TopNotchCity and earn rewards.",
     },
@@ -76,7 +76,7 @@ export const getQuickMenuItems = ({
     {
       label: "Enquiry/Report",
       icon: ReceiptText,
-      link: "/enquiry",
+      link: "/report",
       role: "all",
       description: "Send enquiries or report an issue.",
     },

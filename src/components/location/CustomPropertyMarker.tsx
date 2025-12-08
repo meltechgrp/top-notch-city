@@ -44,7 +44,7 @@ function CustomPropertyMarker({ property, onPress }: Props) {
             source={image ? { uri: image } : PropertyMedia}
             className="border-2 border-primary"
             onLoad={() => setTrack(true)}
-            onLoadEnd={() => setTimeout(() => setTrack(false), 3000)}
+            onLoadEnd={() => setTimeout(() => setTrack(false), 2000)}
             style={{
               width: "100%",
               height: "100%",

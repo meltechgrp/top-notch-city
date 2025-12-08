@@ -83,7 +83,7 @@ function PlayerController({
             <View className="flex-row gap-2 items-center">
               <Icon size="sm" as={MapPin} className="text-primary" />
               <Text numberOfLines={1} className="text-xs  text-white">
-                {reel.location}
+                {reel?.location}
               </Text>
             </View>
             <Text className="text-2xl font-bold text-white">

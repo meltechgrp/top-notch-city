@@ -188,3 +188,55 @@ export async function fetchPlaceFromTextQuery(
     return [];
   }
 }
+
+export async function fetchPlaceFromTextQueryGoogle(
+  query: string
+): Promise<GooglePlace[]> {
+  if (!query || query.trim().length === 0) return [];
+
+  const endpoint = "https://places.googleapis.com/v1/places:searchText";
+
+  try {
+    const res = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": "AIzaSyCi6UmiBotzTMWS9NTg9vkMBaID7MYZ2i0",
+        "X-Goog-FieldMask":
+          "places.displayName,places.formattedAddress,places.location,places.id,places.addressComponents",
+      },
+      body: JSON.stringify({
+        textQuery: query,
+      }),
+    });
+
+    if (!res.ok) {
+      console.error("Google Places API error:", await res.text());
+      return [];
+    }
+
+    const data = (await res.json()) as { places: GooglePlaceResult[] };
+    return (
+      data.places?.map((item) => {
+        const getComponent = (type: string) =>
+          item.addressComponents.find((comp) => comp?.types?.includes(type))
+            ?.longText;
+        return {
+          displayName: item.formattedAddress,
+          placeId: item.id,
+          location: item.location,
+          addressComponents: {
+            city: getComponent("locality"),
+            state: getComponent("administrative_area_level_1"),
+            lga: getComponent("administrative_area_level_2"),
+            street: getComponent("administrative_area_level_3"),
+            country: getComponent("country"),
+          },
+        };
+      }) || []
+    );
+  } catch (err) {
+    console.error("Failed to fetch place:", err);
+    return [];
+  }
+}

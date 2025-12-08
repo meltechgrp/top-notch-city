@@ -21,7 +21,7 @@ const UIAvatar = createAvatar({
 });
 
 const avatarStyle = tva({
-  base: "rounded-full justify-center items-center relative bg-background-muted group-[.avatar-group]/avatar-group:-ml-2.5",
+  base: "rounded-full justify-center items-center relative bg-background-muted/80 group-[.avatar-group]/avatar-group:-ml-2.5",
   variants: {
     size: {
       xs: "w-6 h-6",

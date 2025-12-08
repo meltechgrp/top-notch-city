@@ -16,7 +16,7 @@ const MAP_HEIGHT = 400;
 
 export default function HomeScreen() {
   const { me } = useStore();
-  const { refreshAll, refetching } = useHomeFeed();
+  const { refreshAll } = useHomeFeed();
   useEffect(() => {
     setTimeout(() => eventBus.dispatchEvent("REFRESH_PROFILE", null), 1000);
   }, []);
@@ -81,7 +81,7 @@ export default function HomeScreen() {
       <Box className="flex-1">
         <FlatList
           refreshControl={
-            <RefreshControl refreshing={refetching} onRefresh={refreshAll} />
+            <RefreshControl refreshing={false} onRefresh={refreshAll} />
           }
           ListHeaderComponent={<DiscoverProperties mapHeight={MAP_HEIGHT} />}
           showsVerticalScrollIndicator={false}

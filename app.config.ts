@@ -41,6 +41,7 @@ export default () => ({
   },
   android: {
     edgeToEdgeEnabled: true,
+    predictiveBackGestureEnabled: true,
     googleServicesFile: "./google-services.json",
     package: "com.meltech.topnotchcity",
     adaptiveIcon: {

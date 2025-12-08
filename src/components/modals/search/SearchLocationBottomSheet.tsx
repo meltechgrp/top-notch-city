@@ -153,8 +153,8 @@ function SearchLocationBottomSheet({
         country: item?.addressComponents?.country || "",
         displayName: item.displayName || "",
         isSuggestion: true,
-        longitude: item.location.longitude.toString(),
-        latitude: item.location.latitude.toString(),
+        longitude: item?.location.longitude.toString(),
+        latitude: item?.location.latitude.toString(),
       }))
     : savedSearches;
 

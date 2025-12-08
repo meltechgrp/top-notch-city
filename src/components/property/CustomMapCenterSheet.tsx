@@ -24,7 +24,6 @@ export function CustomCenterSheet({ address }: CustomCenterSheetProps) {
   const { data, isLoading } = useQuery({
     queryKey: [latitude, latitude],
     queryFn: () => getNearbyPlaces({ latitude, longitude, radiusMeters: 5000 }),
-    enabled: Platforms.isAndroid(),
   });
   const nearby = useMemo(() => data?.slice() || [], [data]);
   const MODAL_WIDTH = Math.round(Layout.window.width);

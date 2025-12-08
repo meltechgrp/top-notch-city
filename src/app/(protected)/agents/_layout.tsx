@@ -1,24 +1,23 @@
-import AppCrashScreen from "@/components/shared/AppCrashScreen";
 import headerLeft from "@/components/shared/headerLeft";
 import { useResolvedTheme } from "@/components/ui";
 import { Colors } from "@/constants/Colors";
-import { ErrorBoundaryProps, Stack } from "expo-router";
+import { Stack } from "expo-router";
 
 export const unstable_settings = {
-  // Ensure any route can link back to `/`
-  initialRouteName: "/home",
+  initialRouteName: "index",
 };
 
-export default function ProtectedRoutesLayout() {
+export default function AgentsLayout() {
   const theme = useResolvedTheme();
   return (
     <Stack
       screenOptions={{
-        headerShown: false,
+        headerShown: true,
         gestureEnabled: true,
         animationDuration: 1000,
         animationTypeForReplace: "push",
         headerTitleAlign: "center",
+        animation: "slide_from_right",
         headerBackVisible: false,
         headerShadowVisible: true,
         headerLeft: headerLeft(),
@@ -33,24 +32,17 @@ export default function ProtectedRoutesLayout() {
       }}
     >
       <Stack.Screen
-        name="notification"
+        name="index"
         options={{
-          headerTitle: "Notifications",
-          headerShown: true,
+          headerTitle: "Find Agents",
         }}
       />
       <Stack.Screen
-        name="report"
+        name="[userId]"
         options={{
-          headerTitle: "Send us a Feedback",
-          headerShown: true,
+          headerShown: false,
         }}
       />
     </Stack>
   );
-}
-
-// todo: move to app root layout
-export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
-  return <AppCrashScreen err={error} />;
 }

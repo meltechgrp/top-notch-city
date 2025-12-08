@@ -119,3 +119,9 @@ interface UploadChartItem {
   year?: string;
   count: number;
 }
+
+type AgentFilter = {
+  type: "state" | "name";
+  input: string;
+  sort_by_top_properties?: boolean;
+};

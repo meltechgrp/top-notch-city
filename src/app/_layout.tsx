@@ -26,6 +26,7 @@ import {
 import { enableScreens } from "react-native-screens";
 import { ImageViewerProvider } from "@/components/custom/ImageViewerProvider";
 import { registerDevice } from "@/actions/user";
+import useGetLocation from "@/hooks/useGetLocation";
 
 enableScreens(true);
 const query = new QueryClient({
@@ -52,10 +53,12 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   useNotificationObserver();
+  const { retryGetLocation } = useGetLocation();
   useSuppressChatPushNotification();
   useMountPushNotificationToken();
   useEffect(() => {
-    (async () => await registerDevice())().finally(() => {
+    (async () => await registerDevice())().finally(async () => {
+      await retryGetLocation();
       SplashScreen.hide();
     });
   }, []);
@@ -82,7 +85,7 @@ export default function RootLayout() {
 }
 
 export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
-  return <AppCrashScreen />;
+  return <AppCrashScreen err={error} />;
 }
 
 function useMountPushNotificationToken() {

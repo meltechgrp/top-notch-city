@@ -87,5 +87,5 @@ export default function ProtectedRoutesLayout() {
 
 // todo: move to app root layout
 export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
-  return <AppCrashScreen />;
+  return <AppCrashScreen err={error} />;
 }

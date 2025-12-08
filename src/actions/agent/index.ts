@@ -147,3 +147,30 @@ export async function unFollowAgent(id: string) {
     method: "DELETE",
   });
 }
+
+export async function searchAgents({
+  filter,
+  pageParam,
+  perPage = 10,
+}: {
+  filter?: AgentFilter;
+  pageParam: number;
+  perPage?: number;
+}) {
+  const params = new URLSearchParams();
+
+  if (filter?.type && filter?.input) {
+    params.append(filter.type, filter.input);
+  }
+
+  filter?.sort_by_top_properties &&
+    params.append(
+      "sort_by_top_properties",
+      String(filter?.sort_by_top_properties)
+    );
+
+  params.append("page", pageParam.toString());
+  params.append("per_page", perPage.toString());
+
+  return (await Fetch(`/agents/search?${params.toString()}`)) as AgentResult2;
+}

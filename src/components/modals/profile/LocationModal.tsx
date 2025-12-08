@@ -1,11 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Modal, TextInput, TouchableOpacity, ScrollView } from "react-native";
-import { Check, MapPin, X } from "lucide-react-native";
+import { MapPin, X } from "lucide-react-native";
 import { debounce } from "lodash-es";
-import { cn, composeFullAddress } from "@/lib/utils";
+import { composeFullAddress } from "@/lib/utils";
 import { Icon, Pressable, Text, View } from "@/components/ui";
 import { useMutation } from "@tanstack/react-query";
-import { fetchPlaceFromTextQuery } from "@/actions/utills";
+import { fetchPlaceFromTextQueryGoogle } from "@/actions/utills";
 import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
 
 export function LocationModal({
@@ -22,7 +22,7 @@ export function LocationModal({
   const [query, setQuery] = useState("");
   const [locations, setLocations] = useState<GooglePlace[]>([]);
   const { mutateAsync, isPending } = useMutation({
-    mutationFn: fetchPlaceFromTextQuery,
+    mutationFn: fetchPlaceFromTextQueryGoogle,
     mutationKey: [query],
     onSuccess: (data) => {
       setLocations(data);
@@ -121,7 +121,7 @@ export function LocationModal({
                         </View>
                         <View className="flex-1">
                           <Text className="flex-shrink text-wrap text-typography">
-                            {composeFullAddress(item.addressComponents)}
+                            {item.displayName}
                           </Text>
                         </View>
                         <View className="bg-primary px-4 py-2 self-center rounded-md">

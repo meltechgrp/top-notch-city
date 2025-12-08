@@ -62,7 +62,6 @@ type QueryType =
   | "reels"
   | "lands"
   | "featured"
-  | "trending"
   | "trending-lands"
   | "agent-property";
 

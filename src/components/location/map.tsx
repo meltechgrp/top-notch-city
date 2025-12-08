@@ -196,6 +196,10 @@ const Map = forwardRef<MapController, MapProps>((props, ref) => {
         zoomEnabled={true}
         loadingEnabled
         onPress={onDoublePress}
+        customMapStyle={
+          theme === "dark" && Platforms.isAndroid() ? mapStyleDark : []
+        }
+        onDoublePress={onDoublePress}
         loadingBackgroundColor={
           theme == "dark" ? Colors.light.background : Colors.dark.background
         }
@@ -238,7 +242,7 @@ const Map = forwardRef<MapController, MapProps>((props, ref) => {
             anchor={{ x: 0.5, y: 0.5 }}
           />
         )}
-        {location && showRadius && (
+        {showRadius && (
           <Circle
             center={{ ...center }}
             radius={radiusInMeters || 5000}
@@ -267,3 +271,98 @@ const Map = forwardRef<MapController, MapProps>((props, ref) => {
 });
 
 export default memo(Map);
+
+export const mapStyleDark = [
+  {
+    elementType: "geometry",
+    stylers: [{ color: "#1d1d1d" }],
+  },
+  {
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#d5d5d5" }],
+  },
+  {
+    elementType: "labels.text.stroke",
+    stylers: [{ color: "#1d1d1d" }],
+  },
+  {
+    featureType: "administrative",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#9e9e9e" }],
+  },
+  {
+    featureType: "poi",
+    elementType: "geometry",
+    stylers: [{ color: "#2b2b2b" }],
+  },
+  {
+    featureType: "poi",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#a5a5a5" }],
+  },
+  {
+    featureType: "poi.park",
+    elementType: "geometry",
+    stylers: [{ color: "#263c3f" }],
+  },
+  {
+    featureType: "poi.park",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#6b9a76" }],
+  },
+  {
+    featureType: "road",
+    elementType: "geometry.fill",
+    stylers: [{ color: "#2c2c2c" }],
+  },
+  {
+    featureType: "road",
+    elementType: "geometry",
+    stylers: [{ color: "#383838" }],
+  },
+  {
+    featureType: "road",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#8a8a8a" }],
+  },
+  {
+    featureType: "road.arterial",
+    elementType: "geometry",
+    stylers: [{ color: "#454545" }],
+  },
+  {
+    featureType: "road.highway",
+    elementType: "geometry",
+    stylers: [{ color: "#3c3c3c" }],
+  },
+  {
+    featureType: "road.highway.controlled_access",
+    elementType: "geometry",
+    stylers: [{ color: "#4e4e4e" }],
+  },
+  {
+    featureType: "road.local",
+    elementType: "geometry",
+    stylers: [{ color: "#2e2e2e" }],
+  },
+  {
+    featureType: "transit",
+    elementType: "geometry",
+    stylers: [{ color: "#2f2f2f" }],
+  },
+  {
+    featureType: "transit.station",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#d59563" }],
+  },
+  {
+    featureType: "water",
+    elementType: "geometry",
+    stylers: [{ color: Colors.light.background }],
+  },
+  {
+    featureType: "water",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#3d3d3d" }],
+  },
+];
