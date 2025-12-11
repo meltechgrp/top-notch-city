@@ -17,11 +17,13 @@ interface Props extends Partial<ViewProps> {
   setLocationBottomSheet: () => void;
   setShowFilter: () => void;
   filter: SearchFilters;
+  disableBack?: boolean;
 }
 function SearchHeader({
   setShowFilter,
   setLocationBottomSheet,
   filter,
+  disableBack,
   ...props
 }: Props) {
   const translateY = useSharedValue(50);
@@ -47,16 +49,18 @@ function SearchHeader({
           <Animated.View style={animatedStyle}>
             <View className=" w-full android:pt-2">
               <View className="flex-row items-center gap-x-2 px-4 w-full">
-                <Pressable
-                  onPress={() => {
-                    if (router.canGoBack()) router.back();
-                    else router.push("/");
-                  }}
-                  style={[[props?.style]]}
-                  className="py-px flex-row items-center p-2.5 bg-background-muted rounded-full"
-                >
-                  <Icon className=" w-7 h-7" as={ChevronLeftIcon} />
-                </Pressable>
+                {!disableBack && (
+                  <Pressable
+                    onPress={() => {
+                      if (router.canGoBack()) router.back();
+                      else router.push("/");
+                    }}
+                    style={[[props?.style]]}
+                    className="py-px flex-row items-center p-2.5 bg-background-muted rounded-full"
+                  >
+                    <Icon className=" w-7 h-7" as={ChevronLeftIcon} />
+                  </Pressable>
+                )}
 
                 <View className={"flex-1 flex-row gap-3"}>
                   <Pressable

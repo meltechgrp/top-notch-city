@@ -13,7 +13,10 @@ import { useMediaUpload } from "@/hooks/useMediaUpload";
 import { MotiView } from "moti";
 import { Easing } from "react-native-reanimated";
 import { generateMediaUrlSingle } from "@/lib/api";
-import { ProfileImageTrigger } from "@/components/custom/ImageViewerProvider";
+import {
+  ImageViewerProvider,
+  ProfileImageTrigger,
+} from "@/components/custom/ImageViewerProvider";
 
 const MAX = 2;
 
@@ -135,56 +138,58 @@ function ListingVideosBottomSheet(props: Props) {
         visible={visible}
         onDismiss={onDismiss}
       >
-        <View
-          onLayout={onLayout}
-          className="flex-1 gap-2 py-4 pb-8 bg-background"
-        >
-          <FlatList
-            data={videos}
-            numColumns={2}
-            contentContainerClassName=""
-            ListEmptyComponent={() =>
-              previewFiles.length == 0 ? (
-                <MiniEmptyState title="Pick or take videos" />
-              ) : undefined
-            }
-            keyExtractor={(item) => item.id!}
-            ListHeaderComponent={ListHeader}
-            ItemSeparatorComponent={() => <View className=" h-4" />}
-            renderItem={({ item, index }) => (
-              <ProfileImageTrigger image={videos || []} index={index}>
-                <VideoScreen
-                  item={item}
-                  index={index}
-                  width={width}
-                  setOpenEdit={setOpenEdit}
-                  setSelected={setSelected}
-                />
-              </ProfileImageTrigger>
-            )}
-            keyboardShouldPersistTaps="handled"
-          />
-          <View className=" flex-row gap-6 px-4 mt-auto">
-            {currentCount > 1 && (
-              <View className="flex-1">
-                <Button
-                  className="h-12"
-                  variant="outline"
-                  onPress={deleteAllFile}
-                >
-                  <ButtonText>Remove All</ButtonText>
-                </Button>
-              </View>
-            )}
-            {currentCount > 0 && (
-              <View className="flex-1">
-                <Button className="h-12" onPress={onDismiss}>
-                  <ButtonText>Continue</ButtonText>
-                </Button>
-              </View>
-            )}
+        <ImageViewerProvider>
+          <View
+            onLayout={onLayout}
+            className="flex-1 gap-2 py-4 pb-8 bg-background"
+          >
+            <FlatList
+              data={videos}
+              numColumns={2}
+              contentContainerClassName=""
+              ListEmptyComponent={() =>
+                previewFiles.length == 0 ? (
+                  <MiniEmptyState title="Pick or take videos" />
+                ) : undefined
+              }
+              keyExtractor={(item) => item.id!}
+              ListHeaderComponent={ListHeader}
+              ItemSeparatorComponent={() => <View className=" h-4" />}
+              renderItem={({ item, index }) => (
+                <ProfileImageTrigger image={videos || []} index={index}>
+                  <VideoScreen
+                    item={item}
+                    index={index}
+                    width={width}
+                    setOpenEdit={setOpenEdit}
+                    setSelected={setSelected}
+                  />
+                </ProfileImageTrigger>
+              )}
+              keyboardShouldPersistTaps="handled"
+            />
+            <View className=" flex-row gap-6 px-4 mt-auto">
+              {currentCount > 1 && (
+                <View className="flex-1">
+                  <Button
+                    className="h-12"
+                    variant="outline"
+                    onPress={deleteAllFile}
+                  >
+                    <ButtonText>Remove All</ButtonText>
+                  </Button>
+                </View>
+              )}
+              {currentCount > 0 && (
+                <View className="flex-1">
+                  <Button className="h-12" onPress={onDismiss}>
+                    <ButtonText>Continue</ButtonText>
+                  </Button>
+                </View>
+              )}
+            </View>
           </View>
-        </View>
+        </ImageViewerProvider>
       </BottomSheet>
       <OptionsBottomSheet
         isOpen={openEdit}

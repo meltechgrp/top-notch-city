@@ -26,9 +26,6 @@ export default function AppCrashScreen({ err }: { err?: any }) {
             <Text className="text-center text-typography mt-2 mb-6">
               Please reload to try again!
             </Text>
-            <Text className="text-center text-typography mt-2 mb-6">
-              {JSON.stringify(err)}
-            </Text>
           </View>
 
           <View className="px-4">

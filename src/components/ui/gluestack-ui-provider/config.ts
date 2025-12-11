@@ -101,7 +101,7 @@ export const config = {
     "--color-error": "239 68 68",
 
     /* Success */
-    "--color-success-100": "22 101 52",
+    "--color-success-100": "127 165 3",
     "--color-success-200": "32 111 62",
     "--color-success-300": "42 121 72",
     "--color-success-400": "52 131 82",
@@ -115,7 +115,7 @@ export const config = {
     "--color-warning": "251 149 75",
 
     /* Info */
-    "--color-info-100": "7 90 131",
+    "--color-info-100": "198 21 74",
     "--color-info-200": "9 115 168",
     "--color-info-300": "11 141 205",
     "--color-info-400": "13 166 242",

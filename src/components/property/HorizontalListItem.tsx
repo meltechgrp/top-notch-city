@@ -1,10 +1,11 @@
-import { cn } from "@/lib/utils";
+import { cn, generateTitle } from "@/lib/utils";
 import { formatMoney } from "@/lib/utils";
-import { Image, Pressable, Text, View } from "../ui";
+import { Icon, Image, Pressable, Text, View } from "../ui";
 import { useRouter } from "expo-router";
 import { generateMediaUrl } from "@/lib/api";
-import { PropertyTitle } from "./PropertyTitle";
 import { memo } from "react";
+import { PropertyBadge } from "@/components/property/PropertyBadge";
+import { House, LandPlot } from "lucide-react-native";
 
 type Props = {
   data: Property;
@@ -13,8 +14,8 @@ type Props = {
 function HorizontalListItem(props: Props) {
   const { data, className } = props;
   const { media, price, id, title, category, slug } = data;
-  if (category.name == "Land") return null;
   const router = useRouter();
+  if (category.name == "Land") return null;
   return (
     <Pressable
       both
@@ -27,7 +28,7 @@ function HorizontalListItem(props: Props) {
         });
       }}
       className={cn(
-        "relative flex-row h-[110px] bg-background-muted/80 rounded-xl p-2 gap-4 overflow-hidden active:scale-[0.95]",
+        "relative flex-row h-[120px] bg-background-muted/80 rounded-xl p-2 gap-4 overflow-hidden active:scale-[0.95]",
         className
       )}
       style={{ borderRadius: 8 }}
@@ -38,8 +39,23 @@ function HorizontalListItem(props: Props) {
         style={{ width: 120, borderRadius: 8 }}
         alt={title}
       />
-      <View className=" w-[128px] gap-2 justify-center">
-        <PropertyTitle property={data} smallView />
+      <View className=" w-[135px] gap-2 justify-center">
+        <View className="mb-2 gap-1">
+          <PropertyBadge property={data} />
+          <View className="flex-row gap-1 items-center">
+            <Icon
+              size={"sm"}
+              as={data.category.name == "Land" ? LandPlot : House}
+              className="text-white"
+            />
+            <Text
+              numberOfLines={1}
+              className={cn("text-sm text-white font-medium")}
+            >
+              {generateTitle(data)}
+            </Text>
+          </View>
+        </View>
         <View className=" gap-1">
           <Text size="md" className="font-bold text-typography">
             {formatMoney(price, "NGN", 0)}

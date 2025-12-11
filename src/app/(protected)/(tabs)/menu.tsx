@@ -1,13 +1,6 @@
-import { Icon, Pressable, Text, View } from "@/components/ui";
-import { Stack, useRouter } from "expo-router";
-import {
-  MoreHorizontal,
-  PlusCircle,
-  Search,
-  Share2,
-  User,
-  UserPlus,
-} from "lucide-react-native";
+import { Text, View } from "@/components/ui";
+import { useRouter } from "expo-router";
+import { Share2, User, UserPlus } from "lucide-react-native";
 import { getQuickMenuItems } from "@/components/menu/menuitems";
 import { BodyScrollView } from "@/components/layouts/BodyScrollView";
 import AdminCards from "@/components/admin/dashboard/AdminCards";
@@ -16,51 +9,19 @@ import { MenuListItem } from "@/components/menu/MenuListItem";
 import CampaignCard from "@/components/profile/CampaignCard";
 import { useStore } from "@/store";
 import { useShallow } from "zustand/react/shallow";
+import SearchWrapper from "@/components/search/SearchWrapper";
 
 export default function Menu() {
-  const router = useRouter();
   const { me, isAdmin, isAgent } = useStore(
     useShallow((s) => s.getCurrentUser())
   );
+  const router = useRouter();
   const quickMenuItems = getQuickMenuItems({ me, isAdmin, isAgent });
+  if (me?.role == "user") {
+    return <SearchWrapper disableBack isTab />;
+  }
   return (
     <>
-      <Stack.Screen
-        options={{
-          headerLeft: () =>
-            isAdmin ? (
-              <View className={"px-4 flex-row gap-6"}>
-                <Pressable
-                  className="p-2 bg-background-muted rounded-full"
-                  onPress={() => {}}
-                >
-                  <Icon as={MoreHorizontal} className="w-6 h-6" />
-                </Pressable>
-              </View>
-            ) : isAgent ? (
-              <View className={"px-4 flex-row gap-6"}>
-                <Pressable
-                  className="p-2 bg-background-muted rounded-full"
-                  onPress={() =>
-                    router.push(`/agents/${me?.id}/properties/add`)
-                  }
-                >
-                  <Icon as={PlusCircle} className="w-6 h-6" />
-                </Pressable>
-              </View>
-            ) : undefined,
-          headerRight: () => (
-            <View className="px-4 flex-row gap-4">
-              <Pressable
-                className="p-2 bg-background-muted rounded-full"
-                onPress={() => router.push("/explore")}
-              >
-                <Icon as={Search} className="w-6 h-6" />
-              </Pressable>
-            </View>
-          ),
-        }}
-      />
       <BodyScrollView withBackground className="pt-2">
         {isAdmin && <AdminCards />}
         {isAgent && <AgentCards userId={me?.id!} />}
@@ -71,15 +32,6 @@ export default function Menu() {
             actionLabel="Login"
             className="mt-8 mx-4"
             actionRoute={`/signin`}
-          />
-        )}
-        {me && me?.role == "user" && (
-          <CampaignCard
-            title="Want to Rent or Sell?"
-            subtitle="Easily upload your property and reach verified buyers and renters."
-            actionLabel="Get Started"
-            className="mt-8 mx-4 py-8"
-            actionRoute={`/forms/agent`}
           />
         )}
         <View className="mt-6 px-4">

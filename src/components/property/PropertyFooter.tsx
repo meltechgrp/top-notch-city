@@ -2,13 +2,13 @@ import { startChat } from "@/actions/message";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
 import {
   openAccessModal,
-  openEnquiryModal,
+  openBookingModal,
 } from "@/components/globals/AuthModals";
 import { Icon, Pressable, Text, View } from "@/components/ui";
 import { useStore } from "@/store";
 import { useMutation } from "@tanstack/react-query";
 import { router } from "expo-router";
-import { BookCheck, ChevronRight, MessageCircle } from "lucide-react-native";
+import { BookCheck, MessageCircle } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 interface PropertyFooterProps {
@@ -27,18 +27,22 @@ export function PropertyFooter({ property }: PropertyFooterProps) {
           <Pressable
             both
             onPress={() => {
-              openEnquiryModal({
+              openBookingModal({
                 visible: true,
-                id: property?.id,
+                property_id: property.id,
+                agent_id: property.owner?.id,
+                booking_type:
+                  property.category.name == "Shortlet"
+                    ? "reservation"
+                    : "inspection",
               });
             }}
-            className="flex-row flex-1 bg-gray-600 gap-2 p-4  rounded-xl items-center justify-between"
+            className="flex-row flex-1 bg-gray-600 gap-2 p-4  rounded-xl items-center justify-center"
           >
             <Icon size="xl" as={BookCheck} className="text-primary" />
-            <Text size="md" className=" mr-auto text-white">
-              Book a visit
+            <Text size="md" className=" font-medium text-white">
+              {property.category.name == "Shortlet" ? "Book" : "Book a visit"}
             </Text>
-            <Icon as={ChevronRight} color="white" />
           </Pressable>
           <Pressable
             both
@@ -70,13 +74,12 @@ export function PropertyFooter({ property }: PropertyFooterProps) {
                 }
               );
             }}
-            className="flex-row flex-1 gap-2 bg-primary p-4  rounded-xl items-center justify-between"
+            className="flex-row flex-1 gap-2 bg-primary p-4  rounded-xl items-center justify-center"
           >
             <Icon size="xl" as={MessageCircle} className="text-white" />
-            <Text size="md" className=" mr-auto text-white">
+            <Text size="md" className=" font-medium text-white">
               Chat Agent
             </Text>
-            <Icon as={ChevronRight} color="white" />
           </Pressable>
         </View>
       </SafeAreaView>

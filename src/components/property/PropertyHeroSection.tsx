@@ -1,9 +1,9 @@
-import { composeFullAddress, formatMoney } from "@/lib/utils";
+import { composeFullAddress, formatMoney, generateTitle } from "@/lib/utils";
 import { Icon, Text, View } from "../ui";
 import PropertyCarousel from "./PropertyCarousel";
-import { MapPin } from "lucide-react-native";
-import { PropertyTitle } from "./PropertyTitle";
+import { House, LandPlot, MapPin } from "lucide-react-native";
 import { ProfileImageTrigger } from "@/components/custom/ImageViewerProvider";
+import { PropertyBadge } from "@/components/property/PropertyBadge";
 
 interface Props {
   property: Property;
@@ -29,8 +29,18 @@ export function PropertyHeroSection({ property, width }: Props) {
         {property && (
           <View className=" absolute flex-row justify-between bottom-10 left-4 right-4 w-full px-1">
             <View className="gap-1 flex-1">
-              <View className=" flex-row justify-between items-end">
-                <PropertyTitle property={property} />
+              <View className=" gap-1">
+                <PropertyBadge property={property} />
+                <View className="flex-row gap-1 items-center">
+                  <Icon
+                    size={"sm"}
+                    as={property.category.name == "Land" ? LandPlot : House}
+                    className="text-white"
+                  />
+                  <Text className={"text-md text-white font-bold"}>
+                    {generateTitle(property)}
+                  </Text>
+                </View>
               </View>
               <View className="flex-row items-center gap-2">
                 <Icon size="sm" as={MapPin} className="" />

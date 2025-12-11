@@ -3,16 +3,17 @@ import {
   composeFullAddress,
   formatMoney,
   formatDateDistance,
+  generateTitle,
 } from "@/lib/utils";
 import { StyleProp, View, ViewStyle } from "react-native";
-import { Icon, Text, Pressable } from "../ui";
-import { MapPin } from "lucide-react-native";
+import { Icon, Text, Pressable, Badge } from "../ui";
+import { House, LandPlot, MapPin } from "lucide-react-native";
 import { memo, useMemo } from "react";
 import Layout from "@/constants/Layout";
 import { useLayout } from "@react-native-community/hooks";
 import { PropertyStatus } from "./PropertyStatus";
 import PropertyInteractions from "./PropertyInteractions";
-import { PropertyTitle } from "./PropertyTitle";
+import { PropertyBadge } from "./PropertyBadge";
 import { useStore } from "@/store";
 import PropertyMedia from "@/components/property/PropertyMedia";
 import { openAccessModal } from "@/components/globals/AuthModals";
@@ -125,7 +126,19 @@ function PropertyListItem(props: Props) {
         >
           <View className="flex-1">
             <View className="flex-row justify-between items-end">
-              <PropertyTitle property={data} />
+              <View className="mb-1 gap-1">
+                <PropertyBadge property={data} />
+                <View className="flex-row gap-1 items-center">
+                  <Icon
+                    size={"sm"}
+                    as={data.category.name == "Land" ? LandPlot : House}
+                    className="text-white"
+                  />
+                  <Text className={"text-md text-white font-bold"}>
+                    {generateTitle(data)}
+                  </Text>
+                </View>
+              </View>
               {interaction && (
                 <PropertyInteractions
                   interaction={interaction}
@@ -143,7 +156,8 @@ function PropertyListItem(props: Props) {
               </View>
             )}
             <Text className="text-white text-xl font-bold">
-              {formatMoney(price, "NGN", 0)}
+              {formatMoney(price, "NGN", 0)}{" "}
+              {data.category.name == "Shortlet" && "/night"}
             </Text>
           </View>
         </View>

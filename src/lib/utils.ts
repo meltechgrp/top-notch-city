@@ -1,7 +1,6 @@
 import { format, isThisYear, isToday, subDays, subMonths } from "date-fns";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { useState } from "react";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -85,6 +84,7 @@ export function generateTitle({
   subcategory,
   amenities,
   purpose,
+  title,
 }: Property) {
   switch (category.name.trim()) {
     case "Residential":
@@ -96,14 +96,10 @@ export function generateTitle({
     case "Land":
       return `${FindAmenity("Total Plot", amenities) || 1} Plot${FindAmenity("Total Plot", amenities) > 1 ? "s" : ""} of Land`;
 
-    case "hotel":
+    case "Hotel":
     case "Shortlet":
     case "Chalet":
-      return `${subcategory || category}${FindAmenity("Pool", amenities) ? " with Pool" : ""}${
-        FindAmenity("Rooms", amenities)
-          ? `, ${FindAmenity("Rooms", amenities)} Rooms`
-          : ""
-      }`;
+      return `${title}`;
 
     default:
       return `${subcategory.name || category.name}`;

@@ -87,6 +87,12 @@ export default function ProfileScreensLayout() {
         }}
       />
       <Stack.Screen
+        name="bookings"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
         name="analytics"
         options={{
           headerTitle: "Analytics",

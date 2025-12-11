@@ -3,7 +3,7 @@ import StartChatBottomSheet from "@/components/modals/StartChatBottomSheet";
 import CustomerCareBottomSheet from "@/components/modals/CustomerCareBottomSheet";
 import { Box, Icon, Pressable, View } from "@/components/ui";
 import { FlashList } from "@shopify/flash-list";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { RefreshControl } from "react-native";
 import { useChat } from "@/hooks/useChat";
 import { router, Tabs } from "expo-router";
@@ -18,10 +18,11 @@ import ChatsStateWrapper from "@/components/chat/ChatsStateWrapper";
 import { FilterComponent } from "@/components/admin/shared/FilterComponent";
 import { cn } from "@/lib/utils";
 import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
+import { useWebSocketHandler } from "@/hooks/useWebSocketHandler";
 
 export default function MessagesScreen() {
   const { chats, loading, refreshing, refetch, me } = useChat();
-
+  const { connect } = useWebSocketHandler();
   const [search, setSearch] = useState("");
   const [friendsModal, setFriendsModal] = React.useState(false);
   const [staffs, setStaffs] = React.useState(false);
@@ -51,6 +52,9 @@ export default function MessagesScreen() {
       />
     );
   }, [search, setSearch]);
+  useEffect(() => {
+    connect();
+  }, []);
   return (
     <>
       <Tabs.Screen

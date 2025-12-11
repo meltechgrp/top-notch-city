@@ -43,8 +43,8 @@ export function CustomCenterSheet({ address }: CustomCenterSheetProps) {
           scrollEnabled={false}
           showRadius
           nearby={nearby}
-          radiusInMeters={50}
-          delta={0.006}
+          radiusInMeters={500}
+          delta={0.05}
         />
       </Pressable>
 
@@ -64,7 +64,7 @@ export function CustomCenterSheet({ address }: CustomCenterSheetProps) {
               height: MODAL_HEIGHT,
             }}
             className="bg-background-muted rounded-2xl overflow-hidden relative"
-            onTouchEnd={(ev) => ev.stopPropagation()} // prevent dismiss
+            onTouchEnd={(ev) => ev.stopPropagation()}
           >
             <Map
               latitude={latitude}
@@ -73,8 +73,8 @@ export function CustomCenterSheet({ address }: CustomCenterSheetProps) {
               scrollEnabled={true}
               showRadius
               nearby={nearby}
-              radiusInMeters={60}
-              delta={0.002}
+              radiusInMeters={500}
+              delta={0.05}
             />
 
             <View className=" absolute top-12 z-10 left-0 w-full">

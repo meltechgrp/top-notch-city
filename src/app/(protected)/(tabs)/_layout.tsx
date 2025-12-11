@@ -1,4 +1,4 @@
-import { Tabs } from "expo-router";
+import { router, Tabs } from "expo-router";
 import React from "react";
 import { HapticTab } from "@/components/HapticTab";
 import {
@@ -6,13 +6,14 @@ import {
   LayoutDashboard,
   MessageSquareMore,
   MonitorPlay,
+  MoreHorizontal,
   Plus,
   PlusCircle,
   Search,
   UserCircle,
 } from "lucide-react-native";
 import { Colors } from "@/constants/Colors";
-import { useResolvedTheme } from "@/components/ui";
+import { Icon, Pressable, useResolvedTheme, View } from "@/components/ui";
 import { useStore } from "@/store";
 import { useShallow } from "zustand/react/shallow";
 import { useHomeFeed } from "@/hooks/useHomeFeed";
@@ -81,15 +82,38 @@ export default function TabLayout() {
       <Tabs.Screen
         name="menu"
         options={() => ({
-          title: isAdmin ? "Dashboard" : isAgent ? "Tools" : "Menu",
+          title: isAdmin ? "Dashboard" : isAgent ? "Tools" : "Explore",
+          headerShown: isAdmin || isAgent,
           tabBarIcon: ({ color }) =>
             isAdmin ? (
               <LayoutDashboard size={22} color={color} />
             ) : isAgent ? (
               <PlusCircle size={22} color={color} />
             ) : (
-              <Plus size={22} color={color} />
+              <Search size={22} color={color} />
             ),
+          headerLeft: () =>
+            isAdmin ? (
+              <View className={"px-4 flex-row gap-6"}>
+                <Pressable
+                  className="p-2 bg-background-muted rounded-full"
+                  onPress={() => {}}
+                >
+                  <Icon as={MoreHorizontal} className="w-6 h-6" />
+                </Pressable>
+              </View>
+            ) : isAgent ? (
+              <View className={"px-4 flex-row gap-6"}>
+                <Pressable
+                  className="p-2 bg-background-muted rounded-full"
+                  onPress={() =>
+                    router.push(`/agents/${me?.id}/properties/add`)
+                  }
+                >
+                  <Icon as={PlusCircle} className="w-6 h-6" />
+                </Pressable>
+              </View>
+            ) : undefined,
         })}
       />
       <Tabs.Screen

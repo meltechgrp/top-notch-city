@@ -12,6 +12,7 @@ import PropertiesTabView from "@/components/profile/PropertiesTab";
 import { ProfileDetails } from "@/components/profile/ProfileDetails";
 import { router, Stack } from "expo-router";
 import {
+  ArrowRightLeft,
   ChevronLeftIcon,
   LogIn,
   MoreHorizontal,
@@ -19,6 +20,7 @@ import {
   Search,
   Settings,
   User,
+  UserCircle,
 } from "lucide-react-native";
 import SavedPropertiesTabView from "@/components/profile/SavedProperties";
 import ReviewsTabView from "@/components/profile/ReviewsTabView";
@@ -94,10 +96,10 @@ export function ProfileWrapper({
                     return (
                       <View className="px-4 flex-row gap-6">
                         <Pressable
-                          className="p-2 bg-background-muted rounded-full"
+                          className="p-2 flex-row bg-background-muted rounded-full"
                           onPress={() => openAccountsModal({ visible: true })}
                         >
-                          <Icon as={Plus} className="w-6 h-6" />
+                          <Icon as={ArrowRightLeft} className="w-6 h-6" />
                         </Pressable>
                       </View>
                     );
@@ -118,18 +120,6 @@ export function ProfileWrapper({
             : undefined,
           headerRight: () => (
             <View className="px-2 flex-row gap-4">
-              {userType == "owner" ? (
-                <Pressable
-                  className="p-2 bg-background-muted rounded-full"
-                  onPress={() => router.push("/(protected)/explore")}
-                >
-                  <Icon as={Search} className="w-6 h-6" />
-                </Pressable>
-              ) : (
-                <Pressable className="p-2 android:bg-background-muted rounded-full">
-                  <Icon as={MoreHorizontal} className="w-6 h-6" />
-                </Pressable>
-              )}
               {user && userType == "owner" && (
                 <Pressable
                   className="p-2 bg-background-muted rounded-full"

@@ -91,7 +91,7 @@ export function PropertyEnquiry({ property }: PropertyEnquiryProps) {
       </Button>
       <Text className="text-sm leading-relaxed text-typography/80">
         By pressing Submit, you agree that TopNotch City and its affiliates, and
-        real estate professionals may call/ text you about your enquiry, which
+        real estate professional may call/ text you about your enquiry, which
         may involve use of automated means and prerecorded/artificial voices.
         You also agree to our{" "}
         <ExternalLink href={"https://topnotchcity.com/privacy"}>

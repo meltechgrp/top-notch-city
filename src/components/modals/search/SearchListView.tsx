@@ -32,6 +32,7 @@ type Props = {
   setShowFilter: () => void;
   useMyLocation: () => Promise<void>;
   filter: SearchFilters;
+  isTab?: boolean;
 };
 
 function SearchListBottomSheet({
@@ -44,9 +45,13 @@ function SearchListBottomSheet({
   total,
   useMyLocation,
   filter,
+  isTab,
 }: Props) {
   const sheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ["10%", "40%", "60%", "90%"], []);
+  const snapPoints = useMemo(
+    () => (isTab ? ["20%", "40%", "60%", "90%"] : ["10%", "40%", "60%", "90%"]),
+    [isTab]
+  );
 
   const renderItem = useCallback(
     ({ item }: { item: Property }) => (

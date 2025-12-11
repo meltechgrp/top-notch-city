@@ -1,5 +1,3 @@
-global.XMLHttpRequest = global.XMLHttpRequest;
-
 import config from "@/config";
 import { getActiveToken } from "@/lib/secureStore";
 import axios from "axios";

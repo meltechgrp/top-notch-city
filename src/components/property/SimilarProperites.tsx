@@ -13,9 +13,9 @@ function SimilarProperties({ property }: SimilarPropertiesProps) {
     type: "search",
     filter: {
       use_geo_location: "true",
-      latitude: property.address?.latitude.toString(),
-      longitude: property.address?.longitude.toString(),
-      category: property.category.name,
+      latitude: property.address?.latitude?.toString(),
+      longitude: property.address?.longitude?.toString(),
+      category: property.category?.name,
     },
   });
 

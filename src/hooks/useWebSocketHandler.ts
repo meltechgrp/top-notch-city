@@ -101,5 +101,5 @@ export function useWebSocketHandler() {
     });
   }, [url, isLoading]);
 
-  return { ...rest };
+  return { ...rest, connect };
 }

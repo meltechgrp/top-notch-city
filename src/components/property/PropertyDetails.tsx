@@ -16,14 +16,18 @@ import {
   Bath,
   Bed,
   BoxIcon,
+  Check,
   ChevronRight,
-  Dot,
   Images,
   LandPlot,
 } from "lucide-react-native";
 import { useRouter } from "expo-router";
 import React, { memo } from "react";
-import { generateMediaUrl, getImageUrl } from "@/lib/api";
+import {
+  generateMediaUrl,
+  generateMediaUrlSingle,
+  getImageUrl,
+} from "@/lib/api";
 import { useLayout } from "@react-native-community/hooks";
 import {
   FindAmenity,
@@ -36,8 +40,10 @@ import { CustomCenterSheet } from "@/components/property/CustomMapCenterSheet";
 import PropertyNearbySection from "@/components/property/PropertyNearbySection";
 import { ProfileImageTrigger } from "@/components/custom/ImageViewerProvider";
 import { MiniVideoPlayer } from "@/components/custom/MiniVideoPlayer";
-import HouseVector from "@/assets/images/vectors/house.png";
-import { openEnquiryModal } from "@/components/globals/AuthModals";
+import {
+  openBookingModal,
+  openEnquiryModal,
+} from "@/components/globals/AuthModals";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SimilarProperties from "@/components/property/SimilarProperites";
 import { PropertyEnquiry } from "@/components/property/PropertyEnquiry";
@@ -53,6 +59,7 @@ const PropertyDetailsBottomSheet = ({
 }: PropertyDetailsBottomSheetProps) => {
   const router = useRouter();
   const { width, onLayout } = useLayout();
+  const mainImage = property.media?.find((img) => img.media_type == "IMAGE");
   return (
     <>
       <SafeAreaView edges={["bottom"]} className="flex-1 bg-transparent">
@@ -152,43 +159,64 @@ const PropertyDetailsBottomSheet = ({
                 </Heading>
                 <View className="flex-row gap-4 flex-wrap px-2">
                   {property.amenities?.map((a) => (
-                    <View
-                      key={a.name}
-                      className="w-[46%] flex-row items-center"
-                    >
-                      <Icon as={Dot} className="text-primary" />
-                      <Text numberOfLines={1} className="text-sm flex-1">
-                        {a.name}:{" "}
-                      </Text>
-                      <Text>{a.value == "true" ? "Yes" : a.value}</Text>
+                    <View key={a.name} className="w-[46%] ">
+                      <View className="bg-background rounded-full py-1 px-3 gap-1 flex-row items-center self-start">
+                        <Text numberOfLines={1} className="text-sm">
+                          {a.name}
+                        </Text>
+                        {a.value == "true" ? (
+                          <Icon size="sm" className="text-primary" as={Check} />
+                        ) : (
+                          <Text>{a.value}</Text>
+                        )}
+                      </View>
                     </View>
                   ))}
                 </View>
               </View>
-              <View className="bg-background-muted border border-outline-100 rounded-xl p-4 mx-4">
-                <View className="h-40 w-60 mx-auto">
-                  <Image source={HouseVector} contentFit="contain" />
+              {property.subcategory.name !== "Shortlet" && (
+                <View className="bg-background-muted border border-outline-100 rounded-xl p-4 mx-4">
+                  <View className="h-40 bg-background/70">
+                    {mainImage?.url && (
+                      <Image
+                        rounded
+                        source={{
+                          uri: generateMediaUrlSingle(mainImage?.url),
+                          cacheKey: mainImage?.id,
+                        }}
+                      />
+                    )}
+                  </View>
+                  <View className=" gap-2 my-2">
+                    <Text className="text-xl font-bold">
+                      Tour with an Agent
+                    </Text>
+                    <Text className="mt-1 text-sm text-typography/90">
+                      We'll connect you with an expert to take you on a private
+                      tour on this property at{" "}
+                      {composeFullAddress(property.address, true)}.
+                    </Text>
+                  </View>
+                  <Button
+                    onPress={() => {
+                      openBookingModal({
+                        visible: true,
+                        property_id: property.id,
+                        agent_id: property.owner?.id,
+                        booking_type:
+                          property.category.name == "Shortlet"
+                            ? "reservation"
+                            : "inspection",
+                      });
+                    }}
+                    className="h-12"
+                  >
+                    <Text className="text-base font-bold">
+                      Schedule a visit
+                    </Text>
+                  </Button>
                 </View>
-                <View className=" gap-2 -mt-4 mb-4">
-                  <Text className="text-2xl font-bold">Tour with an Agent</Text>
-                  <Text className="mt-1 text-typography/90">
-                    We'll connect you with an expert to take you on a private
-                    tour on this property at{" "}
-                    {composeFullAddress(property.address, true)}.
-                  </Text>
-                </View>
-                <Button
-                  onPress={() => {
-                    openEnquiryModal({
-                      visible: true,
-                      id: property?.id,
-                    });
-                  }}
-                  className="h-12"
-                >
-                  <Text className="text-base font-bold">Request a tour</Text>
-                </Button>
-              </View>
+              )}
               <View className="bg-background-muted border border-outline-100 p-2 rounded-xl mx-4 gap-2">
                 <View className="rounded-xl overflow-hidden">
                   <CustomCenterSheet address={property.address} />
@@ -232,42 +260,43 @@ const PropertyDetailsBottomSheet = ({
                 <PropertyEnquiry property={property} />
               </View>
               <SimilarProperties property={property} />
-              <View className="px-4">
-                <Text className="text-typography/80">
+              <View className="p-4 border border-warning-100 mx-4 rounded-xl">
+                <Text className="text-typography/60 text-sm">
                   The information related to this real estate property for{" "}
                   {property.purpose} on this app is sourced in part through the
-                  TopNotch City Data Exchange Program, a cooperative system that
-                  allows licensed real estate brokerage firms to share property
-                  listing data. These listings are provided to TopNotch City
-                  through licensing agreements. Please note that:
+                  TopNotch City, a cooperative system that allows licensed
+                  agents/firms to share property listing data. These listings
+                  are provided to TopNotch City through licensing agreements.
+                  Please note that:
                 </Text>
 
-                <Text className="mt-2 text-typography/80">
-                  {"\u2022"} Listings come from various participating brokers,
-                  and not all available properties may appear on this app.
+                <Text className="mt-2 text-typography/60 text-sm">
+                  {"\u2022"} Listings come from various participating
+                  agents/firms, and not all available properties may appear on
+                  this app.
                 </Text>
 
-                <Text className="mt-1 text-typography/80">
+                <Text className="mt-1 text-typography/60 text-sm">
                   {"\u2022"} The property details provided here are intended for
                   personal, non-commercial use only and may not be used for any
                   purpose other than helping consumers identify potential
                   properties of interest.
                 </Text>
 
-                <Text className="mt-1 text-typography/80">
+                <Text className="mt-1 text-typography/60 text-sm">
                   {"\u2022"} Some properties displayed for {property.purpose}{" "}
                   may no longer be available, as they may already be under
                   contract, sold, or otherwise removed from the market.
                 </Text>
 
-                <Text className="mt-4 text-typography/80">
+                <Text className="mt-4 text-typography/60 text-sm">
                   While the information shown is considered reliable, TopNotch
                   City does not guarantee its accuracy.
                 </Text>
-                <Text className="mt-2 text-typography/80">
+                <Text className="mt-2 text-typography/60 text-sm">
                   © {new Date().getFullYear()} TopNotch City.{" "}
                   <ExternalLink href={"https://topnotchcity.com/privacy"}>
-                    <Text className="text-blue-600 underline">
+                    <Text className="text-blue-600 text-sm underline">
                       Click here for more infomation.
                     </Text>
                   </ExternalLink>

@@ -61,7 +61,7 @@ export function useMediaUpload({
     try {
       const results = await Promise.all(
         media.map(
-          (item) =>
+          (item, i) =>
             new Promise(async (resolve, reject) => {
               try {
                 const uploaded = await uploadWithFakeProgress(

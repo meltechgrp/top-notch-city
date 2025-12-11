@@ -1,6 +1,7 @@
+import { addSubcategory } from "@/actions/property/category";
 import CampaignCard from "@/components/profile/CampaignCard";
 import { UserType } from "@/components/profile/ProfileWrapper";
-import { Badge, Icon, Text, View } from "@/components/ui";
+import { Badge, Button, Icon, Text, View } from "@/components/ui";
 import { DAYS } from "@/constants/user";
 import { composeFullAddress } from "@/lib/utils";
 import { format } from "date-fns";
@@ -71,9 +72,10 @@ export function ProfileDetails({
     <View className="px-4 gap-6">
       {userType == "owner" && user?.role == "user" && (
         <CampaignCard
-          title="Become an agent"
-          subtitle="Join TopNotch City and start connecting with clients."
-          actionLabel="Apply now"
+          title="Want to Rent or Sell?"
+          subtitle="Easily upload your property and reach verified buyers and renters."
+          actionLabel="Get Started"
+          className=" py-4"
           actionRoute={`/forms/agent`}
         />
       )}

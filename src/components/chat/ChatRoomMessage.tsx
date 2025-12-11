@@ -21,7 +21,7 @@ import QuoteMessage from "@/components/chat/ChatRoomQuoteMessage";
 import { ProfileImageTrigger } from "@/components/custom/ImageViewerProvider";
 
 export type ChatRoomMessageProps = View["props"] & {
-  me: Me;
+  me: StoredAccount;
   sender?: string;
   message: Message;
   onLongPress: (message: Message) => void;

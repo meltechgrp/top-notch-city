@@ -3,7 +3,7 @@ import * as React from "react";
 import { View } from "react-native";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import ChatRoom from "@/components/chat/ChatRoom";
-import { cn, formatMessageTime, fullName } from "@/lib/utils";
+import { formatMessageTime, fullName } from "@/lib/utils";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import Platforms from "@/constants/Plaforms";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -12,16 +12,13 @@ import {
   AvatarBadge,
   AvatarFallbackText,
   AvatarImage,
-  Box,
   Heading,
-  Icon,
   Pressable,
   Text,
 } from "@/components/ui";
 import { generateMediaUrlSingle } from "@/lib/api";
 import BackgroundView from "@/components/layouts/BackgroundView";
 import { useChatStore } from "@/store/chatStore";
-import { MoreHorizontal } from "lucide-react-native";
 
 export default function ChatRoomScreen() {
   const { chatId } = useLocalSearchParams<{
@@ -74,13 +71,6 @@ export default function ChatRoomScreen() {
                 )}
               </View>
             </Pressable>
-          ),
-          headerRight: () => (
-            <View className="px-4 flex-row gap-6">
-              <Pressable onPress={() => router.push("/(protected)/settings")}>
-                <Icon as={MoreHorizontal} className="w-6 h-6" />
-              </Pressable>
-            </View>
           ),
         }}
       />

@@ -56,7 +56,6 @@ export function useMessages(chatId: string) {
   }, [messageData, chatId]);
 
   const messages = useChatStore(useShallow((s) => s.getMessages(chatId)));
-  const message = useChatStore(useShallow((s) => s.getMessage(chatId)));
   const typing = useChatStore(useShallow((s) => s.getTyping(chatId)));
 
   /** --- MUTATIONS --- */
@@ -66,8 +65,9 @@ export function useMessages(chatId: string) {
     mutationFn: makeMessageReadAndDelivered,
   });
 
-  const invalidateChats = () =>
+  const invalidateChats = () => {
     queryClient.invalidateQueries({ queryKey: ["chats"] });
+  };
 
   async function handleSendMessage(data: Message, isEdit: boolean) {
     if (isEdit) {
@@ -126,7 +126,6 @@ export function useMessages(chatId: string) {
   }
 
   return {
-    message,
     messages,
     refetchMessages,
     fetchNextPage,

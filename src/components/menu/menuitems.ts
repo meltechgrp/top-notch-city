@@ -12,6 +12,7 @@ import {
   Ban,
   ChartColumn,
   Clock,
+  BookPlus,
 } from "lucide-react-native";
 
 type MenuProps = {
@@ -80,8 +81,29 @@ export const getQuickMenuItems = ({
       role: "all",
       description: "Send enquiries or report an issue.",
     },
+    {
+      label: "My Bookings",
+      icon: BookPlus,
+      link: `/agents/${me?.id}/bookings`,
+      role: "user",
+      description: "Manage all your listed properties.",
+    },
 
     // Agent
+    {
+      label: "Bookings",
+      icon: BookPlus,
+      link: `/agents/${me?.id}/bookings`,
+      role: "agent",
+      description: "Manage all your bookings.",
+    },
+    {
+      label: "My Properties",
+      icon: ReceiptText,
+      link: `/agents/${me?.id}/properties`,
+      role: "agent",
+      description: "Manage all your listed properties.",
+    },
     {
       label: "Analytics",
       icon: ChartColumn,
@@ -103,13 +125,6 @@ export const getQuickMenuItems = ({
       role: "agent",
       badge: "",
       description: "Respond to client and buyer messages.",
-    },
-    {
-      label: "My Properties",
-      icon: ReceiptText,
-      link: `/agents/${me?.id}/properties`,
-      role: "agent",
-      description: "Manage all your listed properties.",
     },
 
     // Admin
