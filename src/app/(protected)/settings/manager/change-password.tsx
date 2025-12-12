@@ -11,7 +11,7 @@ import { showErrorAlert } from "@/components/custom/CustomNotification";
 const ProfileNameSchema = z.object({
   current: validatePassword,
   new: validatePassword,
-  comfirm: validatePassword,
+  confirm: validatePassword,
 });
 
 export default function ChangePassword() {
@@ -19,10 +19,10 @@ export default function ChangePassword() {
   const [form, setForm] = useState({
     current: "",
     new: "",
-    comfirm: "",
+    confirm: "",
   });
   async function handleUpload() {
-    if (form.new !== form.comfirm) {
+    if (form.new !== form.confirm) {
       return showErrorAlert({
         title: "Passwords do not match",
         alertType: "warn",
@@ -84,13 +84,13 @@ export default function ChangePassword() {
         </View>
         <View className="gap-1">
           <Text size="sm" className="font-light px-2">
-            Comfirm Password
+            Confirm Password
           </Text>
           <CustomInput
             secureTextEntry
-            value={form.comfirm}
-            onUpdate={(val) => setForm({ ...form, comfirm: val })}
-            placeholder="Comfirm Password"
+            value={form.confirm}
+            onUpdate={(val) => setForm({ ...form, confirm: val })}
+            placeholder="Confirm Password"
           />
         </View>
       </View>

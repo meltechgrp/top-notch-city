@@ -1,4 +1,4 @@
-import OptionsBottomSheet from "@/components/shared/OptionsBottomSheet";
+import MultiSelectOptionBottomSheet from "@/components/shared/MultiSelectOptionBottomSheet";
 import { ChevronDownIcon, Icon, Text } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import { LucideIcon } from "lucide-react-native";
@@ -12,35 +12,46 @@ function DropdownSelect({
   className,
   format,
   icon,
+  multiple = false,
 }: {
-  value?: string;
-  onChange: (val: string) => void;
+  value?: string | string[];
+  onChange: (val: string | string[]) => void;
   options: string[];
   className?: string;
   format?: boolean;
   icon?: LucideIcon;
+  multiple?: boolean;
 }) {
   const [show, setShow] = useState(false);
+
+  const displayValue = Array.isArray(value)
+    ? value.length > 0
+      ? value.join(", ")
+      : "Select"
+    : value || "Select";
+
   return (
     <>
       <TouchableOpacity
         onPress={() => setShow(true)}
         className={cn(
-          " flex-row justify-between p-4 rounded-2xl border border-outline items-center gap-2",
+          "flex-row justify-between p-4 rounded-2xl border border-outline items-center gap-2",
           !icon && "flex-1",
           className
         )}
       >
-        {!icon && <Text>{value?.toString() || "Select"}</Text>}
-        <Icon size="xl" className="" as={icon || ChevronDownIcon} />
+        {!icon && <Text>{displayValue}</Text>}
+        <Icon size="xl" as={icon || ChevronDownIcon} />
       </TouchableOpacity>
-      <OptionsBottomSheet
+
+      <MultiSelectOptionBottomSheet
         isOpen={show}
         format={format}
+        multiple={multiple}
         onDismiss={() => setShow(false)}
-        onChange={async (val) => onChange(val.value)}
-        value={{ label: value ?? "Select", value: value }}
-        options={options?.map((op) => ({
+        onChange={onChange}
+        value={value}
+        options={options.map((op) => ({
           label: op,
           value: op,
         }))}

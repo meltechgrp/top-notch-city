@@ -48,12 +48,12 @@ export default function ApplicationNotificationComponent({
           });
           isAdmin
             ? router.push({
-                pathname: "/admin/(tabs)/analytics/requests",
+                pathname: "/admin/requests",
                 params: { applicationId: data.entity_id },
               })
             : undefined;
         }}
-        className="p-4 rounded-2xl border-l border-red-500 min-h-[6rem] bg-background-info "
+        className="p-4 rounded-2xl border-l border-red-500 min-h-[6rem] bg-background-muted "
       >
         <View className="flex-1 gap-1 justify-center">
           <View className="flex-row gap-2 items-start">

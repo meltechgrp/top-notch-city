@@ -10,25 +10,10 @@ export default function ProfileScreen() {
     useShallow((s) => s.getCurrentUser())
   );
   const tabs = [
-    {
-      label: "All",
-      key: "all",
-    },
-    {
-      label: "Properties",
-      key: "houses",
-    },
-    {
-      label: "Saved",
-      key: "saved",
-    },
-    ...[
-      isAgent && {
-        label: "Reviews",
-        key: "reviews",
-      },
-    ],
-  ].filter((s) => !!s);
+    "All",
+    ...[isAgent && "Properties"],
+    ...[isAgent && "Reviews"],
+  ].filter((s) => typeof s == "string");
 
   if (!me) return <NotLoggedInProfile userType={"owner"} />;
   return (

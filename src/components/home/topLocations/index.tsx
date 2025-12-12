@@ -13,7 +13,7 @@ const TopLocations = () => {
       titleClassName="text-gray-400 text-base"
       subTitle="Explore"
       className=""
-      hasData
+      hasData={properties && properties?.length > 1}
       onSeeAllPress={() => {
         router.push({
           pathname: "/explore",
@@ -32,9 +32,10 @@ const TopLocations = () => {
         snapToAlignment="center"
         decelerationRate="fast"
       >
-        {properties?.map((property) => (
-          <HorizontalListItem key={property.id} data={property} />
-        ))}
+        {properties?.map((property) => {
+          if (!property) return null;
+          return <HorizontalListItem key={property.id} data={property} />;
+        })}
       </ScrollView>
     </SectionHeaderWithRef>
   );

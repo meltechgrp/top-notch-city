@@ -27,7 +27,7 @@ export default function SignUp() {
     first_name: "",
     last_name: "",
     password: "",
-    comfirmPassword: "",
+    confirmPassword: "",
   });
 
   const handleSave = async (token?: string, message?: string) => {
@@ -160,10 +160,10 @@ export default function SignUp() {
           <CustomInput
             type={"password"}
             className="bg-background-muted"
-            value={form.comfirmPassword}
+            value={form.confirmPassword}
             secureTextEntry
-            onUpdate={(text) => setForm({ ...form, comfirmPassword: text })}
-            placeholder="Comfirm password"
+            onUpdate={(text) => setForm({ ...form, confirmPassword: text })}
+            placeholder="Confirm password"
           />
         </View>
         <Button

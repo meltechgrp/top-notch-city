@@ -136,9 +136,9 @@ export const config = {
     /* Background Special */
     "--color-background-error": "66 43 43",
     "--color-background-warning": "65 47 35",
-    "--color-background-success": "28 43 33",
+    "--color-background-success": "127 165 3",
     "--color-background-muted": "36 37 41",
-    "--color-background-info": "38 40 42",
+    "--color-background-info": "198 21 74",
 
     /* Focus Ring Indicator  */
     "--color-indicator-primary": "247 247 247",

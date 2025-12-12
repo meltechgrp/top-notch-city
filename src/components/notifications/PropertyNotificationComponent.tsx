@@ -48,7 +48,7 @@ export default function PropertyAcceptedNotificationComponent({
           });
           isAdmin
             ? router.push({
-                pathname: "/admin/(tabs)/listings/peding",
+                pathname: "/admin/pending",
                 params: { propertyId: data.entity_id },
               })
             : router.push({
@@ -56,7 +56,7 @@ export default function PropertyAcceptedNotificationComponent({
                 params: { propertyId: data.entity_id },
               });
         }}
-        className="p-4 rounded-2xl border-l border-gray-500 min-h-[6rem] bg-background-info "
+        className="p-4 rounded-2xl border-l border-gray-500 min-h-[6rem] bg-background-muted "
       >
         <View className="flex-1 gap-1 justify-center">
           <View className="flex-row gap-2 items-start">

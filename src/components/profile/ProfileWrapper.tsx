@@ -15,31 +15,23 @@ import {
   ArrowRightLeft,
   ChevronLeftIcon,
   LogIn,
-  MoreHorizontal,
-  Plus,
-  Search,
   Settings,
   User,
-  UserCircle,
 } from "lucide-react-native";
 import SavedPropertiesTabView from "@/components/profile/SavedProperties";
 import ReviewsTabView from "@/components/profile/ReviewsTabView";
 import ProfileSkeleton from "@/components/skeleton/ProfileSkeleton";
 import { RefreshControl } from "react-native";
 import { UserActionsBottomSheet } from "@/components/admin/users/UserBottomSheet";
-import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
-import eventBus from "@/lib/eventBus";
 import { openAccountsModal } from "@/components/globals/AuthModals";
 import { useStore } from "@/store";
 import { useShallow } from "zustand/react/shallow";
+import { cn } from "@/lib/utils";
 
 export type UserType = "visitor" | "owner" | "admin";
 
 interface ProfileWrapperProps {
-  tabs: {
-    label: string;
-    key: string;
-  }[];
+  tabs: string[];
   userId?: string;
   userType: UserType;
   isAgent?: boolean;
@@ -54,7 +46,7 @@ export function ProfileWrapper({
     useShallow((s) => s.getCurrentUser())
   );
   const [showActions, setShowActions] = useState(false);
-  const [activeTab, setActiveTab] = useState<(typeof tabs)[number]>(tabs[0]);
+  const [activeTab, setActiveTab] = useState<string>("all");
   const { data, isLoading, refetch, isRefetching } = useQuery({
     queryKey: ["user", userId],
     queryFn: () => getUser(userId!),
@@ -65,7 +57,7 @@ export function ProfileWrapper({
   const user = useMemo(() => data ?? null, [data]);
 
   const dataForTab = useMemo(() => {
-    switch (activeTab.label) {
+    switch (activeTab) {
       case "Properties":
       case "Houses":
         return [{ type: "properties" }];
@@ -96,7 +88,7 @@ export function ProfileWrapper({
                     return (
                       <View className="px-4 flex-row gap-6">
                         <Pressable
-                          className="p-2 flex-row bg-background-muted rounded-full"
+                          className="p-2 flex-row bg-background-info rounded-full"
                           onPress={() => openAccountsModal({ visible: true })}
                         >
                           <Icon as={ArrowRightLeft} className="w-6 h-6" />
@@ -136,7 +128,7 @@ export function ProfileWrapper({
         LoaderComponent={<ProfileSkeleton />}
         loading={isLoading}
       >
-        <Box className="flex-1 pb-24">
+        <Box className={cn("flex-1", userType == "owner" && "pb-24")}>
           <FlashList
             data={dataForTab}
             refreshControl={
@@ -213,9 +205,9 @@ export function ProfileWrapper({
                   />
                 )}
 
-                {user && (
+                {user && tabs.length > 1 && (
                   <ProfileTabHeaderSection
-                    activeIndex={tabs.indexOf(activeTab)}
+                    activeTab={activeTab}
                     onTabChange={(index) => setActiveTab(tabs[index])}
                     profile={user}
                     profileTabs={tabs}

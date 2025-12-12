@@ -9,24 +9,7 @@ export default function ProfileScreen() {
   return (
     <>
       <ProfileWrapper
-        tabs={[
-          {
-            label: "All",
-            key: "all",
-          },
-          {
-            label: "Houses",
-            key: "houses",
-          },
-          {
-            label: "Lands",
-            key: "lands",
-          },
-          {
-            label: "Reviews",
-            key: "reviews",
-          },
-        ]}
+        tabs={["All", "Houses", "Lands", "Reviews"]}
         userType="visitor"
         userId={userId}
         isAgent={userId == me?.id}

@@ -48,7 +48,7 @@ export default function PropertiesTabView({
   if (!isLoading && filtered.length === 0) {
     const propertyLabel = type === "lands" ? "Landed Properties" : "Properties";
 
-    if (isAgent) {
+    if (isOwner && isAgent) {
       return (
         <EmptyState
           icon={House}
@@ -67,7 +67,7 @@ export default function PropertiesTabView({
           title={`You don't have any ${propertyLabel} yet`}
           description="Become an agent to start listing your properties."
           buttonLabel="Become Agent"
-          onPress={() => router.push(`/forms/${profileId}/agent`)}
+          onPress={() => router.push(`/forms/agent`)}
         />
       );
     }

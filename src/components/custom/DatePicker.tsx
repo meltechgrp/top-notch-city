@@ -15,6 +15,7 @@ type IProps = Partial<DatePickerProps> & {
   textClassName?: string;
   startDate?: Date;
   modal?: boolean;
+  disabled?: boolean;
 };
 export default function DatePicker(props: IProps) {
   const {
@@ -26,6 +27,7 @@ export default function DatePicker(props: IProps) {
     textClassName,
     startDate,
     modal = true,
+    disabled = false,
     className,
     ...rest
   } = props;
@@ -46,9 +48,10 @@ export default function DatePicker(props: IProps) {
     <>
       {modal && (
         <Pressable
+          disabled={disabled}
           onPress={onPress}
           className={cn(
-            "h-[52px] border border-outline rounded-xl flex-row items-center px-4",
+            "h-[52px] border border-outline disabled:opacity-60 rounded-xl flex-row items-center px-4",
             className
           )}
         >

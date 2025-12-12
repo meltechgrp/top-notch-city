@@ -1,4 +1,5 @@
 import { fetchDocumentTypes } from "@/actions/user";
+import AnimatedPressable from "@/components/custom/AnimatedPressable";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
 import DatePicker from "@/components/custom/DatePicker";
 import { AgentServicesModal } from "@/components/modals/profile/AgentServicesModal";
@@ -34,6 +35,7 @@ import {
   Eye,
   EyeOff,
   MapPin,
+  Minus,
   Plus,
   Trash2,
   X,
@@ -240,6 +242,54 @@ export function GenderInput({ value, onUpdate }: CustomInputProps) {
           </Pressable>
         );
       })}
+    </View>
+  );
+}
+export function ButtonsInput({
+  value,
+  onUpdate,
+  disabled,
+  title,
+  placeholder = "Add",
+  label = "",
+}: CustomInputProps & {
+  placeholder?: string;
+  label?: string;
+  title?: string;
+}) {
+  const num = Number.isInteger(value) ? 0 : Number(value);
+  return (
+    <View className="gap-1">
+      {title && (
+        <Text className="text-sm text-typography/80 font-medium pl-2">
+          {title}
+        </Text>
+      )}
+      <View className="flex-row justify-between bg-background-muted rounded-xl border border-outline-100 px-4 py-2 items-center">
+        {num ? (
+          <Text className="font-medium">
+            {num} <Text className="text-typography/80">{label}</Text>
+          </Text>
+        ) : (
+          <Text className="text-typography/80 text-sm">{placeholder}</Text>
+        )}
+        <View className="flex-row items-center gap-6">
+          <AnimatedPressable
+            onPress={() => onUpdate(Math.max(0, num - 1).toString())}
+          >
+            <View className="p-2 border border-outline-100 bg-background rounded-full">
+              <Icon as={Minus} />
+            </View>
+          </AnimatedPressable>
+          <AnimatedPressable
+            onPress={() => onUpdate(Math.max(0, num + 1).toString())}
+          >
+            <View className="p-2 border border-outline-100 bg-background rounded-full">
+              <Icon as={Plus} />
+            </View>
+          </AnimatedPressable>
+        </View>
+      </View>
     </View>
   );
 }

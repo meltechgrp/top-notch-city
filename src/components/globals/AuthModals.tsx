@@ -9,7 +9,7 @@ import SwitchAccountSheet from "@/components/modals/SwitchAccount";
 import {
   BookingFormBottomSheet,
   BookingFormProps,
-} from "@/components/modals/BookingBottomSheet";
+} from "@/components/modals/bookings/BookingFormBottomSheet";
 
 export default function AuthModals() {
   const [enquiry, setEnquiry] = useState<AuthModalProps | null>(null);

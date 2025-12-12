@@ -39,7 +39,7 @@ export default function DefaultNotificationComponent({
       onDelete={async () => await mutateAsync2({ id })}
     >
       <Pressable
-        className={cn("p-4 min-h-[6rem] rounded-2xl bg-background-info ")}
+        className={cn("p-4 min-h-[6rem] rounded-2xl bg-background-muted ")}
       >
         <View className="flex-1 gap-1">
           <View className="flex-1 gap-1">

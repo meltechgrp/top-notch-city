@@ -1,11 +1,14 @@
 import { addSubcategory } from "@/actions/property/category";
+import { getQuickMenuItems } from "@/components/menu/menuitems";
+import { MenuListItem } from "@/components/menu/MenuListItem";
 import CampaignCard from "@/components/profile/CampaignCard";
 import { UserType } from "@/components/profile/ProfileWrapper";
 import { Badge, Button, Icon, Text, View } from "@/components/ui";
 import { DAYS } from "@/constants/user";
 import { composeFullAddress } from "@/lib/utils";
+import { useStore } from "@/store";
 import { format } from "date-fns";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import {
   Calendar,
   CalendarCog,
@@ -23,6 +26,7 @@ import {
 } from "lucide-react-native";
 import { useMemo, useState } from "react";
 import { TouchableOpacity } from "react-native";
+import { useShallow } from "zustand/react/shallow";
 
 interface ProfileDetailsProps {
   user: Me;
@@ -30,11 +34,11 @@ interface ProfileDetailsProps {
   isAgent: boolean;
 }
 
-export function ProfileDetails({
-  user,
-  userType,
-  isAgent,
-}: ProfileDetailsProps) {
+export function ProfileDetails({ user, userType }: ProfileDetailsProps) {
+  const { me, isAdmin, isAgent } = useStore(
+    useShallow((s) => s.getCurrentUser())
+  );
+  const quickMenuItems = getQuickMenuItems({ me, isAdmin, isAgent });
   const personal = [
     {
       label: "email",
@@ -228,21 +232,40 @@ export function ProfileDetails({
           ) : undefined}
         </View>
       )}
-      <View className="gap-1">
-        <View className="flex-row items-center justify-between">
-          <Text className="text-md text-typography/80 font-medium">
-            Contact Details
-          </Text>
+      {(userType !== "owner" || isAgent) && (
+        <View className="gap-1">
+          <View className="flex-row items-center justify-between">
+            <Text className="text-md text-typography/80 font-medium">
+              Contact Details
+            </Text>
+          </View>
+          <View className="gap-4 p-4 bg-background-muted rounded-2xl">
+            {personal.map((p) => (
+              <View key={p.label} className="flex-row gap-4 items-center">
+                <Icon size={"sm"} as={p.icon} />
+                <Text>{p.value}</Text>
+              </View>
+            ))}
+          </View>
         </View>
-        <View className="gap-4 p-4 bg-background-muted rounded-2xl">
-          {personal.map((p) => (
-            <View key={p.label} className="flex-row gap-4 items-center">
-              <Icon size={"sm"} as={p.icon} />
-              <Text>{p.value}</Text>
-            </View>
-          ))}
+      )}
+      {userType == "owner" && !isAgent && (
+        <View className="">
+          <Text className="mb-2 text-typography/80 font-medium">Explore</Text>
+          <View className="gap-4 bg-background-muted p-4 rounded-xl border border-outline-100">
+            {quickMenuItems.map((item, i) => (
+              <MenuListItem
+                key={item.label}
+                title={item.label}
+                icon={item.icon}
+                description={item.description}
+                withBorder={i != quickMenuItems.length - 1}
+                onPress={() => item.link && router.push(item.link as any)}
+              />
+            ))}
+          </View>
         </View>
-      </View>
+      )}
     </View>
   );
 }

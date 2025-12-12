@@ -49,13 +49,13 @@ export default function EnquiryNotificationComponent({
           });
           isAdmin
             ? router.push({
-                pathname: "/admin/(tabs)/analytics/reports",
+                pathname: "/admin/reports",
                 params: { enquiryId: data.entity_id },
               })
             : undefined;
         }}
         className={cn(
-          "p-4 min-h-[6rem] border-l border-primary rounded-2xl bg-background-info "
+          "p-4 min-h-[6rem] border-l border-primary rounded-2xl bg-background-muted "
         )}
       >
         <View className="flex-1 gap-1">

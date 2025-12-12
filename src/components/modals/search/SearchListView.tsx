@@ -1,6 +1,6 @@
 import { Dimensions, StyleSheet, View } from "react-native";
 import { useCallback, useMemo, useRef } from "react";
-import { Button, Icon, Text } from "@/components/ui";
+import { Box, Button, Icon, Text } from "@/components/ui";
 import BottomSheet, {
   BottomSheetFlatList,
   useBottomSheetInternal,
@@ -85,6 +85,7 @@ function SearchListBottomSheet({
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
         flex: 1,
+        backgroundColor: Colors.light.background,
       }}
       backgroundComponent={null}
       enableDynamicSizing={false}

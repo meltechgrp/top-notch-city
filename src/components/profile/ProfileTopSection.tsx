@@ -11,12 +11,14 @@ import {
 } from "../ui";
 import { getImageUrl } from "@/lib/api";
 import {
+  ArrowUpRight,
   BadgeCheck,
   Check,
   ChevronDown,
   Dot,
   Edit,
   MessageCircle,
+  MoveUpRight,
   Share2,
 } from "lucide-react-native";
 import { openAccessModal } from "@/components/globals/AuthModals";
@@ -25,6 +27,8 @@ import { useFollowAgent } from "@/hooks/useFollowAgent";
 import { UserType } from "@/components/profile/ProfileWrapper";
 import { Rating } from "@/components/agent/Rating";
 import { ProfileImageTrigger } from "@/components/custom/ImageViewerProvider";
+import { LinearGradient } from "expo-linear-gradient";
+import { TouchableOpacity } from "react-native";
 
 export function ProfileTopSection({
   user,
@@ -121,98 +125,133 @@ export function ProfileTopSection({
   };
   return (
     <>
-      <View className={"px-4 py-2 mt-2"}>
-        <View className={"flex-row gap-4 rounded-2xl"}>
-          <ProfileImageTrigger
-            image={[
-              {
-                url: user?.profile_image!,
-                id: user.id,
-                media_type: "IMAGE",
-              },
-            ]}
-          >
-            <Avatar className="w-24 h-24 rounded-full">
-              <AvatarFallbackText>{fullName(user)}</AvatarFallbackText>
-              <AvatarImage
-                className="rounded-full"
-                source={getImageUrl(user?.profile_image)}
-              />
-            </Avatar>
-          </ProfileImageTrigger>
+      <View className="border-t border-t-outline-100/30">
+        <LinearGradient
+          colors={["#161819", "#2c2d30"]}
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 1 }}
+          style={{
+            flex: 1,
+            borderBottomLeftRadius: 16,
+            borderBottomRightRadius: 16,
+            padding: 16,
+          }}
+        >
+          <View className={"flex-row gap-4 rounded-2xl"}>
+            <ProfileImageTrigger
+              image={[
+                {
+                  url: user?.profile_image!,
+                  id: user.id,
+                  media_type: "IMAGE",
+                },
+              ]}
+            >
+              <Avatar className="w-24 h-24 rounded-full">
+                <AvatarFallbackText>{fullName(user)}</AvatarFallbackText>
+                <AvatarImage
+                  className="rounded-full"
+                  source={getImageUrl(user?.profile_image)}
+                />
+              </Avatar>
+            </ProfileImageTrigger>
 
-          <View className="flex-1">
-            <View className="">
-              <View className="flex-row justify-between items-center">
-                <Text
-                  numberOfLines={1}
-                  className="text-lg flex-1 font-semibold"
-                >
-                  {fullName(user)}
-                </Text>
-                {userType == "admin" && user.verified && (
-                  <Icon
-                    as={BadgeCheck}
-                    className="fill-green-500 text-background-muted"
-                  />
+            <View className="flex-1">
+              <View className="">
+                <View className="flex-row justify-between items-center">
+                  <Text
+                    numberOfLines={1}
+                    className="text-lg flex-1 font-semibold"
+                  >
+                    {fullName(user)}
+                  </Text>
+                  {userType == "admin" && user.verified && (
+                    <Icon
+                      as={BadgeCheck}
+                      className="fill-green-500 text-background-muted"
+                    />
+                  )}
+                </View>
+                {userType == "visitor" ? (
+                  <View className="flex-row gap-1 items-center">
+                    <Text className="text-sm">
+                      {user?.agent_profile?.years_of_experience || "-"}
+                    </Text>
+                    <Text className="text-sm text-typography/80">
+                      Years of Experience
+                    </Text>
+                  </View>
+                ) : (
+                  <Text className="text-xs text-typography/80">
+                    {user.email}
+                  </Text>
                 )}
               </View>
-              {userType == "visitor" ? (
-                <View className="flex-row gap-1 items-center">
-                  <Text className="text-sm">
-                    {user?.agent_profile?.years_of_experience || "-"}
-                  </Text>
-                  <Text className="text-sm text-typography/80">
-                    Years of Experience
-                  </Text>
-                </View>
-              ) : (
-                <Text className="text-xs text-typography/80">{user.email}</Text>
+              {!isAgent && (
+                <Rating
+                  size={14}
+                  rating={user.agent_profile?.average_rating || 0}
+                  total={user.agent_profile?.total_reviews || 0}
+                />
               )}
-            </View>
-            {!isAgent && (
-              <Rating
-                size={14}
-                rating={user.agent_profile?.average_rating || 0}
-                total={user.agent_profile?.total_reviews || 0}
-              />
-            )}
-            <View className="flex-row gap-2 mt-3 items-center">
-              <View className="gap-1 items-center flex-row">
-                <Text className="text-sm font-medium">
-                  {formatNumberCompact(user?.followers_count || 0)}
-                </Text>
-                <Text className="text-xs">Following</Text>
-              </View>
-              <Icon as={Dot} className="w-3 h-3" />
-              <View className="gap-1 items-center flex-row">
-                <Text className="text-sm font-medium">
-                  {formatNumberCompact(user?.total_properties || 0)}
-                </Text>
-                <Text className="text-xs">Listings</Text>
-              </View>
-              <Icon as={Dot} className="w-3 h-3" />
-              <View className="gap-1 items-center flex-row">
-                <Text className="text-sm font-medium">
-                  {formatNumberCompact(user?.likes_count || 0)}
-                </Text>
-                <Text className="text-xs">Likes</Text>
+              <View className="flex-row gap-2 mt-3 items-center">
+                <TouchableOpacity
+                  onPress={() =>
+                    userType != "visitor" &&
+                    router.push({
+                      pathname: "/agents/[userId]/activities",
+                      params: {
+                        userId: user.id,
+                      },
+                    })
+                  }
+                  className="gap-1 items-center flex-row"
+                >
+                  <Text className="text-sm font-medium">
+                    {formatNumberCompact(user?.followers_count || 0)}
+                  </Text>
+                  <Text className="text-xs">Following</Text>
+                  {userType != "visitor" && (
+                    <Icon
+                      size="xs"
+                      as={ArrowUpRight}
+                      className="text-primary"
+                    />
+                  )}
+                </TouchableOpacity>
+                <Icon as={Dot} className="w-3 h-3" />
+                <View className="gap-1 items-center flex-row">
+                  <Text className="text-sm font-medium">
+                    {formatNumberCompact(user?.total_properties || 0)}
+                  </Text>
+                  <Text className="text-xs">Listings</Text>
+                </View>
+                <Icon as={Dot} className="w-3 h-3" />
+                <View className="gap-1 items-center flex-row">
+                  <Text className="text-sm font-medium">
+                    {formatNumberCompact(user?.likes_count || 0)}
+                  </Text>
+                  <Text className="text-xs">Likes</Text>
+                </View>
               </View>
             </View>
           </View>
-        </View>
-        <View className="flex-row mt-6 gap-4 justify-center items-center">
-          {ActionButtons[userType].map((a, i) => (
-            <Button
-              key={a.label}
-              onPress={a.action}
-              className={cn(" h-10 flex-1", i == 0 && "bg-background-muted")}
-            >
-              <ButtonText>{a.label}</ButtonText>
-              <Icon as={a.icon} className="w-4 h-4" />
-            </Button>
-          ))}
-        </View>
+          <View className="flex-row mt-6 gap-4 justify-center items-center">
+            {ActionButtons[userType].map((a, i) => (
+              <Button
+                key={a.label}
+                onPress={a.action}
+                className={cn(
+                  " h-10 rounded-lg flex-1",
+                  i == 0 && "bg-gray-500"
+                )}
+              >
+                <ButtonText>{a.label}</ButtonText>
+                <Icon as={a.icon} className="w-4 h-4" />
+              </Button>
+            ))}
+          </View>
+        </LinearGradient>
       </View>
     </>
   );

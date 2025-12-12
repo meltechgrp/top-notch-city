@@ -1,69 +1,76 @@
 import { Box } from "@/components/ui";
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { Dimensions } from "react-native";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
-import Upcoming from "@/components/bookings/Upcoming";
-import Completed from "@/components/bookings/Completed";
-import Cancelled from "@/components/bookings/Cancelled";
 import { Colors } from "@/constants/Colors";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { Bookings } from "@/actions/bookings";
+import { format } from "date-fns";
+import BookingList from "@/components/bookings/BookingList";
+import VisitationList from "@/components/bookings/VisitationList";
+import { useStore } from "@/store";
+import { useShallow } from "zustand/react/shallow";
 
 export default function BookingHistory() {
   const layout = Dimensions.get("window");
-  // const { data, isLoading, refetch } = useQuery({
-  //   queryKey: ["agent-applications"],
-  //   queryFn: ({})=> getAgentBoookings({pageParam}),
-  // });
-  // const router = useRouter();
-  // const { onRefresh, isRefreshing } = useRefresh(refetch);
-  // const applications = useMemo(() => data || [], [data]);
-  // const sections = useMemo(() => {
-  //   if (!applications.length) return [];
+  const { isAgent } = useStore(useShallow((s) => s.getCurrentUser()));
+  const { data, isLoading, refetch, isRefetching } = useInfiniteQuery({
+    queryKey: ["bookings"],
+    queryFn: ({}) => Bookings(isAgent),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      const { page, pages } = lastPage;
+      return page < pages ? page + 1 : undefined;
+    },
+  });
+  const bookings = useMemo(
+    () => data?.pages.flatMap((page) => page.results) || [],
+    [data]
+  );
+  const sections = useCallback(
+    (key: string) => {
+      if (!bookings.length) return [];
 
-  // applications.forEach((item) => {
-  //   const dateKey = format(new Date(item.created_at), "yyyy-MM-dd");
-  //   if (!groups[dateKey]) groups[dateKey] = [];
-  //   groups[dateKey].push(item);
-  // });
+      const groups: { [date: string]: Booking[] } = {};
+      bookings
+        .filter((booking) => booking.booking_type == key)
+        .forEach((item) => {
+          const dateKey = format(new Date(item.created_at), "yyyy-MM-dd");
+          if (!groups[dateKey]) groups[dateKey] = [];
+          groups[dateKey].push(item);
+        });
 
-  // Convert to array of { title, data }
-  //   return Object.entries(groups)
-  //     .map(([dateKey, items]) => ({
-  //       title: format(new Date(dateKey), "MMMM d, yyyy"),
-  //       data: items,
-  //     }))
-  //     .sort(
-  //       (a, b) => new Date(b.title).getTime() - new Date(a.title).getTime()
-  //     );
-  // }, [applications]);
+      return Object.entries(groups)
+        .map(([dateKey, items]) => ({
+          title: format(new Date(dateKey), "MMMM d, yyyy"),
+          data: items,
+        }))
+        .sort(
+          (a, b) => new Date(b.title).getTime() - new Date(a.title).getTime()
+        );
+    },
+    [bookings]
+  );
   const [index, setIndex] = useState(0);
   const [routes] = useState([
-    { key: "upcoming", title: "Upcoming" },
-    { key: "completed", title: "Completed" },
-    { key: "cancelled", title: "Canceled" },
+    { key: "reservation", title: "Reservation" },
+    { key: "inspection", title: "Inspection" },
   ]);
   const renderScene = SceneMap({
-    upcoming: () => (
-      <Upcoming
-        bookings={[]}
-        isLoading
-        isRefreshing={false}
-        refetch={async () => {}}
+    reservation: () => (
+      <BookingList
+        bookings={sections("reservation")}
+        isLoading={isLoading}
+        isRefreshing={isRefetching}
+        refetch={refetch}
       />
     ),
-    completed: () => (
-      <Completed
-        bookings={[]}
-        isLoading
-        isRefreshing={false}
-        refetch={async () => {}}
-      />
-    ),
-    cancelled: () => (
-      <Cancelled
-        bookings={[]}
-        isLoading
-        isRefreshing={false}
-        refetch={async () => {}}
+    inspection: () => (
+      <VisitationList
+        bookings={sections("inspection")}
+        isLoading={isLoading}
+        isRefreshing={isRefetching}
+        refetch={refetch}
       />
     ),
   });
@@ -78,13 +85,20 @@ export default function BookingHistory() {
           <TabBar
             {...props}
             indicatorStyle={{
-              backgroundColor: Colors.light.background,
-              height: 3,
-              marginBottom: 4,
+              backgroundColor: Colors.primary,
+              height: "88%",
+              margin: 3,
+              borderRadius: 12,
             }}
-            style={{ backgroundColor: Colors.light.background }}
-            activeColor={Colors.primary}
-            inactiveColor="#fff"
+            style={{
+              backgroundColor: "#333333",
+              marginHorizontal: 12,
+              borderRadius: 12,
+              marginBottom: 8,
+              marginTop: 3,
+            }}
+            activeColor={"#fff"}
+            inactiveColor="#ccc"
           />
         )}
       />

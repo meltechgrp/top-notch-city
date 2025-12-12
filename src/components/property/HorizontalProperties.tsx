@@ -8,6 +8,8 @@ interface Props {
   category?: string;
   className?: string;
   isAdmin?: boolean;
+  showStatus?: boolean;
+  showLike?: boolean;
   isLoading?: boolean;
   isRefetching?: boolean;
   isFeatured?: boolean;
@@ -28,6 +30,8 @@ function HorizontalProperties({
   onPress,
   isFeatured,
   listType,
+  showLike = true,
+  showStatus = false,
 }: Props) {
   const router = useRouter();
 
@@ -64,9 +68,10 @@ function HorizontalProperties({
         : data.map((property) => (
             <PropertyListItem
               key={property.id}
-              showLike
+              showLike={showLike}
               listType={listType}
               isFeatured={isFeatured}
+              showStatus={showStatus}
               rounded
               isHorizontal
               data={property}

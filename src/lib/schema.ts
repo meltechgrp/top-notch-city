@@ -27,7 +27,7 @@ export const AuthSignupSchema = z.object({
   password: validatePassword,
   first_name: Name,
   last_name: Name,
-  comfirmPassword: validatePassword,
+  confirmPassword: validatePassword,
 });
 
 export type AuthSignupInput = z.infer<typeof AuthSignupSchema>;

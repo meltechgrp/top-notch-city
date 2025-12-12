@@ -39,6 +39,13 @@ export const getQuickMenuItems = ({
   const data: MenuProps[] = [
     // Users
     {
+      label: "My Bookings",
+      icon: BookPlus,
+      link: `/agents/${me?.id}/bookings`,
+      role: "user",
+      description: "Manage all your reservations/visitations.",
+    },
+    {
       label: "Find Agents",
       icon: Users,
       link: "/agents",
@@ -48,45 +55,16 @@ export const getQuickMenuItems = ({
     {
       label: "Saved",
       icon: Bookmark,
-      link: `/profile`,
+      link: `/agents/${me?.id}/wishlist`,
       role: "user",
       description: "Access all your saved properties.",
-    },
-    {
-      label: "Reels",
-      icon: Film,
-      link: "/reels",
-      role: "all",
-      description: "Explore short property videos.",
     },
     {
       label: "Invite Friends",
       icon: Share2,
       link: "/share",
       role: "all",
-      description: "Share TopNotchCity and earn rewards.",
-    },
-    {
-      label: "Messages",
-      icon: MessageCircle,
-      link: "/chats",
-      role: "user",
-      badge: "",
-      description: "Chat with agents and property owners.",
-    },
-    {
-      label: "Enquiry/Report",
-      icon: ReceiptText,
-      link: "/report",
-      role: "all",
-      description: "Send enquiries or report an issue.",
-    },
-    {
-      label: "My Bookings",
-      icon: BookPlus,
-      link: `/agents/${me?.id}/bookings`,
-      role: "user",
-      description: "Manage all your listed properties.",
+      description: "Share TopNotchCity to your friends.",
     },
 
     // Agent

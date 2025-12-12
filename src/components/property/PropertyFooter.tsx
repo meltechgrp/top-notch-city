@@ -5,6 +5,7 @@ import {
   openBookingModal,
 } from "@/components/globals/AuthModals";
 import { Icon, Pressable, Text, View } from "@/components/ui";
+import { cn } from "@/lib/utils";
 import { useStore } from "@/store";
 import { useMutation } from "@tanstack/react-query";
 import { router } from "expo-router";
@@ -21,7 +22,12 @@ export function PropertyFooter({ property }: PropertyFooterProps) {
     mutationFn: startChat,
   });
   return (
-    <View className=" absolute bottom-0 bg-background border-t border-outline-100 w-full left-0 ">
+    <View
+      className={cn(
+        " absolute bottom-0 hidden bg-background border-t border-outline-100 w-full left-0 ",
+        property.status == "approved" && "flex"
+      )}
+    >
       <SafeAreaView edges={["bottom"]} className="flex-1 bg-transparent">
         <View className="flex-row gap-4 px-4 pt-2 pb-0 flex-1">
           <Pressable
@@ -31,6 +37,12 @@ export function PropertyFooter({ property }: PropertyFooterProps) {
                 visible: true,
                 property_id: property.id,
                 agent_id: property.owner?.id,
+                availableDates: property.availabilities,
+                image:
+                  property.media.find((i) => i.media_type == "IMAGE")?.url ||
+                  "",
+                title: property.title,
+                address: property.address,
                 booking_type:
                   property.category.name == "Shortlet"
                     ? "reservation"

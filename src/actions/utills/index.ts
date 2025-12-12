@@ -21,9 +21,6 @@ export async function Fetch(url: string, options: AxiosRequestConfig = {}) {
     });
     return res.data;
   } catch (error: any) {
-    if (error?.response?.data?.detail) {
-      throw Error(error?.response?.data?.detail);
-    }
     throw error;
   }
 }

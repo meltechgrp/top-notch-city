@@ -126,25 +126,25 @@ function PropertyListItem(props: Props) {
         >
           <View className="flex-1">
             <View className="flex-row justify-between items-end">
-              <View className="mb-1 gap-1">
+              <View className="mb-1 gap-1 w-full">
                 <PropertyBadge property={data} />
-                <View className="flex-row gap-1 items-center">
+                <View className="flex-row w-full gap-1 items-center">
                   <Icon
                     size={"sm"}
                     as={data.category.name == "Land" ? LandPlot : House}
                     className="text-white"
                   />
-                  <Text className={"text-md text-white font-bold"}>
+                  <Text className={"text-md flex-1 text-white font-bold"}>
                     {generateTitle(data)}
                   </Text>
                 </View>
               </View>
-              {interaction && (
+              {/* {interaction && (
                 <PropertyInteractions
                   interaction={interaction}
                   className="w-[15%] gap-2 pr-0"
                 />
-              )}
+              )} */}
             </View>
 
             {address && (
@@ -156,7 +156,7 @@ function PropertyListItem(props: Props) {
               </View>
             )}
             <Text className="text-white text-xl font-bold">
-              {formatMoney(price, "NGN", 0)}{" "}
+              {formatMoney(price, "NGN", 0)}
               {data.category.name == "Shortlet" && "/night"}
             </Text>
           </View>

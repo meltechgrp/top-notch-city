@@ -2,7 +2,7 @@ import { View } from "@/components/ui";
 import Map from "../location/map";
 import HomeNavigation from "./HomeNavigation";
 import { router } from "expo-router";
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import { useStore } from "@/store";
 
 type Props = {
@@ -11,8 +11,11 @@ type Props = {
 };
 const DiscoverProperties = (props: Props) => {
   const { className, mapHeight } = props;
-  const { nearbyProperties: properties } = useStore();
-
+  const { nearbyProperties } = useStore();
+  const properties = useMemo(
+    () => nearbyProperties?.slice().filter(Boolean) || [],
+    [nearbyProperties]
+  );
   return (
     <View style={{ flex: 1, height: mapHeight }} className={className}>
       <View className="overflow-hidden relative flex-1">
@@ -20,7 +23,7 @@ const DiscoverProperties = (props: Props) => {
           <HomeNavigation />
         </View>
         <Map
-          markers={properties || []}
+          markers={properties}
           onDoublePress={() =>
             router.push({
               pathname: "/explore",

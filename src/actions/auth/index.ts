@@ -93,12 +93,12 @@ export async function authSignup(
           password: err.fieldErrors.password?.[0],
           first_name: err.fieldErrors.first_name?.[0],
           last_name: err.fieldErrors.last_name?.[0],
-          comfirmPassword: err.fieldErrors.comfirmPassword?.[0],
+          confirmPassword: err.fieldErrors.confirmPassword?.[0],
         },
       };
     }
-    const { email, password, comfirmPassword, first_name, last_name } = form;
-    if (password !== comfirmPassword) {
+    const { email, password, confirmPassword, first_name, last_name } = form;
+    if (password !== confirmPassword) {
       return {
         formError: "Passwords do not match!",
       };

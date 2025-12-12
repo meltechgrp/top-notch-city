@@ -3,6 +3,7 @@ import { Modal, View, TextInput, TouchableWithoutFeedback } from "react-native";
 import { Text, Button, ButtonText, Pressable, Icon } from "../ui";
 import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react-native";
+import { CustomInput } from "@/components/custom/CustomInput";
 
 type ConfirmationModalProps = ConfirmationActionConfig &
   TouchableWithoutFeedback["props"] & {
@@ -101,7 +102,12 @@ export function ConfirmationModal({
         onRequestClose={() => setConfirmationModal(false)}
       >
         <View className="flex-1 justify-center items-center bg-black/5 px-4">
-          <View className="w-[90%] max-w-md bg-background p-6 rounded-2xl gap-1">
+          <View
+            className={cn(
+              "w-[90%] max-w-md bg-background p-6 rounded-2xl gap-1",
+              requireReason && "h-[22rem]"
+            )}
+          >
             <Text className="text-xl font-semibold text-center">{header}</Text>
             {description && (
               <Text className="text-center text-typography/80 text-sm">
@@ -110,15 +116,12 @@ export function ConfirmationModal({
             )}
 
             {requireReason && (
-              <View className=" mt-3">
-                <TextInput
+              <View className="flex-1 my-3">
+                <CustomInput
                   value={reason}
-                  onChangeText={setReason}
+                  onUpdate={setReason}
                   placeholder="Enter your reason..."
-                  className={cn(
-                    "border rounded-xl px-4 min-h-12 py-2 mt-2 text-sm text-typography bg-background-muted",
-                    error && "border-primary"
-                  )}
+                  className={cn(error && "border-primary")}
                   multiline
                 />
                 {error && (

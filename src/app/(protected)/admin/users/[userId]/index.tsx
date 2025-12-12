@@ -7,24 +7,7 @@ export default function AdminProfile() {
   return (
     <>
       <ProfileWrapper
-        tabs={[
-          {
-            label: "All",
-            key: "all",
-          },
-          {
-            label: "Properties",
-            key: "houses",
-          },
-          {
-            label: "Reviews",
-            key: "reviews",
-          },
-          // {
-          //   label: "Activities",
-          //   key: "activity",
-          // },
-        ]}
+        tabs={["All", "Properties", "Reviews"]}
         userType="admin"
         userId={userId}
       />

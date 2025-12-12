@@ -175,7 +175,7 @@ export default function ListingCategory() {
               />
             </View>
           )}
-          {listing.subCategory == "Shortlet" && (
+          {listing.category == "Shortlet" && (
             <View className="gap-3">
               <Text className="text-base font-medium text-typography/80">
                 Availabilty Period

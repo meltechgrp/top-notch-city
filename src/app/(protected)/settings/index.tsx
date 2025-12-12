@@ -123,6 +123,19 @@ export default function Setting() {
                 icon={Users}
               />
               <MenuListItem
+                title="Bookings"
+                withBorder={false}
+                onPress={() =>
+                  router.push({
+                    pathname: "/agents/[userId]/bookings",
+                    params: {
+                      userId: me.id,
+                    },
+                  })
+                }
+                icon={House}
+              />
+              <MenuListItem
                 title="Saved"
                 withBorder={false}
                 onPress={() =>

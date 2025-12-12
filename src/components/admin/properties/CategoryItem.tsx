@@ -63,7 +63,7 @@ export default function CategoryItem({ item, className }: Props) {
         >
           <View
             className={cn(
-              "flex-1 p-6 py-4 flex-row justify-between items-center bg-background-info rounded-t-xl"
+              "flex-1 p-6 py-4 flex-row justify-between items-center bg-background-muted rounded-t-xl"
             )}
           >
             <View>

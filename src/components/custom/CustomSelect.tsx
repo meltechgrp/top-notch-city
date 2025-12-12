@@ -55,7 +55,7 @@ function CustomSelect(props: Props) {
           setIsOpen(true);
         }}
         className={cn(
-          "px-4 py-2 h-[48px]  border border-outline bg-background-info rounded-xl relative  flex-row",
+          "px-4 py-2 h-[48px]  border border-outline bg-background-muted rounded-xl relative  flex-row",
           {
             " border-transparent": !!disabled,
           }

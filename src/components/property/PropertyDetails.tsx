@@ -111,13 +111,7 @@ const PropertyDetailsBottomSheet = ({
                     <Heading size="lg">Media</Heading>
                   </View>
 
-                  <ProfileImageTrigger
-                    image={
-                      property?.media?.filter((i) => i.media_type == "IMAGE") ||
-                      []
-                    }
-                    index={0}
-                  >
+                  <ProfileImageTrigger image={property?.media || []} index={0}>
                     <View className="bg-background-muted rounded-xl p-4">
                       <ImageGrid
                         media={property?.media || []}
@@ -174,49 +168,56 @@ const PropertyDetailsBottomSheet = ({
                   ))}
                 </View>
               </View>
-              {property.subcategory.name !== "Shortlet" && (
-                <View className="bg-background-muted border border-outline-100 rounded-xl p-4 mx-4">
-                  <View className="h-40 bg-background/70">
-                    {mainImage?.url && (
-                      <Image
-                        rounded
-                        source={{
-                          uri: generateMediaUrlSingle(mainImage?.url),
-                          cacheKey: mainImage?.id,
-                        }}
-                      />
-                    )}
+              {property.subcategory.name !== "Shortlet" &&
+                property.status == "approved" && (
+                  <View className="bg-background-muted border border-outline-100 rounded-xl p-4 mx-4">
+                    <View className="h-40 bg-background/70">
+                      {mainImage?.url && (
+                        <Image
+                          rounded
+                          source={{
+                            uri: generateMediaUrlSingle(mainImage?.url),
+                            cacheKey: mainImage?.id,
+                          }}
+                        />
+                      )}
+                    </View>
+                    <View className=" gap-2 my-2">
+                      <Text className="text-xl font-bold">
+                        Tour with an Agent
+                      </Text>
+                      <Text className="mt-1 text-sm text-typography/90">
+                        We'll connect you with an expert to take you on a
+                        private tour on this property at{" "}
+                        {composeFullAddress(property.address, true)}.
+                      </Text>
+                    </View>
+                    <Button
+                      onPress={() => {
+                        openBookingModal({
+                          visible: true,
+                          property_id: property.id,
+                          agent_id: property.owner?.id,
+                          availableDates: property.availabilities,
+                          image:
+                            property.media.find((i) => i.media_type == "IMAGE")
+                              ?.url || "",
+                          title: property.title,
+                          address: property.address,
+                          booking_type:
+                            property.category.name == "Shortlet"
+                              ? "reservation"
+                              : "inspection",
+                        });
+                      }}
+                      className="h-12"
+                    >
+                      <Text className="text-base font-bold">
+                        Schedule a visit
+                      </Text>
+                    </Button>
                   </View>
-                  <View className=" gap-2 my-2">
-                    <Text className="text-xl font-bold">
-                      Tour with an Agent
-                    </Text>
-                    <Text className="mt-1 text-sm text-typography/90">
-                      We'll connect you with an expert to take you on a private
-                      tour on this property at{" "}
-                      {composeFullAddress(property.address, true)}.
-                    </Text>
-                  </View>
-                  <Button
-                    onPress={() => {
-                      openBookingModal({
-                        visible: true,
-                        property_id: property.id,
-                        agent_id: property.owner?.id,
-                        booking_type:
-                          property.category.name == "Shortlet"
-                            ? "reservation"
-                            : "inspection",
-                      });
-                    }}
-                    className="h-12"
-                  >
-                    <Text className="text-base font-bold">
-                      Schedule a visit
-                    </Text>
-                  </Button>
-                </View>
-              )}
+                )}
               <View className="bg-background-muted border border-outline-100 p-2 rounded-xl mx-4 gap-2">
                 <View className="rounded-xl overflow-hidden">
                   <CustomCenterSheet address={property.address} />

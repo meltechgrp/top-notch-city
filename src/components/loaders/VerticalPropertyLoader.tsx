@@ -8,6 +8,7 @@ type Props = View["props"] & {
   children: React.ReactNode;
   className?: string;
   headerHeight?: number;
+  horizontal?: boolean;
 };
 
 export default function VerticalPropertyLoaderWrapper({
@@ -17,6 +18,7 @@ export default function VerticalPropertyLoaderWrapper({
   style,
   className,
   headerHeight = 12,
+  horizontal = false,
   ...rest
 }: Props) {
   if (loading) {
@@ -27,6 +29,7 @@ export default function VerticalPropertyLoaderWrapper({
           gap: 16,
           paddingVertical: headerHeight,
         }}
+        horizontal={horizontal}
         showsVerticalScrollIndicator={false}
         {...rest}
       >

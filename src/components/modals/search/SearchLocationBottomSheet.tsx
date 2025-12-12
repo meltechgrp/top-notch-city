@@ -168,7 +168,7 @@ function SearchLocationBottomSheet({
     >
       <View className="flex-1 px-4 gap-8 py-2 pb-8 bg-background">
         <View className="gap-3">
-          <View className="px-2 flex-row gap-4 items-center bg-background-info rounded-full border border-outline-200">
+          <View className="px-2 flex-row gap-4 items-center bg-background-muted rounded-full border border-outline-200">
             <CustomInput
               placeholder="Search for a state, city or location..."
               value={text}

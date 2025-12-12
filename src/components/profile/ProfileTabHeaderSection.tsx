@@ -1,43 +1,40 @@
 import { cn } from "@/lib/utils";
-import { Pressable, ScrollView, View } from "react-native";
+import { Pressable, View } from "react-native";
 import { Text } from "../ui";
 
 type IProps = {
   profile: Me;
-  activeIndex: number;
+  activeTab: string;
   onTabChange: (index: number) => void;
-  profileTabs: {
-    label: string;
-    key: string;
-  }[];
+  profileTabs: string[];
 };
 export default function ProfileTabHeaderSection(props: IProps) {
-  const { profile, onTabChange, activeIndex, profileTabs } = props;
+  const { profile, onTabChange, activeTab, profileTabs } = props;
   if (profile?.is_blocked_by_admin) return null;
   return (
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      className="my-4 w-full"
-    >
-      <View className="flex-row px-4 flex-1 gap-2">
-        {profileTabs.map(({ label }, index) => (
-          <Pressable
-            key={label}
-            onPress={() => {
-              onTabChange(index);
-            }}
+    <View className="mx-4 p-1 flex-row my-3 bg-background-muted rounded-xl border border-outline-100">
+      {profileTabs.map((label, index) => (
+        <Pressable
+          key={label}
+          onPress={() => {
+            onTabChange(index);
+          }}
+          className={cn(
+            "h-10 flex-1 gap-1 justify-center px-4 rounded-xl items-center",
+            activeTab.toLowerCase() === label.toLowerCase() && `bg-primary`
+          )}
+        >
+          <Text
             className={cn(
-              "h-full flex-row gap-1 py-2 px-4 rounded-full items-center",
-              activeIndex === index && `bg-primary/10`
+              "text-typography/80",
+              activeTab.toLowerCase() === label.toLowerCase() &&
+                `text-white font-medium`
             )}
           >
-            <Text className={cn(activeIndex === index && `text-primary`)}>
-              {label}
-            </Text>
-          </Pressable>
-        ))}
-      </View>
-    </ScrollView>
+            {label}
+          </Text>
+        </Pressable>
+      ))}
+    </View>
   );
 }
