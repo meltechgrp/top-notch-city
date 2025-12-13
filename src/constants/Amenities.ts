@@ -1,4 +1,7 @@
 export const Durations = [
+  { label: "Daily", value: "7" },
+  { label: "Twice", value: "7" },
+  { label: "Thrice", value: "7" },
   { label: "Weekly", value: "7" },
   { label: "Bi-Weekly", value: "14" },
 
@@ -13,4 +16,18 @@ export const Durations = [
   { label: "3 Years", value: "1095" },
   { label: "5 Years", value: "1825" },
   { label: "10 Years", value: "3650" },
+];
+
+export const ListingRole = [
+  { label: "Agent", value: "agent" },
+  { label: "Manager", value: "landlord" },
+  { label: "Owner", value: "owner" },
+];
+
+export const OnwerType = [
+  { label: "Individual", value: "individual" },
+  { label: "Company", value: "company" },
+  { label: "Property Manager", value: "property_manager" },
+  { label: "Hotel Operator", value: "hotel_operator" },
+  // { label: "Government", value: "government" },
 ];

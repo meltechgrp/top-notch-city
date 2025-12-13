@@ -1,25 +1,32 @@
-import { Box, Heading, View, Text, Icon } from "@/components/ui";
+import { Box, Heading, View, Text, Icon, Pressable } from "@/components/ui";
 import { useTempStore } from "@/store";
 import { CustomInput } from "../custom/CustomInput";
-import { cn, composeFullAddress } from "@/lib/utils";
+import {
+  cn,
+  composeFullAddress,
+  formatNumber,
+  unformatNumber,
+} from "@/lib/utils";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
 import { KeyboardDismissPressable } from "@/components/shared/KeyboardDismissPressable";
-import { ChevronRight, MapPin } from "lucide-react-native";
+import { ChevronDown, ChevronRight, MapPin } from "lucide-react-native";
 import { LocationModal } from "@/components/modals/profile/LocationModal";
 import { useCallback, useState } from "react";
 import useGetLocation from "@/hooks/useGetLocation";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { getReverseGeocode } from "@/hooks/useReverseGeocode";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
+import { Divider } from "@/components/ui/divider";
+import { CurrencyPickerModal } from "@/components/modals/property/CurrencyModal";
 
 const tabs = [
   {
-    label: "Sale",
-    value: "sell",
-  },
-  {
     label: "Rent",
     value: "rent",
+  },
+  {
+    label: "Sale",
+    value: "sell",
   },
 ];
 
@@ -27,6 +34,7 @@ export default function PropertyListingBasic() {
   const { listing, updateListing } = useTempStore();
   const { retryGetLocation } = useGetLocation();
   const [loading, setLoading] = useState(false);
+  const [currencyModal, setCurrencyModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
   const handleUseLocation = useCallback(async () => {
@@ -93,7 +101,7 @@ export default function PropertyListingBasic() {
               ))}
             </View>
           </View>
-          <View className=" py-6 gap-3">
+          <View className=" py-3 gap-4">
             <Text className="text-base font-medium text-typography/80">
               Property details
             </Text>
@@ -111,15 +119,50 @@ export default function PropertyListingBasic() {
               />
             </View>
             <View className="gap-2">
-              <Text className="text-base font-medium text-typography/80">
-                Property location
-              </Text>
+              <View className="flex-row items-center bg-background-muted px-2 rounded-xl overflow-hidden border border-outline-100">
+                <Pressable
+                  onPress={() => setCurrencyModal(true)}
+                  className={cn(
+                    "w-12 border border-outline-100 justify-center bg-background items-center gap-1 px-3 aspect-square rounded-full",
+                    listing?.currency &&
+                      listing?.currency?.symbol?.length > 1 &&
+                      "w-14"
+                  )}
+                >
+                  <Text
+                    className={cn(
+                      "text-xl",
+                      listing?.currency &&
+                        listing?.currency?.symbol?.length > 1 &&
+                        "text-sm"
+                    )}
+                  >
+                    {listing?.currency?.symbol}
+                  </Text>
+                </Pressable>
+                <View className="flex-1">
+                  <CustomInput
+                    keyboardType="decimal-pad"
+                    placeholder="Enter Price/Rate"
+                    enterKeyHint="done"
+                    className="border-0 rounded-none"
+                    value={formatNumber(listing.price)}
+                    onUpdate={(val) =>
+                      updateListing({
+                        price: unformatNumber(val),
+                      })
+                    }
+                  />
+                </View>
+              </View>
+            </View>
+            <View className="gap-2">
               <AnimatedPressable
                 containerClassName="h-16 bg-background-muted border border-outline-100  rounded-2xl"
                 className=" flex-row flex-1 gap-4 items-center px-2 py-1"
                 onPress={() => setShowModal(true)}
               >
-                <View className="h-full bg-background-muted/80 aspect-square border border-outline-100 rounded-full items-center justify-center">
+                <View className="w-12 bg-background/80 aspect-square border border-outline-100 rounded-full items-center justify-center">
                   {loading ? (
                     <SpinningLoader />
                   ) : (
@@ -146,6 +189,12 @@ export default function PropertyListingBasic() {
         handleUseLocation={handleUseLocation}
         onClose={() => setShowModal?.(false)}
         onSelect={(place) => updateListing({ address: place })}
+      />
+      <CurrencyPickerModal
+        open={currencyModal}
+        onClose={() => setCurrencyModal(false)}
+        selected={listing.currency}
+        onSelect={(code) => updateListing({ currency: code })}
       />
     </>
   );

@@ -1,9 +1,12 @@
 import { cn, formatMoney } from "@/lib/utils";
 import * as React from "react";
-import { View } from "react-native";
+import { TextInput, View } from "react-native";
 import { Text, Pressable } from "../ui";
 import BottomSheetPlain from "./BottomSheetPlain";
 import { FlashList } from "@shopify/flash-list";
+import { CustomInput } from "@/components/custom/CustomInput";
+import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
+import { Search } from "lucide-react-native";
 
 type OptionType = {
   label: string;
@@ -33,6 +36,14 @@ export default function MultiSelectOptionBottomSheet(props: Props) {
     multiple = false,
     format,
   } = props;
+  const [search, setSearch] = React.useState("");
+
+  const filtered = React.useMemo(() => {
+    if (!search.trim()) return options;
+    return options.filter((o) =>
+      o.label.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [search, options]);
 
   const isSelected = (v: string) => {
     if (multiple && Array.isArray(value)) {
@@ -43,7 +54,7 @@ export default function MultiSelectOptionBottomSheet(props: Props) {
 
   const toggleSelection = (option: OptionType) => {
     if (!multiple) {
-      onChange(option.value);
+      onChange(value == option.value ? "" : option.value);
       onDismiss();
       return;
     }
@@ -61,22 +72,43 @@ export default function MultiSelectOptionBottomSheet(props: Props) {
   return (
     <BottomSheetPlain
       visible={isOpen}
-      doneLabel={multiple ? "Close" : undefined}
+      doneLabel={multiple ? (value?.length ? "Done" : "Close") : undefined}
       onDismiss={onDismiss}
       withBackground={withBackground}
     >
       <View
-        style={{ height: options.length < 8 ? options.length * 53 : 450 }}
+        style={{
+          height:
+            options.length < 8 ? options.length * 53 : multiple ? 600 : 450,
+        }}
         className={
           withBackground
             ? "bg-background-muted py-2 rounded-2xl overflow-hidden"
             : ""
         }
       >
+        <View className="px-4 py-2 bg-background-muted z-10">
+          <CustomInput
+            value={search}
+            onUpdate={setSearch}
+            placeholder="Search..."
+            className="h-12 px-4 bg-background rounded-xl border border-outline-100 text-base"
+            placeholderTextColor="#999"
+          />
+        </View>
         <FlashList
-          data={options}
+          data={filtered}
           showsVerticalScrollIndicator={false}
           keyExtractor={(item) => item.label}
+          ListEmptyComponent={() => (
+            <MiniEmptyState
+              title="Item not found"
+              description="Clear search to see items"
+              icon={Search}
+              onPress={() => setSearch("")}
+              buttonLabel="Clear search"
+            />
+          )}
           renderItem={({ item: option, index }) => (
             <Pressable
               onPress={() => toggleSelection(option)}

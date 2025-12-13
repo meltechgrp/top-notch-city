@@ -53,7 +53,7 @@ export function BlockListItem({ user }: { user: Blocked }) {
           onPress={handlePress}
           className={`px-5 py-1.5 rounded-md  bg-primary`}
         >
-          <Text className={`font-semibold text-xs`}>Blocked</Text>
+          <Text className={`font-semibold text-xs`}>Unblock</Text>
         </AnimatedPressable>
       </TouchableOpacity>
     </>

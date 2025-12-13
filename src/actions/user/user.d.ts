@@ -62,6 +62,7 @@ interface AgentProfile {
 interface Company {
   id: string;
   name: string;
+  verified?: boolean;
   address?: string;
   website?: string;
   email?: string;

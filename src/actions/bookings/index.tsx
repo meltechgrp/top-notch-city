@@ -9,11 +9,14 @@ export async function sendBooking({ form }: { form: BookingForm }) {
       },
       data: form,
     });
-    if (res?.detail) throw Error("Something went wrong!, try again.");
+    if (res?.detail)
+      throw Error(
+        typeof res.detail == "string" ? res.detail : "Invalid fields"
+      );
     return res;
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
-    throw Error("Something went wrong");
+    throw Error(error);
   }
 }
 export async function Bookings(isAgent: boolean) {

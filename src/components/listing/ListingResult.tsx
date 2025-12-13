@@ -1,15 +1,32 @@
-import { Badge, BadgeText, Icon, Image, Text, View } from "@/components/ui";
+import {
+  Badge,
+  BadgeText,
+  Icon,
+  Image,
+  Pressable,
+  Text,
+  View,
+} from "@/components/ui";
 import { useLayout } from "@react-native-community/hooks";
 import { useTempStore } from "@/store";
 import { capitalize } from "lodash-es";
-import { Check } from "lucide-react-native";
+import { Check, Trash } from "lucide-react-native";
 import { composeFullAddress, formatMoney } from "@/lib/utils";
 import { ProfileImageTrigger } from "@/components/custom/ImageViewerProvider";
 import { generateMediaUrlSingle } from "@/lib/api";
+import { Dimensions } from "react-native";
+import Carousel from "react-native-reanimated-carousel";
+import { useShallow } from "zustand/react/shallow";
+
+const SCREEN_WIDTH = Dimensions.get("window").width;
 
 export default function ListingResult() {
-  const { listing: property } = useTempStore();
+  const { listing: property, updateListing } = useTempStore(
+    useShallow((s) => s)
+  );
   const { onLayout } = useLayout();
+  const availability = property.availabilityPeriod ?? [];
+  const facilities = property.facilities ?? [];
   return (
     <>
       <View onLayout={onLayout} className="gap-y-4 flex-1 mt-4 px-4">
@@ -24,7 +41,7 @@ export default function ListingResult() {
               label="Price"
               value={formatMoney(
                 Number(property?.price || 0),
-                property?.currency || "NGN",
+                property?.currency?.code || "NGN",
                 0
               )}
             />
@@ -98,27 +115,51 @@ export default function ListingResult() {
           <View className="bg-background-muted rounded-2xl p-4 shadow-sm">
             <Text className="mb-3">Amenities</Text>
             <View className="flex-row gap-4 justify-between flex-wrap">
-              {property.facilities?.map((a) => (
-                <View
-                  key={a.label}
-                  className=" border border-outline-100 rounded-xl w-[45%]"
-                >
-                  <Badge
-                    size="lg"
-                    variant="solid"
-                    className="bg-background rounded-xl px-3 py-3 gap-2"
-                  >
-                    <BadgeText className=" text-sm capitalize">
-                      {a.label}
-                    </BadgeText>
-                    {parseInt(a.value) > 0 ? (
-                      <Text className="text-primary">{a.value}</Text>
-                    ) : (
-                      <Icon size="sm" className="text-primary" as={Check} />
+              {facilities?.length > 0 && (
+                <View>
+                  <Carousel
+                    data={facilities}
+                    pagingEnabled={true}
+                    snapEnabled={true}
+                    width={SCREEN_WIDTH - 50}
+                    height={55}
+                    style={{
+                      alignItems: "center",
+                      justifyContent: "center",
+                      margin: "auto",
+                    }}
+                    mode={"horizontal-stack"}
+                    modeConfig={{
+                      snapDirection: "left",
+                      stackInterval: 20,
+                    }}
+                    customConfig={() => ({ type: "positive", viewCount: 10 })}
+                    renderItem={({ item, index }) => (
+                      <View
+                        style={{ width: SCREEN_WIDTH - 100, height: 50 }}
+                        className="flex-row gap-1 items-center bg-background border border-outline-100 justify-between rounded-xl px-4 py-3"
+                      >
+                        <Text className="text-base font-bold">
+                          {index + 1}.
+                        </Text>
+                        <Text className="text-white flex-1">{item}</Text>
+                        <Pressable
+                          className="rounded-xl items-center p-2 bg-primary/80 border border-outline-100"
+                          onPress={() => {
+                            updateListing({
+                              facilities: facilities.filter(
+                                (_, i) => i !== index
+                              ),
+                            });
+                          }}
+                        >
+                          <Icon as={Trash} />
+                        </Pressable>
+                      </View>
                     )}
-                  </Badge>
+                  />
                 </View>
-              ))}
+              )}
             </View>
           </View>
         )}

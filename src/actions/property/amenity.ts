@@ -71,3 +71,29 @@ export const deleteAmenity = async ({ id }: { id: string }) => {
     throw error;
   }
 };
+
+export const fetchAllViewTypes = async (): Promise<ViewType[]> => {
+  try {
+    const res = await Fetch(`/list/all/viewtypes?page=1&per_page=50`, {});
+    return res as ViewType[];
+  } catch (error) {
+    throw new Error("Failed to fetch view types labels");
+  }
+};
+export const fetchAllBedTypes = async (): Promise<BedType[]> => {
+  try {
+    const res = await Fetch(`/list/all/bedtypes?page=1&per_page=50`, {});
+    return res as BedType[];
+  } catch (error) {
+    throw new Error("Failed to fetch view types labels");
+  }
+};
+
+export const fetchAllAgentCompanies = async (): Promise<Company[]> => {
+  try {
+    const res = await Fetch(`/agent/companies`, {});
+    return res as Company[];
+  } catch (error) {
+    throw new Error("Failed to fetch view types labels");
+  }
+};

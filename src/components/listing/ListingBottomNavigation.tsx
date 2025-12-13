@@ -47,7 +47,7 @@ export default function ListingBottomNavigation({
           <Icon as={ChevronLeft} className="mr-2" />
           <Text>Back</Text>
         </Button>
-        {step == 5 ? (
+        {step == 6 ? (
           <Button
             size="xl"
             className="px-6"

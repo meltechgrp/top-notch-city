@@ -34,6 +34,7 @@ import {
   Edit,
   Eye,
   EyeOff,
+  LucideIcon,
   MapPin,
   Minus,
   Plus,
@@ -194,7 +195,7 @@ function CustomInputComponent({
           autoCapitalize="sentences"
           className={cn(
             "text-typography placeholder:text-typography/80 focus:outline-none flex-1 h-full rounded-xl",
-            multiline && "px-1 pt-2"
+            multiline && "px-0 pt-1"
           )}
           value={value}
           secureTextEntry={secure}
@@ -250,41 +251,32 @@ export function ButtonsInput({
   onUpdate,
   disabled,
   title,
-  placeholder = "Add",
-  label = "",
+  icon,
 }: CustomInputProps & {
-  placeholder?: string;
-  label?: string;
-  title?: string;
+  title: string;
+  icon?: LucideIcon;
 }) {
-  const num = Number.isInteger(value) ? 0 : Number(value);
+  const num = !Number(value) ? 0 : Number(value);
   return (
     <View className="gap-1">
-      {title && (
-        <Text className="text-sm text-typography/80 font-medium pl-2">
+      <View className="flex-row justify-between bg-background-muted rounded-xl border border-outline-100 px-4 py-1 items-center">
+        {icon && <Icon as={icon} className="text-typography/70" />}
+        <Text className="text-sm text-typography/70 flex-1 font-medium pl-2">
           {title}
         </Text>
-      )}
-      <View className="flex-row justify-between bg-background-muted rounded-xl border border-outline-100 px-4 py-2 items-center">
-        {num ? (
-          <Text className="font-medium">
-            {num} <Text className="text-typography/80">{label}</Text>
-          </Text>
-        ) : (
-          <Text className="text-typography/80 text-sm">{placeholder}</Text>
-        )}
-        <View className="flex-row items-center gap-6">
+        <View className="flex-row items-center gap-4">
           <AnimatedPressable
             onPress={() => onUpdate(Math.max(0, num - 1).toString())}
           >
-            <View className="p-2 border border-outline-100 bg-background rounded-full">
+            <View className=" items-center justify-center aspect-square w-11 border border-outline-100 bg-background rounded-full">
               <Icon as={Minus} />
             </View>
           </AnimatedPressable>
+          <Text className="font-bold mb-1">{num}</Text>
           <AnimatedPressable
             onPress={() => onUpdate(Math.max(0, num + 1).toString())}
           >
-            <View className="p-2 border border-outline-100 bg-background rounded-full">
+            <View className="w-11 aspect-square items-center justify-center border border-outline-100 bg-gray-600 rounded-full">
               <Icon as={Plus} />
             </View>
           </AnimatedPressable>

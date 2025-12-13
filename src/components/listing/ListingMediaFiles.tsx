@@ -15,10 +15,12 @@ export default function ListingMediaFiles() {
   return (
     <>
       <Box className="flex-1 py-4 px-4">
-        <View className=" flex-1 py-6 gap-4">
-          <Heading size="md" className="text-center">
-            Bring Your Property to Life with Photos and Video
-          </Heading>
+        <View className=" flex-1 gap-4">
+          <Heading size="lg">Add Photos and Videos</Heading>
+          <Text className="text-sm">
+            Bring Your Property to Life by upload clear and quality
+            images/videos.
+          </Text>
           <View className="py-4 gap-5">
             <TouchableOpacity
               className=" h-20"
@@ -62,6 +64,15 @@ export default function ListingMediaFiles() {
                 </Avatar>
               </View>
             </TouchableOpacity>
+          </View>
+          <View className="p-4 border rounded-xl mt-6 border-primary/50 gap-2">
+            <Text className="text-sm">
+              1.⁠ ⁠The video or image must be clear and of high quality.
+            </Text>
+            <Text className="text-sm">
+              2.⁠ ⁠The video or image must not contain any text, labels, or
+              watermarks.
+            </Text>
           </View>
         </View>
         <ListingPhotosBottomSheet

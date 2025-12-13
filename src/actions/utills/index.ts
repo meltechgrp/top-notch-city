@@ -5,24 +5,20 @@ import { getUniqueIdSync } from "react-native-device-info";
 import { useEffect, useRef, useState } from "react";
 
 export async function Fetch(url: string, options: AxiosRequestConfig = {}) {
-  try {
-    const authToken = await getActiveToken();
-    const deviceId = getUniqueIdSync();
-    const res = await axios({
-      baseURL: `${config.origin}/api`,
-      url,
-      method: options.method || "GET",
-      headers: {
-        ...(authToken && { Authorization: `Bearer ${authToken}` }),
-        "X-DID": deviceId,
-        ...options.headers,
-      },
-      data: options.data,
-    });
-    return res.data;
-  } catch (error: any) {
-    throw error;
-  }
+  const authToken = await getActiveToken();
+  const deviceId = getUniqueIdSync();
+  const res = await axios({
+    baseURL: `${config.origin}/api`,
+    url,
+    method: options.method || "GET",
+    headers: {
+      ...(authToken && { Authorization: `Bearer ${authToken}` }),
+      "X-DID": deviceId,
+      ...options.headers,
+    },
+    data: options.data,
+  });
+  return res.data;
 }
 export function useWebSocketConnection(url: string | null) {
   const ws = useRef<WebSocket | null>(null);

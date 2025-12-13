@@ -110,10 +110,20 @@ export type Listing = {
   subCategory?: string;
   type?: string;
   address?: GooglePlace;
-  facilities?: {
-    label: string;
-    value: any;
-  }[];
+  bathroom?: string;
+  bedroom?: string;
+  landarea?: string;
+  bedType?: string;
+  guests?: string;
+  plots?: string;
+  viewType?: string;
+  companies?: Company[];
+  discount?: string;
+  listing_role?: string;
+  owner_type?: string;
+  caution_fee?: string;
+  ownership_document_ids?: string;
+  facilities?: string[];
   photos?: Media[];
   videos?: Media[];
   modelImages?: Media[];
@@ -124,7 +134,10 @@ export type Listing = {
   duration?: string;
   description?: string;
   price?: string;
-  currency?: string;
+  currency?: {
+    code: string;
+    symbol: string;
+  };
 };
 
 type TempState = {
@@ -167,9 +180,12 @@ const initialTempState = {
   fullScreenLoading: false,
   pin: "",
   listing: {
-    purpose: "sell",
+    purpose: "rent",
     step: 1,
-    currency: "NGN",
+    currency: {
+      code: "NGN",
+      symbol: "₦",
+    },
     totalSteps: 7,
   },
   totalUnreadChat: 0,

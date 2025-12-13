@@ -168,7 +168,7 @@ const PropertyDetailsBottomSheet = ({
                   ))}
                 </View>
               </View>
-              {property.subcategory.name !== "Shortlet" &&
+              {property.category.name !== "Shortlet" &&
                 property.status == "approved" && (
                   <View className="bg-background-muted border border-outline-100 rounded-xl p-4 mx-4">
                     <View className="h-40 bg-background/70">

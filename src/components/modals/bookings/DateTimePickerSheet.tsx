@@ -9,6 +9,7 @@ import {
   parseISO,
   isAfter,
   format,
+  isToday,
 } from "date-fns";
 import { cn } from "@/lib/utils";
 import DatePicker from "@/components/custom/DatePicker";
@@ -114,11 +115,7 @@ export const DateTimePickerSheet = ({
                 setSelectedDate(date);
               }}
               mode="date"
-              minimumDate={
-                isReservation
-                  ? (validReservationDates?.[0] ?? new Date())
-                  : new Date()
-              }
+              minimumDate={new Date()}
               startDate={
                 isReservation
                   ? (validReservationDates?.[0] ?? new Date())
@@ -164,8 +161,10 @@ export const DateTimePickerSheet = ({
               minuteInterval={15}
               mode="time"
               minimumDate={
-                isReservation
-                  ? (validReservationDates?.[0] ?? new Date())
+                isReservation && selectedDate
+                  ? isToday(selectedDate)
+                    ? new Date()
+                    : undefined
                   : new Date()
               }
               startDate={

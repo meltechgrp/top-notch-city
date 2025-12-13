@@ -47,6 +47,19 @@ type Property = {
   subcategory: SubCategory;
   address: Address;
   media: Media[];
+  bathroom?: string;
+  bedroom?: string;
+  landarea?: string;
+  bedType?: string;
+  guests?: string;
+  plots?: string;
+  viewType?: string;
+  companies?: Company[];
+  discount?: string;
+  listing_role?: string;
+  owner_type?: string;
+  caution_fee?: string;
+  ownership_document_ids?: string;
   owner: Owner;
   availabilities: Availabilities[];
   is_following: boolean;
@@ -218,4 +231,13 @@ interface Currency {
   code: string;
   name: string;
   symbol: string;
+}
+
+interface ViewType {
+  id: string;
+  name: string;
+}
+interface BedType {
+  id: string;
+  name: string;
 }

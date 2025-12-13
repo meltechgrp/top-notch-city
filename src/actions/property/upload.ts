@@ -26,11 +26,38 @@ export function useUploadProperty(type: "edit" | "add", propertyId?: string) {
         title,
         availabilityPeriod,
         currency,
+        viewType,
+        bathroom,
+        bedType,
+        bedroom,
+        discount,
+        landarea,
+        guests,
+        plots,
+        owner_type,
+        listing_role,
+        ownership_document_ids,
+        companies,
+        caution_fee,
       } = listing;
       if (title) formData.append("title", title);
       if (description) formData.append("description", description);
-      if (currency) formData.append("currency_code", currency);
+      if (currency) formData.append("currency_code", currency.code);
       if (price) formData.append("price", price);
+      if (viewType) formData.append("viewType", viewType);
+      if (bathroom) formData.append("bathroom", bathroom);
+      if (bedroom) formData.append("bedroom", bedroom);
+      if (bedType) formData.append("bedType", bedType);
+      if (discount) formData.append("discount", discount);
+      if (landarea) formData.append("landarea", landarea);
+      if (guests) formData.append("guests", guests);
+      if (plots) formData.append("plots", plots);
+      if (caution_fee) formData.append("caution_fee", caution_fee);
+      if (ownership_document_ids)
+        formData.append("ownership_document_ids", ownership_document_ids);
+      if (companies) formData.append("companies", JSON.stringify(companies));
+      if (owner_type) formData.append("owner_type", owner_type);
+      if (listing_role) formData.append("listing_role", listing_role);
       if (duration) formData.append("duration", duration);
       if (category) formData.append("property_category_name", category);
       if (subCategory)
@@ -59,8 +86,8 @@ export function useUploadProperty(type: "edit" | "add", propertyId?: string) {
       });
 
       facilities?.forEach((fac) => {
-        formData.append("amenity_names", fac.label);
-        formData.append("amenity_values", fac.value.toString());
+        formData.append("amenity_names", fac);
+        formData.append("amenity_values", "true");
       });
 
       try {
@@ -83,7 +110,7 @@ export function useUploadProperty(type: "edit" | "add", propertyId?: string) {
             {
               headers: {
                 Authorization: `Bearer ${token}`,
-                "Content-Type": "multipart/form-data",
+                "Content-Type": "application/x-www-form-urlencoded",
                 Accept: "application/json",
               },
             }

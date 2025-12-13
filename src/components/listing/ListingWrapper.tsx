@@ -1,6 +1,7 @@
 import { useUploadProperty } from "@/actions/property/upload";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { BodyScrollView } from "@/components/layouts/BodyScrollView";
+import AdditionalInfomation from "@/components/listing/AdditionalInfomation";
 import PropertyListingBasic from "@/components/listing/Basic";
 import ListingAmenities from "@/components/listing/ListingAmenities";
 import ListingBottomNavigation from "@/components/listing/ListingBottomNavigation";
@@ -66,6 +67,8 @@ export function ListingWrapper({
       case 4:
         return <ListingMediaFiles />;
       case 5:
+        return <AdditionalInfomation />;
+      case 6:
         return <ListingResult />;
       default:
         return null;
@@ -73,7 +76,7 @@ export function ListingWrapper({
   }, [listing.step]);
   function handleNext(step: number, back?: boolean) {
     if (back) {
-      return updateListing({ ...listing, step });
+      return updateListing({ step });
     } else if (listing.step == 1) {
       if (!listing?.purpose) {
         return showErrorAlert({
@@ -118,10 +121,12 @@ export function ListingWrapper({
           alertType: "warn",
         });
       } else if (listing?.purpose == "rent" && !listing?.duration) {
-        return showErrorAlert({
-          title: "Please select rentage duration",
-          alertType: "warn",
-        });
+        if (listing.category != "Shortlet" && listing.category != "Hotel") {
+          return showErrorAlert({
+            title: "Please select rentage duration",
+            alertType: "warn",
+          });
+        }
       }
     } else if (listing.step == 3 && !listing?.facilities?.length) {
       return showErrorAlert({

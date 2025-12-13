@@ -59,11 +59,13 @@ export const BookingFormBottomSheet = ({
         title: "Message sent successfully",
         alertType: "success",
       }),
-    onError: () =>
+    onError: (e) => {
+      console.log(e);
       showErrorAlert({
-        title: "Something went wrong, try again!",
+        title: e?.message || "Something went wrong, try again!",
         alertType: "error",
-      }),
+      });
+    },
   });
 
   const [formData, setFormData] = useState<BookingForm>({
@@ -231,23 +233,17 @@ export const BookingFormBottomSheet = ({
                 <View className="gap-5">
                   <ButtonsInput
                     title="Duration (days)"
-                    label="days"
-                    placeholder="Add duration"
                     value={formData.duration_days?.toString()}
                     onUpdate={(v) => updateField("duration_days", v)}
                   />
                   <ButtonsInput
                     title="Guests"
-                    label="guests"
-                    placeholder="Number of guests"
                     value={formData.guest?.toString()}
                     onUpdate={(v) => updateField("guest", v)}
                   />
 
                   <ButtonsInput
                     title="Beds (optional)"
-                    placeholder="Number of beds"
-                    label="bed"
                     value={formData.no_of_beds?.toString()}
                     onUpdate={(v) => updateField("no_of_beds", v)}
                   />

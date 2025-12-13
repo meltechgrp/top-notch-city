@@ -88,7 +88,7 @@ function ListingVideosBottomSheet(props: Props) {
         </View>
         <View
           className={cn(
-            "flex-row flex-wrap gap-2 justify-between ",
+            "flex-row flex-wrap gap-2 ",
             previewFiles.length > 0 && "my-4"
           )}
         >

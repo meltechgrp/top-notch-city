@@ -1,10 +1,4 @@
-import {
-  KeyboardAvoidingView,
-  Modal,
-  Platform,
-  TextInput,
-  ScrollView,
-} from "react-native";
+import { KeyboardAvoidingView, Modal, Platform, TextInput } from "react-native";
 import { X } from "lucide-react-native";
 import { Pressable, Text, View } from "@/components/ui";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -42,7 +36,12 @@ export function CompanyModal({
   const save = () => {
     if (!form.name.trim())
       return showErrorAlert({
-        title: "Please enter the name of your company",
+        title: "Company/Organisation must have a name",
+        alertType: "warn",
+      });
+    if (!form?.phone?.trim())
+      return showErrorAlert({
+        title: "Please enter phone number",
         alertType: "warn",
       });
     onSave(form);
@@ -66,7 +65,7 @@ export function CompanyModal({
       <View className="flex-1 bg-black/80 justify-end">
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "padding"}
-          className="max-h-[95%] bg-background flex-1"
+          className="max-h-[90%] bg-background flex-1"
         >
           <SafeAreaView
             edges={["bottom", "left", "right"]}
@@ -91,13 +90,13 @@ export function CompanyModal({
                 />
               </View>
 
-              {(["address", "email", "phone"] as const).map((key) => (
+              {(["phone", "address", "email"] as const).map((key) => (
                 <View className="mb-4" key={key}>
                   <Text className="mb-1 capitalize">{key}</Text>
                   <TextInput
                     value={form[key] || ""}
                     onChangeText={(v) => update(key, v)}
-                    placeholder={`Enter ${key} (Optional)`}
+                    placeholder={`Enter ${key} ${key == "phone" ? "line" : "(Optional)"}`}
                     placeholderTextColor="#777"
                     autoCapitalize="none"
                     className="bg-background-muted text-typography h-12 px-3 rounded-xl"

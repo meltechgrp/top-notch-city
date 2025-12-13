@@ -16,7 +16,7 @@ const AnimatedPressable = ({
   containerClassName,
   ...props
 }: ViewProps & {
-  onPress: () => void;
+  onPress?: () => void;
   onDoublePress?: () => void;
   containerClassName?: string;
 }) => {
