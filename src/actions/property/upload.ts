@@ -36,7 +36,7 @@ export function useUploadProperty(type: "edit" | "add", propertyId?: string) {
         plots,
         owner_type,
         listing_role,
-        ownership_document_ids,
+        ownership_documents,
         companies,
         caution_fee,
       } = listing;
@@ -53,9 +53,17 @@ export function useUploadProperty(type: "edit" | "add", propertyId?: string) {
       if (guests) formData.append("guests", guests);
       if (plots) formData.append("plots", plots);
       if (caution_fee) formData.append("caution_fee", caution_fee);
-      if (ownership_document_ids)
-        formData.append("ownership_document_ids", ownership_document_ids);
-      if (companies) formData.append("companies", JSON.stringify(companies));
+      ownership_documents?.forEach((item) => {
+        formData.append("ownership_document_ids", item.id);
+      });
+      if (companies) {
+        const comp = companies[0];
+        if (comp?.id) {
+          formData.append("companies", comp.id);
+        } else {
+          formData.append("companies", JSON.stringify(comp));
+        }
+      }
       if (owner_type) formData.append("owner_type", owner_type);
       if (listing_role) formData.append("listing_role", listing_role);
       if (duration) formData.append("duration", duration);
@@ -90,35 +98,45 @@ export function useUploadProperty(type: "edit" | "add", propertyId?: string) {
         formData.append("amenity_values", "true");
       });
 
-      try {
-        if (type == "edit") {
-          return await axios.put(
-            `${config.origin}/api/properties/${propertyId}`,
-            formData,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "multipart/form-data",
-                Accept: "application/json",
-              },
-            }
-          );
-        } else {
-          return await axios.post(
-            `${config.origin}/api/properties/`,
-            formData,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/x-www-form-urlencoded",
-                Accept: "application/json",
-              },
-            }
-          );
+      if (type == "edit") {
+        const res = await fetch(
+          `${config.origin}/api/properties/${propertyId}`,
+          {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: formData,
+          }
+        );
+        const data = await res.json();
+        if (data?.detail) {
+          if (data?.detail?.split(":")[2]) {
+            throw Error(data?.detail?.split(":")[2]);
+          } else {
+            throw Error(data.detail);
+          }
         }
-      } catch (error: any) {
-        console.log(error);
-        throw Error(error?.message || "Something went wrong");
+        return data;
+      } else {
+        const res = await fetch(`${config.origin}/api/properties/`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: formData,
+        });
+        const data = await res.json();
+        if (data?.detail) {
+          if (data?.detail?.split(":")[2]) {
+            throw Error(data?.detail?.split(":")[2]);
+          } else {
+            throw Error(data.detail);
+          }
+        }
+        return data;
       }
     },
     onSuccess: () => {
@@ -127,7 +145,6 @@ export function useUploadProperty(type: "edit" | "add", propertyId?: string) {
         queryClient.invalidateQueries({ queryKey: ["properties", propertyId] });
       }
     },
-    onError: (e) => console.log(e),
   });
 
   return {

@@ -40,7 +40,7 @@ export function ListingWrapper({
 
   async function uploaHandler() {
     await uploadProperty(listing, {
-      onSuccess: () => {
+      onSuccess: (e) => {
         router.dismissTo({
           pathname: "/(protected)/agents/[userId]/properties/success",
           params: {
@@ -49,11 +49,13 @@ export function ListingWrapper({
         });
         resetListing();
       },
-      onError: () =>
+      onError: (e) => {
+        console.log(e?.message, "here");
         showErrorAlert({
-          title: error ?? "Something went wrong",
+          title: e?.message || "Something went wrong",
           alertType: "error",
-        }),
+        });
+      },
     });
   }
   const Steps = useMemo(() => {

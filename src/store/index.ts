@@ -122,7 +122,7 @@ export type Listing = {
   listing_role?: string;
   owner_type?: string;
   caution_fee?: string;
-  ownership_document_ids?: string;
+  ownership_documents?: Media[];
   facilities?: string[];
   photos?: Media[];
   videos?: Media[];

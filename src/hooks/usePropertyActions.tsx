@@ -75,7 +75,7 @@ export function usePropertyActions({ property }: { property: Property }) {
       onConfirm: sell,
     },
     {
-      visible: !isAdmin && isOwner && property.status !== "pending",
+      visible: !isAdmin && isOwner,
       header: "Delete Property",
       actionText: "Delete Property",
       description: "This will delete your property. Are you sure?",

@@ -41,7 +41,6 @@ export async function uploadAgentForm(form: Partial<Application>) {
         data.append("languages", val.toString());
       });
     }
-    console.log(data);
     const res = await Fetch("/agent/apply", {
       method: "POST",
       headers: {

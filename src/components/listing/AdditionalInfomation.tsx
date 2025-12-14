@@ -12,6 +12,7 @@ import { fetchAllAgentCompanies } from "@/actions/property/amenity";
 import DropdownSelect from "@/components/custom/DropdownSelect";
 import { Plus, Trash } from "lucide-react-native";
 import { Divider } from "@/components/ui/divider";
+import { formatNumber, unformatNumber } from "@/lib/utils";
 
 export default function AdditionalInfomation() {
   const { listing, updateListing } = useTempStore(useShallow((s) => s));
@@ -74,10 +75,20 @@ export default function AdditionalInfomation() {
             returnKeyType="done"
             enterKeyHint="done"
             returnKeyLabel="Done"
-            value={listing.landarea}
-            onUpdate={(val) => updateListing({ landarea: val })}
+            value={formatNumber(listing.landarea?.toString())}
+            onUpdate={(val) => updateListing({ landarea: unformatNumber(val) })}
           />
         )}
+        <CustomInput
+          title="Discount (optional)"
+          placeholder="Discount percentage"
+          keyboardType="number-pad"
+          returnKeyType="done"
+          enterKeyHint="done"
+          returnKeyLabel="Done"
+          value={listing.discount}
+          onUpdate={(val) => updateListing({ discount: val })}
+        />
         {(listing.listing_role == "agent" ||
           listing.listing_role == "manager") &&
           listing.owner_type != "individual" && (

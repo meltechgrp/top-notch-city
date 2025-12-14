@@ -49,6 +49,7 @@ type Property = {
   media: Media[];
   bathroom?: string;
   bedroom?: string;
+  is_booked?: boolean;
   landarea?: string;
   bedType?: string;
   guests?: string;
@@ -59,8 +60,8 @@ type Property = {
   listing_role?: string;
   owner_type?: string;
   caution_fee?: string;
-  ownership_document_ids?: string;
   owner: Owner;
+  ownership: Ownership;
   availabilities: Availabilities[];
   is_following: boolean;
   amenities: Amenity[];
@@ -89,6 +90,33 @@ type Owner = {
   first_name: string;
   last_name: string;
   profile_image?: string;
+};
+
+type ListingRole = "agent" | "manager" | "onwer";
+type OwnerType =
+  | "individual"
+  | "company"
+  | "property_manager"
+  | "hotel_operator";
+
+type Documents = {
+  id: string;
+  document_type: "image" | "pdf";
+  file_url: string;
+  uploaded_at: string;
+};
+
+type Ownership = {
+  id: string;
+  listing_role: ListingRole;
+  owner_type: OwnerType;
+  owner_user_id: string;
+  owner_company: Company;
+  verification_status: "not_required" | "required";
+  verification_note: string | null;
+  documents: Documents[];
+  created_at: string;
+  updated_at: string | null;
 };
 
 type Amenity = {

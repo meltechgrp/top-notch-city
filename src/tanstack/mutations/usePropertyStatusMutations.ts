@@ -5,13 +5,14 @@ import {
   softDeleteProperty,
 } from "@/actions/property/actions";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
+import { router } from "expo-router";
 
 export function usePropertyStatusMutations() {
   const queryClient = useQueryClient();
 
   const invalidate = (id: string) => {
     queryClient.invalidateQueries({ queryKey: ["properties", id] });
-    queryClient.invalidateQueries({ queryKey: ["properties"] });
+    queryClient.invalidateQueries({ queryKey: ["agent-property"] });
     queryClient.invalidateQueries({ queryKey: ["admins-properties"] });
     queryClient.invalidateQueries({ queryKey: ["pending-properties"] });
   };
@@ -51,6 +52,7 @@ export function usePropertyStatusMutations() {
         duration: 3000,
       });
       invalidate(propertyId);
+      router.back();
     },
     onError: () =>
       showErrorAlert({
@@ -69,6 +71,7 @@ export function usePropertyStatusMutations() {
         duration: 3000,
       });
       invalidate(propertyId);
+      router.back();
     },
     onError: () =>
       showErrorAlert({

@@ -182,7 +182,7 @@ export default function ListingAmenities() {
                         className="rounded-xl items-center p-2 bg-primary/80 border border-outline-100"
                         onPress={() => {
                           updateListing({
-                            facilities: facilities.filter(
+                            availabilityPeriod: availability.filter(
                               (_, i) => i !== index
                             ),
                           });
@@ -267,6 +267,9 @@ export default function ListingAmenities() {
             title="Land area (sq/ft)"
             placeholder="Land area (optional)"
             keyboardType="number-pad"
+            returnKeyType="done"
+            enterKeyHint="done"
+            returnKeyLabel="Done"
             value={listing.landarea}
             onUpdate={(val) => updateListing({ landarea: val })}
           />

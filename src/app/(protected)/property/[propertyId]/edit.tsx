@@ -29,20 +29,29 @@ export default function PropertyEdit() {
         landarea: data.landarea,
         plots: data.plots,
         viewType: data.viewType,
+        discount: data.discount,
+        caution_fee: data.caution_fee,
+        owner_type: data.owner_type,
+        listing_role: data.listing_role,
         subCategory: data.subcategory.name,
         companies: data.companies,
+        ownership_documents: data?.ownership?.documents?.map((d) => ({
+          media_type: d.document_type?.toUpperCase() as Media["media_type"],
+          id: d.id,
+          url: d.file_url,
+        })),
         price: data.price.toString(),
         photos: data.media?.filter((img) => img.media_type == "IMAGE"),
         videos: data.media?.filter((img) => img.media_type == "VIDEO"),
-        currency: data?.currency?.code || "NGN",
+        currency: {
+          code: data?.currency?.code || "NGN",
+          symbol: data?.currency?.symbol || "#",
+        },
         availabilityPeriod: data?.availabilities.map((a) => ({
           start: a.start,
           end: a.end,
         })),
-        facilities: data?.amenities?.map((f) => ({
-          label: f.name,
-          value: f.value,
-        })),
+        facilities: data?.amenities?.map((f) => f.name),
         address: {
           displayName: composeFullAddress(data.address),
           addressComponents: {

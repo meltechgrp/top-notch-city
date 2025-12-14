@@ -42,7 +42,7 @@ export async function softDeleteProperty(propertyId: string) {
     method: "DELETE",
   });
   if (res?.detail) {
-    throw new Error("Failed to soft delete property");
+    throw new Error("Failed to delete property");
   }
   return await res;
 }

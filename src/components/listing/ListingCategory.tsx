@@ -147,6 +147,7 @@ export default function ListingCategory() {
               onUpdate={(val) => updateListing({ plots: val })}
             />
           )}
+
           {listing.purpose == "rent" &&
             listing.category != "Shortlet" &&
             listing.category != "Hotel" && (

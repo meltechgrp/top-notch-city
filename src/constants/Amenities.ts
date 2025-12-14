@@ -20,7 +20,7 @@ export const Durations = [
 
 export const ListingRole = [
   { label: "Agent", value: "agent" },
-  { label: "Manager", value: "landlord" },
+  { label: "Manager", value: "manager" },
   { label: "Owner", value: "owner" },
 ];
 
