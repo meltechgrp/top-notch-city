@@ -30,14 +30,11 @@ const DiscoverProperties = (props: Props) => {
             })
           }
           height={mapHeight}
-          onMarkerPress={(data) =>
-            router.push({
-              pathname: "/explore",
-              params: {
-                propertyId: data.id,
-              },
-            })
-          }
+          // onMarkerPress={(data) =>
+          //   router.push({
+          //     pathname: "/explore",
+          //   })
+          // }
         />
       </View>
     </View>

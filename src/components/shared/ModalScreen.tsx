@@ -1,8 +1,8 @@
-import React, { ReactNode, useCallback, useEffect, useState } from "react";
+import React, { ReactNode, useCallback, useEffect } from "react";
 import { Dimensions, Modal, Platform } from "react-native";
 import { Icon, Text, Pressable, View } from "@/components/ui";
 import { ChevronLeft, LucideIcon } from "lucide-react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import Animated, {
   useSharedValue,
@@ -18,7 +18,6 @@ const SCREEN_WIDTH = Dimensions.get("window").width;
 const EDGE_WIDTH = 40;
 type ModalScreenProps = {
   title?: string;
-  trigger?: ReactNode;
   rightComponent?: ReactNode;
   leftComponent?: ReactNode;
   closeIcon?: LucideIcon;
@@ -30,7 +29,6 @@ type ModalScreenProps = {
 
 export default function ModalScreen({
   title,
-  trigger,
   rightComponent,
   children,
   disableSwipe = false,
@@ -39,6 +37,8 @@ export default function ModalScreen({
   leftComponent,
   visible,
 }: ModalScreenProps) {
+  const insets = useSafeAreaInsets();
+
   const translateX = useSharedValue(SCREEN_WIDTH);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -79,6 +79,7 @@ export default function ModalScreen({
       <Modal
         visible={visible}
         transparent
+        statusBarTranslucent
         animationType="none"
         onRequestClose={close}
       >
@@ -100,27 +101,34 @@ export default function ModalScreen({
               />
             </GestureDetector>
           )}
-          <SafeAreaView edges={["top"]} className="flex-1 bg-background">
-            <View className="h-14 pb-1 px-4 flex-row items-center justify-between border-b border-outline-100/50 relative">
-              {leftComponent ?? (
-                <Pressable
-                  onPress={close}
-                  className="p-2 border border-outline-100 rounded-full items-center justify-center"
-                >
-                  <Icon as={closeIcon ?? ChevronLeft} size="xl" />
-                </Pressable>
-              )}
+          <View className="flex-1">
+            <View
+              style={{
+                paddingTop: Math.max(insets.top, 16),
+              }}
+              className=" bg-background"
+            >
+              <View className="h-14 pb-1 px-4 flex-row items-center justify-between border-b border-outline-100/50 relative">
+                {leftComponent ?? (
+                  <Pressable
+                    onPress={close}
+                    className="p-2 ml-4 border bg-background-muted border-outline-100 rounded-full items-center justify-center"
+                  >
+                    <Icon as={closeIcon ?? ChevronLeft} size="xl" />
+                  </Pressable>
+                )}
 
-              <View className=" absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
-                <Text className="text-base font-medium">{title ?? ""}</Text>
-              </View>
+                <View className=" absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
+                  <Text className="text-base font-medium">{title ?? ""}</Text>
+                </View>
 
-              <View className="min-w-[40px] items-end">
-                {rightComponent ?? null}
+                <View className="min-w-[40px] items-end">
+                  {rightComponent ?? null}
+                </View>
               </View>
             </View>
             <View className="flex-1">{children}</View>
-          </SafeAreaView>
+          </View>
         </Animated.View>
       </Modal>
     </>

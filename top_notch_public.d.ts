@@ -63,7 +63,8 @@ type QueryType =
   | "lands"
   | "featured"
   | "trending-lands"
-  | "agent-property";
+  | "agent-property"
+  | "shortlet";
 
 type UploadedFile = Media & {
   loading?: boolean;

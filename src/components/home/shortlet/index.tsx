@@ -4,14 +4,14 @@ import { useHomeFeed } from "@/hooks/useHomeFeed";
 import { router } from "expo-router";
 import { memo } from "react";
 
-function ApartmentsProperties() {
-  const { latest, refetchingLatest, loadingLatest } = useHomeFeed();
+function ShortletProperties() {
+  const { shortlets, loadingShortlet, refetchingShortlet } = useHomeFeed();
   return (
     <SectionHeaderWithRef
-      title="Properties"
+      title="Shortlet/Hotels"
       titleClassName="text-gray-400 text-base"
       subTitle="See More"
-      hasData={latest?.length > 0 || refetchingLatest || loadingLatest}
+      hasData={loadingShortlet || refetchingShortlet || shortlets?.length > 0}
       onSeeAllPress={() => {
         router.push({
           pathname: "/explore",
@@ -22,13 +22,13 @@ function ApartmentsProperties() {
       }}
     >
       <HorizontalProperties
-        data={latest}
-        isLoading={loadingLatest}
-        isRefetching={refetchingLatest}
-        listType={["latest"]}
+        data={shortlets}
+        isLoading={loadingShortlet}
+        listType={["shortlet"]}
+        isRefetching={refetchingShortlet}
       />
     </SectionHeaderWithRef>
   );
 }
 
-export default memo(ApartmentsProperties);
+export default memo(ShortletProperties);

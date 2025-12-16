@@ -8,23 +8,20 @@ import {
   formatNumberCompact,
 } from "@/lib/utils";
 import { StyleProp, View, ViewStyle } from "react-native";
-import { Icon, Text, Pressable, Badge, Button } from "../ui";
+import { Icon, Text, Pressable } from "../ui";
 import {
   Bath,
   Bed,
   Eye,
   Heart,
   Home,
-  House,
   LandPlot,
   MapPin,
-  MessageCircleMore,
 } from "lucide-react-native";
 import { memo, useMemo } from "react";
 import Layout from "@/constants/Layout";
 import { useLayout } from "@react-native-community/hooks";
 import { PropertyStatus } from "./PropertyStatus";
-import PropertyInteractions from "./PropertyInteractions";
 import { PropertyBadge } from "./PropertyBadge";
 import { useStore } from "@/store";
 import PropertyMedia from "@/components/property/PropertyMedia";
@@ -195,13 +192,10 @@ function PropertyListItem(props: Props) {
             </View>
           )}
         </View>
-        {(data.category.name == "Shortlet" ||
-          data.category.name == "Hotel") && (
-          <View className="flex-row gap-1 items-center mt-2">
-            <Icon as={Home} size="sm" className="text-primary" />
-            <Text className=" text-sm">{data.title}</Text>
-          </View>
-        )}
+        <View className="flex-row gap-1 items-center mt-1">
+          <Icon as={Home} size="sm" className="text-primary" />
+          <Text className=" text-sm">{generateTitle(data)}</Text>
+        </View>
       </View>
     </Pressable>
   );

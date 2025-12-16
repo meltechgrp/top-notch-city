@@ -13,31 +13,19 @@ type SearchFilters = {
   max_bedroom?: string;
   min_bathroom?: string;
   max_bathroom?: string;
+  min_plots?: string;
+  max_plots?: string;
+  min_landarea?: string;
+  max_landarea?: string;
   use_geo_location?: string;
   createdAt?: string;
   tour?: string;
   latitude?: string;
   longitude?: sttring;
   perPage?: number;
-};
-type CustomFilters = {
-  keyword?: string;
-  city?: string;
-  state?: string;
-  country?: string;
-  purpose?: string;
-  min_price?: string;
-  max_price?: string;
-  category?: string;
-  sub_category?: string;
-  amenities?: string[];
-  bedrooms?: string;
-  bathrooms?: string;
-  use_geo_location?: string;
-  createdAt?: string;
-  tour?: string;
-  latitude?: string;
-  longitude?: sttring;
+  bedType?: string;
+  guests?: string;
+  viewType?: string;
 };
 
 type SearchHistory = {

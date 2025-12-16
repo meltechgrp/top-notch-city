@@ -2,7 +2,6 @@ import { useEffect, useMemo, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useStore, useTempStore } from "@/store";
 import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
-import { fetchTopLocations } from "@/actions/property/locations";
 import { Fetch } from "@/actions/utills";
 
 async function getTotal() {
@@ -22,7 +21,7 @@ export function useHomeFeed() {
     isRefetching: refetchingFeatured,
   } = useInfinityQueries({
     type: "featured",
-    perPage: 5,
+    perPage: 10,
   });
 
   const featured = useMemo(
@@ -38,7 +37,7 @@ export function useHomeFeed() {
     isRefetching: refetchingLand,
   } = useInfinityQueries({
     type: "trending-lands",
-    perPage: 5,
+    perPage: 10,
   });
 
   const lands = useMemo(
@@ -54,7 +53,7 @@ export function useHomeFeed() {
     isRefetching: refetchingLatest,
   } = useInfinityQueries({
     type: "latest",
-    perPage: 5,
+    perPage: 10,
   });
 
   const latest = useMemo(
@@ -93,6 +92,20 @@ export function useHomeFeed() {
     queryKey: ["total"],
     queryFn: getTotal,
   });
+  const {
+    data: allShortlet,
+    refetch: refetchShortlet,
+    isLoading: loadingShortlet,
+    isRefetching: refetchingShortlet,
+  } = useInfinityQueries({
+    type: "shortlet",
+    perPage: 10,
+  });
+
+  const shortlets = useMemo(
+    () => allShortlet?.pages.flatMap((page) => page.results) || [],
+    [allShortlet]
+  );
 
   const refreshAll = useCallback(async () => {
     await Promise.all([
@@ -101,6 +114,7 @@ export function useHomeFeed() {
       refetchLatest(),
       refetchNearby(),
       getTotalCount(),
+      refetchShortlet(),
     ]);
   }, [
     refetchFeatured,
@@ -120,6 +134,7 @@ export function useHomeFeed() {
     nearby: nearbyProperties || [],
     loadingFeatured,
     loadingLand,
+    loadingShortlet,
     loadingLatest,
     refetchingFeatured,
     refetchingLand,
@@ -129,5 +144,7 @@ export function useHomeFeed() {
     total: totalUnreadChat,
     getTotalCount,
     updatetotalUnreadChat,
+    refetchingShortlet,
+    shortlets,
   };
 }

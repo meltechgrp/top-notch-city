@@ -83,21 +83,24 @@ export const FindAmenity = (item: string, data?: Property): any => {
   );
 };
 
-export function generateTitle({
-  category,
-  subcategory,
-  amenities,
-  purpose,
-  title,
-}: Property) {
-  switch (category.name.trim()) {
+export function generateTitle(property: Property) {
+  switch (property.category.name.trim()) {
+    case "Residential":
+      return `${FindAmenity("Bedroom", property) || ""} Bedroom ${property.subcategory?.name || ""}`.trim();
+
+    case "Commercial":
+      return `${property.subcategory?.name || "Commercial Space"} ${property.purpose ? `for ${property.purpose}` : ""}`.trim();
+
+    case "Land":
+      return `${FindAmenity("Total Plot", property) || 1} Plot${FindAmenity("Total Plot", property) > 1 ? "s" : ""} of Land`;
+
     case "Hotel":
     case "Shortlet":
     case "Chalet":
-      return `${title}`;
+      return property.title;
 
     default:
-      return `${subcategory.name || category.name}`;
+      return `${property.subcategory.name || property.category.name}`;
   }
 }
 

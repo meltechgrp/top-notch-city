@@ -9,6 +9,7 @@ import { useStore } from "@/store";
 import React, { useEffect, useState } from "react";
 import CustomerCareBottomSheet from "@/components/modals/CustomerCareBottomSheet";
 import { FlatList, ListRenderItem, RefreshControl } from "react-native";
+import ShortletProperties from "@/components/home/shortlet";
 import FeaturedProperties from "@/components/home/featured";
 import ApartmentProperties from "@/components/home/recent";
 import Lands from "@/components/home/lands";
@@ -28,9 +29,13 @@ export default function HomeScreen() {
       id: "locations",
       _typename: "Locations",
     } as any;
-    const populerCommunities = {
+    const featured = {
       id: "featured",
       __typename: "Featured",
+    } as any;
+    const shortlets = {
+      id: "shortlet",
+      __typename: "Shortlet",
     } as any;
     const apartment = {
       id: "apartment",
@@ -46,7 +51,8 @@ export default function HomeScreen() {
     } as any;
     return [
       topLocations,
-      populerCommunities,
+      featured,
+      shortlets,
       apartment,
       lands,
       bottomPlaceHolder,
@@ -60,6 +66,9 @@ export default function HomeScreen() {
     }
     if (item.id === "featured") {
       return <FeaturedProperties />;
+    }
+    if (item.id === "shortlet") {
+      return <ShortletProperties />;
     }
     if (item.id === "apartment") {
       return <ApartmentProperties />;

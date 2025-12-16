@@ -14,6 +14,8 @@ import { useMutation } from "@tanstack/react-query";
 import useGetLocation from "@/hooks/useGetLocation";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { getReverseGeocode } from "@/hooks/useReverseGeocode";
+import ModalScreen from "@/components/shared/ModalScreen";
+import AnimatedPressable from "@/components/custom/AnimatedPressable";
 
 type Props = {
   show: boolean;
@@ -71,7 +73,7 @@ function SearchLocationBottomSheet({
 
   const onChangeText = (val: string) => {
     setText(val);
-    setTyping(val.length > 0);
+    setTyping(val.length > 1);
     debouncedAutocompleteSearch(val);
   };
   function hnadleSave(search: SearchHistory) {
@@ -122,7 +124,7 @@ function SearchLocationBottomSheet({
   };
 
   const handleUseLocation = useCallback(async () => {
-    setTyping(true);
+    setLocating(true);
 
     const locationData = await retryGetLocation();
     if (!locationData) {
@@ -130,7 +132,7 @@ function SearchLocationBottomSheet({
         title: "Unable to get location, try again!",
         alertType: "warn",
       });
-      return setTyping(false);
+      return setLocating(false);
     }
 
     const result = await getReverseGeocode(locationData);
@@ -140,11 +142,11 @@ function SearchLocationBottomSheet({
         title: "Unable to get location, try again!",
         alertType: "warn",
       });
-      return setTyping(false);
+      return setLocating(false);
     }
 
     handleSelect({ ...result.addressComponents, ...locationData } as any);
-    setTyping(false);
+    setLocating(false);
   }, [retryGetLocation, handleSelect]);
   const displayData: SearchHistory[] = typing
     ? locations.map((item) => ({
@@ -159,12 +161,25 @@ function SearchLocationBottomSheet({
     : savedSearches;
 
   return (
-    <BottomSheet
-      withHeader={false}
-      withBackButton={false}
-      snapPoint={"95%"}
+    <ModalScreen
+      title=""
       visible={show}
       onDismiss={onDismiss}
+      rightComponent={
+        <AnimatedPressable
+          className="px-4 flex-row items-center gap-1 py-2 border border-outline-100 bg-background-muted rounded-full"
+          onPress={async () => {
+            await handleUseLocation();
+          }}
+        >
+          {locating ? (
+            <SpinningLoader />
+          ) : (
+            <Icon size="sm" as={MapPin} className="text-primary" />
+          )}
+          <Text>My location</Text>
+        </AnimatedPressable>
+      }
     >
       <View className="flex-1 px-4 gap-8 py-2 pb-8 bg-background">
         <View className="gap-3">
@@ -185,7 +200,7 @@ function SearchLocationBottomSheet({
               returnKeyType="search"
             />
             <View className=" ml-auto p-2 bg-primary rounded-full">
-              {locating ? <SpinningLoader /> : <Icon as={SearchIcon} />}
+              {typing ? <SpinningLoader /> : <Icon as={SearchIcon} />}
             </View>
           </View>
           <View className="flex-row py-0.5 h-14 rounded-xl gap-5">
@@ -205,7 +220,7 @@ function SearchLocationBottomSheet({
                     filter.purpose === value && "text-white"
                   )}
                 >
-                  {label}
+                  For {label}
                 </Heading>
               </Pressable>
             ))}
@@ -221,7 +236,6 @@ function SearchLocationBottomSheet({
             keyboardShouldPersistTaps="handled"
             scrollEnabled={displayData?.length > 12}
             keyboardDismissMode="on-drag"
-            refreshing={locating}
             contentContainerClassName="bg-background-muted p-4 rounded-xl"
             ListHeaderComponent={() =>
               !typing && savedSearches.length ? (
@@ -265,7 +279,7 @@ function SearchLocationBottomSheet({
           />
         </View>
       </View>
-    </BottomSheet>
+    </ModalScreen>
   );
 }
 

@@ -1,6 +1,6 @@
 import { Fetch } from "../utills";
 
-// 🏠 Fetch all properties (paginated)
+// Fetch all properties (paginated)
 export async function fetchProperties({
   pageParam,
   perPage,
@@ -20,7 +20,7 @@ export async function fetchProperties({
     throw new Error("Failed to fetch properties");
   }
 }
-// 🏠 Fetch all featured properties (paginated)
+// Fetch all featured properties (paginated)
 export async function fetchFeaturedProperties({
   pageParam,
   perPage,
@@ -40,7 +40,27 @@ export async function fetchFeaturedProperties({
     throw new Error("Failed to fetch properties");
   }
 }
-// 🏠 Fetch all trending properties (paginated)
+// Fetch all Shortlet properties (paginated)
+export async function fetchShortletProperties({
+  pageParam,
+  perPage,
+}: {
+  pageParam: number;
+  perPage?: number;
+}) {
+  try {
+    const res = await Fetch(
+      `/properties/shortlet-hotel?page=${pageParam}&per_page=${perPage}`,
+      {}
+    );
+    if (res?.detail) throw new Error("Failed to fetch properties");
+    return res as Result;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to fetch properties");
+  }
+}
+// Fetch all trending properties (paginated)
 export async function fetchTrendingLandsProperties({
   pageParam,
   perPage,

@@ -1,41 +1,21 @@
 import { ScrollView, View } from "react-native";
-import {
-  Text,
-  Button,
-  ButtonText,
-  Pressable,
-  Heading,
-  Switch,
-  Checkbox,
-  CheckboxLabel,
-  CheckboxIndicator,
-  CheckboxIcon,
-} from "@/components/ui";
-import BottomSheet from "@/components/shared/BottomSheet";
-import {
-  Accordion,
-  AccordionItem,
-  AccordionHeader,
-  AccordionTrigger,
-  AccordionTitleText,
-  AccordionContent,
-  AccordionIcon,
-} from "@/components/ui/accordion";
-import {
-  CheckIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-} from "@/components/ui/icon";
+import { Text, Button, ButtonText, Pressable, Heading } from "@/components/ui";
+import { Icon } from "@/components/ui/icon";
 
 import { cn } from "@/lib/utils";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
 import DropdownSelect from "@/components/custom/DropdownSelect";
 import { useCategoryQueries } from "@/tanstack/queries/useCategoryQueries";
 import { useQuery } from "@tanstack/react-query";
-import { fetchAllAmenities } from "@/actions/property/amenity";
+import {
+  fetchAllAmenities,
+  fetchAllBedTypes,
+  fetchAllViewTypes,
+} from "@/actions/property/amenity";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useCallback } from "react";
 import ModalScreen from "@/components/shared/ModalScreen";
+import { BedSingle, ChevronRight, Proportions } from "lucide-react-native";
 
 const OPTIONS1 = ["No min", "1", "2", "3", "4", "5"];
 const OPTIONS2 = ["No max", "1", "2", "3", "4", "5"];
@@ -76,6 +56,14 @@ function SearchFilterBottomSheet({
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["amenities"],
     queryFn: fetchAllAmenities,
+  });
+  const { data: beds } = useQuery({
+    queryKey: ["bedTypes"],
+    queryFn: fetchAllBedTypes,
+  });
+  const { data: views } = useQuery({
+    queryKey: ["viewTypes"],
+    queryFn: fetchAllViewTypes,
   });
   const options = [
     { label: "Rent", value: "rent" },
@@ -134,11 +122,13 @@ function SearchFilterBottomSheet({
           <Text>Reset</Text>
         </AnimatedPressable>
       }
-      // footerComponent={FooterComponent}
     >
       <View key={JSON.stringify(filter)} className="flex-1 relative">
         <View className="flex-1 px-4 gap-4 py-5 pb-8 bg-background">
-          <ScrollView>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerClassName="gap-4"
+          >
             <View className="gap-2">
               <View className="flex-row py-0.5 h-14 rounded-xl gap-5">
                 {options.map(({ label, value }) => (
@@ -164,7 +154,7 @@ function SearchFilterBottomSheet({
               </View>
             </View>
             <View>
-              <Text className="text-base mb-2">Category</Text>
+              <Text className="text-base mb-2">Type</Text>
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -250,141 +240,152 @@ function SearchFilterBottomSheet({
               <View className="flex-row justify-between gap-4">
                 <DropdownSelect
                   multiple
-                  value={filter.sub_category || "Select a category"}
+                  value={filter.sub_category || "Select a categories"}
                   options={subcategories?.map((s) => s.name)}
                   className="bg-background-muted"
                   onChange={(val) => onUpdate({ sub_category: val as any })}
                 />
               </View>
             </View>
-            <Accordion
-              size="sm"
-              variant="filled"
-              type="multiple"
-              defaultValue={["a", "b"]}
-              className="p-0 gap-4 bg-background"
-            >
-              <AccordionItem value="a">
-                <AccordionHeader>
-                  <AccordionTrigger className="p-0 border-b border-outline-100 pt-2 pb-3">
-                    {({ isExpanded }: { isExpanded: boolean }) => {
-                      return (
-                        <>
-                          <AccordionTitleText className="text-base font-normal">
-                            Categories
-                          </AccordionTitleText>
-                          {isExpanded ? (
-                            <AccordionIcon
-                              as={ChevronUpIcon}
-                              className="ml-3"
-                            />
-                          ) : (
-                            <AccordionIcon
-                              as={ChevronDownIcon}
-                              className="ml-3"
-                            />
-                          )}
-                        </>
-                      );
-                    }}
-                  </AccordionTrigger>
-                </AccordionHeader>
-                <AccordionContent className="gap-2 my-2 bg-background-muted p-4 border border-outline-100 rounded-xl">
-                  {subcategories.map((b) => {
-                    const isSelected = filter.sub_category?.includes(b.name);
-                    return (
-                      <Checkbox
-                        value={""}
-                        key={b.id}
-                        isChecked={isSelected}
-                        onChange={() => {
-                          const updated = isSelected
-                            ? filter.sub_category?.filter(
-                                (t) => t !== b.name
-                              ) || []
-                            : [...(filter.sub_category || []), b.name];
-
-                          onUpdate({ sub_category: updated });
-                        }}
-                        size="lg"
+            <View>
+              <Text className="text-base mb-2">Amenities</Text>
+              <View className="flex-row justify-between gap-4">
+                <DropdownSelect
+                  multiple
+                  value={filter.amenities || "Select a amenities"}
+                  options={data?.map((s) => s.name) || []}
+                  className="bg-background-muted"
+                  onChange={(val) => onUpdate({ amenities: val as any })}
+                />
+              </View>
+            </View>
+            {(filter.category == "Shortlet" || filter.category == "Hotel") && (
+              <DropdownSelect
+                value={filter.bedType as any}
+                onChange={(values) => onUpdate({ bedType: values as any })}
+                className=" flex-1 p-4 py-4 bg-background-muted rounded-xl border border-outline-100 gap-1"
+                Trigger={
+                  <View className="flex-row flex-1  justify-between items-center gap-2">
+                    <Icon
+                      size="md"
+                      as={BedSingle}
+                      className="text-typography/80"
+                    />
+                    <View className="flex-1">
+                      <Text
+                        className={cn(
+                          "text-typography/80",
+                          filter?.bedType && "text-xs -mt-1"
+                        )}
                       >
-                        <CheckboxIndicator>
-                          <CheckboxIcon as={CheckIcon} />
-                        </CheckboxIndicator>
-                        <CheckboxLabel>{b.name}</CheckboxLabel>
-                      </Checkbox>
-                    );
-                  })}
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="b" className="gap-2">
-                <AccordionHeader>
-                  <AccordionTrigger className="p-0 border-b border-outline-100 pt-2 pb-3">
-                    {({ isExpanded }: { isExpanded: boolean }) => {
-                      return (
-                        <>
-                          <AccordionTitleText>Amenities</AccordionTitleText>
-                          {isExpanded ? (
-                            <AccordionIcon
-                              as={ChevronUpIcon}
-                              className="ml-3"
-                            />
-                          ) : (
-                            <AccordionIcon
-                              as={ChevronDownIcon}
-                              className="ml-3"
-                            />
-                          )}
-                        </>
-                      );
-                    }}
-                  </AccordionTrigger>
-                </AccordionHeader>
-                <AccordionContent className="p-0">
-                  <View className="gap-y-3 border border-outline-100 bg-background-muted rounded-xl p-4">
-                    {data
-                      ?.filter((a) => a.category.trim() == "Residential")
-                      .map((item) => {
-                        const isSelected = filter.amenities?.includes(
-                          item.name
-                        );
+                        Bed type {!filter?.bedType ? "(optional)" : ""}
+                      </Text>
+                      {filter?.bedType && (
+                        <Text className="font-medium capitalize">
+                          {filter.bedType}
+                        </Text>
+                      )}
+                    </View>
 
-                        return (
-                          <View
-                            key={item.id}
-                            className="flex-row items-center justify-between border-b border-outline/20 pb-2"
-                          >
-                            <Text className="text-base text-typography">
-                              {item.name}
-                            </Text>
-                            <Switch
-                              value={isSelected}
-                              onValueChange={(val) => {
-                                let updatedAmenities = filter.amenities || [];
-
-                                if (val) {
-                                  updatedAmenities = [
-                                    ...updatedAmenities,
-                                    item.name,
-                                  ];
-                                } else {
-                                  updatedAmenities = updatedAmenities.filter(
-                                    (f) => f !== item.name
-                                  );
-                                }
-
-                                onUpdate({
-                                  amenities: updatedAmenities,
-                                });
-                              }}
-                            />
-                          </View>
-                        );
-                      })}
+                    <Icon
+                      size="md"
+                      as={ChevronRight}
+                      className="text-primary"
+                    />
                   </View>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
+                }
+                options={beds?.map((a) => a.name) || []}
+              />
+            )}
+            {(filter.category == "Shortlet" || filter.category == "Hotel") && (
+              <DropdownSelect
+                value={filter.viewType as any}
+                onChange={(values) => onUpdate({ viewType: values as any })}
+                className=" flex-1 p-4 py-4 bg-background-muted rounded-xl border border-outline-100 gap-1"
+                Trigger={
+                  <View className="flex-row flex-1  justify-between items-center gap-2">
+                    <Icon
+                      size="md"
+                      as={Proportions}
+                      className="text-typography/80"
+                    />
+                    <View className="flex-1">
+                      <Text
+                        className={cn(
+                          "text-typography/80",
+                          filter?.viewType && "text-xs -mt-1"
+                        )}
+                      >
+                        View type {!filter?.viewType ? "(optional)" : ""}
+                      </Text>
+                      {filter?.viewType && (
+                        <Text className="font-medium capitalize">
+                          {filter.viewType}
+                        </Text>
+                      )}
+                    </View>
+
+                    <Icon
+                      size="md"
+                      as={ChevronRight}
+                      className="text-primary"
+                    />
+                  </View>
+                }
+                options={views?.map((a) => a.name) || []}
+              />
+            )}
+            {(filter.category == "Shortlet" || filter.category == "Hotel") && (
+              <View>
+                <Text className="text-base mb-2">Max guests</Text>
+                <View className="flex-row justify-between gap-4">
+                  <DropdownSelect
+                    value={filter.guests || "No min"}
+                    options={OPTIONS1}
+                    className="bg-background-muted"
+                    onChange={(val) => onUpdate({ guests: val as any })}
+                  />
+                </View>
+              </View>
+            )}
+            {filter?.category == "Land" && (
+              <View>
+                <Text className="text-base mb-2">Plots</Text>
+                <View className="flex-row justify-between gap-4">
+                  <DropdownSelect
+                    value={filter.min_plots || "No min"}
+                    options={OPTIONS1}
+                    className="bg-background-muted"
+                    onChange={(val) => onUpdate({ min_plots: val as any })}
+                  />
+                  <DropdownSelect
+                    value={filter.max_plots || "No max"}
+                    options={OPTIONS2}
+                    className="bg-background-muted"
+                    onChange={(val) => onUpdate({ max_plots: val as any })}
+                  />
+                </View>
+              </View>
+            )}
+            {filter?.category == "Land" && (
+              <View>
+                <Text className="text-base mb-2">Land Area</Text>
+                <View className="flex-row justify-between gap-4">
+                  <DropdownSelect
+                    value={filter.min_landarea || "No min"}
+                    options={OPTIONS1}
+                    className="bg-background-muted"
+                    onChange={(val) => onUpdate({ min_landarea: val as any })}
+                  />
+                  <DropdownSelect
+                    value={filter.max_landarea || "No max"}
+                    options={OPTIONS2}
+                    className="bg-background-muted"
+                    onChange={(val) => onUpdate({ max_landarea: val as any })}
+                  />
+                </View>
+              </View>
+            )}
           </ScrollView>
           <FooterComponent />
         </View>

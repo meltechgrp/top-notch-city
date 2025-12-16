@@ -14,6 +14,9 @@ export async function searchProperties(
   if (filters?.longitude) query.append("longitude", filters.longitude);
   // if (filters?.country) query.append("country", filters.country);
   if (filters?.purpose) query.append("purpose", filters.purpose);
+  if (filters?.viewType) query.append("viewType", filters.viewType);
+  if (filters?.bedType) query.append("bedType", filters.bedType);
+  if (filters?.guests) query.append("guests", filters.guests);
   if (filters?.min_price && filters.min_price !== "No min")
     query.append("min_price", filters.min_price);
   if (filters?.max_price && filters.max_price !== "No max")
@@ -31,6 +34,14 @@ export async function searchProperties(
     query.append("min_bathroom", filters.min_bathroom);
   if (filters?.max_bathroom && filters.max_bathroom !== "No max")
     query.append("max_bathroom", filters.max_bathroom);
+  if (filters?.min_plots && filters.min_plots !== "No min")
+    query.append("min_plots", filters.min_plots);
+  if (filters?.max_plots && filters.max_plots !== "No max")
+    query.append("max_plots", filters.max_plots);
+  if (filters?.min_landarea && filters.min_landarea !== "No min")
+    query.append("min_landarea", filters.min_landarea);
+  if (filters?.max_landarea && filters.max_landarea !== "No max")
+    query.append("max_landarea", filters.max_landarea);
   if (filters?.createdAt && filters.createdAt !== "any")
     query.append(
       "created_at",

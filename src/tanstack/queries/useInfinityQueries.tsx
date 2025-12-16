@@ -9,6 +9,7 @@ import {
   fetchFeaturedProperties,
   fetchTrendingLandsProperties,
   fetchAgentProperties,
+  fetchShortletProperties,
 } from "@/actions/property/list";
 import { searchProperties } from "@/actions/search";
 import { fetchLocationProperties } from "@/actions/property/locations";
@@ -49,6 +50,19 @@ export function useInfinityQueries({
         queryKey: ["featured"],
         queryFn: ({ pageParam = 1 }) =>
           fetchFeaturedProperties({ pageParam, perPage }),
+        initialPageParam: 1,
+        getNextPageParam: (lastPage) => {
+          const { page, pages } = lastPage;
+          return page < pages ? page + 1 : undefined;
+        },
+        enabled,
+      });
+    }
+    case "shortlet": {
+      return useInfiniteQuery({
+        queryKey: ["shortlet"],
+        queryFn: ({ pageParam = 1 }) =>
+          fetchShortletProperties({ pageParam, perPage }),
         initialPageParam: 1,
         getNextPageParam: (lastPage) => {
           const { page, pages } = lastPage;

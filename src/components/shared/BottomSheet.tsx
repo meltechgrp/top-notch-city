@@ -24,7 +24,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardDismissPressable } from "./KeyboardDismissPressable";
 import BottomSheetKeyboardAwareScrollView from "@/components/custom/BottomSheetKeyboardAwareScrollView";
 import { X } from "lucide-react-native";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+const query = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 60 * 1,
+    },
+  },
+});
 type BottomSheetProps = Modal["props"] & {
   withHeader?: any;
   title?: string;
@@ -180,7 +188,9 @@ export default function BottomSheet(props: BottomSheetProps) {
                     )}
                   </Pressable>
                   <View className="flex-row w-full justify-center items-center absolute inset-0 pl-8">
-                    <Heading className=" font-medium">{props.title}</Heading>
+                    <Heading numberOfLines={1} className=" font-medium">
+                      {props.title}
+                    </Heading>
                   </View>
 
                   <View>{HeaderRightComponent}</View>
@@ -191,54 +201,56 @@ export default function BottomSheet(props: BottomSheetProps) {
         )
       }
     >
-      {withScroll ? (
-        <BottomSheetKeyboardAwareScrollView
-          style={{
-            flex: 1,
-          }}
-          keyboardShouldPersistTaps="handled"
-          className={cn(
-            "bg-background",
-            rounded && " rounded-t-xl",
-            contentClassName
-          )}
-        >
-          <KeyboardDismissPressable>
-            <SafeAreaView
-              style={{
-                flex: 1,
-              }}
-              edges={["bottom"]}
-            >
-              {props.children}
-            </SafeAreaView>
-          </KeyboardDismissPressable>
-        </BottomSheetKeyboardAwareScrollView>
-      ) : (
-        <BottomSheetView
-          style={{
-            flex: 1,
-            flexGrow: 1,
-            height: "100%",
-          }}
-          className={cn(
-            addBackground ? "bg-background" : "bg-transparent",
-            rounded && " rounded-t-xl",
-            contentClassName
-          )}
-        >
-          <KeyboardDismissPressable>
-            <SafeAreaView
-              style={{
-                flex: 1,
-              }}
-              edges={addBackground ? ["bottom"] : []}
-            >
-              {props.children}
-            </SafeAreaView>
-          </KeyboardDismissPressable>
-        </BottomSheetView>
-      )}
+      <QueryClientProvider client={query}>
+        {withScroll ? (
+          <BottomSheetKeyboardAwareScrollView
+            style={{
+              flex: 1,
+            }}
+            keyboardShouldPersistTaps="handled"
+            className={cn(
+              "bg-background",
+              rounded && " rounded-t-xl",
+              contentClassName
+            )}
+          >
+            <KeyboardDismissPressable>
+              <SafeAreaView
+                style={{
+                  flex: 1,
+                }}
+                edges={["bottom"]}
+              >
+                {props.children}
+              </SafeAreaView>
+            </KeyboardDismissPressable>
+          </BottomSheetKeyboardAwareScrollView>
+        ) : (
+          <BottomSheetView
+            style={{
+              flex: 1,
+              flexGrow: 1,
+              height: "100%",
+            }}
+            className={cn(
+              addBackground ? "bg-background" : "bg-transparent",
+              rounded && " rounded-t-xl",
+              contentClassName
+            )}
+          >
+            <KeyboardDismissPressable>
+              <SafeAreaView
+                style={{
+                  flex: 1,
+                }}
+                edges={addBackground ? ["bottom"] : []}
+              >
+                {props.children}
+              </SafeAreaView>
+            </KeyboardDismissPressable>
+          </BottomSheetView>
+        )}
+      </QueryClientProvider>
     </BottomSheetModal>
   );
 }
