@@ -96,7 +96,7 @@ export function useInfinityQueries({
     }
     case "pending": {
       return useInfiniteQuery({
-        queryKey: ["pending-propertiess"],
+        queryKey: ["pending-properties"],
         queryFn: ({ pageParam = 1 }) => fetchPendingProperties({ pageParam }),
         initialPageParam: 1,
         getNextPageParam: (lastPage) => {
@@ -144,7 +144,7 @@ export function useInfinityQueries({
     }
     case "search": {
       return useInfiniteQuery({
-        queryKey: [key || "search", filter],
+        queryKey: key ? [key] : ["search", filter],
         queryFn: ({ pageParam = 1 }) =>
           searchProperties(pageParam, perPage, filter),
         getNextPageParam: (lastPage) => {

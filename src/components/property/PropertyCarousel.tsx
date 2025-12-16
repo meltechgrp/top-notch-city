@@ -161,7 +161,7 @@ function PropertyCarousel({
             dotStyle={{
               borderRadius: 100,
               backgroundColor:
-                theme == "dark"
+                theme == "light"
                   ? Colors.light.background
                   : Colors.dark.background,
             }}
@@ -174,7 +174,10 @@ function PropertyCarousel({
               {
                 position: "absolute",
                 bottom: pointerPosition,
+                backgroundColor: "rgb(0,0,0,0.3)",
                 gap: 5,
+                padding: 8,
+                borderRadius: 20,
               },
             ]}
             horizontal

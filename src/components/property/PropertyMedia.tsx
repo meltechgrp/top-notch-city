@@ -72,7 +72,7 @@ const PropertyMedia: React.FC<Props> = (props) => {
       {withBackdrop && (
         <View
           className={cn(
-            "absolute w-full h-full bg-black/40 ios:z-10",
+            "absolute w-full h-full bg-black/30 ios:z-10",
             rounded && "rounded-xl"
           )}
         />

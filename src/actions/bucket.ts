@@ -10,11 +10,9 @@ export type UploadedFile = {
 export async function uploadToBucket({
   data,
   type,
-  apply_watermark = false,
 }: {
   data: UploadedFile[];
   type: "image" | "video" | "audio";
-  apply_watermark?: boolean;
 }) {
   try {
     const token = await getActiveToken();
@@ -34,7 +32,7 @@ export async function uploadToBucket({
       } as any);
     });
 
-    const url = `${config.origin}/api/bucket/upload/?apply_watermark=${apply_watermark}`;
+    const url = `${config.origin}/api/bucket/upload/`;
 
     const response = await axios.post(url, formData, {
       headers: {

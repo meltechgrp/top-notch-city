@@ -59,8 +59,12 @@ export default function RootLayout() {
   useEffect(() => {
     (async () => await registerDevice())().finally(async () => {
       await retryGetLocation();
-      SplashScreen.hide();
     });
+  }, []);
+  useEffect(() => {
+    setTimeout(() => {
+      SplashScreen.hide();
+    }, 2000);
   }, []);
   return (
     <>

@@ -167,16 +167,8 @@ export const DateTimePickerSheet = ({
                     : undefined
                   : new Date()
               }
-              startDate={
-                isReservation
-                  ? (validReservationDates?.[0] ?? new Date())
-                  : new Date()
-              }
-              maximumDate={
-                isReservation
-                  ? validReservationDates?.[validReservationDates.length - 1]
-                  : undefined
-              }
+              startDate={new Date()}
+              maximumDate={undefined}
             />
           </View>
 

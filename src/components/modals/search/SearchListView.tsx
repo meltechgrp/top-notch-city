@@ -20,6 +20,7 @@ import Animated, {
 } from "react-native-reanimated";
 import eventBus from "@/lib/eventBus";
 import DropdownSelect from "@/components/custom/DropdownSelect";
+import VerticalPropertyLoaderWrapper from "@/components/loaders/VerticalPropertyLoader";
 const { width } = Dimensions.get("screen");
 
 type Props = {
@@ -100,31 +101,41 @@ function SearchListBottomSheet({
         />
       )}
       footerComponent={() => (
-        <FloatingMapButton onPress={() => sheetRef.current?.snapToIndex(0)} />
+        <FloatingMapButton
+          isTab={isTab}
+          onPress={() => sheetRef.current?.snapToIndex(0)}
+        />
       )}
     >
-      <BottomSheetFlatList
-        data={properties}
-        renderItem={renderItem}
-        keyExtractor={(item: any) => item.id}
-        onEndReached={() => {
-          if (hasNextPage && !isLoading) fetchNextPage?.();
-        }}
-        onEndReachedThreshold={0.1}
-        scrollEventThrottle={16}
-        ListEmptyComponent={() => (
-          <>
-            <MiniEmptyState
-              icon={HouseIcon}
-              title="No Properties Found"
-              description="You're all caught up. New properties will appear here soon."
-              buttonLabel="Try again"
-              onPress={refetch}
-            />
-          </>
-        )}
-        contentContainerStyle={styles.contentContainer}
-      />
+      <VerticalPropertyLoaderWrapper
+        headerHeight={20}
+        loading={isLoading || false}
+      >
+        <BottomSheetFlatList
+          data={properties}
+          renderItem={renderItem}
+          keyExtractor={(item: any) => item.id}
+          onEndReached={() => {
+            if (hasNextPage && !isLoading) fetchNextPage?.();
+          }}
+          onEndReachedThreshold={0.1}
+          scrollEventThrottle={16}
+          ListEmptyComponent={() => (
+            <>
+              {!isLoading && (
+                <MiniEmptyState
+                  icon={HouseIcon}
+                  title="No Properties Found"
+                  description="You're all caught up. New properties will appear here soon."
+                  buttonLabel="Try again"
+                  onPress={refetch}
+                />
+              )}
+            </>
+          )}
+          contentContainerStyle={styles.contentContainer}
+        />
+      </VerticalPropertyLoaderWrapper>
     </BottomSheet>
   );
 }
@@ -143,7 +154,6 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     margin: 6,
-    height: 200,
     width: width - 20,
   },
 });
@@ -268,7 +278,13 @@ export const CustomHandle = ({
   );
 };
 
-export const FloatingMapButton = ({ onPress }: { onPress: () => void }) => {
+export const FloatingMapButton = ({
+  onPress,
+  isTab,
+}: {
+  onPress: () => void;
+  isTab?: boolean;
+}) => {
   return (
     <Animated.View
       style={[
@@ -283,7 +299,7 @@ export const FloatingMapButton = ({ onPress }: { onPress: () => void }) => {
         style={[
           {
             position: "absolute",
-            bottom: 60,
+            bottom: isTab ? 100 : 60,
             alignSelf: "center",
           },
         ]}

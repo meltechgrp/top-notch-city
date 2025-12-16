@@ -1,7 +1,7 @@
 export const Durations = [
-  { label: "Daily", value: "7" },
-  { label: "Twice", value: "7" },
-  { label: "Thrice", value: "7" },
+  { label: "Daily", value: "1" },
+  { label: "Twice", value: "2" },
+  { label: "Thrice", value: "3" },
   { label: "Weekly", value: "7" },
   { label: "Bi-Weekly", value: "14" },
 

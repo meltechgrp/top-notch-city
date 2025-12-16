@@ -3,7 +3,12 @@ import { View, Alert } from "react-native";
 import BottomSheet from "@/components/shared/BottomSheet";
 import { Button, Icon, Text } from "@/components/ui";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteUser, updateRole, verifyEmail } from "@/actions/user";
+import {
+  deleteUser,
+  suspendUser,
+  updateRole,
+  verifyEmail,
+} from "@/actions/user";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { Ban, Check, ChevronDown, Trash, User } from "lucide-react-native";
@@ -30,7 +35,7 @@ export function UserActionsBottomSheet({
     mutationFn: deleteUser,
   });
   const { mutateAsync: mutateSuspend, isPending: suspending } = useMutation({
-    mutationFn: verifyEmail,
+    mutationFn: suspendUser,
   });
 
   const { mutateAsync: mutateRole, isPending: roling } = useMutation({
@@ -82,11 +87,11 @@ export function UserActionsBottomSheet({
       [
         { text: "Cancel", style: "cancel" },
         {
-          text: "Suspend",
+          text: "Continue",
           style: "destructive",
           onPress: async () => {
             await mutateSuspend(
-              { user_id: user.id },
+              { user_id: user.id, suspended: user.is_blocked_by_admin },
               {
                 onSuccess(data) {
                   if (data?.message) {
@@ -95,7 +100,7 @@ export function UserActionsBottomSheet({
                       queryKey: ["user", user.id],
                     });
                     showErrorAlert({
-                      title: "Account suspended successfully",
+                      title: data?.message || "Account updated successfully",
                       alertType: "success",
                     });
                   }
@@ -231,14 +236,13 @@ export function UserActionsBottomSheet({
             className="bg-background-muted justify-between"
             onPress={handleSuspend}
           >
-            <Text>Suspend</Text>
+            <Text>{user?.is_blocked_by_admin ? "Suspended" : "Suspend"}</Text>
             {suspending ? <Icon as={SpinningLoader} /> : <Icon as={Ban} />}
           </Button>
 
           <Button
             size={"xl"}
             className=" justify-between"
-            variant="destructive"
             onPress={handleDelete}
           >
             <Text>Delete</Text>

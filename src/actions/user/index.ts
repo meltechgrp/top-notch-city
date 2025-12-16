@@ -160,6 +160,28 @@ export async function verifyEmail({ user_id }: { user_id: string }) {
   }
   return res as { message: string };
 }
+export async function suspendUser({
+  user_id,
+  suspended,
+}: {
+  user_id: string;
+  suspended: boolean;
+}) {
+  const url = suspended
+    ? `/admin/users/${user_id}/unblock`
+    : `/admin/users/${user_id}/block`;
+  const res = await Fetch(url, {
+    method: suspended ? "DELETE" : "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (res?.detail) {
+    throw new Error("Failed to update profile");
+  }
+  return res as { message: string };
+}
 
 export async function registerDevice() {
   const deviceId = getUniqueIdSync();

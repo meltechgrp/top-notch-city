@@ -20,41 +20,13 @@ export function PropertyHeroSection({ property, width }: Props) {
             factor={1}
             withBackdrop={true}
             loop={false}
+            paginationsize={6}
             media={
               property?.media.filter((item) => item.media_type == "IMAGE") || []
             }
             pointerPosition={40}
           />
         </ProfileImageTrigger>
-        {property && (
-          <View className=" absolute flex-row justify-between bottom-10 left-4 right-4 w-full px-1">
-            <View className="gap-1 flex-1">
-              <View className=" gap-1">
-                <PropertyBadge property={property} />
-                <View className="flex-row gap-1 items-center">
-                  <Icon
-                    size={"sm"}
-                    as={property.category.name == "Land" ? LandPlot : House}
-                    className="text-white"
-                  />
-                  <Text className={"text-md text-white font-bold"}>
-                    {generateTitle(property)}
-                  </Text>
-                </View>
-              </View>
-              <View className="flex-row items-center gap-2">
-                <Icon size="sm" as={MapPin} className="" />
-                <Text className="text-sm text-white">
-                  {composeFullAddress(property?.address)}
-                </Text>
-              </View>
-
-              <Text className="text-white text-xl font-bold">
-                {formatMoney(property.price, "NGN", 0)}
-              </Text>
-            </View>
-          </View>
-        )}
       </View>
     </View>
   );

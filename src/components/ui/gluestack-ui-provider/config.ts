@@ -105,7 +105,7 @@ export const config = {
     "--color-success-200": "32 111 62",
     "--color-success-300": "42 121 72",
     "--color-success-400": "52 131 82",
-    "--color-success": "72 151 102",
+    "--color-success": "22 163 74",
 
     /* Warning */
     "--color-warning-100": "130 68 23",
@@ -134,9 +134,9 @@ export const config = {
     "--color-outline": "64 64 64",
 
     /* Background Special */
-    "--color-background-error": "66 43 43",
+    "--color-background-error": "234 88 12",
     "--color-background-warning": "65 47 35",
-    "--color-background-success": "127 165 3",
+    "--color-background-success": "22 163 74",
     "--color-background-muted": "36 37 41",
     "--color-background-info": "198 21 74",
 

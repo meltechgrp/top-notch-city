@@ -14,22 +14,6 @@ export function useHomeFeed() {
   const { nearbyProperties, setNearbyProperties, location } = useStore();
   const { updatetotalUnreadChat, totalUnreadChat } = useTempStore();
 
-  /** --- Top Locations --- */
-  const {
-    data: locationsData,
-    refetch: refetchLocations,
-    isRefetching: refetchingLocations,
-    isLoading: loadingLocations,
-  } = useQuery({
-    queryKey: ["locations"],
-    queryFn: fetchTopLocations,
-  });
-
-  const locations = useMemo(
-    () => locationsData?.slice() || [],
-    [locationsData?.length]
-  );
-
   /** --- featured Properties --- */
   const {
     data: allFeatured,
@@ -78,7 +62,6 @@ export function useHomeFeed() {
     [allLatest]
   );
 
-  /** --- Nearby Properties --- */
   const {
     data: nearbyData,
     refetch: refetchNearby,
@@ -88,7 +71,6 @@ export function useHomeFeed() {
     filter: {
       latitude: location?.latitude?.toString(),
       longitude: location?.longitude?.toString(),
-      use_geo_location: "true",
     },
     key: "nearby",
   });
@@ -107,19 +89,16 @@ export function useHomeFeed() {
       refetchNearby();
     }
   }, [location, nearby]);
-  /* Total unread count */
   const { data: totalCount, refetch: getTotalCount } = useQuery({
     queryKey: ["total"],
     queryFn: getTotal,
   });
 
-  /** --- Combined Refresh --- */
   const refreshAll = useCallback(async () => {
     await Promise.all([
       refetchFeatured(),
       refetchLands(),
       refetchLatest(),
-      refetchLocations(),
       refetchNearby(),
       getTotalCount(),
     ]);
@@ -128,7 +107,6 @@ export function useHomeFeed() {
     refetchLands,
     refetchLatest,
     refetchFeatured,
-    refetchLocations,
     refetchNearby,
     getTotalCount,
   ]);
@@ -139,7 +117,6 @@ export function useHomeFeed() {
     lands,
     latest,
     featured,
-    locations,
     nearby: nearbyProperties || [],
     loadingFeatured,
     loadingLand,
@@ -147,8 +124,6 @@ export function useHomeFeed() {
     refetchingFeatured,
     refetchingLand,
     refetchingLatest,
-    loadingLocations,
-    refetchingLocations,
     refreshAll,
     refetching: refetchingNearby,
     total: totalUnreadChat,

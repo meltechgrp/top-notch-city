@@ -14,7 +14,7 @@ interface Props {
   isRefetching?: boolean;
   isFeatured?: boolean;
   hasNextPage?: boolean;
-  listType?: QueryType;
+  listType?: any[];
   data: Property[];
   refetch?: () => Promise<any>;
   fetchNextPage?: () => Promise<any>;

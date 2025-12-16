@@ -133,7 +133,7 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
     <VerticalPropertyLoaderWrapper
       className={className}
       headerHeight={headerHeight}
-      loading={isLoading || isRefetching || false}
+      loading={isLoading || false}
     >
       <AnimatedFlashList
         data={deduplicate(data, "id")}

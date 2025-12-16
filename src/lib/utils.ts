@@ -67,16 +67,20 @@ export function formatNumberCompact(amount: number = 0) {
     return amount;
   }
   if (amount < 1000000) {
-    return `${(amount / 1000).toFixed(1)}K`;
+    return `${(amount / 1000).toFixed(0)}K`;
   }
-  return `${(amount / 1000000).toFixed(1)}M`;
+  return `${(amount / 1000000).toFixed(0)}M`;
 }
 
 export function fullName(user: any) {
   return !user?.first_name ? "" : `${user.first_name} ${user.last_name}`;
 }
-export const FindAmenity = (item: string, data?: Property["amenities"]) => {
-  return Number(data?.find((a) => a.name == item)?.value || 0);
+export const FindAmenity = (item: string, data?: Property): any => {
+  return (
+    data?.amenities?.find((a) => a.name == item)?.value ||
+    data?.[item.toLowerCase() as keyof Property] ||
+    "N/A"
+  );
 };
 
 export function generateTitle({
@@ -87,15 +91,6 @@ export function generateTitle({
   title,
 }: Property) {
   switch (category.name.trim()) {
-    case "Residential":
-      return `${FindAmenity("Bedroom", amenities) || ""} Bedroom ${subcategory?.name || ""}`.trim();
-
-    case "Commercial":
-      return `${subcategory?.name || "Commercial Space"} ${purpose ? `for ${purpose}` : ""}`.trim();
-
-    case "Land":
-      return `${FindAmenity("Total Plot", amenities) || 1} Plot${FindAmenity("Total Plot", amenities) > 1 ? "s" : ""} of Land`;
-
     case "Hotel":
     case "Shortlet":
     case "Chalet":
@@ -128,22 +123,22 @@ export function formatDateDistance(date: string, full?: boolean) {
   );
   let interval = Math.floor(seconds / 31536000);
   if (interval > 1) {
-    return `${interval}${full ? " years" : "y"} ago`;
+    return `${interval} years ago`;
   }
 
   interval = Math.floor(seconds / 86400);
   if (interval >= 1) {
-    return `${interval}${full ? " days" : "d"} ago`;
+    return `${interval} days ago`;
   }
   interval = Math.floor(seconds / 3600);
   if (interval > 1) {
-    return `${interval}${full ? " hours" : "h"} ago`;
+    return `${interval} hours ago`;
   }
   interval = Math.floor(seconds / 60);
   if (interval >= 1) {
-    return `${interval}${full ? " minutes" : "m"} ago`;
+    return `${interval} minutes ago`;
   }
-  return `${Math.floor(seconds)}s ago`;
+  return `${Math.floor(seconds)} seconds ago`;
 }
 
 export function getRegionForMarkers(

@@ -107,8 +107,9 @@ export default function PropertyListingBasic() {
             </Text>
             <View className="gap-6">
               <CustomInput
-                placeholder="Enter title"
+                placeholder="Enter title (max 40 characters)"
                 value={listing.title}
+                maxLength={40}
                 onUpdate={(val) => updateListing({ title: val })}
               />
               <CustomInput

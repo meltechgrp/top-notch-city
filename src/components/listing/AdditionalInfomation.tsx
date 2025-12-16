@@ -75,8 +75,10 @@ export default function AdditionalInfomation() {
             returnKeyType="done"
             enterKeyHint="done"
             returnKeyLabel="Done"
-            value={formatNumber(listing.landarea?.toString())}
-            onUpdate={(val) => updateListing({ landarea: unformatNumber(val) })}
+            value={formatNumber(listing.caution_fee?.toString())}
+            onUpdate={(val) =>
+              updateListing({ caution_fee: unformatNumber(val) })
+            }
           />
         )}
         <CustomInput
@@ -89,7 +91,7 @@ export default function AdditionalInfomation() {
           value={listing.discount}
           onUpdate={(val) => updateListing({ discount: val })}
         />
-        {(listing.listing_role == "agent" ||
+        {/* {(listing.listing_role == "agent" ||
           listing.listing_role == "manager") &&
           listing.owner_type != "individual" && (
             <View className="gap-3">
@@ -177,7 +179,7 @@ export default function AdditionalInfomation() {
                 </View>
               )}
             </View>
-          )}
+          )} */}
       </Box>
       <CompanyModal
         onSave={(val) => {

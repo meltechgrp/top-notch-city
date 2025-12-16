@@ -50,7 +50,7 @@ type Property = {
   bathroom?: string;
   bedroom?: string;
   is_booked?: boolean;
-  landarea?: string;
+  landarea?: number;
   bedType?: string;
   guests?: string;
   plots?: string;

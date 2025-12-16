@@ -25,7 +25,7 @@ function ApartmentsProperties() {
         data={latest}
         isLoading={loadingLatest}
         isRefetching={refetchingLatest}
-        listType="latest"
+        listType={["latest"]}
       />
     </SectionHeaderWithRef>
   );

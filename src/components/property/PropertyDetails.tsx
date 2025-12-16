@@ -16,10 +16,11 @@ import {
   Bath,
   Bed,
   BoxIcon,
-  Check,
   ChevronRight,
+  Home,
   Images,
   LandPlot,
+  MapPin,
 } from "lucide-react-native";
 import { useRouter } from "expo-router";
 import React, { memo } from "react";
@@ -30,25 +31,26 @@ import {
 } from "@/lib/api";
 import { useLayout } from "@react-native-community/hooks";
 import {
-  FindAmenity,
   fullName,
   formatDateDistance,
   composeFullAddress,
+  formatMoney,
+  formatNumberCompact,
+  FindAmenity,
 } from "@/lib/utils";
 import { LongDescription } from "@/components/custom/LongDescription";
 import { CustomCenterSheet } from "@/components/property/CustomMapCenterSheet";
 import PropertyNearbySection from "@/components/property/PropertyNearbySection";
 import { ProfileImageTrigger } from "@/components/custom/ImageViewerProvider";
 import { MiniVideoPlayer } from "@/components/custom/MiniVideoPlayer";
-import {
-  openBookingModal,
-  openEnquiryModal,
-} from "@/components/globals/AuthModals";
+import { openBookingModal } from "@/components/globals/AuthModals";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SimilarProperties from "@/components/property/SimilarProperites";
 import { PropertyEnquiry } from "@/components/property/PropertyEnquiry";
 import { KeyboardDismissPressable } from "@/components/shared/KeyboardDismissPressable";
 import { ExternalLink } from "@/components/ExternalLink";
+import ModalScreen from "@/components/shared/ModalScreen";
+import { PropertyBadge } from "@/components/property/PropertyBadge";
 
 interface PropertyDetailsBottomSheetProps {
   property: Property;
@@ -71,24 +73,48 @@ const PropertyDetailsBottomSheet = ({
             <View className="justify-center items-center pt-2">
               <View className="h-1.5 w-[60px] rounded-md bg-primary" />
             </View>
-            <View className="gap-4 p-4 py-2">
+            <View className="p-4 mx-4 -mt-1 bg-background-muted rounded-xl">
+              <View className="flex-row justify-between items-center">
+                <Text className="text-white text-2xl font-bold">
+                  {formatMoney(property.price, "NGN", 0)}
+                  {property.category.name == "Shortlet" && "/night"}
+                </Text>
+                <PropertyBadge property={property} />
+              </View>
+              {(property.category.name == "Shortlet" ||
+                property.category.name == "Hotel") && (
+                <View className="flex-row gap-1 items-center my-px">
+                  <Icon as={Home} size="sm" className="text-primary" />
+                  <Text className=" text-sm">{property.title}</Text>
+                </View>
+              )}
+              <View className="flex-row mt-1 gap-4 items-center">
+                {property.address && (
+                  <View className="flex-1 flex-row gap-1 items-center">
+                    <Icon size="sm" as={MapPin} className="text-primary" />
+                    <Text className="text-white flex-1 text-xs">
+                      {composeFullAddress(property.address)}
+                    </Text>
+                  </View>
+                )}
+              </View>
+            </View>
+            <View className="gap-4 px-4 pb-2 -mt-2">
               <View className="flex-row gap-4 mt-2">
                 <View className="flex-row flex-1 bg-background-muted rounded-xl p-4 items-center justify-center gap-2">
                   <Icon size="sm" as={Bed} className="text-primary" />
-                  <Text size="sm">
-                    {FindAmenity("Bedroom", property?.amenities) || "N/A"} Bed
-                  </Text>
+                  <Text size="sm">{FindAmenity("Bedroom", property)} Bed</Text>
                 </View>
                 <View className="flex-row flex-1 bg-background-muted rounded-xl p-4 items-center justify-center gap-2">
                   <Icon size="sm" as={Bath} className="text-primary" />
                   <Text size="sm">
-                    {FindAmenity("Bathroom", property?.amenities) || "N/A"} Bath
+                    {FindAmenity("Bathroom", property)} Bath
                   </Text>
                 </View>
                 <View className="flex-row flex-1 bg-background-muted rounded-xl p-4 items-center justify-center gap-2">
                   <Icon size="sm" as={LandPlot} className="text-primary" />
                   <Text size="sm">
-                    {FindAmenity("Land Area", property?.amenities) || "N/A"} Sq
+                    {FindAmenity("Landarea", property)} Sqft
                   </Text>
                 </View>
               </View>
@@ -152,20 +178,20 @@ const PropertyDetailsBottomSheet = ({
                   Features
                 </Heading>
                 <View className="flex-row gap-4 flex-wrap px-2">
-                  {property.amenities?.map((a) => (
+                  {property.amenities?.slice(0, 6).map((a) => (
                     <View key={a.name} className="w-[46%] ">
                       <View className="bg-background rounded-full py-1 px-3 gap-1 flex-row items-center self-start">
                         <Text numberOfLines={1} className="text-sm">
                           {a.name}
                         </Text>
-                        {a.value == "true" ? (
-                          <Icon size="sm" className="text-primary" as={Check} />
-                        ) : (
-                          <Text>{a.value}</Text>
-                        )}
                       </View>
                     </View>
                   ))}
+                  {/* {property?.amenities?.length > 2 && (
+                    <ModalScreen>
+                      <View></View>
+                    </ModalScreen>
+                  )} */}
                 </View>
               </View>
               {property.category.name !== "Shortlet" &&

@@ -8,7 +8,7 @@ function FeaturedProperties() {
   const { featured, loadingFeatured, refetchingFeatured } = useHomeFeed();
   return (
     <SectionHeaderWithRef
-      title="Featured Properties"
+      title="Featured"
       titleClassName="text-gray-400 text-base"
       subTitle="See More"
       hasData={loadingFeatured || refetchingFeatured || featured?.length > 0}
@@ -24,7 +24,8 @@ function FeaturedProperties() {
       <HorizontalProperties
         data={featured}
         isLoading={loadingFeatured}
-        listType="featured"
+        listType={["featured"]}
+        isFeatured
         isRefetching={refetchingFeatured}
       />
     </SectionHeaderWithRef>

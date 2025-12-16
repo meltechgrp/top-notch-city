@@ -9,7 +9,7 @@ const Lands = () => {
 
   return (
     <SectionHeaderWithRef
-      title="Trending Lands"
+      title="Lands"
       titleClassName="text-gray-400 text-base"
       subTitle="See More"
       hasData={lands?.length > 0 || loadingLand || refetchingLand}
@@ -25,7 +25,7 @@ const Lands = () => {
       <HorizontalProperties
         data={lands}
         isLoading={loadingLand}
-        listType="trending-lands"
+        listType={["trending-lands"]}
         isRefetching={refetchingLand}
       />
     </SectionHeaderWithRef>
