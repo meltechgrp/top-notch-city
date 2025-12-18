@@ -6,8 +6,6 @@ import migrations from "@/db/migrations/migrations";
 
 import {
   properties,
-  propertyListItems,
-  propertyLists,
   media,
   amenities,
   propertyAmenities,
@@ -15,15 +13,12 @@ import {
   ownerInteractions,
   addresses,
 } from "@/db/schema";
-import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 
-const expo = SQLite.openDatabaseSync("db.db");
+export const expoSqlite = SQLite.openDatabaseSync("db.db");
 
-export const db = drizzle(expo);
+export const db = drizzle(expoSqlite);
 
 export async function runMigrations() {
-  useDrizzleStudio(expo);
-  await clearAllData();
   try {
     await migrate(db, migrations);
     console.log("✅ Migrations ran successfully");
@@ -38,8 +33,6 @@ export async function resetDatabase() {
 
 export async function clearAllData() {
   await db.transaction(async (tx) => {
-    await tx.delete(propertyListItems);
-    await tx.delete(propertyLists);
     await tx.delete(media);
     await tx.delete(propertyAmenities);
     await tx.delete(amenities);
@@ -48,8 +41,4 @@ export async function clearAllData() {
     await tx.delete(addresses);
     await tx.delete(properties);
   });
-}
-export async function clearListsOnly() {
-  await db.delete(propertyListItems);
-  await db.delete(propertyLists);
 }

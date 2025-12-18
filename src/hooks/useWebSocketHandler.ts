@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useHomeFeed } from "@/hooks/useHomeFeed";
 import { getActiveToken } from "@/lib/secureStore";
 import { useWebSocketConnection } from "@/actions/utills";
 import { useChatStore } from "@/store/chatStore";
@@ -22,7 +21,6 @@ export function useWebSocketHandler() {
     updateChatListDetails,
   } = useChatStore.getState();
 
-  const { updatetotalUnreadChat } = useHomeFeed();
   const { connect, setOnMessage, ...rest } = useWebSocketConnection(url);
 
   useEffect(() => {
@@ -77,7 +75,7 @@ export function useWebSocketHandler() {
           updateMessageStatus(data.chat_id, data.message_id, "seen"),
         message_edited: () =>
           updateMessage(data.chat_id, data.message_id, data.content),
-        unread_count_update: () => updatetotalUnreadChat(data.total_unread),
+        // unread_count_update: () => updatetotalUnreadChat(data.total_unread),
         typing: () => setTyping(data.chat_id, data.is_typing),
         message_deleted: () =>
           deleteChatMessage(

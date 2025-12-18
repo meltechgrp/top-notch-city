@@ -23,10 +23,10 @@ interface Props {
   contentContainerClassName?: string;
   imageStyle?: StyleProp<ViewStyle>;
   style?: StyleProp<ViewStyle>;
-  data: Property[];
+  data: PropertyListItem[];
   refetch?: () => Promise<any>;
   fetchNextPage?: () => Promise<any>;
-  onPress?: (data: Property) => void;
+  onPress?: (data: PropertyListItem) => void;
 }
 
 function HorizontalProperties({
@@ -53,7 +53,7 @@ function HorizontalProperties({
   const skeletonItems = useMemo(() => Array.from({ length: 5 }), []);
 
   const handlePress = useCallback(
-    (property: Property) => {
+    (property: PropertyListItem) => {
       if (onPress) return onPress(property);
 
       router.push({
@@ -65,7 +65,6 @@ function HorizontalProperties({
   );
 
   const isBusy = isLoading || isRefetching;
-
   return (
     <ScrollView
       horizontal

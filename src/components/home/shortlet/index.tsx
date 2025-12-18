@@ -1,17 +1,15 @@
 import SectionHeaderWithRef from "@/components/home/SectionHeaderWithRef";
 import HorizontalProperties from "@/components/property/HorizontalProperties";
-import { useHomeFeed } from "@/hooks/useHomeFeed";
 import { router } from "expo-router";
 import { memo } from "react";
 
-function ShortletProperties() {
-  const { shortlets, loadingShortlet, refetchingShortlet } = useHomeFeed();
+function ShortletProperties({ data = [] }: { data: PropertyListItem[] }) {
   return (
     <SectionHeaderWithRef
       title="Shortlet/Hotels"
       titleClassName="text-gray-400 text-base"
       subTitle="See More"
-      hasData={loadingShortlet || refetchingShortlet || shortlets?.length > 0}
+      hasData={data?.length > 0}
       onSeeAllPress={() => {
         router.push({
           pathname: "/explore",
@@ -22,10 +20,10 @@ function ShortletProperties() {
       }}
     >
       <HorizontalProperties
-        data={shortlets}
-        isLoading={loadingShortlet}
+        data={data}
+        isLoading={false}
         listType={["shortlet"]}
-        isRefetching={refetchingShortlet}
+        isRefetching={false}
       />
     </SectionHeaderWithRef>
   );

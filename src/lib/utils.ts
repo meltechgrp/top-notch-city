@@ -1,6 +1,7 @@
 import { format, isThisYear, isToday, subDays, subMonths } from "date-fns";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { unknown } from "zod";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -79,7 +80,7 @@ export const FindAmenity = (item: string, data?: Property): any => {
   return (
     data?.amenities?.find((a) => a.name == item)?.value ||
     data?.[item.toLowerCase() as keyof Property] ||
-    "N/A"
+    null
   );
 };
 
@@ -97,7 +98,7 @@ export function generateTitle(property: Property) {
     case "Hotel":
     case "Shortlet":
     case "Chalet":
-      return property.title;
+      return property?.title || "";
 
     default:
       return `${property.subcategory.name || property.category.name}`;
@@ -388,7 +389,7 @@ export async function uploadWithFakeProgress(
   let progress = 0;
 
   const interval = setInterval(() => {
-    progress += Math.random() * (isVideo ? 1 : 5);
+    progress += Math.random() * (isVideo ? 0.4 : 5);
 
     if (progress > 90) progress = 90;
     onProgress(Math.round(progress));
@@ -409,8 +410,10 @@ export async function uploadWithFakeProgress(
 
 export function mapPropertyList(rows: any[]) {
   return rows.map((row) => ({
-    ...row.properties,
-    position: row.property_list_items.position,
-    listId: row.property_list_items.listId,
-  }));
+    ...row.property,
+    interaction: row?.interaction || null,
+    ownerInteraction: row?.ownerInteraction || null,
+    media: row.media,
+    address: row?.address,
+  })) as unknown as PropertyListItem[];
 }

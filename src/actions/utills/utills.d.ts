@@ -35,6 +35,7 @@ type AddressComponent = {
 };
 
 type Address = {
+  display_address: string;
   street: string;
   city: string;
   state: string;

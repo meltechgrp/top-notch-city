@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1766016535372,
-      "tag": "0000_lame_marvex",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1766057533205,
-      "tag": "0001_last_aqueduct",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1766059420690,
-      "tag": "0002_panoramic_blur",
+      "when": 1766080608287,
+      "tag": "0000_whole_alex_wilder",
       "breakpoints": true
     }
   ]

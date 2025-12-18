@@ -159,3 +159,9 @@ export async function deleteChatMessage({
     }
   );
 }
+
+export async function getTotal() {
+  return (await Fetch("/chats/unread-count")) as {
+    total_unread: number;
+  };
+}

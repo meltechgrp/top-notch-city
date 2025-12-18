@@ -27,8 +27,10 @@ import { enableScreens } from "react-native-screens";
 import { ImageViewerProvider } from "@/components/custom/ImageViewerProvider";
 import { registerDevice } from "@/actions/user";
 import useGetLocation from "@/hooks/useGetLocation";
-import { runMigrations } from "@/db";
+import { expoSqlite, runMigrations } from "@/db";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
+
+import * as SQLite from "expo-sqlite";
 
 enableScreens(true);
 const query = new QueryClient({
@@ -38,7 +40,10 @@ const query = new QueryClient({
     },
   },
 });
-
+export async function resetDatabase() {
+  // ⚠️ DO NOT open the DB before this
+  await SQLite.deleteDatabaseAsync("db.db");
+}
 export const unstable_settings = {
   initialRouteName: "(onboarding)/splash",
 };
@@ -49,13 +54,13 @@ configureReanimatedLogger({
   level: ReanimatedLogLevel.error,
   strict: false,
 });
-
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   useEffect(() => {
     runMigrations();
   }, []);
+  useDrizzleStudio(expoSqlite);
   useNotificationObserver();
   const { retryGetLocation } = useGetLocation();
   useSuppressChatPushNotification();

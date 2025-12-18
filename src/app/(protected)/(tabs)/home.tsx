@@ -3,10 +3,8 @@ import DiscoverProperties from "@/components/home/DiscoverProperties";
 import TopLocations from "@/components/home/topLocations";
 import { Box, View } from "@/components/ui";
 import StartChatBottomSheet from "@/components/modals/StartChatBottomSheet";
-import { useHomeFeed } from "@/hooks/useHomeFeed";
-import eventBus from "@/lib/eventBus";
 import { useStore } from "@/store";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import CustomerCareBottomSheet from "@/components/modals/CustomerCareBottomSheet";
 import { ListRenderItem, RefreshControl } from "react-native";
 import ShortletProperties from "@/components/home/shortlet";
@@ -19,21 +17,10 @@ const MAP_HEIGHT = 400;
 
 export default function HomeScreen() {
   const { me } = useStore();
-  const { refreshAll } = useHomeFeed();
-  useEffect(() => {
-    setTimeout(() => eventBus.dispatchEvent("REFRESH_PROFILE", null), 1000);
-  }, []);
 
   const [friendsModal, setFriendsModal] = React.useState(false);
   const [staffs, setStaffs] = useState(false);
   const { featured, lands, latest, shortlet, nearby } = useHomeList();
-  console.log(
-    featured?.length,
-    lands?.length,
-    shortlet?.length,
-    latest?.length,
-    nearby?.length
-  );
   const feedList = React.useMemo(() => {
     const topLocations = {
       id: "locations",
@@ -71,19 +58,19 @@ export default function HomeScreen() {
   type FeedList = any;
   const renderItem: ListRenderItem<FeedList> = useCallback(({ item }) => {
     if (item.id === "locations") {
-      return <TopLocations />;
+      return <TopLocations data={nearby} />;
     }
     if (item.id === "featured") {
-      return <FeaturedProperties />;
+      return <FeaturedProperties data={featured} />;
     }
     if (item.id === "shortlet") {
-      return <ShortletProperties />;
+      return <ShortletProperties data={shortlet} />;
     }
     if (item.id === "apartment") {
-      return <ApartmentProperties />;
+      return <ApartmentProperties data={latest} />;
     }
     if (item.id === "lands") {
-      return <Lands />;
+      return <Lands data={lands} />;
     }
     if (item.id === "bottomPlaceHolder") {
       return <View className="h-24" />;
@@ -98,9 +85,9 @@ export default function HomeScreen() {
     <>
       <Box className="flex-1">
         <FlashList
-          refreshControl={
-            <RefreshControl refreshing={false} onRefresh={refreshAll} />
-          }
+          // refreshControl={
+          //   <RefreshControl refreshing={false} onRefresh={refreshAll} />
+          // }
           ListHeaderComponent={<DiscoverProperties mapHeight={MAP_HEIGHT} />}
           showsVerticalScrollIndicator={false}
           data={feedList}

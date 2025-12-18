@@ -18,10 +18,14 @@ export const properties = sqliteTable("properties", {
 
   status: text("status").notNull(),
   purpose: text("purpose").notNull(),
+  category: text("category").notNull(),
+  subCategory: text("sub_category").notNull(),
   isFeatured: integer("is_featured", { mode: "boolean" }).default(false),
-
+  displayAddress: text("display_address").notNull(),
+  ownerId: text("owner_id").notNull(),
   duration: text("duration"),
-
+  total_reviews: integer("total_reviews"),
+  avg_rating: integer("avg_rating"),
   bathroom: text("bathroom"),
   bedroom: text("bedroom"),
   landarea: real("landarea"),
@@ -35,50 +39,24 @@ export const properties = sqliteTable("properties", {
   cautionFee: text("caution_fee"),
 
   createdAt: text("created_at").notNull(),
-  updatedAt: text("updated_at").notNull(),
+  updatedAt: text("updated_at"),
   syncedAt: text("synced_at"),
   version: integer("version"),
   deletedAt: text("deleted_at"),
 });
 
-export const categories = sqliteTable("categories", {
-  id: text("id").primaryKey(),
-  name: text("name").notNull(),
-  slug: text("slug").notNull(),
-});
-
-export const subcategories = sqliteTable("subcategories", {
-  id: text("id").primaryKey(),
-  categoryId: text("category_id")
-    .notNull()
-    .references(() => categories.id),
-  name: text("name").notNull(),
-  slug: text("slug").notNull(),
-});
-
-export const propertyCategoryMap = sqliteTable("property_category_map", {
-  propertyId: text("property_id")
-    .notNull()
-    .references(() => properties.id),
-  categoryId: text("category_id")
-    .notNull()
-    .references(() => categories.id),
-  subcategoryId: text("subcategory_id").references(() => subcategories.id),
-});
-
 export const addresses = sqliteTable("addresses", {
   propertyId: text("property_id")
     .primaryKey()
-    .references(() => properties.id),
+    .references(() => properties.id, { onDelete: "cascade" }),
 
   city: text("city"),
-  state: text("state"),
-  country: text("country"),
   street: text("street"),
+  state: text("state"),
+  country: text("country").notNull(),
 
-  latitude: real("latitude"),
-  longitude: real("longitude"),
-  deletedAt: text("deleted_at"),
+  latitude: real("latitude").notNull(),
+  longitude: real("longitude").notNull(),
 });
 
 export const media = sqliteTable("media", {
@@ -89,20 +67,34 @@ export const media = sqliteTable("media", {
 
   url: text("url").notNull(),
   mediaType: text("media_type").notNull(),
-  deletedAt: text("deleted_at"),
 });
 
-export const amenities = sqliteTable("amenities", {
-  id: text("id").primaryKey(),
-  name: text("name").notNull(),
-});
+export const amenities = sqliteTable(
+  "amenities",
+  {
+    id: text("id").primaryKey(),
+    name: text("name").notNull(),
+  },
+  (t) => ({
+    uniqName: index("idx_amenity_name").on(t.name),
+  })
+);
 
-export const propertyAmenities = sqliteTable("property_amenities", {
-  propertyId: text("property_id")
-    .notNull()
-    .references(() => properties.id),
-  amenityName: text("amenity_name").notNull(),
-});
+export const propertyAmenities = sqliteTable(
+  "property_amenities",
+  {
+    propertyId: text("property_id")
+      .notNull()
+      .references(() => properties.id, { onDelete: "cascade" }),
+
+    amenityId: text("amenity_id")
+      .notNull()
+      .references(() => amenities.id),
+  },
+  (t) => ({
+    pk: primaryKey({ columns: [t.propertyId, t.amenityId] }),
+  })
+);
 
 export const availabilities = sqliteTable("availabilities", {
   id: text("id").primaryKey(),
@@ -128,7 +120,7 @@ export const ownerships = sqliteTable("ownerships", {
   id: text("id").primaryKey(),
   propertyId: text("property_id")
     .notNull()
-    .references(() => properties.id),
+    .references(() => properties.id, { onDelete: "cascade" }),
 
   ownerId: text("owner_id").references(() => owners.id),
   listingRole: text("listing_role"),
@@ -144,69 +136,38 @@ export const ownerships = sqliteTable("ownerships", {
 export const interactions = sqliteTable("interactions", {
   propertyId: text("property_id")
     .primaryKey()
-    .references(() => properties.id),
+    .references(() => properties.id, { onDelete: "cascade" }),
 
   viewed: integer("viewed").default(0),
   liked: integer("liked").default(0),
   addedToWishlist: integer("added_to_wishlist").default(0),
-  dirty: integer("dirty").default(0),
+  dirty: integer("dirty", { mode: "boolean" }).default(false),
 });
 
 export const ownerInteractions = sqliteTable("owner_interactions", {
   propertyId: text("property_id")
     .primaryKey()
-    .references(() => properties.id),
+    .references(() => properties.id, { onDelete: "cascade" }),
 
   viewed: integer("viewed", { mode: "boolean" }),
   liked: integer("liked", { mode: "boolean" }),
   addedToWishlist: integer("added_to_wishlist", { mode: "boolean" }),
 });
 
-export const propertyLists = sqliteTable("property_lists", {
-  id: text("id").primaryKey(),
-  updatedAt: text("updated_at"),
-});
-
-export const propertyListItems = sqliteTable(
-  "property_list_items",
-  {
-    listId: text("list_id")
-      .notNull()
-      .references(() => propertyLists.id),
-
-    propertyId: text("property_id")
-      .notNull()
-      .references(() => properties.id),
-
-    position: integer("position").notNull(),
-  },
-  (t) => ({
-    pk: primaryKey({ columns: [t.listId, t.propertyId] }),
-  })
-);
-
 export const propertyIndexes = {
   byStatus: index("idx_property_status").on(properties.status),
   byBathroom: index("idx_property_bedroom").on(properties.bathroom),
-  byBedroom: index("idx_property_bedroom").on(properties.bedroom),
+  byCategory: index("idx_property_category").on(properties.category),
+  bySubCategory: index("idx_property_sub_category").on(properties.subCategory),
   byPlots: index("idx_property_plots").on(properties.plots),
   byPurpose: index("idx_property_purpose").on(properties.purpose),
   byPrice: index("idx_property_price").on(properties.price),
   byFeatured: index("idx_property_featured").on(properties.isFeatured),
-};
-export const addressIndexes = {
   byLatLng: index("idx_address_lat_lng").on(
     addresses.latitude,
     addresses.longitude
   ),
 };
-export const listIndexes = {
-  byList: index("idx_list_items").on(
-    propertyListItems.listId,
-    propertyListItems.position
-  ),
-};
-
 export const propertySearch = sqliteTable("property_search", {
   propertyId: text("property_id").primaryKey(),
   title: text("title"),

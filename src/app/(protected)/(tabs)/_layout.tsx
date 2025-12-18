@@ -16,7 +16,6 @@ import { Colors } from "@/constants/Colors";
 import { Icon, Pressable, useResolvedTheme, View } from "@/components/ui";
 import { useStore } from "@/store";
 import { useShallow } from "zustand/react/shallow";
-import { useHomeFeed } from "@/hooks/useHomeFeed";
 
 export const unstable_settings = {
   initialRouteName: "/home",
@@ -26,7 +25,7 @@ export default function TabLayout() {
   const { me, isAdmin, isAgent } = useStore(
     useShallow((s) => s.getCurrentUser())
   );
-  const { total } = useHomeFeed();
+  const total = 0;
   return (
     <Tabs
       screenOptions={{

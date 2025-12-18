@@ -42,6 +42,8 @@ type Property = {
   subcategory: SubCategory;
   address: Address;
   media: Media[];
+  total_reviews: number;
+  avg_rating: number;
   bathroom?: string;
   bedroom?: string;
   is_booked?: boolean;
@@ -61,6 +63,33 @@ type Property = {
   interaction: Interaction;
   owner_interaction: Owner_interaction;
   reason_or_comment?: string;
+};
+type PropertyListItem = {
+  id: string;
+  title: string;
+  slug: string;
+  price: number;
+  createdAt: string;
+  currencyCode: string;
+  status: PropertyStatus;
+  purpose: PropertyPurpose;
+  isFeatured: boolean;
+  duration?: string;
+  category: string;
+  subCategory: string;
+  media: Media;
+  ownerId: string;
+  bathroom?: string;
+  displayAddress: string;
+  bedroom?: string;
+  isBooked: boolean;
+  landarea?: string;
+  address: Address;
+  guests?: string;
+  plots?: string;
+  discount?: string;
+  interaction: Interaction;
+  ownerInteraction: Owner_interaction;
 };
 
 type Media = {

@@ -17,7 +17,7 @@ type SearchFilters = {
   max_plots?: string;
   min_landarea?: string;
   max_landarea?: string;
-  use_geo_location?: string;
+  use_geo_location?: boolean;
   createdAt?: string;
   tour?: string;
   latitude?: string;

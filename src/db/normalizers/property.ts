@@ -1,4 +1,4 @@
-import { FindAmenity, generateTitle } from "@/lib/utils";
+import { composeFullAddress, FindAmenity, generateTitle } from "@/lib/utils";
 export function normalizeProperty(api: Property) {
   const property = {
     id: api.id,
@@ -19,6 +19,8 @@ export function normalizeProperty(api: Property) {
     plots: api.plots,
     viewType: api.viewType,
     isBooked: api.is_booked,
+    category: api.category.name,
+    subcategory: api.subcategory.name,
     discount: api.discount,
     cautionFee: api.caution_fee?.toString(),
     createdAt: api.created_at,
@@ -26,19 +28,6 @@ export function normalizeProperty(api: Property) {
     syncedAt: new Date().toISOString(),
     version: Date.now(),
     deletedAt: null,
-  };
-
-  const category = api.category && {
-    id: api.category.id,
-    name: api.category.name,
-    slug: api.category.name.toLowerCase(),
-  };
-
-  const subcategory = api.subcategory && {
-    id: api.subcategory.id,
-    name: api.subcategory.name,
-    slug: api.subcategory.name.toLowerCase(),
-    categoryId: api.category.id,
   };
 
   const address = api.address && {
@@ -106,8 +95,6 @@ export function normalizeProperty(api: Property) {
 
   return {
     property,
-    category,
-    subcategory,
     address,
     media,
     amenities,
@@ -117,5 +104,71 @@ export function normalizeProperty(api: Property) {
     ownership,
     owner,
     availabilities,
+  };
+}
+export function normalizePropertyList(api: Property) {
+  const property = {
+    id: api?.id,
+    title: generateTitle(api),
+    slug: api?.slug,
+    price: api?.price,
+    currencyCode: api?.currency?.code || "NGN",
+    status: api.status,
+    purpose: api.purpose,
+    isFeatured: api?.is_featured || false,
+    duration: api?.duration?.toString(),
+    bedroom: FindAmenity("Bedroom", api),
+    bathroom: FindAmenity("Bathroom", api),
+    landarea: FindAmenity("Landarea", api),
+    ownerId: api.owner?.id || "",
+    guests: api?.guests || 0,
+    plots: api?.plots || 0,
+    displayAddress:
+      api?.address?.display_address || composeFullAddress(api.address) || "",
+    isBooked: api?.is_booked ? api?.is_booked : false,
+    category: api?.category.name,
+    subCategory: api?.subcategory.name,
+    discount: api?.discount,
+    createdAt: api?.created_at,
+    syncedAt: new Date().toISOString(),
+    version: Date.now(),
+    deletedAt: null,
+  };
+
+  const media = (api?.media || []).map((m: Media) => ({
+    id: m.id,
+    propertyId: api.id,
+    url: m.url,
+    mediaType: m.media_type,
+  }));
+
+  const interaction = api?.interaction && {
+    propertyId: api.id,
+    viewed: api.interaction.viewed ?? 0,
+    liked: api.interaction.liked ?? 0,
+    addedToWishlist: api.interaction.added_to_wishlist ?? 0,
+  };
+
+  const ownerInteraction = api.owner_interaction && {
+    propertyId: api.id,
+    viewed: api?.owner_interaction.viewed,
+    liked: api?.owner_interaction.liked,
+    addedToWishlist: api?.owner_interaction.added_to_wishlist,
+  };
+  const address = api.address && {
+    propertyId: api.id,
+    street: api.address?.street,
+    city: api.address?.city,
+    state: api.address?.state,
+    country: api.address?.country,
+    latitude: api.address?.latitude,
+    longitude: api.address?.longitude,
+  };
+  return {
+    property,
+    media,
+    interaction,
+    ownerInteraction,
+    address,
   };
 }

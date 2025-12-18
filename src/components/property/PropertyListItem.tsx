@@ -1,10 +1,7 @@
 import {
   cn,
-  composeFullAddress,
   formatMoney,
   formatDateDistance,
-  generateTitle,
-  FindAmenity,
   formatNumberCompact,
 } from "@/lib/utils";
 import { StyleProp, View, ViewStyle } from "react-native";
@@ -30,7 +27,7 @@ import { useLike } from "@/hooks/useLike";
 import { generateMediaUrlSingle } from "@/lib/api";
 
 type Props = {
-  data: Property;
+  data: PropertyListItem;
   className?: string;
   subClassName?: string;
   showFacilites?: boolean;
@@ -68,9 +65,9 @@ function PropertyListItem(props: Props) {
   const me = useStore((s) => s.me);
   const { toggleLike } = useLike({ queryKey: listType });
   const { bannerHeight } = Layout;
-  const { price, media, address, interaction, status, owner } = data;
+  const { price, media, displayAddress, ownerId, interaction, status } = data;
   const { width, onLayout } = useLayout();
-  const isMine = useMemo(() => me?.id === owner?.id, [me, owner]);
+  const isMine = useMemo(() => me?.id === ownerId, [me, ownerId]);
   const isAdmin = useMemo(() => me?.role == "admin", [me]);
   const Actions = () => {
     if (isFeatured) {
@@ -80,7 +77,7 @@ function PropertyListItem(props: Props) {
     } else {
       return (
         <Text className="text-gray-300 bg-black/50 px-3 py-1 rounded-2xl">
-          {formatDateDistance(data.created_at)}
+          {formatDateDistance(data.createdAt)}
         </Text>
       );
     }
@@ -94,10 +91,10 @@ function PropertyListItem(props: Props) {
     }
   }
   const liked = useMemo(
-    () => data?.owner_interaction?.liked,
-    [data?.owner_interaction?.liked]
+    () => data?.ownerInteraction?.liked,
+    [data?.ownerInteraction?.liked]
   );
-  const banner = media[0];
+  const banner = Array.isArray(media) ? media[0] : media;
   return (
     <Pressable
       onLayout={onLayout}
@@ -170,44 +167,34 @@ function PropertyListItem(props: Props) {
         <View className=" gap-1 w-full">
           <Text className="text-white text-xl font-bold">
             {formatMoney(price, "NGN", 0)}
-            {data.category.name == "Shortlet" && "/night"}
+            {data.category == "Shortlet" && "/night"}
           </Text>
           <View className="flex-row gap-4 mb-1">
             <View className="flex-row rounded-xl items-center gap-2">
               <Icon size="sm" as={Bed} className="text-primary" />
-              <Text className="text-sm">
-                {FindAmenity("Bedroom", data)} bed
-              </Text>
+              <Text className="text-sm">{data?.bedroom || "N/A"} bed</Text>
             </View>
             <View className="flex-row rounded-xl items-center gap-2">
               <Icon size="sm" as={Bath} className="text-primary" />
-              <Text className="text-sm">
-                {FindAmenity("Bathroom", data)} bath
-              </Text>
+              <Text className="text-sm">{data?.bathroom || "N/A"} bath</Text>
             </View>
             <View className="flex-row rounded-xl items-center gap-2">
               <Icon size="sm" as={LandPlot} className="text-primary" />
-              <Text className="text-sm">
-                {FindAmenity("Landarea", data)} sqft
-              </Text>
+              <Text className="text-sm">{data?.landarea || "N/A"} sqft</Text>
             </View>
           </View>
         </View>
 
         <View className="flex-row gap-4 items-center">
-          {address && (
-            <View className="flex-1 flex-row gap-1 items-center">
-              <Icon size="sm" as={MapPin} className="text-primary" />
-              <Text className="text-white flex-1 text-xs">
-                {composeFullAddress(address)}
-              </Text>
-            </View>
-          )}
+          <View className="flex-1 flex-row gap-1 items-center">
+            <Icon size="sm" as={MapPin} className="text-primary" />
+            <Text className="text-white flex-1 text-xs">{displayAddress}</Text>
+          </View>
         </View>
         {showTitle && (
           <View className="flex-row gap-1 items-center mt-1">
             <Icon as={Home} size="sm" className="text-primary" />
-            <Text className=" text-sm">{generateTitle(data)}</Text>
+            <Text className=" text-sm">{data.title}</Text>
           </View>
         )}
       </View>

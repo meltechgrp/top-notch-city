@@ -3,7 +3,7 @@ import { router } from "expo-router";
 import { memo } from "react";
 import HorizontalProperties from "@/components/property/HorizontalProperties";
 
-const Lands = ({ data = [] }: { data?: Property[] }) => {
+const Lands = ({ data = [] }: { data: PropertyListItem[] }) => {
   return (
     <SectionHeaderWithRef
       title="Lands"
