@@ -6,13 +6,15 @@ import StartChatBottomSheet from "@/components/modals/StartChatBottomSheet";
 import { useHomeFeed } from "@/hooks/useHomeFeed";
 import eventBus from "@/lib/eventBus";
 import { useStore } from "@/store";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import CustomerCareBottomSheet from "@/components/modals/CustomerCareBottomSheet";
-import { FlatList, ListRenderItem, RefreshControl } from "react-native";
+import { ListRenderItem, RefreshControl } from "react-native";
 import ShortletProperties from "@/components/home/shortlet";
 import FeaturedProperties from "@/components/home/featured";
 import ApartmentProperties from "@/components/home/recent";
 import Lands from "@/components/home/lands";
+import { FlashList } from "@shopify/flash-list";
+import { useHomeList } from "@/hooks/useHomeList";
 const MAP_HEIGHT = 400;
 
 export default function HomeScreen() {
@@ -24,6 +26,14 @@ export default function HomeScreen() {
 
   const [friendsModal, setFriendsModal] = React.useState(false);
   const [staffs, setStaffs] = useState(false);
+  const { featured, lands, latest, shortlet, nearby } = useHomeList();
+  console.log(
+    featured?.length,
+    lands?.length,
+    shortlet?.length,
+    latest?.length,
+    nearby?.length
+  );
   const feedList = React.useMemo(() => {
     const topLocations = {
       id: "locations",
@@ -58,9 +68,8 @@ export default function HomeScreen() {
       bottomPlaceHolder,
     ];
   }, []);
-
   type FeedList = any;
-  const renderItem: ListRenderItem<FeedList> = ({ item }) => {
+  const renderItem: ListRenderItem<FeedList> = useCallback(({ item }) => {
     if (item.id === "locations") {
       return <TopLocations />;
     }
@@ -80,7 +89,7 @@ export default function HomeScreen() {
       return <View className="h-24" />;
     }
     return <View></View>;
-  };
+  }, []);
   const onNewChat = () => {
     setFriendsModal(true);
   };
@@ -88,7 +97,7 @@ export default function HomeScreen() {
   return (
     <>
       <Box className="flex-1">
-        <FlatList
+        <FlashList
           refreshControl={
             <RefreshControl refreshing={false} onRefresh={refreshAll} />
           }

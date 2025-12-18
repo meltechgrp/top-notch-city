@@ -38,7 +38,7 @@ export function FilterComponent({
             onUpdate={onSearch}
           />
         </View>
-        {tabs?.length && (
+        {tabs?.length ? (
           <ScrollView
             horizontal
             snapToInterval={300 + 4}
@@ -76,7 +76,7 @@ export function FilterComponent({
               </Pressable>
             ))}
           </ScrollView>
-        )}
+        ) : null}
       </View>
       <View className="border-b h-px border-outline"></View>
     </View>

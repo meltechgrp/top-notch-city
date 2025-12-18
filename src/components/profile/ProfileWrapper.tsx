@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
 
 import { Box, Button, Icon, Pressable, Text, View } from "@/components/ui";
@@ -150,46 +150,6 @@ export function ProfileWrapper({
                     </View>
                   );
 
-                case "properties":
-                  return (
-                    <View className="mt-4">
-                      {user && (
-                        <PropertiesTabView
-                          isAgent={isAgent}
-                          isOwner={userType == "owner"}
-                          profileId={user.id}
-                        />
-                      )}
-                    </View>
-                  );
-                case "lands":
-                  return (
-                    <View className="mt-4">
-                      {user && (
-                        <PropertiesTabView
-                          isAgent={isAgent}
-                          isOwner={userType == "owner"}
-                          profileId={user.id}
-                          type="lands"
-                        />
-                      )}
-                    </View>
-                  );
-
-                case "saved":
-                  return (
-                    <View className="mt-4">
-                      {user && <SavedPropertiesTabView />}
-                    </View>
-                  );
-
-                case "reviews":
-                  return (
-                    <View className="mt-4">
-                      {user && <ReviewsTabView profileId={user.id} />}
-                    </View>
-                  );
-
                 default:
                   return null;
               }
@@ -202,15 +162,6 @@ export function ProfileWrapper({
                     userType={userType}
                     isAgent={isAgent}
                     setShowActions={() => setShowActions(true)}
-                  />
-                )}
-
-                {user && tabs.length > 1 && (
-                  <ProfileTabHeaderSection
-                    activeTab={activeTab}
-                    onTabChange={(index) => setActiveTab(tabs[index])}
-                    profile={user}
-                    profileTabs={tabs}
                   />
                 )}
               </View>

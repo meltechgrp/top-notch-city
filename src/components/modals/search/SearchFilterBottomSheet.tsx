@@ -66,8 +66,8 @@ function SearchFilterBottomSheet({
     queryFn: fetchAllViewTypes,
   });
   const options = [
-    { label: "Rent", value: "rent" },
-    { label: "Buy", value: "sell" },
+    { label: "For Rent", value: "rent" },
+    { label: "For Buy", value: "sell" },
   ];
   const FooterComponent = useCallback(
     () => (

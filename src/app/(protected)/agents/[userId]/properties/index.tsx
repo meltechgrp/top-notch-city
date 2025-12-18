@@ -2,6 +2,7 @@ import { FilterComponent } from "@/components/admin/shared/FilterComponent";
 import VerticalProperties from "@/components/property/VerticalProperties";
 import { Box, Icon, Pressable, View } from "@/components/ui";
 import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
+import { useStore } from "@/store";
 import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import { Stack, useGlobalSearchParams, useRouter } from "expo-router";
 import { PlusCircle } from "lucide-react-native";
@@ -11,6 +12,7 @@ export default function AgentProperties() {
   const { userId } = useGlobalSearchParams() as { userId: string };
   const router = useRouter();
   const [search, setSearch] = useState("");
+  const { me } = useStore();
   const [actveTab, setActiveTab] = useState("all");
   const { data, refetch, isLoading, fetchNextPage, hasNextPage } =
     useInfinityQueries({ type: "agent-property" });
@@ -56,49 +58,52 @@ export default function AgentProperties() {
       { title: "flagged", total: flagged },
     ];
   }, [list]);
-
+  const isOwner = useMemo(() => userId == me?.id, [me, userId]);
   useRefreshOnFocus(refetch);
   const headerComponent = useMemo(() => {
     return (
       <FilterComponent
         search={search}
         onSearch={setSearch}
-        tabs={tabs}
+        tabs={isOwner ? tabs : []}
         tab={actveTab}
         onUpdate={setActiveTab}
         searchPlaceholder="Search by location, category or price "
       />
     );
-  }, [search, setSearch, tabs, actveTab]);
+  }, [search, setSearch, tabs, isOwner, actveTab]);
   return (
     <>
       <Stack.Screen
         options={{
-          headerRight: () => (
-            <View className=" flex-row">
-              <Pressable
-                className="p-2 bg-background-muted rounded-full"
-                onPress={() =>
-                  router.push({
-                    pathname: "/agents/[userId]/properties/add",
-                    params: {
-                      userId,
-                    },
-                  })
-                }
-              >
-                <Icon as={PlusCircle} className="w-6 text-primary h-6" />
-              </Pressable>
-            </View>
-          ),
+          headerRight: isOwner
+            ? () => (
+                <View className=" flex-row">
+                  <Pressable
+                    className="p-2 bg-background-muted rounded-full"
+                    onPress={() =>
+                      router.push({
+                        pathname: "/agents/[userId]/properties/add",
+                        params: {
+                          userId,
+                        },
+                      })
+                    }
+                  >
+                    <Icon as={PlusCircle} className="w-6 text-primary h-6" />
+                  </Pressable>
+                </View>
+              )
+            : undefined,
         }}
       />
       <Box className="flex-1 px-2 py-2">
         <VerticalProperties
           isLoading={isLoading}
           data={filteredData}
-          showStatus={true}
-          showLike={false}
+          showStatus={isOwner}
+          showLike={!isOwner}
+          listType={["agent-property"]}
           headerTopComponent={
             filteredData.length > 0 ? headerComponent : undefined
           }

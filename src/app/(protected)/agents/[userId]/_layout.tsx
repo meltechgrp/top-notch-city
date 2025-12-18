@@ -99,6 +99,12 @@ export default function ProfileScreensLayout() {
         }}
       />
       <Stack.Screen
+        name="greeting"
+        options={{
+          headerTitle: "Greeting message",
+        }}
+      />
+      <Stack.Screen
         name="activities"
         options={{
           headerTitle: me ? fullName(me) : "Activities",

@@ -24,6 +24,10 @@ export default () => ({
     infoPlist: {
       NSLocationWhenInUseUsageDescription:
         "Allow $(PRODUCT_NAME) to access your location to show nearby properties and map search.",
+      NSLocationAlwaysUsageDescription:
+        "$(PRODUCT_NAME) needs access to your location at all times so you can view nearby properties, track directions, and get personalized property search suggestions.",
+      NSFaceIDUsageDescription:
+        "$(PRODUCT_NAME) uses Face ID for secure and convenient login, ensuring only you can access your account.",
       ITSAppUsesNonExemptEncryption: false,
       LSApplicationQueriesSchemes: [
         "fb",
@@ -41,7 +45,6 @@ export default () => ({
   },
   android: {
     edgeToEdgeEnabled: true,
-    predictiveBackGestureEnabled: true,
     googleServicesFile: "./google-services.json",
     package: "com.meltech.topnotchcity",
     adaptiveIcon: {
@@ -95,7 +98,7 @@ export default () => ({
   plugins: [
     "expo-asset",
     "expo-router",
-    "expo-apple-authentication",
+    "expo-sqlite",
     [
       "./plugins/withAndroidQueries.js",
       [
@@ -128,6 +131,7 @@ export default () => ({
     ],
     "expo-secure-store",
     "expo-background-task",
+    "expo-apple-authentication",
     [
       "expo-web-browser",
       {

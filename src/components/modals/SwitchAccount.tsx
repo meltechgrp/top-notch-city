@@ -37,7 +37,7 @@ export default function SwitchAccountSheet({
     <BottomSheet
       visible={visible}
       onDismiss={onDismiss}
-      snapPoint={[450, 500]}
+      snapPoint={[320]}
       enableDynamicSizing
       enableOverDrag
     >
@@ -109,9 +109,6 @@ export default function SwitchAccountSheet({
               </View>
             </Pressable>
           )}
-        </View>
-        <View className=" items-center mt-16">
-          <Text className="text-base font-medium">TopNotch City</Text>
         </View>
       </Box>
     </BottomSheet>

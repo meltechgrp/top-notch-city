@@ -9,7 +9,6 @@ import { CompanyModal } from "@/components/modals/profile/CompanyModal";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchAllAgentCompanies } from "@/actions/property/amenity";
-import DropdownSelect from "@/components/custom/DropdownSelect";
 import { Plus, Trash } from "lucide-react-native";
 import { Divider } from "@/components/ui/divider";
 import { formatNumber, unformatNumber } from "@/lib/utils";
@@ -91,95 +90,88 @@ export default function AdditionalInfomation() {
           value={listing.discount}
           onUpdate={(val) => updateListing({ discount: val })}
         />
-        {/* {(listing.listing_role == "agent" ||
-          listing.listing_role == "manager") &&
-          listing.owner_type != "individual" && (
-            <View className="gap-3">
-              <Text className="text-sm">
-                Select/Add company/organisation that belongs to the property for
-                verification purpose
-              </Text>
-              <Divider />
-              {listing?.companies && listing?.companies?.length > 0 ? (
-                <View className="">
-                  {listing?.companies.map((c) => (
-                    <View
-                      key={c.name}
-                      className="bg-background-muted border border-outline-100 p-4 rounded-xl"
+        <View className="gap-3">
+          <Text className="text-sm">
+            Select/Add company/organisation that belongs to the property for
+            verification purpose{" "}
+            {listing.category == "Shortlet" || listing.category == "Hotel"
+              ? ""
+              : "(Optional)"}
+          </Text>
+          <Divider />
+          {listing?.companies && listing?.companies?.length > 0 ? (
+            <View className="">
+              {listing?.companies.map((c) => (
+                <View
+                  key={c.name}
+                  className="bg-background-muted border border-outline-100 p-4 rounded-xl"
+                >
+                  <View className="flex-row justify-between items-center">
+                    <Text className="text-typography/80 text-sm mb-2">
+                      Selected company/organisation
+                    </Text>
+                    <Pressable
+                      className="rounded-xl items-center p-2 bg-primary/80 border border-outline-100"
+                      onPress={() => {
+                        updateListing({ companies: undefined });
+                      }}
                     >
-                      <View className="flex-row justify-between items-center">
-                        <Text className="text-typography/80 text-sm mb-2">
-                          Selected company/organisation
-                        </Text>
-                        <Pressable
-                          className="rounded-xl items-center p-2 bg-primary/80 border border-outline-100"
-                          onPress={() => {
-                            updateListing({ companies: undefined });
-                          }}
-                        >
-                          <Icon size="sm" as={Trash} />
-                        </Pressable>
-                      </View>
-                      <View className="flex-row gap-2 items-center">
-                        <Text className="text-sm">Name:</Text>
-                        <Text className="font-semibold">{c.name}</Text>
-                      </View>
-                      <View className="flex-row gap-2 items-center">
-                        <Text className="text-sm">Phone:</Text>
-                        <Text className="font-semibold">
-                          {c?.phone || "N/A"}
-                        </Text>
-                      </View>
-                      <View className="flex-row gap-2 items-center">
-                        <Text className="text-sm">Email:</Text>
-                        <Text className="font-semibold">
-                          {c?.email || "N/A"}
-                        </Text>
-                      </View>
-                      <View className="flex-row gap-2 items-center">
-                        <Text className="text-sm">Address:</Text>
-                        <Text className="font-semibold">
-                          {c?.address || "N/A"}
-                        </Text>
-                      </View>
-                    </View>
-                  ))}
+                      <Icon size="sm" as={Trash} />
+                    </Pressable>
+                  </View>
+                  <View className="flex-row gap-2 items-center">
+                    <Text className="text-sm">Name:</Text>
+                    <Text className="font-semibold">{c.name}</Text>
+                  </View>
+                  <View className="flex-row gap-2 items-center">
+                    <Text className="text-sm">Phone:</Text>
+                    <Text className="font-semibold">{c?.phone || "N/A"}</Text>
+                  </View>
+                  <View className="flex-row gap-2 items-center">
+                    <Text className="text-sm">Email:</Text>
+                    <Text className="font-semibold">{c?.email || "N/A"}</Text>
+                  </View>
+                  <View className="flex-row gap-2 items-center">
+                    <Text className="text-sm">Address:</Text>
+                    <Text className="font-semibold">{c?.address || "N/A"}</Text>
+                  </View>
                 </View>
-              ) : (
-                <View className="gap-2">
-                  <CustomSelect
-                    BottomSheet={OptionsBottomSheet}
-                    title="Company"
-                    withDropIcon
-                    label="company"
-                    value={undefined}
-                    valueParser={(value: any) =>
-                      companies.find((item) => item.name == value)?.name ||
-                      "Select from existing"
-                    }
-                    options={companies.map((a) => ({
-                      value: a.name,
-                      label: a.name,
-                    }))}
-                    onChange={(val) => {
-                      const comp = companies.find((c) => c.name == val.value);
-                      if (!comp) return;
-                      updateListing({ companies: [comp] });
-                    }}
-                  />
-                  <Pressable
-                    className=" h-14 flex-row bg-background-muted px-4 justify-between items-center rounded-xl border border-outline-100"
-                    onPress={() => setShowCompanyModal(true)}
-                  >
-                    <Text>Upload new company</Text>
-                    <View className="p-1.5 aspect-square bg-background rounded-full border border-outline-100">
-                      <Icon size="xl" as={Plus} className="text-primary" />
-                    </View>
-                  </Pressable>
-                </View>
-              )}
+              ))}
             </View>
-          )} */}
+          ) : (
+            <View className="gap-2">
+              <CustomSelect
+                BottomSheet={OptionsBottomSheet}
+                title="Company"
+                withDropIcon
+                label="company"
+                value={undefined}
+                valueParser={(value: any) =>
+                  companies.find((item) => item.name == value)?.name ||
+                  "Select from existing"
+                }
+                options={companies.map((a) => ({
+                  value: a.name,
+                  label: a.name,
+                }))}
+                onChange={(val) => {
+                  const comp = companies.find((c) => c.name == val.value);
+                  if (!comp) return;
+                  updateListing({ companies: [comp] });
+                }}
+              />
+              <Pressable
+                className=" h-14 flex-row bg-background-muted px-4 justify-between items-center rounded-xl border border-outline-100"
+                onPress={() => setShowCompanyModal(true)}
+              >
+                <Text>Upload new company</Text>
+                <View className="p-1.5 aspect-square bg-background rounded-full border border-outline-100">
+                  <Icon size="xl" as={Plus} className="text-primary" />
+                </View>
+              </Pressable>
+            </View>
+          )}
+        </View>
       </Box>
       <CompanyModal
         onSave={(val) => {

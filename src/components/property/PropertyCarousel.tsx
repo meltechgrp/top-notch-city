@@ -3,14 +3,13 @@ import Carousel, {
   ICarouselInstance,
   Pagination,
 } from "react-native-reanimated-carousel";
-import PropertyMedia from "./PropertyMedia";
 import { Colors } from "@/constants/Colors";
 import { Image, useResolvedTheme, View } from "../ui";
 import Layout from "@/constants/Layout";
 import { useSharedValue } from "react-native-reanimated";
 import { Dimensions, ScrollView } from "react-native";
 import { ImageContentFit } from "expo-image";
-import { generateMediaUrl } from "@/lib/api";
+import { generateMediaUrl, generateMediaUrlSingle } from "@/lib/api";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -21,7 +20,6 @@ type Props = {
   width: number;
   factor?: number;
   pointerPosition?: number;
-  withBackdrop?: boolean;
   loop?: boolean;
   autoPlay?: boolean;
   paginationLenght?: number;
@@ -29,16 +27,13 @@ type Props = {
   rounded?: boolean;
   stackMode?: boolean;
   fullScreen?: boolean;
-  isOwner?: boolean;
   withPagination?: boolean;
-  canPlayVideo?: boolean;
   setSelectedIndex?: (val: number) => void;
   selectedIndex?: number;
   paginationsize?: number;
   isList?: boolean;
   enabled?: boolean;
   contentFit?: ImageContentFit;
-  property?: Property;
   showImages?: boolean;
   onPress?: (index: number) => void;
 };
@@ -49,24 +44,18 @@ function PropertyCarousel({
   factor,
   pointerPosition = 10,
   paginationsize = 8,
-  withBackdrop,
   loop = false,
   scrollAnimationDuration = 800,
   autoPlay = false,
   stackMode = false,
   withPagination = true,
-  canPlayVideo,
   paginationLenght,
   setSelectedIndex,
   selectedIndex,
-  isOwner,
   isList = false,
-  rounded,
-  contentFit,
   enabled = true,
   fullScreen = false,
   showImages = false,
-  property,
   onPress,
 }: Props) {
   const { bannerHeight, window } = Layout;
@@ -124,19 +113,14 @@ function PropertyCarousel({
           onSnapToItem={setSelectedIndex}
           style={{ width: width }}
           data={media}
-          renderItem={({ item, index }) => (
-            <PropertyMedia
+          renderItem={({ item }) => (
+            <Image
               style={{ height: 500, flex: 1 }}
-              withBackdrop={withBackdrop}
-              source={item}
-              isOwner={isOwner}
-              isVisible
-              fullScreen={fullScreen}
-              contentFit={contentFit}
-              rounded={rounded}
-              property={property}
-              canPlayVideo={canPlayVideo}
-              onPress={() => onPress?.(index)}
+              source={{
+                uri: generateMediaUrlSingle(item.url),
+                cacheKey: item.id,
+              }}
+              cacheKey={item.id}
             />
           )}
           pagingEnabled={true}
@@ -174,7 +158,7 @@ function PropertyCarousel({
               {
                 position: "absolute",
                 bottom: pointerPosition,
-                backgroundColor: "rgb(0,0,0,0.3)",
+                backgroundColor: "rgb(0,0,0,0.5)",
                 gap: 5,
                 padding: 8,
                 borderRadius: 20,

@@ -17,6 +17,8 @@ import {
   Bed,
   BoxIcon,
   ChevronRight,
+  Eye,
+  Heart,
   Home,
   Images,
   LandPlot,
@@ -37,6 +39,7 @@ import {
   formatMoney,
   formatNumberCompact,
   FindAmenity,
+  generateTitle,
 } from "@/lib/utils";
 import { LongDescription } from "@/components/custom/LongDescription";
 import { CustomCenterSheet } from "@/components/property/CustomMapCenterSheet";
@@ -81,14 +84,11 @@ const PropertyDetailsBottomSheet = ({
                 </Text>
                 <PropertyBadge property={property} />
               </View>
-              {(property.category.name == "Shortlet" ||
-                property.category.name == "Hotel") && (
-                <View className="flex-row gap-1 items-center my-px">
-                  <Icon as={Home} size="sm" className="text-primary" />
-                  <Text className=" text-sm">{property.title}</Text>
-                </View>
-              )}
-              <View className="flex-row mt-1 gap-4 items-center">
+              <View className="flex-row gap-1 items-center my-px">
+                <Icon as={Home} size="sm" className="text-primary" />
+                <Text className=" text-sm">{generateTitle(property)}</Text>
+              </View>
+              <View className="flex-row justify-between gap-4 items-center">
                 {property.address && (
                   <View className="flex-1 flex-row gap-1 items-center">
                     <Icon size="sm" as={MapPin} className="text-primary" />
@@ -97,6 +97,21 @@ const PropertyDetailsBottomSheet = ({
                     </Text>
                   </View>
                 )}
+
+                <View className="flex-row gap-1 ">
+                  <View className="flex-row h-8 gap-2 bg-black/40 rounded-2xl py-0 px-3 items-center">
+                    <Icon as={Eye} size="sm" className="text-white" />
+                    <Text className="text-white font-medium text-sm ">
+                      {formatNumberCompact(property?.interaction?.viewed)}
+                    </Text>
+                  </View>
+                  <View className="flex-row h-8 gap-2 bg-black/40 rounded-2xl py-0 px-3 items-center">
+                    <Icon as={Heart} size="sm" className="text-white" />
+                    <Text className="text-white font-medium text-sm ">
+                      {formatNumberCompact(property?.interaction?.liked)}
+                    </Text>
+                  </View>
+                </View>
               </View>
             </View>
             <View className="gap-4 px-4 pb-2 -mt-2">

@@ -8,7 +8,7 @@ import {
   formatNumberCompact,
 } from "@/lib/utils";
 import { StyleProp, View, ViewStyle } from "react-native";
-import { Icon, Text, Pressable } from "../ui";
+import { Icon, Text, Pressable, Image } from "../ui";
 import {
   Bath,
   Bed,
@@ -24,14 +24,15 @@ import { useLayout } from "@react-native-community/hooks";
 import { PropertyStatus } from "./PropertyStatus";
 import { PropertyBadge } from "./PropertyBadge";
 import { useStore } from "@/store";
-import PropertyMedia from "@/components/property/PropertyMedia";
 import { openAccessModal } from "@/components/globals/AuthModals";
 import { AnimatedLikeButton } from "@/components/custom/AnimatedLikeButton";
 import { useLike } from "@/hooks/useLike";
+import { generateMediaUrlSingle } from "@/lib/api";
 
 type Props = {
   data: Property;
   className?: string;
+  subClassName?: string;
   showFacilites?: boolean;
   showStatus?: boolean;
   isList?: boolean;
@@ -39,9 +40,12 @@ type Props = {
   showLike?: boolean;
   listType?: any[];
   rounded?: boolean;
+  showTitle?: boolean;
   isHorizontal?: boolean;
   withPagination?: boolean;
   enabled?: boolean;
+  imageWrapperClassName?: string;
+  imageStyle?: StyleProp<ViewStyle>;
   style?: StyleProp<ViewStyle>;
   onPress: (data: Props["data"]) => void;
 };
@@ -56,17 +60,16 @@ function PropertyListItem(props: Props) {
     isFeatured,
     showLike,
     listType,
+    imageWrapperClassName,
+    imageStyle,
+    showTitle = true,
+    subClassName,
   } = props;
   const me = useStore((s) => s.me);
   const { toggleLike } = useLike({ queryKey: listType });
-  const { bannerHeight, window } = Layout;
+  const { bannerHeight } = Layout;
   const { price, media, address, interaction, status, owner } = data;
   const { width, onLayout } = useLayout();
-  const images = useMemo(
-    () => media?.filter((item) => item.media_type == "IMAGE") ?? [],
-    [media]
-  );
-
   const isMine = useMemo(() => me?.id === owner?.id, [me, owner]);
   const isAdmin = useMemo(() => me?.role == "admin", [me]);
   const Actions = () => {
@@ -94,12 +97,13 @@ function PropertyListItem(props: Props) {
     () => data?.owner_interaction?.liked,
     [data?.owner_interaction?.liked]
   );
+  const banner = media[0];
   return (
     <Pressable
       onLayout={onLayout}
       key={data.id}
       onPress={() => onPress(data)}
-      style={style}
+      style={[{ minHeight: 200 }, style]}
       className={cn(
         "relative flex-1 rounded-3xl p-2 bg-background-muted",
         isHorizontal && "w-[23rem]",
@@ -107,19 +111,27 @@ function PropertyListItem(props: Props) {
       )}
     >
       <View
-        style={{ height: bannerHeight - 30, minHeight: 200 }}
-        className=" rounded-[1.2rem] overflow-hidden relative flex-1"
+        style={[{ height: bannerHeight - 30 }, imageStyle]}
+        className={cn(
+          " rounded-[1.2rem] overflow-hidden relative flex-1",
+          imageWrapperClassName
+        )}
       >
-        <PropertyMedia
-          style={{ height: bannerHeight - 30, minHeight: 200 }}
-          source={images[0]}
-          withBackdrop
+        <Image
           rounded
+          source={{
+            uri: generateMediaUrlSingle(banner.url),
+            cacheKey: banner.id,
+          }}
+          cacheKey={banner.id}
+          transition={500}
+          style={[{ height: bannerHeight - 30 }, imageStyle as any]}
+          contentFit="cover"
         />
         <View className=" absolute top-0 w-full h-full justify-between">
           <View
             className={cn(
-              "flex-row px-3 pt-2 pb-0 items-start justify-between"
+              "flex-row px-3 pt-3 pb-0 items-start justify-between"
             )}
           >
             <Actions />
@@ -154,7 +166,7 @@ function PropertyListItem(props: Props) {
           </View>
         </View>
       </View>
-      <View className="flex-1 p-4 pt-3 px-2">
+      <View className={cn("flex-1 p-4 pt-3 px-2", subClassName)}>
         <View className=" gap-1 w-full">
           <Text className="text-white text-xl font-bold">
             {formatMoney(price, "NGN", 0)}
@@ -192,10 +204,12 @@ function PropertyListItem(props: Props) {
             </View>
           )}
         </View>
-        <View className="flex-row gap-1 items-center mt-1">
-          <Icon as={Home} size="sm" className="text-primary" />
-          <Text className=" text-sm">{generateTitle(data)}</Text>
-        </View>
+        {showTitle && (
+          <View className="flex-row gap-1 items-center mt-1">
+            <Icon as={Home} size="sm" className="text-primary" />
+            <Text className=" text-sm">{generateTitle(data)}</Text>
+          </View>
+        )}
       </View>
     </Pressable>
   );

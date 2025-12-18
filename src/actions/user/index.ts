@@ -146,6 +146,24 @@ export async function updateProfileField(
     throw error;
   }
 }
+export async function updateGreetingMessage(message: string) {
+  try {
+    const formData = new FormData();
+    formData.append("message", message);
+
+    const res = await Fetch(`/agent/auto-message?message=${message}`, {
+      method: "PUT",
+    });
+
+    if (res?.detail) {
+      throw new Error("Failed to update profile");
+    }
+
+    return res;
+  } catch (error) {
+    throw error;
+  }
+}
 
 export async function verifyEmail({ user_id }: { user_id: string }) {
   const res = await Fetch(`/admin/users/${user_id}/verify-email`, {

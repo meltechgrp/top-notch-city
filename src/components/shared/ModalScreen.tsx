@@ -13,9 +13,10 @@ import Animated, {
 
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { scheduleOnRN } from "react-native-worklets";
+import { BodyScrollView } from "@/components/layouts/BodyScrollView";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
-const EDGE_WIDTH = 40;
+const EDGE_WIDTH = 20;
 type ModalScreenProps = {
   title?: string;
   rightComponent?: ReactNode;
@@ -24,6 +25,7 @@ type ModalScreenProps = {
   children: ReactNode;
   disableSwipe?: boolean;
   visible?: boolean;
+  withScroll?: boolean;
   onDismiss: (val: boolean) => void;
 };
 
@@ -32,6 +34,7 @@ export default function ModalScreen({
   rightComponent,
   children,
   disableSwipe = false,
+  withScroll = false,
   onDismiss,
   closeIcon,
   leftComponent,
@@ -110,16 +113,17 @@ export default function ModalScreen({
             >
               <View className="h-14 pb-1 px-4 flex-row items-center justify-between border-b border-outline-100/50 relative">
                 {leftComponent ?? (
-                  <Pressable
-                    onPress={close}
-                    className="p-2 ml-4 border bg-background-muted border-outline-100 rounded-full items-center justify-center"
-                  >
-                    <Icon as={closeIcon ?? ChevronLeft} size="xl" />
+                  <Pressable onPress={close} className="w-20">
+                    <View className="p-2 self-start ml-2 border bg-background-muted border-outline-100 rounded-full items-center justify-center">
+                      <Icon as={closeIcon ?? ChevronLeft} size="xl" />
+                    </View>
                   </Pressable>
                 )}
 
                 <View className=" absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
-                  <Text className="text-base font-medium">{title ?? ""}</Text>
+                  <Text className="text-lg capitalize font-bold">
+                    {title ?? ""}
+                  </Text>
                 </View>
 
                 <View className="min-w-[40px] items-end">
@@ -127,7 +131,13 @@ export default function ModalScreen({
                 </View>
               </View>
             </View>
-            <View className="flex-1">{children}</View>
+            {withScroll ? (
+              <BodyScrollView style={{ flex: 1 }} containerClassName="flex-1">
+                {children}
+              </BodyScrollView>
+            ) : (
+              <View className="flex-1">{children}</View>
+            )}
           </View>
         </Animated.View>
       </Modal>

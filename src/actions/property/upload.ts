@@ -21,7 +21,7 @@ const parseApiError = (data: any, status: number) => {
 
 const buildPropertyFormData = (listing: Listing) => {
   const fd = new FormData();
-
+  console.log(listing?.listing_role, listing?.owner_type);
   if (listing?.title) fd.append("title", listing.title);
   if (listing?.description) fd.append("description", listing.description);
   if (listing?.price) fd.append("price", listing.price);
@@ -74,7 +74,7 @@ const buildPropertyFormData = (listing: Listing) => {
   });
 
   listing.videos?.forEach((vid) => {
-    fd.append("property_video_ids", vid.id);
+    fd.append("property_image_ids", vid.id);
   });
 
   listing.ownership_documents?.forEach((doc) => {
@@ -83,7 +83,7 @@ const buildPropertyFormData = (listing: Listing) => {
 
   if (listing.companies?.length) {
     const company = listing.companies[0];
-    fd.append("companies", company.id ? company.id : JSON.stringify(company));
+    fd.append("companies", JSON.stringify(company));
   }
 
   return fd;

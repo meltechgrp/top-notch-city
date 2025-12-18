@@ -8,11 +8,11 @@ export async function searchProperties(
 ): Promise<Result> {
   const query = new URLSearchParams();
   if (filters?.keyword) query.append("title", filters.keyword);
-  // if (filters?.city) query.append("city", filters.city);
-  // if (filters?.state) query.append("state", filters.state);
+  if (filters?.city) query.append("city", filters.city);
+  if (filters?.state) query.append("state", filters.state);
   if (filters?.latitude) query.append("latitude", filters.latitude);
   if (filters?.longitude) query.append("longitude", filters.longitude);
-  // if (filters?.country) query.append("country", filters.country);
+  if (filters?.country) query.append("country", filters.country);
   if (filters?.purpose) query.append("purpose", filters.purpose);
   if (filters?.viewType) query.append("viewType", filters.viewType);
   if (filters?.bedType) query.append("bedType", filters.bedType);

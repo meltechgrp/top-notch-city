@@ -14,7 +14,6 @@ import { useTempStore } from "@/store";
 import { useLayout } from "@react-native-community/hooks";
 import { useRouter } from "expo-router";
 import { useMemo } from "react";
-import Animated, { FadeInRight, FadeOutLeft } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 interface ListingWrapperProps {
@@ -76,76 +75,52 @@ export function ListingWrapper({
         return null;
     }
   }, [listing.step]);
+  const warn = (msg: string) =>
+    showErrorAlert({ title: msg, alertType: "warn" });
   function handleNext(step: number, back?: boolean) {
     if (back) {
       return updateListing({ step });
     } else if (listing.step == 1) {
-      if (!listing?.purpose) {
-        return showErrorAlert({
-          title: "Please select your purpose",
-          alertType: "warn",
-        });
-      } else if (!listing?.title || listing.title?.length < 2) {
-        return showErrorAlert({
-          title: "Please add property title",
-          alertType: "warn",
-        });
-      } else if (!listing?.description) {
-        return showErrorAlert({
-          title: "Please add a detailed description",
-          alertType: "warn",
-        });
-      } else if (!listing?.address) {
-        return showErrorAlert({
-          title: "Please add property location",
-          alertType: "warn",
-        });
-      }
+      if (!listing?.purpose) return warn("Please select your purpose");
+      if (!listing?.title || listing.title?.length < 2)
+        return warn("Please add property title");
+      if (!listing?.description)
+        return warn("Please add a detailed description");
+      if (!listing?.address) return warn("Please add property location");
+      if (!listing?.price) return warn("Please add property price");
+      if (!listing?.currency) return warn("Please select a currency");
     } else if (listing.step == 2) {
-      if (!listing?.purpose) {
-        return showErrorAlert({
-          title: "Please select a property type",
-          alertType: "warn",
-        });
-      } else if (!listing?.subCategory) {
-        return showErrorAlert({
-          title: "Please select the kind of property",
-          alertType: "warn",
-        });
-      } else if (!listing?.currency) {
-        return showErrorAlert({
-          title: "Please select a currency",
-          alertType: "warn",
-        });
-      } else if (!listing?.price) {
-        return showErrorAlert({
-          title: "Please add property price",
-          alertType: "warn",
-        });
-      } else if (listing?.purpose == "rent" && !listing?.duration) {
-        if (listing.category != "Shortlet" && listing.category != "Hotel") {
-          return showErrorAlert({
-            title: "Please select rentage duration",
-            alertType: "warn",
-          });
-        }
+      if (!listing?.category) return warn("Please select a property type");
+      if (!listing?.bedroom && listing.category !== "Land")
+        return warn("Please add number of bedrooms");
+      if (!listing?.plots && listing.category == "Land")
+        return warn("Please add number of plots");
+      if (!listing?.subCategory)
+        return warn("Please select the kind of property");
+      if (listing?.purpose == "rent" && !listing?.duration) {
+        if (listing.category != "Shortlet" && listing.category != "Hotel")
+          return warn("Please select rentage duration");
       }
-    } else if (listing.step == 3 && !listing?.facilities?.length) {
-      return showErrorAlert({
-        title: "Please select at least 2 amenities",
-        alertType: "warn",
-      });
+    } else if (listing.step == 3) {
+      if (!listing?.facilities)
+        return warn("Please select at least 1 amenities");
+      if (
+        !listing?.availabilityPeriod &&
+        (listing.category == "Shortlet" || listing.category == "Hotel")
+      )
+        return warn("Please add at least 1 availability period");
     } else if (listing.step == 4) {
+      if (!listing?.photos) return warn("Add some images to proceed!");
       if (listing?.photos && listing?.photos?.length < 2)
-        return showErrorAlert({
-          title: "Upload at least 2 images",
-          alertType: "warn",
-        });
-      else if (!listing?.photos?.length)
-        return showErrorAlert({
-          title: "Add some images to proceed!",
-          alertType: "warn",
-        });
+        return warn("Upload at least 2 images");
+    } else if (listing.step == 5) {
+      if (!listing?.listing_role) return warn("Please select your role");
+      if (!listing?.owner_type) return warn("Please select the property owner");
+      if (
+        !listing?.companies &&
+        (listing.category == "Shortlet" || listing.category == "Hotel")
+      )
+        return warn("Please add a company/organisation to continue");
     }
     updateListingStep();
   }
@@ -154,16 +129,16 @@ export function ListingWrapper({
       <Box onLayout={onLayout} className="flex-1">
         <FullHeightLoaderWrapper className="flex-1" loading={loading}>
           <SafeAreaView edges={["bottom"]} className="flex-1">
-            <Animated.View
-              entering={FadeInRight.duration(800)}
-              exiting={FadeOutLeft.duration(800)}
+            {/* <Animated.View
+              entering={FadeInRight.duration(200)}
+              exiting={FadeOutLeft.duration(200)}
               key={listing.step}
               style={{ height, flex: 1 }}
-            >
-              <BodyScrollView withBackground contentContainerClassName="pb-12">
-                {Steps}
-              </BodyScrollView>
-            </Animated.View>
+            > */}
+            <BodyScrollView withBackground contentContainerClassName="pb-12">
+              {Steps}
+            </BodyScrollView>
+            {/* </Animated.View> */}
             <ListingBottomNavigation
               step={listing.step}
               uploaHandler={uploaHandler}

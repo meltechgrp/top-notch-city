@@ -2,8 +2,10 @@ import { Dimensions, StyleSheet, View } from "react-native";
 import { useCallback, useMemo, useRef } from "react";
 import { Box, Button, Icon, Text } from "@/components/ui";
 import BottomSheet, {
+  BottomSheetFlashList,
   BottomSheetFlatList,
   useBottomSheetInternal,
+  useBottomSheetScrollableCreator,
 } from "@gorhom/bottom-sheet";
 import { Colors } from "@/constants/Colors";
 import { formatNumber } from "@/lib/utils";
@@ -21,6 +23,7 @@ import Animated, {
 import eventBus from "@/lib/eventBus";
 import DropdownSelect from "@/components/custom/DropdownSelect";
 import VerticalPropertyLoaderWrapper from "@/components/loaders/VerticalPropertyLoader";
+import { FlashList } from "@shopify/flash-list";
 const { width } = Dimensions.get("screen");
 
 type Props = {
@@ -48,6 +51,7 @@ function SearchListBottomSheet({
   filter,
   isTab,
 }: Props) {
+  const BottomSheetScrollable = useBottomSheetScrollableCreator();
   const sheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(
     () => (isTab ? ["20%", "40%", "60%", "90%"] : ["10%", "40%", "60%", "90%"]),
@@ -56,24 +60,20 @@ function SearchListBottomSheet({
 
   const renderItem = useCallback(
     ({ item }: { item: Property }) => (
-      <View
+      <PropertyListItem
+        onPress={(data) => {
+          router.push({
+            pathname: `/property/[propertyId]`,
+            params: {
+              propertyId: data.slug,
+            },
+          });
+        }}
         style={styles.itemContainer}
-        className="bg-background-muted rounded-xl"
-      >
-        <PropertyListItem
-          onPress={(data) => {
-            router.push({
-              pathname: `/property/[propertyId]`,
-              params: {
-                propertyId: data.slug,
-              },
-            });
-          }}
-          isList={true}
-          data={item}
-          rounded={true}
-        />
-      </View>
+        isList={true}
+        data={item}
+        rounded={true}
+      />
     ),
     []
   );
@@ -86,6 +86,7 @@ function SearchListBottomSheet({
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
         flex: 1,
+        width,
         backgroundColor: Colors.light.background,
       }}
       backgroundComponent={null}
@@ -111,13 +112,14 @@ function SearchListBottomSheet({
         headerHeight={20}
         loading={isLoading || false}
       >
-        <BottomSheetFlatList
+        <FlashList
           data={properties}
           renderItem={renderItem}
-          keyExtractor={(item: any) => item.id}
+          keyExtractor={(item) => item.id}
           onEndReached={() => {
             if (hasNextPage && !isLoading) fetchNextPage?.();
           }}
+          renderScrollComponent={BottomSheetScrollable}
           onEndReachedThreshold={0.1}
           scrollEventThrottle={16}
           ListEmptyComponent={() => (
@@ -148,8 +150,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     padding: 4,
-    alignItems: "center",
-    paddingBottom: 80,
+    paddingBottom: 60,
     backgroundColor: Colors["light"].background,
   },
   itemContainer: {

@@ -26,7 +26,7 @@ export default function PropertyHeader({
   const liked = useMemo(() => !!property.owner_interaction?.liked, [property]);
   return (
     <>
-      <View className="pr-4 flex-row bg-background/50 px-4 rounded-full mr-4 items-center gap-2">
+      <View className="pr-4 flex-row bg-background/60 px-4 rounded-full mr-4 items-center gap-2">
         {property.status == "approved" && (
           <WishListButton
             id={property.id}
@@ -43,11 +43,12 @@ export default function PropertyHeader({
                 pathname: "/property/[propertyId]/edit",
                 params: {
                   propertyId: property.id,
+                  userId: property.owner.id,
                 },
               })
             }
             className={
-              "px-4 h-14 flex-row border-outline border-b justify-between rounded-xl items-center"
+              "px-4 h-12 flex-row border-outline border-b justify-between rounded-xl items-center"
             }
           >
             <Icon

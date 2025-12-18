@@ -1,18 +1,15 @@
 import SectionHeaderWithRef from "@/components/home/SectionHeaderWithRef";
 import { router } from "expo-router";
 import { memo } from "react";
-import { useHomeFeed } from "@/hooks/useHomeFeed";
 import HorizontalProperties from "@/components/property/HorizontalProperties";
 
-const Lands = () => {
-  const { lands, loadingLand, refetchingLand } = useHomeFeed();
-
+const Lands = ({ data = [] }: { data?: Property[] }) => {
   return (
     <SectionHeaderWithRef
       title="Lands"
       titleClassName="text-gray-400 text-base"
       subTitle="See More"
-      hasData={lands?.length > 0 || loadingLand || refetchingLand}
+      hasData={data?.length > 0}
       onSeeAllPress={() => {
         router.push({
           pathname: "/explore",
@@ -23,10 +20,10 @@ const Lands = () => {
       }}
     >
       <HorizontalProperties
-        data={lands}
-        isLoading={loadingLand}
+        data={data}
+        isLoading={false}
         listType={["trending-lands"]}
-        isRefetching={refetchingLand}
+        isRefetching={false}
       />
     </SectionHeaderWithRef>
   );

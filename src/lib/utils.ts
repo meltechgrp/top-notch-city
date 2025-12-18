@@ -406,3 +406,11 @@ export async function uploadWithFakeProgress(
       throw err;
     });
 }
+
+export function mapPropertyList(rows: any[]) {
+  return rows.map((row) => ({
+    ...row.properties,
+    position: row.property_list_items.position,
+    listId: row.property_list_items.listId,
+  }));
+}

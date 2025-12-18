@@ -1,9 +1,6 @@
-import { composeFullAddress, formatMoney, generateTitle } from "@/lib/utils";
-import { Icon, Text, View } from "../ui";
+import { View } from "../ui";
 import PropertyCarousel from "./PropertyCarousel";
-import { House, LandPlot, MapPin } from "lucide-react-native";
 import { ProfileImageTrigger } from "@/components/custom/ImageViewerProvider";
-import { PropertyBadge } from "@/components/property/PropertyBadge";
 
 interface Props {
   property: Property;
@@ -18,7 +15,6 @@ export function PropertyHeroSection({ property, width }: Props) {
           <PropertyCarousel
             width={width || 400}
             factor={1}
-            withBackdrop={true}
             loop={false}
             paginationsize={6}
             media={

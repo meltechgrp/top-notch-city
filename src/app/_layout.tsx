@@ -27,6 +27,8 @@ import { enableScreens } from "react-native-screens";
 import { ImageViewerProvider } from "@/components/custom/ImageViewerProvider";
 import { registerDevice } from "@/actions/user";
 import useGetLocation from "@/hooks/useGetLocation";
+import { runMigrations } from "@/db";
+import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 
 enableScreens(true);
 const query = new QueryClient({
@@ -43,7 +45,6 @@ export const unstable_settings = {
 LogBox.ignoreLogs([
   "[Reanimated] Reading from `value` during component render.",
 ]);
-
 configureReanimatedLogger({
   level: ReanimatedLogLevel.error,
   strict: false,
@@ -52,14 +53,18 @@ configureReanimatedLogger({
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  useEffect(() => {
+    runMigrations();
+  }, []);
   useNotificationObserver();
   const { retryGetLocation } = useGetLocation();
   useSuppressChatPushNotification();
   useMountPushNotificationToken();
   useEffect(() => {
-    (async () => await registerDevice())().finally(async () => {
+    (async () => {
       await retryGetLocation();
-    });
+      await registerDevice();
+    })();
   }, []);
   useEffect(() => {
     setTimeout(() => {
@@ -72,14 +77,14 @@ export default function RootLayout() {
         <NotifierWrapper>
           <GluestackUIProvider>
             <KeyboardProvider>
-              <BottomSheetModalProvider>
-                <QueryClientProvider client={query}>
-                  <ImageViewerProvider>
+              <ImageViewerProvider>
+                <BottomSheetModalProvider>
+                  <QueryClientProvider client={query}>
                     <Slot />
-                  </ImageViewerProvider>
-                  <GlobalManager />
-                </QueryClientProvider>
-              </BottomSheetModalProvider>
+                    <GlobalManager />
+                  </QueryClientProvider>
+                </BottomSheetModalProvider>
+              </ImageViewerProvider>
             </KeyboardProvider>
           </GluestackUIProvider>
         </NotifierWrapper>
@@ -111,20 +116,6 @@ function useMountPushNotificationToken() {
           });
       }
     }, 5000);
-    // const notificationListener =
-    //   Notifications.addNotificationReceivedListener((notification) => {
-    //     console.log(notification.request.content?.data, "test");
-    //     const data = notification.request.content.data;
-    //     if (data?.entity_type !== "chat") {
-    //       showBounceNotification({
-    //         title: notification.request.content.title || "New Notification",
-    //         description: notification.request.content.body || undefined,
-    //       });
-    //     }
-    //   });
-    // return () => {
-    //   notificationListener.remove();
-    // };
   }, [hasAuth]);
 }
 

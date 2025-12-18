@@ -19,11 +19,6 @@ type SubCategory = {
   name: string;
   slug: string;
 };
-type CategorySections = {
-  name: string;
-  id: string;
-  data: { name: string; id: string; catId: string }[];
-}[];
 
 type PropertyResponse = {
   count: number;
@@ -57,8 +52,6 @@ type Property = {
   viewType?: string;
   companies?: Company[];
   discount?: string;
-  listing_role?: string;
-  owner_type?: string;
   caution_fee?: string;
   owner: Owner;
   ownership: Ownership;
@@ -120,8 +113,8 @@ type Ownership = {
 };
 
 type Amenity = {
+  id: string;
   name: string;
-  icon: string;
   value: string;
 };
 
@@ -142,15 +135,6 @@ type Place = {
   vicinity: string;
 };
 
-type FlatCategoryItem = { type: "category"; id: string; name: string };
-type FlatSubcategoryItem = {
-  type: "subcategory";
-  id: string;
-  name: string;
-  categoryId: string;
-};
-type FlatItem = FlatCategoryItem | FlatSubcategoryItem;
-
 type PropertyStatus =
   | "pending"
   | "approved"
@@ -161,6 +145,21 @@ type PropertyStatus =
   | "featured";
 
 type PropertyPurpose = "rent" | "sell";
+
+type CategorySections = {
+  name: string;
+  id: string;
+  data: { name: string; id: string; catId: string }[];
+}[];
+
+type FlatCategoryItem = { type: "category"; id: string; name: string };
+type FlatSubcategoryItem = {
+  type: "subcategory";
+  id: string;
+  name: string;
+  categoryId: string;
+};
+type FlatItem = FlatCategoryItem | FlatSubcategoryItem;
 
 type TopLocation = {
   state: string;

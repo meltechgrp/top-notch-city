@@ -30,11 +30,6 @@ const DiscoverProperties = (props: Props) => {
             })
           }
           height={mapHeight}
-          // onMarkerPress={(data) =>
-          //   router.push({
-          //     pathname: "/explore",
-          //   })
-          // }
         />
       </View>
     </View>

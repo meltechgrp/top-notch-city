@@ -1,8 +1,10 @@
 import { addSubcategory } from "@/actions/property/category";
+import SectionHeaderWithRef from "@/components/home/SectionHeaderWithRef";
 import { getQuickMenuItems } from "@/components/menu/menuitems";
 import { MenuListItem } from "@/components/menu/MenuListItem";
 import CampaignCard from "@/components/profile/CampaignCard";
 import { UserType } from "@/components/profile/ProfileWrapper";
+import PropertiesTabView from "@/components/profile/PropertiesTab";
 import { Badge, Button, Icon, Text, View } from "@/components/ui";
 import { DAYS } from "@/constants/user";
 import { composeFullAddress } from "@/lib/utils";
@@ -92,13 +94,12 @@ export function ProfileDetails({ user, userType }: ProfileDetailsProps) {
           actionRoute={`/agents/${user?.id}/properties/add`}
         />
       )}
+
       {(userType !== "owner" || isAgent) && (
-        <View className=" gap-2 mt-2">
-          <View className="gap-2 flex-row justify-between">
-            <Text className="text-typography/80">Bussiness hours</Text>
-          </View>
-          <WorkingDays days={user?.agent_profile?.working_hours} />
-        </View>
+        <PropertiesTabView
+          showStatus={userType == "owner" && isAgent}
+          profileId={user.id}
+        />
       )}
       {(userType !== "owner" || isAgent) && (
         <View className="gap-1">
@@ -116,7 +117,14 @@ export function ProfileDetails({ user, userType }: ProfileDetailsProps) {
           </View>
         </View>
       )}
-
+      {(userType !== "owner" || isAgent) && (
+        <View className=" gap-2 mt-2">
+          <View className="gap-2 flex-row justify-between">
+            <Text className="text-typography/80">Bussiness hours</Text>
+          </View>
+          <WorkingDays days={user?.agent_profile?.working_hours} />
+        </View>
+      )}
       {(userType !== "owner" || isAgent) && (
         <View>
           {user.agent_profile?.specialties?.slice() ? (
@@ -296,10 +304,10 @@ export function WorkingDays({ days }: { days?: Record<string, string> }) {
   const orderedDays = [today, ...DAYS.filter((d) => d.toLowerCase() !== today)];
 
   return (
-    <View className="flex-1 bg-background-muted rounded-xl pb-3">
+    <View className=" bg-background-muted rounded-xl pb-3">
       <TouchableOpacity
         onPress={() => setExpanded((prev) => !prev)}
-        className="flex-row items-center justify-between p-3 pb-0"
+        className="flex-row h-10 items-center justify-between p-3 pb-0"
       >
         <View className="flex-row items-center gap-2">
           <Icon as={Clock} className=" text-primary" />

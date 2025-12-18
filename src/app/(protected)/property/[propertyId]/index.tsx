@@ -28,12 +28,16 @@ import Animated, {
   useSharedValue,
 } from "react-native-reanimated";
 import { PropertyFooter } from "@/components/property/PropertyFooter";
+import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
+import { composeFullAddress } from "@/lib/utils";
+import { useTempStore } from "@/store";
 
 const { height } = Dimensions.get("window");
 const HERO_HEIGHT = height / 2.2;
 
 export default function PropertyItem() {
   const { propertyId } = useLocalSearchParams() as { propertyId: string };
+  const { updateListing } = useTempStore();
   const { width, onLayout } = useLayout();
   const theme = useResolvedTheme();
   const detailsY = useSharedValue(0);
@@ -111,12 +115,71 @@ export default function PropertyItem() {
   });
   if (error) {
     return (
-      <View className="flex-1 bg-background justify-center items-center">
-        <Text>Error occurred. Please try again.</Text>
-      </View>
+      <Box className="flex-1 justify-center items-center">
+        <MiniEmptyState
+          title="Property not found"
+          description="This property seems to be removed or not available"
+        />
+      </Box>
     );
   }
 
+  useEffect(() => {
+    if (data) {
+      setTimeout(() => {
+        updateListing({
+          title: data.title,
+          description: data?.description || "",
+          duration: data?.duration,
+          purpose: data.purpose,
+          category: data.category.name,
+          bedroom: data.bedroom,
+          bathroom: data.bathroom,
+          bedType: data.bedType,
+          guests: data.guests,
+          landarea: data.landarea?.toString(),
+          plots: data.plots,
+          viewType: data.viewType,
+          discount: data.discount,
+          caution_fee: data.caution_fee,
+          owner_type: data?.ownership?.owner_type,
+          listing_role: data?.ownership?.listing_role,
+          subCategory: data.subcategory.name,
+          companies: data.companies,
+          ownership_documents: data?.ownership?.documents?.map((d) => ({
+            media_type: d.document_type?.toUpperCase() as Media["media_type"],
+            id: d.id,
+            url: d.file_url,
+          })),
+          price: data.price.toString(),
+          photos: data.media?.filter((img) => img.media_type == "IMAGE"),
+          videos: data.media?.filter((img) => img.media_type == "VIDEO"),
+          currency: {
+            code: data?.currency?.code || "NGN",
+            symbol: data?.currency?.symbol || "#",
+          },
+          availabilityPeriod: data?.availabilities.map((a) => ({
+            start: a.start,
+            end: a.end,
+          })),
+          facilities: data?.amenities?.map((f) => f.name),
+          address: {
+            displayName: composeFullAddress(data.address),
+            addressComponents: {
+              country: data.address.country,
+              state: data.address.state,
+              city: data.address.city,
+              street: data.address.street,
+            },
+            location: {
+              latitude: data.address.latitude,
+              longitude: data.address.longitude,
+            },
+          },
+        });
+      }, 50);
+    }
+  }, [data]);
   return (
     <>
       <Stack.Screen

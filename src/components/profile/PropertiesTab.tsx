@@ -6,11 +6,12 @@ import PropertyListItem from "@/components/property/PropertyListItem";
 import { router } from "expo-router";
 import { EmptyState } from "@/components/property/EmptyPropertyCard";
 import { House } from "lucide-react-native";
+import HorizontalProperties from "@/components/property/HorizontalProperties";
+import SectionHeaderWithRef from "@/components/home/SectionHeaderWithRef";
 
 type IProps = {
   profileId: string;
   showStatus?: boolean;
-  type?: "houses" | "lands";
   isOwner?: boolean;
   isAgent?: boolean;
 };
@@ -18,7 +19,6 @@ type IProps = {
 export default function PropertiesTabView({
   profileId,
   showStatus = false,
-  type = "houses",
   isOwner = false,
   isAgent = false,
 }: IProps) {
@@ -31,22 +31,8 @@ export default function PropertiesTabView({
     () => (data?.pages ? data.pages.flatMap((page) => page.results) : []),
     [data]
   );
-  const filtered = useMemo(() => {
-    if (type == "lands") {
-      return list.filter((p) => p.category.name == "Land");
-    } else {
-      return list;
-    }
-  }, [list, type]);
-  const handlePress = useCallback((property: { slug: string }) => {
-    router.push({
-      pathname: `/property/[propertyId]`,
-      params: { propertyId: property.slug },
-    });
-  }, []);
-
-  if (!isLoading && filtered.length === 0) {
-    const propertyLabel = type === "lands" ? "Landed Properties" : "Properties";
+  if (!isLoading && list.length === 0) {
+    const propertyLabel = "Properties";
 
     if (isOwner && isAgent) {
       return (
@@ -96,19 +82,34 @@ export default function PropertiesTabView({
     );
   }
   return (
-    <VerticalPropertyLoaderWrapper loading={isLoading}>
-      <View className="gap-4 px-4">
-        {filtered.map((property) => (
-          <PropertyListItem
-            key={property.id}
-            onPress={() => handlePress(property)}
-            isList
-            showStatus={isOwner && isAgent}
-            data={property}
-            rounded
-          />
-        ))}
-      </View>
-    </VerticalPropertyLoaderWrapper>
+    <SectionHeaderWithRef
+      title="Properties"
+      titleClassName="text-gray-400 text-base"
+      subTitle="See All"
+      className="px-0 bg-background-muted rounded-xl -mx-4 pb-5"
+      hasData={isLoading || list?.length > 0}
+      onSeeAllPress={() => {
+        router.push({
+          pathname: "/agents/[userId]/properties",
+          params: {
+            userId: profileId,
+          },
+        });
+      }}
+    >
+      <HorizontalProperties
+        data={list}
+        isLoading={isLoading}
+        className="w-[19rem] bg-background"
+        contentContainerClassName={"px-3"}
+        imageStyle={{ height: 130 }}
+        isRefetching={false}
+        snapToInterval={180}
+        showTitle={false}
+        showLike={false}
+        showStatus={showStatus}
+        subClassName="pb-1"
+      />
+    </SectionHeaderWithRef>
   );
 }

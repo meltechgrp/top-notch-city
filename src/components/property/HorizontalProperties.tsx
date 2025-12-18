@@ -1,8 +1,9 @@
 import { PropertySkeletonCard } from "@/components/property/PropertyCardSkeleton";
 import PropertyListItem from "@/components/property/PropertyListItem";
 import { useRouter } from "expo-router";
-import { ScrollView } from "react-native";
+import { ScrollView, StyleProp, ViewStyle } from "react-native";
 import { useMemo, useCallback, memo } from "react";
+import { cn } from "@/lib/utils";
 
 interface Props {
   category?: string;
@@ -10,11 +11,18 @@ interface Props {
   isAdmin?: boolean;
   showStatus?: boolean;
   showLike?: boolean;
+  showTitle?: boolean;
   isLoading?: boolean;
   isRefetching?: boolean;
+  snapToInterval?: number;
   isFeatured?: boolean;
   hasNextPage?: boolean;
   listType?: any[];
+  imageWrapperClassName?: string;
+  subClassName?: string;
+  contentContainerClassName?: string;
+  imageStyle?: StyleProp<ViewStyle>;
+  style?: StyleProp<ViewStyle>;
   data: Property[];
   refetch?: () => Promise<any>;
   fetchNextPage?: () => Promise<any>;
@@ -32,6 +40,13 @@ function HorizontalProperties({
   listType,
   showLike = true,
   showStatus = false,
+  style,
+  imageStyle,
+  imageWrapperClassName,
+  contentContainerClassName,
+  showTitle,
+  subClassName,
+  snapToInterval,
 }: Props) {
   const router = useRouter();
 
@@ -56,10 +71,10 @@ function HorizontalProperties({
       horizontal
       pagingEnabled
       showsHorizontalScrollIndicator={false}
-      snapToInterval={344}
+      snapToInterval={snapToInterval || 344}
       snapToAlignment="center"
       decelerationRate="fast"
-      contentContainerClassName="gap-x-4 px-4"
+      contentContainerClassName={cn("gap-x-4 px-4", contentContainerClassName)}
     >
       {isBusy
         ? skeletonItems.map((_, i) => (
@@ -73,8 +88,14 @@ function HorizontalProperties({
               isFeatured={isFeatured}
               showStatus={showStatus}
               rounded
+              imageStyle={imageStyle}
+              imageWrapperClassName={imageWrapperClassName}
               isHorizontal
               data={property}
+              subClassName={subClassName}
+              showTitle={showTitle}
+              style={style}
+              className={className}
               onPress={handlePress}
             />
           ))}

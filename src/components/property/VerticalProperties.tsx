@@ -43,6 +43,7 @@ interface Props {
   headerTopComponent?: any;
   headerHeight?: number;
   listRef?: any;
+  listType?: any[];
   ListEmptyComponent?: ReactNode;
   onPress?: (data: Props["data"][0]) => void;
 }
@@ -69,6 +70,7 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
     ListEmptyComponent,
     isRefetching,
     showLike = true,
+    listType,
   },
   ref
 ) {
@@ -110,6 +112,7 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
             });
           }}
           isList={true}
+          listType={listType}
           showLike={showLike}
           showStatus={showStatus}
           isHorizontal={isHorizontal}

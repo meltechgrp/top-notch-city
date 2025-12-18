@@ -160,6 +160,6 @@ export const PROFILE_FORM_CONFIG: Record<string, FieldConfig> = {
     inputs: [{ key: "companies", placeholder: "" }],
     inputType: "companies",
     showAddBtn: true,
-    maxLength: 2,
+    maxLength: 20,
   },
 };

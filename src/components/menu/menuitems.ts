@@ -13,6 +13,7 @@ import {
   ChartColumn,
   Clock,
   BookPlus,
+  Zap,
 } from "lucide-react-native";
 
 type MenuProps = {
@@ -81,6 +82,13 @@ export const getQuickMenuItems = ({
       link: `/agents/${me?.id}/properties`,
       role: "agent",
       description: "Manage all your listed properties.",
+    },
+    {
+      label: "Greeting message",
+      icon: Zap,
+      link: `/agents/${me?.id}/greeting`,
+      role: "agent",
+      description: "Update your greeting message",
     },
     {
       label: "Analytics",

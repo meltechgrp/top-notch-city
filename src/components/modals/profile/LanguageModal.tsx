@@ -1,8 +1,11 @@
 import { Modal, TextInput, KeyboardAvoidingView, Platform } from "react-native";
 import React from "react";
-import { Pressable, Text, View } from "@/components/ui";
+import { Icon, Pressable, Text, View } from "@/components/ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
+import ModalScreen from "@/components/shared/ModalScreen";
+import { Plus } from "lucide-react-native";
+import { cn } from "@/lib/utils";
 
 export function LanguageModal({
   visible,
@@ -21,52 +24,52 @@ export function LanguageModal({
     setText(value);
   }, [value]);
   return (
-    <Modal visible={visible} transparent animationType="slide">
-      <View className="flex-1 justify-end android:justify-center bg-black/10">
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "padding"}
-          className="bg-background p-6 gap-4 rounded-t-2xl android:rounded-2xl"
+    <ModalScreen
+      visible={visible}
+      title="Language"
+      onDismiss={onClose}
+      rightComponent={
+        <Pressable
+          disabled={text?.trim()?.length < 2}
+          onPress={() => {
+            if (text?.trim()?.length > 2) {
+              onSave(text.trim());
+              onClose();
+            } else {
+              showErrorAlert({
+                title: "Enter a valid language",
+                alertType: "warn",
+              });
+            }
+          }}
+          className={
+            "bg-primary flex-row gap-2 items-center py-2 px-4 rounded-full"
+          }
         >
-          <SafeAreaView
-            edges={["bottom"]}
-            className=" bg-background pb-6 rounded-t-2xl"
-          >
-            <TextInput
-              value={text}
-              onChangeText={setText}
-              placeholder={`Enter language`}
-              placeholderTextColor="#777"
-              autoCapitalize="words"
-              className="bg-background-muted h-14 text-typography px-4 py-3 rounded-xl mb-6"
-            />
+          <Text className="text-center text-lg">Add</Text>
+          <Icon as={Plus} />
+        </Pressable>
+      }
+    >
+      <View className="p-4">
+        <TextInput
+          value={text}
+          onChangeText={setText}
+          placeholder={`Enter language`}
+          placeholderTextColor="#777"
+          autoCapitalize="words"
+          className="bg-background-muted h-14 text-typography px-4 py-3 rounded-xl mb-6"
+        />
 
-            <View className="flex-row gap-4 mb-4">
-              <Pressable
-                className="py-3 flex-1 bg-background-muted rounded-xl"
-                onPress={onClose}
-              >
-                <Text className="text-center text-primary text-lg">Cancel</Text>
-              </Pressable>
-              <Pressable
-                onPress={() => {
-                  if (text?.trim()?.length > 2) {
-                    onSave(text.trim());
-                    onClose();
-                  } else {
-                    showErrorAlert({
-                      title: "Enter a valid language",
-                      alertType: "warn",
-                    });
-                  }
-                }}
-                className="bg-primary py-3 flex-1 rounded-xl"
-              >
-                <Text className="text-center text-lg">Continue</Text>
-              </Pressable>
-            </View>
-          </SafeAreaView>
-        </KeyboardAvoidingView>
+        <View className="flex-row gap-4 mb-4">
+          <Pressable
+            className="py-3 flex-1 bg-background-muted rounded-xl"
+            onPress={onClose}
+          >
+            <Text className="text-center text-primary text-lg">Cancel</Text>
+          </Pressable>
+        </View>
       </View>
-    </Modal>
+    </ModalScreen>
   );
 }

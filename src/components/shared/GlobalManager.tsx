@@ -2,8 +2,10 @@ import React, { useEffect, useCallback } from "react";
 import eventBus from "@/lib/eventBus";
 import AuthModals from "../globals/AuthModals";
 import { useMultiAccount } from "@/hooks/useAccounts";
+import { useHomeSync } from "@/hooks/useHomeSync";
 
 export default function GlobalManager() {
+  useHomeSync();
   const { updateAccount } = useMultiAccount();
 
   const updateMe = useCallback(async () => {

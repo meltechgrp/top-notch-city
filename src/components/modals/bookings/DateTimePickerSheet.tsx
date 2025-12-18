@@ -10,9 +10,11 @@ import {
   isAfter,
   format,
   isToday,
+  addHours,
 } from "date-fns";
 import { cn } from "@/lib/utils";
 import DatePicker from "@/components/custom/DatePicker";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
 
 interface Availabilities {
   id: string;
@@ -74,6 +76,7 @@ export const DateTimePickerSheet = ({
     setSelectedDate(null);
     setSelectedTime(null);
   }, []);
+  const date = new Date();
   return (
     <Modal visible={visible} transparent animationType="slide">
       <View className="flex-1 bg-black/50 justify-center">
@@ -113,6 +116,7 @@ export const DateTimePickerSheet = ({
                   return;
                 }
                 setSelectedDate(date);
+                setSelectedTime(null);
               }}
               mode="date"
               minimumDate={new Date()}
@@ -152,23 +156,33 @@ export const DateTimePickerSheet = ({
                 const minute = d.getMinutes();
 
                 if (!isReservation && !isTimeAllowedForInspection(hour)) {
+                  showErrorAlert({
+                    title: "Inspection is between 8am to 5:30pm",
+                    alertType: "warn",
+                  });
                   setSelectedTime(null);
                   return;
                 }
 
                 setSelectedTime({ hour, minute });
               }}
-              minuteInterval={15}
+              minuteInterval={5}
               mode="time"
               minimumDate={
-                isReservation && selectedDate
-                  ? isToday(selectedDate)
-                    ? new Date()
-                    : undefined
-                  : new Date()
+                selectedDate && isToday(selectedDate)
+                  ? date
+                  : isReservation
+                    ? new Date(addHours(date, 1))
+                    : new Date(date.setHours(8, 0, 0))
               }
-              startDate={new Date()}
-              maximumDate={undefined}
+              startDate={date}
+              maximumDate={
+                selectedDate && isToday(selectedDate)
+                  ? date
+                  : isReservation
+                    ? undefined
+                    : new Date(date.setHours(17, 30, 0))
+              }
             />
           </View>
 

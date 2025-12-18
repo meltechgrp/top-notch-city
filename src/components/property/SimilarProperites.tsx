@@ -42,7 +42,7 @@ function SimilarProperties({ property }: SimilarPropertiesProps) {
       <HorizontalProperties
         data={properties}
         isLoading={isLoading}
-        listType="featured"
+        showLike={false}
         isRefetching={isFetching}
       />
     </SectionHeaderWithRef>

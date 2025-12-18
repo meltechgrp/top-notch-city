@@ -10,6 +10,7 @@ import {
   Sparkle,
   UserCircle,
   Users,
+  Zap,
 } from "lucide-react-native";
 import { MenuListItem } from "@/components/menu/MenuListItem";
 import { Divider } from "@/components/ui/divider";
@@ -122,6 +123,21 @@ export default function Setting() {
                 }
                 icon={Users}
               />
+              {isAgent && (
+                <MenuListItem
+                  title="Greeting message"
+                  withBorder={false}
+                  onPress={() =>
+                    router.push({
+                      pathname: "/agents/[userId]/greeting",
+                      params: {
+                        userId: me.id,
+                      },
+                    })
+                  }
+                  icon={Zap}
+                />
+              )}
               <MenuListItem
                 title="Bookings"
                 withBorder={false}
