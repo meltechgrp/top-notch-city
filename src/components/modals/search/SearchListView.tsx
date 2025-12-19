@@ -2,8 +2,6 @@ import { Dimensions, StyleSheet, View } from "react-native";
 import { useCallback, useMemo, useRef } from "react";
 import { Box, Button, Icon, Text } from "@/components/ui";
 import BottomSheet, {
-  BottomSheetFlashList,
-  BottomSheetFlatList,
   useBottomSheetInternal,
   useBottomSheetScrollableCreator,
 } from "@gorhom/bottom-sheet";
@@ -28,15 +26,15 @@ const { width } = Dimensions.get("screen");
 
 type Props = {
   total: number;
-  properties: Property[];
+  properties: PropertyListItem[];
   isLoading: boolean;
   hasNextPage: boolean;
-  refetch: () => Promise<any>;
   fetchNextPage: () => Promise<any>;
   setShowFilter: () => void;
   useMyLocation: () => Promise<void>;
   filter: SearchFilters;
   isTab?: boolean;
+  onReset?: () => void;
 };
 
 function SearchListBottomSheet({
@@ -44,8 +42,7 @@ function SearchListBottomSheet({
   isLoading,
   fetchNextPage,
   hasNextPage,
-  refetch,
-  setShowFilter,
+  onReset,
   total,
   useMyLocation,
   filter,
@@ -59,7 +56,7 @@ function SearchListBottomSheet({
   );
 
   const renderItem = useCallback(
-    ({ item }: { item: Property }) => (
+    ({ item }: { item: PropertyListItem }) => (
       <PropertyListItem
         onPress={(data) => {
           router.push({
@@ -130,7 +127,7 @@ function SearchListBottomSheet({
                   title="No Properties Found"
                   description="You're all caught up. New properties will appear here soon."
                   buttonLabel="Try again"
-                  onPress={refetch}
+                  onPress={onReset}
                 />
               )}
             </>

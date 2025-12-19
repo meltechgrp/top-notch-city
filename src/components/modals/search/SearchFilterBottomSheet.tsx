@@ -33,7 +33,6 @@ type Props = {
   show: boolean;
   onDismiss: () => void;
   onUpdate: (values: Partial<SearchFilters>) => void;
-  onApply: () => void;
   filter: SearchFilters;
   showPurpose?: boolean;
   loading: boolean;
@@ -44,7 +43,6 @@ type Props = {
 function SearchFilterBottomSheet({
   show,
   onDismiss,
-  onApply,
   filter,
   showPurpose = true,
   onUpdate,
@@ -75,7 +73,6 @@ function SearchFilterBottomSheet({
         <View className="flex-row bg-background gap-4 px-4 pt-2 android:pb-2 justify-center items-center">
           <Button
             onPress={() => {
-              onApply();
               onDismiss();
             }}
             className="h-12 flex-1"
@@ -107,14 +104,14 @@ function SearchFilterBottomSheet({
           className="px-4 py-1.5 border border-outline-100 bg-background-muted rounded-2xl"
           onPress={() =>
             onReset([
-              "min_bedroom",
-              "max_bedroom",
-              "max_bathroom",
-              "min_bathroom",
-              "max_price",
-              "min_price",
+              "minBedroom",
+              "maxBedroom",
+              "maxBathroom",
+              "minBathroom",
+              "maxPrice",
+              "minPrice",
               "amenities",
-              "sub_category",
+              "subCategory",
               "category",
             ])
           }
@@ -186,18 +183,18 @@ function SearchFilterBottomSheet({
               <Text className="text-base mb-2">Price</Text>
               <View className="flex-row justify-between gap-4">
                 <DropdownSelect
-                  value={filter.min_price || "No min"}
+                  value={filter.minPrice || "No min"}
                   options={PRICE1}
                   format
                   className="bg-background-muted"
-                  onChange={(val) => onUpdate({ min_price: val as any })}
+                  onChange={(val) => onUpdate({ minPrice: val as any })}
                 />
                 <DropdownSelect
-                  value={filter.max_price || "No max"}
+                  value={filter.maxPrice || "No max"}
                   options={PRICE2}
                   format
                   className="bg-background-muted"
-                  onChange={(val) => onUpdate({ max_price: val as any })}
+                  onChange={(val) => onUpdate({ maxPrice: val as any })}
                 />
               </View>
             </View>
@@ -205,16 +202,16 @@ function SearchFilterBottomSheet({
               <Text className="text-base mb-2">Bedrooms</Text>
               <View className="flex-row justify-between gap-4">
                 <DropdownSelect
-                  value={filter.min_bedroom || "No min"}
+                  value={filter.minBedroom || "No min"}
                   options={OPTIONS1}
                   className="bg-background-muted"
-                  onChange={(val) => onUpdate({ min_bedroom: val as any })}
+                  onChange={(val) => onUpdate({ minBedroom: val as any })}
                 />
                 <DropdownSelect
-                  value={filter.max_bedroom || "No max"}
+                  value={filter.maxBedroom || "No max"}
                   options={OPTIONS2}
                   className="bg-background-muted"
-                  onChange={(val) => onUpdate({ max_bedroom: val as any })}
+                  onChange={(val) => onUpdate({ maxBedroom: val as any })}
                 />
               </View>
             </View>
@@ -222,16 +219,16 @@ function SearchFilterBottomSheet({
               <Text className="text-base mb-2">Bathrooms</Text>
               <View className="flex-row justify-between gap-4">
                 <DropdownSelect
-                  value={filter.min_bathroom || "No min"}
+                  value={filter.minBathroom || "No min"}
                   options={OPTIONS1}
                   className="bg-background-muted"
-                  onChange={(val) => onUpdate({ min_bathroom: val as any })}
+                  onChange={(val) => onUpdate({ minBathroom: val as any })}
                 />
                 <DropdownSelect
-                  value={filter.max_bathroom || "No max"}
+                  value={filter.maxBathroom || "No max"}
                   options={OPTIONS2}
                   className="bg-background-muted"
-                  onChange={(val) => onUpdate({ max_bathroom: val as any })}
+                  onChange={(val) => onUpdate({ maxBathroom: val as any })}
                 />
               </View>
             </View>
@@ -240,10 +237,10 @@ function SearchFilterBottomSheet({
               <View className="flex-row justify-between gap-4">
                 <DropdownSelect
                   multiple
-                  value={filter.sub_category || "Select a categories"}
+                  value={filter.subCategory || "Select a categories"}
                   options={subcategories?.map((s) => s.name)}
                   className="bg-background-muted"
-                  onChange={(val) => onUpdate({ sub_category: val as any })}
+                  onChange={(val) => onUpdate({ subCategory: val as any })}
                 />
               </View>
             </View>
@@ -353,16 +350,16 @@ function SearchFilterBottomSheet({
                 <Text className="text-base mb-2">Plots</Text>
                 <View className="flex-row justify-between gap-4">
                   <DropdownSelect
-                    value={filter.min_plots || "No min"}
+                    value={filter.minPlots || "No min"}
                     options={OPTIONS1}
                     className="bg-background-muted"
-                    onChange={(val) => onUpdate({ min_plots: val as any })}
+                    onChange={(val) => onUpdate({ minPlots: val as any })}
                   />
                   <DropdownSelect
-                    value={filter.max_plots || "No max"}
+                    value={filter.maxPlots || "No max"}
                     options={OPTIONS2}
                     className="bg-background-muted"
-                    onChange={(val) => onUpdate({ max_plots: val as any })}
+                    onChange={(val) => onUpdate({ maxPlots: val as any })}
                   />
                 </View>
               </View>
@@ -372,16 +369,16 @@ function SearchFilterBottomSheet({
                 <Text className="text-base mb-2">Land Area</Text>
                 <View className="flex-row justify-between gap-4">
                   <DropdownSelect
-                    value={filter.min_landarea || "No min"}
+                    value={filter.minLandarea || "No min"}
                     options={OPTIONS1}
                     className="bg-background-muted"
-                    onChange={(val) => onUpdate({ min_landarea: val as any })}
+                    onChange={(val) => onUpdate({ minLandarea: val as any })}
                   />
                   <DropdownSelect
-                    value={filter.max_landarea || "No max"}
+                    value={filter.maxLandarea || "No max"}
                     options={OPTIONS2}
                     className="bg-background-muted"
-                    onChange={(val) => onUpdate({ max_landarea: val as any })}
+                    onChange={(val) => onUpdate({ maxLandarea: val as any })}
                   />
                 </View>
               </View>

@@ -2,14 +2,16 @@ import SectionHeaderWithRef from "@/components/home/SectionHeaderWithRef";
 import { router } from "expo-router";
 import { memo } from "react";
 import HorizontalProperties from "@/components/property/HorizontalProperties";
+import { useHomeList } from "@/hooks/useHomeList";
 
-const Lands = ({ data = [] }: { data: PropertyListItem[] }) => {
+const Lands = () => {
+  const { lands } = useHomeList();
   return (
     <SectionHeaderWithRef
       title="Lands"
       titleClassName="text-gray-400 text-base"
       subTitle="See More"
-      hasData={data?.length > 0}
+      hasData={lands?.length > 0}
       onSeeAllPress={() => {
         router.push({
           pathname: "/explore",
@@ -20,7 +22,7 @@ const Lands = ({ data = [] }: { data: PropertyListItem[] }) => {
       }}
     >
       <HorizontalProperties
-        data={data}
+        data={lands}
         isLoading={false}
         listType={["trending-lands"]}
         isRefetching={false}

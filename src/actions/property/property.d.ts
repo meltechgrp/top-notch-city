@@ -77,7 +77,7 @@ type PropertyListItem = {
   duration?: string;
   category: string;
   subCategory: string;
-  media: Media;
+  media: Media[];
   ownerId: string;
   bathroom?: string;
   displayAddress: string;

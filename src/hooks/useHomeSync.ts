@@ -5,6 +5,7 @@ import { useDbStore } from "@/store/dbStore";
 import { useEffect } from "react";
 import { shouldSync } from "@/hooks/useLiveQuery";
 import { normalizePropertyList } from "@/db/normalizers/property";
+import { clearAllData } from "@/db";
 
 export function useHomeSync() {
   const { lastSync, load, update } = useDbStore();
@@ -12,12 +13,13 @@ export function useHomeSync() {
     load();
   }, []);
   const enabled = shouldSync(lastSync);
-  useQuery({
+  const { refetch, error } = useQuery({
     queryKey: ["sync-home-sync"],
     queryFn: async () => {
+      await clearAllData();
       const res = await searchProperties(1, 100, {
         country: "Nigeria",
-        use_geo_location: false,
+        useGeoLocation: false,
       });
       const data = res.results?.map((p) => normalizePropertyList(p));
       await syncPropertyLists(data);
@@ -26,4 +28,5 @@ export function useHomeSync() {
     },
     enabled,
   });
+  return { refetch };
 }

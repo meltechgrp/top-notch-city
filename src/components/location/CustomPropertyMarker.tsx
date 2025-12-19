@@ -6,12 +6,14 @@ import { Colors } from "@/constants/Colors";
 import { memo, useState } from "react";
 
 interface Props {
-  property: Property;
-  onPress: (data: Property) => void;
+  property: PropertyListItem;
+  onPress: (data: PropertyListItem) => void;
 }
 function CustomPropertyMarker({ property, onPress }: Props) {
   const { latitude, longitude } = property.address;
-  const media = property.media.find((item) => item.media_type == "IMAGE")!;
+  const media = Array.isArray(property.media)
+    ? property.media[0]
+    : property.media;
   const image = generateMediaUrl(media)?.uri;
   const [track, setTrack] = useState(true);
 

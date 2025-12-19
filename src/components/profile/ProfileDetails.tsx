@@ -1,5 +1,3 @@
-import { addSubcategory } from "@/actions/property/category";
-import SectionHeaderWithRef from "@/components/home/SectionHeaderWithRef";
 import { getQuickMenuItems } from "@/components/menu/menuitems";
 import { MenuListItem } from "@/components/menu/MenuListItem";
 import CampaignCard from "@/components/profile/CampaignCard";
@@ -98,6 +96,8 @@ export function ProfileDetails({ user, userType }: ProfileDetailsProps) {
       {(userType !== "owner" || isAgent) && (
         <PropertiesTabView
           showStatus={userType == "owner" && isAgent}
+          isAgent={isAgent}
+          isOwner={userType == "owner"}
           profileId={user.id}
         />
       )}

@@ -1,31 +1,41 @@
-import { getCategories, getFeatured, getNearby } from "@/db/queries";
+import {
+  getCategories,
+  getFeatured,
+  getNearby,
+} from "@/db/queries/property-list";
 import useGetLocation from "@/hooks/useGetLocation";
 import { useLiveQuery } from "@/hooks/useLiveQuery";
 import { mapPropertyList } from "@/lib/utils";
 
 export function useHomeList() {
   const { location } = useGetLocation();
-  const featured = useLiveQuery(() => getFeatured({})) ?? [];
-  const lands =
+  const { data: featured } =
+    useLiveQuery(() => getFeatured({}), ["featured"]) ?? [];
+  const { data: lands } =
     useLiveQuery(() => getCategories({ categories: ["Land"] })) ?? [];
-  const latest =
-    useLiveQuery(() =>
-      getCategories({ categories: ["Commercial", "Residential"] })
+  const { data: latest } =
+    useLiveQuery(
+      () => getCategories({ categories: ["Commercial", "Residential"] }),
+      ["Commercial", "Residential"]
     ) ?? [];
-  const shortlet =
-    useLiveQuery(() => getCategories({ categories: ["Shortlet", "Hotel"] })) ??
-    [];
-  const nearby = location
-    ? useLiveQuery(() =>
-        getNearby({ lat: location.latitude, long: location.longitude })
-      )
-    : null;
+  const { data: shortlet } =
+    useLiveQuery(
+      () => getCategories({ categories: ["Shortlet", "Hotel"] }),
+      ["Shortlet", "Hotel"]
+    ) ?? [];
+  const { data: nearby } = useLiveQuery(
+    () =>
+      location
+        ? getNearby({ lat: location.latitude, long: location.longitude })
+        : Promise.resolve([]),
+    [location?.latitude, location?.longitude]
+  );
 
   return {
-    featured: mapPropertyList(featured),
-    lands: mapPropertyList(lands),
-    latest: mapPropertyList(latest),
-    shortlet: mapPropertyList(shortlet),
+    featured: featured ? mapPropertyList(featured) : [],
+    lands: lands ? mapPropertyList(lands) : [],
+    latest: latest ? mapPropertyList(latest) : [],
+    shortlet: shortlet ? mapPropertyList(shortlet) : [],
     nearby: nearby ? mapPropertyList(nearby) : [],
   };
 }

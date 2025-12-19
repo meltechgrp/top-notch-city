@@ -35,10 +35,9 @@ export default function SearchWrapper({
   useEffect(() => {
     if (latitude && longitude) {
       search.setFilters({
-        latitude: latitude,
-        longitude: longitude,
+        latitude: Number(latitude),
+        longitude: Number(longitude),
       });
-      query.refetchAndApply();
     }
     if (locate) {
       setLocationBottomSheet(true);
@@ -74,7 +73,6 @@ export default function SearchWrapper({
                     : undefined
                 }
                 onUpdate={search.setFilters}
-                onApply={query.applyCachedResults}
                 longitude={
                   search.filter?.longitude
                     ? Number(search.filter.longitude)
@@ -86,11 +84,11 @@ export default function SearchWrapper({
 
           <SearchListBottomSheet
             setShowFilter={() => setShowFilter(true)}
-            isLoading={query.loading}
-            refetch={query.refetchAndApply}
-            hasNextPage={query.hasNextPage}
+            isLoading={query.isLoading}
+            hasNextPage={false}
+            onReset={search.resetFilters}
             filter={search.filter}
-            fetchNextPage={query.fetchNextPage}
+            fetchNextPage={async () => {}}
             properties={properties}
             useMyLocation={search.useMyLocation}
             total={results.available}
@@ -103,15 +101,13 @@ export default function SearchWrapper({
         filter={search.filter}
         onDismiss={() => setLocationBottomSheet(false)}
         onUpdate={search.setFilters}
-        refetchAndApply={query.refetchAndApply}
       />
       <SearchFilterBottomSheet
         show={showFilter}
         onDismiss={() => setShowFilter(false)}
-        onApply={query.applyCachedResults}
         onReset={search.resetSome}
         onUpdate={search.setFilters}
-        loading={query.loading}
+        loading={query.isLoading}
         filter={search.filter}
         total={results.total}
         showPurpose

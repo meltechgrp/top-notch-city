@@ -1,15 +1,17 @@
 import SectionHeaderWithRef from "@/components/home/SectionHeaderWithRef";
 import HorizontalProperties from "@/components/property/HorizontalProperties";
+import { useHomeList } from "@/hooks/useHomeList";
 import { router } from "expo-router";
 import { memo } from "react";
 
-function FeaturedProperties({ data = [] }: { data: PropertyListItem[] }) {
+function FeaturedProperties() {
+  const { featured } = useHomeList();
   return (
     <SectionHeaderWithRef
       title="Featured"
       titleClassName="text-gray-400 text-base"
       subTitle="See More"
-      hasData={data?.length > 0}
+      hasData={featured?.length > 0}
       onSeeAllPress={() => {
         router.push({
           pathname: "/explore",
@@ -20,7 +22,7 @@ function FeaturedProperties({ data = [] }: { data: PropertyListItem[] }) {
       }}
     >
       <HorizontalProperties
-        data={data}
+        data={featured}
         isLoading={false}
         listType={["featured"]}
         isFeatured

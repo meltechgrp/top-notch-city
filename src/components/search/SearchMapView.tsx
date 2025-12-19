@@ -4,13 +4,12 @@ import { View } from "../ui";
 import PropertyBottomSheet from "../location/PropertyBottomSheet";
 
 type Props = {
-  properties: Property[];
+  properties: PropertyListItem[];
   height: number;
   propertyId?: string;
   latitude?: number;
   longitude?: number;
   onUpdate: (values: Partial<SearchFilters>) => void;
-  onApply: () => void;
 };
 
 function SearchMapView({
@@ -20,9 +19,10 @@ function SearchMapView({
   latitude,
   longitude,
   onUpdate,
-  onApply,
 }: Props) {
-  const [selectedItem, setSeletedItem] = useState<Property | null>(null);
+  const [selectedItem, setSeletedItem] = useState<PropertyListItem | null>(
+    null
+  );
 
   useEffect(() => {
     if (propertyId && properties.length > 0) {
@@ -40,7 +40,6 @@ function SearchMapView({
           markers={properties}
           onRegionChange={(latitude, longitude) => {
             onUpdate({ latitude, longitude });
-            onApply();
           }}
           showSmallMarker={false}
           onMarkerPress={(marker) => setSeletedItem(marker)}

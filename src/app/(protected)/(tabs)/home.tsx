@@ -12,15 +12,14 @@ import FeaturedProperties from "@/components/home/featured";
 import ApartmentProperties from "@/components/home/recent";
 import Lands from "@/components/home/lands";
 import { FlashList } from "@shopify/flash-list";
-import { useHomeList } from "@/hooks/useHomeList";
+import { useHomeSync } from "@/hooks/useHomeSync";
 const MAP_HEIGHT = 400;
 
 export default function HomeScreen() {
   const { me } = useStore();
-
+  const { refetch } = useHomeSync();
   const [friendsModal, setFriendsModal] = React.useState(false);
   const [staffs, setStaffs] = useState(false);
-  const { featured, lands, latest, shortlet, nearby } = useHomeList();
   const feedList = React.useMemo(() => {
     const topLocations = {
       id: "locations",
@@ -58,19 +57,19 @@ export default function HomeScreen() {
   type FeedList = any;
   const renderItem: ListRenderItem<FeedList> = useCallback(({ item }) => {
     if (item.id === "locations") {
-      return <TopLocations data={nearby} />;
+      return <TopLocations />;
     }
     if (item.id === "featured") {
-      return <FeaturedProperties data={featured} />;
+      return <FeaturedProperties />;
     }
     if (item.id === "shortlet") {
-      return <ShortletProperties data={shortlet} />;
+      return <ShortletProperties />;
     }
     if (item.id === "apartment") {
-      return <ApartmentProperties data={latest} />;
+      return <ApartmentProperties />;
     }
     if (item.id === "lands") {
-      return <Lands data={lands} />;
+      return <Lands />;
     }
     if (item.id === "bottomPlaceHolder") {
       return <View className="h-24" />;
@@ -85,9 +84,9 @@ export default function HomeScreen() {
     <>
       <Box className="flex-1">
         <FlashList
-          // refreshControl={
-          //   <RefreshControl refreshing={false} onRefresh={refreshAll} />
-          // }
+          refreshControl={
+            <RefreshControl refreshing={false} onRefresh={refetch} />
+          }
           ListHeaderComponent={<DiscoverProperties mapHeight={MAP_HEIGHT} />}
           showsVerticalScrollIndicator={false}
           data={feedList}

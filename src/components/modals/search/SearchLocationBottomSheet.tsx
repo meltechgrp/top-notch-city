@@ -22,7 +22,6 @@ type Props = {
   filter: SearchFilters;
   onDismiss: () => void;
   onUpdate: (values: Partial<SearchFilters>) => void;
-  refetchAndApply: () => void;
 };
 
 const options = [
@@ -34,12 +33,11 @@ function SearchLocationBottomSheet({
   onDismiss,
   filter,
   onUpdate,
-  refetchAndApply,
 }: Props) {
   const { retryGetLocation } = useGetLocation();
   const [text, setText] = useState("");
   const [locations, setLocations] = useState<GooglePlace[]>([]);
-  const { savedSearches, updateSavedSearch } = useStore();
+  // const { savedSearches, updateSavedSearch } = useStore();
   const [typing, setTyping] = useState(false);
   const [locating, setLocating] = useState(false);
   const { mutateAsync, isPending } = useMutation({
@@ -76,23 +74,23 @@ function SearchLocationBottomSheet({
     setTyping(val.length > 1);
     debouncedAutocompleteSearch(val);
   };
-  function hnadleSave(search: SearchHistory) {
-    const history = savedSearches;
-    const existingIndex = history.findIndex(
-      (item: any) =>
-        item.city === search.city &&
-        item.state === search.state &&
-        item.country === search.country &&
-        item.longitude === search.longitude &&
-        item.latitude === search.latitude
-    );
+  // function hnadleSave(search: SearchHistory) {
+  //   const history = savedSearches;
+  //   const existingIndex = history.findIndex(
+  //     (item: any) =>
+  //       item.city === search.city &&
+  //       item.state === search.state &&
+  //       item.country === search.country &&
+  //       item.longitude === search.longitude &&
+  //       item.latitude === search.latitude
+  //   );
 
-    if (existingIndex !== -1) history.splice(existingIndex, 1);
-    history.unshift(search);
+  //   if (existingIndex !== -1) history.splice(existingIndex, 1);
+  //   history.unshift(search);
 
-    const trimmed = history.slice(0, 10);
-    updateSavedSearch(trimmed);
-  }
+  //   const trimmed = history.slice(0, 10);
+  //   updateSavedSearch(trimmed);
+  // }
 
   const handleSelect = async (item: SearchFilters) => {
     setTyping(false);
@@ -100,24 +98,23 @@ function SearchLocationBottomSheet({
       state: item?.state,
       city: item?.city,
       country: item?.country,
-      use_geo_location: "false",
+      useGeoLocation: false,
       longitude: item.longitude,
-      latitude: item.latitude as string,
+      latitude: item.latitude,
     };
 
-    const exists = savedSearches.some(
-      (h) =>
-        h.city === newSearch.city &&
-        h.state === newSearch.state &&
-        h.country === newSearch.country &&
-        h.longitude === newSearch.longitude &&
-        h.latitude === newSearch.latitude
-    );
+    // const exists = savedSearches.some(
+    //   (h) =>
+    //     h.city === newSearch.city &&
+    //     h.state === newSearch.state &&
+    //     h.country === newSearch.country &&
+    //     h.longitude === newSearch.longitude &&
+    //     h.latitude === newSearch.latitude
+    // );
 
-    if (!exists) hnadleSave(newSearch);
+    // if (!exists) hnadleSave(newSearch);
 
     onUpdate(newSearch);
-    refetchAndApply();
     onDismiss();
     setText("");
     setLocations([]);
@@ -148,17 +145,17 @@ function SearchLocationBottomSheet({
     handleSelect({ ...result.addressComponents, ...locationData } as any);
     setLocating(false);
   }, [retryGetLocation, handleSelect]);
-  const displayData: SearchHistory[] = typing
+  const displayData = typing
     ? locations.map((item) => ({
         city: item?.addressComponents?.city || "",
         state: item?.addressComponents?.state || "",
         country: item?.addressComponents?.country || "",
         displayName: item.displayName || "",
         isSuggestion: true,
-        longitude: item?.location.longitude.toString(),
-        latitude: item?.location.latitude.toString(),
+        longitude: item?.location.longitude,
+        latitude: item?.location.latitude,
       }))
-    : savedSearches;
+    : [];
 
   return (
     <ModalScreen
@@ -237,15 +234,15 @@ function SearchLocationBottomSheet({
             scrollEnabled={displayData?.length > 12}
             keyboardDismissMode="on-drag"
             contentContainerClassName="bg-background-muted p-4 rounded-xl"
-            ListHeaderComponent={() =>
-              !typing && savedSearches.length ? (
-                <View className="px-4 pb-2">
-                  <Text size="lg" className="font-light">
-                    Recent searches
-                  </Text>
-                </View>
-              ) : null
-            }
+            // ListHeaderComponent={() =>
+            //   !typing && savedSearches.length ? (
+            //     <View className="px-4 pb-2">
+            //       <Text size="lg" className="font-light">
+            //         Recent searches
+            //       </Text>
+            //     </View>
+            //   ) : null
+            // }
             ListEmptyComponent={() => (
               <MiniEmptyState
                 className="mb-8"

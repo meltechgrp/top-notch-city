@@ -31,11 +31,11 @@ interface MapProps {
   showUserLocation?: boolean;
   scrollEnabled?: boolean;
   showsBuildings?: boolean;
-  activeMarker?: Property[];
+  activeMarker?: PropertyListItem[];
   children?: ReactNode;
-  onMarkerPress?: (data: Property) => void;
+  onMarkerPress?: (data: PropertyListItem) => void;
   zoomControlEnabled?: boolean;
-  markers?: Property[];
+  markers?: PropertyListItem[];
   marker?: LocationData;
   nearby?: NearbyPOI[];
   showRadius?: boolean;
@@ -46,7 +46,7 @@ interface MapProps {
   delta?: number;
   initialMapType?: MapType;
   onMapTypeChange?: (type: MapType) => void;
-  onRegionChange?: (lat: string, lon: string) => void;
+  onRegionChange?: (lat: number, lon: number) => void;
 }
 
 export type MapType =
@@ -210,7 +210,7 @@ const Map = forwardRef<MapController, MapProps>((props, ref) => {
         showsTraffic
         showsCompass={false}
         // onRegionChangeComplete={({ latitude, longitude }) =>
-        //   onRegionChange?.(latitude.toString(), longitude.toString())
+        //   onRegionChange?.(latitude, longitude)
         // }
         zoomControlEnabled={zoomControlEnabled}
         compassOffset={{ x: 10, y: 50 }}

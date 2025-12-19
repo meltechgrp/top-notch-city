@@ -1,13 +1,13 @@
-import React, { useMemo, useCallback } from "react";
-import { View } from "react-native";
+import React, { useMemo } from "react";
 import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
-import VerticalPropertyLoaderWrapper from "@/components/loaders/VerticalPropertyLoader";
-import PropertyListItem from "@/components/property/PropertyListItem";
 import { router } from "expo-router";
 import { EmptyState } from "@/components/property/EmptyPropertyCard";
 import { House } from "lucide-react-native";
 import HorizontalProperties from "@/components/property/HorizontalProperties";
 import SectionHeaderWithRef from "@/components/home/SectionHeaderWithRef";
+import { useLiveQuery } from "@/hooks/useLiveQuery";
+import { getAgentList } from "@/db/queries/property-list";
+import { mapPropertyList } from "@/lib/utils";
 
 type IProps = {
   profileId: string;
@@ -22,15 +22,18 @@ export default function PropertiesTabView({
   isOwner = false,
   isAgent = false,
 }: IProps) {
-  const { data, isLoading, refetch } = useInfinityQueries({
-    type: isOwner && isAgent ? "agent-property" : "user",
-    profileId,
-  });
+  const { data, isLoading } =
+    useLiveQuery(
+      () =>
+        getAgentList({
+          agentId: profileId,
+          isOwner: isOwner && isAgent,
+          page: 1,
+        }),
+      [profileId, isOwner, isAgent]
+    ) ?? [];
 
-  const list = useMemo(
-    () => (data?.pages ? data.pages.flatMap((page) => page.results) : []),
-    [data]
-  );
+  const list = useMemo(() => mapPropertyList(data || []), [data]);
   if (!isLoading && list.length === 0) {
     const propertyLabel = "Properties";
 
@@ -38,10 +41,9 @@ export default function PropertiesTabView({
       return (
         <EmptyState
           icon={House}
-          title={`You don't have any ${propertyLabel} listed yet`}
+          className="px-0"
+          title={`You have no ${propertyLabel} listed yet`}
           description="Start listing properties to reach potential buyers and renters."
-          buttonLabel="Add Property"
-          onPress={() => router.push("/property/add")}
         />
       );
     }
@@ -50,6 +52,7 @@ export default function PropertiesTabView({
       return (
         <EmptyState
           icon={House}
+          className="px-0"
           title={`You don't have any ${propertyLabel} yet`}
           description="Become an agent to start listing your properties."
           buttonLabel="Become Agent"
@@ -62,6 +65,7 @@ export default function PropertiesTabView({
       return (
         <EmptyState
           icon={House}
+          className="px-0"
           title={`No ${propertyLabel} Found`}
           description="New listings will appear here soon."
           buttonLabel="Browse Listings"
@@ -73,11 +77,9 @@ export default function PropertiesTabView({
     return (
       <EmptyState
         icon={House}
+        className="px-0"
         title={`No ${propertyLabel} Found`}
         description="New properties will appear here soon."
-        className="px-4"
-        buttonLabel="Try again"
-        onPress={() => refetch()}
       />
     );
   }

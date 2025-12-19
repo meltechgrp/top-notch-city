@@ -22,7 +22,7 @@ export function EmptyState({
   className,
 }: EmptyStateProps) {
   return (
-    <View className={`h-full max-h-[60%] px-4 ${className}`}>
+    <View className={` px-4 ${className}`}>
       <LinearGradient
         colors={["#2c2d30", "#1c1d1f"]}
         start={{ x: 0.5, y: 0 }}
