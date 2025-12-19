@@ -9,7 +9,6 @@ import { getNearbyPlaces } from "@/actions/property";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DropdownSelect from "@/components/custom/DropdownSelect";
 import eventBus from "@/lib/eventBus";
-import Platforms from "@/constants/Plaforms";
 
 interface CustomCenterSheetProps {
   address: Property["address"];

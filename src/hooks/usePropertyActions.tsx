@@ -1,14 +1,9 @@
-import { useStore } from "@/store";
+import { useMe } from "@/hooks/useMe";
 import { usePropertyStatusMutations } from "@/tanstack/mutations/usePropertyStatusMutations";
 import { useMemo } from "react";
-import { useShallow } from "zustand/react/shallow";
 
 export function usePropertyActions({ property }: { property: Property }) {
-  const {
-    me: user,
-    isAdmin,
-    isAgent,
-  } = useStore(useShallow((s) => s.getCurrentUser()));
+  const { me: user, isAdmin, isAgent } = useMe();
   const { mutateAsync: approve } = usePropertyStatusMutations().approveMutation;
   const { mutateAsync: reject } = usePropertyStatusMutations().rejectMutation;
   const { mutateAsync: permanentDelete } =

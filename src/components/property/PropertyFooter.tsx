@@ -44,7 +44,7 @@ export function PropertyFooter({ property }: PropertyFooterProps) {
                 title: property.title,
                 address: property.address,
                 booking_type:
-                  property.category.name == "Shortlet"
+                  property.category == "Shortlet"
                     ? "reservation"
                     : "inspection",
               });
@@ -53,7 +53,7 @@ export function PropertyFooter({ property }: PropertyFooterProps) {
           >
             <Icon size="xl" as={BookCheck} className="text-primary" />
             <Text size="md" className=" font-medium text-white">
-              {property.category.name == "Shortlet" ? "Book" : "Book a visit"}
+              {property.category == "Shortlet" ? "Book" : "Book a visit"}
             </Text>
           </Pressable>
           <Pressable

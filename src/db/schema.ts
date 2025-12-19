@@ -172,15 +172,21 @@ export const propertySearch = sqliteTable("property_search", {
   state: text("state"),
   country: text("country"),
 });
-export const propertyAddresses = sqliteTable("property_addresses", {
-  propertyId: text("property_id")
-    .notNull()
-    .references(() => properties.id, { onDelete: "cascade" }),
+export const propertyAddresses = sqliteTable(
+  "property_addresses",
+  {
+    propertyId: text("property_id")
+      .notNull()
+      .references(() => properties.id, { onDelete: "cascade" }),
 
-  addressId: text("address_id")
-    .notNull()
-    .references(() => addresses.id, { onDelete: "cascade" }),
-});
+    addressId: text("address_id")
+      .notNull()
+      .references(() => addresses.id, { onDelete: "cascade" }),
+  },
+  (t) => ({
+    pk: primaryKey(t.propertyId, t.addressId),
+  })
+);
 
 // User
 
@@ -257,15 +263,21 @@ export const companies = sqliteTable("companies", {
   phone: text("phone"),
   description: text("description"),
 });
-export const agentCompanies = sqliteTable("agent_companies", {
-  agentId: text("agent_id")
-    .references(() => users.id, { onDelete: "cascade" })
-    .notNull(),
+export const agentCompanies = sqliteTable(
+  "agent_companies",
+  {
+    agentId: text("agent_id")
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
 
-  companyId: text("company_id")
-    .references(() => companies.id, { onDelete: "cascade" })
-    .notNull(),
-});
+    companyId: text("company_id")
+      .references(() => companies.id, { onDelete: "cascade" })
+      .notNull(),
+  },
+  (t) => ({
+    pk: primaryKey(t.agentId, t.companyId),
+  })
+);
 
 export const reviews = sqliteTable("reviews", {
   id: text("id").primaryKey(),
@@ -286,7 +298,7 @@ export const reviews = sqliteTable("reviews", {
 });
 
 export const accounts = sqliteTable("accounts", {
-  userId: text("user_id").primaryKey(), // same as users.id
+  userId: text("user_id").primaryKey(),
 
   email: text("email").notNull(),
   role: text("role").notNull(),
@@ -295,13 +307,18 @@ export const accounts = sqliteTable("accounts", {
 
   lastLoginAt: text("last_login_at"),
 });
+export const userAddresses = sqliteTable(
+  "user_addresses",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
 
-export const userAddresses = sqliteTable("user_addresses", {
-  userId: text("user_id")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-
-  addressId: text("address_id")
-    .notNull()
-    .references(() => addresses.id, { onDelete: "cascade" }),
-});
+    addressId: text("address_id")
+      .notNull()
+      .references(() => addresses.id, { onDelete: "cascade" }),
+  },
+  (t) => ({
+    pk: primaryKey(t.userId, t.addressId),
+  })
+);

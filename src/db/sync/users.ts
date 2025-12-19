@@ -23,7 +23,7 @@ export async function syncUser(user: any) {
             .insert(agentProfiles)
             .values(user.agentProfile)
             .onConflictDoUpdate({
-              target: user.agentProfiles.userId,
+              target: agentProfiles.userId,
               set: user.agentProfile,
             });
         }
@@ -34,17 +34,28 @@ export async function syncUser(user: any) {
             set: company,
           });
 
-          await tx.insert(agentCompanies).values({
-            agentId: user.id,
-            companyId: company.id,
-          });
+          await tx
+            .insert(agentCompanies)
+            .values({
+              agentId: user.user.id,
+              companyId: company.id,
+            })
+            .onConflictDoNothing();
         }
 
         if (user.address) {
-          await tx.insert(addresses).values(user.address);
+          await tx.insert(addresses).values(user.address).onConflictDoUpdate({
+            target: addresses.id,
+            set: user.address,
+          });
+
           await tx
             .insert(userAddresses)
-            .values({ userId: user.user.id, addressId: user.address.id });
+            .values({
+              userId: user.user.id,
+              addressId: user.address.id,
+            })
+            .onConflictDoNothing();
         }
       });
     } catch (e) {

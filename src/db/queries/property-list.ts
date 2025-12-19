@@ -7,7 +7,7 @@ import {
   media,
   propertyAddresses,
 } from "@/db/schema";
-import { eq, and, isNull, inArray, between } from "drizzle-orm";
+import { eq, and, isNull, inArray, between, sql } from "drizzle-orm";
 
 export function getAgentList({
   agentId,
@@ -184,6 +184,36 @@ export function getNearby({
         between(addresses.longitude, minLng, maxLng)
       )
     )
+    .limit(limit)
+    .offset(offset);
+}
+export function getReels({
+  limit = 10,
+  offset = 0,
+}: {
+  limit?: number;
+  offset?: number;
+}) {
+  return db
+    .select({
+      property: properties,
+      interaction: interactions,
+      ownerInteraction: ownerInteractions,
+      video: media,
+    })
+    .from(properties)
+    .innerJoin(
+      media,
+      and(eq(media.propertyId, properties.id), eq(media.mediaType, "video"))
+    )
+    .leftJoin(interactions, eq(interactions.propertyId, properties.id))
+    .leftJoin(
+      ownerInteractions,
+      eq(ownerInteractions.propertyId, properties.id)
+    )
+    .where(and(eq(properties.status, "approved"), isNull(properties.deletedAt)))
+    .groupBy(properties.id)
+    .orderBy(sql`RANDOM()`)
     .limit(limit)
     .offset(offset);
 }

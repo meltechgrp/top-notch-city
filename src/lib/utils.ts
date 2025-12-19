@@ -85,12 +85,12 @@ export const FindAmenity = (item: string, data?: Property): any => {
 };
 
 export function generateTitle(property: Property) {
-  switch (property.category.name.trim()) {
+  switch (property.category.trim()) {
     case "Residential":
-      return `${FindAmenity("Bedroom", property) || ""} Bedroom ${property.subcategory?.name || ""}`.trim();
+      return `${FindAmenity("Bedroom", property) || ""} Bedroom ${property.subCategory || ""}`.trim();
 
     case "Commercial":
-      return `${property.subcategory?.name || "Commercial Space"} ${property.purpose ? `for ${property.purpose}` : ""}`.trim();
+      return `${property.subCategory || "Commercial Space"} ${property.purpose ? `for ${property.purpose}` : ""}`.trim();
 
     case "Land":
       return `${FindAmenity("Total Plot", property) || 1} Plot${FindAmenity("Total Plot", property) > 1 ? "s" : ""} of Land`;
@@ -101,7 +101,7 @@ export function generateTitle(property: Property) {
       return property?.title || "";
 
     default:
-      return `${property.subcategory.name || property.category.name}`;
+      return `${property.subCategory || property.category}`;
   }
 }
 
@@ -415,7 +415,16 @@ export function mapPropertyList(rows: any[]) {
     ownerInteraction: row?.ownerInteraction || null,
     media: row.media,
     address: row?.address,
-  })) as unknown as PropertyListItem[];
+  })) as unknown as Property[];
+}
+export function mapProperty(row: any) {
+  return {
+    ...row.property,
+    interaction: row?.interaction || null,
+    ownerInteraction: row?.ownerInteraction || null,
+    media: row.media,
+    address: row?.address,
+  } as unknown as Property;
 }
 export function mapUserData(row: any) {
   return {

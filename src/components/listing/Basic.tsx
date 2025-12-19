@@ -125,20 +125,18 @@ export default function PropertyListingBasic() {
                   onPress={() => setCurrencyModal(true)}
                   className={cn(
                     "w-12 border border-outline-100 justify-center bg-background items-center gap-1 px-3 aspect-square rounded-full",
-                    listing?.currency &&
-                      listing?.currency?.symbol?.length > 1 &&
-                      "w-14"
+                    listing?.currency && listing?.currency?.length > 1 && "w-14"
                   )}
                 >
                   <Text
                     className={cn(
                       "text-xl",
                       listing?.currency &&
-                        listing?.currency?.symbol?.length > 1 &&
+                        listing?.currency?.length > 1 &&
                         "text-sm"
                     )}
                   >
-                    {listing?.currency?.symbol}
+                    {listing?.currency}
                   </Text>
                 </Pressable>
                 <View className="flex-1">
@@ -195,7 +193,7 @@ export default function PropertyListingBasic() {
         open={currencyModal}
         onClose={() => setCurrencyModal(false)}
         selected={listing.currency}
-        onSelect={(code) => updateListing({ currency: code })}
+        onSelect={(code) => updateListing({ currency: code.code })}
       />
     </>
   );

@@ -80,7 +80,7 @@ const PropertyDetailsBottomSheet = ({
               <View className="flex-row justify-between items-center">
                 <Text className="text-white text-2xl font-bold">
                   {formatMoney(property.price, "NGN", 0)}
-                  {property.category.name == "Shortlet" && "/night"}
+                  {property.category == "Shortlet" && "/night"}
                 </Text>
                 <PropertyBadge property={property} />
               </View>
@@ -140,7 +140,7 @@ const PropertyDetailsBottomSheet = ({
                   What's special
                 </Heading>
                 <LongDescription
-                  updated={property.updated_at}
+                  updated={property.updatedAt}
                   numberOfLines={8}
                   description={property?.description?.trim() || ""}
                 />
@@ -177,7 +177,7 @@ const PropertyDetailsBottomSheet = ({
               </View>
               <View className="flex-row justify-around">
                 <Text className="">
-                  {formatDateDistance(property.created_at, true)}
+                  {formatDateDistance(property.createdAt, true)}
                 </Text>
                 <Text>
                   {property.interaction.viewed}{" "}
@@ -209,7 +209,7 @@ const PropertyDetailsBottomSheet = ({
                   )} */}
                 </View>
               </View>
-              {property.category.name !== "Shortlet" &&
+              {property.category !== "Shortlet" &&
                 property.status == "approved" && (
                   <View className="bg-background-muted border border-outline-100 rounded-xl p-4 mx-4">
                     <View className="h-40 bg-background/70">
@@ -246,7 +246,7 @@ const PropertyDetailsBottomSheet = ({
                           title: property.title,
                           address: property.address,
                           booking_type:
-                            property.category.name == "Shortlet"
+                            property.category == "Shortlet"
                               ? "reservation"
                               : "inspection",
                         });
@@ -292,7 +292,7 @@ const PropertyDetailsBottomSheet = ({
                         {fullName(property?.owner)}
                       </AvatarFallbackText>
                       <AvatarImage
-                        source={getImageUrl(property?.owner?.profile_image)}
+                        source={getImageUrl(property?.owner?.profileImage)}
                       />
                     </Avatar>
                     <ButtonText>Portfolio</ButtonText>

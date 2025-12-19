@@ -15,10 +15,7 @@ export function CurrencyPickerModal({
   open: boolean;
   onClose: () => void;
   onSelect: (v: { code: string; symbol: string }) => void;
-  selected?: {
-    code: string;
-    symbol: string;
-  };
+  selected?: string;
 }) {
   const [query, setQuery] = useState("");
 
@@ -65,7 +62,7 @@ export function CurrencyPickerModal({
             <ScrollView className="max-h-[90%] h-[80%]">
               {filtered.map((c) => {
                 const label = `${c.code} - ${c.name} (${c.symbol})`;
-                const disabled = selected?.code == c.code;
+                const disabled = selected == c.code;
 
                 return (
                   <TouchableOpacity

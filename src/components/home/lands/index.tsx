@@ -3,6 +3,7 @@ import { router } from "expo-router";
 import { memo } from "react";
 import HorizontalProperties from "@/components/property/HorizontalProperties";
 import { useHomeList } from "@/hooks/useHomeList";
+import { deduplicate } from "@/lib/utils";
 
 const Lands = () => {
   const { lands } = useHomeList();
@@ -22,7 +23,7 @@ const Lands = () => {
       }}
     >
       <HorizontalProperties
-        data={lands}
+        data={deduplicate(lands, "id")}
         isLoading={false}
         listType={["trending-lands"]}
         isRefetching={false}

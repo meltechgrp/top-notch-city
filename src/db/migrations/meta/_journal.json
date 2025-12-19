@@ -5,36 +5,15 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1766080608287,
-      "tag": "0000_whole_alex_wilder",
+      "when": 1766144275143,
+      "tag": "0000_cloudy_salo",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "6",
-      "when": 1766123635013,
-      "tag": "0001_lean_tenebrous",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1766128727902,
-      "tag": "0002_strong_romulus",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "6",
-      "when": 1766134000424,
-      "tag": "0003_secret_franklin_richards",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "6",
-      "when": 1766140288296,
-      "tag": "0004_outstanding_sway",
+      "when": 1766145980170,
+      "tag": "0001_giant_sally_floyd",
       "breakpoints": true
     }
   ]

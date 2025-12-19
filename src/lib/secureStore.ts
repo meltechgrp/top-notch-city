@@ -10,7 +10,6 @@ export async function getActiveUserId() {
 }
 
 export async function setToken(userId: string, token: string) {
-  console.log(userId, token);
   await SecureStore.setItemAsync(`token_${userId}`, token);
 }
 

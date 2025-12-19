@@ -36,6 +36,7 @@ import {
 import DropdownSelect from "@/components/custom/DropdownSelect";
 import { ExternalLink } from "@/components/ExternalLink";
 import ModalScreen from "@/components/shared/ModalScreen";
+import { useMe } from "@/hooks/useMe";
 
 export type BookingFormProps = {
   visible: boolean;
@@ -60,7 +61,7 @@ export const BookingFormBottomSheet = ({
   title,
   availableDates,
 }: BookingFormProps) => {
-  const { me } = useStore();
+  const { me } = useMe();
   const [dateSheetVisible, setDateSheetVisible] = useState(false);
 
   const { mutateAsync, isPending } = useMutation({
@@ -307,7 +308,7 @@ export const BookingFormBottomSheet = ({
                     <Icon as={User} className="text-primary" />
                   </View>
                   <Text className="text-base">
-                    {me?.first_name} {me?.last_name}
+                    {me?.firstName} {me?.lastName}
                   </Text>
                 </View>
                 <View className="flex-row gap-2 items-center bg-background-muted border border-outline-100 text-center rounded-xl px-4 h-16">

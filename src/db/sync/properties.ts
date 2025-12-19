@@ -51,10 +51,14 @@ export async function syncPropertyLists(lists: any[]) {
               target: addresses.id,
               set: list.address,
             });
-            await tx.insert(propertyAddresses).values({
-              propertyId: list.property.id,
-              addressId: list.address.id,
-            });
+
+            await tx
+              .insert(propertyAddresses)
+              .values({
+                propertyId: list.property.id,
+                addressId: list.address.id,
+              })
+              .onConflictDoNothing();
           }
         }
       });

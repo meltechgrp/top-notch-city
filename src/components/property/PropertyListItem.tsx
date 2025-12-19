@@ -27,7 +27,7 @@ import { useLike } from "@/hooks/useLike";
 import { generateMediaUrlSingle } from "@/lib/api";
 
 type Props = {
-  data: PropertyListItem;
+  data: Property;
   className?: string;
   subClassName?: string;
   showFacilites?: boolean;

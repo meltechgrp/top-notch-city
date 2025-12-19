@@ -23,7 +23,7 @@ export default function PropertyHeader({
     property,
   });
   const [openActions, setOpenActions] = useState(false);
-  const liked = useMemo(() => !!property.owner_interaction?.liked, [property]);
+  const liked = useMemo(() => !!property.ownerInteraction?.liked, [property]);
   return (
     <>
       <View className="pr-4 flex-row bg-background/60 px-4 rounded-full mr-4 items-center gap-2">

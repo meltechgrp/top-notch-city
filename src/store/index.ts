@@ -134,10 +134,7 @@ export type Listing = {
   duration?: string;
   description?: string;
   price?: string;
-  currency?: {
-    code: string;
-    symbol: string;
-  };
+  currency?: string;
 };
 
 type TempState = {
@@ -182,10 +179,7 @@ const initialTempState = {
   listing: {
     purpose: "rent",
     step: 1,
-    currency: {
-      code: "NGN",
-      symbol: "₦",
-    },
+    currency: "NGN",
     totalSteps: 7,
   },
   totalUnreadChat: 0,

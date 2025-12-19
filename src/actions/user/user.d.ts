@@ -1,4 +1,4 @@
-type Me = {
+type User = {
   email: string;
   phone: string | null;
   first_name: string;
@@ -24,6 +24,35 @@ type Me = {
   total_properties: number;
   followers_count: number;
   is_following?: boolean;
+  address?: Address;
+};
+
+type Me = {
+  email: string;
+  phone: string | null;
+  firstName: string;
+  slug: string;
+  agentProfile?: AgentProfile;
+  lastName: string;
+  gender: "male" | "female" | null;
+  dateOfBirth: string | null;
+  status: "online" | "offline" | "idle";
+  verified: boolean;
+  profileImage: string | null;
+  isActive: boolean;
+  isAvailable?: boolean;
+  isBlockedByAdmin?: boolean;
+  isSuperuser: boolean;
+  role: "user" | "admin" | "agent" | "staff" | "staff_agent";
+  id: string;
+  autoChatMessage: string;
+  createdAt: string;
+  updatedAt: string;
+  viewsCount: number;
+  likesCount: number;
+  totalProperties: number;
+  followersCount: number;
+  isFollowing?: boolean;
   address?: Address;
 };
 

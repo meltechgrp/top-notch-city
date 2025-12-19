@@ -51,9 +51,7 @@ export function useMultiAccount() {
       }
 
       await syncUser(normalizeMe(me));
-    } catch {
-      await handleInvalidAuth();
-    }
+    } catch {}
   }, [handleInvalidAuth]);
 
   const addAccount = useCallback(

@@ -113,6 +113,7 @@ export function normalizePropertyList(api: Property) {
     slug: api?.slug,
     price: api?.price,
     currencyCode: api?.currency?.code || "NGN",
+    description: api.description,
     status: api.status,
     purpose: api.purpose,
     isFeatured: api?.is_featured || false,

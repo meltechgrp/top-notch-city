@@ -1,5 +1,4 @@
-import { BadgeCheck, Ban, CheckCheck, CircleDashed } from "lucide-react-native";
-import { Badge, BadgeIcon, Text } from "../ui";
+import { Badge, Text } from "../ui";
 
 export function PropertyStatus({ status }: { status: Property["status"] }) {
   switch (status) {

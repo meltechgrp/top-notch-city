@@ -29,14 +29,18 @@ import Animated, {
 } from "react-native-reanimated";
 import { PropertyFooter } from "@/components/property/PropertyFooter";
 import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
-import { composeFullAddress } from "@/lib/utils";
+import { composeFullAddress, mapProperty } from "@/lib/utils";
 import { useTempStore } from "@/store";
+import { useLiveQuery } from "@/hooks/useLiveQuery";
+import { getProperty } from "@/db/queries/property";
+import { useMe } from "@/hooks/useMe";
 
 const { height } = Dimensions.get("window");
 const HERO_HEIGHT = height / 2.2;
 
 export default function PropertyItem() {
   const { propertyId } = useLocalSearchParams() as { propertyId: string };
+  const { isAdmin, isAgent } = useMe();
   const { updateListing } = useTempStore();
   const { width, onLayout } = useLayout();
   const theme = useResolvedTheme();
@@ -45,10 +49,9 @@ export default function PropertyItem() {
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["properties", propertyId],
-    queryFn: () => fetchProperty({ id: propertyId }),
-  });
+  const { data, isLoading, error } = useLiveQuery(() =>
+    getProperty({ propertyId, isAdmin, isAgent })
+  );
   const { mutate } = useMutation({
     mutationFn: () => viewProperty({ id: propertyId }),
     onSuccess: () => {
@@ -60,7 +63,7 @@ export default function PropertyItem() {
     detailsY.value = e.nativeEvent.layout.y;
   };
   const property = useMemo(() => {
-    return data?.id ? data : null;
+    return data ? mapProperty(data) : null;
   }, [propertyId, data]);
 
   useEffect(() => {
@@ -125,61 +128,58 @@ export default function PropertyItem() {
   }
 
   useEffect(() => {
-    if (data) {
+    if (property) {
       setTimeout(() => {
         updateListing({
-          title: data.title,
-          description: data?.description || "",
-          duration: data?.duration,
-          purpose: data.purpose,
-          category: data.category.name,
-          bedroom: data.bedroom,
-          bathroom: data.bathroom,
-          bedType: data.bedType,
-          guests: data.guests,
-          landarea: data.landarea?.toString(),
-          plots: data.plots,
-          viewType: data.viewType,
-          discount: data.discount,
-          caution_fee: data.caution_fee,
-          owner_type: data?.ownership?.owner_type,
-          listing_role: data?.ownership?.listing_role,
-          subCategory: data.subcategory.name,
-          companies: data.companies,
-          ownership_documents: data?.ownership?.documents?.map((d) => ({
+          title: property.title,
+          description: property?.description || "",
+          duration: property?.duration,
+          purpose: property.purpose,
+          category: property.category,
+          bedroom: property.bedroom,
+          bathroom: property.bathroom,
+          bedType: property.bedType,
+          guests: property.guests,
+          landarea: property.landarea?.toString(),
+          plots: property.plots,
+          viewType: property.viewType,
+          discount: property.discount,
+          caution_fee: property.cautionFee,
+          owner_type: property?.ownership?.ownerType,
+          listing_role: property?.ownership?.listingRole,
+          subCategory: property.subCategory,
+          companies: property.companies,
+          ownership_documents: property?.ownership?.documents?.map((d) => ({
             media_type: d.document_type?.toUpperCase() as Media["media_type"],
             id: d.id,
             url: d.file_url,
           })),
-          price: data.price.toString(),
-          photos: data.media?.filter((img) => img.media_type == "IMAGE"),
-          videos: data.media?.filter((img) => img.media_type == "VIDEO"),
-          currency: {
-            code: data?.currency?.code || "NGN",
-            symbol: data?.currency?.symbol || "#",
-          },
-          availabilityPeriod: data?.availabilities.map((a) => ({
+          price: property.price.toString(),
+          photos: property.media?.filter((img) => img.media_type == "IMAGE"),
+          videos: property.media?.filter((img) => img.media_type == "VIDEO"),
+          currency: property.currencyCode || "NGN",
+          availabilityPeriod: property?.availabilities.map((a) => ({
             start: a.start,
             end: a.end,
           })),
-          facilities: data?.amenities?.map((f) => f.name),
+          facilities: property?.amenities?.map((f) => f.name),
           address: {
-            displayName: composeFullAddress(data.address),
+            displayName: composeFullAddress(property.address),
             addressComponents: {
-              country: data.address.country,
-              state: data.address.state,
-              city: data.address.city,
-              street: data.address.street,
+              country: property.address.country,
+              state: property.address.state,
+              city: property.address.city,
+              street: property.address.street,
             },
             location: {
-              latitude: data.address.latitude,
-              longitude: data.address.longitude,
+              latitude: property.address.latitude,
+              longitude: property.address.longitude,
             },
           },
         });
       }, 50);
     }
-  }, [data]);
+  }, [property]);
   return (
     <>
       <Stack.Screen

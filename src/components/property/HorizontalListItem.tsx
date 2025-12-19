@@ -15,7 +15,7 @@ function HorizontalListItem(props: Props) {
   const { data, className } = props;
   const { media, price, id, title, category, slug } = data;
   const router = useRouter();
-  if (category.name == "Land") return null;
+  if (category == "Land") return null;
   return (
     <Pressable
       both
@@ -45,7 +45,7 @@ function HorizontalListItem(props: Props) {
           <View className="flex-row gap-1 items-center">
             <Icon
               size={"sm"}
-              as={data.category.name == "Land" ? LandPlot : House}
+              as={data.category == "Land" ? LandPlot : House}
               className="text-white"
             />
             <Text

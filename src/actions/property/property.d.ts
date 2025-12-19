@@ -31,45 +31,8 @@ type Property = {
   slug: string;
   description: string | null;
   price: number;
-  created_at: string;
-  updated_at: string;
-  currency: Currency;
-  status: PropertyStatus;
-  purpose: PropertyPurpose;
-  is_featured: boolean;
-  duration?: string;
-  category: Category;
-  subcategory: SubCategory;
-  address: Address;
-  media: Media[];
-  total_reviews: number;
-  avg_rating: number;
-  bathroom?: string;
-  bedroom?: string;
-  is_booked?: boolean;
-  landarea?: number;
-  bedType?: string;
-  guests?: string;
-  plots?: string;
-  viewType?: string;
-  companies?: Company[];
-  discount?: string;
-  caution_fee?: string;
-  owner: Owner;
-  ownership: Ownership;
-  availabilities: Availabilities[];
-  is_following: boolean;
-  amenities: Amenity[];
-  interaction: Interaction;
-  owner_interaction: Owner_interaction;
-  reason_or_comment?: string;
-};
-type PropertyListItem = {
-  id: string;
-  title: string;
-  slug: string;
-  price: number;
   createdAt: string;
+  updatedAt: string;
   currencyCode: string;
   status: PropertyStatus;
   purpose: PropertyPurpose;
@@ -77,21 +40,31 @@ type PropertyListItem = {
   duration?: string;
   category: string;
   subCategory: string;
-  media: Media[];
-  ownerId: string;
-  bathroom?: string;
   displayAddress: string;
-  bedroom?: string;
-  isBooked: boolean;
-  landarea?: string;
   address: Address;
+  media: Media[];
+  totalReviews: number;
+  ownerId: string;
+  avgRating: number;
+  bathroom?: string;
+  bedroom?: string;
+  isBooked?: boolean;
+  landarea?: number;
+  bedType?: string;
   guests?: string;
   plots?: string;
+  viewType?: string;
+  companies?: Company[];
   discount?: string;
+  cautionFee?: string;
+  owner: Owner;
+  ownership: Ownership;
+  availabilities: Availabilities[];
+  isFollowing: boolean;
+  amenities: Amenity[];
   interaction: Interaction;
   ownerInteraction: Owner_interaction;
 };
-
 type Media = {
   id: string;
   url: string;
@@ -109,9 +82,9 @@ type Owner = {
   email: string;
   slug: string;
   phone: string;
-  first_name: string;
-  last_name: string;
-  profile_image?: string;
+  firstName: string;
+  lastName: string;
+  profileImage?: string;
 };
 
 type ListingRole = "agent" | "manager" | "onwer";
@@ -130,15 +103,14 @@ type Documents = {
 
 type Ownership = {
   id: string;
-  listing_role: ListingRole;
-  owner_type: OwnerType;
-  owner_user_id: string;
-  owner_company: Company;
-  verification_status: "not_required" | "required";
-  verification_note: string | null;
+  listingRole: ListingRole;
+  ownerType: OwnerType;
+  ownerCompany: Company;
+  verificationStatus: "not_required" | "required";
+  verificationNote: string | null;
   documents: Documents[];
-  created_at: string;
-  updated_at: string | null;
+  createdAt: string;
+  updatedAt: string | null;
 };
 
 type Amenity = {
@@ -150,13 +122,13 @@ type Amenity = {
 type Interaction = {
   viewed: number;
   liked: number;
-  added_to_wishlist: number;
+  addedToWishlist: number;
 };
 
 type Owner_interaction = {
   viewed: boolean;
   liked: boolean;
-  added_to_wishlist: boolean;
+  addedToWishlist: number;
 };
 
 type Place = {
