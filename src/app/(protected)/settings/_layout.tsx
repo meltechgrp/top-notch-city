@@ -33,12 +33,12 @@ export default function SettingsLayout() {
           headerTitle: "Settings",
         }}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name="theme"
         options={{
           headerTitle: "Themes",
         }}
-      />
+      /> */}
       <Stack.Screen
         name="permissions"
         options={{

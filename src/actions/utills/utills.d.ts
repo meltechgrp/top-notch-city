@@ -43,8 +43,9 @@ type Address = {
   postal_code: string | null;
   latitude: number;
   longitude: number;
-  place_id: string;
+  place_id?: string;
   country_code: string | null;
+  id?: string;
 };
 
 type UploadedFile = {

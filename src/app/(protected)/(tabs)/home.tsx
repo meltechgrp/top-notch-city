@@ -3,7 +3,6 @@ import DiscoverProperties from "@/components/home/DiscoverProperties";
 import TopLocations from "@/components/home/topLocations";
 import { Box, View } from "@/components/ui";
 import StartChatBottomSheet from "@/components/modals/StartChatBottomSheet";
-import { useStore } from "@/store";
 import React, { useCallback, useState } from "react";
 import CustomerCareBottomSheet from "@/components/modals/CustomerCareBottomSheet";
 import { ListRenderItem, RefreshControl } from "react-native";
@@ -13,10 +12,11 @@ import ApartmentProperties from "@/components/home/recent";
 import Lands from "@/components/home/lands";
 import { FlashList } from "@shopify/flash-list";
 import { useHomeSync } from "@/hooks/useHomeSync";
+import { useMe } from "@/hooks/useMe";
 const MAP_HEIGHT = 400;
 
 export default function HomeScreen() {
-  const { me } = useStore();
+  const { me } = useMe();
   const { refetch } = useHomeSync();
   const [friendsModal, setFriendsModal] = React.useState(false);
   const [staffs, setStaffs] = useState(false);

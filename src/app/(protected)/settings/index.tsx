@@ -21,14 +21,11 @@ import { getUniqueIdSync } from "react-native-device-info";
 import LogoutButton from "@/components/settings/LogoutButton";
 import { useMultiAccount } from "@/hooks/useAccounts";
 import { NotLoggedInProfile } from "@/components/profile/ProfileWrapper";
-import { useStore } from "@/store";
-import { useShallow } from "zustand/react/shallow";
+import { useMe } from "@/hooks/useMe";
 
 export default function Setting() {
-  const { removeAcc } = useMultiAccount();
-  const { me, isAdmin, isAgent } = useStore(
-    useShallow((s) => s.getCurrentUser())
-  );
+  const { removeAccount } = useMultiAccount();
+  const { me, isAdmin, isAgent } = useMe();
   const router = useRouter();
   const deviceId = getUniqueIdSync();
 
@@ -37,10 +34,11 @@ export default function Setting() {
       method: "POST",
       data: { device_id: deviceId },
     });
-    removeAcc();
+    removeAccount(me?.id!);
     router.dismissTo("/home");
   }
   async function onLogout() {
+    if (!me) return;
     Alert.alert(
       "Logout",
       "Are you sure you want to logout?",

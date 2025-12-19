@@ -24,16 +24,13 @@ import ImageOptionBottomSheet from "@/components/modals/profile/ImageOptionBotto
 import { useProfileMutations } from "@/tanstack/mutations/useProfileMutations";
 import OptionsBottomSheet from "@/components/shared/OptionsBottomSheet";
 import { MediaPreviewModal } from "@/components/modals/profile/MediaPreviewModal";
-import { useStore } from "@/store";
-import { useShallow } from "zustand/react/shallow";
+import { useMe } from "@/hooks/useMe";
 
 export default function UserAccount() {
   const { userId } = useLocalSearchParams() as {
     userId: string;
   };
-  const { me, isAdmin, isAgent } = useStore(
-    useShallow((s) => s.getCurrentUser())
-  );
+  const { isAgent } = useMe();
   const { data, isLoading, refetch, isRefetching } = useQuery({
     queryKey: ["user", userId],
     queryFn: () => getUser(userId),
@@ -43,30 +40,24 @@ export default function UserAccount() {
   const [previewOpen, setPreviewOpen] = useState(false);
   const { mutation } = useProfileMutations(userId);
   const [showOptions, setShowOptions] = useState(false);
-  const {
-    pickMedia,
-    takeMedia,
-    setLoading,
-    loading,
-    progressMap,
-    processFiles,
-  } = useMediaUpload({
-    type: "image",
-    maxSelection: 1,
-    onSuccess: (media) => {
-      setPreviewOpen(false);
-      mutation.mutateAsync([
-        {
-          field: "profile_image_id",
-          value: media[0].id,
-        },
-      ]);
-    },
-    onFiles: (media) => {
-      setFiles(media);
-      setPreviewOpen(true);
-    },
-  });
+  const { pickMedia, takeMedia, setLoading, loading, processFiles } =
+    useMediaUpload({
+      type: "image",
+      maxSelection: 1,
+      onSuccess: (media) => {
+        setPreviewOpen(false);
+        mutation.mutateAsync([
+          {
+            field: "profile_image_id",
+            value: media[0].id,
+          },
+        ]);
+      },
+      onFiles: (media) => {
+        setFiles(media);
+        setPreviewOpen(true);
+      },
+    });
   const user = useMemo(() => data ?? null, [data]);
 
   const personal = [

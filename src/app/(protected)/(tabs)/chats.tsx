@@ -7,13 +7,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { RefreshControl } from "react-native";
 import { useChat } from "@/hooks/useChat";
 import { router, Tabs } from "expo-router";
-import {
-  MessageSquare,
-  MoreHorizontal,
-  Plus,
-  Search,
-  Users,
-} from "lucide-react-native";
+import { MoreHorizontal, Plus, Search, Users } from "lucide-react-native";
 import ChatsStateWrapper from "@/components/chat/ChatsStateWrapper";
 import { FilterComponent } from "@/components/admin/shared/FilterComponent";
 import { cn } from "@/lib/utils";
@@ -26,7 +20,6 @@ export default function MessagesScreen() {
   const [search, setSearch] = useState("");
   const [friendsModal, setFriendsModal] = React.useState(false);
   const [staffs, setStaffs] = React.useState(false);
-  const isFetching = loading || refreshing;
 
   const filteredData = useMemo(() => {
     let filtered = chats;

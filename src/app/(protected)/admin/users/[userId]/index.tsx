@@ -6,11 +6,7 @@ export default function AdminProfile() {
 
   return (
     <>
-      <ProfileWrapper
-        tabs={["All", "Properties", "Reviews"]}
-        userType="admin"
-        userId={userId}
-      />
+      <ProfileWrapper userType="admin" userId={userId} />
     </>
   );
 }

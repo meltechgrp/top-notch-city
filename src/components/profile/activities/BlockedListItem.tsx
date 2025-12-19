@@ -8,9 +8,10 @@ import AnimatedPressable from "@/components/custom/AnimatedPressable";
 import { openAccessModal } from "@/components/globals/AuthModals";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { unBlockedUser } from "@/actions/user";
+import { useMe } from "@/hooks/useMe";
 
 export function BlockListItem({ user }: { user: Blocked }) {
-  const { me } = useStore();
+  const { me, isAdmin, isAgent } = useMe();
   const queryClient = useQueryClient();
   const { mutateAsync, isPending } = useMutation({
     mutationFn: () => unBlockedUser(user.id),

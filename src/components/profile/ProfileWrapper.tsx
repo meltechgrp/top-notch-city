@@ -7,8 +7,6 @@ import { getUser } from "@/actions/user";
 import FullHeightLoaderWrapper from "@/components/loaders/FullHeightLoaderWrapper";
 
 import { ProfileTopSection } from "@/components/profile/ProfileTopSection";
-import ProfileTabHeaderSection from "@/components/profile/ProfileTabHeaderSection";
-import PropertiesTabView from "@/components/profile/PropertiesTab";
 import { ProfileDetails } from "@/components/profile/ProfileDetails";
 import { router, Stack } from "expo-router";
 import {
@@ -18,63 +16,38 @@ import {
   Settings,
   User,
 } from "lucide-react-native";
-import SavedPropertiesTabView from "@/components/profile/SavedProperties";
-import ReviewsTabView from "@/components/profile/ReviewsTabView";
 import ProfileSkeleton from "@/components/skeleton/ProfileSkeleton";
 import { RefreshControl } from "react-native";
 import { UserActionsBottomSheet } from "@/components/admin/users/UserBottomSheet";
 import { openAccountsModal } from "@/components/globals/AuthModals";
-import { useStore } from "@/store";
-import { useShallow } from "zustand/react/shallow";
 import { cn } from "@/lib/utils";
+import { useMe } from "@/hooks/useMe";
 
 export type UserType = "visitor" | "owner" | "admin";
 
 interface ProfileWrapperProps {
-  tabs: string[];
   userId?: string;
   userType: UserType;
   isAgent?: boolean;
 }
 
 export function ProfileWrapper({
-  tabs,
   userType = "visitor",
   userId,
 }: ProfileWrapperProps) {
-  const { me, isAdmin, isAgent } = useStore(
-    useShallow((s) => s.getCurrentUser())
-  );
+  const { isAgent } = useMe();
   const [showActions, setShowActions] = useState(false);
-  const [activeTab, setActiveTab] = useState<string>("all");
   const { data, isLoading, refetch, isRefetching } = useQuery({
     queryKey: ["user", userId],
     queryFn: () => getUser(userId!),
     enabled: !!userId,
-    staleTime: 0,
   });
 
   const user = useMemo(() => data ?? null, [data]);
 
   const dataForTab = useMemo(() => {
-    switch (activeTab) {
-      case "Properties":
-      case "Houses":
-        return [{ type: "properties" }];
-      case "Lands":
-        return [{ type: "lands" }];
-
-      case "Saved":
-        return [{ type: "saved" }];
-
-      case "Reviews":
-        return [{ type: "reviews" }];
-
-      case "All":
-      default:
-        return [{ type: "all" }];
-    }
-  }, [activeTab]);
+    return [{ type: "all" }];
+  }, []);
 
   const stickyHeaderIndices = [0, 1];
   return (
@@ -134,7 +107,7 @@ export function ProfileWrapper({
             refreshControl={
               <RefreshControl refreshing={false} onRefresh={refetch} />
             }
-            keyExtractor={(_, idx) => `${activeTab}-${idx}`}
+            keyExtractor={(_, idx) => `all`}
             renderItem={({ item }) => {
               switch (item.type) {
                 case "all":

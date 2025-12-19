@@ -1,5 +1,4 @@
 import { searchAgents } from "@/actions/agent";
-import { FilterComponent } from "@/components/admin/shared/FilterComponent";
 import VerticalAgentLoaderWrapper from "@/components/loaders/VerticalAgentLoader";
 import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
 import { Box, Text, View } from "@/components/ui";
@@ -20,7 +19,6 @@ import { router } from "expo-router";
 import { useFollowAgent } from "@/hooks/useFollowAgent";
 import { openAccessModal } from "@/components/globals/AuthModals";
 import { KeyboardDismissPressable } from "@/components/shared/KeyboardDismissPressable";
-import DropdownSelect from "@/components/custom/DropdownSelect";
 import OptionsBottomSheet from "@/components/shared/OptionsBottomSheet";
 import { CustomInput } from "@/components/custom/CustomInput";
 

@@ -1,68 +1,36 @@
+// auth/secure.ts
 import * as SecureStore from "expo-secure-store";
 
-const ACCOUNTS_KEY = "tnc_accounts";
-const ACTIVE_KEY = "tnc_active";
-
-export async function getAccounts(): Promise<StoredAccount[]> {
-  const raw = await SecureStore.getItemAsync(ACCOUNTS_KEY);
-  return raw ? JSON.parse(raw) : [];
-}
-
-export async function saveAccounts(list: StoredAccount[]) {
-  await SecureStore.setItemAsync(ACCOUNTS_KEY, JSON.stringify(list));
-}
-
-export async function addAccountToStorage(acc: StoredAccount) {
-  const accounts = await getAccounts();
-
-  const exists = accounts.find((a) => a.id === acc.id);
-
-  let updated = exists
-    ? accounts.map((a) => (a.id === acc.id ? acc : a))
-    : [...accounts, acc];
-
-  await saveAccounts(updated);
-
-  await setActiveUserId(acc.id);
-}
-
 export async function setActiveUserId(id: string) {
-  await SecureStore.setItemAsync(ACTIVE_KEY, id);
+  await SecureStore.setItemAsync("active_user_id", id);
 }
 
-export async function getActiveUserId(): Promise<string | null> {
-  return await SecureStore.getItemAsync(ACTIVE_KEY);
+export async function getActiveUserId() {
+  return SecureStore.getItemAsync("active_user_id");
 }
 
-export async function getActiveAccount(): Promise<StoredAccount | null> {
-  const id = await getActiveUserId();
-  if (!id) return null;
-
-  const accounts = await getAccounts();
-  return accounts.find((a) => a.id === id) ?? null;
-}
-export async function getActiveToken(): Promise<string | null> {
-  const acc = await getActiveAccount();
-  return acc?.token ?? null;
+export async function setToken(userId: string, token: string) {
+  console.log(userId, token);
+  await SecureStore.setItemAsync(`token_${userId}`, token);
 }
 
-export async function removeAccount(id: string) {
-  const accounts = await getAccounts();
-  const updated = accounts.filter((a) => a.id !== id);
-
-  await saveAccounts(updated);
-
-  const activeId = await getActiveUserId();
-  if (activeId === id) {
-    await SecureStore.deleteItemAsync(ACTIVE_KEY);
-
-    if (updated.length > 0) {
-      await setActiveUserId(updated[0].id);
-    }
-  }
+export async function getToken(userId: string) {
+  return SecureStore.getItemAsync(`token_${userId}`);
+}
+export async function getActiveAccount() {
+  const userId = await SecureStore.getItemAsync("active_user_id");
+  const token = await SecureStore.getItemAsync(`token_${userId}`);
+  return { userId, token };
+}
+export async function getActiveToken() {
+  const userId = await SecureStore.getItemAsync("active_user_id");
+  if (!userId) return null;
+  return SecureStore.getItemAsync(`token_${userId}`);
 }
 
-export async function clearAllAccounts() {
-  await SecureStore.deleteItemAsync(ACCOUNTS_KEY);
-  await SecureStore.deleteItemAsync(ACTIVE_KEY);
+export async function removeToken(userId: string) {
+  await SecureStore.deleteItemAsync(`token_${userId}`);
+}
+export async function removeActiveUser() {
+  await SecureStore.deleteItemAsync(`active_user_id`);
 }

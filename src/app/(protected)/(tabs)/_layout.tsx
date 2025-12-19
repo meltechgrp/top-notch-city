@@ -7,24 +7,20 @@ import {
   MessageSquareMore,
   MonitorPlay,
   MoreHorizontal,
-  Plus,
   PlusCircle,
   Search,
   UserCircle,
 } from "lucide-react-native";
 import { Colors } from "@/constants/Colors";
 import { Icon, Pressable, useResolvedTheme, View } from "@/components/ui";
-import { useStore } from "@/store";
-import { useShallow } from "zustand/react/shallow";
+import { useMe } from "@/hooks/useMe";
 
 export const unstable_settings = {
   initialRouteName: "/home",
 };
 export default function TabLayout() {
   const theme = useResolvedTheme();
-  const { me, isAdmin, isAgent } = useStore(
-    useShallow((s) => s.getCurrentUser())
-  );
+  const { me, isAdmin, isAgent } = useMe();
   const total = 0;
   return (
     <Tabs

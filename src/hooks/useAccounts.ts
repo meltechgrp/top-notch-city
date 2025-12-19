@@ -1,103 +1,146 @@
-import { useStore } from "@/store";
+import { useCallback } from "react";
+import { eq } from "drizzle-orm";
+
+import { db } from "@/db";
+import { accounts, users } from "@/db/schema";
+import { syncUser } from "@/db/sync/users";
+import { normalizeMe } from "@/db/normalizers/user";
+
 import {
-  addAccountToStorage,
-  getAccounts,
   getActiveAccount,
-  getActiveToken,
-  removeAccount,
+  removeActiveUser,
+  removeToken,
   setActiveUserId,
+  setToken,
 } from "@/lib/secureStore";
+
+import { useLiveQuery, writeDb } from "@/hooks/useLiveQuery";
 import useResetAppState from "./useResetAppState";
 import config from "@/config";
-import { useCallback } from "react";
 
 export function useMultiAccount() {
-  const { updateProfile } = useStore.getState();
   const resetAppState = useResetAppState();
+
   const handleInvalidAuth = useCallback(async () => {
     await resetAppState();
   }, [resetAppState]);
-  async function addAccount(acc: StoredAccount) {
-    await resetAppState({ onlyCache: true });
-    await addAccountToStorage(acc);
-    updateProfile(acc);
-  }
-  async function updateAccount() {
-    try {
-      const token = await getActiveToken();
-      if (!token) return await handleInvalidAuth();
+  const accountsQuery = useLiveQuery(() =>
+    db.select().from(accounts).orderBy(accounts.lastLoginAt)
+  );
 
-      const resp = await fetch(`${config.origin}/api/users/me`, {
+  const updateAccount = useCallback(async () => {
+    try {
+      const active = await getActiveAccount();
+      if (!active?.token || !active?.userId) {
+        return handleInvalidAuth();
+      }
+
+      const resp = await fetch(`${config.origin}/api/users/${active.userId}`, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${active.token}`,
         },
       });
 
-      if (resp.status === 401 || resp.status === 403) {
-        return await handleInvalidAuth();
+      if (!resp.ok) {
+        return handleInvalidAuth();
       }
 
       const me = await resp.json();
-
-      if (me?.detail) {
-        return await handleInvalidAuth();
+      if (!me || me?.detail) {
+        return handleInvalidAuth();
       }
-      const acc = {
-        token,
-        id: me.id,
-        first_name: me.first_name,
-        last_name: me.last_name,
-        profile_image: me?.profile_image,
-        role: me.role,
-        email: me.email,
-        verified: me.verified,
-        is_superuser: me?.is_superuser,
-        lastLogin: Date.now(),
-      };
-      await addAccountToStorage(acc);
-      updateProfile(acc);
-    } catch (error) {
-      return await handleInvalidAuth();
+
+      await syncUser(normalizeMe(me));
+    } catch {
+      await handleInvalidAuth();
     }
-  }
-  async function switchToAccount(id: string) {
-    await setActiveUserId(id);
-    await resetAppState({ onlyCache: true, withStore: true });
-    const user = await getActiveAccount();
-    user && updateProfile(user);
-  }
+  }, [handleInvalidAuth]);
 
-  async function removeAcc() {
-    await resetAppState();
-    const users = await getAccounts();
-    if (users) {
-      await setActiveUserId(users[0].id);
-      updateProfile(users[0]);
+  const addAccount = useCallback(
+    async ({ user, token }: { user: Me; token: string }) => {
+      const now = new Date().toISOString();
+
+      await resetAppState({ onlyCache: true });
+
+      await db.transaction(async (tx) => {
+        await tx
+          .insert(users)
+          .values({
+            id: user.id,
+            slug: user.slug,
+            email: user.email,
+            firstName: user.first_name,
+            lastName: user.last_name,
+            role: user.role,
+            status: user.status,
+            createdAt: user.created_at,
+            updatedAt: user.updated_at,
+          })
+          .onConflictDoUpdate({
+            target: users.id,
+            set: {
+              email: user.email,
+              updatedAt: user.updated_at,
+            },
+          });
+
+        await tx.update(accounts).set({ isActive: false });
+
+        await tx
+          .insert(accounts)
+          .values({
+            userId: user.id,
+            email: user.email,
+            role: user.role,
+            isActive: true,
+            lastLoginAt: now,
+          })
+          .onConflictDoUpdate({
+            target: accounts.userId,
+            set: {
+              isActive: true,
+              lastLoginAt: now,
+            },
+          });
+      });
+
+      await Promise.all([setActiveUserId(user.id), setToken(user.id, token)]);
+    },
+    [resetAppState]
+  );
+
+  const switchToAccount = useCallback(async (userId: string) => {
+    await writeDb(async () => {
+      await db.transaction(async (tx) => {
+        await tx.update(accounts).set({ isActive: false });
+        await tx
+          .update(accounts)
+          .set({ isActive: true })
+          .where(eq(accounts.userId, userId));
+      });
+    });
+
+    await setActiveUserId(userId);
+  }, []);
+
+  const removeAccount = useCallback(async (userId: string) => {
+    await db.delete(accounts).where(eq(accounts.userId, userId));
+    await removeToken(userId);
+
+    const [next] = await db.select().from(accounts).limit(1);
+
+    if (next) {
+      await setActiveUserId(next.userId);
+    } else {
+      await removeActiveUser();
     }
-  }
-  async function removeAccId(id: string) {
-    await removeAccount(id);
-  }
-  async function removeAll() {
-    await resetAppState({ logoutAll: true });
-  }
-
-  async function fetchAccounts() {
-    return await getAccounts();
-  }
-
-  async function getActive() {
-    return await getActiveAccount();
-  }
+  }, []);
 
   return {
+    accounts: accountsQuery,
     addAccount,
     switchToAccount,
-    removeAcc,
-    fetchAccounts,
-    getActive,
-    removeAll,
-    removeAccId,
+    removeAccount,
     updateAccount,
   };
 }

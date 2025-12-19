@@ -1,15 +1,14 @@
 import React from "react";
 import { useLocalSearchParams } from "expo-router";
 import { ProfileWrapper } from "@/components/profile/ProfileWrapper";
-import { useStore } from "@/store";
+import { useMe } from "@/hooks/useMe";
 
 export default function ProfileScreen() {
   const { userId } = useLocalSearchParams() as { userId: string };
-  const { me } = useStore();
+  const { me } = useMe();
   return (
     <>
       <ProfileWrapper
-        tabs={["All", "Houses", "Lands", "Reviews"]}
         userType="visitor"
         userId={userId}
         isAgent={userId == me?.id}

@@ -5,6 +5,7 @@ import {
   interactions,
   ownerInteractions,
   media,
+  propertyAddresses,
 } from "@/db/schema";
 import { eq, and, isNull, inArray, between, gte, lte } from "drizzle-orm";
 
@@ -81,7 +82,11 @@ export function getSearchList({
       address: addresses,
     })
     .from(properties)
-    .innerJoin(addresses, eq(addresses.propertyId, properties.id))
+    .innerJoin(
+      propertyAddresses,
+      eq(propertyAddresses.propertyId, properties.id)
+    )
+    .innerJoin(addresses, eq(addresses.id, propertyAddresses.addressId))
     .leftJoin(interactions, eq(interactions.propertyId, properties.id))
     .leftJoin(
       ownerInteractions,

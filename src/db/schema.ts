@@ -46,15 +46,12 @@ export const properties = sqliteTable("properties", {
 });
 
 export const addresses = sqliteTable("addresses", {
-  propertyId: text("property_id")
-    .primaryKey()
-    .references(() => properties.id, { onDelete: "cascade" }),
-
+  id: text("id").primaryKey(),
+  displayAddress: text("display_address"),
   city: text("city"),
   street: text("street"),
   state: text("state"),
   country: text("country").notNull(),
-
   latitude: real("latitude").notNull(),
   longitude: real("longitude").notNull(),
 });
@@ -174,4 +171,137 @@ export const propertySearch = sqliteTable("property_search", {
   city: text("city"),
   state: text("state"),
   country: text("country"),
+});
+export const propertyAddresses = sqliteTable("property_addresses", {
+  propertyId: text("property_id")
+    .notNull()
+    .references(() => properties.id, { onDelete: "cascade" }),
+
+  addressId: text("address_id")
+    .notNull()
+    .references(() => addresses.id, { onDelete: "cascade" }),
+});
+
+// User
+
+export const users = sqliteTable(
+  "users",
+  {
+    id: text("id").primaryKey(),
+
+    email: text("email").notNull(),
+    phone: text("phone"),
+
+    firstName: text("first_name").notNull(),
+    lastName: text("last_name").notNull(),
+    slug: text("slug").notNull(),
+
+    gender: text("gender"),
+    dateOfBirth: text("date_of_birth"),
+
+    status: text("status").notNull(),
+    role: text("role").notNull(),
+    verified: integer("verified", { mode: "boolean" }).default(false),
+    isActive: integer("is_active", { mode: "boolean" }).default(true),
+    isSuperuser: integer("is_superuser", { mode: "boolean" }).default(false),
+    isBlockedByAdmin: integer("is_blocked_by_admin", {
+      mode: "boolean",
+    }).default(false),
+
+    profileImage: text("profile_image"),
+    autoChatMessage: text("auto_chat_message"),
+
+    viewsCount: integer("views_count").default(0),
+    likesCount: integer("likes_count").default(0),
+    totalProperties: integer("total_properties").default(0),
+    followersCount: integer("followers_count").default(0),
+    isFollowing: integer("is_following", { mode: "boolean" }),
+
+    createdAt: text("created_at").notNull(),
+    updatedAt: text("updated_at").notNull(),
+  },
+  (t) => ({
+    roleIdx: index("idx_users_role").on(t.role),
+    slugIdx: index("idx_users_slug").on(t.slug),
+  })
+);
+export const agentProfiles = sqliteTable("agent_profiles", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => users.id, { onDelete: "cascade" }),
+
+  licenseNumber: text("license_number"),
+  yearsOfExperience: text("years_of_experience"),
+  about: text("about"),
+  website: text("website"),
+
+  isAvailable: integer("is_available", { mode: "boolean" }).default(false),
+
+  averageRating: real("average_rating").default(0),
+  totalReviews: integer("total_reviews").default(0),
+
+  languages: text("languages"),
+  specialties: text("specialties"),
+  socialLinks: text("social_links"),
+  certifications: text("certifications"),
+  workingHours: text("working_hours"),
+});
+
+export const companies = sqliteTable("companies", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  verified: integer("verified", { mode: "boolean" }),
+  address: text("address"),
+  website: text("website"),
+  email: text("email"),
+  phone: text("phone"),
+  description: text("description"),
+});
+export const agentCompanies = sqliteTable("agent_companies", {
+  agentId: text("agent_id")
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
+
+  companyId: text("company_id")
+    .references(() => companies.id, { onDelete: "cascade" })
+    .notNull(),
+});
+
+export const reviews = sqliteTable("reviews", {
+  id: text("id").primaryKey(),
+
+  agentId: text("agent_id")
+    .references(() => users.id)
+    .notNull(),
+
+  userId: text("user_id")
+    .references(() => users.id)
+    .notNull(),
+
+  rating: integer("rating").notNull(),
+  comment: text("comment"),
+
+  createdAt: text("created_at").notNull(),
+  updatedAt: text("updated_at").notNull(),
+});
+
+export const accounts = sqliteTable("accounts", {
+  userId: text("user_id").primaryKey(), // same as users.id
+
+  email: text("email").notNull(),
+  role: text("role").notNull(),
+
+  isActive: integer("is_active", { mode: "boolean" }).default(false),
+
+  lastLoginAt: text("last_login_at"),
+});
+
+export const userAddresses = sqliteTable("user_addresses", {
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+
+  addressId: text("address_id")
+    .notNull()
+    .references(() => addresses.id, { onDelete: "cascade" }),
 });

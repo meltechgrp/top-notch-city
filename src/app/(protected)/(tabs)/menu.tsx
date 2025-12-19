@@ -7,14 +7,11 @@ import AdminCards from "@/components/admin/dashboard/AdminCards";
 import AgentCards from "@/components/agent/dashboard/AgentCards";
 import { MenuListItem } from "@/components/menu/MenuListItem";
 import CampaignCard from "@/components/profile/CampaignCard";
-import { useStore } from "@/store";
-import { useShallow } from "zustand/react/shallow";
 import SearchWrapper from "@/components/search/SearchWrapper";
+import { useMe } from "@/hooks/useMe";
 
 export default function Menu() {
-  const { me, isAdmin, isAgent } = useStore(
-    useShallow((s) => s.getCurrentUser())
-  );
+  const { me, isAdmin, isAgent } = useMe();
   const router = useRouter();
   const quickMenuItems = getQuickMenuItems({ me, isAdmin, isAgent });
   if (me?.role == "user") {

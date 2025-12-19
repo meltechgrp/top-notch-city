@@ -1,8 +1,8 @@
 import { FilterComponent } from "@/components/admin/shared/FilterComponent";
 import VerticalProperties from "@/components/property/VerticalProperties";
 import { Box, Icon, Pressable, View } from "@/components/ui";
+import { useMe } from "@/hooks/useMe";
 import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
-import { useStore } from "@/store";
 import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import { Stack, useGlobalSearchParams, useRouter } from "expo-router";
 import { PlusCircle } from "lucide-react-native";
@@ -12,7 +12,7 @@ export default function AgentProperties() {
   const { userId } = useGlobalSearchParams() as { userId: string };
   const router = useRouter();
   const [search, setSearch] = useState("");
-  const { me } = useStore();
+  const { me } = useMe();
   const [actveTab, setActiveTab] = useState("all");
   const { data, refetch, isLoading, fetchNextPage, hasNextPage } =
     useInfinityQueries({ type: "agent-property" });

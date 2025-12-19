@@ -8,11 +8,12 @@ import { deleteUser } from "@/actions/user";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import { useMultiAccount } from "@/hooks/useAccounts";
+import { useMe } from "@/hooks/useMe";
 
 export default function DeleteAccount() {
-  const { me } = useStore();
+  const { me } = useMe();
   const router = useRouter();
-  const { removeAcc } = useMultiAccount();
+  const { removeAccount } = useMultiAccount();
   const { mutateAsync, isPending } = useMutation({
     mutationFn: deleteUser,
     onSuccess: async () => {
@@ -21,7 +22,7 @@ export default function DeleteAccount() {
         alertType: "success",
       });
 
-      await removeAcc();
+      await removeAccount(me?.id!);
       router.dismissTo("/home");
     },
     onError: () => {
@@ -84,7 +85,7 @@ export default function DeleteAccount() {
         </View>
       </View>
       <View className="flex-row gap-4">
-        <Button className="h-11 flex-1" onPress={onDelete}>
+        <Button disabled={!me} className="h-11 flex-1" onPress={onDelete}>
           {isPending && <SpinningLoader />}
           <ButtonText className=" text-white">Delete</ButtonText>
         </Button>

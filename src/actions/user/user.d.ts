@@ -1,26 +1,22 @@
 type Me = {
-  username: string | null;
   email: string;
   phone: string | null;
   first_name: string;
   slug: string;
-  is_blocked_by_admin: boolean;
-  website?: string;
   agent_profile?: AgentProfile;
   last_name: string;
-  middle_name: string | null;
   gender: "male" | "female" | null;
   date_of_birth: string | null;
   status: "online" | "offline" | "idle";
   verified: boolean;
   profile_image: string | null;
-  wallet_balance: number;
   is_active: boolean;
   is_available?: boolean;
   is_blocked_by_admin?: boolean;
   is_superuser: boolean;
   role: "user" | "admin" | "agent" | "staff" | "staff_agent";
   id: string;
+  auto_chat_message: string;
   created_at: string;
   updated_at: string;
   views_count: number;
@@ -28,17 +24,7 @@ type Me = {
   total_properties: number;
   followers_count: number;
   is_following?: boolean;
-  address?: {
-    street: string;
-    city: string;
-    state: string;
-    postal_code: string;
-    country_code: string;
-    country: string;
-    latitude: number;
-    longitude: number;
-    id: string;
-  };
+  address?: Address;
 };
 
 interface AgentProfile {

@@ -11,14 +11,14 @@ import { memo } from "react";
 import { fullName } from "@/lib/utils";
 import { getImageUrl } from "@/lib/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useStore } from "@/store";
 import { followAgent, unFollowAgent } from "@/actions/agent";
 import { openAccessModal } from "@/components/globals/AuthModals";
+import { useMe } from "@/hooks/useMe";
 
 function AgentProfile({ data }: { data: AgentInfo }) {
   if (data.is_following) return null;
   const client = useQueryClient();
-  const { me } = useStore();
+  const { me, isAdmin, isAgent } = useMe();
   const { mutate } = useMutation({
     mutationFn: () =>
       data.is_following ? unFollowAgent(data.id) : followAgent(data.id),

@@ -417,3 +417,10 @@ export function mapPropertyList(rows: any[]) {
     address: row?.address,
   })) as unknown as PropertyListItem[];
 }
+export function mapUserData(row: any) {
+  return {
+    ...row.user,
+    agent: row?.agent,
+    address: row?.address,
+  } as unknown as Me;
+}

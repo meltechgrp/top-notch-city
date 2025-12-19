@@ -2,14 +2,15 @@ import { Text } from "@/components/ui/text";
 import { Avatar, AvatarFallbackText, AvatarImage, View } from "@/components/ui";
 import { TouchableOpacity } from "react-native";
 import { generateMediaUrlSingle } from "@/lib/api";
-import { profileDefault, useStore } from "@/store";
+import { profileDefault } from "@/store";
 import { fullName } from "@/lib/utils";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
 import { useFollowAgent } from "@/hooks/useFollowAgent";
 import { openAccessModal } from "@/components/globals/AuthModals";
+import { useMe } from "@/hooks/useMe";
 
 export function UserListItem({ user }: { user: Person }) {
-  const { me } = useStore();
+  const { me, isAdmin, isAgent } = useMe();
   const { mutateAsync } = useFollowAgent({
     queryKey: ["following"],
     is_following: user.is_following,

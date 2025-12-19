@@ -3,12 +3,12 @@ import { useQuery } from "@tanstack/react-query";
 import { useChatStore } from "@/store/chatStore";
 import { getChats } from "@/actions/message";
 import { useShallow } from "zustand/react/shallow";
-import { useStore } from "@/store";
+import { useMe } from "@/hooks/useMe";
 
 export function useChat() {
   const { updateChatList, getMessages, updateChatListDetails } =
     useChatStore.getState();
-  const me = useStore((s) => s?.me);
+  const { me, isAdmin, isAgent } = useMe();
   const {
     data: chatData,
     refetch: refetchChats,

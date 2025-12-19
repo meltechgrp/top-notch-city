@@ -1,15 +1,14 @@
-import { Button, Text, View } from "@/components/ui";
+import { Text, View } from "@/components/ui";
 import { useRouter } from "expo-router";
-import { Bell, House, Link, Lock, Trash2, Users } from "lucide-react-native";
+import { Link, Lock, Trash2, Users } from "lucide-react-native";
 import { MenuListItem } from "@/components/menu/MenuListItem";
-import { Divider } from "@/components/ui/divider";
 import { BodyScrollView } from "@/components/layouts/BodyScrollView";
 import { NotLoggedInProfile } from "@/components/profile/ProfileWrapper";
-import { useStore } from "@/store";
 import { openAccountsModal } from "@/components/globals/AuthModals";
+import { useMe } from "@/hooks/useMe";
 
 export default function Setting() {
-  const { me } = useStore();
+  const { me } = useMe();
   const router = useRouter();
 
   if (!me) return <NotLoggedInProfile userType={"owner"} />;

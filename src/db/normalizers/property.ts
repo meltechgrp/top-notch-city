@@ -156,7 +156,7 @@ export function normalizePropertyList(api: Property) {
     addedToWishlist: api?.owner_interaction.added_to_wishlist,
   };
   const address = api.address && {
-    propertyId: api.id,
+    id: api.address.id,
     street: api.address?.street,
     city: api.address?.city,
     state: api.address?.state,

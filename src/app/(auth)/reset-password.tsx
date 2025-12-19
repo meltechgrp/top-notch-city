@@ -3,7 +3,6 @@ import { router } from "expo-router";
 import { Button, ButtonText, Text, View, Box } from "@/components/ui";
 import React from "react";
 import { CustomInput } from "@/components/custom/CustomInput";
-import { removeAuthToken } from "@/lib/secureStore";
 import { useStore, useTempStore } from "@/store";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { useAuthMutations } from "@/tanstack/mutations/useAuthMutations";
@@ -62,7 +61,6 @@ export default function ResetPassword() {
     if (router.canGoBack()) {
       router.back();
     } else {
-      removeAuthToken();
       useStore.getState().resetStore();
       useTempStore.getState().resetStore();
       router.push("/signin");

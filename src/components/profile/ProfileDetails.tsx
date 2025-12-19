@@ -3,10 +3,10 @@ import { MenuListItem } from "@/components/menu/MenuListItem";
 import CampaignCard from "@/components/profile/CampaignCard";
 import { UserType } from "@/components/profile/ProfileWrapper";
 import PropertiesTabView from "@/components/profile/PropertiesTab";
-import { Badge, Button, Icon, Text, View } from "@/components/ui";
+import { Badge, Icon, Text, View } from "@/components/ui";
 import { DAYS } from "@/constants/user";
+import { useMe } from "@/hooks/useMe";
 import { composeFullAddress } from "@/lib/utils";
-import { useStore } from "@/store";
 import { format } from "date-fns";
 import { Link, router } from "expo-router";
 import {
@@ -26,7 +26,6 @@ import {
 } from "lucide-react-native";
 import { useMemo, useState } from "react";
 import { TouchableOpacity } from "react-native";
-import { useShallow } from "zustand/react/shallow";
 
 interface ProfileDetailsProps {
   user: Me;
@@ -35,9 +34,7 @@ interface ProfileDetailsProps {
 }
 
 export function ProfileDetails({ user, userType }: ProfileDetailsProps) {
-  const { me, isAdmin, isAgent } = useStore(
-    useShallow((s) => s.getCurrentUser())
-  );
+  const { me, isAdmin, isAgent } = useMe();
   const quickMenuItems = getQuickMenuItems({ me, isAdmin, isAgent });
   const personal = [
     {

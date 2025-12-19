@@ -6,6 +6,7 @@ import {
   interactions,
   ownerInteractions,
   addresses,
+  propertyAddresses,
 } from "@/db/schema";
 import { writeDb } from "@/hooks/useLiveQuery";
 
@@ -47,8 +48,12 @@ export async function syncPropertyLists(lists: any[]) {
           }
           if (list.address) {
             await tx.insert(addresses).values(list.address).onConflictDoUpdate({
-              target: addresses.propertyId,
+              target: addresses.id,
               set: list.address,
+            });
+            await tx.insert(propertyAddresses).values({
+              propertyId: list.property.id,
+              addressId: list.address.id,
             });
           }
         }

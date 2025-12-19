@@ -86,16 +86,8 @@ export default function SignIn() {
         return;
       }
       addAccount({
+        user: me,
         token: token,
-        id: me.id,
-        first_name: me.first_name,
-        last_name: me.last_name,
-        profile_image: me?.profile_image,
-        role: me.role,
-        email: me.email,
-        verified: me.verified,
-        is_superuser: me?.is_superuser,
-        lastLogin: Date.now(),
       });
       return router.push((redirect ?? "/home") as any);
     } catch (error) {

@@ -2,8 +2,8 @@ import headerLeft from "@/components/shared/headerLeft";
 import { useResolvedTheme } from "@/components/ui";
 import { Colors } from "@/constants/Colors";
 import Platforms from "@/constants/Plaforms";
+import { useMe } from "@/hooks/useMe";
 import { fullName } from "@/lib/utils";
-import { useStore } from "@/store";
 import { Stack } from "expo-router";
 
 export const unstable_settings = {
@@ -12,7 +12,7 @@ export const unstable_settings = {
 
 export default function ProfileScreensLayout() {
   const theme = useResolvedTheme();
-  const me = useStore.getState().me;
+  const { me } = useMe();
   return (
     <Stack
       screenOptions={{

@@ -3,9 +3,9 @@ import { useCallback } from "react";
 import { useStore, useTempStore } from "@/store";
 import { useChatStore } from "@/store/chatStore";
 import {
-  removeAccount,
+  removeToken,
+  removeActiveUser,
   getActiveUserId,
-  clearAllAccounts,
 } from "@/lib/secureStore";
 
 import { cacheStorage } from "@/lib/asyncStorage";
@@ -20,10 +20,13 @@ export default function useResetAppState() {
       withStore?: boolean;
     }) => {
       if (options?.logoutAll) {
-        await clearAllAccounts();
+        // await clearAllAccounts();
       } else if (!options?.onlyCache) {
         const activeId = await getActiveUserId();
-        if (activeId) await removeAccount(activeId);
+        if (activeId) {
+          await removeToken(activeId);
+          await removeActiveUser();
+        }
       }
       if (!options?.withStore) {
         useStore.getState().resetStore();

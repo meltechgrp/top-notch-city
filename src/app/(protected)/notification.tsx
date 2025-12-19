@@ -6,8 +6,8 @@ import EnquiryNotificationComponent from "@/components/notifications/EnquiryNoti
 import PropertyNotificationComponent from "@/components/notifications/PropertyNotificationComponent";
 import EmptyStateWrapper from "@/components/shared/EmptyStateWrapper";
 import { Box, Heading, Text } from "@/components/ui";
+import { useMe } from "@/hooks/useMe";
 import eventBus from "@/lib/eventBus";
-import { useStore } from "@/store";
 import { useRefresh } from "@react-native-community/hooks";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
@@ -15,7 +15,7 @@ import React, { useEffect, useMemo } from "react";
 import { RefreshControl, SectionList, View } from "react-native";
 
 export default function NotificationScreen() {
-  const { me } = useStore();
+  const { me } = useMe();
   const { data, isFetching, isLoading, refetch } = useQuery({
     queryKey: ["notifications"],
     queryFn: () => getNotifications({ id: me?.id }),

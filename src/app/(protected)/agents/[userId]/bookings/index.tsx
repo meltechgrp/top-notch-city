@@ -8,12 +8,11 @@ import { Bookings } from "@/actions/bookings";
 import { format } from "date-fns";
 import BookingList from "@/components/bookings/BookingList";
 import VisitationList from "@/components/bookings/VisitationList";
-import { useStore } from "@/store";
-import { useShallow } from "zustand/react/shallow";
+import { useMe } from "@/hooks/useMe";
 
 export default function BookingHistory() {
   const layout = Dimensions.get("window");
-  const { isAgent } = useStore(useShallow((s) => s.getCurrentUser()));
+  const { isAgent } = useMe();
   const { data, isLoading, refetch, isRefetching } = useInfiniteQuery({
     queryKey: ["bookings"],
     queryFn: ({}) => Bookings(isAgent),
