@@ -1,10 +1,32 @@
 import * as React from "react";
-
+import * as SplashScreen from "expo-splash-screen";
 import { Redirect } from "expo-router";
 import { useStore } from "@/store";
+import { useMe } from "@/hooks/useMe";
 
 export default function LandingScreen() {
   const { isOnboarded } = useStore();
+  const { isLoggedIn, isLoading } = useMe();
 
-  return <Redirect href={isOnboarded ? "/home" : "/onboarding"} />;
+  const isReady = !isLoading;
+
+  React.useEffect(() => {
+    if (isReady) {
+      SplashScreen.hideAsync();
+    }
+  }, [isReady]);
+
+  if (!isReady) {
+    return null;
+  }
+
+  if (!isOnboarded) {
+    return <Redirect href="/onboarding" />;
+  }
+
+  if (!isLoggedIn) {
+    return <Redirect href="/signin" />;
+  }
+
+  return <Redirect href="/home" />;
 }

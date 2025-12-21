@@ -1,12 +1,10 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { View } from "react-native";
-import BottomSheet from "../../shared/BottomSheet";
 import { ButtonsInput, CustomInput } from "../../custom/CustomInput";
-import { Button, ButtonText, Text, Image, Icon, Pressable } from "../../ui";
+import { Button, ButtonText, Text, Image, Icon } from "../../ui";
 import { useMutation } from "@tanstack/react-query";
 import { sendBooking } from "@/actions/bookings";
 import { SpinningLoader } from "../../loaders/SpinningLoader";
-import { useStore } from "@/store";
 import { DateTimePickerSheet } from "./DateTimePickerSheet";
 import { composeFullAddress } from "@/lib/utils";
 import { generateMediaUrlSingle } from "@/lib/api";
@@ -17,22 +15,12 @@ import {
   isWithinInterval,
   parseISO,
   isAfter,
-  format,
   isToday,
   addHours,
 } from "date-fns";
 import DatePicker from "@/components/custom/DatePicker";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
-import {
-  ChevronLeft,
-  CircleX,
-  Clock,
-  Mail,
-  Plus,
-  PlusCircle,
-  Save,
-  User,
-} from "lucide-react-native";
+import { Mail, Plus, Save, User } from "lucide-react-native";
 import DropdownSelect from "@/components/custom/DropdownSelect";
 import { ExternalLink } from "@/components/ExternalLink";
 import ModalScreen from "@/components/shared/ModalScreen";

@@ -52,7 +52,7 @@ export async function searchProperties(
   }
 
   query.append("page", String(page));
-  query.append("per_page", perPage.toString());
+  query.append("per_page", "99");
   query.append("sortBy", "created_at");
   query.append("use_geo_location", String(filters?.useGeoLocation) || "true");
   query.append("radius_km", "100");

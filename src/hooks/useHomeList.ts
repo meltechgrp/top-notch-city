@@ -7,7 +7,7 @@ import useGetLocation from "@/hooks/useGetLocation";
 import { useLiveQuery } from "@/hooks/useLiveQuery";
 import { mapPropertyList } from "@/lib/utils";
 
-export function useHomeList() {
+export function useHomeList(limit?: number) {
   const { location } = useGetLocation();
   const { data: featured } =
     useLiveQuery(() => getFeatured({}), ["featured"]) ?? [];
@@ -26,7 +26,11 @@ export function useHomeList() {
   const { data: nearby } = useLiveQuery(
     () =>
       location
-        ? getNearby({ lat: location.latitude, long: location.longitude })
+        ? getNearby({
+            lat: location.latitude,
+            long: location.longitude,
+            limit: limit || 10,
+          })
         : Promise.resolve([]),
     [location?.latitude, location?.longitude]
   );

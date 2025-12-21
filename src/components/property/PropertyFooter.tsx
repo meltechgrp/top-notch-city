@@ -5,8 +5,8 @@ import {
   openBookingModal,
 } from "@/components/globals/AuthModals";
 import { Icon, Pressable, Text, View } from "@/components/ui";
+import { useMe } from "@/hooks/useMe";
 import { cn } from "@/lib/utils";
-import { useStore } from "@/store";
 import { useMutation } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { BookCheck, MessageCircle } from "lucide-react-native";
@@ -17,7 +17,7 @@ interface PropertyFooterProps {
 }
 
 export function PropertyFooter({ property }: PropertyFooterProps) {
-  const { me } = useStore();
+  const { me } = useMe();
   const { mutateAsync } = useMutation({
     mutationFn: startChat,
   });
@@ -36,11 +36,10 @@ export function PropertyFooter({ property }: PropertyFooterProps) {
               openBookingModal({
                 visible: true,
                 property_id: property.id,
-                agent_id: property.owner?.id,
+                agent_id: property.ownerId,
                 availableDates: property.availabilities,
                 image:
-                  property.media.find((i) => i.media_type == "IMAGE")?.url ||
-                  "",
+                  property.media.find((i) => i.mediaType == "IMAGE")?.url || "",
                 title: property.title,
                 address: property.address,
                 booking_type:
@@ -58,7 +57,7 @@ export function PropertyFooter({ property }: PropertyFooterProps) {
           </Pressable>
           <Pressable
             both
-            disabled={me?.id == property?.owner.id}
+            disabled={me?.id == property?.ownerId}
             onPress={async () => {
               if (!me) {
                 return openAccessModal({ visible: true });
@@ -66,7 +65,7 @@ export function PropertyFooter({ property }: PropertyFooterProps) {
               await mutateAsync(
                 {
                   property_id: property?.id!,
-                  member_id: property?.owner.id!,
+                  member_id: property?.ownerId!,
                 },
                 {
                   onError: (e) => {

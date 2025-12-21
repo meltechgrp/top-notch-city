@@ -1,17 +1,16 @@
 // hooks/useMe.ts
 import { useLiveQuery } from "@/hooks/useLiveQuery";
 import { getMe } from "@/db/queries/user";
-import { mapUserData } from "@/lib/utils";
 
-export function useMe() {
-  const { data, isLoading, error } = useLiveQuery(getMe);
-  const me = data ? mapUserData(data) : null;
+export function useMe(userId?: string) {
+  const { data, isLoading, error, refetch } = useLiveQuery(() => getMe(userId));
   return {
-    me,
+    me: data,
     isLoading,
     isLoggedIn: !!data,
     error,
-    isAgent: me?.role == "agent" || me?.role == "staff_agent",
-    isAdmin: me?.role == "admin" || me?.is_superuser || false,
+    isAgent: data?.role == "agent" || data?.role == "staff_agent",
+    isAdmin: data?.role == "admin" || data?.isSuperuser || false,
+    refetch,
   };
 }

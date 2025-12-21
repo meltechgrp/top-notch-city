@@ -9,6 +9,7 @@ import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import GlobalManager from "@/components/shared/GlobalManager";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { KeyboardProvider } from "react-native-keyboard-controller";
+import * as SplashScreen from "expo-splash-screen";
 import { LogBox, Platform } from "react-native";
 import { cacheStorage } from "@/lib/asyncStorage";
 import { NotifierWrapper } from "react-native-notifier";
@@ -18,11 +19,11 @@ import Constants from "expo-constants";
 import { updatePushNotificationToken } from "@/actions/utills";
 import { pushNotificationResponseHandler } from "@/lib/notification";
 import useSuppressChatPushNotification from "@/components/chat/useSuppressChatPushNotification";
-import * as SplashScreen from "expo-splash-screen";
 import {
   configureReanimatedLogger,
   ReanimatedLogLevel,
 } from "react-native-reanimated";
+import "@/lib/background/propertySync.task";
 import { enableScreens } from "react-native-screens";
 import { ImageViewerProvider } from "@/components/custom/ImageViewerProvider";
 import { registerDevice } from "@/actions/user";
@@ -31,6 +32,7 @@ import { expoSqlite, runMigrations } from "@/db";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 
 import * as SQLite from "expo-sqlite";
+import { registerPropertyBackgroundSync } from "@/hooks/useTaskManager";
 
 enableScreens(true);
 const query = new QueryClient({
@@ -62,19 +64,19 @@ export default function RootLayout() {
   }, []);
   useDrizzleStudio(expoSqlite);
   useNotificationObserver();
+  registerPropertyBackgroundSync();
   const { retryGetLocation } = useGetLocation();
   useSuppressChatPushNotification();
   useMountPushNotificationToken();
+
+  useEffect(() => {
+    registerPropertyBackgroundSync();
+  }, []);
   useEffect(() => {
     (async () => {
       await retryGetLocation();
       await registerDevice();
     })();
-  }, []);
-  useEffect(() => {
-    setTimeout(() => {
-      SplashScreen.hide();
-    }, 2000);
   }, []);
   return (
     <>

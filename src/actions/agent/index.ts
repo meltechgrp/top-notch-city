@@ -130,9 +130,19 @@ export async function deleteApplication({
   return res as { message: string };
 }
 
-export async function getAgents({ pageParam }: { pageParam: number }) {
+export async function getAgents({
+  pageParam,
+  name,
+  state,
+  perPage = 20,
+}: {
+  pageParam: number;
+  perPage?: number;
+  name?: string;
+  state?: string;
+}) {
   return (await Fetch(
-    `/agents/search?per_page=20&page=${pageParam}&sort_by_top_properties=true`
+    `/agents/search?per_page=${perPage}&page=${pageParam}&sort_by_top_properties=true`
   )) as AgentResult2;
 }
 

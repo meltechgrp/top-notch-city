@@ -3,7 +3,7 @@ import PropertyListItem from "@/components/property/PropertyListItem";
 import { useRouter } from "expo-router";
 import { ScrollView, StyleProp, ViewStyle } from "react-native";
 import { useMemo, useCallback, memo } from "react";
-import { cn } from "@/lib/utils";
+import { cn, deduplicate } from "@/lib/utils";
 
 interface Props {
   category?: string;
@@ -79,7 +79,7 @@ function HorizontalProperties({
         ? skeletonItems.map((_, i) => (
             <PropertySkeletonCard isHorizontal key={i} />
           ))
-        : data.map((property) => (
+        : deduplicate(data, "id").map((property) => (
             <PropertyListItem
               key={property.id}
               showLike={showLike}

@@ -144,22 +144,3 @@ export async function viewProperty({ id }: { id: string }) {
     throw new Error("Failed to view");
   }
 }
-
-export async function fetchAllProperties() {
-  try {
-    const data = await fetch(`${config.origin}/api/properties/slugs/`);
-    const res = await data.json();
-    return res as { slug: string; created_at: string }[];
-  } catch (error) {
-    return [];
-  }
-}
-export async function fetchAllAgents() {
-  try {
-    const data = await fetch(`${config.origin}/api/all-agent/slugs/`);
-    const res = await data.json();
-    return res as { slug: string; created_at: string }[];
-  } catch (error) {
-    return [];
-  }
-}

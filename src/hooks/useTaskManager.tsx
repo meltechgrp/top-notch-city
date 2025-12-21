@@ -1,98 +1,65 @@
-// import { useStore, useTempStore } from "@/store";
-// import * as TaskManager from "expo-task-manager";
-// import * as Location from "expo-location";
-// import { showErrorAlert } from "@/components/custom/CustomNotification";
+import * as TaskManager from "expo-task-manager";
+import * as BackgroundTask from "expo-background-task";
+import { useEffect, useCallback } from "react";
+import { useDbStore } from "@/store/dbStore";
+import { shouldSync } from "@/hooks/useLiveQuery";
+import { PROPERTY_SYNC_TASK } from "@/constants";
+import {
+  runAgentsBackgroundSync,
+  runPropertyBackgroundSync,
+} from "@/lib/background/runBackgroundSync";
 
-// const showErrorSnackbar = (message: string) => {
-//   showSnackbar({
-//     message,
-//     type: "error",
-//     duration: 3000,
-//   });
-// };
+export function useBackgroundSync() {
+  const { lastSync, update, load } = useDbStore();
 
-// export default function useUserLiveLocation() {
-//   const requestBackgorundLocationAccess = async () => {
-//     try {
-//       const { granted } = await Location.getForegroundPermissionsAsync();
-//       if (!granted) {
-//         const { status: allowed } =
-//           await Location.requestForegroundPermissionsAsync();
-//         if (allowed !== "granted") {
-//           console.error("Permission to access fore location was denied");
-//           showErrorAlert({
-//             title: "Permission to access foreground location was denied",
-//             alertType: "error",
-//             duration: 3000,
-//           });
-//           return null;
-//         }
-//         const { status } = await Location.requestBackgroundPermissionsAsync();
-//         if (status !== "granted") {
-//           console.error("Permission to access background location was denied");
-//           return null;
-//         }
-//       }
-//       console.log("getting permissions");
-//       const location = await Location.getCurrentPositionAsync({
-//         accuracy: Location.Accuracy.Low,
-//       });
-//       console.log("gotten permissions");
-//       if (!location) return null;
-//       const { latitude, longitude } = location.coords;
-//       return { latitude, longitude };
-//     } catch (error) {
-//       console.error("Error getting location", error);
-//       showErrorSnackbar("Error getting location");
-//       return null;
-//     }
-//   };
+  useEffect(() => {
+    load();
+  }, [load]);
 
-//   const stopLocationTracking = async () => {
-//     const hasStarted =
-//       await Location.hasStartedLocationUpdatesAsync(LOCATION_TASK_NAME);
-//     const coord = useTempStore.getState().coords;
-//     const postId = useStore.getState().livePostId?.postId;
-//     const userId = useStore.getState().me?.id;
-//     await endLiveLocation({
-//       variables: {
-//         postId: postId as string,
-//         latitude: coord.lat,
-//         longitude: coord.lng,
-//         userId: userId as string,
-//       },
-//     });
-//     if (hasStarted) {
-//       console.log("Stopping background location tracking...");
-//       await Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME);
-//     }
-//   };
-//   const startLocationTracking = async () => {
-//     console.log("Starting location tracking");
-//     const isTaskDefined = TaskManager.isTaskDefined(LOCATION_TASK_NAME);
-//     const hasStarted =
-//       await Location.hasStartedLocationUpdatesAsync(LOCATION_TASK_NAME);
+  const syncNow = useCallback(async () => {
+    if (!lastSync || shouldSync(lastSync)) {
+      await runPropertyBackgroundSync();
+      await runAgentsBackgroundSync();
+      update();
+    }
+  }, [lastSync, update]);
 
-//     if (!isTaskDefined) {
-//       console.error(`Task "${LOCATION_TASK_NAME}" is not defined.`);
-//     } else if (!hasStarted) {
-//       console.log("Starting background location tracking...");
-//       await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
-//         accuracy: Location.Accuracy.High,
-//         timeInterval: 5000,
-//         distanceInterval: 0,
-//         showsBackgroundLocationIndicator: true,
-//         foregroundService: {
-//           notificationTitle: "Live Location Tracking",
-//           notificationBody: "Your location is being tracked in the background",
-//         },
-//       });
-//     }
-//   };
+  useEffect(() => {
+    if (lastSync !== undefined) {
+      syncNow();
+    }
+  }, [lastSync, syncNow]);
 
-//   return {
-//     requestBackgorundLocationAccess,
-//     startLocationTracking,
-//     stopLocationTracking,
-//   };
-// }
+  return {
+    syncNow,
+    enabled: shouldSync(lastSync),
+  };
+}
+
+export async function registerPropertyBackgroundSync() {
+  const available = await TaskManager.isAvailableAsync();
+  if (!available) {
+    console.log("❌ TaskManager not available");
+    return;
+  }
+
+  const status = await BackgroundTask.getStatusAsync();
+  if (status !== BackgroundTask.BackgroundTaskStatus.Available) {
+    console.log("❌ Background tasks unavailable:", status);
+    return;
+  }
+
+  const isRegistered =
+    await TaskManager.isTaskRegisteredAsync(PROPERTY_SYNC_TASK);
+
+  if (isRegistered) {
+    console.log("ℹ️ Property sync already registered");
+    return;
+  }
+
+  await BackgroundTask.registerTaskAsync(PROPERTY_SYNC_TASK, {
+    minimumInterval: 15 * 60, // 15 minutes
+  });
+
+  console.log("✅ Property background sync registered");
+}

@@ -6,7 +6,7 @@ interface Reel {
   slug: string;
   description: string;
   interations: Interaction;
-  owner_interaction: Owner_interaction;
+  owner_interaction: OwnerInteraction;
   created_at: string;
   owner?: Owner;
   purpose: PropertyPurpose;
@@ -59,7 +59,7 @@ interface Land {
   description: string;
   slug: string;
   interations: Interaction;
-  owner_interaction: Owner_interaction;
+  owner_interaction: OwnerInteraction;
   created_at: string;
   owner?: Owner;
   purpose: PropertyPurpose;

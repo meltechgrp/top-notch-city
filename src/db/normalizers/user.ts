@@ -36,13 +36,22 @@ export function normalizeMe(me: any) {
           isAvailable: me.agent_profile?.is_available,
           averageRating: me.agent_profile?.average_rating,
           totalReviews: me.agent_profile?.total_reviews,
-          languages: JSON.stringify(me.agent_profile?.languages ?? []),
-          specialties: JSON.stringify(me.agent_profile?.specialties ?? []),
-          socialLinks: JSON.stringify(me.agent_profile?.social_links ?? {}),
-          certifications: JSON.stringify(
-            me.agent_profile?.certifications ?? {}
-          ),
-          workingHours: JSON.stringify(me.agent_profile?.working_hours ?? {}),
+          languages: me.agent_profile?.languages
+            ? me.agent_profile?.languages.join(",")
+            : null,
+          specialties: me.agent_profile?.specialties
+            ? me.agent_profile?.specialties?.join(",")
+            : null,
+          socialLinks: me.agent_profile?.social_links
+            ? Object.entries(me.agent_profile?.social_links)
+                .map((s) => `${s[0]}:${s[1]}`)
+                .join(",")
+            : null,
+          workingHours: me.agent_profile?.working_hours
+            ? Object.entries(me.agent_profile?.working_hours)
+                .map((s) => `${s[0]}:${s[1]}`)
+                .join(",")
+            : null,
         }
       : null,
 

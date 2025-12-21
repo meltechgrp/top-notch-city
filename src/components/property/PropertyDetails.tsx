@@ -64,7 +64,7 @@ const PropertyDetailsBottomSheet = ({
 }: PropertyDetailsBottomSheetProps) => {
   const router = useRouter();
   const { width, onLayout } = useLayout();
-  const mainImage = property.media?.find((img) => img.media_type == "IMAGE");
+  const mainImage = property.media?.find((img) => img.mediaType == "IMAGE");
   return (
     <>
       <SafeAreaView edges={["bottom"]} className="flex-1 bg-transparent">
@@ -241,7 +241,7 @@ const PropertyDetailsBottomSheet = ({
                           agent_id: property.owner?.id,
                           availableDates: property.availabilities,
                           image:
-                            property.media.find((i) => i.media_type == "IMAGE")
+                            property.media.find((i) => i.mediaType == "IMAGE")
                               ?.url || "",
                           title: property.title,
                           address: property.address,

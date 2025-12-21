@@ -110,21 +110,23 @@ function PropertyListItem(props: Props) {
       <View
         style={[{ height: bannerHeight - 30 }, imageStyle]}
         className={cn(
-          " rounded-[1.2rem] overflow-hidden relative flex-1",
+          " rounded-[1.2rem] bg-background-muted/50 overflow-hidden relative flex-1",
           imageWrapperClassName
         )}
       >
-        <Image
-          rounded
-          source={{
-            uri: generateMediaUrlSingle(banner.url),
-            cacheKey: banner.id,
-          }}
-          cacheKey={banner.id}
-          transition={500}
-          style={[{ height: bannerHeight - 30 }, imageStyle as any]}
-          contentFit="cover"
-        />
+        {banner?.url ? (
+          <Image
+            rounded
+            source={{
+              uri: generateMediaUrlSingle(banner.url),
+              cacheKey: banner.id,
+            }}
+            cacheKey={banner.id}
+            transition={500}
+            style={[{ height: bannerHeight - 30 }, imageStyle as any]}
+            contentFit="cover"
+          />
+        ) : null}
         <View className=" absolute top-0 w-full h-full justify-between">
           <View
             className={cn(

@@ -43,7 +43,7 @@ export default function PropertyHeader({
                 pathname: "/property/[propertyId]/edit",
                 params: {
                   propertyId: property.id,
-                  userId: property.owner.id,
+                  userId: property.ownerId,
                 },
               })
             }
@@ -64,7 +64,7 @@ export default function PropertyHeader({
         <ReelShareButton
           icon={Share}
           className="h-7 w-7"
-          title={generateTitle(property)}
+          title={property.title}
           id={property.slug}
         />
         <Pressable className="p-2" onPress={() => setOpenActions(true)}>

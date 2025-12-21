@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "7993a93c-7939-443a-aa8d-2903e3f81eb2",
+  "id": "9f3e07c0-4d38-432a-83b4-2697229e6398",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "accounts": {
@@ -110,7 +110,16 @@
           "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "idx_address_lat_lng": {
+          "name": "idx_address_lat_lng",
+          "columns": [
+            "latitude",
+            "longitude"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
@@ -163,7 +172,15 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
+      "compositePrimaryKeys": {
+        "agent_companies_agent_id_company_id_pk": {
+          "columns": [
+            "agent_id",
+            "company_id"
+          ],
+          "name": "agent_companies_agent_id_company_id_pk"
+        }
+      },
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
@@ -304,6 +321,13 @@
         }
       },
       "indexes": {
+        "amenities_name_unique": {
+          "name": "amenities_name_unique",
+          "columns": [
+            "name"
+          ],
+          "isUnique": true
+        },
         "idx_amenity_name": {
           "name": "idx_amenity_name",
           "columns": [
@@ -504,7 +528,7 @@
         "id": {
           "name": "id",
           "type": "text",
-          "primaryKey": true,
+          "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
@@ -530,7 +554,16 @@
           "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "uniq_media_per_property": {
+          "name": "uniq_media_per_property",
+          "columns": [
+            "property_id",
+            "id"
+          ],
+          "isUnique": true
+        }
+      },
       "foreignKeys": {
         "media_property_id_properties_id_fk": {
           "name": "media_property_id_properties_id_fk",
@@ -542,7 +575,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -612,6 +645,13 @@
           "notNull": true,
           "autoincrement": false
         },
+        "property_id": {
+          "name": "property_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "first_name": {
           "name": "first_name",
           "type": "text",
@@ -655,8 +695,30 @@
           "autoincrement": false
         }
       },
-      "indexes": {},
-      "foreignKeys": {},
+      "indexes": {
+        "owners_property_id_unique": {
+          "name": "owners_property_id_unique",
+          "columns": [
+            "property_id"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "owners_property_id_properties_id_fk": {
+          "name": "owners_property_id_properties_id_fk",
+          "tableFrom": "owners",
+          "tableTo": "properties",
+          "columnsFrom": [
+            "property_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {}
@@ -1107,6 +1169,65 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
+    "property_companies": {
+      "name": "property_companies",
+      "columns": {
+        "property_id": {
+          "name": "property_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "company_id": {
+          "name": "company_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "property_companies_property_id_properties_id_fk": {
+          "name": "property_companies_property_id_properties_id_fk",
+          "tableFrom": "property_companies",
+          "tableTo": "properties",
+          "columnsFrom": [
+            "property_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "property_companies_company_id_companies_id_fk": {
+          "name": "property_companies_company_id_companies_id_fk",
+          "tableFrom": "property_companies",
+          "tableTo": "companies",
+          "columnsFrom": [
+            "company_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "property_companies_property_id_company_id_pk": {
+          "columns": [
+            "property_id",
+            "company_id"
+          ],
+          "name": "property_companies_property_id_company_id_pk"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
     "property_search": {
       "name": "property_search",
       "columns": {
@@ -1162,15 +1283,22 @@
           "notNull": true,
           "autoincrement": false
         },
-        "agent_id": {
-          "name": "agent_id",
+        "reviewer_id": {
+          "name": "reviewer_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "user_id": {
-          "name": "user_id",
+        "target_type": {
+          "name": "target_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "target_id": {
+          "name": "target_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -1201,36 +1329,39 @@
           "name": "updated_at",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         }
       },
-      "indexes": {},
-      "foreignKeys": {
-        "reviews_agent_id_users_id_fk": {
-          "name": "reviews_agent_id_users_id_fk",
-          "tableFrom": "reviews",
-          "tableTo": "users",
-          "columnsFrom": [
-            "agent_id"
+      "indexes": {
+        "idx_reviews_target": {
+          "name": "idx_reviews_target",
+          "columns": [
+            "target_type",
+            "target_id"
           ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "isUnique": false
         },
-        "reviews_user_id_users_id_fk": {
-          "name": "reviews_user_id_users_id_fk",
+        "idx_reviews_reviewer": {
+          "name": "idx_reviews_reviewer",
+          "columns": [
+            "reviewer_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "reviews_reviewer_id_users_id_fk": {
+          "name": "reviews_reviewer_id_users_id_fk",
           "tableFrom": "reviews",
           "tableTo": "users",
           "columnsFrom": [
-            "user_id"
+            "reviewer_id"
           ],
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },

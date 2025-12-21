@@ -17,9 +17,11 @@ CREATE TABLE `addresses` (
 	`longitude` real NOT NULL
 );
 --> statement-breakpoint
+CREATE INDEX `idx_address_lat_lng` ON `addresses` (`latitude`,`longitude`);--> statement-breakpoint
 CREATE TABLE `agent_companies` (
 	`agent_id` text NOT NULL,
 	`company_id` text NOT NULL,
+	PRIMARY KEY(`agent_id`, `company_id`),
 	FOREIGN KEY (`agent_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`company_id`) REFERENCES `companies`(`id`) ON UPDATE no action ON DELETE cascade
 );
@@ -46,6 +48,7 @@ CREATE TABLE `amenities` (
 	`name` text NOT NULL
 );
 --> statement-breakpoint
+CREATE UNIQUE INDEX `amenities_name_unique` ON `amenities` (`name`);--> statement-breakpoint
 CREATE INDEX `idx_amenity_name` ON `amenities` (`name`);--> statement-breakpoint
 CREATE TABLE `availabilities` (
 	`id` text PRIMARY KEY NOT NULL,
@@ -76,13 +79,14 @@ CREATE TABLE `interactions` (
 );
 --> statement-breakpoint
 CREATE TABLE `media` (
-	`id` text PRIMARY KEY NOT NULL,
+	`id` text NOT NULL,
 	`property_id` text NOT NULL,
 	`url` text NOT NULL,
 	`media_type` text NOT NULL,
-	FOREIGN KEY (`property_id`) REFERENCES `properties`(`id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`property_id`) REFERENCES `properties`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
+CREATE UNIQUE INDEX `uniq_media_per_property` ON `media` (`property_id`,`id`);--> statement-breakpoint
 CREATE TABLE `owner_interactions` (
 	`property_id` text PRIMARY KEY NOT NULL,
 	`viewed` integer,
@@ -93,14 +97,17 @@ CREATE TABLE `owner_interactions` (
 --> statement-breakpoint
 CREATE TABLE `owners` (
 	`id` text PRIMARY KEY NOT NULL,
+	`property_id` text NOT NULL,
 	`first_name` text,
 	`slug` text,
 	`last_name` text,
 	`email` text,
 	`phone` text,
-	`profile_image` text
+	`profile_image` text,
+	FOREIGN KEY (`property_id`) REFERENCES `properties`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
+CREATE UNIQUE INDEX `owners_property_id_unique` ON `owners` (`property_id`);--> statement-breakpoint
 CREATE TABLE `ownerships` (
 	`id` text PRIMARY KEY NOT NULL,
 	`property_id` text NOT NULL,
@@ -165,6 +172,14 @@ CREATE TABLE `property_amenities` (
 	FOREIGN KEY (`amenity_id`) REFERENCES `amenities`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
+CREATE TABLE `property_companies` (
+	`property_id` text NOT NULL,
+	`company_id` text NOT NULL,
+	PRIMARY KEY(`property_id`, `company_id`),
+	FOREIGN KEY (`property_id`) REFERENCES `properties`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`company_id`) REFERENCES `companies`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
 CREATE TABLE `property_search` (
 	`property_id` text PRIMARY KEY NOT NULL,
 	`title` text,
@@ -175,16 +190,18 @@ CREATE TABLE `property_search` (
 --> statement-breakpoint
 CREATE TABLE `reviews` (
 	`id` text PRIMARY KEY NOT NULL,
-	`agent_id` text NOT NULL,
-	`user_id` text NOT NULL,
+	`reviewer_id` text NOT NULL,
+	`target_type` text NOT NULL,
+	`target_id` text NOT NULL,
 	`rating` integer NOT NULL,
 	`comment` text,
 	`created_at` text NOT NULL,
-	`updated_at` text NOT NULL,
-	FOREIGN KEY (`agent_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action,
-	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action
+	`updated_at` text,
+	FOREIGN KEY (`reviewer_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
+CREATE INDEX `idx_reviews_target` ON `reviews` (`target_type`,`target_id`);--> statement-breakpoint
+CREATE INDEX `idx_reviews_reviewer` ON `reviews` (`reviewer_id`);--> statement-breakpoint
 CREATE TABLE `user_addresses` (
 	`user_id` text NOT NULL,
 	`address_id` text NOT NULL,

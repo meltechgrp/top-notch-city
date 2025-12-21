@@ -3,7 +3,7 @@ type Result = {
   page: number;
   per_page: number;
   pages: number;
-  results: Property[];
+  results: any[];
   user_location?: LocationData;
 };
 
@@ -63,12 +63,12 @@ type Property = {
   isFollowing: boolean;
   amenities: Amenity[];
   interaction: Interaction;
-  ownerInteraction: Owner_interaction;
+  ownerInteraction: OwnerInteraction;
 };
 type Media = {
   id: string;
   url: string;
-  media_type: "IMAGE" | "VIDEO" | "AUDIO";
+  mediaType: "IMAGE" | "VIDEO" | "AUDIO";
 };
 
 type Availabilities = {
@@ -125,7 +125,7 @@ type Interaction = {
   addedToWishlist: number;
 };
 
-type Owner_interaction = {
+type OwnerInteraction = {
   viewed: boolean;
   liked: boolean;
   addedToWishlist: number;

@@ -1,3 +1,4 @@
+import { eq } from "drizzle-orm";
 import {
   sqliteTable,
   text,
@@ -5,6 +6,7 @@ import {
   real,
   index,
   primaryKey,
+  uniqueIndex,
 } from "drizzle-orm/sqlite-core";
 
 export const properties = sqliteTable("properties", {
@@ -24,8 +26,8 @@ export const properties = sqliteTable("properties", {
   displayAddress: text("display_address").notNull(),
   ownerId: text("owner_id").notNull(),
   duration: text("duration"),
-  total_reviews: integer("total_reviews"),
-  avg_rating: integer("avg_rating"),
+  totalReviews: integer("total_reviews"),
+  avgRating: integer("avg_rating"),
   bathroom: text("bathroom"),
   bedroom: text("bedroom"),
   landarea: real("landarea"),
@@ -45,32 +47,47 @@ export const properties = sqliteTable("properties", {
   deletedAt: text("deleted_at"),
 });
 
-export const addresses = sqliteTable("addresses", {
-  id: text("id").primaryKey(),
-  displayAddress: text("display_address"),
-  city: text("city"),
-  street: text("street"),
-  state: text("state"),
-  country: text("country").notNull(),
-  latitude: real("latitude").notNull(),
-  longitude: real("longitude").notNull(),
-});
+export const addresses = sqliteTable(
+  "addresses",
+  {
+    id: text("id").primaryKey(),
+    displayAddress: text("display_address"),
+    city: text("city"),
+    street: text("street"),
+    state: text("state"),
+    country: text("country").notNull(),
+    latitude: real("latitude").notNull(),
+    longitude: real("longitude").notNull(),
+  },
+  (t) => ({
+    latLngIdx: index("idx_address_lat_lng").on(t.latitude, t.longitude),
+  })
+);
 
-export const media = sqliteTable("media", {
-  id: text("id").primaryKey(),
-  propertyId: text("property_id")
-    .notNull()
-    .references(() => properties.id),
+export const media = sqliteTable(
+  "media",
+  {
+    id: text("id").notNull(),
+    propertyId: text("property_id")
+      .notNull()
+      .references(() => properties.id, { onDelete: "cascade" }),
 
-  url: text("url").notNull(),
-  mediaType: text("media_type").notNull(),
-});
+    url: text("url").notNull(),
+    mediaType: text("media_type").notNull(),
+  },
+  (t) => ({
+    uniq_media_per_property: uniqueIndex("uniq_media_per_property").on(
+      t.propertyId,
+      t.id
+    ),
+  })
+);
 
 export const amenities = sqliteTable(
   "amenities",
   {
     id: text("id").primaryKey(),
-    name: text("name").notNull(),
+    name: text("name").notNull().unique(),
   },
   (t) => ({
     uniqName: index("idx_amenity_name").on(t.name),
@@ -105,6 +122,10 @@ export const availabilities = sqliteTable("availabilities", {
 
 export const owners = sqliteTable("owners", {
   id: text("id").primaryKey(),
+  propertyId: text("property_id")
+    .notNull()
+    .references(() => properties.id, { onDelete: "cascade" })
+    .unique(),
   firstName: text("first_name"),
   slug: text("slug"),
   lastName: text("last_name"),
@@ -160,10 +181,6 @@ export const propertyIndexes = {
   byPurpose: index("idx_property_purpose").on(properties.purpose),
   byPrice: index("idx_property_price").on(properties.price),
   byFeatured: index("idx_property_featured").on(properties.isFeatured),
-  byLatLng: index("idx_address_lat_lng").on(
-    addresses.latitude,
-    addresses.longitude
-  ),
 };
 export const propertySearch = sqliteTable("property_search", {
   propertyId: text("property_id").primaryKey(),
@@ -185,6 +202,21 @@ export const propertyAddresses = sqliteTable(
   },
   (t) => ({
     pk: primaryKey(t.propertyId, t.addressId),
+  })
+);
+export const propertyCompanies = sqliteTable(
+  "property_companies",
+  {
+    propertyId: text("property_id")
+      .references(() => properties.id, { onDelete: "cascade" })
+      .notNull(),
+
+    companyId: text("company_id")
+      .references(() => companies.id, { onDelete: "cascade" })
+      .notNull(),
+  },
+  (t) => ({
+    pk: primaryKey(t.propertyId, t.companyId),
   })
 );
 
@@ -279,23 +311,29 @@ export const agentCompanies = sqliteTable(
   })
 );
 
-export const reviews = sqliteTable("reviews", {
-  id: text("id").primaryKey(),
+export const reviews = sqliteTable(
+  "reviews",
+  {
+    id: text("id").primaryKey(),
+    reviewerId: text("reviewer_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    targetType: text("target_type", {
+      enum: ["property", "agent", "company"],
+    }).notNull(),
 
-  agentId: text("agent_id")
-    .references(() => users.id)
-    .notNull(),
+    targetId: text("target_id").notNull(),
 
-  userId: text("user_id")
-    .references(() => users.id)
-    .notNull(),
-
-  rating: integer("rating").notNull(),
-  comment: text("comment"),
-
-  createdAt: text("created_at").notNull(),
-  updatedAt: text("updated_at").notNull(),
-});
+    rating: integer("rating").notNull(),
+    comment: text("comment"),
+    createdAt: text("created_at").notNull(),
+    updatedAt: text("updated_at"),
+  },
+  (t) => ({
+    idxTarget: index("idx_reviews_target").on(t.targetType, t.targetId),
+    idxReviewer: index("idx_reviews_reviewer").on(t.reviewerId),
+  })
+);
 
 export const accounts = sqliteTable("accounts", {
   userId: text("user_id").primaryKey(),

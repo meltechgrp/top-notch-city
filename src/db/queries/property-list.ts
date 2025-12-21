@@ -47,7 +47,10 @@ export function getAgentList({
       ownerInteractions,
       eq(ownerInteractions.propertyId, properties.id)
     )
-    .leftJoin(media, eq(media.propertyId, properties.id))
+    .leftJoin(
+      media,
+      and(eq(media.propertyId, properties.id), eq(media.mediaType, "IMAGE"))
+    )
     .where(and(...whereConditions))
     .limit(limit)
     .offset(offset);
@@ -83,7 +86,10 @@ export function getCategories({
       ownerInteractions,
       eq(ownerInteractions.propertyId, properties.id)
     )
-    .leftJoin(media, eq(media.propertyId, properties.id))
+    .leftJoin(
+      media,
+      and(eq(media.propertyId, properties.id), eq(media.mediaType, "IMAGE"))
+    )
     .where(
       and(
         isNull(properties.deletedAt),
@@ -123,7 +129,10 @@ export function getFeatured({
       eq(propertyAddresses.propertyId, properties.id)
     )
     .innerJoin(addresses, eq(addresses.id, propertyAddresses.addressId))
-    .leftJoin(media, eq(media.propertyId, properties.id))
+    .leftJoin(
+      media,
+      and(eq(media.propertyId, properties.id), eq(media.mediaType, "IMAGE"))
+    )
     .where(
       and(
         eq(properties.isFeatured, true),
@@ -175,7 +184,10 @@ export function getNearby({
       ownerInteractions,
       eq(ownerInteractions.propertyId, properties.id)
     )
-    .leftJoin(media, eq(media.propertyId, properties.id))
+    .leftJoin(
+      media,
+      and(eq(media.propertyId, properties.id), eq(media.mediaType, "IMAGE"))
+    )
     .where(
       and(
         isNull(properties.deletedAt),
@@ -204,7 +216,7 @@ export function getReels({
     .from(properties)
     .innerJoin(
       media,
-      and(eq(media.propertyId, properties.id), eq(media.mediaType, "video"))
+      and(eq(media.propertyId, properties.id), eq(media.mediaType, "VIDEO"))
     )
     .leftJoin(interactions, eq(interactions.propertyId, properties.id))
     .leftJoin(
@@ -216,4 +228,13 @@ export function getReels({
     .orderBy(sql`RANDOM()`)
     .limit(limit)
     .offset(offset);
+}
+
+export async function getLocalPropertyIndex() {
+  return db
+    .select({
+      id: properties.id,
+      updatedAt: properties.updatedAt,
+    })
+    .from(properties);
 }

@@ -74,23 +74,23 @@ export function formatNumberCompact(amount: number = 0) {
 }
 
 export function fullName(user: any) {
-  return !user?.first_name ? "" : `${user.first_name} ${user.last_name}`;
+  return !user?.firstName ? "" : `${user.firstName} ${user.lastName}`;
 }
-export const FindAmenity = (item: string, data?: Property): any => {
+export const FindAmenity = (item: string, data?: any): any => {
   return (
-    data?.amenities?.find((a) => a.name == item)?.value ||
-    data?.[item.toLowerCase() as keyof Property] ||
+    data?.amenities?.find((a: any) => a.name == item)?.value ||
+    data?.[item.toLowerCase()] ||
     null
   );
 };
 
-export function generateTitle(property: Property) {
-  switch (property.category.trim()) {
+export function generateTitle(property: any) {
+  switch (property?.category?.name?.trim()) {
     case "Residential":
-      return `${FindAmenity("Bedroom", property) || ""} Bedroom ${property.subCategory || ""}`.trim();
+      return `${FindAmenity("Bedroom", property) || ""} Bedroom ${property?.subCategory?.name || ""}`.trim();
 
     case "Commercial":
-      return `${property.subCategory || "Commercial Space"} ${property.purpose ? `for ${property.purpose}` : ""}`.trim();
+      return `${property?.subCategory?.name || "Commercial Space"} ${property?.purpose ? `for ${property?.purpose}` : ""}`.trim();
 
     case "Land":
       return `${FindAmenity("Total Plot", property) || 1} Plot${FindAmenity("Total Plot", property) > 1 ? "s" : ""} of Land`;
@@ -101,7 +101,7 @@ export function generateTitle(property: Property) {
       return property?.title || "";
 
     default:
-      return `${property.subCategory || property.category}`;
+      return `${property?.subCategory?.name || property?.category?.name}`;
   }
 }
 
@@ -417,19 +417,53 @@ export function mapPropertyList(rows: any[]) {
     address: row?.address,
   })) as unknown as Property[];
 }
-export function mapProperty(row: any) {
+export function mapProperty(rows: any[]) {
+  const base = rows[0];
+  if (!base) return null;
+  const unique = <T>(arr: T[], key: (v: T) => string) =>
+    Object.values(Object.fromEntries(arr.map((v) => [key(v), v])));
+  rows?.map((r) => console.log(r?.media));
   return {
-    ...row.property,
-    interaction: row?.interaction || null,
-    ownerInteraction: row?.ownerInteraction || null,
-    media: row.media,
-    address: row?.address,
-  } as unknown as Property;
+    ...base.property,
+    address: base.address,
+    interaction: base.interaction,
+    ownerInteraction: base.ownerInteraction,
+    owner: base.owner,
+    company: base.company,
+    media: unique(rows.map((r) => r.media).filter(Boolean), (m) => m.id),
+
+    amenities: unique(rows.map((r) => r.amenity).filter(Boolean), (a) => a.id),
+
+    availabilities: unique(
+      rows.map((r) => r.availability).filter(Boolean),
+      (a) => a.id
+    ),
+  } as Property;
 }
-export function mapUserData(row: any) {
+export function mapUserData(rows: any) {
+  const base = Array.isArray(rows) ? rows[0] : rows;
+  const others = Array.isArray(rows) ? rows : [rows];
   return {
-    ...row.user,
-    agent: row?.agent,
-    address: row?.address,
+    ...base?.user,
+    address: base?.address,
+    companies: others?.map((r: any) => r.company).filter(Boolean),
+    reviews: others?.map((r: any) => r.review).filter(Boolean),
   } as unknown as Me;
+}
+export function getOutdatedIds({
+  server,
+  local,
+}: {
+  server: { id: string; updatedAt: string }[];
+  local: { id: string; updatedAt: string }[];
+}) {
+  const localMap = new Map(local.map((p) => [p.id, p.updatedAt]));
+
+  return server
+    .filter((p) => {
+      const localUpdatedAt = localMap.get(p.id);
+      if (!localUpdatedAt) return true;
+      return new Date(p.updatedAt) > new Date(localUpdatedAt);
+    })
+    .map((p) => p.id);
 }

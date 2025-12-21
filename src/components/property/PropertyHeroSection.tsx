@@ -18,7 +18,7 @@ export function PropertyHeroSection({ property, width }: Props) {
             loop={false}
             paginationsize={6}
             media={
-              property?.media.filter((item) => item.media_type == "IMAGE") || []
+              property?.media.filter((item) => item.mediaType == "IMAGE") || []
             }
             pointerPosition={40}
           />

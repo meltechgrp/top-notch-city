@@ -11,13 +11,13 @@ import FeaturedProperties from "@/components/home/featured";
 import ApartmentProperties from "@/components/home/recent";
 import Lands from "@/components/home/lands";
 import { FlashList } from "@shopify/flash-list";
-import { useHomeSync } from "@/hooks/useHomeSync";
 import { useMe } from "@/hooks/useMe";
+import { useBackgroundSync } from "@/hooks/useTaskManager";
 const MAP_HEIGHT = 400;
 
 export default function HomeScreen() {
   const { me } = useMe();
-  const { refetch } = useHomeSync();
+  const { syncNow } = useBackgroundSync();
   const [friendsModal, setFriendsModal] = React.useState(false);
   const [staffs, setStaffs] = useState(false);
   const feedList = React.useMemo(() => {
@@ -85,7 +85,7 @@ export default function HomeScreen() {
       <Box className="flex-1">
         <FlashList
           refreshControl={
-            <RefreshControl refreshing={false} onRefresh={refetch} />
+            <RefreshControl refreshing={false} onRefresh={syncNow} />
           }
           ListHeaderComponent={<DiscoverProperties mapHeight={MAP_HEIGHT} />}
           showsVerticalScrollIndicator={false}

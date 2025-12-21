@@ -2,8 +2,6 @@ import React, { useMemo, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
 
 import { Box, Button, Icon, Pressable, Text, View } from "@/components/ui";
-import { useQuery } from "@tanstack/react-query";
-import { getUser } from "@/actions/user";
 import FullHeightLoaderWrapper from "@/components/loaders/FullHeightLoaderWrapper";
 
 import { ProfileTopSection } from "@/components/profile/ProfileTopSection";
@@ -28,23 +26,14 @@ export type UserType = "visitor" | "owner" | "admin";
 interface ProfileWrapperProps {
   userId?: string;
   userType: UserType;
-  isAgent?: boolean;
 }
 
 export function ProfileWrapper({
   userType = "visitor",
   userId,
 }: ProfileWrapperProps) {
-  const { isAgent } = useMe();
+  const { isAgent, me: user, isLoading, isAdmin, refetch } = useMe(userId);
   const [showActions, setShowActions] = useState(false);
-  const { data, isLoading, refetch, isRefetching } = useQuery({
-    queryKey: ["user", userId],
-    queryFn: () => getUser(userId!),
-    enabled: !!userId,
-  });
-
-  const user = useMemo(() => data ?? null, [data]);
-
   const dataForTab = useMemo(() => {
     return [{ type: "all" }];
   }, []);

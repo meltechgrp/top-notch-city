@@ -6,6 +6,13 @@ import {
   ownerInteractions,
   media,
   propertyAddresses,
+  availabilities,
+  owners,
+  ownerships,
+  amenities,
+  companies,
+  propertyAmenities,
+  propertyCompanies,
 } from "@/db/schema";
 import { eq, and, isNull } from "drizzle-orm";
 
@@ -19,13 +26,22 @@ export function getProperty({
   isAgent: boolean;
 }) {
   const whereConditions = [eq(properties.id, propertyId)];
+
+  // Normal users → only approved & not deleted
   if (!isAdmin && !isAgent) {
-    (isNull(properties.deletedAt),
-      whereConditions.push(eq(properties.status, "approved")));
+    whereConditions.push(
+      eq(properties.status, "approved"),
+      isNull(properties.deletedAt)
+    );
   }
-  if (isAgent) {
-    whereConditions.push(eq(properties.status, "deleted"));
+
+  // Agents → allow approved + pending, but not deleted
+  if (isAgent && !isAdmin) {
+    whereConditions.push(isNull(properties.deletedAt));
   }
+
+  // Admin → see everything (no extra conditions)
+
   return db
     .select({
       property: properties,
@@ -33,19 +49,39 @@ export function getProperty({
       ownerInteraction: ownerInteractions,
       media,
       address: addresses,
+      availability: availabilities,
+      owner: owners,
+      ownership: ownerships,
+      amenity: amenities,
+      company: companies,
     })
     .from(properties)
-    .leftJoin(interactions, eq(interactions.propertyId, properties.id))
+
     .innerJoin(
       propertyAddresses,
       eq(propertyAddresses.propertyId, properties.id)
     )
     .innerJoin(addresses, eq(addresses.id, propertyAddresses.addressId))
+
+    .leftJoin(interactions, eq(interactions.propertyId, properties.id))
     .leftJoin(
       ownerInteractions,
       eq(ownerInteractions.propertyId, properties.id)
     )
     .leftJoin(media, eq(media.propertyId, properties.id))
-    .where(and(...whereConditions))
-    .limit(1);
+    .leftJoin(
+      propertyCompanies,
+      eq(propertyCompanies.propertyId, properties.id)
+    )
+    .leftJoin(companies, eq(companies.id, propertyCompanies.companyId))
+    .leftJoin(availabilities, eq(availabilities.propertyId, properties.id))
+    .leftJoin(ownerships, eq(ownerships.propertyId, properties.id))
+    .leftJoin(owners, eq(owners.id, ownerships.ownerId))
+    .leftJoin(
+      propertyAmenities,
+      eq(propertyAmenities.propertyId, properties.id)
+    )
+    .leftJoin(amenities, eq(amenities.id, propertyAmenities.amenityId))
+
+    .where(and(...whereConditions));
 }

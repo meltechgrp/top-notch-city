@@ -34,6 +34,7 @@ import { useTempStore } from "@/store";
 import { useLiveQuery } from "@/hooks/useLiveQuery";
 import { getProperty } from "@/db/queries/property";
 import { useMe } from "@/hooks/useMe";
+import { scheduleOnRN } from "react-native-worklets";
 
 const { height } = Dimensions.get("window");
 const HERO_HEIGHT = height / 2.2;
@@ -80,7 +81,7 @@ export default function PropertyItem() {
       if (event.contentOffset.y >= detailsY.value) {
         runOnJS(setHasScrolledToDetails)(true);
       } else {
-        runOnJS(setHasScrolledToDetails)(false);
+        scheduleOnRN(setHasScrolledToDetails, false);
       }
     },
   });
@@ -116,17 +117,6 @@ export default function PropertyItem() {
       backgroundColor: `rgba(${theme == "dark" ? "22,24,25" : "238,236,240"},${opacity})`,
     };
   });
-  if (error) {
-    return (
-      <Box className="flex-1 justify-center items-center">
-        <MiniEmptyState
-          title="Property not found"
-          description="This property seems to be removed or not available"
-        />
-      </Box>
-    );
-  }
-
   useEffect(() => {
     if (property) {
       setTimeout(() => {
@@ -134,29 +124,29 @@ export default function PropertyItem() {
           title: property.title,
           description: property?.description || "",
           duration: property?.duration,
-          purpose: property.purpose,
-          category: property.category,
-          bedroom: property.bedroom,
-          bathroom: property.bathroom,
-          bedType: property.bedType,
-          guests: property.guests,
-          landarea: property.landarea?.toString(),
-          plots: property.plots,
-          viewType: property.viewType,
-          discount: property.discount,
-          caution_fee: property.cautionFee,
+          purpose: property?.purpose,
+          category: property?.category,
+          bedroom: property?.bedroom,
+          bathroom: property?.bathroom,
+          bedType: property?.bedType,
+          guests: property?.guests,
+          landarea: property?.landarea?.toString(),
+          plots: property?.plots,
+          viewType: property?.viewType,
+          discount: property?.discount,
+          caution_fee: property?.cautionFee,
           owner_type: property?.ownership?.ownerType,
           listing_role: property?.ownership?.listingRole,
-          subCategory: property.subCategory,
-          companies: property.companies,
-          ownership_documents: property?.ownership?.documents?.map((d) => ({
-            media_type: d.document_type?.toUpperCase() as Media["media_type"],
-            id: d.id,
-            url: d.file_url,
-          })),
+          subCategory: property?.subCategory,
+          companies: property?.companies,
+          // ownershipDocuments: property?.ownership?.documents?.map((d) => ({
+          //   media_type: d.document_type?.toUpperCase() as Media["mediaType"],
+          //   id: d.id,
+          //   url: d.url,
+          // })),
           price: property.price.toString(),
-          photos: property.media?.filter((img) => img.media_type == "IMAGE"),
-          videos: property.media?.filter((img) => img.media_type == "VIDEO"),
+          photos: property.media?.filter((img) => img.mediaType == "IMAGE"),
+          videos: property.media?.filter((img) => img.mediaType == "VIDEO"),
           currency: property.currencyCode || "NGN",
           availabilityPeriod: property?.availabilities.map((a) => ({
             start: a.start,
@@ -180,6 +170,16 @@ export default function PropertyItem() {
       }, 50);
     }
   }, [property]);
+  if (error) {
+    return (
+      <Box className="flex-1 justify-center items-center">
+        <MiniEmptyState
+          title="Property not found"
+          description="This property seems to be removed or not available"
+        />
+      </Box>
+    );
+  }
   return (
     <>
       <Stack.Screen
