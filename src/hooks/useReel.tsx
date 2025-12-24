@@ -27,10 +27,10 @@ export function useReels() {
   };
 }
 
-export function propertyToReelVideo(properties: Property[]) {
+export function propertyToReelVideo(properties: any[]) {
   return properties
     .map((p) => {
-      let v = p.media.find((m) => m.media_type === "VIDEO");
+      let v = p.media.find((m: any) => m.media_type === "VIDEO");
       if (v) {
         return {
           id: p.id,
@@ -41,7 +41,7 @@ export function propertyToReelVideo(properties: Property[]) {
           description: p.description || "",
           interations: {
             liked: p.interaction?.liked || 0,
-            added_to_wishlist: p.interaction?.added_to_wishlist || 0,
+            addedToWishlist: p.interaction?.added_to_wishlist || 0,
             viewed: p.interaction?.viewed || 0,
           },
           owner_interaction: {
@@ -53,9 +53,9 @@ export function propertyToReelVideo(properties: Property[]) {
           owner: p?.owner,
           price: p.price,
           is_following: p.is_following || false,
-          location: composeFullAddress(p.address),
+          location: p.address?.display_address || composeFullAddress(p.address),
           purpose: p.purpose,
-        };
+        } as Reel;
       }
     })
     .filter((p) => !!p);

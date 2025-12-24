@@ -1,8 +1,6 @@
 import { getQuickMenuItems } from "@/components/menu/menuitems";
 import { MenuListItem } from "@/components/menu/MenuListItem";
-import CampaignCard from "@/components/profile/CampaignCard";
 import { UserType } from "@/components/profile/ProfileWrapper";
-import PropertiesTabView from "@/components/profile/PropertiesTab";
 import { Badge, Icon, Text, View } from "@/components/ui";
 import { DAYS } from "@/constants/user";
 import { useMe } from "@/hooks/useMe";
@@ -21,14 +19,13 @@ import {
   Mail,
   MapPin,
   Phone,
-  PlusCircle,
   User,
 } from "lucide-react-native";
 import { useMemo, useState } from "react";
-import { TouchableOpacity } from "react-native";
+import { ScrollView, TouchableOpacity } from "react-native";
 
 interface ProfileDetailsProps {
-  user: Me;
+  user?: Me;
   userType: UserType;
   isAgent: boolean;
 }
@@ -39,7 +36,7 @@ export function ProfileDetails({ user, userType }: ProfileDetailsProps) {
   const personal = [
     {
       label: "email",
-      value: user.email || "N/A",
+      value: user?.email || "N/A",
       icon: Mail,
     },
     {
@@ -59,7 +56,7 @@ export function ProfileDetails({ user, userType }: ProfileDetailsProps) {
         label: "Birthday",
         icon: Calendar,
         value: user?.date_of_birth
-          ? format(new Date(user.date_of_birth), "MMM dd, yyyy")
+          ? format(new Date(user?.date_of_birth), "MMM dd, yyyy")
           : "N/A",
       },
     ],
@@ -71,33 +68,6 @@ export function ProfileDetails({ user, userType }: ProfileDetailsProps) {
   ].filter((p) => !!p);
   return (
     <View className="px-4 gap-6">
-      {userType == "owner" && user?.role == "user" && (
-        <CampaignCard
-          title="Want to Rent or Sell?"
-          subtitle="Easily upload your property and reach verified buyers and renters."
-          actionLabel="Get Started"
-          className=" py-4"
-          actionRoute={`/forms/agent`}
-        />
-      )}
-      {userType == "owner" && isAgent && (
-        <CampaignCard
-          title="Upload your property"
-          subtitle="List your property for sale or rent today."
-          icon={PlusCircle}
-          actionLabel="Upload"
-          actionRoute={`/agents/${user?.id}/properties/add`}
-        />
-      )}
-
-      {(userType !== "owner" || isAgent) && (
-        <PropertiesTabView
-          showStatus={userType == "owner" && isAgent}
-          isAgent={isAgent}
-          isOwner={userType == "owner"}
-          profileId={user.id}
-        />
-      )}
       {(userType !== "owner" || isAgent) && (
         <View className="gap-1">
           <View className="flex-row items-center justify-between">
@@ -105,7 +75,7 @@ export function ProfileDetails({ user, userType }: ProfileDetailsProps) {
           </View>
           <View className="gap-4 p-4 bg-background-muted min-h-20 rounded-2xl">
             <Text className="text-sm">
-              {user.agent_profile?.about
+              {user?.agent_profile?.about
                 ? user.agent_profile?.about
                 : userType == "owner"
                   ? "Add an intresting bio about yourself to stand out."
@@ -124,7 +94,7 @@ export function ProfileDetails({ user, userType }: ProfileDetailsProps) {
       )}
       {(userType !== "owner" || isAgent) && (
         <View>
-          {user.agent_profile?.specialties?.slice() ? (
+          {user?.agent_profile?.specialties?.slice() ? (
             <View className="gap-1">
               <View className="flex-row items-center justify-between">
                 <Text className="text-lg font-medium">Services</Text>
@@ -153,7 +123,7 @@ export function ProfileDetails({ user, userType }: ProfileDetailsProps) {
               <View className=" gap-2">
                 <Text className="text-sm text-typography/80">Languages</Text>
                 <View className="flex-row flex-wrap items-center gap-2">
-                  {user.agent_profile?.languages?.slice(0, 3).map((l) => (
+                  {user?.agent_profile?.languages?.slice(0, 3).map((l) => (
                     <Text key={l} className="text-sm capitalize">
                       {l}
                     </Text>
@@ -173,13 +143,13 @@ export function ProfileDetails({ user, userType }: ProfileDetailsProps) {
                   License Number
                 </Text>
                 <Text className="text-sm">
-                  {user.agent_profile?.license_number || "N/A"}
+                  {user?.agent_profile?.license_number || "N/A"}
                 </Text>
               </View>
             </View>
             <View className="flex-row items-center gap-2">
               <Icon as={Globe} className="w-4 h-4" />
-              {user.agent_profile?.website ? (
+              {user?.agent_profile?.website ? (
                 <Link
                   target="_blank"
                   className=" text-sm text-blue-500"
@@ -195,7 +165,7 @@ export function ProfileDetails({ user, userType }: ProfileDetailsProps) {
               <Icon as={CalendarCog} className="w-4 h-4 text-typography/80" />
               <View className="flex-row gap-1 items-center">
                 <Text className="text-sm">
-                  {user.agent_profile?.years_of_experience || "N/A"}
+                  {user?.agent_profile?.years_of_experience || "N/A"}
                 </Text>
                 <Text className="text-sm text-typography/80">
                   Years of Experience
@@ -207,32 +177,51 @@ export function ProfileDetails({ user, userType }: ProfileDetailsProps) {
       )}
       {(userType !== "owner" || isAgent) && (
         <View>
-          {user.agent_profile?.companies?.slice().length ? (
-            <View className="gap-1">
+          {user?.agent_profile?.companies?.slice().length ? (
+            <View className="gap-2 bg-background-muted p-4 -mx-4">
               <View className="flex-row items-center justify-between">
                 <Text className="text-lg font-medium">Companies</Text>
               </View>
-              <View className="gap-4 bg-background-muted p-4 rounded-xl">
-                {user.agent_profile?.companies?.slice(0, 1).map((c) => (
+              <ScrollView
+                horizontal
+                contentContainerClassName="gap-x-4"
+                showsHorizontalScrollIndicator={false}
+              >
+                {user.agent_profile?.companies?.map((c) => (
                   <View
                     key={c.id}
-                    className=" flex-row justify-between items-center"
+                    className=" w-[18rem] border border-outline-100 flex-row justify-between bg-background items-start p-4 rounded-xl"
                   >
                     <View className="flex-1">
                       <Text className="font-semibold">{c.name}</Text>
                       {!!c.address && (
-                        <Text className="text-typography/80">{c.address}</Text>
+                        <View className="flex-row gap-2 items-center">
+                          <Icon
+                            size="sm"
+                            as={MapPin}
+                            className="text-primary"
+                          />
+                          <Text className="text-typography/80">
+                            {c.address}
+                          </Text>
+                        </View>
                       )}
                       {!!c.phone && (
-                        <Text className="text-typography/80">{c.phone}</Text>
+                        <View className="flex-row gap-2 items-center">
+                          <Icon size="sm" as={Phone} className="text-primary" />
+                          <Text className="text-typography/80">{c.phone}</Text>
+                        </View>
                       )}
                       {!!c.email && (
-                        <Text className="text-typography/80">{c.email}</Text>
+                        <View className="flex-row gap-2 items-center">
+                          <Icon size="sm" as={Mail} className="text-primary" />
+                          <Text className="text-typography/80">{c.email}</Text>
+                        </View>
                       )}
                     </View>
                   </View>
                 ))}
-              </View>
+              </ScrollView>
             </View>
           ) : undefined}
         </View>

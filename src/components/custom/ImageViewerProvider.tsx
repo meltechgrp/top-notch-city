@@ -158,7 +158,7 @@ export const ProfileImageTrigger = ({
 type Media = {
   id: string;
   url: string;
-  media_type?: "IMAGE" | "VIDEO" | "AUDIO";
+  mediaType?: "IMAGE" | "VIDEO" | "AUDIO";
 };
 
 const CLOSE_THRESHOLD = 140;
@@ -211,7 +211,7 @@ const ProfileImageViewer = ({
                   justifyContent: "center",
                 }}
               >
-                {item.media_type === "VIDEO" ? (
+                {item.mediaType === "VIDEO" ? (
                   <MiniVideoPlayer
                     canPlay={i === index}
                     uri={generateMediaUrlSingle(item.url)}
@@ -247,7 +247,7 @@ const ProfileImageViewer = ({
                       : { borderColor: "rgba(255,255,255,0.3)" },
                   ]}
                 >
-                  {item.media_type === "VIDEO" ? (
+                  {item.mediaType === "VIDEO" ? (
                     <MiniVideoPlayer
                       showPlayBtn
                       canPlay={false}
@@ -378,7 +378,7 @@ const ProfileImageViewer = ({
   if (!visible || !images || images.length === 0) return null;
 
   const renderSlide = (item: Media, i: number) => {
-    if (item.media_type === "IMAGE" || !item.media_type) {
+    if (item.mediaType === "IMAGE" || !item.mediaType) {
       return (
         <Image
           source={{ uri: generateMediaUrlSingle(item.url), cacheKey: item.id }}
@@ -386,7 +386,7 @@ const ProfileImageViewer = ({
           style={{ width: SCREEN_W, height: SCREEN_H }}
         />
       );
-    } else if (item.media_type === "VIDEO" || !item.media_type) {
+    } else if (item.mediaType === "VIDEO" || !item.mediaType) {
       return (
         <MiniVideoPlayer
           canPlay={i == index}
@@ -470,7 +470,7 @@ const ProfileImageViewer = ({
                         : { borderColor: "rgba(255,255,255,0.2)" },
                     ]}
                   >
-                    {item.media_type == "IMAGE" ? (
+                    {item.mediaType == "IMAGE" ? (
                       <Image
                         source={{ uri: generateMediaUrlSingle(item.url) }}
                         style={styles.thumb}

@@ -5,13 +5,13 @@ import { router } from "expo-router";
 import { memo } from "react";
 
 function ApartmentsProperties() {
-  const { latest } = useHomeList();
+  const { latest, isLoading } = useHomeList();
   return (
     <SectionHeaderWithRef
       title="Properties"
       titleClassName="text-gray-400 text-base"
       subTitle="See More"
-      hasData={latest?.length > 0}
+      hasData={isLoading || latest?.length > 0}
       onSeeAllPress={() => {
         router.push({
           pathname: "/explore",
@@ -23,7 +23,7 @@ function ApartmentsProperties() {
     >
       <HorizontalProperties
         data={latest}
-        isLoading={false}
+        isLoading={isLoading}
         isRefetching={false}
         listType={["latest"]}
       />

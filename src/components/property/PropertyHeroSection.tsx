@@ -3,23 +3,21 @@ import PropertyCarousel from "./PropertyCarousel";
 import { ProfileImageTrigger } from "@/components/custom/ImageViewerProvider";
 
 interface Props {
-  property: Property;
+  media: Media[];
   width: number;
 }
 
-export function PropertyHeroSection({ property, width }: Props) {
+export function PropertyHeroSection({ media, width }: Props) {
   return (
     <View className="flex-1 bg-background">
       <View className=" relative flex-1">
-        <ProfileImageTrigger image={property?.media || []} index={0}>
+        <ProfileImageTrigger image={media} index={0}>
           <PropertyCarousel
             width={width || 400}
             factor={1}
             loop={false}
             paginationsize={6}
-            media={
-              property?.media.filter((item) => item.mediaType == "IMAGE") || []
-            }
+            media={media.filter((item) => item.mediaType == "IMAGE") || []}
             pointerPosition={40}
           />
         </ProfileImageTrigger>

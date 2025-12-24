@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
 import VerticalProperties from "@/components/property/VerticalProperties";
 import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
+import { normalizePropertyListServer } from "@/db/normalizers/property";
 
 export default function AdminProperties() {
   const [search, setSearch] = useState("");
@@ -19,7 +20,10 @@ export default function AdminProperties() {
   } = useInfinityQueries({ type: "admin" });
 
   const propertyData = useMemo(
-    () => data?.pages.flatMap((page) => page.results) || [],
+    () =>
+      data?.pages.flatMap((page) =>
+        normalizePropertyListServer(page.results)
+      ) || [],
     [data]
   );
   const filteredData = useMemo(() => {
@@ -32,9 +36,10 @@ export default function AdminProperties() {
       const regex = new RegExp(search.trim(), "i");
       filtered = filtered.filter(
         (u) =>
-          regex.test(u.title) ||
-          regex.test(u.category.name) ||
-          regex.test(u.subcategory.name)
+          regex.test(u.category) ||
+          regex.test(u.purpose) ||
+          regex.test(u.price.toString()) ||
+          regex.test(u.status)
       );
     }
     return filtered;

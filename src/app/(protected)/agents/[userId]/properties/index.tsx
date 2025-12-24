@@ -1,6 +1,7 @@
 import { FilterComponent } from "@/components/admin/shared/FilterComponent";
 import VerticalProperties from "@/components/property/VerticalProperties";
 import { Box, Icon, Pressable, View } from "@/components/ui";
+import { normalizePropertyListServer } from "@/db/normalizers/property";
 import { useMe } from "@/hooks/useMe";
 import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
 import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
@@ -21,7 +22,10 @@ export default function AgentProperties() {
     [data]
   );
   const filteredData = useMemo(() => {
-    let filtered = data?.pages.flatMap((page) => page.results) || [];
+    let filtered =
+      data?.pages.flatMap((page) =>
+        normalizePropertyListServer(page.results)
+      ) || [];
 
     if (actveTab !== "all") {
       filtered = filtered.filter((u) => u.status.toLowerCase() === actveTab);
@@ -30,13 +34,10 @@ export default function AgentProperties() {
       const regex = new RegExp(search.trim(), "i");
       filtered = filtered.filter(
         (u) =>
-          regex.test(u.category?.name) ||
-          regex.test(u.subcategory?.name) ||
+          regex.test(u.category) ||
           regex.test(u.purpose) ||
           regex.test(u.price.toString()) ||
-          regex.test(u.status) ||
-          regex.test(u.address.city) ||
-          regex.test(u.address.state)
+          regex.test(u.status)
       );
     }
     return filtered;

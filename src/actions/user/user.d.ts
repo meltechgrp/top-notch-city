@@ -1,4 +1,4 @@
-type User = {
+type Me = {
   email: string;
   phone: string | null;
   first_name: string;
@@ -24,35 +24,6 @@ type User = {
   total_properties: number;
   followers_count: number;
   is_following?: boolean;
-  address?: Address;
-};
-
-type Me = {
-  email: string;
-  phone: string | null;
-  firstName: string;
-  slug: string;
-  agentProfile?: AgentProfile;
-  lastName: string;
-  gender: "male" | "female" | null;
-  dateOfBirth: string | null;
-  status: "online" | "offline" | "idle";
-  verified: boolean;
-  profileImage: string | null;
-  isActive: boolean;
-  isAvailable?: boolean;
-  isBlockedByAdmin?: boolean;
-  isSuperuser: boolean;
-  role: "user" | "admin" | "agent" | "staff" | "staff_agent";
-  id: string;
-  autoChatMessage: string;
-  createdAt: string;
-  updatedAt: string;
-  viewsCount: number;
-  likesCount: number;
-  totalProperties: number;
-  followersCount: number;
-  isFollowing?: boolean;
   address?: Address;
 };
 
@@ -247,16 +218,28 @@ type DocumentTypes = {
   description: string;
 };
 
-type StoredAccount = {
+type Account = {
+  role: string | null;
   id: string;
-  role: Me["role"];
-  token: string;
-  refreshToken?: string;
-  first_name: string;
-  last_name: string;
   email: string;
-  profile_image: string | null;
-  lastLogin: number;
-  verified: boolean;
-  is_superuser: boolean;
-};
+  phone: string | null;
+  firstName: string;
+  lastName: string;
+  slug: string;
+  gender: string | null;
+  dateOfBirth: string | null;
+  status: string | null;
+  verified: boolean | null;
+  isActive: boolean | null;
+  isSuperuser: boolean | null;
+  isBlockedByAdmin: boolean | null;
+  profileImage: string | null;
+  autoChatMessage: string | null;
+  viewsCount: number | null;
+  likesCount: number | null;
+  totalProperties: number | null;
+  followersCount: number | null;
+  isFollowing: boolean | null;
+  createdAt: string | null;
+  updatedAt: string | null;
+} | null;

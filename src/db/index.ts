@@ -4,17 +4,11 @@ import { drizzle } from "drizzle-orm/expo-sqlite";
 import { migrate } from "drizzle-orm/expo-sqlite/migrator";
 import migrations from "@/db/migrations/migrations";
 
-import {
-  properties,
-  media,
-  amenities,
-  propertyAmenities,
-  interactions,
-  ownerInteractions,
-  addresses,
-} from "@/db/schema";
+import { properties } from "@/db/schema";
 
-export const expoSqlite = SQLite.openDatabaseSync("db.db");
+export const expoSqlite = SQLite.openDatabaseSync("db.db", {
+  enableChangeListener: true,
+});
 
 export const db = drizzle(expoSqlite);
 
@@ -33,12 +27,6 @@ export async function resetDatabase() {
 
 export async function clearAllData() {
   await db.transaction(async (tx) => {
-    await tx.delete(media);
-    await tx.delete(propertyAmenities);
-    await tx.delete(amenities);
-    await tx.delete(interactions);
-    await tx.delete(ownerInteractions);
-    await tx.delete(addresses);
     await tx.delete(properties);
   });
 }

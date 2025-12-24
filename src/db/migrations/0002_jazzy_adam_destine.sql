@@ -1,0 +1,1 @@
+ALTER TABLE `properties` ADD `dirty` integer DEFAULT false;

@@ -6,7 +6,47 @@ export function normalizePropertyList(api: any) {
     slug: api?.slug || "",
     description: api?.description,
     price: api.price || 0,
-    currencyCode: api?.currency?.code || "NGN",
+    currency: api?.currency?.code || "NGN",
+    status: api.status || "pending",
+    purpose: api.purpose,
+    isFeatured: api.is_featured,
+    duration: api.duration?.toString(),
+    bedroom: FindAmenity("Bedroom", api),
+    bathroom: FindAmenity("Bathroom", api),
+    landarea: FindAmenity("Landarea", api),
+    latitude: api.address.latitude,
+    longitude: api.address.longitude,
+    thumbnail: api?.media.find((m: any) => m.media_type == "IMAGE")?.url || "",
+    ownerId: api.owner?.id || "",
+    address:
+      api?.address?.display_address || composeFullAddress(api.address) || "",
+    plots: api.plots,
+    isBooked: api.is_booked,
+    category: api?.category?.name || "",
+    subCategory: api?.subcategory?.name || "",
+    discount: api.discount,
+    views: api?.interaction.viewed ?? 0,
+    likes: api?.interaction.liked ?? 0,
+    liked: api?.owner_interaction.liked || false,
+    createdAt: api.created_at,
+    updatedAt: api.updated_at,
+    syncedAt: new Date().toISOString(),
+    version: Date.now(),
+    deletedAt: null,
+  };
+
+  return {
+    property,
+  };
+}
+export function normalizePropertyServer(api: any): Property {
+  const property = {
+    id: api.id,
+    title: generateTitle(api) || "",
+    slug: api?.slug || "",
+    description: api?.description,
+    price: api.price || 0,
+    currency: api?.currency?.code || "NGN",
     status: api.status || "pending",
     purpose: api.purpose,
     isFeatured: api.is_featured,
@@ -30,9 +70,12 @@ export function normalizePropertyList(api: any) {
     updatedAt: api.updated_at,
     totalReviews: api?.total_reviews,
     avgRating: api?.avg_rating,
-    syncedAt: new Date().toISOString(),
-    version: Date.now(),
-    deletedAt: null,
+    isFollowing: api?.is_following,
+    views: api?.interaction?.viewed ?? 0,
+    likes: api?.interaction?.liked ?? 0,
+    viewed: api?.owner_interaction?.viewed || false,
+    liked: api?.owner_interaction?.liked || false,
+    added: api?.owner_interaction?.added_to_wishlist || false,
   };
 
   const address = api.address && {
@@ -49,7 +92,6 @@ export function normalizePropertyList(api: any) {
 
   const media = (api.media || []).map((m: any) => ({
     id: m.id,
-    propertyId: api.id,
     url: m.url,
     mediaType: m.media_type,
   }));
@@ -59,33 +101,15 @@ export function normalizePropertyList(api: any) {
     name: a.name,
   }));
 
-  const propertyAmenities = (api.amenities || []).map((a: any) => ({
-    propertyId: api.id,
-    amenityId: a.id,
-  }));
-
-  const interaction = api.interaction && {
-    propertyId: api.id,
-    viewed: api.interaction.viewed ?? 0,
-    liked: api.interaction.liked ?? 0,
-    addedToWishlist: api.interaction.added_to_wishlist ?? 0,
-  };
-
-  const ownerInteraction = api.owner_interaction && {
-    propertyId: api.id,
-    viewed: api.owner_interaction.viewed,
-    liked: api.owner_interaction.liked,
-    addedToWishlist: api.owner_interaction.added_to_wishlist,
-  };
   const ownership = api.ownership && {
-    id: api.id,
+    userId: api.owner.id,
     listingRole: api.ownership?.listing_role,
     ownerType: api.ownership?.owner_type,
     verificationStatus: api.ownership?.verification_status,
     verificationNote: api.ownership?.verificationNote,
+    createdAt: api.ownership?.createdAt,
   };
   const owner = api.owner && {
-    propertyId: api.id,
     id: api.owner.id,
     slug: api.owner.slug,
     email: api.owner.email,
@@ -93,9 +117,10 @@ export function normalizePropertyList(api: any) {
     firstName: api.owner.first_name,
     lastName: api.owner.last_name,
     profileImage: api.owner.profile_image,
+    status: "offline",
+    role: "agent",
   };
   const availabilities = (api.availabilities || []).map((a: any) => ({
-    propertyId: api.id,
     id: a.id,
     start: a.start,
     end: a.end,
@@ -122,17 +147,52 @@ export function normalizePropertyList(api: any) {
   }));
 
   return {
-    property,
+    ...property,
     address,
     media,
     amenities,
-    propertyAmenities,
-    interaction,
-    ownerInteraction,
     ownership,
     owner,
     availabilities,
-    reviews,
+    // reviews,
     companies,
   };
+}
+export function normalizePropertyListServer(data: any[]) {
+  return data?.map(
+    (api) =>
+      ({
+        id: api.id,
+        title: generateTitle(api) || "",
+        slug: api?.slug || "",
+        price: api.price || 0,
+        currency: api?.currency?.code || "NGN",
+        status: api.status || "pending",
+        purpose: api.purpose,
+        isFeatured: api.is_featured,
+        duration: api.duration?.toString(),
+        bedroom: FindAmenity("Bedroom", api),
+        bathroom: FindAmenity("Bathroom", api),
+        landarea: FindAmenity("Landarea", api),
+        ownerId: api.owner?.id || "",
+        address:
+          api?.address?.display_address ||
+          composeFullAddress(api.address) ||
+          "",
+        thumbnail:
+          api?.media.find((m: any) => m.media_type == "IMAGE")?.url || "",
+        latitude: api.address.latitude,
+        longitude: api.address.longitude,
+        views: api?.interaction?.viewed ?? 0,
+        likes: api?.interaction?.liked ?? 0,
+        viewed: api?.owner_interaction?.viewed || false,
+        liked: api?.owner_interaction?.liked || false,
+        added: api?.owner_interaction?.added_to_wishlist || false,
+        plots: api.plots,
+        isBooked: api.is_booked,
+        category: api?.category?.name || "",
+        subCategory: api?.subcategory?.name || "",
+        createdAt: api.created_at,
+      }) as PropertyList
+  );
 }

@@ -92,7 +92,7 @@ export function VisitCard({ booking }: Props) {
                 booking_type: booking.booking_type,
                 image: booking.property.image,
                 title: booking.property.title,
-                address: booking.property.address as any,
+                address: composeFullAddress(booking.property.address),
                 onDismiss: () =>
                   query.invalidateQueries({
                     queryKey: ["bookings"],
@@ -162,7 +162,7 @@ export function VisitCard({ booking }: Props) {
               {
                 url: booking.property.image,
                 id: booking.id,
-                media_type: "IMAGE",
+                mediaType: "IMAGE",
               },
             ]}
           >

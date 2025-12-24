@@ -5,13 +5,13 @@ import { router } from "expo-router";
 import { memo } from "react";
 
 function FeaturedProperties() {
-  const { featured } = useHomeList();
+  const { featured, isLoading } = useHomeList();
   return (
     <SectionHeaderWithRef
       title="Featured"
       titleClassName="text-gray-400 text-base"
       subTitle="See More"
-      hasData={featured?.length > 0}
+      hasData={isLoading || featured?.length > 0}
       onSeeAllPress={() => {
         router.push({
           pathname: "/explore",
@@ -23,7 +23,7 @@ function FeaturedProperties() {
     >
       <HorizontalProperties
         data={featured}
-        isLoading={false}
+        isLoading={isLoading}
         listType={["featured"]}
         isFeatured
         isRefetching={false}

@@ -1,6 +1,6 @@
 import { cn, formatMoney } from "@/lib/utils";
 import * as React from "react";
-import { TextInput, View } from "react-native";
+import { View } from "react-native";
 import { Text, Pressable } from "../ui";
 import BottomSheetPlain from "./BottomSheetPlain";
 import { FlashList } from "@shopify/flash-list";
@@ -19,6 +19,7 @@ export type Props = {
   onChange: (value: string | string[]) => void;
   onDismiss: () => void;
   multiple?: boolean;
+  showSearch?: boolean;
   withBackground?: boolean;
   format?: boolean;
   isOpen: boolean;
@@ -35,6 +36,7 @@ export default function MultiSelectOptionBottomSheet(props: Props) {
     withBackground = true,
     multiple = false,
     format,
+    showSearch = true,
   } = props;
   const [search, setSearch] = React.useState("");
 
@@ -87,15 +89,17 @@ export default function MultiSelectOptionBottomSheet(props: Props) {
             : ""
         }
       >
-        <View className="px-4 py-2 bg-background-muted z-10">
-          <CustomInput
-            value={search}
-            onUpdate={setSearch}
-            placeholder="Search..."
-            className="h-12 px-4 bg-background rounded-xl border border-outline-100 text-base"
-            placeholderTextColor="#999"
-          />
-        </View>
+        {showSearch && (
+          <View className="px-4 py-2 bg-background-muted z-10">
+            <CustomInput
+              value={search}
+              onUpdate={setSearch}
+              placeholder="Search..."
+              className="h-12 px-4 bg-background rounded-xl border border-outline-100 text-base"
+              placeholderTextColor="#999"
+            />
+          </View>
+        )}
         <FlashList
           data={filtered}
           showsVerticalScrollIndicator={false}

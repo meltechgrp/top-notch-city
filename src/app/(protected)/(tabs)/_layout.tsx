@@ -14,6 +14,8 @@ import {
 import { Colors } from "@/constants/Colors";
 import { Icon, Pressable, useResolvedTheme, View } from "@/components/ui";
 import { useMe } from "@/hooks/useMe";
+import { useQuery } from "@tanstack/react-query";
+import { getTotal } from "@/actions/message";
 
 export const unstable_settings = {
   initialRouteName: "/home",
@@ -21,7 +23,11 @@ export const unstable_settings = {
 export default function TabLayout() {
   const theme = useResolvedTheme();
   const { me, isAdmin, isAgent } = useMe();
-  const total = 0;
+  const { data } = useQuery({
+    queryKey: ["total-pending"],
+    queryFn: getTotal,
+  });
+  const total = data?.total_unread || 0;
   return (
     <Tabs
       screenOptions={{

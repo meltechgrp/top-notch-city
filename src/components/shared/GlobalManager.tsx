@@ -20,8 +20,8 @@ export default function GlobalManager() {
   }, [updateMe]);
 
   useEffect(() => {
-    updateMe();
     syncNow();
+    updateMe();
   }, []);
 
   return <AuthModals />;

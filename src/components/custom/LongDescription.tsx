@@ -10,7 +10,6 @@ interface LongDescriptionProps {
   numberOfLines?: number;
   className?: string;
   textClassName?: string;
-  updated: string;
 }
 
 export function LongDescription({
@@ -18,7 +17,6 @@ export function LongDescription({
   numberOfLines = 6,
   className,
   textClassName,
-  updated,
 }: LongDescriptionProps) {
   const [expanded, setExpanded] = useState(false);
   const [showToggle, setShowToggle] = useState(false);
@@ -57,11 +55,6 @@ export function LongDescription({
           >
             {description?.toLowerCase()}
           </Text>
-          {expanded && (
-            <Text className="text-sm mt-2 text-typography/80">
-              Last updated: {format(new Date(updated), "dd-MMM")}
-            </Text>
-          )}
         </View>
 
         {showToggle && (

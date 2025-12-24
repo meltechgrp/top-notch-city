@@ -1,20 +1,18 @@
 import { Marker } from "react-native-maps";
 import PropertyMedia from "@/assets/images/property.png";
-import { generateMediaUrl } from "@/lib/api";
+import { generateMediaUrlSingle } from "@/lib/api";
 import { Image, View } from "@/components/ui";
 import { Colors } from "@/constants/Colors";
 import { memo, useState } from "react";
 
 interface Props {
-  property: PropertyListItem;
-  onPress: (data: PropertyListItem) => void;
+  property: PropertyList;
+  onPress: (data: PropertyList) => void;
 }
 function CustomPropertyMarker({ property, onPress }: Props) {
-  const { latitude, longitude } = property.address;
-  const media = Array.isArray(property.media)
-    ? property.media[0]
-    : property.media;
-  const image = generateMediaUrl(media)?.uri;
+  const { latitude, longitude } = property;
+  const media = property.thumbnail;
+  const image = media ? generateMediaUrlSingle(media) : null;
   const [track, setTrack] = useState(true);
 
   return (

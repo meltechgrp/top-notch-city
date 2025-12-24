@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { Badge, Text, View } from "../ui";
 
 interface Props {
-  property: Property;
+  property: PropertyList;
 }
 
 export function PropertyBadge({ property: { purpose, category } }: Props) {

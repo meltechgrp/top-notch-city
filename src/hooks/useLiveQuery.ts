@@ -10,10 +10,7 @@ type LiveQueryState<T> = {
   error: Error | null;
 };
 
-export function useLiveQuery<T>(
-  queryFn: () => Promise<T>,
-  deps: any[] = []
-): LiveQueryState<T> & { refetch: () => Promise<void> } {
+export function useLiveQuery<T>(queryFn: () => Promise<T>, deps: any[] = []) {
   const version = useDbStore((s) => s.version);
 
   const [state, setState] = React.useState<LiveQueryState<T>>({
@@ -22,70 +19,25 @@ export function useLiveQuery<T>(
     error: null,
   });
 
-  const run = React.useCallback(async () => {
-    let cancelled = false;
+  const queryRef = React.useRef(queryFn);
+  queryRef.current = queryFn;
 
-    setState((s) => ({ ...s, isLoading: true, error: null }));
+  const run = React.useCallback(async () => {
+    setState((s) => (s.isLoading ? s : { ...s, isLoading: true, error: null }));
 
     try {
-      const result = await queryFn();
-      if (cancelled) return;
-
-      setState({
-        data: result,
-        isLoading: false,
-        error: null,
-      });
+      const result = await queryRef.current();
+      setState({ data: result, isLoading: false, error: null });
     } catch (err) {
-      if (cancelled) return;
-
-      setState({
-        data: null,
-        isLoading: false,
-        error: err as Error,
-      });
+      setState({ data: null, isLoading: false, error: err as Error });
     }
-
-    return () => {
-      cancelled = true;
-    };
-  }, [queryFn]);
+  }, []);
 
   React.useEffect(() => {
-    let cancelled = false;
+    run();
+  }, [version, ...deps]);
 
-    (async () => {
-      try {
-        const result = await queryFn();
-        if (cancelled) return;
-
-        setState({
-          data: result,
-          isLoading: false,
-          error: null,
-        });
-      } catch (err) {
-        if (cancelled) return;
-
-        setState({
-          data: null,
-          isLoading: false,
-          error: err as Error,
-        });
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [version, queryFn, ...deps]);
-
-  return {
-    ...state,
-    refetch: async () => {
-      await run();
-    },
-  };
+  return { ...state, refetch: run };
 }
 
 export async function writeDb(fn: () => Promise<void>) {

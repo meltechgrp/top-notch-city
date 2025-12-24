@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "0c3d8a45-e804-42e8-9564-d1bb1f5dd4ea",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "115ac890-7081-47cc-8177-cd3e839b44d7",
+  "prevId": "0c3d8a45-e804-42e8-9564-d1bb1f5dd4ea",
   "tables": {
     "search_history": {
       "name": "search_history",
@@ -262,24 +262,25 @@
         },
         "views": {
           "name": "views",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
         "likes": {
           "name": "likes",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
         "liked": {
           "name": "liked",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false
+          "autoincrement": false,
+          "default": false
         },
         "created_at": {
           "name": "created_at",

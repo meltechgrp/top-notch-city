@@ -74,6 +74,9 @@ export function formatNumberCompact(amount: number = 0) {
 }
 
 export function fullName(user: any) {
+  return !user?.first_name ? "" : `${user.first_name} ${user.last_name}`;
+}
+export function fullNameLocal(user: any) {
   return !user?.firstName ? "" : `${user.firstName} ${user.lastName}`;
 }
 export const FindAmenity = (item: string, data?: any): any => {
@@ -410,60 +413,28 @@ export async function uploadWithFakeProgress(
 
 export function mapPropertyList(rows: any[]) {
   return rows.map((row) => ({
-    ...row.property,
-    interaction: row?.interaction || null,
-    ownerInteraction: row?.ownerInteraction || null,
-    media: row.media,
-    address: row?.address,
-  })) as unknown as Property[];
-}
-export function mapProperty(rows: any[]) {
-  const base = rows[0];
-  if (!base) return null;
-  const unique = <T>(arr: T[], key: (v: T) => string) =>
-    Object.values(Object.fromEntries(arr.map((v) => [key(v), v])));
-  rows?.map((r) => console.log(r?.media));
-  return {
-    ...base.property,
-    address: base.address,
-    interaction: base.interaction,
-    ownerInteraction: base.ownerInteraction,
-    owner: base.owner,
-    company: base.company,
-    media: unique(rows.map((r) => r.media).filter(Boolean), (m) => m.id),
-
-    amenities: unique(rows.map((r) => r.amenity).filter(Boolean), (a) => a.id),
-
-    availabilities: unique(
-      rows.map((r) => r.availability).filter(Boolean),
-      (a) => a.id
-    ),
-  } as Property;
+    ...row,
+  })) as unknown as PropertyList[];
 }
 export function mapUserData(rows: any) {
   const base = Array.isArray(rows) ? rows[0] : rows;
-  const others = Array.isArray(rows) ? rows : [rows];
   return {
     ...base?.user,
     address: base?.address,
-    companies: others?.map((r: any) => r.company).filter(Boolean),
-    reviews: others?.map((r: any) => r.review).filter(Boolean),
   } as unknown as Me;
 }
 export function getOutdatedIds({
   server,
   local,
 }: {
-  server: { id: string; updatedAt: string }[];
+  server: any[];
   local: { id: string; updatedAt: string }[];
 }) {
   const localMap = new Map(local.map((p) => [p.id, p.updatedAt]));
 
-  return server
-    .filter((p) => {
-      const localUpdatedAt = localMap.get(p.id);
-      if (!localUpdatedAt) return true;
-      return new Date(p.updatedAt) > new Date(localUpdatedAt);
-    })
-    .map((p) => p.id);
+  return server.filter((p) => {
+    const localUpdatedAt = localMap.get(p.id);
+    if (!localUpdatedAt) return true;
+    return new Date(p.updatedAt) > new Date(localUpdatedAt);
+  });
 }

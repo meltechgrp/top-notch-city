@@ -3,8 +3,8 @@ import ReelShareButton from "../reel/ReelShareButton";
 import { usePropertyActions } from "@/hooks/usePropertyActions";
 import { router } from "expo-router";
 import { Edit, MoreHorizontal, Share } from "lucide-react-native";
-import { cn, generateTitle } from "@/lib/utils";
-import { useMemo, useState } from "react";
+import { cn } from "@/lib/utils";
+import { useState } from "react";
 import WishListButton from "@/components/property/WishListButton";
 import PropertyActionsBottomSheet from "@/components/modals/property/PropertyActionsBottomSheet";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
@@ -23,7 +23,6 @@ export default function PropertyHeader({
     property,
   });
   const [openActions, setOpenActions] = useState(false);
-  const liked = useMemo(() => !!property.ownerInteraction?.liked, [property]);
   return (
     <>
       <View className="pr-4 flex-row bg-background/60 px-4 rounded-full mr-4 items-center gap-2">
@@ -31,7 +30,7 @@ export default function PropertyHeader({
           <WishListButton
             id={property.id}
             slug={property.slug}
-            isAdded={liked}
+            isAdded={!!property.liked}
             hasScrolledToDetails={hasScrolledToDetails}
           />
         )}

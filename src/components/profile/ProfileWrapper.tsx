@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from "react";
-import { FlashList } from "@shopify/flash-list";
+import React, { useCallback, useState } from "react";
+import { FlashList, ListRenderItem } from "@shopify/flash-list";
 
 import { Box, Button, Icon, Pressable, Text, View } from "@/components/ui";
 import FullHeightLoaderWrapper from "@/components/loaders/FullHeightLoaderWrapper";
@@ -20,6 +20,10 @@ import { UserActionsBottomSheet } from "@/components/admin/users/UserBottomSheet
 import { openAccountsModal } from "@/components/globals/AuthModals";
 import { cn } from "@/lib/utils";
 import { useMe } from "@/hooks/useMe";
+import { Campaigns } from "@/components/profile/campaigns";
+import PropertiesTabView from "@/components/profile/PropertiesTab";
+import { useQuery } from "@tanstack/react-query";
+import { getUser } from "@/actions/user";
 
 export type UserType = "visitor" | "owner" | "admin";
 
@@ -32,12 +36,63 @@ export function ProfileWrapper({
   userType = "visitor",
   userId,
 }: ProfileWrapperProps) {
-  const { isAgent, me: user, isLoading, isAdmin, refetch } = useMe(userId);
+  const { isAgent, me } = useMe();
+  const id = userId || me?.id;
+  const {
+    data: user,
+    isLoading,
+    refetch,
+    isRefetching,
+  } = useQuery({
+    queryKey: ["user", id],
+    queryFn: () => getUser(id!),
+    enabled: !!id,
+    staleTime: 0,
+  });
   const [showActions, setShowActions] = useState(false);
-  const dataForTab = useMemo(() => {
-    return [{ type: "all" }];
+  const feedList = React.useMemo(() => {
+    const camps = {
+      id: "camps",
+    } as any;
+    const properties = {
+      id: "properties",
+    } as any;
+    const details = {
+      id: "details",
+    } as any;
+    const bottomPlaceHolder = {
+      id: "bottomPlaceHolder",
+    } as any;
+    return [camps, properties, details, bottomPlaceHolder];
   }, []);
-
+  type FeedList = any;
+  const renderItem: ListRenderItem<FeedList> = useCallback(
+    ({ item }) => {
+      if (item.id === "camps") {
+        return <Campaigns isAgent={isAgent} userType={userType} user={user} />;
+      }
+      if (item.id === "properties" && (userType == "visitor" || isAgent)) {
+        return (
+          <PropertiesTabView
+            showStatus={userType == "owner" && isAgent}
+            isAgent={isAgent}
+            isOwner={userType == "owner"}
+            profileId={id}
+          />
+        );
+      }
+      if (item.id === "details") {
+        return (
+          <ProfileDetails isAgent={isAgent} userType={userType} user={user} />
+        );
+      }
+      if (item.id === "bottomPlaceHolder") {
+        return <View className="h-24" />;
+      }
+      return <View></View>;
+    },
+    [isAgent, userType, user, id]
+  );
   const stickyHeaderIndices = [0, 1];
   return (
     <>
@@ -92,30 +147,13 @@ export function ProfileWrapper({
       >
         <Box className={cn("flex-1", userType == "owner" && "pb-24")}>
           <FlashList
-            data={dataForTab}
+            data={feedList}
             refreshControl={
               <RefreshControl refreshing={false} onRefresh={refetch} />
             }
-            keyExtractor={(_, idx) => `all`}
-            renderItem={({ item }) => {
-              switch (item.type) {
-                case "all":
-                  return (
-                    <View className="mt-4">
-                      {user && (
-                        <ProfileDetails
-                          isAgent={isAgent}
-                          userType={userType}
-                          user={user}
-                        />
-                      )}
-                    </View>
-                  );
-
-                default:
-                  return null;
-              }
-            }}
+            keyExtractor={(item) => item.id}
+            renderItem={renderItem}
+            showsVerticalScrollIndicator={false}
             ListHeaderComponent={
               <View>
                 {user && (
@@ -128,7 +166,7 @@ export function ProfileWrapper({
                 )}
               </View>
             }
-            stickyHeaderIndices={stickyHeaderIndices}
+            // stickyHeaderIndices={stickyHeaderIndices}
             contentContainerStyle={{
               paddingBottom: 50,
             }}

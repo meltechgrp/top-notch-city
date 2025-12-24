@@ -55,7 +55,7 @@ export const BookingBottomSheet: React.FC<BookingBottomSheetProps> = ({
                   {
                     url: booking.property.image,
                     id: booking.id,
-                    media_type: "IMAGE",
+                    mediaType: "IMAGE",
                   },
                 ]}
               >
@@ -115,7 +115,7 @@ export const BookingBottomSheet: React.FC<BookingBottomSheetProps> = ({
                   {
                     url: booking.property.image,
                     id: booking.id,
-                    media_type: "IMAGE",
+                    mediaType: "IMAGE",
                   },
                 ]}
               >
@@ -241,7 +241,7 @@ export const BookingBottomSheet: React.FC<BookingBottomSheetProps> = ({
                   {
                     url: booking.customer.profile_image,
                     id: booking.customer.id,
-                    media_type: "IMAGE",
+                    mediaType: "IMAGE",
                   },
                 ]}
               >
@@ -271,7 +271,7 @@ export const BookingBottomSheet: React.FC<BookingBottomSheetProps> = ({
                   {
                     url: booking.agent.profile_image,
                     id: booking.agent.id,
-                    media_type: "IMAGE",
+                    mediaType: "IMAGE",
                   },
                 ]}
               >

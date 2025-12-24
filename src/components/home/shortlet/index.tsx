@@ -5,13 +5,13 @@ import { router } from "expo-router";
 import { memo } from "react";
 
 function ShortletProperties() {
-  const { shortlet } = useHomeList();
+  const { shortlet, isLoading } = useHomeList();
   return (
     <SectionHeaderWithRef
       title="Shortlet/Hotels"
       titleClassName="text-gray-400 text-base"
       subTitle="See More"
-      hasData={shortlet?.length > 0}
+      hasData={isLoading || shortlet?.length > 0}
       onSeeAllPress={() => {
         router.push({
           pathname: "/explore",
@@ -23,7 +23,7 @@ function ShortletProperties() {
     >
       <HorizontalProperties
         data={shortlet}
-        isLoading={false}
+        isLoading={isLoading}
         listType={["shortlet"]}
         isRefetching={false}
       />

@@ -3,14 +3,15 @@ import { useLiveQuery } from "@/hooks/useLiveQuery";
 import { getMe } from "@/db/queries/user";
 
 export function useMe(userId?: string) {
-  const { data, isLoading, error, refetch } = useLiveQuery(() => getMe(userId));
+  const { data, isLoading, error, refetch } = useLiveQuery(() => getMe());
+  const user = data?.[0] ? data[0].user : null;
   return {
-    me: data,
+    me: user,
     isLoading,
-    isLoggedIn: !!data,
+    isLoggedIn: !!user,
     error,
-    isAgent: data?.role == "agent" || data?.role == "staff_agent",
-    isAdmin: data?.role == "admin" || data?.isSuperuser || false,
+    isAgent: user?.role == "agent" || user?.role == "staff_agent",
+    isAdmin: user?.role == "admin" || user?.isSuperuser || false,
     refetch,
   };
 }

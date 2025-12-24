@@ -22,26 +22,21 @@ import { Dimensions, LayoutChangeEvent } from "react-native";
 import Animated, {
   Extrapolation,
   interpolate,
-  runOnJS,
   useAnimatedScrollHandler,
   useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
 import { PropertyFooter } from "@/components/property/PropertyFooter";
 import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
-import { composeFullAddress, mapProperty } from "@/lib/utils";
 import { useTempStore } from "@/store";
-import { useLiveQuery } from "@/hooks/useLiveQuery";
-import { getProperty } from "@/db/queries/property";
-import { useMe } from "@/hooks/useMe";
 import { scheduleOnRN } from "react-native-worklets";
+import { normalizePropertyServer } from "@/db/normalizers/property";
 
 const { height } = Dimensions.get("window");
 const HERO_HEIGHT = height / 2.2;
 
 export default function PropertyItem() {
   const { propertyId } = useLocalSearchParams() as { propertyId: string };
-  const { isAdmin, isAgent } = useMe();
   const { updateListing } = useTempStore();
   const { width, onLayout } = useLayout();
   const theme = useResolvedTheme();
@@ -50,9 +45,11 @@ export default function PropertyItem() {
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const { data, isLoading, error } = useLiveQuery(() =>
-    getProperty({ propertyId, isAdmin, isAgent })
-  );
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["properties", propertyId],
+    queryFn: () => fetchProperty({ id: propertyId }),
+  });
+
   const { mutate } = useMutation({
     mutationFn: () => viewProperty({ id: propertyId }),
     onSuccess: () => {
@@ -64,7 +61,7 @@ export default function PropertyItem() {
     detailsY.value = e.nativeEvent.layout.y;
   };
   const property = useMemo(() => {
-    return data ? mapProperty(data) : null;
+    return data ? normalizePropertyServer(data) : null;
   }, [propertyId, data]);
 
   useEffect(() => {
@@ -79,7 +76,7 @@ export default function PropertyItem() {
     onScroll: (event) => {
       scrollY.value = event.contentOffset.y;
       if (event.contentOffset.y >= detailsY.value) {
-        runOnJS(setHasScrolledToDetails)(true);
+        scheduleOnRN(setHasScrolledToDetails, true);
       } else {
         scheduleOnRN(setHasScrolledToDetails, false);
       }
@@ -135,8 +132,8 @@ export default function PropertyItem() {
           viewType: property?.viewType,
           discount: property?.discount,
           caution_fee: property?.cautionFee,
-          owner_type: property?.ownership?.ownerType,
-          listing_role: property?.ownership?.listingRole,
+          owner_type: property?.ownership?.ownerType || undefined,
+          listing_role: property?.ownership?.listingRole || undefined,
           subCategory: property?.subCategory,
           companies: property?.companies,
           // ownershipDocuments: property?.ownership?.documents?.map((d) => ({
@@ -145,16 +142,16 @@ export default function PropertyItem() {
           //   url: d.url,
           // })),
           price: property.price.toString(),
-          photos: property.media?.filter((img) => img.mediaType == "IMAGE"),
-          videos: property.media?.filter((img) => img.mediaType == "VIDEO"),
-          currency: property.currencyCode || "NGN",
-          availabilityPeriod: property?.availabilities.map((a) => ({
+          photos: property?.media?.filter((img) => img.mediaType == "IMAGE"),
+          videos: property?.media?.filter((img) => img.mediaType == "VIDEO"),
+          currency: property.currency || "NGN",
+          availabilityPeriod: property?.availabilities?.map((a) => ({
             start: a.start,
             end: a.end,
           })),
           facilities: property?.amenities?.map((f) => f.name),
           address: {
-            displayName: composeFullAddress(property.address),
+            displayName: property.address.displayAddress,
             addressComponents: {
               country: property.address.country,
               state: property.address.state,
@@ -263,7 +260,7 @@ export default function PropertyItem() {
               <Animated.View
                 style={[{ width, height: HERO_HEIGHT }, heroAnimatedStyle]}
               >
-                <PropertyHeroSection property={property} width={width} />
+                <PropertyHeroSection media={property?.media} width={width} />
               </Animated.View>
             )}
             {property && (

@@ -14,6 +14,7 @@ import {
   Home,
   LandPlot,
   MapPin,
+  VectorSquare,
 } from "lucide-react-native";
 import { memo, useMemo } from "react";
 import Layout from "@/constants/Layout";
@@ -25,9 +26,11 @@ import { openAccessModal } from "@/components/globals/AuthModals";
 import { AnimatedLikeButton } from "@/components/custom/AnimatedLikeButton";
 import { useLike } from "@/hooks/useLike";
 import { generateMediaUrlSingle } from "@/lib/api";
+import { useMe } from "@/hooks/useMe";
+import { likePropertyById } from "@/db/mutations/property";
 
 type Props = {
-  data: Property;
+  data: PropertyList;
   className?: string;
   subClassName?: string;
   showFacilites?: boolean;
@@ -41,6 +44,7 @@ type Props = {
   isHorizontal?: boolean;
   withPagination?: boolean;
   enabled?: boolean;
+  isLocal?: boolean;
   imageWrapperClassName?: string;
   imageStyle?: StyleProp<ViewStyle>;
   style?: StyleProp<ViewStyle>;
@@ -60,12 +64,14 @@ function PropertyListItem(props: Props) {
     imageWrapperClassName,
     imageStyle,
     showTitle = true,
+    isLocal = true,
     subClassName,
   } = props;
-  const me = useStore((s) => s.me);
+  const { me } = useMe();
   const { toggleLike } = useLike({ queryKey: listType });
   const { bannerHeight } = Layout;
-  const { price, media, displayAddress, ownerId, interaction, status } = data;
+  const { price, thumbnail, address, ownerId, likes, views, liked, status } =
+    data;
   const { width, onLayout } = useLayout();
   const isMine = useMemo(() => me?.id === ownerId, [me, ownerId]);
   const isAdmin = useMemo(() => me?.role == "admin", [me]);
@@ -87,14 +93,13 @@ function PropertyListItem(props: Props) {
     if (!me) {
       return openAccessModal({ visible: true });
     } else {
-      toggleLike({ id: data.id });
+      if (isLocal) {
+        return likePropertyById({ propertyId: data.id });
+      } else {
+        toggleLike({ id: data.id });
+      }
     }
   }
-  const liked = useMemo(
-    () => data?.ownerInteraction?.liked,
-    [data?.ownerInteraction?.liked]
-  );
-  const banner = Array.isArray(media) ? media[0] : media;
   return (
     <Pressable
       onLayout={onLayout}
@@ -114,14 +119,13 @@ function PropertyListItem(props: Props) {
           imageWrapperClassName
         )}
       >
-        {banner?.url ? (
+        {thumbnail ? (
           <Image
             rounded
             source={{
-              uri: generateMediaUrlSingle(banner.url),
-              cacheKey: banner.id,
+              uri: generateMediaUrlSingle(thumbnail),
+              cacheKey: thumbnail,
             }}
-            cacheKey={banner.id}
             transition={500}
             style={[{ height: bannerHeight - 30 }, imageStyle as any]}
             contentFit="cover"
@@ -141,13 +145,13 @@ function PropertyListItem(props: Props) {
               <View className="flex-row h-8 gap-2 bg-black/40 rounded-2xl py-0 px-3 items-center">
                 <Icon as={Eye} size="sm" className="text-white" />
                 <Text className="text-white font-medium text-sm ">
-                  {formatNumberCompact(interaction?.viewed)}
+                  {formatNumberCompact(views || 0)}
                 </Text>
               </View>
               <View className="flex-row h-8 gap-2 bg-black/40 rounded-2xl py-0 px-3 items-center">
                 <Icon as={Heart} size="sm" className="text-white" />
                 <Text className="text-white font-medium text-sm ">
-                  {formatNumberCompact(interaction?.liked)}
+                  {formatNumberCompact(likes || 0)}
                 </Text>
               </View>
             </View>
@@ -157,7 +161,7 @@ function PropertyListItem(props: Props) {
                 className={"p-2 rounded-full bg-black/50"}
               >
                 <AnimatedLikeButton
-                  liked={liked}
+                  liked={liked || false}
                   className="w-7 h-7 text-white"
                 />
               </Pressable>
@@ -171,26 +175,39 @@ function PropertyListItem(props: Props) {
             {formatMoney(price, "NGN", 0)}
             {data.category == "Shortlet" && "/night"}
           </Text>
-          <View className="flex-row gap-4 mb-1">
-            <View className="flex-row rounded-xl items-center gap-2">
-              <Icon size="sm" as={Bed} className="text-primary" />
-              <Text className="text-sm">{data?.bedroom || "N/A"} bed</Text>
+          {data.category !== "Land" ? (
+            <View className="flex-row gap-4 mb-1">
+              <View className="flex-row rounded-xl items-center gap-2">
+                <Icon size="sm" as={Bed} className="text-primary" />
+                <Text className="text-sm">{data?.bedroom || "N/A"} bed</Text>
+              </View>
+              <View className="flex-row rounded-xl items-center gap-2">
+                <Icon size="sm" as={Bath} className="text-primary" />
+                <Text className="text-sm">{data?.bathroom || "N/A"} bath</Text>
+              </View>
+              <View className="flex-row rounded-xl items-center gap-2">
+                <Icon size="sm" as={VectorSquare} className="text-primary" />
+                <Text className="text-sm">{data?.landarea || "N/A"} sqft</Text>
+              </View>
             </View>
-            <View className="flex-row rounded-xl items-center gap-2">
-              <Icon size="sm" as={Bath} className="text-primary" />
-              <Text className="text-sm">{data?.bathroom || "N/A"} bath</Text>
+          ) : (
+            <View className="flex-row gap-4 mb-1">
+              <View className="flex-row rounded-xl items-center gap-2">
+                <Icon size="sm" as={LandPlot} className="text-primary" />
+                <Text className="text-sm">{data?.plots || "N/A"} plot</Text>
+              </View>
+              <View className="flex-row rounded-xl items-center gap-2">
+                <Icon size="sm" as={VectorSquare} className="text-primary" />
+                <Text className="text-sm">{data?.landarea || "N/A"} sqft</Text>
+              </View>
             </View>
-            <View className="flex-row rounded-xl items-center gap-2">
-              <Icon size="sm" as={LandPlot} className="text-primary" />
-              <Text className="text-sm">{data?.landarea || "N/A"} sqft</Text>
-            </View>
-          </View>
+          )}
         </View>
 
         <View className="flex-row gap-4 items-center">
           <View className="flex-1 flex-row gap-1 items-center">
             <Icon size="sm" as={MapPin} className="text-primary" />
-            <Text className="text-white flex-1 text-xs">{displayAddress}</Text>
+            <Text className="text-white flex-1 text-xs">{address}</Text>
           </View>
         </View>
         {showTitle && (

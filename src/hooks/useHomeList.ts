@@ -4,42 +4,46 @@ import {
   getNearby,
 } from "@/db/queries/property-list";
 import useGetLocation from "@/hooks/useGetLocation";
-import { useLiveQuery } from "@/hooks/useLiveQuery";
-import { mapPropertyList } from "@/lib/utils";
+import React from "react";
 
-export function useHomeList(limit?: number) {
+export function useHomeList(limit: number = 10) {
   const { location } = useGetLocation();
-  const { data: featured } =
-    useLiveQuery(() => getFeatured({}), ["featured"]) ?? [];
-  const { data: lands } =
-    useLiveQuery(() => getCategories({ categories: ["Land"] })) ?? [];
-  const { data: latest } =
-    useLiveQuery(
-      () => getCategories({ categories: ["Commercial", "Residential"] }),
-      ["Commercial", "Residential"]
-    ) ?? [];
-  const { data: shortlet } =
-    useLiveQuery(
-      () => getCategories({ categories: ["Shortlet", "Hotel"] }),
-      ["Shortlet", "Hotel"]
-    ) ?? [];
-  const { data: nearby } = useLiveQuery(
-    () =>
-      location
-        ? getNearby({
-            lat: location.latitude,
-            long: location.longitude,
-            limit: limit || 10,
-          })
-        : Promise.resolve([]),
-    [location?.latitude, location?.longitude]
+
+  const featuredQuery = React.useCallback(
+    () => getFeatured({ limit }),
+    [limit]
   );
 
+  const landsQuery = React.useCallback(
+    () => getCategories({ categories: ["Land"], limit }),
+    [limit]
+  );
+
+  const latestQuery = React.useCallback(
+    () => getCategories({ categories: ["Commercial", "Residential"], limit }),
+    [limit]
+  );
+
+  const shortletQuery = React.useCallback(
+    () => getCategories({ categories: ["Shortlet", "Hotel"], limit }),
+    [limit]
+  );
+
+  const nearbyQuery = React.useCallback(() => {
+    if (!location) return Promise.resolve([]);
+    return getNearby({
+      lat: location.latitude,
+      long: location.longitude,
+      limit: limit || 10,
+    });
+  }, [location?.latitude, location?.longitude, limit]);
+
   return {
-    featured: featured ? mapPropertyList(featured) : [],
-    lands: lands ? mapPropertyList(lands) : [],
-    latest: latest ? mapPropertyList(latest) : [],
-    shortlet: shortlet ? mapPropertyList(shortlet) : [],
-    nearby: nearby ? mapPropertyList(nearby) : [],
+    featured: featuredQuery(),
+    lands: landsQuery(),
+    latest: latestQuery(),
+    shortlet: shortletQuery(),
+    nearby: nearbyQuery(),
+    isLoading: false,
   };
 }

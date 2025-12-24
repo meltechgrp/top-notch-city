@@ -15,6 +15,7 @@ function DropdownSelect({
   multiple = false,
   placeholder,
   Trigger,
+  showSearch,
 }: {
   value?: string | string[];
   onChange: (val: string | string[]) => void;
@@ -23,6 +24,7 @@ function DropdownSelect({
   format?: boolean;
   icon?: LucideIcon;
   multiple?: boolean;
+  showSearch?: boolean;
   placeholder?: string;
   Trigger?: ReactNode;
 }) {
@@ -57,6 +59,7 @@ function DropdownSelect({
       <MultiSelectOptionBottomSheet
         isOpen={show}
         format={format}
+        showSearch={showSearch}
         multiple={multiple}
         onDismiss={() => setShow(false)}
         onChange={onChange}

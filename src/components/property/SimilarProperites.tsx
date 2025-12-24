@@ -7,7 +7,7 @@ import { router } from "expo-router";
 import { memo, useMemo } from "react";
 
 interface SimilarPropertiesProps {
-  property: Property;
+  property: PropertyItem;
 }
 
 function SimilarProperties({ property }: SimilarPropertiesProps) {

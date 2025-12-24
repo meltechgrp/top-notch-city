@@ -27,7 +27,7 @@ type MenuProps = {
 };
 
 interface QuickMenuItemsProps {
-  me: Me | null;
+  me: Account;
   isAgent: boolean;
   isAdmin: boolean;
 }

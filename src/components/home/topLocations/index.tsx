@@ -7,14 +7,14 @@ import { useHomeList } from "@/hooks/useHomeList";
 
 const TopLocations = () => {
   const { location } = useGetLocation();
-  const { nearby } = useHomeList();
+  const { nearby, isLoading } = useHomeList();
   return (
     <SectionHeaderWithRef
       title="Nearby"
       titleClassName="text-gray-400 text-base"
       subTitle="Explore"
       className=""
-      hasData={nearby?.length > 1}
+      hasData={isLoading || nearby?.length > 1}
       onSeeAllPress={() => {
         router.push({
           pathname: "/explore",
@@ -27,7 +27,7 @@ const TopLocations = () => {
     >
       <HorizontalProperties
         data={nearby}
-        isLoading={false}
+        isLoading={isLoading}
         listType={["nearby"]}
         showLike
         isRefetching={false}

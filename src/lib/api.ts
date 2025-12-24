@@ -11,7 +11,7 @@ export const getImageUrl = (url?: string | null) => {
 export const generateMediaUrl = (media: Media) => {
   return {
     uri: `${config.origin}${media?.url}`,
-    isImage: media?.media_type == "IMAGE",
+    isImage: media?.mediaType == "IMAGE",
     id: media?.id,
   };
 };

@@ -18,7 +18,6 @@ import {
   Dot,
   Edit,
   MessageCircle,
-  MoveUpRight,
   Share2,
 } from "lucide-react-native";
 import { openAccessModal } from "@/components/globals/AuthModals";
@@ -44,7 +43,7 @@ export function ProfileTopSection({
   const { mutateAsync } = useFollowAgent({
     queryKey: ["user", user.id],
     agentId: user.id,
-    is_following: user.isFollowing || false,
+    is_following: user.is_following || false,
   });
   const handlePress = () => {
     if (!user) {
@@ -57,7 +56,7 @@ export function ProfileTopSection({
     visitor: [
       {
         action: handlePress,
-        label: user?.isFollowing ? "Unfollow" : "Follow",
+        label: user?.is_following ? "Unfollow" : "Follow",
         icon: Check,
       },
       {
@@ -141,9 +140,9 @@ export function ProfileTopSection({
             <ProfileImageTrigger
               image={[
                 {
-                  url: user?.profileImage!,
+                  url: user?.profile_image!,
                   id: user.id,
-                  media_type: "IMAGE",
+                  mediaType: "IMAGE",
                 },
               ]}
             >
@@ -151,7 +150,7 @@ export function ProfileTopSection({
                 <AvatarFallbackText>{fullName(user)}</AvatarFallbackText>
                 <AvatarImage
                   className="rounded-full"
-                  source={getImageUrl(user?.profileImage)}
+                  source={getImageUrl(user?.profile_image)}
                 />
               </Avatar>
             </ProfileImageTrigger>
@@ -175,7 +174,7 @@ export function ProfileTopSection({
                 {userType == "visitor" ? (
                   <View className="flex-row gap-1 items-center">
                     <Text className="text-sm">
-                      {user?.agentProfile?.years_of_experience || "-"}
+                      {user?.agent_profile?.years_of_experience || "-"}
                     </Text>
                     <Text className="text-sm text-typography/80">
                       Years of Experience
@@ -190,8 +189,8 @@ export function ProfileTopSection({
               {!isAgent && (
                 <Rating
                   size={14}
-                  rating={user.agentProfile?.average_rating || 0}
-                  total={user.agentProfile?.total_reviews || 0}
+                  rating={user.agent_profile?.average_rating || 0}
+                  total={user.agent_profile?.total_reviews || 0}
                 />
               )}
               <View className="flex-row gap-2 mt-3 items-center">
@@ -208,7 +207,7 @@ export function ProfileTopSection({
                   className="gap-1 items-center flex-row"
                 >
                   <Text className="text-sm font-medium">
-                    {formatNumberCompact(user?.followersCount || 0)}
+                    {formatNumberCompact(user?.followers_count || 0)}
                   </Text>
                   <Text className="text-xs">Following</Text>
                   {userType != "visitor" && (
@@ -222,14 +221,14 @@ export function ProfileTopSection({
                 <Icon as={Dot} className="w-3 h-3" />
                 <View className="gap-1 items-center flex-row">
                   <Text className="text-sm font-medium">
-                    {formatNumberCompact(user?.totalProperties || 0)}
+                    {formatNumberCompact(user?.total_properties || 0)}
                   </Text>
                   <Text className="text-xs">Listings</Text>
                 </View>
                 <Icon as={Dot} className="w-3 h-3" />
                 <View className="gap-1 items-center flex-row">
                   <Text className="text-sm font-medium">
-                    {formatNumberCompact(user?.likesCount || 0)}
+                    {formatNumberCompact(user?.likes_count || 0)}
                   </Text>
                   <Text className="text-xs">Likes</Text>
                 </View>

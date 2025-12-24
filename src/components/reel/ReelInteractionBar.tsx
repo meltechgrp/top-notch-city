@@ -13,6 +13,7 @@ import {
   View,
 } from "@/components/ui";
 import { generateMediaUrl } from "@/lib/api";
+import { fullNameLocal } from "@/lib/utils";
 import { profileDefault } from "@/store";
 import { useMutation } from "@tanstack/react-query";
 import { router } from "expo-router";
@@ -45,22 +46,22 @@ function ReelInteractionBar({
         className=" relative"
         onPress={() => {
           router.push({
-            pathname: "/agents/[user]",
+            pathname: "/agents/[userId]",
             params: {
-              user: reel?.owner?.id!,
+              userId: reel?.owner?.id!,
             },
           });
         }}
       >
         <Avatar>
-          {reel?.owner?.profile_image ? (
+          {reel?.owner?.profileImage ? (
             <AvatarImage
               source={
                 {
                   uri: generateMediaUrl({
-                    url: reel.owner.profile_image,
+                    url: reel.owner.profileImage,
                     id: "",
-                    media_type: "IMAGE",
+                    mediaType: "IMAGE",
                   }),
                 }.uri
               }
@@ -68,9 +69,7 @@ function ReelInteractionBar({
           ) : (
             <AvatarImage source={profileDefault} />
           )}
-          <AvatarFallbackText>
-            {reel.owner?.first_name} {reel.owner?.last_name}
-          </AvatarFallbackText>
+          <AvatarFallbackText>{fullNameLocal(reel?.owner)}</AvatarFallbackText>
         </Avatar>
       </AnimatedPressable>
       <View className=" items-center">
@@ -79,7 +78,7 @@ function ReelInteractionBar({
       </View>
       <View className=" items-center">
         <ReelWishListButton isAdded={isAdded} isLand={isLand} id={reel.id} />
-        <Text className=" text-white">{record?.added_to_wishlist || 0}</Text>
+        <Text className=" text-white">{record?.addedToWishlist || 0}</Text>
       </View>
       {showChat && (
         <View className=" items-center">
@@ -99,7 +98,7 @@ function ReelInteractionBar({
                   },
                   onSuccess: (data) => {
                     router.replace({
-                      pathname: "/messages/[chatId]",
+                      pathname: "/chats/[chatId]",
                       params: {
                         chatId: data,
                       },

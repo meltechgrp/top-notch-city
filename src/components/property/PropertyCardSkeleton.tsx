@@ -16,7 +16,7 @@ export function PropertySkeletonCard({
   const { bannerHeight } = Layout;
   return (
     <Pressable
-      style={[{ height: bannerHeight }, style]}
+      style={[{ height: bannerHeight + 50 }, style]}
       className={cn(
         "relative flex-1 bg-background-muted rounded-xl overflow-hidden",
         isHorizontal && "w-[23rem]",
@@ -26,7 +26,7 @@ export function PropertySkeletonCard({
       <Skeleton
         colorMode="dark"
         radius={16}
-        height={bannerHeight}
+        height={bannerHeight - 30}
         width={"100%"}
       />
 

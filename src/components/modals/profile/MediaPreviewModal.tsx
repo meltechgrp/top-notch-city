@@ -42,7 +42,7 @@ export function MediaPreviewModal({
   const renderSlide = (item: Media) => {
     const src = item.url;
 
-    switch (item.media_type) {
+    switch (item.mediaType) {
       case "IMAGE":
         return (
           <Image
@@ -116,7 +116,7 @@ export function MediaPreviewModal({
                 }`}
               >
                 <View className="relative">
-                  {item.media_type === "IMAGE" ? (
+                  {item.mediaType === "IMAGE" ? (
                     <Image
                       source={{ uri: item.url }}
                       className="w-16 h-16"
@@ -125,7 +125,7 @@ export function MediaPreviewModal({
                   ) : (
                     <View className="w-16 h-16 bg-black/40 items-center justify-center">
                       <Icon
-                        as={item.media_type === "VIDEO" ? Play : Music}
+                        as={item.mediaType === "VIDEO" ? Play : Music}
                         color="white"
                         size={"lg"}
                       />

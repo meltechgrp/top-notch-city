@@ -5,12 +5,10 @@ import { EmptyState } from "@/components/property/EmptyPropertyCard";
 import { House } from "lucide-react-native";
 import HorizontalProperties from "@/components/property/HorizontalProperties";
 import SectionHeaderWithRef from "@/components/home/SectionHeaderWithRef";
-import { useLiveQuery } from "@/hooks/useLiveQuery";
-import { getAgentList } from "@/db/queries/property-list";
-import { mapPropertyList } from "@/lib/utils";
+import { normalizePropertyListServer } from "@/db/normalizers/property";
 
 type IProps = {
-  profileId: string;
+  profileId?: string;
   showStatus?: boolean;
   isOwner?: boolean;
   isAgent?: boolean;
@@ -22,18 +20,15 @@ export default function PropertiesTabView({
   isOwner = false,
   isAgent = false,
 }: IProps) {
-  const { data, isLoading } =
-    useLiveQuery(
-      () =>
-        getAgentList({
-          agentId: profileId,
-          isOwner: isOwner && isAgent,
-          page: 1,
-        }),
-      [profileId, isOwner, isAgent]
-    ) ?? [];
-
-  const list = useMemo(() => mapPropertyList(data || []), [data]);
+  const { data, isLoading, refetch } = useInfinityQueries({
+    type: isOwner && isAgent ? "agent-property" : "user",
+    profileId,
+  });
+  const list = useMemo(
+    () =>
+      data?.pages.flatMap((p) => normalizePropertyListServer(p.results)) || [],
+    [data]
+  );
   if (!isLoading && list.length === 0) {
     const propertyLabel = "Properties";
 
@@ -88,13 +83,13 @@ export default function PropertiesTabView({
       title="Properties"
       titleClassName="text-gray-400 text-base"
       subTitle="See All"
-      className="px-0 bg-background-muted rounded-xl -mx-4 pb-5"
+      className=" bg-background-muted rounded-xl -mx-4 px-4 pb-5"
       hasData={isLoading || list?.length > 0}
       onSeeAllPress={() => {
         router.push({
           pathname: "/agents/[userId]/properties",
           params: {
-            userId: profileId,
+            userId: profileId!,
           },
         });
       }}

@@ -21,7 +21,7 @@ import QuoteMessage from "@/components/chat/ChatRoomQuoteMessage";
 import { ProfileImageTrigger } from "@/components/custom/ImageViewerProvider";
 
 export type ChatRoomMessageProps = View["props"] & {
-  me: StoredAccount;
+  me: Account;
   sender?: string;
   message: Message;
   onLongPress: (message: Message) => void;
@@ -44,11 +44,11 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
       message?.file_data?.map((item) => ({
         id: item.file_id,
         url: item.file_url,
-        media_type: "IMAGE",
+        mediaType: "IMAGE",
       })),
     [message]
   ) as Media[];
-  const isMine = React.useMemo(() => message.sender_info?.id === me.id, []);
+  const isMine = React.useMemo(() => message.sender_info?.id === me?.id, []);
   const formatedTime = React.useMemo(
     () =>
       formatMessageTime(message.created_at as unknown as Date, {
@@ -144,7 +144,7 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
                               ? item.url
                               : generateMediaUrl({
                                   url: item.url,
-                                  media_type: "IMAGE",
+                                  mediaType: "IMAGE",
                                   id: item.id,
                                 }).uri,
                             cacheKey: item.id,
@@ -180,7 +180,7 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
                     source={{
                       uri: generateMediaUrl({
                         url: message.property_info?.image_url,
-                        media_type: "IMAGE",
+                        mediaType: "IMAGE",
                         id: message.property_info?.id!,
                       }).uri,
                     }}

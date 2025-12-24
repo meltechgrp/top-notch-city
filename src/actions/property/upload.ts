@@ -39,7 +39,7 @@ const buildPropertyFormData = (listing: Listing) => {
   if (listing?.listing_role) fd.append("listing_role", listing.listing_role);
   if (listing?.caution_fee) fd.append("caution_fee", listing.caution_fee);
 
-  if (listing.currency) fd.append("currency_code", listing.currency.code);
+  if (listing.currency) fd.append("currency_code", listing.currency);
 
   if (listing.category) fd.append("property_category_name", listing.category);
 

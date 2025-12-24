@@ -1,12 +1,5 @@
 import { db } from "@/db";
-import {
-  properties,
-  addresses,
-  interactions,
-  ownerInteractions,
-  media,
-  propertyAddresses,
-} from "@/db/schema";
+import { properties } from "@/db/schema";
 import { eq, and, isNull, inArray, between, gte, lte } from "drizzle-orm";
 
 export function getSearchList({
@@ -39,18 +32,6 @@ export function getSearchList({
     whereConditions.push(inArray(properties.subCategory, filter.subCategory));
   }
 
-  if (filter.city) {
-    whereConditions.push(eq(addresses.city, filter.city));
-  }
-
-  if (filter.state) {
-    whereConditions.push(eq(addresses.state, filter.state));
-  }
-
-  if (filter.country) {
-    whereConditions.push(eq(addresses.country, filter.country));
-  }
-
   if (filter.minPrice !== undefined) {
     whereConditions.push(gte(properties.price, Number(filter.minPrice)));
   }
@@ -68,31 +49,13 @@ export function getSearchList({
     const maxLng = filter.longitude + delta;
 
     whereConditions.push(
-      between(addresses.latitude, minLat, maxLat),
-      between(addresses.longitude, minLng, maxLng)
+      between(properties.latitude, minLat, maxLat),
+      between(properties.longitude, minLng, maxLng)
     );
   }
-
   return db
-    .select({
-      property: properties,
-      interaction: interactions,
-      ownerInteraction: ownerInteractions,
-      media,
-      address: addresses,
-    })
+    .select()
     .from(properties)
-    .innerJoin(
-      propertyAddresses,
-      eq(propertyAddresses.propertyId, properties.id)
-    )
-    .innerJoin(addresses, eq(addresses.id, propertyAddresses.addressId))
-    .leftJoin(interactions, eq(interactions.propertyId, properties.id))
-    .leftJoin(
-      ownerInteractions,
-      eq(ownerInteractions.propertyId, properties.id)
-    )
-    .leftJoin(media, eq(media.propertyId, properties.id))
     .where(and(...whereConditions))
     .limit(limit)
     .offset(offset);

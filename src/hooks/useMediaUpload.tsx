@@ -69,7 +69,6 @@ export function useMediaUpload({
                     uploadToBucket({
                       data: [{ url: item.url }],
                       type,
-                      apply_watermark,
                     }),
                   (p) => updateProgress(item.id, p),
                   type == "video"
@@ -139,7 +138,7 @@ export function useMediaUpload({
     const files = result.assets.map((a) => ({
       url: a.uri,
       id: uniqueId("media_"),
-      media_type: type.toUpperCase() as Media["media_type"],
+      mediaType: type.toUpperCase() as Media["mediaType"],
       loading: true,
       progress: 0,
     })) as UploadedFile[];
@@ -172,7 +171,7 @@ export function useMediaUpload({
     const files = result.assets.map((a) => ({
       url: a.uri,
       id: uniqueId("media_"),
-      media_type: type.toUpperCase() as Media["media_type"],
+      mediaType: type.toUpperCase() as Media["mediaType"],
       loading: true,
       progress: 0,
     })) as UploadedFile[];

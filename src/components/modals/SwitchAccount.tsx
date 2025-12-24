@@ -57,6 +57,7 @@ export default function SwitchAccountSheet({
               ) : (
                 <DropdownSelect
                   value="Remove"
+                  showSearch={false}
                   icon={MoreHorizontal}
                   className=" p-2 border-0 rounded-md"
                   onChange={async () => {

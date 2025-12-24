@@ -6,13 +6,13 @@ import { useHomeList } from "@/hooks/useHomeList";
 import { deduplicate } from "@/lib/utils";
 
 const Lands = () => {
-  const { lands } = useHomeList();
+  const { lands, isLoading } = useHomeList();
   return (
     <SectionHeaderWithRef
       title="Lands"
       titleClassName="text-gray-400 text-base"
       subTitle="See More"
-      hasData={lands?.length > 0}
+      hasData={isLoading || lands?.length > 0}
       onSeeAllPress={() => {
         router.push({
           pathname: "/explore",
@@ -24,7 +24,7 @@ const Lands = () => {
     >
       <HorizontalProperties
         data={deduplicate(lands, "id")}
-        isLoading={false}
+        isLoading={isLoading}
         listType={["trending-lands"]}
         isRefetching={false}
       />

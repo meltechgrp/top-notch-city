@@ -33,7 +33,7 @@ type Property = {
   price: number;
   createdAt: string;
   updatedAt: string;
-  currencyCode: string;
+  currency: string;
   status: PropertyStatus;
   purpose: PropertyPurpose;
   isFeatured: boolean;
@@ -62,9 +62,38 @@ type Property = {
   availabilities: Availabilities[];
   isFollowing: boolean;
   amenities: Amenity[];
-  interaction: Interaction;
-  ownerInteraction: OwnerInteraction;
+  views: number;
+  likes: number;
+  viewed: number;
+  liked: number;
+  added: number;
 };
+type PropertyList = {
+  id: string;
+  title: string;
+  slug: string;
+  price: number;
+  currency: string;
+  status: PropertyStatus;
+  purpose: PropertyPurpose;
+  bathroom?: string;
+  bedroom?: string;
+  plots?: string;
+  isBooked?: boolean;
+  landarea?: number;
+  category: string;
+  ownerId: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  thumbnail: string | null;
+  views: number | null;
+  likes: number | null;
+  liked: boolean | null;
+  description?: string;
+  createdAt: string;
+};
+
 type Media = {
   id: string;
   url: string;
@@ -116,7 +145,6 @@ type Ownership = {
 type Amenity = {
   id: string;
   name: string;
-  value: string;
 };
 
 type Interaction = {
@@ -128,7 +156,7 @@ type Interaction = {
 type OwnerInteraction = {
   viewed: boolean;
   liked: boolean;
-  addedToWishlist: number;
+  added_to_wishlist: number;
 };
 
 type Place = {

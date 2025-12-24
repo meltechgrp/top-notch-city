@@ -9,14 +9,13 @@ import {
 } from "@/lib/utils";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
 import { KeyboardDismissPressable } from "@/components/shared/KeyboardDismissPressable";
-import { ChevronDown, ChevronRight, MapPin } from "lucide-react-native";
+import { ChevronRight, MapPin } from "lucide-react-native";
 import { LocationModal } from "@/components/modals/profile/LocationModal";
 import { useCallback, useState } from "react";
 import useGetLocation from "@/hooks/useGetLocation";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { getReverseGeocode } from "@/hooks/useReverseGeocode";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
-import { Divider } from "@/components/ui/divider";
 import { CurrencyPickerModal } from "@/components/modals/property/CurrencyModal";
 
 const tabs = [
@@ -124,20 +123,10 @@ export default function PropertyListingBasic() {
                 <Pressable
                   onPress={() => setCurrencyModal(true)}
                   className={cn(
-                    "w-12 border border-outline-100 justify-center bg-background items-center gap-1 px-3 aspect-square rounded-full",
-                    listing?.currency && listing?.currency?.length > 1 && "w-14"
+                    "w-14 border border-outline-100 justify-center bg-background items-center gap-1 px-3 aspect-square rounded-full"
                   )}
                 >
-                  <Text
-                    className={cn(
-                      "text-xl",
-                      listing?.currency &&
-                        listing?.currency?.length > 1 &&
-                        "text-sm"
-                    )}
-                  >
-                    {listing?.currency}
-                  </Text>
+                  <Text className={cn("text-xs")}>{listing?.currency}</Text>
                 </Pressable>
                 <View className="flex-1">
                   <CustomInput

@@ -31,12 +31,12 @@ const PropertyWishListButton = ({ isAdded, id, className, slug }: Props) => {
     onMutate: async () => {
       await client.cancelQueries({ queryKey: ["properties", slug] });
 
-      const previousData = client.getQueryData<Property | undefined>([
+      const previousData = client.getQueryData<any | undefined>([
         "properties",
         slug,
       ]);
 
-      client.setQueryData<Property | undefined>(["properties", slug], (old) => {
+      client.setQueryData<any | undefined>(["properties", slug], (old: any) => {
         if (!old) return old;
         return {
           ...old,

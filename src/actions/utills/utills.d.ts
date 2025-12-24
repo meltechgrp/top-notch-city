@@ -35,16 +35,13 @@ type AddressComponent = {
 };
 
 type Address = {
-  display_address: string;
+  displayAddress: string;
   street: string;
   city: string;
   state: string;
   country: string;
-  postal_code: string | null;
   latitude: number;
   longitude: number;
-  place_id?: string;
-  country_code: string | null;
   id?: string;
 };
 

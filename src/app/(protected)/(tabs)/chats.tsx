@@ -13,9 +13,11 @@ import { FilterComponent } from "@/components/admin/shared/FilterComponent";
 import { cn } from "@/lib/utils";
 import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
 import { useWebSocketHandler } from "@/hooks/useWebSocketHandler";
+import { useMe } from "@/hooks/useMe";
 
 export default function MessagesScreen() {
-  const { chats, loading, refreshing, refetch, me } = useChat();
+  const { chats, loading, refreshing, refetch } = useChat();
+  const { me } = useMe();
   const { connect } = useWebSocketHandler();
   const [search, setSearch] = useState("");
   const [friendsModal, setFriendsModal] = React.useState(false);

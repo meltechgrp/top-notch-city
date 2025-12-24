@@ -35,7 +35,7 @@ export type BookingFormProps = {
   image: string;
   title: string;
   availableDates?: Availabilities[];
-  address?: Property["address"];
+  address?: string;
 };
 
 export const BookingFormBottomSheet = ({
@@ -79,7 +79,7 @@ export const BookingFormBottomSheet = ({
     no_of_beds: booking_type == "inspection" ? undefined : "",
     notes:
       booking_type == "inspection"
-        ? `I am interested in your property at ${composeFullAddress(address || {})}`
+        ? `I am interested in your property at ${address}`
         : "",
   });
   const isReservation = booking_type == "reservation";
@@ -180,7 +180,7 @@ export const BookingFormBottomSheet = ({
                   An experienced agent will guide you through a private tour of{" "}
                   {address && (
                     <Text className="text-xs text-typography/90 font-medium">
-                      {composeFullAddress(address, true)}
+                      {address}
                     </Text>
                   )}{" "}
                   to help you assess the space and ask any questions you may
@@ -194,7 +194,7 @@ export const BookingFormBottomSheet = ({
                   Secure your stay at{" "}
                   {address && (
                     <Text className="text-sm text-typography/90 font-medium">
-                      {composeFullAddress(address, true)}
+                      {address}
                     </Text>
                   )}
                   . Your booking guarantees availability for your selected date

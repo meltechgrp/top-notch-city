@@ -37,11 +37,12 @@ export function PropertyFooter({ property }: PropertyFooterProps) {
                 visible: true,
                 property_id: property.id,
                 agent_id: property.ownerId,
-                availableDates: property.availabilities,
+                availableDates: property?.availabilities,
                 image:
-                  property.media.find((i) => i.mediaType == "IMAGE")?.url || "",
+                  property?.media.find((i) => i.mediaType == "IMAGE")?.url ||
+                  "",
                 title: property.title,
-                address: property.address,
+                address: property.address.displayAddress,
                 booking_type:
                   property.category == "Shortlet"
                     ? "reservation"
