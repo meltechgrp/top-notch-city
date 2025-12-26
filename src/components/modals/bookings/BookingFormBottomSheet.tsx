@@ -150,7 +150,6 @@ export const BookingFormBottomSheet = ({
     <>
       <ModalScreen
         visible={visible}
-        disableSwipe
         onDismiss={onDismiss!}
         title={
           booking_type === "inspection"
@@ -296,7 +295,7 @@ export const BookingFormBottomSheet = ({
                     <Icon as={User} className="text-primary" />
                   </View>
                   <Text className="text-base">
-                    {me?.firstName} {me?.lastName}
+                    {me?.first_name} {me?.last_name}
                   </Text>
                 </View>
                 <View className="flex-row gap-2 items-center bg-background-muted border border-outline-100 text-center rounded-xl px-4 h-16">

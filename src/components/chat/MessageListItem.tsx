@@ -4,6 +4,7 @@ import {
   AvatarBadge,
   AvatarFallbackText,
   AvatarImage,
+  Icon,
   Pressable,
   Text,
   View,
@@ -20,6 +21,8 @@ import { TypingIndicator } from "@/components/chat/TypingIndicator";
 import { useShallow } from "zustand/react/shallow";
 import { useChatStore } from "@/store/chatStore";
 import { useMe } from "@/hooks/useMe";
+import { ProfileImageTrigger } from "@/components/custom/ImageViewerProvider";
+import { MoreHorizontal, Trash } from "lucide-react-native";
 
 type MessageListItemProps = {
   chat: Chat;
@@ -71,7 +74,31 @@ function MessageListItem(props: MessageListItemProps) {
     });
   }
   return (
-    <SwipeableWrapper leftAction={handleDelete}>
+    <SwipeableWrapper
+      rightActions={[
+        {
+          type: "danger",
+          component: (
+            <View className="bg-primary flex-1 items-center justify-center">
+              <Icon as={Trash} className="text-white" />
+              <Text className="text-white">Delete</Text>
+            </View>
+          ),
+          onPress: handleDelete,
+        },
+      ]}
+      leftActions={[
+        {
+          component: (
+            <View className="bg-gray-600 flex-1 items-center justify-center">
+              <Icon as={MoreHorizontal} className="text-white" />
+              <Text className="text-white">More</Text>
+            </View>
+          ),
+          onPress: () => {},
+        },
+      ]}
+    >
       <Pressable
         onPress={() =>
           router.push({
@@ -84,73 +111,80 @@ function MessageListItem(props: MessageListItemProps) {
         }
         className=" h-[70px] flex-1 bg-background"
       >
-        <View className=" h-full w-full px-4">
-          <View className="w-full h-full border-b border-outline  flex-row items-center">
-            <View className="h-[60px] gap-4 w-full flex-row items-center">
-              <Avatar className="bg-gray-500 w-12 h-12">
+        <View className="flex-1 py-1 gap-4 pl-4 w-full flex-row">
+          {chat.receiver.profile_image && (
+            <ProfileImageTrigger
+              image={[
+                {
+                  url: chat.receiver.profile_image,
+                  id: chat.receiver.id,
+                  media_type: "IMAGE",
+                },
+              ]}
+            >
+              <Avatar className="bg-gray-500 w-16 h-16">
                 <AvatarFallbackText className="text-typography text-xl">
                   {fullName(chat.receiver)}
                 </AvatarFallbackText>
                 {chat.receiver.status == "online" && <AvatarBadge />}
-                {chat.receiver.profile_image && (
-                  <AvatarImage
-                    source={{
-                      uri: generateMediaUrlSingle(chat.receiver.profile_image),
-                      cache: "force-cache",
-                    }}
-                  />
-                )}
+                <AvatarImage
+                  source={{
+                    uri: generateMediaUrlSingle(chat.receiver.profile_image),
+                    cache: "force-cache",
+                  }}
+                />
               </Avatar>
-              <View className="flex-1 gap-1">
-                <View className="flex-row items-center justify-between">
-                  <View className="flex-row items-center flex-1  pr-4">
-                    <Text numberOfLines={1} className=" text-base">
-                      {fullName(chat.receiver)}
-                    </Text>
-                  </View>
-                  <Text className="text-typography/60 text-xs">
-                    {formatedTime}
+            </ProfileImageTrigger>
+          )}
+          <View className="flex-1 pr-4 border-b border-outline">
+            <View className="flex-row items-center justify-between">
+              <View className="flex-row items-center flex-1  pr-4">
+                <Text numberOfLines={1} className=" text-base font-medium">
+                  {fullName(chat.receiver)}
+                </Text>
+              </View>
+              <Text
+                className={cn(
+                  "text-typography/60 text-xs",
+                  unreadCount && "text-primary"
+                )}
+              >
+                {formatedTime}
+              </Text>
+            </View>
+            {typing && <TypingIndicator />}
+            {!typing && chat?.recent_message && (
+              <View className="flex flex-row gap-4 w-full">
+                <View className="flex-1 flex-row gap-2 items-center overflow-hidden">
+                  {isMine && (
+                    <MessageStatusIcon status={chat?.recent_message?.status} />
+                  )}
+                  <Text
+                    className="text-typography/60 text-sm"
+                    ellipsizeMode="tail"
+                    numberOfLines={2}
+                  >
+                    {chat?.recent_message?.content
+                      ? chat?.recent_message.content
+                      : chat?.recent_message?.file_data?.length
+                        ? "Media"
+                        : ""}
                   </Text>
                 </View>
-                {typing && <TypingIndicator />}
-                {!typing && chat?.recent_message && (
-                  <View className="flex flex-row gap-4 w-full">
-                    <View className="flex-1 flex-row gap-2 items-center overflow-hidden">
-                      {isMine && (
-                        <MessageStatusIcon
-                          status={chat?.recent_message?.status}
-                        />
+                <View className="flex-row w-8 items-center gap-1">
+                  {!!unreadCount && (
+                    <View
+                      className={cn(
+                        "flex-row items-center  h-[18px] bg-primary rounded-full justify-center ml-auto",
+                        unreadCount === "99+" ? "w-[32px]" : "w-[20px]"
                       )}
-                      <Text
-                        className="text-typography/60 text-sm"
-                        ellipsizeMode="tail"
-                        numberOfLines={1}
-                      >
-                        {chat?.recent_message?.content
-                          ? chat?.recent_message.content
-                          : chat?.recent_message?.file_data?.length
-                            ? "Media"
-                            : ""}
-                      </Text>
+                    >
+                      <Text className="text-white text-xs">{unreadCount}</Text>
                     </View>
-                    <View className="flex-row w-8 items-center gap-1">
-                      {!!unreadCount && (
-                        <View
-                          className={cn(
-                            "flex-row items-center  h-[18px] bg-primary rounded-full justify-center ml-auto",
-                            unreadCount === "99+" ? "w-[32px]" : "w-[20px]"
-                          )}
-                        >
-                          <Text className="text-white text-xs">
-                            {unreadCount}
-                          </Text>
-                        </View>
-                      )}
-                    </View>
-                  </View>
-                )}
+                  )}
+                </View>
               </View>
-            </View>
+            )}
           </View>
         </View>
       </Pressable>

@@ -9,6 +9,7 @@ import ChatsStateWrapper from "@/components/chat/ChatsStateWrapper";
 import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
 import { useWebSocketHandler } from "@/hooks/useWebSocketHandler";
 import { useMe } from "@/hooks/useMe";
+import eventBus from "@/lib/eventBus";
 
 function ChatList() {
   const { chats, loading, refreshing, refetch } = useChat();
@@ -35,7 +36,7 @@ function ChatList() {
   }, []);
   return (
     <>
-      <Box className="flex-1">
+      <Box className="flex-1 mt-2">
         <ChatsStateWrapper loading={loading || isLoading} isEmpty={!me}>
           <View className="flex-1">
             <FlashList
@@ -47,6 +48,7 @@ function ChatList() {
               contentContainerClassName="pt-2"
               keyExtractor={(item) => item.chat_id}
               renderItem={({ item }) => <MessageListItem chat={item} />}
+              onScroll={() => eventBus.dispatchEvent("SWIPEABLE_OPEN", null)}
               ListEmptyComponent={() => (
                 <MiniEmptyState
                   icon={Users}

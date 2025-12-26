@@ -24,85 +24,47 @@ import {
 } from "lucide-react-native";
 import { cn, composeFullAddress, formatMoney, fullName } from "@/lib/utils";
 import ModalScreen from "@/components/shared/ModalScreen";
-import { openBookingModal } from "@/components/globals/AuthModals";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useCallback, useState } from "react";
-import { updateBookingStatus } from "@/actions/bookings";
-import { showErrorAlert } from "@/components/custom/CustomNotification";
-import { CancelationReasonBottomSheet } from "@/components/modals/bookings/CancelationReasonBottomSheet";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useCallback } from "react";
+import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 
 export type BookingBottomSheetProps = {
   visible: boolean;
   onDismiss: () => void;
+  setOpenActions: () => void;
+  handleRebook: () => void;
+  handleUpdate(status: BookingStatus, note?: string): Promise<void>;
   booking: Booking;
   isOwner: boolean;
+  isPending: boolean;
 };
 
 export const BookingBottomSheet: React.FC<BookingBottomSheetProps> = ({
   visible,
   onDismiss,
   booking,
+  handleRebook,
+  handleUpdate,
   isOwner,
+  setOpenActions,
+  isPending,
 }) => {
-  const query = useQueryClient();
-  const [bookingBottomSheet, setBoookingBottomSheet] = useState(false);
-  const [openActions, setOpenActions] = useState(false);
-  const { mutateAsync, isPending } = useMutation({
-    mutationFn: updateBookingStatus,
-    mutationKey: ["booking", "status"],
-    onSettled: () => {
-      showErrorAlert({
-        title: "Booking updated successfully",
-        alertType: "success",
-      });
-      query.invalidateQueries({
-        queryKey: ["bookings"],
-      });
-    },
-    onError: () => {
-      showErrorAlert({
-        title: "Something went wrong!",
-        alertType: "error",
-      });
-    },
-  });
-  async function handleUpdate(status: BookingStatus, note?: string) {
-    await mutateAsync({
-      booking_id: booking.id,
-      status,
-      note,
-    });
-  }
-  function handleRebook() {
-    openBookingModal({
-      visible: true,
-      property_id: booking.property.id,
-      agent_id: booking.agent?.id,
-      booking_type: booking.booking_type,
-      image: booking.property.image,
-      title: booking.property.title,
-      address: composeFullAddress(booking.property.address),
-      onDismiss: () =>
-        query.invalidateQueries({
-          queryKey: ["bookings"],
-        }),
-    });
-  }
   const ActionsButtons = useCallback(() => {
     if (booking.status == "pending" && isOwner) {
       return (
-        <Pressable
+        <Button
           disabled={isPending}
           onPress={() => handleUpdate("confirmed", undefined)}
-          className="items-center h-12 flex-1 bg-info-100 py-2 px-5 rounded-lg"
+          className="items-center h-12 flex-1 bg-info-100 rounded-xl"
         >
+          {isPending && <SpinningLoader />}
           <Text className="text-white font-semibold">Confirm</Text>
-        </Pressable>
+        </Button>
       );
     } else if (booking.status == "pending" && !isOwner) {
       return (
-        <Button onPress={() => setOpenActions(true)} className="flex-1 h-12">
+        <Button onPress={setOpenActions} className="flex-1 h-12">
+          {isPending && <SpinningLoader />}
           <Text className="font-semibold">Cancel</Text>
         </Button>
       );
@@ -111,8 +73,9 @@ export const BookingBottomSheet: React.FC<BookingBottomSheetProps> = ({
         <Button
           disabled={isPending}
           onPress={() => handleUpdate("completed", undefined)}
-          className="items-center h-12 flex-1 bg-success-100 py-2 px-5 rounded-lg"
+          className="items-center h-12 flex-1 bg-success-100 rounded-xl"
         >
+          {isPending && <SpinningLoader />}
           <Text className="font-semibold">Mark as Completed</Text>
         </Button>
       );
@@ -123,8 +86,9 @@ export const BookingBottomSheet: React.FC<BookingBottomSheetProps> = ({
       return (
         <Button
           onPress={handleRebook}
-          className="items-center h-12 flex-1 bg-gray-500 py-2 px-5 rounded-lg"
+          className="items-center h-12 flex-1 bg-gray-500 rounded-xl"
         >
+          {isPending && <SpinningLoader />}
           <Text className="font-semibold">Re-Book</Text>
         </Button>
       );
@@ -135,9 +99,9 @@ export const BookingBottomSheet: React.FC<BookingBottomSheetProps> = ({
   return (
     <>
       <ModalScreen
+        title={"Details"}
         visible={visible}
         onDismiss={onDismiss}
-        title={"Details"}
         withScroll
         rightComponent={
           <Badge
@@ -153,29 +117,20 @@ export const BookingBottomSheet: React.FC<BookingBottomSheetProps> = ({
           </Badge>
         }
         bottomComponent={
-          <SafeAreaView edges={["bottom"]} className="bg-transparent">
-            <View className=" bg-background border-t border-t-outline-100 h-16 p-4 pb-0">
+          <View>
+            <View className=" bg-background border-t border-t-outline-100 h-20 p-4">
               <View className="flex-row gap-4">
                 {booking.status == "pending" && isOwner ? (
-                  <Button
-                    onPress={() => setOpenActions(true)}
-                    className="flex-1 h-12"
-                  >
+                  <Button onPress={setOpenActions} className="flex-1 h-12">
+                    {isPending && <SpinningLoader />}
                     <Text className="font-semibold">Cancel</Text>
                   </Button>
-                ) : (
-                  <Button
-                    onPress={() => onDismiss()}
-                    className="flex-1 h-12 bg-gray-500"
-                  >
-                    <Text className="font-semibold">Close</Text>
-                  </Button>
-                )}
+                ) : null}
 
                 <ActionsButtons />
               </View>
             </View>
-          </SafeAreaView>
+          </View>
         }
       >
         <View className="bg-background rounded-2xl px-4 pt-2 pb-8">
@@ -201,28 +156,28 @@ export const BookingBottomSheet: React.FC<BookingBottomSheetProps> = ({
             </ProfileImageTrigger>
 
             <View className="bg-background-muted p-4 rounded-2xl border border-outline-100 gap-1">
-              <Text className="text-lg flex-1 font-semibold ">
-                {booking.booking_type == "reservation"
-                  ? booking.property.title
-                  : "Address:"}
-              </Text>
               <View className="flex-row justify-between gap-4">
-                {booking.property.address ? (
-                  <View className="flex-row gap-1 items-center">
-                    <Icon as={MapPin} size="sm" className="text-info-100" />
-                    <Text
-                      numberOfLines={1}
-                      className="text-sm text-typography/80 "
-                    >
-                      {composeFullAddress(booking.property.address)}
-                    </Text>
-                  </View>
-                ) : null}
-                <Button size="sm" className="bg-gray-500 rounded-xl">
+                <Text className="text-lg flex-1 font-semibold ">
+                  {booking.booking_type == "reservation"
+                    ? booking.property.title
+                    : "Address:"}
+                </Text>
+                <Button size="xs" className="bg-gray-500 rounded-xl">
                   <Text>View</Text>
                   <Icon as={ChevronRight} />
                 </Button>
               </View>
+              {booking.property.address ? (
+                <View className="flex-row flex-1 gap-1 items-center">
+                  <Icon as={MapPin} size="sm" />
+                  <Text
+                    numberOfLines={2}
+                    className="text-sm text-typography/80 "
+                  >
+                    {composeFullAddress(booking.property.address)}
+                  </Text>
+                </View>
+              ) : null}
             </View>
           </View>
           <View className="items-center justify-between mt-3 bg-background-muted p-4 gap-2 rounded-2xl border border-outline-100">
@@ -245,11 +200,11 @@ export const BookingBottomSheet: React.FC<BookingBottomSheetProps> = ({
                 Scheduled Time
               </Text>
               <Text className="font-medium text-sm ">
-                {format(new Date(booking.scheduled_date), "mm:hh a")}
+                {format(new Date(booking.scheduled_date), "hh:mm a")}
               </Text>
             </View>
             <View className="flex-row justify-between gap-4">
-              {booking.duration && (
+              {booking.duration && booking.booking_type == "reservation" && (
                 <View className="flex-1 bg-background px-4 py-3 rounded-2xl flex-row gap-2 items-center">
                   <View className="bg-background-muted rounded-xl border border-outline-100 p-2">
                     <Icon as={ClockFading} size="sm" />
@@ -263,7 +218,7 @@ export const BookingBottomSheet: React.FC<BookingBottomSheetProps> = ({
                   </Text>
                 </View>
               )}
-              {booking.guest && (
+              {booking.guest && booking.booking_type == "reservation" && (
                 <View className=" bg-background px-4 py-3 rounded-xl flex-row gap-2 items-center">
                   <View className="bg-background-muted rounded-xl border border-outline-100 p-2">
                     <Icon as={UsersIcon} size="sm" />
@@ -373,11 +328,6 @@ export const BookingBottomSheet: React.FC<BookingBottomSheetProps> = ({
           )}
         </View>
       </ModalScreen>
-      <CancelationReasonBottomSheet
-        visible={openActions}
-        onCancel={async (reason) => await handleUpdate("cancelled", reason)}
-        onDismiss={() => setOpenActions(false)}
-      />
     </>
   );
 };

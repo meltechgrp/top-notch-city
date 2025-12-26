@@ -1,5 +1,4 @@
 import React from "react";
-import EmptyState, { EmptyStateProps } from "@/components/shared/EmptyState";
 import { ScrollView } from "react-native";
 import { ChatItemSkeleton } from "@/components/skeleton/ChatItemSkeleton";
 import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
@@ -40,7 +39,7 @@ export default function ChatsStateWrapper({
         icon={MessageSquare}
         className="pt-8"
         title="Account needed"
-        description="Login to enjoy our messaging feature"
+        description="Login to enjoy this feature"
         onPress={() => router.push("/signin")}
         subIcon={LogIn}
         buttonLabel="Login / Signup"

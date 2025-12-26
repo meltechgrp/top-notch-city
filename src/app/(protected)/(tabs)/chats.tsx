@@ -4,8 +4,7 @@ import { Box, Icon, Pressable, View } from "@/components/ui";
 import { Tabs } from "expo-router";
 import { Plus, Search } from "lucide-react-native";
 import { useMe } from "@/hooks/useMe";
-import { TabView, SceneMap, TabBar } from "react-native-tab-view";
-import { Colors } from "@/constants/Colors";
+import { TabView, SceneMap } from "react-native-tab-view";
 import BookingList from "@/components/bookings/BookingList";
 import VisitationList from "@/components/bookings/VisitationList";
 import React from "react";
@@ -19,8 +18,8 @@ export default function MessagesScreen() {
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
     { key: "chats", title: "Chats" },
-    { key: "reservation", title: "Reservation" },
-    { key: "inspection", title: "Inspection" },
+    { key: "reservation", title: "Reservations" },
+    { key: "inspection", title: "Inspections" },
   ]);
   const renderScene = SceneMap({
     chats: ChatList,
@@ -59,6 +58,7 @@ export default function MessagesScreen() {
           navigationState={{ index, routes }}
           renderScene={renderScene}
           onIndexChange={setIndex}
+          swipeEnabled={false}
           initialLayout={{ width: layout.width }}
           renderTabBar={(props) => <SmallTabBar {...props} />}
         />

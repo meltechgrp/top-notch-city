@@ -1,9 +1,4 @@
-import { Icon, Text } from "@/components/ui";
-import { Edit, Trash } from "lucide-react-native";
-import Reanimated, {
-  useAnimatedStyle,
-  useSharedValue,
-} from "react-native-reanimated";
+import { Text, View } from "@/components/ui";
 import ReanimatedSwipeable, {
   SwipeableMethods,
 } from "react-native-gesture-handler/ReanimatedSwipeable";
@@ -12,121 +7,104 @@ import { ReactNode, useEffect, useRef } from "react";
 import { Platform, StyleSheet } from "react-native";
 import Animated from "react-native-reanimated";
 import { RectButton } from "react-native-gesture-handler";
-import { Colors } from "@/constants/Colors";
 import eventBus from "@/lib/eventBus";
+
+type SwipeAction = {
+  onPress: () => void;
+  component?: ReactNode;
+  width?: number;
+  type?: "success" | "danger" | "neutral";
+};
 
 type Props = {
   children: ReactNode;
-  rightAction?: () => void;
-  leftAction?: () => void;
+  leftActions?: SwipeAction[];
+  rightActions?: SwipeAction[];
   withBorder?: boolean;
-  rightText?: string;
 };
 
 export default function SwipeableWrapper({
   children,
-  rightAction,
-  leftAction,
+  leftActions = [],
+  rightActions = [],
   withBorder,
-  rightText = "Edit",
 }: Props) {
-  const height = useSharedValue(1);
-  const opacity = useSharedValue(1);
-
-  const animatedContainerStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-    transform: [{ scaleY: height.value }],
-  }));
   const reanimatedRef = useRef<SwipeableMethods>(null);
-  const RightAction = () => {
-    if (!rightAction) return null;
-    const pressHandler = () => {
-      if (Platform.OS === "ios") {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      }
-      rightAction();
-      reanimatedRef.current?.close();
-    };
-    return (
-      <Animated.View style={{ width: 90, transform: [{ translateX: 0 }] }}>
-        <RectButton
-          style={[
-            styles.rightAction,
-            { backgroundColor: "gray", borderRadius: withBorder ? 10 : 0 },
-          ]}
-          onPress={pressHandler}
-        >
-          <Icon as={Edit} className="text-white" />
-          <Text className="text-white">{rightText}</Text>
-        </RectButton>
-      </Animated.View>
-    );
-  };
-  const LeftAction = () => {
-    if (!leftAction) return null;
-    const pressHandler = () => {
-      if (Platform.OS === "ios") {
+
+  const triggerHaptics = (type?: SwipeAction["type"]) => {
+    if (Platform.OS === "ios") {
+      if (type === "danger") {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       } else {
-        Haptics.performAndroidHapticsAsync(Haptics.AndroidHaptics.Clock_Tick);
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       }
-      leftAction();
-      reanimatedRef.current?.close();
-    };
-    return (
-      <Animated.View style={{ width: 90, transform: [{ translateX: 0 }] }}>
+    } else {
+      Haptics.performAndroidHapticsAsync(Haptics.AndroidHaptics.Clock_Tick);
+    }
+  };
+
+  const renderActions = (actions: SwipeAction[]) => () => (
+    <Animated.View style={{ flexDirection: "row" }}>
+      {actions.map((action, index) => (
         <RectButton
+          key={index}
           style={[
-            styles.rightAction,
+            styles.action,
             {
-              backgroundColor: Colors.primary,
+              width: action.width ?? 80,
               borderRadius: withBorder ? 10 : 0,
             },
           ]}
-          onPress={pressHandler}
+          onPress={() => {
+            triggerHaptics(action.type);
+            action.onPress();
+            reanimatedRef.current?.close();
+          }}
         >
-          <Icon as={Trash} className="text-white" />
-          <Text className="text-white">Delete</Text>
+          {action.component ?? (
+            <View className="flex-1 items-center justify-center bg-gray-600">
+              <Text className="text-white">Action</Text>
+            </View>
+          )}
         </RectButton>
-      </Animated.View>
-    );
-  };
+      ))}
+    </Animated.View>
+  );
+
+  function handleSwipeOpen() {
+    eventBus.dispatchEvent("SWIPEABLE_OPEN", null);
+  }
 
   useEffect(() => {
-    eventBus.addEventListener("SWIPEABLE_OPEN", () =>
-      reanimatedRef.current?.close()
-    );
+    const closeAll = () => reanimatedRef.current?.close();
 
+    eventBus.addEventListener("SWIPEABLE_OPEN", closeAll);
     return () => {
-      eventBus.removeEventListener("SWIPEABLE_OPEN", () =>
-        reanimatedRef.current?.close()
-      );
+      eventBus.removeEventListener("SWIPEABLE_OPEN", closeAll);
     };
   }, []);
+
   return (
-    <Reanimated.View>
-      <ReanimatedSwipeable
-        friction={2}
-        ref={reanimatedRef}
-        rightThreshold={40}
-        renderLeftActions={LeftAction}
-        renderRightActions={RightAction}
-        overshootLeft={false}
-        overshootRight={false}
-        leftThreshold={30}
-      >
-        {children}
-      </ReanimatedSwipeable>
-    </Reanimated.View>
+    <ReanimatedSwipeable
+      ref={reanimatedRef}
+      friction={2}
+      overshootLeft={false}
+      overshootRight={false}
+      renderLeftActions={
+        leftActions.length ? renderActions(leftActions) : undefined
+      }
+      onSwipeableCloseStartDrag={handleSwipeOpen}
+      renderRightActions={
+        rightActions.length ? renderActions(rightActions) : undefined
+      }
+    >
+      {children}
+    </ReanimatedSwipeable>
   );
 }
 
 const styles = StyleSheet.create({
-  rightAction: {
-    minWidth: 80,
-    width: "100%",
+  action: {
     height: "100%",
-    alignItems: "center",
-    justifyContent: "center",
   },
 });

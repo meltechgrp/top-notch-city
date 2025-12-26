@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback, useEffect } from "react";
+import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { Dimensions, Modal, Platform } from "react-native";
 import { Icon, Text, Pressable, View } from "@/components/ui";
 import { ChevronLeft, LucideIcon } from "lucide-react-native";
