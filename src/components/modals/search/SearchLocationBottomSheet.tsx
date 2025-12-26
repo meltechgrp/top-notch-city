@@ -1,5 +1,4 @@
 import { FlatList, View } from "react-native";
-import BottomSheet from "@/components/shared/BottomSheet";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Icon, Text, Pressable, Heading } from "@/components/ui";
 import { debounce } from "lodash-es";
@@ -9,7 +8,6 @@ import { cn, composeFullAddress } from "@/lib/utils";
 import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
 import { CustomInput } from "@/components/custom/CustomInput";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
-import { useStore } from "@/store";
 import { useMutation } from "@tanstack/react-query";
 import useGetLocation from "@/hooks/useGetLocation";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
@@ -26,7 +24,7 @@ type Props = {
 
 const options = [
   { label: "Rent", value: "rent" },
-  { label: "Buy", value: "sell" },
+  { label: "Sale", value: "sell" },
 ];
 function SearchLocationBottomSheet({
   show,

@@ -1,6 +1,3 @@
-import * as React from "react";
-
-import { View } from "react-native";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import ChatRoom from "@/components/chat/ChatRoom";
 import { formatMessageTime, fullName } from "@/lib/utils";
@@ -15,10 +12,12 @@ import {
   Heading,
   Pressable,
   Text,
+  View,
 } from "@/components/ui";
 import { generateMediaUrlSingle } from "@/lib/api";
 import BackgroundView from "@/components/layouts/BackgroundView";
 import { useChatStore } from "@/store/chatStore";
+import { useBackHandler } from "@react-native-community/hooks";
 
 export default function ChatRoomScreen() {
   const { chatId } = useLocalSearchParams<{
@@ -26,6 +25,10 @@ export default function ChatRoomScreen() {
   }>();
   const { getReceiver } = useChatStore();
   const receiver = getReceiver(chatId);
+  useBackHandler(() => {
+    router.replace("/(protected)/(tabs)/chats");
+    return true;
+  });
   return (
     <>
       <Stack.Screen

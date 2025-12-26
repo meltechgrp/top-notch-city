@@ -91,7 +91,7 @@ export default function Staffs() {
                     onSuccess: (data) => {
                       router.dismissAll();
                       router.dismissTo({
-                        pathname: "/chats/[chatId]",
+                        pathname: "/(protected)/chats/[chatId]",
                         params: {
                           chatId: data,
                         },

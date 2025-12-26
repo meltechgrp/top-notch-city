@@ -9,11 +9,8 @@ import {
 import { MenuListItem } from "@/components/menu/MenuListItem";
 import { Divider } from "@/components/ui/divider";
 import { useRouter } from "expo-router";
-import CustomerCareBottomSheet from "@/components/modals/CustomerCareBottomSheet";
-
 export default function SupportScreen() {
   const router = useRouter();
-  const [staffs, setStaffs] = useState(false);
   return (
     <>
       <Box className={"flex-1"}>
@@ -34,7 +31,7 @@ export default function SupportScreen() {
           <MenuListItem
             title="Chat With Us"
             description="Send an in-app message"
-            onPress={() => setStaffs(true)}
+            onPress={() => router.push("/staffs")}
             icon={MessageCircleMoreIcon}
             iconColor="primary"
             className=" py-2"
@@ -50,12 +47,6 @@ export default function SupportScreen() {
           />
         </ScrollView>
       </Box>
-      <CustomerCareBottomSheet
-        visible={staffs}
-        onDismiss={() => {
-          setStaffs(false);
-        }}
-      />
     </>
   );
 }

@@ -1,6 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
-import { Dimensions, TouchableOpacity, View } from "react-native";
+import { Dimensions, View } from "react-native";
 import {
   Avatar,
   AvatarFallbackText,
@@ -9,7 +9,6 @@ import {
   Box,
   Heading,
   Icon,
-  Pressable,
   Text,
   useResolvedTheme,
 } from "@/components/ui";
@@ -25,6 +24,7 @@ import { Divider } from "@/components/ui/divider";
 import { router } from "expo-router";
 import { openEnquiryModal } from "@/components/globals/AuthModals";
 import { useMe } from "@/hooks/useMe";
+import AnimatedPressable from "@/components/custom/AnimatedPressable";
 const h = Dimensions.get("screen").height;
 
 export default function Start() {
@@ -79,7 +79,7 @@ export default function Start() {
           </Heading>
           <Heading className=" text-3xl">How can we help?</Heading>
         </View>
-        <TouchableOpacity
+        <AnimatedPressable
           onPress={() => router.push("/staffs")}
           className=" mt-6 px-6 py-6 flex-row shadow justify-between items-center bg-background-muted rounded-3xl"
         >
@@ -92,9 +92,9 @@ export default function Start() {
             </Text>
           </View>
           <Icon className="text-primary" as={SendHorizonal} />
-        </TouchableOpacity>
+        </AnimatedPressable>
         <View className=" mt-6 px-6 shadow py-6 gap-4 bg-background-muted rounded-3xl">
-          <TouchableOpacity
+          <AnimatedPressable
             onPress={() => {
               router.push("/agents");
             }}
@@ -104,9 +104,9 @@ export default function Start() {
               Find Agents
             </Text>
             <Icon className="text-primary" as={UserSearch} />
-          </TouchableOpacity>
+          </AnimatedPressable>
           <Divider />
-          <TouchableOpacity
+          <AnimatedPressable
             onPress={() => {
               router.push({
                 pathname: "/explore",
@@ -121,10 +121,10 @@ export default function Start() {
               Explore Properties
             </Text>
             <Icon className="text-primary" as={House} />
-          </TouchableOpacity>
+          </AnimatedPressable>
         </View>
         <View className=" mt-6 px-6 shadow py-6 gap-4 bg-background-muted rounded-3xl">
-          <TouchableOpacity
+          <AnimatedPressable
             onPress={() => {
               router.push("/support/contact");
             }}
@@ -134,9 +134,9 @@ export default function Start() {
               Help
             </Text>
             <Icon className="text-primary" as={HelpCircle} />
-          </TouchableOpacity>
+          </AnimatedPressable>
           <Divider />
-          <TouchableOpacity
+          <AnimatedPressable
             onPress={() => {
               openEnquiryModal({ visible: true });
             }}
@@ -146,7 +146,7 @@ export default function Start() {
               Send us a feedback
             </Text>
             <Icon className="text-primary" as={Bot} />
-          </TouchableOpacity>
+          </AnimatedPressable>
         </View>
       </View>
     </LinearGradient>

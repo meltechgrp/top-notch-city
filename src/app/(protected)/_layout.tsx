@@ -63,7 +63,7 @@ export default function ProtectedRoutesLayout() {
           headerLeft: headerLeft(),
           headerTitle: "Staffs",
           presentation: Platforms.isAndroid() ? "modal" : "formSheet",
-          sheetAllowedDetents: [0.85, 1],
+          sheetAllowedDetents: [0.9, 1],
           sheetGrabberVisible: true,
           contentStyle: {
             flex: 1,

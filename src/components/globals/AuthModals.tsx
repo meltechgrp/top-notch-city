@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import eventBus from "@/lib/eventBus";
 import EnquiriesFormBottomSheet from "../modals/EnquiriesBottomSheet";
-import CustomerCareBottomSheet from "@/components/modals/CustomerCareBottomSheet";
 import { ContentAccessModal } from "@/components/modals/ContentAccessModal";
 import { AgentShareSheet } from "@/components/modals/agent/AgentShareSheet";
 import { AppShareSheet } from "@/components/modals/AppShareSheet";
@@ -37,15 +36,6 @@ export default function AuthModals() {
           {...enquiry}
           onDismiss={() => {
             enquiry.onDismiss?.();
-            setEnquiry(null);
-          }}
-        />
-      )}
-      {!!staffs && (
-        <CustomerCareBottomSheet
-          {...staffs}
-          onDismiss={() => {
-            staffs.onDismiss?.();
             setEnquiry(null);
           }}
         />

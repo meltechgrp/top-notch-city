@@ -2,9 +2,6 @@ import CreateButton from "@/components/custom/CreateButton";
 import DiscoverProperties from "@/components/home/DiscoverProperties";
 import TopLocations from "@/components/home/topLocations";
 import { Box, View } from "@/components/ui";
-import StartChatBottomSheet from "@/components/modals/StartChatBottomSheet";
-import React, { useCallback, useState } from "react";
-import CustomerCareBottomSheet from "@/components/modals/CustomerCareBottomSheet";
 import { ListRenderItem, RefreshControl } from "react-native";
 import ShortletProperties from "@/components/home/shortlet";
 import FeaturedProperties from "@/components/home/featured";
@@ -12,15 +9,14 @@ import ApartmentProperties from "@/components/home/recent";
 import Lands from "@/components/home/lands";
 import { FlashList } from "@shopify/flash-list";
 import { useMe } from "@/hooks/useMe";
-import { useBackgroundSync } from "@/hooks/useTaskManager";
 import { router } from "expo-router";
+import { useHomeFeed } from "@/hooks/useHomeFeed";
+import React, { useCallback } from "react";
 const MAP_HEIGHT = 400;
 
 export default function HomeScreen() {
   const { me } = useMe();
-  const { syncNow } = useBackgroundSync();
-  const [friendsModal, setFriendsModal] = React.useState(false);
-  const [staffs, setStaffs] = useState(false);
+  const { refreshAll, refetching } = useHomeFeed();
   const feedList = React.useMemo(() => {
     const topLocations = {
       id: "locations",
@@ -86,7 +82,7 @@ export default function HomeScreen() {
       <Box className="flex-1">
         <FlashList
           refreshControl={
-            <RefreshControl refreshing={false} onRefresh={syncNow} />
+            <RefreshControl refreshing={refetching} onRefresh={refreshAll} />
           }
           ListHeaderComponent={<DiscoverProperties mapHeight={MAP_HEIGHT} />}
           showsVerticalScrollIndicator={false}
@@ -99,20 +95,6 @@ export default function HomeScreen() {
         />
       </Box>
       {me && <CreateButton className="" onPress={onNewChat} />}
-      {me && friendsModal && (
-        <StartChatBottomSheet
-          visible={friendsModal}
-          onDismiss={() => setFriendsModal(false)}
-          setStaffs={() => setStaffs(true)}
-          me={me}
-        />
-      )}
-      <CustomerCareBottomSheet
-        visible={staffs}
-        onDismiss={() => {
-          setStaffs(false);
-        }}
-      />
     </>
   );
 }

@@ -1,10 +1,8 @@
-import StartChatBottomSheet from "@/components/modals/StartChatBottomSheet";
-import CustomerCareBottomSheet from "@/components/modals/CustomerCareBottomSheet";
 import { Box, Icon, Pressable, View } from "@/components/ui";
 import { router, Tabs, useFocusEffect } from "expo-router";
 import { Plus, Search } from "lucide-react-native";
 import { useMe } from "@/hooks/useMe";
-import { TabView, SceneMap } from "react-native-tab-view";
+import { TabView } from "react-native-tab-view";
 import BookingList from "@/components/bookings/BookingList";
 import VisitationList from "@/components/bookings/VisitationList";
 import React, { useCallback, useMemo } from "react";
@@ -107,20 +105,6 @@ export default function MessagesScreen() {
           renderTabBar={(props) => <SmallTabBar {...props} />}
         />
       </Box>
-      {me && friendsModal && (
-        <StartChatBottomSheet
-          visible={friendsModal}
-          onDismiss={() => setFriendsModal(false)}
-          setStaffs={() => setStaffs(true)}
-          me={me}
-        />
-      )}
-      <CustomerCareBottomSheet
-        visible={staffs}
-        onDismiss={() => {
-          setStaffs(false);
-        }}
-      />
     </>
   );
 }

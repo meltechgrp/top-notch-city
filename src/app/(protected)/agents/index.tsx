@@ -68,7 +68,7 @@ export default function Agents() {
           <View className="px-2 my-2 border-b border-outline-100 pb-2 flex-row gap-2">
             <TouchableOpacity
               onPress={() => setShow(true)}
-              className=" flex-row justify-between py-2 px-2 h-12 w-28 rounded-2xl border border-outline bg-background-muted items-center gap-2"
+              className=" flex-row justify-between py-2 px-2 h-14 w-28 rounded-2xl border border-outline bg-background-muted items-center gap-2"
             >
               <Text className="flex-1 capitalize">by {filter.type}</Text>
               <Icon size="sm" className="" as={ChevronDownIcon} />

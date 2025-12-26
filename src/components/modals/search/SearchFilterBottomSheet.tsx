@@ -65,7 +65,7 @@ function SearchFilterBottomSheet({
   });
   const options = [
     { label: "For Rent", value: "rent" },
-    { label: "For Buy", value: "sell" },
+    { label: "For Sale", value: "sell" },
   ];
   const FooterComponent = useCallback(
     () => (

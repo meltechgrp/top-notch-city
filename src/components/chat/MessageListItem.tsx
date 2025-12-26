@@ -112,30 +112,31 @@ function MessageListItem(props: MessageListItemProps) {
         className=" h-[70px] flex-1 bg-background"
       >
         <View className="flex-1 py-1 gap-4 pl-4 w-full flex-row">
-          {chat.receiver.profile_image && (
-            <ProfileImageTrigger
-              image={[
-                {
-                  url: chat.receiver.profile_image,
-                  id: chat.receiver.id,
-                  media_type: "IMAGE",
+          <Pressable
+            onPress={() =>
+              router.push({
+                pathname: "/agents/[userId]",
+                params: {
+                  userId: chat.sender_id,
                 },
-              ]}
-            >
-              <Avatar className="bg-gray-500 w-16 h-16">
-                <AvatarFallbackText className="text-typography text-xl">
-                  {fullName(chat.receiver)}
-                </AvatarFallbackText>
-                {chat.receiver.status == "online" && <AvatarBadge />}
+              })
+            }
+          >
+            <Avatar className="bg-gray-500 w-16 h-16">
+              <AvatarFallbackText className="text-typography text-xl">
+                {fullName(chat.receiver)}
+              </AvatarFallbackText>
+              {chat.receiver.status == "online" && <AvatarBadge />}
+              {chat.receiver.profile_image && (
                 <AvatarImage
                   source={{
                     uri: generateMediaUrlSingle(chat.receiver.profile_image),
                     cache: "force-cache",
                   }}
                 />
-              </Avatar>
-            </ProfileImageTrigger>
-          )}
+              )}
+            </Avatar>
+          </Pressable>
           <View className="flex-1 pr-4 border-b border-outline">
             <View className="flex-row items-center justify-between">
               <View className="flex-row items-center flex-1  pr-4">
