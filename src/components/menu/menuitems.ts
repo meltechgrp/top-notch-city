@@ -42,7 +42,7 @@ export const getQuickMenuItems = ({
     {
       label: "My Bookings",
       icon: BookPlus,
-      link: `/agents/${me?.id}/bookings`,
+      link: `/chats`,
       role: "user",
       description: "Manage all your reservations/visitations.",
     },
@@ -72,7 +72,7 @@ export const getQuickMenuItems = ({
     {
       label: "Bookings",
       icon: BookPlus,
-      link: `/agents/${me?.id}/bookings`,
+      link: `/chats`,
       role: "agent",
       description: "Manage all your bookings.",
     },

@@ -42,23 +42,25 @@ export default function Menu() {
             actionRoute={`/signin`}
           />
         )}
-        <View className="mt-6 px-4">
-          <Text className="mb-2 font-medium">
-            {isAgent ? "Grow your bussiness" : "Explore"}
-          </Text>
-          <View className="gap-4 bg-background-muted p-4 rounded-xl border border-outline-100">
-            {quickMenuItems.map((item, i) => (
-              <MenuListItem
-                key={item.label}
-                title={item.label}
-                icon={item.icon}
-                description={item.description}
-                withBorder={i != quickMenuItems.length - 1}
-                onPress={() => item.link && router.push(item.link as any)}
-              />
-            ))}
+        {isAgent && (
+          <View className="mt-6 px-4">
+            <Text className="mb-2 font-medium">
+              {isAgent ? "Grow your bussiness" : "Explore"}
+            </Text>
+            <View className="gap-4 bg-background-muted p-4 rounded-xl border border-outline-100">
+              {quickMenuItems.map((item, i) => (
+                <MenuListItem
+                  key={item.label}
+                  title={item.label}
+                  icon={item.icon}
+                  description={item.description}
+                  withBorder={i != quickMenuItems.length - 1}
+                  onPress={() => item.link && router.push(item.link as any)}
+                />
+              ))}
+            </View>
           </View>
-        </View>
+        )}
         {isAgent && (
           <View className="mt-6 px-4">
             <Text className="mb-2 font-medium">Manage your account</Text>

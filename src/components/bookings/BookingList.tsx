@@ -32,12 +32,7 @@ function BookingList() {
     (key: string) => {
       if (!bookings.length) return [];
 
-      return bookings
-        .filter((booking) => booking.booking_type == key)
-        .sort(
-          (a, b) =>
-            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        );
+      return bookings.filter((booking) => booking.booking_type == key);
     },
     [bookings]
   );

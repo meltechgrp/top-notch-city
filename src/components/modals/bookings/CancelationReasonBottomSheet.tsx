@@ -33,8 +33,8 @@ export const CancelationReasonBottomSheet: React.FC<
     <BottomSheet
       visible={visible}
       onDismiss={onDismiss}
-      snapPoint={["65%"]}
-      title={title ?? "Cancel Reservation"}
+      snapPoint={["65%", "90%"]}
+      title={title ?? "Cancel"}
       withHeader
       backdropVariant="xl"
       withScroll
@@ -64,7 +64,7 @@ export const CancelationReasonBottomSheet: React.FC<
               <ButtonText>Close</ButtonText>
             </Button>
             <Button className="flex-1" onPress={handleConfirm}>
-              <ButtonText>Submit</ButtonText>
+              <ButtonText>Continue</ButtonText>
             </Button>
           </View>
         </View>

@@ -32,12 +32,7 @@ function VisitationList() {
     (key: string) => {
       if (!bookings.length) return [];
 
-      bookings.filter((booking) => booking.booking_type == key);
-
-      return bookings.sort(
-        (a, b) =>
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      );
+      return bookings.filter((booking) => booking.booking_type == key);
     },
     [bookings]
   );

@@ -13,6 +13,7 @@ import Lands from "@/components/home/lands";
 import { FlashList } from "@shopify/flash-list";
 import { useMe } from "@/hooks/useMe";
 import { useBackgroundSync } from "@/hooks/useTaskManager";
+import { router } from "expo-router";
 const MAP_HEIGHT = 400;
 
 export default function HomeScreen() {
@@ -77,7 +78,7 @@ export default function HomeScreen() {
     return <View></View>;
   }, []);
   const onNewChat = () => {
-    setFriendsModal(true);
+    router.push("/start");
   };
 
   return (

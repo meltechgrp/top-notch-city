@@ -9,7 +9,7 @@ import Animated from "react-native-reanimated";
 import { RectButton } from "react-native-gesture-handler";
 import eventBus from "@/lib/eventBus";
 
-type SwipeAction = {
+export type SwipeAction = {
   onPress: () => void;
   component?: ReactNode;
   width?: number;

@@ -1,20 +1,20 @@
 import { Colors } from "@/constants/Colors";
 import React from "react";
 import { View, StyleSheet, Pressable, Animated } from "react-native";
-import {
-  SceneRendererProps,
-  NavigationState,
-  Route,
-} from "react-native-tab-view";
+import { SceneRendererProps, NavigationState } from "react-native-tab-view";
+
+type Route = {
+  key: string;
+  title: string;
+  count?: number;
+};
 
 export function SmallTabBar({
   navigationState,
   position,
   jumpTo,
-  count,
 }: SceneRendererProps & {
   navigationState: NavigationState<Route>;
-  count?: number;
 }) {
   const inputRange = navigationState.routes.map((_, i) => i);
 
@@ -55,10 +55,10 @@ export function SmallTabBar({
                 {route.title}
               </Animated.Text>
 
-              {!!count && count > 0 && (
+              {route.count !== undefined && route.count > 0 && (
                 <View style={styles.badge}>
                   <Animated.Text style={styles.badgeText}>
-                    {count > 99 ? "99+" : count}
+                    {route.count > 99 ? "99+" : route.count}
                   </Animated.Text>
                 </View>
               )}
@@ -77,6 +77,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 4,
     marginHorizontal: 12,
+    marginTop: 4,
   },
   tab: {
     flex: 1,

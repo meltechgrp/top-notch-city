@@ -19,6 +19,7 @@ import {
   House,
   MessagesSquare,
   SendHorizonal,
+  UserSearch,
   X,
 } from "lucide-react-native";
 import { Divider } from "@/components/ui/divider";
@@ -115,15 +116,15 @@ export default function ConnectionsListSelectBottomSheet(props: Props) {
             <View className=" mt-6 px-6 shadow py-6 gap-4 bg-background-muted rounded-3xl">
               <TouchableOpacity
                 onPress={() => {
-                  router.push("/chats");
+                  router.push("/agents");
                   onDismiss();
                 }}
                 className="flex-row justify-between items-center"
               >
                 <Text size="xl" className=" font-heading">
-                  Messages
+                  Find Agents
                 </Text>
-                <Icon className="text-primary" as={MessagesSquare} />
+                <Icon className="text-primary" as={UserSearch} />
               </TouchableOpacity>
               <Divider />
               <TouchableOpacity

@@ -32,7 +32,9 @@ import { format } from "date-fns";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateBookingStatus } from "@/actions/bookings";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
-import SwipeableWrapper from "@/components/shared/SwipeableWrapper";
+import SwipeableWrapper, {
+  SwipeAction,
+} from "@/components/shared/SwipeableWrapper";
 import { openBookingModal } from "@/components/globals/AuthModals";
 import { CancelationReasonBottomSheet } from "@/components/modals/bookings/CancelationReasonBottomSheet";
 
@@ -47,8 +49,8 @@ export function BookingCard({ booking }: Props) {
   const [openActions, setOpenActions] = useState(false);
   const { mutateAsync, isPending } = useMutation({
     mutationFn: updateBookingStatus,
-    mutationKey: ["booking", "status"],
-    onSettled: () => {
+    mutationKey: ["bookings"],
+    onSuccess: () => {
       showErrorAlert({
         title: "Booking updated successfully",
         alertType: "success",
@@ -89,33 +91,60 @@ export function BookingCard({ booking }: Props) {
         }),
     });
   }
+  const LeftActions = useMemo(
+    () =>
+      [
+        ...[
+          isOwner && booking.status == "pending"
+            ? {
+                type: "success",
+                component: (
+                  <View className="bg-success-100 flex-1 items-center justify-center">
+                    <Icon as={CircleCheckBig} className="text-white" />
+                    <Text className="text-white text-sm">
+                      {isOwner ? "Comfirm" : "Completed"}
+                    </Text>
+                  </View>
+                ),
+                onPress: () =>
+                  handleUpdate(isOwner ? "confirmed" : "completed"),
+              }
+            : null,
+        ],
+        ...[
+          !isOwner && booking.status == "confirmed"
+            ? {
+                type: "success",
+                component: (
+                  <View className="bg-success-100 flex-1 items-center justify-center">
+                    <Icon as={CircleCheckBig} className="text-white" />
+                    <Text className="text-white text-sm">
+                      {isOwner ? "Comfirm" : "Completed"}
+                    </Text>
+                  </View>
+                ),
+                onPress: () =>
+                  handleUpdate(isOwner ? "confirmed" : "completed"),
+              }
+            : null,
+        ],
+        {
+          type: "success",
+          component: (
+            <View className="bg-gray-600 flex-1 items-center justify-center">
+              <Icon as={BookCheck} className="text-white text-sm" />
+              <Text className="text-white">Re-book</Text>
+            </View>
+          ),
+          onPress: handleRebook,
+        },
+      ].filter((a) => a != null) as SwipeAction[],
+    [isOwner, booking]
+  );
   return (
     <>
       <SwipeableWrapper
-        leftActions={[
-          {
-            type: "success",
-            component: (
-              <View className="bg-success-100 flex-1 items-center justify-center">
-                <Icon as={CircleCheckBig} className="text-white" />
-                <Text className="text-white">
-                  {isOwner ? "Comfirm" : "Completed"}
-                </Text>
-              </View>
-            ),
-            onPress: () => handleUpdate(isOwner ? "confirmed" : "completed"),
-          },
-          {
-            type: "success",
-            component: (
-              <View className="bg-gray-600 flex-1 items-center justify-center">
-                <Icon as={BookCheck} className="text-white" />
-                <Text className="text-white">Re-book</Text>
-              </View>
-            ),
-            onPress: handleRebook,
-          },
-        ]}
+        leftActions={LeftActions}
         rightActions={[
           {
             component: (
@@ -136,8 +165,10 @@ export function BookingCard({ booking }: Props) {
             <ProfileImageTrigger
               image={[
                 {
-                  url: booking.property.image,
-                  id: booking.id,
+                  url: isOwner
+                    ? booking.customer.profile_image
+                    : booking.property.image,
+                  id: isOwner ? booking.customer.id : booking.property.id,
                   media_type: "IMAGE",
                 },
               ]}
@@ -146,11 +177,14 @@ export function BookingCard({ booking }: Props) {
                 <AvatarFallbackText className="text-typography text-xl">
                   {fullName(booking.customer)}
                 </AvatarFallbackText>
-                {booking.customer.profile_image && (
+                {(booking.customer.profile_image ||
+                  booking.agent.profile_image) && (
                   <AvatarImage
                     source={{
                       uri: generateMediaUrlSingle(
-                        booking.customer.profile_image
+                        isOwner
+                          ? booking.customer.profile_image
+                          : booking.property.image
                       ),
                       cache: "force-cache",
                     }}
@@ -162,7 +196,11 @@ export function BookingCard({ booking }: Props) {
               <View className="flex-row items-center justify-between">
                 <View className="flex-row items-center flex-1  pr-4">
                   <Text numberOfLines={1} className=" text-base font-medium">
-                    {fullName(booking.customer)}
+                    {isOwner
+                      ? fullName(booking.customer)
+                      : booking.booking_type == "reservation"
+                        ? booking.property.title
+                        : "Address"}
                   </Text>
                 </View>
                 <Text className="text-typography/60 text-xs">
@@ -174,15 +212,6 @@ export function BookingCard({ booking }: Props) {
 
               <View className="flex-1 flex-row gap-4">
                 <View className="flex-1 gap-1">
-                  <View className="flex-row gap-1 items-center">
-                    <Icon as={Calendar} size="xs" className="text-gray-400" />
-                    <Text className="font-semibold text-xs text-typography/80">
-                      {format(
-                        new Date(booking.scheduled_date),
-                        "dd MMMM, hh:mm a"
-                      )}
-                    </Text>
-                  </View>
                   <View className=" flex-row gap-1 items-center">
                     <Icon as={MapPin} className="text-primary" size="xs" />
                     <Text
@@ -191,6 +220,15 @@ export function BookingCard({ booking }: Props) {
                       numberOfLines={1}
                     >
                       {composeFullAddress(booking.property.address)}
+                    </Text>
+                  </View>
+                  <View className="flex-row gap-1 items-center">
+                    <Icon as={Calendar} size="xs" className="text-gray-400" />
+                    <Text className="font-semibold text-xs text-typography/80">
+                      {format(
+                        new Date(booking.scheduled_date),
+                        "dd MMMM, hh:mm a"
+                      )}
                     </Text>
                   </View>
                 </View>

@@ -45,7 +45,7 @@ export async function resetDatabase() {
   await SQLite.deleteDatabaseAsync("db.db");
 }
 export const unstable_settings = {
-  initialRouteName: "(onboarding)/splash",
+  initialRouteName: "/",
 };
 LogBox.ignoreLogs([
   "[Reanimated] Reading from `value` during component render.",

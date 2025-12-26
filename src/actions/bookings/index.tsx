@@ -9,7 +9,6 @@ export async function sendBooking({ form }: { form: BookingForm }) {
       },
       data: form,
     });
-    console.log(res?.detail);
     if (res?.detail)
       throw Error(
         typeof res.detail == "string" ? res.detail : "Invalid fields"
@@ -37,22 +36,26 @@ export async function updateBookingStatus({
   status: BookingStatus;
   note?: string;
 }) {
-  const res = await Fetch(`/bookings/${booking_id}/status`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    data: note
-      ? {
-          booking_id,
-          status,
-          note,
-        }
-      : {
-          booking_id,
-          status,
-        },
-  });
-  if (res?.detail) throw Error("Something went wrong!, try again.");
-  return res as Booking[];
+  try {
+    const res = await Fetch(`/bookings/${booking_id}/status`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      data: note
+        ? {
+            booking_id,
+            status,
+            note,
+          }
+        : {
+            booking_id,
+            status,
+          },
+    });
+    if (res?.detail) throw Error("Something went wrong!, try again.");
+    return res as Booking[];
+  } catch (error) {
+    throw Error("Something went wrong!");
+  }
 }
