@@ -68,18 +68,19 @@ export function useMultiAccount() {
               id: user.id,
               slug: user.slug,
               email: user.email,
-              firstName: user.first_name,
-              lastName: user.last_name,
+              first_name: user.first_name,
+              last_name: user.last_name,
               role: user.role,
               status: user.status,
-              createdAt: user.created_at,
-              updatedAt: user.updated_at,
+              created_at: user.created_at,
+              updated_at: user.updated_at,
+              profile_image: user?.profile_image,
             })
             .onConflictDoUpdate({
               target: users.id,
               set: {
                 email: user.email,
-                updatedAt: user.updated_at,
+                updated_at: user.updated_at,
               },
             });
 
@@ -94,6 +95,7 @@ export function useMultiAccount() {
               isActive: true,
               lastLoginAt: now,
               fullName: fullName(user),
+              profile_image: user?.profile_image,
             })
             .onConflictDoUpdate({
               target: accounts.userId,

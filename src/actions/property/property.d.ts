@@ -3,7 +3,7 @@ type Result = {
   page: number;
   per_page: number;
   pages: number;
-  results: any[];
+  results: Property[];
   user_location?: LocationData;
 };
 
@@ -19,6 +19,11 @@ type SubCategory = {
   name: string;
   slug: string;
 };
+type CategorySections = {
+  name: string;
+  id: string;
+  data: { name: string; id: string; catId: string }[];
+}[];
 
 type PropertyResponse = {
   count: number;
@@ -31,24 +36,20 @@ type Property = {
   slug: string;
   description: string | null;
   price: number;
-  createdAt: string;
-  updatedAt: string;
-  currency: string;
+  created_at: string;
+  updated_at: string;
+  currency: Currency;
   status: PropertyStatus;
   purpose: PropertyPurpose;
-  isFeatured: boolean;
+  is_featured: boolean;
   duration?: string;
-  category: string;
-  subCategory: string;
-  displayAddress: string;
+  category: Category;
+  subcategory: SubCategory;
   address: Address;
   media: Media[];
-  totalReviews: number;
-  ownerId: string;
-  avgRating: number;
   bathroom?: string;
   bedroom?: string;
-  isBooked?: boolean;
+  is_booked?: boolean;
   landarea?: number;
   bedType?: string;
   guests?: string;
@@ -56,48 +57,23 @@ type Property = {
   viewType?: string;
   companies?: Company[];
   discount?: string;
-  cautionFee?: string;
+  listing_role?: string;
+  owner_type?: string;
+  caution_fee?: string;
   owner: Owner;
   ownership: Ownership;
   availabilities: Availabilities[];
-  isFollowing: boolean;
+  is_following: boolean;
   amenities: Amenity[];
-  views: number;
-  likes: number;
-  viewed: number;
-  liked: number;
-  added: number;
-};
-type PropertyList = {
-  id: string;
-  title: string;
-  slug: string;
-  price: number;
-  currency: string;
-  status: PropertyStatus;
-  purpose: PropertyPurpose;
-  bathroom?: string;
-  bedroom?: string;
-  plots?: string;
-  isBooked?: boolean;
-  landarea?: number;
-  category: string;
-  ownerId: string;
-  address: string;
-  latitude: number;
-  longitude: number;
-  thumbnail: string | null;
-  views: number | null;
-  likes: number | null;
-  liked: boolean | null;
-  description?: string;
-  createdAt: string;
+  interaction: Interaction;
+  owner_interaction: Owner_interaction;
+  reason_or_comment?: string;
 };
 
 type Media = {
   id: string;
   url: string;
-  mediaType: "IMAGE" | "VIDEO" | "AUDIO";
+  media_type: "IMAGE" | "VIDEO" | "AUDIO";
 };
 
 type Availabilities = {
@@ -111,9 +87,9 @@ type Owner = {
   email: string;
   slug: string;
   phone: string;
-  firstName: string;
-  lastName: string;
-  profileImage?: string;
+  first_name: string;
+  last_name: string;
+  profile_image?: string;
 };
 
 type ListingRole = "agent" | "manager" | "onwer";
@@ -132,37 +108,48 @@ type Documents = {
 
 type Ownership = {
   id: string;
-  listingRole: ListingRole;
-  ownerType: OwnerType;
-  ownerCompany: Company;
-  verificationStatus: "not_required" | "required";
-  verificationNote: string | null;
+  listing_role: ListingRole;
+  owner_type: OwnerType;
+  owner_user_id: string;
+  owner_company: Company;
+  verification_status: "not_required" | "required";
+  verification_note: string | null;
   documents: Documents[];
-  createdAt: string;
-  updatedAt: string | null;
+  created_at: string;
+  updated_at: string | null;
 };
 
 type Amenity = {
-  id: string;
   name: string;
+  icon: string;
+  value: string;
 };
 
 type Interaction = {
   viewed: number;
   liked: number;
-  addedToWishlist: number;
+  added_to_wishlist: number;
 };
 
-type OwnerInteraction = {
+type Owner_interaction = {
   viewed: boolean;
   liked: boolean;
-  added_to_wishlist: number;
+  added_to_wishlist: boolean;
 };
 
 type Place = {
   name: string;
   vicinity: string;
 };
+
+type FlatCategoryItem = { type: "category"; id: string; name: string };
+type FlatSubcategoryItem = {
+  type: "subcategory";
+  id: string;
+  name: string;
+  categoryId: string;
+};
+type FlatItem = FlatCategoryItem | FlatSubcategoryItem;
 
 type PropertyStatus =
   | "pending"
@@ -174,21 +161,6 @@ type PropertyStatus =
   | "featured";
 
 type PropertyPurpose = "rent" | "sell";
-
-type CategorySections = {
-  name: string;
-  id: string;
-  data: { name: string; id: string; catId: string }[];
-}[];
-
-type FlatCategoryItem = { type: "category"; id: string; name: string };
-type FlatSubcategoryItem = {
-  type: "subcategory";
-  id: string;
-  name: string;
-  categoryId: string;
-};
-type FlatItem = FlatCategoryItem | FlatSubcategoryItem;
 
 type TopLocation = {
   state: string;

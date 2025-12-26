@@ -31,11 +31,11 @@ interface MapProps {
   showUserLocation?: boolean;
   scrollEnabled?: boolean;
   showsBuildings?: boolean;
-  activeMarker?: PropertyList[];
+  activeMarker?: Property[];
   children?: ReactNode;
-  onMarkerPress?: (data: PropertyList) => void;
+  onMarkerPress?: (data: Property) => void;
   zoomControlEnabled?: boolean;
-  markers?: PropertyList[];
+  markers?: Property[];
   marker?: LocationData;
   nearby?: NearbyPOI[];
   showRadius?: boolean;
@@ -136,8 +136,8 @@ const Map = forwardRef<MapController, MapProps>((props, ref) => {
         const list =
           markerList ??
           markers?.map((m) => ({
-            latitude: m.latitude,
-            longitude: m.longitude,
+            latitude: m.address.latitude,
+            longitude: m.address.longitude,
           })) ??
           [];
         if (!list || list.length === 0) return;
@@ -167,8 +167,8 @@ const Map = forwardRef<MapController, MapProps>((props, ref) => {
       if (markers && markers.length > 0) {
         const region = getRegionForMarkers(
           markers.map((m) => ({
-            latitude: m.latitude,
-            longitude: m.longitude,
+            latitude: m.address.latitude,
+            longitude: m.address.longitude,
           }))
         );
         setCenter({ latitude: region.latitude, longitude: region.longitude });

@@ -13,7 +13,7 @@ import {
   View,
 } from "@/components/ui";
 import { generateMediaUrl } from "@/lib/api";
-import { fullNameLocal } from "@/lib/utils";
+import { fullName } from "@/lib/utils";
 import { profileDefault } from "@/store";
 import { useMutation } from "@tanstack/react-query";
 import { router } from "expo-router";
@@ -54,22 +54,21 @@ function ReelInteractionBar({
         }}
       >
         <Avatar>
-          {reel?.owner?.profileImage ? (
+          {reel?.owner?.profile_image ? (
             <AvatarImage
-              source={
-                {
-                  uri: generateMediaUrl({
-                    url: reel.owner.profileImage,
-                    id: "",
-                    mediaType: "IMAGE",
-                  }),
-                }.uri
-              }
+              source={{
+                uri: generateMediaUrl({
+                  url: reel.owner.profile_image,
+                  id: "",
+                  media_type: "IMAGE",
+                }).uri,
+                cache: "force-cache",
+              }}
             />
           ) : (
             <AvatarImage source={profileDefault} />
           )}
-          <AvatarFallbackText>{fullNameLocal(reel?.owner)}</AvatarFallbackText>
+          <AvatarFallbackText>{fullName(reel?.owner)}</AvatarFallbackText>
         </Avatar>
       </AnimatedPressable>
       <View className=" items-center">
@@ -78,7 +77,7 @@ function ReelInteractionBar({
       </View>
       <View className=" items-center">
         <ReelWishListButton isAdded={isAdded} isLand={isLand} id={reel.id} />
-        <Text className=" text-white">{record?.addedToWishlist || 0}</Text>
+        <Text className=" text-white">{record?.added_to_wishlist || 0}</Text>
       </View>
       {showChat && (
         <View className=" items-center">

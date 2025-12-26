@@ -44,7 +44,7 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
       message?.file_data?.map((item) => ({
         id: item.file_id,
         url: item.file_url,
-        mediaType: "IMAGE",
+        media_type: "IMAGE",
       })),
     [message]
   ) as Media[];
@@ -144,7 +144,7 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
                               ? item.url
                               : generateMediaUrl({
                                   url: item.url,
-                                  mediaType: "IMAGE",
+                                  media_type: "IMAGE",
                                   id: item.id,
                                 }).uri,
                             cacheKey: item.id,
@@ -180,7 +180,7 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
                     source={{
                       uri: generateMediaUrl({
                         url: message.property_info?.image_url,
-                        mediaType: "IMAGE",
+                        media_type: "IMAGE",
                         id: message.property_info?.id!,
                       }).uri,
                     }}

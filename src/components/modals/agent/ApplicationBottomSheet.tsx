@@ -49,7 +49,7 @@ export default function ApplicationBottomSheet({
               source={generateMediaUrl({
                 url: agent.user.profile_image,
                 id: "",
-                mediaType: "IMAGE",
+                media_type: "IMAGE",
               })}
             />
           </Avatar>

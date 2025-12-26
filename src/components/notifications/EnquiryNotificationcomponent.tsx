@@ -8,15 +8,15 @@ import NotificationItemWrapper from "./NotificationItemWrapper";
 import { cn } from "@/lib/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteNotification, markAsRead } from "@/actions/notification";
-import { useStore } from "@/store";
+import { useMe } from "@/hooks/useMe";
 
 export default function EnquiryNotificationComponent({
   data,
 }: {
   data: UserNotification;
 }) {
-  const { title, message, is_read, id, entity_id } = data;
-  const { me } = useStore();
+  const { is_read, id } = data;
+  const { me } = useMe();
   const query = useQueryClient();
   function invalidate() {
     query.invalidateQueries({

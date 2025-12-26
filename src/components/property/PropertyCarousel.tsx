@@ -120,7 +120,6 @@ function PropertyCarousel({
                 uri: generateMediaUrlSingle(item.url),
                 cacheKey: item.id,
               }}
-              cacheKey={item.id}
             />
           )}
           pagingEnabled={true}

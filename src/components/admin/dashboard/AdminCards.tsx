@@ -1,4 +1,6 @@
 import {
+  BookCheck,
+  Building2,
   CircleAlert,
   Eye,
   GitPullRequest,
@@ -11,13 +13,23 @@ import { useRouter } from "expo-router";
 import { DashboardCard } from "@/components/custom/DashboardCard";
 import { useQuery } from "@tanstack/react-query";
 import { fetchAdminDashboardStats } from "@/actions/dashboard/admin";
+import { useEffect } from "react";
+import eventBus from "@/lib/eventBus";
 
 export default function AdminCards() {
-  const { data, refetch, isFetching, isLoading } = useQuery({
+  const { data, refetch } = useQuery({
     queryKey: ["admin-dashboard"],
     queryFn: fetchAdminDashboardStats,
   });
   const router = useRouter();
+
+  useEffect(() => {
+    eventBus.addEventListener("REFRESH_DASHBOARD", refetch);
+    return () => {
+      eventBus.removeEventListener("REFRESH_DASHBOARD", refetch);
+    };
+  }, [refetch]);
+
   return (
     <View className="gap-4 px-4">
       <View className="flex-wrap gap-4">
@@ -41,17 +53,30 @@ export default function AdminCards() {
           <DashboardCard
             title="Devices"
             icon={Smartphone}
-            total={data?.totalDevices}
+            total={data?.deviceStats.totalDevices}
             onPress={() => router.push("/admin/analytics")}
           />
           <DashboardCard
             title="Views"
             icon={Eye}
             total={data?.totalViews}
-            data={data?.totalViewsLast30Days.map((data) => ({
-              month: data.date,
-              count: data.views,
-            }))}
+            showDirection={false}
+            onPress={() => router.push("/admin/analytics")}
+          />
+        </View>
+        <View className="flex-row gap-4">
+          <DashboardCard
+            title="IOS Devices"
+            icon={Smartphone}
+            showDirection={false}
+            total={data?.deviceStats.totalIOSDevices}
+            onPress={() => router.push("/admin/analytics")}
+          />
+          <DashboardCard
+            title="Android Devices"
+            icon={Smartphone}
+            total={data?.deviceStats.totalAndroidDevices}
+            showDirection={false}
             onPress={() => router.push("/admin/analytics")}
           />
         </View>
@@ -66,8 +91,24 @@ export default function AdminCards() {
           <DashboardCard
             title="Pending Properties"
             icon={CircleAlert}
-            total={data?.totalRequests}
+            total={data?.totalPendingProperties}
             onPress={() => router.push("/admin/pending")}
+            showDirection={false}
+          />
+        </View>
+        <View className="flex-row gap-4">
+          <DashboardCard
+            title="Companies"
+            icon={Building2}
+            total={data?.companyStats.totalCompanies}
+            showDirection={false}
+            onPress={() => router.push("/admin/analytics")}
+          />
+          <DashboardCard
+            title="Bookings"
+            icon={BookCheck}
+            total={data?.bookingsSummary.totalBookings}
+            onPress={() => router.push("/admin/analytics")}
             showDirection={false}
           />
         </View>

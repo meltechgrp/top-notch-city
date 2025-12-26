@@ -35,7 +35,7 @@ interface Props {
   isRefetching?: boolean;
   hasNextPage?: boolean;
   showStatus?: boolean;
-  data: PropertyList[];
+  data: Property[];
   scrollElRef?: any;
   disableHeader?: boolean;
   refetch: () => Promise<any>;

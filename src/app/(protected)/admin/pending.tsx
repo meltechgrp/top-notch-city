@@ -2,7 +2,6 @@ import { Box, View } from "@/components/ui";
 import { useMemo } from "react";
 import VerticalProperties from "@/components/property/VerticalProperties";
 import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
-import { normalizePropertyListServer } from "@/db/normalizers/property";
 
 export default function PendingProperties() {
   const {
@@ -14,10 +13,7 @@ export default function PendingProperties() {
     isFetchingNextPage,
   } = useInfinityQueries({ type: "pending" });
   const propertyData = useMemo(
-    () =>
-      data?.pages.flatMap((page) =>
-        normalizePropertyListServer(page.results)
-      ) || [],
+    () => data?.pages.flatMap((page) => page.results) || [],
     [data]
   );
   return (

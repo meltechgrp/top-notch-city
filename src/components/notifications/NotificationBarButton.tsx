@@ -6,9 +6,9 @@ import { View } from "react-native";
 import { Button, Icon } from "../ui";
 import { cn } from "@/lib/utils";
 import * as Haptics from "expo-haptics";
-import { useStore } from "@/store";
 import { useQuery } from "@tanstack/react-query";
 import { getNotifications } from "@/actions/notification";
+import { useMe } from "@/hooks/useMe";
 
 type Props = {
   className?: string;
@@ -16,7 +16,7 @@ type Props = {
 };
 
 function NotificationBarButton({ className, isAdmin }: Props) {
-  const { me } = useStore();
+  const { me } = useMe();
   const { data, refetch } = useQuery({
     queryKey: ["notifications"],
     queryFn: () => getNotifications({ id: me?.id }),

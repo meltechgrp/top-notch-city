@@ -16,7 +16,7 @@ export default function AmenityItem({ item }: Props) {
   const { mutateAsync: deleteAmenity, isPending: loading } =
     useAmenityMutations().deleteAmenityMutation;
 
-  async function editHandler(data: Omit<AmenityLabel, "id">) {
+  async function editHandler(data: string) {
     await editAmenity(
       {
         id: item.id,
@@ -56,7 +56,7 @@ export default function AmenityItem({ item }: Props) {
         onSubmit={editHandler}
         loading={loading || loading2}
         type="edit"
-        value={item}
+        value={item.name}
       />
     </>
   );

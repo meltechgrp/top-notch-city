@@ -89,7 +89,7 @@ const NearbyCategory = ({
 };
 
 interface PropertyNearbySectionProps {
-  address: PropertyItem["address"];
+  address: Property["address"];
 }
 
 const PropertyNearbySection = ({ address }: PropertyNearbySectionProps) => {

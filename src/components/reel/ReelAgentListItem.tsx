@@ -9,14 +9,15 @@ import {
   Text,
 } from "@/components/ui";
 import { generateMediaUrlSingle } from "@/lib/api";
-import { profileDefault, useStore } from "@/store";
+import { profileDefault } from "@/store";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
 import { router } from "expo-router";
 import { openAccessModal } from "@/components/globals/AuthModals";
 import { useFollowAgent } from "@/hooks/useFollowAgent";
+import { useMe } from "@/hooks/useMe";
 
 const ReelAgentListItem = ({ account }: { account: AgentInfo }) => {
-  const { me } = useStore();
+  const { me } = useMe();
   const { mutateAsync } = useFollowAgent({
     queryKey: ["agents"],
     agentId: account.id,

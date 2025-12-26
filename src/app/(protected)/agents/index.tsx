@@ -12,7 +12,7 @@ import { Avatar, AvatarFallbackText, AvatarImage } from "@/components/ui";
 import { BadgeCheck, Dot, Heart, House } from "lucide-react-native";
 import { TouchableOpacity } from "react-native";
 import { generateMediaUrlSingle } from "@/lib/api";
-import { profileDefault, useStore } from "@/store";
+import { profileDefault } from "@/store";
 import { fullName } from "@/lib/utils";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
 import { router } from "expo-router";
@@ -21,6 +21,7 @@ import { openAccessModal } from "@/components/globals/AuthModals";
 import { KeyboardDismissPressable } from "@/components/shared/KeyboardDismissPressable";
 import OptionsBottomSheet from "@/components/shared/OptionsBottomSheet";
 import { CustomInput } from "@/components/custom/CustomInput";
+import { useMe } from "@/hooks/useMe";
 
 function useDebounce(value: AgentFilter, delay = 350) {
   const [debounced, setDebounced] = useState(value);
@@ -140,7 +141,7 @@ export function AgentDetails({
   queryKey: any[];
 }) {
   const agent = data;
-  const { me } = useStore();
+  const { me } = useMe();
   const { mutateAsync } = useFollowAgent({
     queryKey: queryKey,
     agentId: agent.id,
@@ -170,6 +171,7 @@ export function AgentDetails({
             <AvatarImage
               source={{
                 uri: generateMediaUrlSingle(agent?.profile_image),
+                cache: "force-cache",
               }}
             />
           ) : (

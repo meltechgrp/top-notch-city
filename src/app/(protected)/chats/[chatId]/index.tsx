@@ -50,6 +50,7 @@ export default function ChatRoomScreen() {
                   <AvatarImage
                     source={{
                       uri: generateMediaUrlSingle(receiver.profile_image),
+                      cache: "force-cache",
                     }}
                   />
                 )}

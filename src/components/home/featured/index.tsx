@@ -1,17 +1,17 @@
 import SectionHeaderWithRef from "@/components/home/SectionHeaderWithRef";
 import HorizontalProperties from "@/components/property/HorizontalProperties";
-import { useHomeList } from "@/hooks/useHomeList";
+import { useHomeFeed } from "@/hooks/useHomeFeed";
 import { router } from "expo-router";
 import { memo } from "react";
 
 function FeaturedProperties() {
-  const { featured, isLoading } = useHomeList();
+  const { featured, loadingFeatured, refetchingFeatured } = useHomeFeed();
   return (
     <SectionHeaderWithRef
       title="Featured"
       titleClassName="text-gray-400 text-base"
       subTitle="See More"
-      hasData={isLoading || featured?.length > 0}
+      hasData={loadingFeatured || refetchingFeatured || featured?.length > 0}
       onSeeAllPress={() => {
         router.push({
           pathname: "/explore",
@@ -23,10 +23,10 @@ function FeaturedProperties() {
     >
       <HorizontalProperties
         data={featured}
-        isLoading={isLoading}
+        isLoading={loadingFeatured}
         listType={["featured"]}
         isFeatured
-        isRefetching={false}
+        isRefetching={refetchingFeatured}
       />
     </SectionHeaderWithRef>
   );

@@ -2,7 +2,6 @@ import UserListItem from "@/components/admin/users/UserListItem";
 import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
 import { Box, View } from "@/components/ui";
 import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
-import eventBus from "@/lib/eventBus";
 import { FlashList } from "@shopify/flash-list";
 import { useMemo, useState } from "react";
 import { RefreshControl } from "react-native";
@@ -12,7 +11,6 @@ import { getUsers } from "@/actions/user";
 import { router } from "expo-router";
 
 export default function Users() {
-  const [refreshing, setRefreshing] = useState(false);
   const [actveTab, setActiveTab] = useState("all");
   const [search, setSearch] = useState("");
   const { data, refetch, hasNextPage, isRefetching, fetchNextPage, isLoading } =

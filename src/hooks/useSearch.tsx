@@ -1,12 +1,8 @@
-import { searchProperties } from "@/actions/search";
-import { normalizePropertyList } from "@/db/normalizers/property";
-import { getSearchList } from "@/db/queries/search";
-import { syncPropertyLists } from "@/db/sync/properties";
 import useGetLocation from "@/hooks/useGetLocation";
-import { useLiveQuery } from "@/hooks/useLiveQuery";
 import { getReverseGeocode } from "@/hooks/useReverseGeocode";
-import { mapPropertyList } from "@/lib/utils";
-import { useReducer, useMemo, useCallback } from "react";
+import { useStore } from "@/store";
+import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
+import { useReducer, useMemo, useEffect, useCallback } from "react";
 
 type SearchAction =
   | { type: "SET_FILTERS"; payload: Partial<SearchFilters> }
@@ -38,38 +34,27 @@ function searchReducer(
 // Hook
 export function useSearch() {
   const { retryGetLocation, location } = useGetLocation();
+  const { searchProperties, updateSearchProperties } = useStore();
   const [search, dispatch] = useReducer(searchReducer, {
     perPage: 90,
     purpose: "rent",
     latitude: location?.latitude,
     longitude: location?.longitude,
   });
-
-  const { data, isLoading } =
-    useLiveQuery(
-      () =>
-        getSearchList({
-          filter: search,
-          limit: search.perPage,
-          page: 1,
-        }),
-      [search]
-    ) ?? [];
-
-  const properties = useMemo(() => mapPropertyList(data || []), [data]);
-
-  const hydrateFromServer = useCallback(async () => {
-    if (!search.country) return;
-
-    const res = await searchProperties(1, 100, {
-      country: search.country,
-      useGeoLocation: false,
-    });
-
-    if (res?.results?.length) {
-      await syncPropertyLists(res.results.map(normalizePropertyList));
-    }
-  }, [search.country]);
+  const {
+    data,
+    refetch,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isFetching,
+  } = useInfinityQueries({
+    type: "search",
+    filter: search,
+    enabled: false,
+    perPage: search.perPage,
+  });
   const setFilter = useCallback(
     (field: keyof SearchFilters, value: string | string[] | undefined) =>
       dispatch({ type: "SET_FILTERS", payload: { [field]: value } }),
@@ -89,42 +74,85 @@ export function useSearch() {
     dispatch({ type: "RESET_FILTERS" });
   };
 
-  async function useMyLocation() {
-    const loc = location ?? (await retryGetLocation());
-    if (!loc) return;
-
-    setFilters({
-      latitude: loc.latitude,
-      longitude: loc.longitude,
-      useGeoLocation: true,
-    });
-
-    const address = await getReverseGeocode(loc);
-    setFilters({
-      country: address?.addressComponents?.country,
-      state: address?.addressComponents?.state,
-      city: address?.addressComponents?.city,
-    });
-
-    await hydrateFromServer();
+  const properties = useMemo(() => {
+    return data?.pages.flatMap((page) => page.results) || [];
+  }, [data]);
+  const total = useMemo(() => data?.pages?.[0]?.total ?? 0, [data]);
+  const available = useMemo(
+    () => searchProperties?.length || 0,
+    [searchProperties]
+  );
+  function applyCachedResults() {
+    updateSearchProperties(properties || []);
   }
+  async function refetchAndApply() {
+    let { data } = await refetch();
+    const properties = data?.pages.flatMap((page) => page.results) || [];
+    updateSearchProperties(properties || []);
+  }
+  const isLocation = useMemo(
+    () =>
+      search?.latitude == location?.latitude &&
+      search?.longitude == location?.longitude,
+    [search, location]
+  );
+  async function useMyLocation() {
+    if (location) {
+      setFilters({
+        latitude: location.latitude,
+        longitude: location.longitude,
+      });
+      refetchAndApply();
+      const address = await getReverseGeocode(location);
+      setFilters({
+        country: address?.addressComponents?.country,
+        state: address?.addressComponents?.state,
+        city: address?.addressComponents?.city,
+      });
+    } else {
+      const locate = await retryGetLocation();
+      setFilters({
+        latitude: locate?.latitude,
+        longitude: locate?.longitude,
+      });
+      refetchAndApply();
+      if (locate) {
+        const address = await getReverseGeocode(locate);
+        setFilters({
+          country: address?.addressComponents?.country,
+          state: address?.addressComponents?.state,
+          city: address?.addressComponents?.city,
+        });
+      }
+    }
+  }
+  useEffect(() => {
+    refetch();
+  }, [search]);
+  useEffect(() => {
+    if (properties?.length > 0 && searchProperties?.length < 1) {
+      updateSearchProperties(properties || []);
+    }
+  }, [searchProperties, properties]);
   return {
     search: {
-      filter: search,
       setFilter,
       setFilters,
+      resetSome,
       resetFilters,
       useMyLocation,
-      resetSome,
+      filter: search,
+      isLocation,
     },
-    results: {
-      total: properties.length,
-      available: properties.length,
-    },
+    results: { total, available },
     query: {
-      hydrateFromServer,
-      isLoading,
+      refetch,
+      fetchNextPage,
+      hasNextPage,
+      loading: isLoading || isFetching,
+      applyCachedResults,
+      refetchAndApply,
     },
-    properties,
+    properties: searchProperties,
   };
 }

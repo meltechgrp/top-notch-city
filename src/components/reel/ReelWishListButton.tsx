@@ -1,11 +1,11 @@
 import { Icon } from "../ui";
 import { memo } from "react";
 import { cn } from "@/lib/utils";
-import { useStore } from "@/store";
 import { openAccessModal } from "@/components/globals/AuthModals";
 import { Bookmark } from "lucide-react-native";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
 import { useWishlist } from "@/hooks/useWishlist";
+import { useMe } from "@/hooks/useMe";
 
 interface Props {
   isAdded: boolean;
@@ -15,7 +15,7 @@ interface Props {
 }
 
 const ReelWishListButton = ({ isAdded, id, isLand, className }: Props) => {
-  const { me } = useStore();
+  const { me } = useMe();
   const { toggleWishlist, isPending } = useWishlist({
     queryKey: [isLand ? "lands" : "reels"],
   });

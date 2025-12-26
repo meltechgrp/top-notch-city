@@ -84,7 +84,7 @@ export default function SearchWrapper({
 
           <SearchListBottomSheet
             setShowFilter={() => setShowFilter(true)}
-            isLoading={query.isLoading}
+            isLoading={query.loading}
             hasNextPage={false}
             onReset={search.resetFilters}
             filter={search.filter}
@@ -107,7 +107,7 @@ export default function SearchWrapper({
         onDismiss={() => setShowFilter(false)}
         onReset={search.resetSome}
         onUpdate={search.setFilters}
-        loading={query.isLoading}
+        loading={query.loading}
         filter={search.filter}
         total={results.total}
         showPurpose

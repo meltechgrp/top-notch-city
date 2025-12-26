@@ -36,15 +36,15 @@ export function PropertyFooter({ property }: PropertyFooterProps) {
               openBookingModal({
                 visible: true,
                 property_id: property.id,
-                agent_id: property.ownerId,
+                agent_id: property.owner.id,
                 availableDates: property?.availabilities,
                 image:
-                  property?.media.find((i) => i.mediaType == "IMAGE")?.url ||
+                  property?.media.find((i) => i.media_type == "IMAGE")?.url ||
                   "",
                 title: property.title,
-                address: property.address.displayAddress,
+                address: property.address.display_address,
                 booking_type:
-                  property.category == "Shortlet"
+                  property.category.name == "Shortlet"
                     ? "reservation"
                     : "inspection",
               });
@@ -53,12 +53,12 @@ export function PropertyFooter({ property }: PropertyFooterProps) {
           >
             <Icon size="xl" as={BookCheck} className="text-primary" />
             <Text size="md" className=" font-medium text-white">
-              {property.category == "Shortlet" ? "Book" : "Book a visit"}
+              {property.category.name == "Shortlet" ? "Book" : "Book a visit"}
             </Text>
           </Pressable>
           <Pressable
             both
-            disabled={me?.id == property?.ownerId}
+            disabled={me?.id == property?.owner.id}
             onPress={async () => {
               if (!me) {
                 return openAccessModal({ visible: true });
@@ -66,7 +66,7 @@ export function PropertyFooter({ property }: PropertyFooterProps) {
               await mutateAsync(
                 {
                   property_id: property?.id!,
-                  member_id: property?.ownerId!,
+                  member_id: property?.owner.id!,
                 },
                 {
                   onError: (e) => {

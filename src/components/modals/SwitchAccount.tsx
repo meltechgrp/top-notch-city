@@ -4,6 +4,7 @@ import BottomSheet from "@/components/shared/BottomSheet";
 import {
   Avatar,
   AvatarFallbackText,
+  AvatarImage,
   Box,
   Icon,
   Pressable,
@@ -12,6 +13,7 @@ import {
 } from "@/components/ui";
 import { useMultiAccount } from "@/hooks/useAccounts";
 import { useMe } from "@/hooks/useMe";
+import { generateMediaUrlSingle } from "@/lib/api";
 import { router } from "expo-router";
 import { BadgeCheck, MoreHorizontal, Plus } from "lucide-react-native";
 
@@ -44,12 +46,20 @@ export default function SwitchAccountSheet({
               className="flex-row justify-between items-center gap-4 border-b border-outline-100 p-4"
             >
               <Avatar>
-                <AvatarFallbackText>
-                  {acc.email.charAt(0).toUpperCase()}
-                </AvatarFallbackText>
+                {acc?.profile_image && (
+                  <AvatarImage
+                    source={{
+                      uri: generateMediaUrlSingle(acc.profile_image),
+                      cache: "force-cache",
+                    }}
+                  />
+                )}
+                {!acc?.profile_image && (
+                  <AvatarFallbackText>{acc.fullName}</AvatarFallbackText>
+                )}
               </Avatar>
               <View className="flex-1">
-                <Text className=" text-sm font-medium">{acc.email}</Text>
+                <Text className=" text-sm font-medium">{acc.fullName}</Text>
                 <Text className="text-xs capitalize">{acc.role}</Text>
               </View>
               {acc.userId == me?.id ? (

@@ -16,7 +16,6 @@ export async function uploadToBucket({
 }) {
   try {
     const token = await getActiveToken();
-    console.log(token, data);
     if (!token) throw new Error("Authentication token missing");
 
     const formData = new FormData();
@@ -46,7 +45,7 @@ export async function uploadToBucket({
     return response.data?.files?.map((f: any) => ({
       id: f.id,
       url: f.file_url,
-      mediaType: f.file_type,
+      media_type: f.file_type,
     })) as Media[];
   } catch (error: any) {
     throw Error(error?.message);

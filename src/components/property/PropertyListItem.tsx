@@ -3,6 +3,9 @@ import {
   formatMoney,
   formatDateDistance,
   formatNumberCompact,
+  composeFullAddress,
+  generateTitle,
+  FindAmenity,
 } from "@/lib/utils";
 import { StyleProp, View, ViewStyle } from "react-native";
 import { Icon, Text, Pressable, Image } from "../ui";
@@ -21,16 +24,15 @@ import Layout from "@/constants/Layout";
 import { useLayout } from "@react-native-community/hooks";
 import { PropertyStatus } from "./PropertyStatus";
 import { PropertyBadge } from "./PropertyBadge";
-import { useStore } from "@/store";
 import { openAccessModal } from "@/components/globals/AuthModals";
 import { AnimatedLikeButton } from "@/components/custom/AnimatedLikeButton";
 import { useLike } from "@/hooks/useLike";
 import { generateMediaUrlSingle } from "@/lib/api";
 import { useMe } from "@/hooks/useMe";
-import { likePropertyById } from "@/db/mutations/property";
+import { Durations } from "@/constants/Amenities";
 
 type Props = {
-  data: PropertyList;
+  data: Property;
   className?: string;
   subClassName?: string;
   showFacilites?: boolean;
@@ -44,7 +46,6 @@ type Props = {
   isHorizontal?: boolean;
   withPagination?: boolean;
   enabled?: boolean;
-  isLocal?: boolean;
   imageWrapperClassName?: string;
   imageStyle?: StyleProp<ViewStyle>;
   style?: StyleProp<ViewStyle>;
@@ -64,26 +65,32 @@ function PropertyListItem(props: Props) {
     imageWrapperClassName,
     imageStyle,
     showTitle = true,
-    isLocal = true,
     subClassName,
   } = props;
   const { me } = useMe();
   const { toggleLike } = useLike({ queryKey: listType });
   const { bannerHeight } = Layout;
-  const { price, thumbnail, address, ownerId, likes, views, liked, status } =
-    data;
-  const { width, onLayout } = useLayout();
-  const isMine = useMemo(() => me?.id === ownerId, [me, ownerId]);
+  const { price, media, address, interaction, status, owner } = data;
+  const isMine = useMemo(() => me?.id === owner?.id, [me, owner]);
   const isAdmin = useMemo(() => me?.role == "admin", [me]);
   const Actions = () => {
     if (isFeatured) {
       return <PropertyStatus status="featured" />;
     } else if (showStatus && (isAdmin || isMine)) {
       return <PropertyStatus status={status} />;
+    } else if (
+      data.category.name == "Shortlet" ||
+      data.category.name == "Hotel"
+    ) {
+      return (
+        <Text className="text-white bg-black px-3 py-1 rounded-2xl">
+          {data.category.name}
+        </Text>
+      );
     } else {
       return (
-        <Text className="text-gray-300 bg-black/50 px-3 py-1 rounded-2xl">
-          {formatDateDistance(data.createdAt)}
+        <Text className="text-gray-300 bg-black/70 px-3 py-1 rounded-2xl">
+          {formatDateDistance(data.created_at)}
         </Text>
       );
     }
@@ -93,16 +100,12 @@ function PropertyListItem(props: Props) {
     if (!me) {
       return openAccessModal({ visible: true });
     } else {
-      if (isLocal) {
-        return likePropertyById({ propertyId: data.id });
-      } else {
-        toggleLike({ id: data.id });
-      }
+      toggleLike({ id: data.id });
     }
   }
+  const banner = media[0];
   return (
     <Pressable
-      onLayout={onLayout}
       key={data.id}
       onPress={() => onPress(data)}
       style={[{ minHeight: 200 }, style]}
@@ -119,18 +122,16 @@ function PropertyListItem(props: Props) {
           imageWrapperClassName
         )}
       >
-        {thumbnail ? (
-          <Image
-            rounded
-            source={{
-              uri: generateMediaUrlSingle(thumbnail),
-              cacheKey: thumbnail,
-            }}
-            transition={500}
-            style={[{ height: bannerHeight - 30 }, imageStyle as any]}
-            contentFit="cover"
-          />
-        ) : null}
+        <Image
+          rounded
+          source={{
+            uri: generateMediaUrlSingle(banner.url),
+            cacheKey: banner.id,
+          }}
+          transition={500}
+          style={[{ height: bannerHeight - 30 }, imageStyle as any]}
+          contentFit="cover"
+        />
         <View className=" absolute top-0 w-full h-full justify-between">
           <View
             className={cn(
@@ -145,13 +146,13 @@ function PropertyListItem(props: Props) {
               <View className="flex-row h-8 gap-2 bg-black/40 rounded-2xl py-0 px-3 items-center">
                 <Icon as={Eye} size="sm" className="text-white" />
                 <Text className="text-white font-medium text-sm ">
-                  {formatNumberCompact(views || 0)}
+                  {formatNumberCompact(interaction?.viewed)}
                 </Text>
               </View>
               <View className="flex-row h-8 gap-2 bg-black/40 rounded-2xl py-0 px-3 items-center">
                 <Icon as={Heart} size="sm" className="text-white" />
                 <Text className="text-white font-medium text-sm ">
-                  {formatNumberCompact(likes || 0)}
+                  {formatNumberCompact(interaction?.liked)}
                 </Text>
               </View>
             </View>
@@ -161,7 +162,7 @@ function PropertyListItem(props: Props) {
                 className={"p-2 rounded-full bg-black/50"}
               >
                 <AnimatedLikeButton
-                  liked={liked || false}
+                  liked={data?.owner_interaction?.liked || false}
                   className="w-7 h-7 text-white"
                 />
               </Pressable>
@@ -171,34 +172,54 @@ function PropertyListItem(props: Props) {
       </View>
       <View className={cn("flex-1 p-4 pt-3 px-2", subClassName)}>
         <View className=" gap-1 w-full">
-          <Text className="text-white text-xl font-bold">
-            {formatMoney(price, "NGN", 0)}
-            {data.category == "Shortlet" && "/night"}
-          </Text>
-          {data.category !== "Land" ? (
+          <View className="flex-row items-center">
+            <Text className="text-white text-xl font-bold">
+              {formatMoney(price, data?.currency?.code || "NGN", 0)}
+            </Text>
+            <Text className="text-base text-white">
+              {data.purpose == "rent" &&
+                data?.duration &&
+                `/${Durations.find((d) => d.value == data.duration)?.label?.toLowerCase()}`}
+              {(data.category.name == "Shortlet" ||
+                data.category.name == "Hotel") &&
+                !data?.duration &&
+                "/night"}
+            </Text>
+          </View>
+          {data.category.name !== "Land" ? (
             <View className="flex-row gap-4 mb-1">
               <View className="flex-row rounded-xl items-center gap-2">
                 <Icon size="sm" as={Bed} className="text-primary" />
-                <Text className="text-sm">{data?.bedroom || "N/A"} bed</Text>
+                <Text className="text-sm">
+                  {FindAmenity("Bedroom", data) || "N/A"} bed
+                </Text>
               </View>
               <View className="flex-row rounded-xl items-center gap-2">
                 <Icon size="sm" as={Bath} className="text-primary" />
-                <Text className="text-sm">{data?.bathroom || "N/A"} bath</Text>
+                <Text className="text-sm">
+                  {FindAmenity("Bathroom", data) || "N/A"} bath
+                </Text>
               </View>
               <View className="flex-row rounded-xl items-center gap-2">
                 <Icon size="sm" as={VectorSquare} className="text-primary" />
-                <Text className="text-sm">{data?.landarea || "N/A"} sqft</Text>
+                <Text className="text-sm">
+                  {FindAmenity("Landarea", data) || "N/A"} sqft
+                </Text>
               </View>
             </View>
           ) : (
             <View className="flex-row gap-4 mb-1">
               <View className="flex-row rounded-xl items-center gap-2">
                 <Icon size="sm" as={LandPlot} className="text-primary" />
-                <Text className="text-sm">{data?.plots || "N/A"} plot</Text>
+                <Text className="text-sm">
+                  {FindAmenity("Plots", data) || "N/A"} plot
+                </Text>
               </View>
               <View className="flex-row rounded-xl items-center gap-2">
                 <Icon size="sm" as={VectorSquare} className="text-primary" />
-                <Text className="text-sm">{data?.landarea || "N/A"} sqft</Text>
+                <Text className="text-sm">
+                  {FindAmenity("Landarea", data) || "N/A"} sqft
+                </Text>
               </View>
             </View>
           )}
@@ -207,13 +228,15 @@ function PropertyListItem(props: Props) {
         <View className="flex-row gap-4 items-center">
           <View className="flex-1 flex-row gap-1 items-center">
             <Icon size="sm" as={MapPin} className="text-primary" />
-            <Text className="text-white flex-1 text-xs">{address}</Text>
+            <Text numberOfLines={1} className="text-white flex-1 text-xs">
+              {composeFullAddress(data.address)}
+            </Text>
           </View>
         </View>
         {showTitle && (
           <View className="flex-row gap-1 items-center mt-1">
             <Icon as={Home} size="sm" className="text-primary" />
-            <Text className=" text-sm">{data.title}</Text>
+            <Text className=" text-sm">{generateTitle(data)}</Text>
           </View>
         )}
       </View>

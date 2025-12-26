@@ -7,8 +7,8 @@ import { useMutation } from "@tanstack/react-query";
 import { sendEquiry } from "@/actions/equiry";
 import { SpinningLoader } from "../loaders/SpinningLoader";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
-import { useStore } from "@/store";
 import { fullName } from "@/lib/utils";
+import { useMe } from "@/hooks/useMe";
 
 type Props = {
   visible: boolean;
@@ -21,7 +21,7 @@ const EnquiriesFormBottomSheet: React.FC<Props> = ({
   onDismiss,
   id,
 }) => {
-  const { me } = useStore((s) => s);
+  const { me } = useMe();
   const { mutateAsync, isPending } = useMutation({
     mutationFn: sendEquiry,
     onSuccess: () =>

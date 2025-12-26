@@ -158,7 +158,7 @@ export const ProfileImageTrigger = ({
 type Media = {
   id: string;
   url: string;
-  mediaType?: "IMAGE" | "VIDEO" | "AUDIO";
+  media_type?: "IMAGE" | "VIDEO" | "AUDIO";
 };
 
 const CLOSE_THRESHOLD = 140;
@@ -211,7 +211,7 @@ const ProfileImageViewer = ({
                   justifyContent: "center",
                 }}
               >
-                {item.mediaType === "VIDEO" ? (
+                {item.media_type === "VIDEO" ? (
                   <MiniVideoPlayer
                     canPlay={i === index}
                     uri={generateMediaUrlSingle(item.url)}
@@ -219,9 +219,11 @@ const ProfileImageViewer = ({
                   />
                 ) : (
                   <Image
-                    source={{ uri: generateMediaUrlSingle(item.url) }}
+                    source={{
+                      uri: generateMediaUrlSingle(item.url),
+                      cacheKey: item.id,
+                    }}
                     style={{ width: SCREEN_W, height: SCREEN_H }}
-                    contentFit="contain"
                   />
                 )}
               </View>
@@ -247,7 +249,7 @@ const ProfileImageViewer = ({
                       : { borderColor: "rgba(255,255,255,0.3)" },
                   ]}
                 >
-                  {item.mediaType === "VIDEO" ? (
+                  {item.media_type === "VIDEO" ? (
                     <MiniVideoPlayer
                       showPlayBtn
                       canPlay={false}
@@ -378,7 +380,7 @@ const ProfileImageViewer = ({
   if (!visible || !images || images.length === 0) return null;
 
   const renderSlide = (item: Media, i: number) => {
-    if (item.mediaType === "IMAGE" || !item.mediaType) {
+    if (item.media_type === "IMAGE" || !item.media_type) {
       return (
         <Image
           source={{ uri: generateMediaUrlSingle(item.url), cacheKey: item.id }}
@@ -386,7 +388,7 @@ const ProfileImageViewer = ({
           style={{ width: SCREEN_W, height: SCREEN_H }}
         />
       );
-    } else if (item.mediaType === "VIDEO" || !item.mediaType) {
+    } else if (item.media_type === "VIDEO" || !item.media_type) {
       return (
         <MiniVideoPlayer
           canPlay={i == index}
@@ -470,7 +472,7 @@ const ProfileImageViewer = ({
                         : { borderColor: "rgba(255,255,255,0.2)" },
                     ]}
                   >
-                    {item.mediaType == "IMAGE" ? (
+                    {item.media_type == "IMAGE" ? (
                       <Image
                         source={{ uri: generateMediaUrlSingle(item.url) }}
                         style={styles.thumb}

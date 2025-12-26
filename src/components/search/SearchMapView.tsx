@@ -4,7 +4,7 @@ import { View } from "../ui";
 import PropertyBottomSheet from "../location/PropertyBottomSheet";
 
 type Props = {
-  properties: PropertyListItem[];
+  properties: Property[];
   height: number;
   propertyId?: string;
   latitude?: number;
@@ -20,9 +20,7 @@ function SearchMapView({
   longitude,
   onUpdate,
 }: Props) {
-  const [selectedItem, setSeletedItem] = useState<PropertyListItem | null>(
-    null
-  );
+  const [selectedItem, setSeletedItem] = useState<Property | null>(null);
 
   useEffect(() => {
     if (propertyId && properties.length > 0) {

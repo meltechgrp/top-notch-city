@@ -76,9 +76,6 @@ export function formatNumberCompact(amount: number = 0) {
 export function fullName(user: any) {
   return !user?.first_name ? "" : `${user.first_name} ${user.last_name}`;
 }
-export function fullNameLocal(user: any) {
-  return !user?.firstName ? "" : `${user.firstName} ${user.lastName}`;
-}
 export const FindAmenity = (item: string, data?: any): any => {
   return (
     data?.amenities?.find((a: any) => a.name == item)?.value ||
@@ -87,13 +84,13 @@ export const FindAmenity = (item: string, data?: any): any => {
   );
 };
 
-export function generateTitle(property: any) {
+export function generateTitle(property: Property) {
   switch (property?.category?.name?.trim()) {
     case "Residential":
-      return `${FindAmenity("Bedroom", property) || ""} Bedroom ${property?.subCategory?.name || ""}`.trim();
+      return `${FindAmenity("Bedroom", property) || ""} Bedroom ${property?.subcategory?.name || ""}`.trim();
 
     case "Commercial":
-      return `${property?.subCategory?.name || "Commercial Space"} ${property?.purpose ? `for ${property?.purpose}` : ""}`.trim();
+      return `${property?.subcategory?.name || "Commercial Space"} ${property?.purpose ? `for ${property?.purpose}` : ""}`.trim();
 
     case "Land":
       return `${FindAmenity("Total Plot", property) || 1} Plot${FindAmenity("Total Plot", property) > 1 ? "s" : ""} of Land`;
@@ -104,11 +101,14 @@ export function generateTitle(property: any) {
       return property?.title || "";
 
     default:
-      return `${property?.subCategory?.name || property?.category?.name}`;
+      return `${property?.subcategory?.name || property?.category?.name}`;
   }
 }
 
 export function composeFullAddress(address: ParsedAddress, cityOnly?: boolean) {
+  if (address?.display_address) {
+    return address.display_address;
+  }
   if (cityOnly) {
     return joinWithComma(address?.street, address?.city, address?.lga);
   }
@@ -409,32 +409,4 @@ export async function uploadWithFakeProgress(
       onProgress(0);
       throw err;
     });
-}
-
-export function mapPropertyList(rows: any[]) {
-  return rows.map((row) => ({
-    ...row,
-  })) as unknown as PropertyList[];
-}
-export function mapUserData(rows: any) {
-  const base = Array.isArray(rows) ? rows[0] : rows;
-  return {
-    ...base?.user,
-    address: base?.address,
-  } as unknown as Me;
-}
-export function getOutdatedIds({
-  server,
-  local,
-}: {
-  server: any[];
-  local: { id: string; updatedAt: string }[];
-}) {
-  const localMap = new Map(local.map((p) => [p.id, p.updatedAt]));
-
-  return server.filter((p) => {
-    const localUpdatedAt = localMap.get(p.id);
-    if (!localUpdatedAt) return true;
-    return new Date(p.updatedAt) > new Date(localUpdatedAt);
-  });
 }

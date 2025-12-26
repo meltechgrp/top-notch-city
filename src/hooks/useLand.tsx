@@ -28,10 +28,10 @@ export function useLand() {
   };
 }
 
-export function propertyToReelLand(properties: any[]) {
+export function propertyToReelLand(properties: Property[]) {
   return properties
     .map((p) => {
-      let v = p.media.filter((m: any) => m.media_type === "IMAGE");
+      let v = p.media.filter((m) => m.media_type === "IMAGE");
       if (v?.length > 0) {
         return {
           id: p.id,

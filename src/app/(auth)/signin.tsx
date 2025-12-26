@@ -208,6 +208,7 @@ export default function SignIn() {
           title="Email"
           autoCapitalize="words"
           autoComplete="email"
+          keyboardType="email-address"
           onUpdate={(text) => setForm({ ...form, email: text })}
           placeholder="Email address"
         />

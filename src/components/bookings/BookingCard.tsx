@@ -3,9 +3,7 @@ import { Badge, Icon, Image, Pressable, Text, View } from "@/components/ui";
 import { generateMediaUrlSingle } from "@/lib/api";
 import { cn, composeFullAddress, formatMoney } from "@/lib/utils";
 import { addDays, format } from "date-fns";
-import { Bed, MapPin, Users } from "lucide-react-native";
-import { useShallow } from "zustand/react/shallow";
-import { useStore } from "@/store";
+import { MapPin, Users } from "lucide-react-native";
 import { openBookingModal } from "@/components/globals/AuthModals";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ProfileImageTrigger } from "@/components/custom/ImageViewerProvider";
@@ -15,6 +13,7 @@ import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { CancelationReasonBottomSheet } from "@/components/modals/bookings/CancelationReasonBottomSheet";
 import { TouchableOpacity } from "react-native";
 import { router } from "expo-router";
+import { useMe } from "@/hooks/useMe";
 
 type Props = {
   booking: Booking;
@@ -22,7 +21,7 @@ type Props = {
 
 export function BookingCard({ booking }: Props) {
   const query = useQueryClient();
-  const { me } = useStore(useShallow((s) => s.getCurrentUser()));
+  const { me } = useMe();
   const [bookingBottomSheet, setBoookingBottomSheet] = useState(false);
   const [openActions, setOpenActions] = useState(false);
   const isOwner = useMemo(() => me?.id == booking.agent.id, [booking, me]);
@@ -132,7 +131,8 @@ export function BookingCard({ booking }: Props) {
                 booking_type: booking.booking_type,
                 image: booking.property.image,
                 title: booking.property.title,
-                address: booking.property.address as any,
+                address: composeFullAddress(booking.property.address),
+                availableDates: booking.availabilities,
                 onDismiss: () =>
                   query.invalidateQueries({
                     queryKey: ["bookings"],
@@ -165,7 +165,7 @@ export function BookingCard({ booking }: Props) {
               {
                 url: booking.property.image,
                 id: booking.id,
-                mediaType: "IMAGE",
+                media_type: "IMAGE",
               },
             ]}
           >

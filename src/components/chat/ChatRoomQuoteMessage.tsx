@@ -79,7 +79,7 @@ const QuoteMessage = (props: QuoteMessageProps) => {
                         ? item.file_url
                         : generateMediaUrl({
                             url: item.file_url,
-                            mediaType: "IMAGE",
+                            media_type: "IMAGE",
                             id: item.file_id,
                           }).uri,
                       cacheKey: item.file_id,

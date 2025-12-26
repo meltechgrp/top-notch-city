@@ -142,7 +142,7 @@ export function ProfileTopSection({
                 {
                   url: user?.profile_image!,
                   id: user.id,
-                  mediaType: "IMAGE",
+                  media_type: "IMAGE",
                 },
               ]}
             >

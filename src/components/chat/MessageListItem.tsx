@@ -10,7 +10,6 @@ import {
 } from "../ui";
 import { cn, formatMessageTime, fullName } from "@/lib/utils";
 import { generateMediaUrlSingle } from "@/lib/api";
-import { useStore } from "@/store";
 import SwipeableWrapper from "@/components/shared/SwipeableWrapper";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteChat } from "@/actions/message";
@@ -20,6 +19,7 @@ import { router } from "expo-router";
 import { TypingIndicator } from "@/components/chat/TypingIndicator";
 import { useShallow } from "zustand/react/shallow";
 import { useChatStore } from "@/store/chatStore";
+import { useMe } from "@/hooks/useMe";
 
 type MessageListItemProps = {
   chat: Chat;
@@ -29,7 +29,7 @@ function MessageListItem(props: MessageListItemProps) {
 
   const typing = useChatStore(useShallow((s) => s.getTyping(chat.chat_id)));
   const queryClient = useQueryClient();
-  const { me } = useStore();
+  const { me } = useMe();
   const { mutateAsync } = useMutation({
     mutationFn: deleteChat,
   });
@@ -96,6 +96,7 @@ function MessageListItem(props: MessageListItemProps) {
                   <AvatarImage
                     source={{
                       uri: generateMediaUrlSingle(chat.receiver.profile_image),
+                      cache: "force-cache",
                     }}
                   />
                 )}

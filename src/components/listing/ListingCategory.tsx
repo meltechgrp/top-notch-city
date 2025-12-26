@@ -148,27 +148,25 @@ export default function ListingCategory() {
             />
           )}
 
-          {listing.purpose == "rent" &&
-            listing.category != "Shortlet" &&
-            listing.category != "Hotel" && (
-              <View className="gap-2">
-                <Text className="text-base font-medium text-typography/80">
-                  Duration
-                </Text>
-                <CustomSelect
-                  withDropIcon
-                  label="Duration"
-                  BottomSheet={OptionsBottomSheet}
-                  value={listing.duration}
-                  valueParser={(value: any) =>
-                    Durations.find((item) => item.value == value)?.label ||
-                    "Select Duration"
-                  }
-                  onChange={(val) => updateListing({ duration: val.value })}
-                  options={Durations}
-                />
-              </View>
-            )}
+          {listing.purpose == "rent" && (
+            <View className="gap-2">
+              <Text className="text-base font-medium text-typography/80">
+                Duration
+              </Text>
+              <CustomSelect
+                withDropIcon
+                label="Duration"
+                BottomSheet={OptionsBottomSheet}
+                value={listing.duration}
+                valueParser={(value: any) =>
+                  Durations.find((item) => item.value == value)?.label ||
+                  "Select Duration"
+                }
+                onChange={(val) => updateListing({ duration: val.value })}
+                options={Durations}
+              />
+            </View>
+          )}
         </View>
       </Box>
     </>

@@ -34,10 +34,12 @@ import {
 } from "@/lib/api";
 import { useLayout } from "@react-native-community/hooks";
 import {
-  fullNameLocal,
   formatDateDistance,
   formatMoney,
   formatNumberCompact,
+  composeFullAddress,
+  generateTitle,
+  fullName,
 } from "@/lib/utils";
 import { LongDescription } from "@/components/custom/LongDescription";
 import { CustomCenterSheet } from "@/components/property/CustomMapCenterSheet";
@@ -52,6 +54,7 @@ import { KeyboardDismissPressable } from "@/components/shared/KeyboardDismissPre
 import { ExternalLink } from "@/components/ExternalLink";
 import ModalScreen from "@/components/shared/ModalScreen";
 import { PropertyBadge } from "@/components/property/PropertyBadge";
+import { Durations } from "@/constants/Amenities";
 
 interface PropertyDetailsBottomSheetProps {
   property: Property;
@@ -62,7 +65,7 @@ const PropertyDetailsBottomSheet = ({
 }: PropertyDetailsBottomSheetProps) => {
   const router = useRouter();
   const { width, onLayout } = useLayout();
-  const mainImage = property?.media?.find((img) => img.mediaType == "IMAGE");
+  const mainImage = property?.media?.find((img) => img.media_type == "IMAGE");
   return (
     <>
       <SafeAreaView edges={["bottom"]} className="flex-1 bg-transparent">
@@ -76,22 +79,45 @@ const PropertyDetailsBottomSheet = ({
             </View>
             <View className="p-4 mx-4 -mt-1 bg-background-muted rounded-xl">
               <View className="flex-row justify-between items-center">
-                <Text className="text-white text-2xl font-bold">
-                  {formatMoney(property.price, "NGN", 0)}
-                  {property.category == "Shortlet" && "/night"}
-                </Text>
-                <PropertyBadge property={property as any} />
+                <View className="flex-row items-center">
+                  <Text className="text-white text-2xl font-bold">
+                    {formatMoney(
+                      property.price,
+                      property?.currency?.code || "NGN",
+                      0
+                    )}
+                  </Text>
+                  <Text className="text-base text-white">
+                    {property.purpose == "rent" &&
+                      property?.duration &&
+                      `/${Durations.find((d) => d.value == property.duration)?.label?.toLowerCase()}`}
+                    {(property.category.name == "Shortlet" ||
+                      property.category.name == "Hotel") &&
+                      !property?.duration &&
+                      "/night"}
+                  </Text>
+                </View>
+                <PropertyBadge property={property} />
               </View>
-              <View className="flex-row gap-1 items-center my-px">
-                <Icon as={Home} size="sm" className="text-primary" />
-                <Text className=" text-sm">{property.title}</Text>
+              <View className="flex-row items-center">
+                <View className="flex-row gap-1 items-center my-px">
+                  <Icon as={Home} size="sm" className="text-primary" />
+                  <Text className=" text-sm">{generateTitle(property)}</Text>
+                </View>
+                {(property.category.name == "Shortlet" ||
+                  property.category.name == "Hotel") && (
+                  <Text className="text-white text-sm font-medium">
+                    {" "}
+                    - {property.category.name}
+                  </Text>
+                )}
               </View>
               <View className="flex-row justify-between gap-4 items-center">
                 {property.address && (
                   <View className="flex-1 flex-row gap-1 items-center">
                     <Icon size="sm" as={MapPin} className="text-primary" />
                     <Text className="text-white flex-1 text-xs">
-                      {property.address.displayAddress}
+                      {composeFullAddress(property.address)}
                     </Text>
                   </View>
                 )}
@@ -100,20 +126,20 @@ const PropertyDetailsBottomSheet = ({
                   <View className="flex-row h-8 gap-2 bg-black/40 rounded-2xl py-0 px-3 items-center">
                     <Icon as={Eye} size="sm" className="text-white" />
                     <Text className="text-white font-medium text-sm ">
-                      {formatNumberCompact(property?.views || 0)}
+                      {formatNumberCompact(property?.interaction.viewed || 0)}
                     </Text>
                   </View>
                   <View className="flex-row h-8 gap-2 bg-black/40 rounded-2xl py-0 px-3 items-center">
                     <Icon as={Heart} size="sm" className="text-white" />
                     <Text className="text-white font-medium text-sm ">
-                      {formatNumberCompact(property?.likes || 0)}
+                      {formatNumberCompact(property?.interaction.liked || 0)}
                     </Text>
                   </View>
                 </View>
               </View>
             </View>
             <View className="gap-4 px-4 pb-2 -mt-2">
-              {property.category !== "Land" ? (
+              {property.category.name !== "Land" ? (
                 <View className="flex-row gap-4 mt-2">
                   <View className="flex-row flex-1 bg-background-muted rounded-xl p-4 items-center justify-center gap-2">
                     <Icon size="sm" as={Bed} className="text-primary" />
@@ -187,14 +213,14 @@ const PropertyDetailsBottomSheet = ({
               </View>
               <View className="flex-row justify-around">
                 <Text className="">
-                  {formatDateDistance(property.createdAt, true)}
+                  {formatDateDistance(property.created_at, true)}
                 </Text>
                 <Text>
-                  {property.views}{" "}
+                  {property.interaction.viewed}{" "}
                   <Text className="text-typography/80">Views</Text>
                 </Text>
                 <Text>
-                  {property.likes}{" "}
+                  {property.interaction.liked}{" "}
                   <Text className="text-typography/80">Likes</Text>
                 </Text>
               </View>
@@ -219,7 +245,7 @@ const PropertyDetailsBottomSheet = ({
                   )} */}
                 </View>
               </View>
-              {property.category !== "Shortlet" &&
+              {property.category.name !== "Shortlet" &&
                 property.status == "approved" && (
                   <View className="bg-background-muted border border-outline-100 rounded-xl p-4 mx-4">
                     <View className="h-40 bg-background/70">
@@ -240,7 +266,7 @@ const PropertyDetailsBottomSheet = ({
                       <Text className="mt-1 text-sm text-typography/90">
                         We'll connect you with an expert to take you on a
                         private tour on this property at{" "}
-                        {property.address.displayAddress}.
+                        {composeFullAddress(property.address)}.
                       </Text>
                     </View>
                     <Button
@@ -248,15 +274,15 @@ const PropertyDetailsBottomSheet = ({
                         openBookingModal({
                           visible: true,
                           property_id: property.id,
-                          agent_id: property.ownerId,
+                          agent_id: property.owner.id,
                           availableDates: property?.availabilities,
                           image:
-                            property?.media.find((i) => i.mediaType == "IMAGE")
+                            property?.media.find((i) => i.media_type == "IMAGE")
                               ?.url || "",
                           title: property.title,
-                          address: property.address.displayAddress,
+                          address: composeFullAddress(property.address),
                           booking_type:
-                            property.category == "Shortlet"
+                            property.category.name == "Shortlet"
                               ? "reservation"
                               : "inspection",
                         });
@@ -282,7 +308,7 @@ const PropertyDetailsBottomSheet = ({
 
                     <View className="flex-1">
                       <Text className="text-lg text-typography font-medium">
-                        {fullNameLocal(property?.owner)}
+                        {fullName(property?.owner)}
                       </Text>
                     </View>
                   </View>
@@ -293,17 +319,17 @@ const PropertyDetailsBottomSheet = ({
                       router.push({
                         pathname: "/agents/[userId]",
                         params: {
-                          userId: property.ownerId,
+                          userId: property.owner.id,
                         },
                       });
                     }}
                   >
                     <Avatar className=" w-10 h-10 mr-4">
                       <AvatarFallbackText>
-                        {fullNameLocal(property?.owner)}
+                        {fullName(property?.owner)}
                       </AvatarFallbackText>
                       <AvatarImage
-                        source={getImageUrl(property?.owner?.profileImage)}
+                        source={getImageUrl(property?.owner?.profile_image)}
                       />
                     </Avatar>
                     <ButtonText>Portfolio</ButtonText>

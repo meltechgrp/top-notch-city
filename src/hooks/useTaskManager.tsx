@@ -4,7 +4,6 @@ import { useEffect, useCallback } from "react";
 import { useDbStore } from "@/store/dbStore";
 import { shouldSync } from "@/hooks/useLiveQuery";
 import { PROPERTY_SYNC_TASK } from "@/constants";
-import { runPropertyBackgroundSync } from "@/lib/background/runBackgroundSync";
 
 export function useBackgroundSync() {
   const { lastSync, update, load } = useDbStore();
@@ -15,7 +14,7 @@ export function useBackgroundSync() {
 
   const syncNow = useCallback(async () => {
     if (!lastSync || shouldSync(lastSync)) {
-      await runPropertyBackgroundSync();
+      // await runPropertyBackgroundSync();
       update();
     }
   }, [lastSync, update]);

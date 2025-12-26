@@ -5,7 +5,6 @@ import { EmptyState } from "@/components/property/EmptyPropertyCard";
 import { House } from "lucide-react-native";
 import HorizontalProperties from "@/components/property/HorizontalProperties";
 import SectionHeaderWithRef from "@/components/home/SectionHeaderWithRef";
-import { normalizePropertyListServer } from "@/db/normalizers/property";
 
 type IProps = {
   profileId?: string;
@@ -25,8 +24,7 @@ export default function PropertiesTabView({
     profileId,
   });
   const list = useMemo(
-    () =>
-      data?.pages.flatMap((p) => normalizePropertyListServer(p.results)) || [],
+    () => data?.pages.flatMap((p) => p.results) || [],
     [data]
   );
   if (!isLoading && list.length === 0) {

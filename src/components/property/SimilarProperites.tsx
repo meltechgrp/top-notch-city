@@ -1,28 +1,28 @@
 import SectionHeaderWithRef from "@/components/home/SectionHeaderWithRef";
 import HorizontalProperties from "@/components/property/HorizontalProperties";
-import { getNearby } from "@/db/queries/property-list";
-import { useLiveQuery } from "@/hooks/useLiveQuery";
 import { mapPropertyList } from "@/lib/utils";
+import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import { router } from "expo-router";
 import { memo, useMemo } from "react";
 
 interface SimilarPropertiesProps {
-  property: PropertyItem;
+  property: Property;
 }
 
 function SimilarProperties({ property }: SimilarPropertiesProps) {
-  const { data, isLoading } = useLiveQuery(
-    () =>
-      location
-        ? getNearby({
-            lat: property.address?.latitude,
-            long: property.address?.longitude,
-          })
-        : Promise.resolve([]),
-    [property.address?.latitude, property.address?.longitude]
-  );
+  const { data, isLoading, isFetching } = useInfinityQueries({
+    type: "search",
+    filter: {
+      latitude: property.address?.latitude,
+      longitude: property.address?.longitude,
+      category: property.category?.name,
+    },
+  });
 
-  const properties = useMemo(() => (data ? mapPropertyList(data) : []), [data]);
+  const properties = useMemo(
+    () => data?.pages.flatMap((r) => r.results) || [],
+    [data]
+  );
   return (
     <SectionHeaderWithRef
       title="Similar Properties"
@@ -43,7 +43,7 @@ function SimilarProperties({ property }: SimilarPropertiesProps) {
         data={properties}
         isLoading={isLoading}
         showLike={false}
-        isRefetching={false}
+        isRefetching={isFetching}
       />
     </SectionHeaderWithRef>
   );

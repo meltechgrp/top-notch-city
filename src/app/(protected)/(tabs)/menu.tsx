@@ -9,6 +9,8 @@ import { MenuListItem } from "@/components/menu/MenuListItem";
 import CampaignCard from "@/components/profile/CampaignCard";
 import SearchWrapper from "@/components/search/SearchWrapper";
 import { useMe } from "@/hooks/useMe";
+import { RefreshControl } from "react-native";
+import eventBus from "@/lib/eventBus";
 
 export default function Menu() {
   const { me, isAdmin, isAgent } = useMe();
@@ -19,7 +21,16 @@ export default function Menu() {
   }
   return (
     <>
-      <BodyScrollView withBackground className="pt-2">
+      <BodyScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={false}
+            onRefresh={() => eventBus.dispatchEvent("REFRESH_DASHBOARD", null)}
+          />
+        }
+        withBackground
+        className="pt-2"
+      >
         {isAdmin && <AdminCards />}
         {isAgent && <AgentCards userId={me?.id!} />}
         {!me && (

@@ -6,10 +6,10 @@ import {
 } from "@/actions/property";
 import { memo } from "react";
 import { cn } from "@/lib/utils";
-import { useStore } from "@/store";
 import { openAccessModal } from "@/components/globals/AuthModals";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
 import { AnimatedLikeButton } from "@/components/custom/AnimatedLikeButton";
+import { useMe } from "@/hooks/useMe";
 
 interface Props {
   isAdded: boolean;
@@ -21,7 +21,7 @@ interface Props {
 
 const PropertyWishListButton = ({ isAdded, id, className, slug }: Props) => {
   const client = useQueryClient();
-  const { me } = useStore();
+  const { me } = useMe();
   const { mutate } = useMutation({
     mutationFn: async () => {
       await likeProperty({ id });
@@ -31,12 +31,12 @@ const PropertyWishListButton = ({ isAdded, id, className, slug }: Props) => {
     onMutate: async () => {
       await client.cancelQueries({ queryKey: ["properties", slug] });
 
-      const previousData = client.getQueryData<any | undefined>([
+      const previousData = client.getQueryData<Property | undefined>([
         "properties",
         slug,
       ]);
 
-      client.setQueryData<any | undefined>(["properties", slug], (old: any) => {
+      client.setQueryData<Property | undefined>(["properties", slug], (old) => {
         if (!old) return old;
         return {
           ...old,

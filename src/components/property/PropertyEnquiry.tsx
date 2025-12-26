@@ -6,13 +6,13 @@ import { useMutation } from "@tanstack/react-query";
 import { sendEquiry } from "@/actions/equiry";
 import { SpinningLoader } from "../loaders/SpinningLoader";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
-import { fullName, fullNameLocal } from "@/lib/utils";
 import { Send } from "lucide-react-native";
 import { ExternalLink } from "@/components/ExternalLink";
 import { useMe } from "@/hooks/useMe";
+import { fullName } from "@/lib/utils";
 
 interface PropertyEnquiryProps {
-  property: PropertyItem;
+  property: Property;
 }
 
 export function PropertyEnquiry({ property }: PropertyEnquiryProps) {
@@ -31,9 +31,9 @@ export function PropertyEnquiry({ property }: PropertyEnquiryProps) {
       }),
   });
   const [formData, setFormData] = useState<Enquiry>({
-    full_name: me ? fullNameLocal(me) : "",
+    full_name: me ? fullName(me) : "",
     email: me?.email || "",
-    message: `I am interested in your property at ${property.address.displayAddress}`,
+    message: `I am interested in your property at ${property.address.display_address}`,
     type: "enquiry",
     address: "",
     property_id: property.id,

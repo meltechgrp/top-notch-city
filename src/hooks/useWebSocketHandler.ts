@@ -3,10 +3,10 @@ import { getActiveToken } from "@/lib/secureStore";
 import { useWebSocketConnection } from "@/actions/utills";
 import { useChatStore } from "@/store/chatStore";
 import { useMultiAccount } from "@/hooks/useAccounts";
-import { useStore } from "@/store";
+import { useMe } from "@/hooks/useMe";
 
 export function useWebSocketHandler() {
-  const { me } = useStore();
+  const { me } = useMe();
   const [url, setUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { updateAccount } = useMultiAccount();

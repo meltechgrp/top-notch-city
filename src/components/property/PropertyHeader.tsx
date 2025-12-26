@@ -30,7 +30,7 @@ export default function PropertyHeader({
           <WishListButton
             id={property.id}
             slug={property.slug}
-            isAdded={!!property.liked}
+            isAdded={!!property.owner_interaction.added_to_wishlist}
             hasScrolledToDetails={hasScrolledToDetails}
           />
         )}
@@ -42,7 +42,7 @@ export default function PropertyHeader({
                 pathname: "/property/[propertyId]/edit",
                 params: {
                   propertyId: property.id,
-                  userId: property.ownerId,
+                  userId: property.owner.id,
                 },
               })
             }

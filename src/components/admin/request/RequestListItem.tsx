@@ -71,6 +71,7 @@ export default function RequestListItem({ request, onPress }: Props) {
               <AvatarImage
                 source={{
                   uri: generateMediaUrlSingle(request.user.profile_image),
+                  cache: "force-cache",
                 }}
               />
             </Avatar>

@@ -7,7 +7,7 @@ import NotificationItemWrapper from "./NotificationItemWrapper";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteNotification, markAsRead } from "@/actions/notification";
 import { format } from "date-fns";
-import { useStore } from "@/store";
+import { useMe } from "@/hooks/useMe";
 
 export default function PropertyAcceptedNotificationComponent({
   data,
@@ -15,7 +15,7 @@ export default function PropertyAcceptedNotificationComponent({
   data: UserNotification;
 }) {
   const { title, message, is_read, id, entity_id } = data;
-  const { me } = useStore();
+  const { me } = useMe();
   const query = useQueryClient();
   function invalidate() {
     query.invalidateQueries({

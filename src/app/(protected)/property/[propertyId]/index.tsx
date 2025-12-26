@@ -30,7 +30,8 @@ import { PropertyFooter } from "@/components/property/PropertyFooter";
 import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
 import { useTempStore } from "@/store";
 import { scheduleOnRN } from "react-native-worklets";
-import { normalizePropertyServer } from "@/db/normalizers/property";
+import { PropertySkeletonCard } from "@/components/property/PropertyCardSkeleton";
+import { PropertySkeletonScreen } from "@/components/property/PropertySkeletonScreen";
 
 const { height } = Dimensions.get("window");
 const HERO_HEIGHT = height / 2.2;
@@ -61,7 +62,7 @@ export default function PropertyItem() {
     detailsY.value = e.nativeEvent.layout.y;
   };
   const property = useMemo(() => {
-    return data ? normalizePropertyServer(data) : null;
+    return data ? data : null;
   }, [propertyId, data]);
 
   useEffect(() => {
@@ -122,7 +123,7 @@ export default function PropertyItem() {
           description: property?.description || "",
           duration: property?.duration,
           purpose: property?.purpose,
-          category: property?.category,
+          category: property?.category.name,
           bedroom: property?.bedroom,
           bathroom: property?.bathroom,
           bedType: property?.bedType,
@@ -131,27 +132,26 @@ export default function PropertyItem() {
           plots: property?.plots,
           viewType: property?.viewType,
           discount: property?.discount,
-          caution_fee: property?.cautionFee,
-          owner_type: property?.ownership?.ownerType || undefined,
-          listing_role: property?.ownership?.listingRole || undefined,
-          subCategory: property?.subCategory,
+          caution_fee: property?.caution_fee,
+          owner_type: property?.ownership?.owner_type || undefined,
+          listing_role: property?.ownership?.listing_role || undefined,
+          subCategory: property?.subcategory.name,
           companies: property?.companies,
           // ownershipDocuments: property?.ownership?.documents?.map((d) => ({
-          //   media_type: d.document_type?.toUpperCase() as Media["mediaType"],
+          //   media_type: d.document_type?.toUpperCase() as Media["media_type"],
           //   id: d.id,
-          //   url: d.url,
+          //   url: d.file_url,
           // })),
           price: property.price.toString(),
-          photos: property?.media?.filter((img) => img.mediaType == "IMAGE"),
-          videos: property?.media?.filter((img) => img.mediaType == "VIDEO"),
-          currency: property.currency || "NGN",
+          photos: property?.media?.filter((img) => img.media_type == "IMAGE"),
+          videos: property?.media?.filter((img) => img.media_type == "VIDEO"),
           availabilityPeriod: property?.availabilities?.map((a) => ({
             start: a.start,
             end: a.end,
           })),
           facilities: property?.amenities?.map((f) => f.name),
           address: {
-            displayName: property.address.displayAddress,
+            displayName: property.address.display_address,
             addressComponents: {
               country: property.address.country,
               state: property.address.state,
@@ -167,6 +167,7 @@ export default function PropertyItem() {
       }, 50);
     }
   }, [property]);
+
   if (error) {
     return (
       <Box className="flex-1 justify-center items-center">
@@ -249,7 +250,10 @@ export default function PropertyItem() {
           </SafeAreaView>
         </Animated.View>
       )}
-      <FullHeightLoaderWrapper loading={isLoading}>
+      <FullHeightLoaderWrapper
+        LoaderComponent={<PropertySkeletonScreen />}
+        loading={isLoading}
+      >
         <Box onLayout={onLayout} className="flex-1 relative">
           <Animated.ScrollView
             scrollEventThrottle={16}

@@ -7,7 +7,7 @@ import PropertyListItem from "@/components/property/PropertyListItem";
 type Props = {
   onDismiss: () => void;
   visible: boolean;
-  data: PropertyListItem;
+  data: Property;
 };
 export default function PropertyBottomSheet(props: Props) {
   const { visible, onDismiss, data } = props;

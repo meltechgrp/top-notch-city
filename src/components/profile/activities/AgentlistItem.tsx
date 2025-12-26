@@ -11,12 +11,13 @@ import {
 } from "lucide-react-native";
 import { TouchableOpacity } from "react-native";
 import { generateMediaUrlSingle } from "@/lib/api";
-import { profileDefault, useStore } from "@/store";
+import { profileDefault } from "@/store";
 import { fullName } from "@/lib/utils";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
 import { router } from "expo-router";
 import { useFollowAgent } from "@/hooks/useFollowAgent";
 import { openAccessModal } from "@/components/globals/AuthModals";
+import { useMe } from "@/hooks/useMe";
 
 export default function AgentListItem({
   data,
@@ -26,7 +27,7 @@ export default function AgentListItem({
   queryKey?: string[];
 }) {
   const { agent } = data;
-  const { me } = useStore();
+  const { me } = useMe();
   const { mutateAsync } = useFollowAgent({
     queryKey: queryKey || ["agents"],
     agentId: agent.id,
@@ -56,6 +57,7 @@ export default function AgentListItem({
             <AvatarImage
               source={{
                 uri: generateMediaUrlSingle(agent?.profile_image),
+                cache: "force-cache",
               }}
             />
           ) : (

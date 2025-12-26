@@ -91,7 +91,7 @@ export default function ConnectionsListSelectBottomSheet(props: Props) {
             </View>
             <View className="mt-12 gap-3">
               <Heading className=" text-3xl text-typography/80">
-                Hi {me?.firstName}
+                Hi {me?.first_name}
               </Heading>
               <Heading className=" text-3xl">How can we help?</Heading>
             </View>

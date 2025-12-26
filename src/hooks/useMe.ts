@@ -6,12 +6,12 @@ export function useMe(userId?: string) {
   const { data, isLoading, error, refetch } = useLiveQuery(() => getMe());
   const user = data?.[0] ? data[0].user : null;
   return {
-    me: user,
+    me: user as Account,
     isLoading,
     isLoggedIn: !!user,
     error,
     isAgent: user?.role == "agent" || user?.role == "staff_agent",
-    isAdmin: user?.role == "admin" || user?.isSuperuser || false,
+    isAdmin: user?.role == "admin" || user?.is_superuser || false,
     refetch,
   };
 }

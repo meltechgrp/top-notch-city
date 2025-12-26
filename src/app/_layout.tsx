@@ -23,7 +23,6 @@ import {
   configureReanimatedLogger,
   ReanimatedLogLevel,
 } from "react-native-reanimated";
-import "@/lib/background/propertySync.task";
 import { enableScreens } from "react-native-screens";
 import { ImageViewerProvider } from "@/components/custom/ImageViewerProvider";
 import { registerDevice } from "@/actions/user";
@@ -32,7 +31,6 @@ import { expoSqlite, runMigrations } from "@/db";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 
 import * as SQLite from "expo-sqlite";
-import { registerPropertyBackgroundSync } from "@/hooks/useTaskManager";
 
 enableScreens(true);
 const query = new QueryClient({
@@ -64,14 +62,9 @@ export default function RootLayout() {
   }, []);
   useDrizzleStudio(expoSqlite);
   useNotificationObserver();
-  registerPropertyBackgroundSync();
   const { retryGetLocation } = useGetLocation();
   useSuppressChatPushNotification();
   useMountPushNotificationToken();
-
-  useEffect(() => {
-    registerPropertyBackgroundSync();
-  }, []);
   useEffect(() => {
     (async () => {
       await retryGetLocation();

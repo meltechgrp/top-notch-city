@@ -6,13 +6,13 @@ import { Colors } from "@/constants/Colors";
 import { memo, useState } from "react";
 
 interface Props {
-  property: PropertyList;
-  onPress: (data: PropertyList) => void;
+  property: Property;
+  onPress: (data: Property) => void;
 }
 function CustomPropertyMarker({ property, onPress }: Props) {
-  const { latitude, longitude } = property;
-  const media = property.thumbnail;
-  const image = media ? generateMediaUrlSingle(media) : null;
+  const { latitude, longitude } = property.address;
+  const media = property.media[0];
+  const image = media ? generateMediaUrlSingle(media.url) : null;
   const [track, setTrack] = useState(true);
 
   return (

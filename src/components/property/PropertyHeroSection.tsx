@@ -17,7 +17,7 @@ export function PropertyHeroSection({ media, width }: Props) {
             factor={1}
             loop={false}
             paginationsize={6}
-            media={media.filter((item) => item.mediaType == "IMAGE") || []}
+            media={media.filter((item) => item.media_type == "IMAGE") || []}
             pointerPosition={40}
           />
         </ProfileImageTrigger>

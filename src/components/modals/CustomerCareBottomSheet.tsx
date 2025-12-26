@@ -99,6 +99,7 @@ export default function CustomerCareBottomSheet({
                 <AvatarImage
                   source={{
                     uri: generateMediaUrlSingle(item.profile_image),
+                    cache: "force-cache",
                   }}
                 />
               )}

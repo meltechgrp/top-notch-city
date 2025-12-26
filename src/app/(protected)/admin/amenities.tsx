@@ -3,21 +3,13 @@ import AmenityBottomSheet from "@/components/admin/properties/AmenityBottomSheet
 import AmenityItem from "@/components/admin/properties/amenityItem";
 import AdminCreateButton from "@/components/admin/shared/AdminCreateButton";
 import EmptyStateWrapper from "@/components/shared/EmptyStateWrapper";
-import { Box, Heading, Text, View } from "@/components/ui";
+import { Box, Heading, View } from "@/components/ui";
 import { useAmenityMutations } from "@/tanstack/mutations/useAmenityMutation";
 import { FlashList } from "@shopify/flash-list";
 import { useQuery } from "@tanstack/react-query";
 import { Bath } from "lucide-react-native";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { RefreshControl } from "react-native";
-
-type FlatItem = {
-  key: "category" | "subcategory";
-  id: string;
-  name: string;
-  category: string;
-  type: string;
-};
 
 export default function AmenitiesScreen() {
   const [refreshing, setRefreshing] = useState(false);
@@ -29,39 +21,9 @@ export default function AmenitiesScreen() {
 
   const { mutateAsync, isPending, isSuccess } =
     useAmenityMutations().addAmenityMutation;
+  const amenities = data || [];
 
-  const flatAmenities = useMemo(() => {
-    if (!data || data.length === 0) return [];
-
-    const grouped = data.reduce<Record<string, AmenityLabel[]>>(
-      (acc, amenity) => {
-        if (!acc[amenity.category]) {
-          acc[amenity.category] = [];
-        }
-        acc[amenity.category].push(amenity);
-        return acc;
-      },
-      {}
-    );
-
-    return Object.entries(grouped).flatMap(([typeName, items]) => [
-      {
-        key: "category",
-        id: typeName, // Using type name as the category ID
-        name: typeName,
-      },
-      ...items.map((item) => ({
-        key: "subcategory",
-        ...item,
-      })),
-    ]);
-  }, [data]) as FlatItem[];
-
-  const handleCreateCategory = async (data: {
-    name: string;
-    type: string;
-    category: string;
-  }) => {
+  const handleCreateCategory = async (data: string) => {
     await mutateAsync(data);
     refetch();
   };
@@ -85,7 +47,7 @@ export default function AmenitiesScreen() {
     <Box className="flex-1">
       <View className="flex-1 py-px">
         <EmptyStateWrapper
-          isEmpty={!flatAmenities.length}
+          isEmpty={!amenities.length}
           loading={isLoading}
           illustration={<Bath />}
           refreshControl={
@@ -101,31 +63,9 @@ export default function AmenitiesScreen() {
           contentWrapperClassName="relative -top-24"
         >
           <FlashList
-            data={flatAmenities}
+            data={amenities}
             keyExtractor={(item) => item.id}
-            renderItem={({ item }) => {
-              if (item.key === "category") {
-                return (
-                  <View
-                    className={
-                      "flex-1 p-6 py-4 flex-row justify-between items-center "
-                    }
-                  >
-                    <View>
-                      <Text size="md" className="capitalize">
-                        {item.name} Amenities
-                      </Text>
-                    </View>
-                  </View>
-                );
-              }
-
-              if (item.key === "subcategory") {
-                return <AmenityItem item={item} />;
-              }
-
-              return null;
-            }}
+            renderItem={({ item }) => <AmenityItem item={item} />}
             contentContainerStyle={{
               paddingBottom: 120,
               paddingTop: 10,

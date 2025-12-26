@@ -97,10 +97,8 @@ export function ListingWrapper({
         return warn("Please add number of plots");
       if (!listing?.subCategory)
         return warn("Please select the kind of property");
-      if (listing?.purpose == "rent" && !listing?.duration) {
-        if (listing.category != "Shortlet" && listing.category != "Hotel")
-          return warn("Please select rentage duration");
-      }
+      if (listing?.purpose == "rent" && !listing?.duration)
+        return warn("Please select rentage duration");
     } else if (listing.step == 3) {
       if (!listing?.facilities)
         return warn("Please select at least 1 amenities");

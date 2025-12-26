@@ -36,7 +36,7 @@ export function ProfileWrapper({
   userType = "visitor",
   userId,
 }: ProfileWrapperProps) {
-  const { isAgent, me } = useMe();
+  const { isAgent, me, isLoading: loading } = useMe();
   const id = userId || me?.id;
   const {
     data: user,
@@ -47,7 +47,6 @@ export function ProfileWrapper({
     queryKey: ["user", id],
     queryFn: () => getUser(id!),
     enabled: !!id,
-    staleTime: 0,
   });
   const [showActions, setShowActions] = useState(false);
   const feedList = React.useMemo(() => {
@@ -93,7 +92,9 @@ export function ProfileWrapper({
     },
     [isAgent, userType, user, id]
   );
-  const stickyHeaderIndices = [0, 1];
+
+  if (!loading && !me && userType == "owner")
+    return <NotLoggedInProfile userType={"owner"} />;
   return (
     <>
       <Stack.Screen
@@ -143,7 +144,7 @@ export function ProfileWrapper({
       />
       <FullHeightLoaderWrapper
         LoaderComponent={<ProfileSkeleton />}
-        loading={isLoading}
+        loading={isLoading || loading}
       >
         <Box className={cn("flex-1", userType == "owner" && "pb-24")}>
           <FlashList
@@ -166,7 +167,6 @@ export function ProfileWrapper({
                 )}
               </View>
             }
-            // stickyHeaderIndices={stickyHeaderIndices}
             contentContainerStyle={{
               paddingBottom: 50,
             }}

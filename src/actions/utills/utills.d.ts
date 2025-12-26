@@ -12,6 +12,7 @@ type GooglePlace = {
 
 type ParsedAddress = {
   city?: string;
+  display_address?: string;
   state?: string;
   country?: string;
   street?: string;
@@ -35,7 +36,7 @@ type AddressComponent = {
 };
 
 type Address = {
-  displayAddress: string;
+  display_address: string;
   street: string;
   city: string;
   state: string;

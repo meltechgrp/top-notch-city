@@ -9,22 +9,14 @@ export const fetchAllAmenities = async (): Promise<AmenityLabel[]> => {
   }
 };
 
-export const addAmenity = async ({
-  name,
-  type,
-  category,
-}: {
-  name: string;
-  type: string;
-  category: string;
-}) => {
+export const addAmenity = async (name: string) => {
   try {
     const res = await Fetch(`/amenity-labels/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      data: { name, type, category },
+      data: { name },
     });
 
     if (res?.detail) throw new Error("Failed to add amenity");
@@ -38,11 +30,7 @@ export const editAmenity = async ({
   data,
 }: {
   id: string;
-  data: {
-    name: string;
-    type: string;
-    category: string;
-  };
+  data: string;
 }) => {
   try {
     const res = await Fetch(`/amenity-labels/${id}`, {
@@ -50,7 +38,7 @@ export const editAmenity = async ({
       headers: {
         "Content-Type": "application/json",
       },
-      data: data,
+      data: { name: data },
     });
 
     if (res?.detail) throw new Error("Failed to edit amenity");

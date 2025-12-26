@@ -5,13 +5,14 @@ export const getImageUrl = (url?: string | null) => {
   if (url)
     return {
       uri: `${config.origin}${url}`,
+      cache: "force-cache",
     };
   return profileDefault;
 };
 export const generateMediaUrl = (media: Media) => {
   return {
     uri: `${config.origin}${media?.url}`,
-    isImage: media?.mediaType == "IMAGE",
+    isImage: media?.media_type == "IMAGE",
     id: media?.id,
   };
 };

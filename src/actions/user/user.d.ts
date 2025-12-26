@@ -218,28 +218,4 @@ type DocumentTypes = {
   description: string;
 };
 
-type Account = {
-  role: string | null;
-  id: string;
-  email: string;
-  phone: string | null;
-  firstName: string;
-  lastName: string;
-  slug: string;
-  gender: string | null;
-  dateOfBirth: string | null;
-  status: string | null;
-  verified: boolean | null;
-  isActive: boolean | null;
-  isSuperuser: boolean | null;
-  isBlockedByAdmin: boolean | null;
-  profileImage: string | null;
-  autoChatMessage: string | null;
-  viewsCount: number | null;
-  likesCount: number | null;
-  totalProperties: number | null;
-  followersCount: number | null;
-  isFollowing: boolean | null;
-  createdAt: string | null;
-  updatedAt: string | null;
-} | null;
+type Account = Me | null;

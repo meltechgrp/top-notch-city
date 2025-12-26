@@ -55,7 +55,7 @@ type Booking = {
     last_name: string;
     profile_image: string;
   };
-
+  availabilities: Availabilities[];
   booking_type: Bookingtype;
   notes: string;
   updated_at?: string;

@@ -1,10 +1,10 @@
 import { Pressable } from "../ui";
 import { cn } from "@/lib/utils";
 import { memo } from "react";
-import { useStore } from "@/store";
 import { openAccessModal } from "@/components/globals/AuthModals";
 import { useLike } from "@/hooks/useLike";
 import { AnimatedLikeButton } from "@/components/custom/AnimatedLikeButton";
+import { useMe } from "@/hooks/useMe";
 
 interface Props {
   liked: boolean;
@@ -14,7 +14,7 @@ interface Props {
 }
 
 const ReelLikeButton = ({ liked, id, className, isLand }: Props) => {
-  const { me } = useStore();
+  const { me } = useMe();
   const { toggleLike, isPending } = useLike({
     queryKey: [isLand ? "lands" : "reels"],
   });

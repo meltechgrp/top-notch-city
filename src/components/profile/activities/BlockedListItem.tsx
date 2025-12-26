@@ -35,6 +35,7 @@ export function BlockListItem({ user }: { user: Blocked }) {
             <AvatarImage
               source={{
                 uri: generateMediaUrlSingle(user?.profile_image),
+                cache: "force-cache",
               }}
             />
           ) : (

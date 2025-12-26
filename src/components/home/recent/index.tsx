@@ -1,17 +1,17 @@
 import SectionHeaderWithRef from "@/components/home/SectionHeaderWithRef";
 import HorizontalProperties from "@/components/property/HorizontalProperties";
-import { useHomeList } from "@/hooks/useHomeList";
+import { useHomeFeed } from "@/hooks/useHomeFeed";
 import { router } from "expo-router";
 import { memo } from "react";
 
 function ApartmentsProperties() {
-  const { latest, isLoading } = useHomeList();
+  const { latest, loadingLatest, refetchingLatest } = useHomeFeed();
   return (
     <SectionHeaderWithRef
       title="Properties"
       titleClassName="text-gray-400 text-base"
       subTitle="See More"
-      hasData={isLoading || latest?.length > 0}
+      hasData={loadingLatest || refetchingLatest || latest?.length > 0}
       onSeeAllPress={() => {
         router.push({
           pathname: "/explore",
@@ -23,8 +23,8 @@ function ApartmentsProperties() {
     >
       <HorizontalProperties
         data={latest}
-        isLoading={isLoading}
-        isRefetching={false}
+        isLoading={loadingLatest}
+        isRefetching={refetchingLatest}
         listType={["latest"]}
       />
     </SectionHeaderWithRef>

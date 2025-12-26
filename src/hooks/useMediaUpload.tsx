@@ -138,7 +138,7 @@ export function useMediaUpload({
     const files = result.assets.map((a) => ({
       url: a.uri,
       id: uniqueId("media_"),
-      mediaType: type.toUpperCase() as Media["mediaType"],
+      media_type: type.toUpperCase() as Media["media_type"],
       loading: true,
       progress: 0,
     })) as UploadedFile[];
@@ -171,7 +171,7 @@ export function useMediaUpload({
     const files = result.assets.map((a) => ({
       url: a.uri,
       id: uniqueId("media_"),
-      mediaType: type.toUpperCase() as Media["mediaType"],
+      media_type: type.toUpperCase() as Media["media_type"],
       loading: true,
       progress: 0,
     })) as UploadedFile[];

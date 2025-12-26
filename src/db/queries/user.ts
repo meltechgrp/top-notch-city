@@ -12,12 +12,3 @@ export async function getMe() {
     .where(eq(accounts.isActive, true))
     .limit(1);
 }
-
-export async function getLocalUserIndex() {
-  return db
-    .select({
-      id: users.id,
-      updatedAt: users.updatedAt,
-    })
-    .from(users);
-}
