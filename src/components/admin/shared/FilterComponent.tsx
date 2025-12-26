@@ -14,6 +14,7 @@ type Props = {
   onSearch: (search: string) => void;
   onUpdate?: (tab: string) => void;
   className?: string;
+  inputClassName?: string;
 };
 
 export function FilterComponent({
@@ -24,13 +25,17 @@ export function FilterComponent({
   onUpdate,
   search,
   className,
+  inputClassName,
 }: Props) {
   return (
     <View className={cn("gap-3 mb-4", className)}>
       <View className="gap-4">
         <View>
           <CustomInput
-            className="rounded-xl bg-background-muted px-2 h-11 "
+            className={cn(
+              "rounded-xl bg-background-muted px-2 h-11 ",
+              inputClassName
+            )}
             value={search}
             placeholder={
               searchPlaceholder ?? "Search by name, email or phone..."

@@ -1,30 +1,62 @@
+import { Bookings } from "@/actions/bookings";
 import { BookingCard } from "@/components/bookings/BookingCard";
 import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
 import { Box, Text, View } from "@/components/ui";
+import { useMe } from "@/hooks/useMe";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { format } from "date-fns";
 import { router } from "expo-router";
 import { FolderOpen, Search } from "lucide-react-native";
-import { memo } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { RefreshControl, SectionList } from "react-native";
 
-interface Props {
-  bookings: {
-    title: string;
-    data: Booking[];
-  }[];
-  isRefreshing: boolean;
-  isLoading: boolean;
-  refetch: () => Promise<any>;
-}
+function BookingList() {
+  const { isAgent } = useMe();
+  const { data, isLoading, refetch, isRefetching } = useInfiniteQuery({
+    queryKey: ["bookings"],
+    queryFn: ({}) => Bookings(isAgent),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      const { page, pages } = lastPage;
+      return page < pages ? page + 1 : undefined;
+    },
+  });
+  const bookings = useMemo(
+    () => data?.pages.flatMap((page) => page.results) || [],
+    [data]
+  );
+  const sections = useCallback(
+    (key: string) => {
+      if (!bookings.length) return [];
 
-function BookingList({ bookings, isLoading, isRefreshing, refetch }: Props) {
+      const groups: { [date: string]: Booking[] } = {};
+      bookings
+        .filter((booking) => booking.booking_type == key)
+        .forEach((item) => {
+          const dateKey = format(new Date(item.created_at), "yyyy-MM-dd");
+          if (!groups[dateKey]) groups[dateKey] = [];
+          groups[dateKey].push(item);
+        });
+
+      return Object.entries(groups)
+        .map(([dateKey, items]) => ({
+          title: format(new Date(dateKey), "MMMM d, yyyy"),
+          data: items,
+        }))
+        .sort(
+          (a, b) => new Date(b.title).getTime() - new Date(a.title).getTime()
+        );
+    },
+    [bookings]
+  );
   return (
     <Box className="flex-1 px-4">
       <SectionList
-        sections={bookings}
+        sections={sections("reservation")}
         contentContainerClassName="pb-20"
         keyExtractor={(item) => item.id}
         refreshControl={
-          <RefreshControl refreshing={isRefreshing} onRefresh={refetch} />
+          <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
         }
         renderItem={({ item }) => <BookingCard booking={item} />}
         renderSectionHeader={({ section: { title } }) => (

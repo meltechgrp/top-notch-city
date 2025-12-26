@@ -143,13 +143,13 @@ function PropertyListItem(props: Props) {
           </View>
           <View className="flex-row justify-between items-center p-4 pb-2">
             <View className="flex-row gap-1">
-              <View className="flex-row h-8 gap-2 bg-black/40 rounded-2xl py-0 px-3 items-center">
+              <View className="flex-row h-8 gap-2 bg-black/70 rounded-2xl py-0 px-3 items-center">
                 <Icon as={Eye} size="sm" className="text-white" />
                 <Text className="text-white font-medium text-sm ">
                   {formatNumberCompact(interaction?.viewed)}
                 </Text>
               </View>
-              <View className="flex-row h-8 gap-2 bg-black/40 rounded-2xl py-0 px-3 items-center">
+              <View className="flex-row h-8 gap-2 bg-black/70 rounded-2xl py-0 px-3 items-center">
                 <Icon as={Heart} size="sm" className="text-white" />
                 <Text className="text-white font-medium text-sm ">
                   {formatNumberCompact(interaction?.liked)}

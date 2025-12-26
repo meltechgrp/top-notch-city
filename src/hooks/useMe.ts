@@ -2,7 +2,7 @@
 import { useLiveQuery } from "@/hooks/useLiveQuery";
 import { getMe } from "@/db/queries/user";
 
-export function useMe(userId?: string) {
+export function useMe() {
   const { data, isLoading, error, refetch } = useLiveQuery(() => getMe());
   const user = data?.[0] ? data[0].user : null;
   return {

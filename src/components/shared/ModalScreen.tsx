@@ -14,6 +14,7 @@ import Animated, {
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { scheduleOnRN } from "react-native-worklets";
 import { BodyScrollView } from "@/components/layouts/BodyScrollView";
+import { ImageViewerProvider } from "@/components/custom/ImageViewerProvider";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const EDGE_WIDTH = 20;
@@ -21,6 +22,7 @@ type ModalScreenProps = {
   title?: string;
   rightComponent?: ReactNode;
   leftComponent?: ReactNode;
+  bottomComponent?: ReactNode;
   closeIcon?: LucideIcon;
   children: ReactNode;
   disableSwipe?: boolean;
@@ -39,6 +41,7 @@ export default function ModalScreen({
   closeIcon,
   leftComponent,
   visible,
+  bottomComponent,
 }: ModalScreenProps) {
   const insets = useSafeAreaInsets();
 
@@ -104,7 +107,7 @@ export default function ModalScreen({
               />
             </GestureDetector>
           )}
-          <View className="flex-1">
+          <View className="flex-1 relative">
             <View
               style={{
                 paddingTop: Math.max(insets.top, 16),
@@ -131,13 +134,17 @@ export default function ModalScreen({
                 </View>
               </View>
             </View>
-            {withScroll ? (
-              <BodyScrollView style={{ flex: 1 }} containerClassName="flex-1">
-                {children}
-              </BodyScrollView>
-            ) : (
-              <View className="flex-1">{children}</View>
-            )}
+
+            <ImageViewerProvider>
+              {withScroll ? (
+                <BodyScrollView style={{ flex: 1 }} containerClassName="flex-1">
+                  {children}
+                </BodyScrollView>
+              ) : (
+                <View className="flex-1">{children}</View>
+              )}
+            </ImageViewerProvider>
+            {bottomComponent && bottomComponent}
           </View>
         </Animated.View>
       </Modal>

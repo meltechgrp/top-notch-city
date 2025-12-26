@@ -14,6 +14,7 @@ import { useTempStore } from "@/store";
 import { useLayout } from "@react-native-community/hooks";
 import { useRouter } from "expo-router";
 import { useMemo } from "react";
+import Animated, { FadeInRight, FadeOutLeft } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 interface ListingWrapperProps {
@@ -127,16 +128,16 @@ export function ListingWrapper({
       <Box onLayout={onLayout} className="flex-1">
         <FullHeightLoaderWrapper className="flex-1" loading={loading}>
           <SafeAreaView edges={["bottom"]} className="flex-1">
-            {/* <Animated.View
+            <Animated.View
               entering={FadeInRight.duration(200)}
               exiting={FadeOutLeft.duration(200)}
               key={listing.step}
               style={{ height, flex: 1 }}
-            > */}
-            <BodyScrollView withBackground contentContainerClassName="pb-12">
-              {Steps}
-            </BodyScrollView>
-            {/* </Animated.View> */}
+            >
+              <BodyScrollView withBackground contentContainerClassName="pb-12">
+                {Steps}
+              </BodyScrollView>
+            </Animated.View>
             <ListingBottomNavigation
               step={listing.step}
               uploaHandler={uploaHandler}

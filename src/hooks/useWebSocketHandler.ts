@@ -42,9 +42,9 @@ export function useWebSocketHandler() {
     connect();
 
     setOnMessage(async (data) => {
-      // if (data.type !== "ping") {
-      console.log("📨 Message:", data);
-      // }
+      if (data.type !== "ping") {
+        console.log("📨 Message:", data);
+      }
 
       const handlers: Record<string, () => Promise<void> | void> = {
         new_message: () => {
