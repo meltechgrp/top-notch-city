@@ -11,6 +11,7 @@ import Layout from "@/constants/Layout";
 import { Copy, Edit, Reply, Trash } from "lucide-react-native";
 import { Icon, Text, Pressable } from "@/components/ui";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
+import { useMe } from "@/hooks/useMe";
 
 type Props = {
   visible: boolean;
@@ -32,7 +33,7 @@ function MessageActionsBottomSheet(props: Props) {
     handleEdit,
     message,
   } = props;
-  const me = useStore((s) => s.me);
+  const { me } = useMe();
   const isMine = me?.id === message?.sender_info?.id;
 
   const messageActions = useMemo(() => {

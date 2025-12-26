@@ -23,6 +23,7 @@ import { useMessages } from "@/hooks/useMessages";
 import BackgroundView from "@/components/layouts/BackgroundView";
 import { TypingIndicator } from "@/components/chat/TypingIndicator";
 import { useWebSocketHandler } from "@/hooks/useWebSocketHandler";
+import { useMe } from "@/hooks/useMe";
 
 const InitialNumToRender = 30;
 type Props = {
@@ -31,7 +32,7 @@ type Props = {
 };
 export default function ChatRoom(props: Props) {
   const { ChatRoomFooterProps = {}, chatId } = props;
-  const me = useStore((s) => s.me);
+  const { me } = useMe();
   const { connect } = useWebSocketHandler();
   const {
     handleSendMessage,

@@ -7,6 +7,7 @@ import { CloseIcon, Icon, Image, Text } from "@/components/ui";
 import { cn, fullName } from "@/lib/utils";
 import { chunk } from "lodash-es";
 import { generateMediaUrl } from "@/lib/api";
+import { useMe } from "@/hooks/useMe";
 
 type QuoteMessageProps = {
   onClear?: () => void;
@@ -16,7 +17,7 @@ type QuoteMessageProps = {
 
 const QuoteMessage = (props: QuoteMessageProps) => {
   const { quote, forEditor, onClear } = props;
-  const me = useStore((s) => s.me);
+  const { me } = useMe();
 
   const isMine = quote?.sender_info?.id === me?.id;
 

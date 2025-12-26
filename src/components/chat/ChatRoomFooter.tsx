@@ -1,6 +1,7 @@
 import { ChatRoomMessageProps } from "@/components/chat/ChatRoomMessage";
 import QuoteMessage from "@/components/chat/ChatRoomQuoteMessage";
 import Editor, { EditorComponentRefHandle } from "@/components/custom/Editor";
+import { useMe } from "@/hooks/useMe";
 import { guidGenerator } from "@/lib/utils";
 import { useStore } from "@/store";
 import { ImagePickerAsset } from "expo-image-picker";
@@ -32,7 +33,7 @@ const ChatRoomFooter = React.forwardRef<EditorComponentRefHandle, Props>(
       selectedMessage,
       receiver,
     } = props;
-    const me = useStore((s) => s.me);
+    const { me } = useMe();
     function onSubmit({
       text,
       files,
