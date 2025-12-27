@@ -16,7 +16,7 @@ function ShortletProperties() {
         router.push({
           pathname: "/explore",
           params: {
-            list: "true",
+            category: "Shortlet",
           },
         });
       }}
@@ -24,7 +24,7 @@ function ShortletProperties() {
       <HorizontalProperties
         data={shortlets}
         isLoading={loadingShortlet}
-        listType={["shortlets"]}
+        listType={["shortlet"]}
         isRefetching={refetchingShortlet}
       />
     </SectionHeaderWithRef>

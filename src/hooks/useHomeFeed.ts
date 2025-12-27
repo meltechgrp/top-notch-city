@@ -131,6 +131,7 @@ export function useHomeFeed() {
     lands,
     latest,
     featured,
+    shortlets,
     nearby: nearbyProperties || [],
     loadingFeatured,
     loadingLand,
@@ -145,6 +146,5 @@ export function useHomeFeed() {
     getTotalCount,
     updatetotalUnreadChat,
     refetchingShortlet,
-    shortlets,
   };
 }

@@ -17,7 +17,7 @@ const Lands = () => {
         router.push({
           pathname: "/explore",
           params: {
-            list: "true",
+            category: "Land",
           },
         });
       }}

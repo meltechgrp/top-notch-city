@@ -19,12 +19,12 @@ export default function SearchWrapper({
   disableBack = false,
   isTab = false,
 }: SearchWrapperProps) {
-  const { latitude, longitude, reset, list, locate } =
+  const { latitude, longitude, reset, category, locate } =
     useGlobalSearchParams() as {
       latitude: string;
       longitude: string;
       reset: string;
-      list: string;
+      category: string;
       locate: string;
     };
   const { height: totalHeight } = Dimensions.get("screen");
@@ -42,14 +42,19 @@ export default function SearchWrapper({
     if (locate) {
       setLocationBottomSheet(true);
     }
+    if (category) {
+      search.setFilters({
+        category: category,
+      });
+    }
     router.setParams({
       latitude: undefined,
       longitude: undefined,
       reset: undefined,
-      list: undefined,
+      category: undefined,
       locate: undefined,
     });
-  }, [latitude, longitude, reset, list, locate]);
+  }, [latitude, longitude, reset, category, locate]);
 
   return (
     <>

@@ -38,7 +38,6 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
     resendMessage,
     ...others
   } = props;
-  const { width, onLayout } = useLayout();
   const images = useMemo(
     () =>
       message?.file_data?.map((item) => ({
@@ -109,7 +108,6 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
           {...pressProps}
           {...others}
           onPress={dismissKeyboard}
-          onLayout={onLayout}
           className={cn([
             " px-4 w-full flex-row py-2",
             isDeleting && "opacity-30",

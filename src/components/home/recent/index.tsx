@@ -16,7 +16,7 @@ function ApartmentsProperties() {
         router.push({
           pathname: "/explore",
           params: {
-            list: "true",
+            category: "Residential",
           },
         });
       }}

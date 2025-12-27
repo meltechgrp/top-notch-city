@@ -21,7 +21,6 @@ import {
 } from "lucide-react-native";
 import { memo, useMemo } from "react";
 import Layout from "@/constants/Layout";
-import { useLayout } from "@react-native-community/hooks";
 import { PropertyStatus } from "./PropertyStatus";
 import { PropertyBadge } from "./PropertyBadge";
 import { openAccessModal } from "@/components/globals/AuthModals";

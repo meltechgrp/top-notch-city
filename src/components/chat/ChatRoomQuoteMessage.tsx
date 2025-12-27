@@ -1,6 +1,5 @@
 import { ChatRoomMessageProps } from "@/components/chat/ChatRoomMessage";
 import { View, Pressable } from "react-native";
-import { useStore } from "@/store";
 import ImageOutlineIcon from "@/components/icons/ImageOutlineIcon";
 import { Colors } from "@/constants/Colors";
 import { CloseIcon, Icon, Image, Text } from "@/components/ui";

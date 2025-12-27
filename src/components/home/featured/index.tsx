@@ -16,7 +16,7 @@ function FeaturedProperties() {
         router.push({
           pathname: "/explore",
           params: {
-            list: "true",
+            featured: "true",
           },
         });
       }}
