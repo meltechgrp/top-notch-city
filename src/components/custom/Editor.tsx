@@ -1,26 +1,18 @@
 import { cn } from "@/lib/utils";
 import React, {
   memo,
-  useCallback,
   useEffect,
   useImperativeHandle,
   useMemo,
   useState,
 } from "react";
-import {
-  Keyboard,
-  Pressable,
-  TextInput,
-  TextInputProps,
-  View,
-} from "react-native";
+import { Keyboard, TextInput, TextInputProps, View } from "react-native";
 import { CameraIcon, Send } from "lucide-react-native";
-import { Icon } from "../ui";
+import { Icon, Pressable } from "../ui";
 import MediaPicker, { MediaPickerRef } from "@/components/custom/MediaPicker";
-import type { ImagePickerAsset } from "expo-image-picker";
 import { sendTyping } from "@/actions/message";
 
-export type EditorOnchangeArgs = { text: string; files: ImagePickerAsset[] };
+export type EditorOnchangeArgs = { text: string; files: Media[] };
 type Props = View["props"] & {
   onBlur?: () => void;
   onSend: (arg: EditorOnchangeArgs) => void;
@@ -57,10 +49,10 @@ const EditorComponent = React.forwardRef<
     noMedia,
     chatId,
   } = props;
-  const mediaPickerRef = React.useRef<any>(null);
+  const mediaPickerRef = React.useRef<MediaPickerRef>(null);
   const [text, setText] = React.useState(value);
   const [typing, setTyping] = useState(false);
-  const [media, setMedia] = React.useState<any[]>([]);
+  const [media, setMedia] = React.useState<Media[]>([]);
   const textInputRef = React.useRef<TextInput>(null);
   const typingTimeout = React.useRef<ReturnType<typeof setTimeout> | null>(
     null
@@ -135,7 +127,7 @@ const EditorComponent = React.forwardRef<
                 className={cn(
                   "h-12 w-12 items-center justify-center rounded-xl disabled:opacity-50"
                 )}
-                onPress={() => mediaPickerRef.current?.onPickPhoto?.()}
+                onPress={() => mediaPickerRef.current?.pick?.()}
                 disabled={media.length >= fileLimit}
               >
                 <Icon as={CameraIcon} />

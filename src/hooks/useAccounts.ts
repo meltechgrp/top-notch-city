@@ -130,11 +130,11 @@ export function useMultiAccount() {
     await writeDb(async () => {
       await db.delete(accounts).where(eq(accounts.userId, userId));
       await removeToken(userId);
-
+      await resetAppState({ onlyCache: true });
       const [next] = await db.select().from(accounts).limit(1);
 
       if (next) {
-        await setActiveUserId(next.userId);
+        await switchToAccount(next.userId);
       } else {
         await removeActiveUser();
       }

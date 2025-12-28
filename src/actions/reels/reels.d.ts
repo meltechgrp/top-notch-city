@@ -5,6 +5,9 @@ interface Reel {
   title: string;
   slug: string;
   description: string;
+  category: {
+    name: string;
+  };
   interations: Interaction;
   owner_interaction: OwnerInteraction;
   created_at: string;

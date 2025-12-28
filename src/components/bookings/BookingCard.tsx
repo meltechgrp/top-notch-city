@@ -5,7 +5,6 @@ import {
   AvatarImage,
   Badge,
   Icon,
-  Image,
   Pressable,
   Text,
   View,
@@ -23,59 +22,30 @@ import {
   Calendar,
   CircleCheckBig,
   MapPin,
-  Users,
 } from "lucide-react-native";
 import { ProfileImageTrigger } from "@/components/custom/ImageViewerProvider";
 import { BookingBottomSheet } from "@/components/modals/bookings/BookingBottomSheet";
 import { useMe } from "@/hooks/useMe";
 import { format } from "date-fns";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateBookingStatus } from "@/actions/bookings";
-import { showErrorAlert } from "@/components/custom/CustomNotification";
 import SwipeableWrapper, {
   SwipeAction,
 } from "@/components/shared/SwipeableWrapper";
 import { openBookingModal } from "@/components/globals/AuthModals";
 import { CancelationReasonBottomSheet } from "@/components/modals/bookings/CancelationReasonBottomSheet";
+import { useBooking } from "@/hooks/useBooking";
 
 type Props = {
   booking: Booking;
 };
 
 export function BookingCard({ booking }: Props) {
-  const query = useQueryClient();
   const { me } = useMe();
   const [bookingBottomSheet, setBoookingBottomSheet] = useState(false);
   const [openActions, setOpenActions] = useState(false);
-  const { mutateAsync, isPending } = useMutation({
-    mutationFn: updateBookingStatus,
-    mutationKey: ["bookings"],
-    onSuccess: () => {
-      showErrorAlert({
-        title: "Booking updated successfully",
-        alertType: "success",
-      });
-      query.invalidateQueries({
-        queryKey: ["bookings"],
-      });
-      setBoookingBottomSheet(false);
-    },
-    onError: () => {
-      showErrorAlert({
-        title: "Something went wrong!",
-        alertType: "error",
-      });
-    },
-  });
 
+  const { handleInvalidate, mutation } = useBooking();
   const isOwner = useMemo(() => me?.id == booking.agent.id, [booking, me]);
-  async function handleUpdate(status: BookingStatus, note?: string) {
-    await mutateAsync({
-      booking_id: booking.id,
-      status,
-      note,
-    });
-  }
+
   function handleRebook() {
     openBookingModal({
       visible: true,
@@ -85,10 +55,7 @@ export function BookingCard({ booking }: Props) {
       image: booking.property.image,
       title: booking.property.title,
       address: composeFullAddress(booking.property.address),
-      onDismiss: () =>
-        query.invalidateQueries({
-          queryKey: ["bookings"],
-        }),
+      onDismiss: handleInvalidate,
     });
   }
   const LeftActions = useMemo(
@@ -107,7 +74,10 @@ export function BookingCard({ booking }: Props) {
                   </View>
                 ),
                 onPress: () =>
-                  handleUpdate(isOwner ? "confirmed" : "completed"),
+                  mutation.updateStatus(
+                    booking.id,
+                    isOwner ? "confirmed" : "completed"
+                  ),
               }
             : null,
         ],
@@ -124,20 +94,27 @@ export function BookingCard({ booking }: Props) {
                   </View>
                 ),
                 onPress: () =>
-                  handleUpdate(isOwner ? "confirmed" : "completed"),
+                  mutation.updateStatus(
+                    booking.id,
+                    isOwner ? "confirmed" : "completed"
+                  ),
               }
             : null,
         ],
-        {
-          type: "success",
-          component: (
-            <View className="bg-gray-600 flex-1 items-center justify-center">
-              <Icon as={BookCheck} className="text-white text-sm" />
-              <Text className="text-white">Re-book</Text>
-            </View>
-          ),
-          onPress: handleRebook,
-        },
+        ...[
+          !isOwner
+            ? {
+                type: "success",
+                component: (
+                  <View className="bg-gray-600 flex-1 items-center justify-center">
+                    <Icon as={BookCheck} className="text-white text-sm" />
+                    <Text className="text-white">Re-book</Text>
+                  </View>
+                ),
+                onPress: handleRebook,
+              }
+            : null,
+        ],
       ].filter((a) => a != null) as SwipeAction[],
     [isOwner, booking]
   );
@@ -145,17 +122,21 @@ export function BookingCard({ booking }: Props) {
     <>
       <SwipeableWrapper
         leftActions={LeftActions}
-        rightActions={[
-          {
-            component: (
-              <View className="bg-primary flex-1 items-center justify-center">
-                <Icon as={Ban} className="text-white" />
-                <Text className="text-white">Cancel</Text>
-              </View>
-            ),
-            onPress: () => setOpenActions(true),
-          },
-        ]}
+        rightActions={
+          booking.status != "cancelled"
+            ? [
+                {
+                  component: (
+                    <View className="bg-primary flex-1 items-center justify-center">
+                      <Icon as={Ban} className="text-white" />
+                      <Text className="text-white">Cancel</Text>
+                    </View>
+                  ),
+                  onPress: () => setOpenActions(true),
+                },
+              ]
+            : undefined
+        }
       >
         <Pressable
           onPress={() => setBoookingBottomSheet(true)}
@@ -256,14 +237,16 @@ export function BookingCard({ booking }: Props) {
           setBoookingBottomSheet(false);
         }}
         isOwner={isOwner}
-        isPending={isPending}
+        isPending={mutation.isPending}
         handleRebook={handleRebook}
-        handleUpdate={handleUpdate}
+        handleUpdate={mutation.updateStatus}
       />
 
       <CancelationReasonBottomSheet
         visible={openActions}
-        onCancel={async (reason) => await handleUpdate("cancelled", reason)}
+        onCancel={async (reason) =>
+          await mutation.updateStatus(booking.id, "cancelled", reason)
+        }
         onDismiss={() => setOpenActions(false)}
       />
     </>

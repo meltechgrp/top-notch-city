@@ -1,3 +1,4 @@
+import { PropertyBadge } from "@/components/property/PropertyBadge";
 import ReelInteractionBar from "@/components/reel/ReelInteractionBar";
 import { Icon, Pressable, Text, useResolvedTheme, View } from "@/components/ui";
 import { Divider } from "@/components/ui/divider";
@@ -63,11 +64,7 @@ function PlayerController({
       <View className={cn("flex-1 gap-2 pb-1 android:pb-4", isLand && "pb-8")}>
         <View className="flex-row justify-between items-end gap-4 px-3">
           <View className="flex-1 gap-1">
-            <View className="bg-primary rounded-md self-start py-1 px-2">
-              <Text className="text-lg text-white capitalize">
-                For {reel.purpose == "sell" ? "Sale" : "Rent"}
-              </Text>
-            </View>
+            <PropertyBadge property={reel as any} />
             {inTab && (
               <View className="flex-row gap-2 items-center">
                 <Icon size="sm" as={House} className="text-primary" />

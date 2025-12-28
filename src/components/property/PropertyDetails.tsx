@@ -116,7 +116,10 @@ const PropertyDetailsBottomSheet = ({
                 {property.address && (
                   <View className="flex-1 flex-row gap-1 items-center">
                     <Icon size="sm" as={MapPin} className="text-primary" />
-                    <Text className="text-white flex-1 text-xs">
+                    <Text
+                      numberOfLines={2}
+                      className="text-white flex-1 text-xs"
+                    >
                       {composeFullAddress(property.address)}
                     </Text>
                   </View>

@@ -51,11 +51,11 @@ function ListingPhotosBottomSheet({
       processFiles(media);
       setPreviewFiles(media);
     },
-    apply_watermark: true,
     onSuccess: (media) => {
       setPreviewFiles([]);
       onUpdate(media);
     },
+    onError: () => setPreviewFiles([]),
     maxSelection: MAX - currentCount,
   });
 

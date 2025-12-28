@@ -42,9 +42,11 @@ export default function ProtectedRoutesLayout() {
       <Stack.Screen
         name="start"
         options={{
-          headerTitle: "Start",
-          presentation: Platforms.isAndroid() ? "modal" : "formSheet",
-          sheetAllowedDetents: [0.8, 1],
+          headerShown: true,
+          headerLeft: headerLeft(),
+          headerTitle: "",
+          presentation: "formSheet",
+          sheetAllowedDetents: [0.9],
           sheetGrabberVisible: true,
           contentStyle: {
             flex: 1,

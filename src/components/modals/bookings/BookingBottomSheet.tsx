@@ -6,7 +6,6 @@ import {
   Button,
   Icon,
   Image,
-  Pressable,
   Text,
   View,
 } from "@/components/ui";
@@ -14,7 +13,6 @@ import { generateMediaUrlSingle, getImageUrl } from "@/lib/api";
 import { format } from "date-fns";
 import { ProfileImageTrigger } from "@/components/custom/ImageViewerProvider";
 import {
-  Bed,
   Calendar,
   ChevronRight,
   Clock,
@@ -24,7 +22,6 @@ import {
 } from "lucide-react-native";
 import { cn, composeFullAddress, formatMoney, fullName } from "@/lib/utils";
 import ModalScreen from "@/components/shared/ModalScreen";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useCallback } from "react";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 

@@ -45,7 +45,7 @@ function ListingVideosBottomSheet(props: Props) {
       processFiles(media);
       setPreviewFiles(media);
     },
-    apply_watermark: true,
+    onError: () => setPreviewFiles([]),
     onSuccess: (media) => {
       setPreviewFiles([]);
       onUpdate(media);

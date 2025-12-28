@@ -22,7 +22,6 @@ import MessageActionsBottomSheet from "@/components/chat/MessageActionsBottomShe
 import { useMessages } from "@/hooks/useMessages";
 import BackgroundView from "@/components/layouts/BackgroundView";
 import { TypingIndicator } from "@/components/chat/TypingIndicator";
-import { useWebSocketHandler } from "@/hooks/useWebSocketHandler";
 import { useMe } from "@/hooks/useMe";
 
 const InitialNumToRender = 30;
@@ -33,7 +32,6 @@ type Props = {
 export default function ChatRoom(props: Props) {
   const { ChatRoomFooterProps = {}, chatId } = props;
   const { me } = useMe();
-  const { connect } = useWebSocketHandler();
   const {
     handleSendMessage,
     hasNextPage,
@@ -149,9 +147,6 @@ export default function ChatRoom(props: Props) {
     }
   );
 
-  React.useEffect(() => {
-    connect();
-  }, []);
   React.useEffect(() => {
     if (chatId && messages?.length) {
       markAsRead({ chatId });

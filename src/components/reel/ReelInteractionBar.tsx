@@ -1,6 +1,7 @@
 import { startChat } from "@/actions/message";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
+import { openAccessModal } from "@/components/globals/AuthModals";
 import ReelLikeButton from "@/components/reel/ReelLikeButton";
 import ReelShareButton from "@/components/reel/ReelShareButton";
 import ReelWishListButton from "@/components/reel/ReelWishListButton";
@@ -12,6 +13,7 @@ import {
   Text,
   View,
 } from "@/components/ui";
+import { useMe } from "@/hooks/useMe";
 import { generateMediaUrl } from "@/lib/api";
 import { fullName } from "@/lib/utils";
 import { profileDefault } from "@/store";
@@ -28,6 +30,7 @@ function ReelInteractionBar({
   isLand,
   setShowBottomSheet,
 }: ReelInteractionBar) {
+  const { me } = useMe();
   const { mutateAsync } = useMutation({
     mutationFn: startChat,
   });
@@ -83,6 +86,9 @@ function ReelInteractionBar({
         <View className=" items-center">
           <AnimatedPressable
             onPress={async () => {
+              if (!me) {
+                return openAccessModal({ visible: true });
+              }
               await mutateAsync(
                 {
                   property_id: reel.id!,

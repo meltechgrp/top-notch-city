@@ -6,11 +6,12 @@ import { ImageManipulator, SaveFormat } from "expo-image-manipulator";
 import { uploadToBucket } from "@/actions/bucket";
 import { uploadWithFakeProgress } from "@/lib/utils";
 
-type MediaType = "image" | "video" | "audio";
+type MediaType = "image" | "video" | "audio" | "all";
 
 type UseMediaUploadOptions = {
   onSuccess: (media: UploadedFile[]) => void;
   onFiles: (media: UploadedFile[]) => void;
+  onError?: () => void;
   type: MediaType;
   maxSelection?: number;
   apply_watermark?: boolean;
@@ -21,7 +22,7 @@ export function useMediaUpload({
   type,
   maxSelection,
   onFiles,
-  apply_watermark = false,
+  onError,
 }: UseMediaUploadOptions) {
   const [loading, setLoading] = useState(false);
   const [progressMap, setProgressMap] = useState<Record<string, number>>({});
@@ -71,7 +72,7 @@ export function useMediaUpload({
                       type,
                     }),
                   (p) => updateProgress(item.id, p),
-                  type == "video"
+                  type == "video" || type == "all"
                 );
 
                 resolve(uploaded[0]);
@@ -82,13 +83,12 @@ export function useMediaUpload({
         )
       );
       const uploaded = media.map((m, index) => ({
-        ...m,
         // @ts-ignore
         id: results[index].id,
         // @ts-ignore
         url: results[index].url,
-        loading: false,
-        progress: 100,
+        // @ts-ignore
+        media_type: results[index].media_type,
       }));
 
       onSuccess(uploaded);
@@ -97,6 +97,7 @@ export function useMediaUpload({
         title: "Upload failed. Try again.",
         alertType: "warn",
       });
+      onError?.();
     } finally {
       setLoading(false);
       setProgressMap({});
@@ -124,7 +125,12 @@ export function useMediaUpload({
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: type === "image" ? ["images"] : ["videos"],
+      mediaTypes:
+        type === "image"
+          ? ["images"]
+          : type == "video"
+            ? ["videos"]
+            : ["videos", "images"],
       selectionLimit: maxSelection,
       allowsMultipleSelection: true,
       orderedSelection: true,
@@ -159,7 +165,12 @@ export function useMediaUpload({
     if (!permitted.granted) await ImagePicker.requestCameraPermissionsAsync();
 
     const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: type === "image" ? ["images"] : ["videos"],
+      mediaTypes:
+        type === "image"
+          ? ["images"]
+          : type == "video"
+            ? ["videos"]
+            : ["videos", "images"],
       cameraType: ImagePicker.CameraType.back,
       quality: 1,
     });

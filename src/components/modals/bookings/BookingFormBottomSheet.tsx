@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState } from "react";
 import { View } from "react-native";
 import { ButtonsInput, CustomInput } from "../../custom/CustomInput";
 import { Button, ButtonText, Text, Image, Icon } from "../../ui";
@@ -6,17 +6,14 @@ import { useMutation } from "@tanstack/react-query";
 import { sendBooking } from "@/actions/bookings";
 import { SpinningLoader } from "../../loaders/SpinningLoader";
 import { DateTimePickerSheet } from "./DateTimePickerSheet";
-import { composeFullAddress } from "@/lib/utils";
 import { generateMediaUrlSingle } from "@/lib/api";
 import {
   setHours,
   setMinutes,
-  addMinutes,
   isWithinInterval,
   parseISO,
-  isAfter,
   isToday,
-  addHours,
+  format,
 } from "date-fns";
 import DatePicker from "@/components/custom/DatePicker";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
@@ -87,65 +84,70 @@ export const BookingFormBottomSheet = ({
     setFormData((p) => ({ ...p, [key]: value }));
 
   const handleSubmit = async () => {
-    if (!formData.scheduled_date)
+    if (!formData.scheduled_date) {
       return showErrorAlert({
-        title: "Please select date & time",
+        title: "Select date and time",
         alertType: "warn",
       });
-    if (booking_type === "reservation" && !formData.duration_days)
-      return showErrorAlert({
-        title: "Please add duration",
-        alertType: "warn",
-      });
-    if (booking_type === "reservation" && !formData.guest)
-      return showErrorAlert({
-        title: "Please add number of guests",
-        alertType: "warn",
-      });
+    }
 
-    await mutateAsync({ form: formData });
+    if (isReservation) {
+      if (
+        !Number(formData.duration_days) ||
+        Number(formData.duration_days) <= 0
+      ) {
+        return showErrorAlert({
+          title: "Enter valid duration",
+          alertType: "warn",
+        });
+      }
+
+      if (!Number(formData.guest) || Number(formData.guest) <= 0) {
+        return showErrorAlert({
+          title: "Enter number of guests",
+          alertType: "warn",
+        });
+      }
+    }
+
+    await mutateAsync({
+      form: {
+        ...formData,
+        duration_days: formData.duration_days,
+        guest: formData.guest,
+      },
+    });
+
     onDismiss?.();
   };
 
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedTime, setSelectedTime] = useState<{
-    hour: number;
-    minute: number;
-  } | null>(null);
-
-  const validReservationDates = useMemo(() => {
-    if (!isReservation) return null;
-
-    return availableDates?.flatMap((range) => {
-      const start = parseISO(range.start);
-      const end = parseISO(range.end);
-
-      const days: Date[] = [];
-      let current = new Date(start);
-
-      while (isAfter(end, current) || +end === +current) {
-        days.push(new Date(current));
-        current = addMinutes(current, 1440);
-      }
-      return days;
-    });
-  }, [availableDates, isReservation]);
-
-  const isDateAllowedForReservation = (date: Date) => {
+  const isReservationDateAllowed = (date: Date) => {
     return availableDates?.some((range) => {
       const start = parseISO(range.start);
       const end = parseISO(range.end);
-      return isWithinInterval(date, { start, end });
+
+      return (
+        isSameDay(date, start) ||
+        isSameDay(date, end) ||
+        isWithinInterval(date, {
+          start: setHours(start, 0),
+          end: setHours(end, 23),
+        })
+      );
     });
   };
+  const isSameDay = (a: Date, b: Date) =>
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate();
 
-  const isTimeAllowedForInspection = (hour: number) => {
-    return hour >= 8 && hour <= 18;
+  const clampInspectionTime = (date: Date) => {
+    const h = date.getHours();
+    if (h < 8) return setHours(setMinutes(date, 0), 8);
+    if (h > 17) return setHours(setMinutes(date, 30), 17);
+    return date;
   };
-  useEffect(() => {
-    setSelectedDate(null);
-  }, []);
-  const date = new Date();
+  console.log(availableDates);
   return (
     <>
       <ModalScreen
@@ -205,84 +207,71 @@ export const BookingFormBottomSheet = ({
             <Text className="text-sm mt-8 text-typography/80">
               Select Date:
             </Text>
+            {booking_type === "reservation" && (
+              <ReservationDatesInfo availableDates={availableDates} />
+            )}
             <View className="mb-4 mt-2">
               <DatePicker
                 label="Select Date"
-                placeholder="Day / Month / Year"
-                value={selectedDate}
-                className="bg-background"
+                value={formData.scheduled_date}
+                mode="date"
+                placeholder="dd/mm/yyyy"
+                formatPattern="dd MMMM, yyyy"
+                minimumDate={new Date()}
                 onChange={(val) => {
-                  const date = new Date(val);
-                  if (isReservation && !isDateAllowedForReservation(date)) {
-                    setSelectedDate(null);
+                  const next = new Date(val);
+
+                  if (isReservation && !isReservationDateAllowed(next)) {
+                    showErrorAlert({
+                      title: "Date not available",
+                      alertType: "warn",
+                    });
                     return;
                   }
-                  setSelectedDate(date);
-                  setSelectedTime(null);
+
+                  setFormData((p) => ({
+                    ...p,
+                    scheduled_date: next,
+                  }));
                 }}
-                mode="date"
-                minimumDate={new Date()}
-                startDate={
-                  isReservation
-                    ? (validReservationDates?.[0] ?? new Date())
-                    : new Date()
-                }
-                maximumDate={
-                  isReservation
-                    ? validReservationDates?.[validReservationDates.length - 1]
-                    : undefined
-                }
+                maximumDate={undefined}
               />
             </View>
 
             <View className="mb-8">
               <DatePicker
                 label="Select Time"
-                placeholder="HH : MM"
-                formatPattern="hh:mm"
-                className="bg-background"
-                disabled={!selectedDate}
-                value={
-                  formData.scheduled_date && selectedDate
-                    ? new Date(formData.scheduled_date)
-                    : null
+                mode="time"
+                disabled={!formData.scheduled_date}
+                placeholder="mm:hh"
+                formatPattern="mm:hh a"
+                value={formData.scheduled_date}
+                minimumDate={
+                  formData.scheduled_date && isToday(formData.scheduled_date)
+                    ? new Date()
+                    : undefined
+                }
+                maximumDate={
+                  booking_type === "inspection"
+                    ? setHours(setMinutes(new Date(), 30), 17)
+                    : undefined
                 }
                 onChange={(val) => {
-                  const d = new Date(val);
-                  const hour = d.getHours();
-                  const minute = d.getMinutes();
-                  if (!selectedDate) return;
-                  if (!isReservation && !isTimeAllowedForInspection(hour)) {
-                    showErrorAlert({
-                      title: "Inspection is between 8am to 5:30pm",
-                      alertType: "warn",
-                    });
-                    setSelectedTime(null);
-                    return;
+                  if (!formData.scheduled_date) return;
+
+                  let next = new Date(val);
+                  next = setHours(formData.scheduled_date, next.getHours());
+                  next = setMinutes(next, next.getMinutes());
+
+                  if (booking_type === "inspection") {
+                    next = clampInspectionTime(next);
                   }
-                  const finalDate = setMinutes(
-                    setHours(selectedDate, hour),
-                    minute
-                  );
-                  setFormData((p) => ({ ...p, scheduled_date: finalDate }));
+
+                  setFormData((p) => ({
+                    ...p,
+                    scheduled_date: next,
+                  }));
                 }}
-                minuteInterval={5}
-                mode="time"
-                minimumDate={
-                  selectedDate && isToday(selectedDate)
-                    ? date
-                    : isReservation
-                      ? new Date(addHours(date, 1))
-                      : new Date(date.setHours(8, 0, 0))
-                }
-                startDate={date}
-                maximumDate={
-                  selectedDate && isToday(selectedDate)
-                    ? date
-                    : isReservation
-                      ? undefined
-                      : new Date(date.setHours(17, 30, 0))
-                }
               />
             </View>
           </View>
@@ -409,3 +398,39 @@ export const BookingFormBottomSheet = ({
     </>
   );
 };
+
+type Props = {
+  availableDates?: Availabilities[];
+};
+
+export function ReservationDatesInfo({ availableDates }: Props) {
+  if (!availableDates || availableDates.length === 0) return null;
+
+  return (
+    <View className="mb-4 p-3 rounded-xl bg-background-muted border border-outline-100">
+      <Text className="text-sm font-medium mb-2">
+        Available Reservation Dates
+      </Text>
+
+      {availableDates.map((range, index) => {
+        const start = format(parseISO(range.start), "MMM dd, yyyy");
+        const end = format(parseISO(range.end), "MMM dd, yyyy");
+
+        return (
+          <View
+            key={index}
+            className="flex-row justify-between items-center py-1"
+          >
+            <Text className="text-xs text-typography/80">{start}</Text>
+            <Text className="text-xs text-typography/60">→</Text>
+            <Text className="text-xs text-typography/80">{end}</Text>
+          </View>
+        );
+      })}
+
+      <Text className="text-[11px] text-typography/60 mt-2">
+        You can only book within these date ranges
+      </Text>
+    </View>
+  );
+}

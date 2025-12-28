@@ -34,10 +34,11 @@ function ChatList() {
   useEffect(() => {
     connect();
   }, []);
+  console.log(me);
   return (
     <>
       <Box className="flex-1 mt-2">
-        <ChatsStateWrapper loading={loading || isLoading} isEmpty={!me}>
+        <ChatsStateWrapper loading={loading || isLoading}>
           <View className="flex-1">
             <FlashList
               data={filteredData}
@@ -53,7 +54,7 @@ function ChatList() {
                 <MiniEmptyState
                   icon={Users}
                   className="mt-8"
-                  title="No user Found"
+                  title="No message Found"
                   description="Clear search to see other messages"
                   onPress={() => {
                     setSearch("");

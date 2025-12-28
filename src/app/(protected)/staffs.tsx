@@ -19,7 +19,6 @@ import { router } from "expo-router";
 import { ChevronRight, Headset } from "lucide-react-native";
 import {
   View,
-  TouchableOpacity,
   ActivityIndicator,
   FlatList,
   RefreshControl,
@@ -89,8 +88,8 @@ export default function Staffs() {
                       });
                     },
                     onSuccess: (data) => {
-                      router.dismissAll();
-                      router.dismissTo({
+                      router.dismiss();
+                      router.push({
                         pathname: "/(protected)/chats/[chatId]",
                         params: {
                           chatId: data,

@@ -79,11 +79,11 @@ export function useWebSocketConnection(url: string | null) {
   };
 
   const sendMessage = (msg: any) => {
-    if (ws.current?.readyState === WebSocket.OPEN) {
-      ws.current.send(JSON.stringify(msg));
-    } else {
-      console.warn("⚠️ WebSocket is not open, message not sent.");
-    }
+    // if (ws.current?.readyState === WebSocket.OPEN) {
+    //   ws.current.send(JSON.stringify(msg));
+    // } else {
+    //   console.warn("⚠️ WebSocket is not open, message not sent.");
+    // }
   };
 
   const setOnMessage = (handler: (data: any) => void) => {

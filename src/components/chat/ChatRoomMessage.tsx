@@ -11,14 +11,14 @@ import {
   TouchableOpacity,
 } from "react-native";
 import PostTextContent from "./PostTextContent";
-import { generateMediaUrl } from "@/lib/api";
-import { useLayout } from "@react-native-community/hooks";
+import { generateMediaUrl, generateMediaUrlSingle } from "@/lib/api";
 import { hapticFeed } from "@/components/HapticTab";
 import { MessageStatusIcon } from "@/components/chat/MessageStatus";
 import { router } from "expo-router";
 import { RotateCcw } from "lucide-react-native";
 import QuoteMessage from "@/components/chat/ChatRoomQuoteMessage";
 import { ProfileImageTrigger } from "@/components/custom/ImageViewerProvider";
+import { MiniVideoPlayer } from "@/components/custom/MiniVideoPlayer";
 
 export type ChatRoomMessageProps = View["props"] & {
   me: Account;
@@ -41,13 +41,16 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
   const images = useMemo(
     () =>
       message?.file_data?.map((item) => ({
-        id: item.file_id,
+        id: item.id,
         url: item.file_url,
-        media_type: "IMAGE",
+        media_type: item.file_type,
       })),
     [message]
   ) as Media[];
-  const isMine = React.useMemo(() => message.sender_info?.id === me?.id, []);
+  const isMine = React.useMemo(
+    () => message.sender_info?.id === me?.id,
+    [me, message]
+  );
   const formatedTime = React.useMemo(
     () =>
       formatMessageTime(message.created_at as unknown as Date, {
@@ -122,8 +125,7 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
             )}
           >
             {images ? (
-              <ProfileImageTrigger
-                image={images}
+              <View
                 className={cn(
                   "gap-1 flex-row flex-wrap ",
                   isMine ? "items-end" : "items-start"
@@ -131,30 +133,42 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
               >
                 {chunk(images, 2).map((row, i) => (
                   <View key={i} className="flex-row gap-1">
-                    {row.map((item, i) => (
-                      <Pressable
-                        key={item.id}
-                        className={cn(["rounded-2xl mb-1 flex-1 h-40"])}
-                      >
-                        <Image
-                          source={{
-                            uri: message.isMock
-                              ? item.url
-                              : generateMediaUrl({
-                                  url: item.url,
-                                  media_type: "IMAGE",
-                                  id: item.id,
-                                }).uri,
-                            cacheKey: item.id,
-                          }}
-                          rounded
-                          alt={"chat image"}
-                        />
-                      </Pressable>
-                    ))}
+                    {row.map((item, i) => {
+                      const isVideo = item.media_type === "VIDEO";
+                      return (
+                        <View
+                          key={item.id}
+                          className={cn(["rounded-2xl mb-1 flex-1 h-40"])}
+                        >
+                          <ProfileImageTrigger
+                            image={images}
+                            index={i}
+                            className="flex-1"
+                          >
+                            {isVideo ? (
+                              <MiniVideoPlayer
+                                uri={generateMediaUrlSingle(item.url)}
+                                rounded
+                                canPlay
+                                autoPlay={false}
+                                showPlayBtn
+                              />
+                            ) : (
+                              <Image
+                                source={{
+                                  uri: generateMediaUrlSingle(item.url),
+                                  cacheKey: item.id,
+                                }}
+                                rounded
+                              />
+                            )}
+                          </ProfileImageTrigger>
+                        </View>
+                      );
+                    })}
                   </View>
                 ))}
-              </ProfileImageTrigger>
+              </View>
             ) : null}
             {message?.property_info && (
               <View

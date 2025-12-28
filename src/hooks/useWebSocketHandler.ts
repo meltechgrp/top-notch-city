@@ -62,10 +62,9 @@ export function useWebSocketHandler() {
             },
             status: data.status,
             file_data: data.media?.map((f: any) => ({
-              file_id: f.id,
+              id: f.id,
               file_url: f.file_url,
               file_type: f.file_type,
-              file_name: f.file_name,
             })),
             read: data.read,
           });

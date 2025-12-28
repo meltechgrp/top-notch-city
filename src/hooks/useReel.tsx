@@ -44,6 +44,9 @@ export function propertyToReelVideo(properties: Property[]) {
             added_to_wishlist: p.interaction?.added_to_wishlist || 0,
             viewed: p.interaction?.viewed || 0,
           },
+          category: {
+            name: p.category.name,
+          },
           owner_interaction: {
             liked: p.owner_interaction?.liked || false,
             added_to_wishlist: p.owner_interaction?.added_to_wishlist || false,
@@ -53,7 +56,7 @@ export function propertyToReelVideo(properties: Property[]) {
           owner: p?.owner,
           price: p.price,
           is_following: p.is_following || false,
-          location: p.address?.display_address || composeFullAddress(p.address),
+          location: composeFullAddress(p.address),
           purpose: p.purpose,
         } as Reel;
       }

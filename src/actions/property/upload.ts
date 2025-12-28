@@ -47,13 +47,15 @@ const buildPropertyFormData = (listing: Listing) => {
     fd.append("property_subcategory_name", listing.subCategory);
 
   if (listing.address) {
-    const { location, addressComponents, placeId } = listing.address;
+    const { location, addressComponents, placeId, displayName } =
+      listing.address;
 
     if (location.latitude) fd.append("latitude", location.latitude.toString());
     if (location.longitude)
       fd.append("longitude", location.longitude.toString());
 
     if (addressComponents.city) fd.append("city", addressComponents.city);
+    if (displayName) fd.append("display_address", displayName);
     if (addressComponents.state) fd.append("state", addressComponents.state);
     if (addressComponents.country)
       fd.append("country", addressComponents.country);

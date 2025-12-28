@@ -3,8 +3,6 @@ import QuoteMessage from "@/components/chat/ChatRoomQuoteMessage";
 import Editor, { EditorComponentRefHandle } from "@/components/custom/Editor";
 import { useMe } from "@/hooks/useMe";
 import { guidGenerator } from "@/lib/utils";
-import { useStore } from "@/store";
-import { ImagePickerAsset } from "expo-image-picker";
 import React, { useCallback } from "react";
 import { View } from "react-native";
 
@@ -34,13 +32,7 @@ const ChatRoomFooter = React.forwardRef<EditorComponentRefHandle, Props>(
       receiver,
     } = props;
     const { me } = useMe();
-    function onSubmit({
-      text,
-      files,
-    }: {
-      text: string;
-      files: ImagePickerAsset[];
-    }) {
+    function onSubmit({ text, files }: { text: string; files: Media[] }) {
       if (me) {
         const tempId = guidGenerator();
         const mock: Message = {
@@ -54,10 +46,9 @@ const ChatRoomFooter = React.forwardRef<EditorComponentRefHandle, Props>(
           isMock: true,
           status: "pending",
           file_data: files?.map((f) => ({
-            file_id: guidGenerator(),
-            file_url: f.uri,
-            file_type: "image",
-            file_name: "image",
+            id: f.id,
+            file_url: f.url,
+            file_type: f.media_type,
           })),
           read: false,
         };

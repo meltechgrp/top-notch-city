@@ -84,8 +84,7 @@ interface SendMessage {
 }
 
 interface FileData {
-  file_id: string;
+  id: string;
   file_url: string;
-  file_type: string;
-  file_name: string;
+  file_type: Media["media_type"];
 }

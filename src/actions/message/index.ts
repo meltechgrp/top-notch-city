@@ -34,17 +34,13 @@ export async function sendMessage({
     if (reply_to_message_id)
       formData.append("reply_to_message_id", reply_to_message_id);
     if (content) formData.append("content", content);
-    files?.forEach((item, index) => {
-      formData.append("media", {
-        uri: item.file_url,
-        name: `image.jpg`,
-        type: "image/jpeg",
-      } as any);
+    files?.forEach((item) => {
+      formData.append("chat_media_ids", item.id);
     });
     const result = await Fetch(`/send/messages`, {
       method: "POST",
       headers: {
-        "Content-Type": "multipart/form-data",
+        "Content-Type": "application/x-www-form-urlencoded",
       },
       data: formData,
     });
@@ -59,9 +55,10 @@ export async function sendMessage({
       sender_name: string;
       read: boolean;
       status: Message["status"];
+      reply_to_message_id?: string;
     };
   } catch (error) {
-    throw Error("something went wrong");
+    throw Error("Something went wrong");
   }
 }
 export async function editMessage({

@@ -6,7 +6,7 @@ import {
 } from "@/components/globals/AuthModals";
 import { Icon, Pressable, Text, View } from "@/components/ui";
 import { useMe } from "@/hooks/useMe";
-import { cn } from "@/lib/utils";
+import { cn, composeFullAddress } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { BookCheck, MessageCircle } from "lucide-react-native";
@@ -17,7 +17,7 @@ interface PropertyFooterProps {
 }
 
 export function PropertyFooter({ property }: PropertyFooterProps) {
-  const { me } = useMe();
+  const { me, isAgent } = useMe();
   const { mutateAsync } = useMutation({
     mutationFn: startChat,
   });
@@ -32,6 +32,7 @@ export function PropertyFooter({ property }: PropertyFooterProps) {
         <View className="flex-row gap-4 px-4 pt-2 pb-0 flex-1">
           <Pressable
             both
+            disabled={me?.id == property?.owner.id}
             onPress={() => {
               openBookingModal({
                 visible: true,
@@ -42,9 +43,10 @@ export function PropertyFooter({ property }: PropertyFooterProps) {
                   property?.media.find((i) => i.media_type == "IMAGE")?.url ||
                   "",
                 title: property.title,
-                address: property.address.display_address,
+                address: composeFullAddress(property.address),
                 booking_type:
-                  property.category.name == "Shortlet"
+                  property.category.name == "Shortlet" ||
+                  property.category.name == "Hotel"
                     ? "reservation"
                     : "inspection",
               });
@@ -53,7 +55,10 @@ export function PropertyFooter({ property }: PropertyFooterProps) {
           >
             <Icon size="xl" as={BookCheck} className="text-primary" />
             <Text size="md" className=" font-medium text-white">
-              {property.category.name == "Shortlet" ? "Book" : "Book a visit"}
+              {property.category.name == "Shortlet" ||
+              property.category.name == "Hotel"
+                ? "Book"
+                : "Book a visit"}
             </Text>
           </Pressable>
           <Pressable

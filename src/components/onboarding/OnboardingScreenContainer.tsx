@@ -55,10 +55,11 @@ export default function OnboardingScreenContainer(props: Props) {
                 )}
                 {showHeader && (
                   <View className="flex-1 gap-2 justify-center flex-row items-center ">
-                    <View className="w-12 h-12">
+                    <View className="w-60 h-14">
                       <Image
-                        source={require("@/assets/images/splash.png")}
+                        source={require("@/assets/images/logo.png")}
                         alt="Logo"
+                        contentFit="contain"
                       />
                     </View>
                   </View>

@@ -8,7 +8,7 @@ import { useMe } from "@/hooks/useMe";
 export function useChat() {
   const { updateChatList, getMessages, updateChatListDetails } =
     useChatStore.getState();
-  const { me, isAdmin, isAgent } = useMe();
+  const { me } = useMe();
   const {
     data: chatData,
     refetch: refetchChats,

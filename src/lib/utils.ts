@@ -323,48 +323,6 @@ export function formatNumber(num?: string) {
 export function unformatNumber(str: string) {
   return str.replace(/,/g, "");
 }
-export function calculateFeedDisplayDimensions(
-  originalWidth: number,
-  originalHeight: number,
-  maxWidth: number,
-  maxHeight: number
-): { width: number; height: number } {
-  if (
-    originalWidth <= 0 ||
-    originalHeight <= 0 ||
-    maxWidth <= 0 ||
-    maxHeight <= 0
-  ) {
-    return { width: 0, height: 0 };
-  }
-
-  const aspectRatio = originalWidth / originalHeight;
-  const minAspectRatioForNoCrop = 3 / 4; // 0.75
-
-  let displayWidth: number;
-  let displayHeight: number;
-
-  if (originalWidth > maxWidth || originalHeight > maxHeight) {
-    const widthScale = maxWidth / originalWidth;
-    const heightScale = maxHeight / originalHeight;
-    const scale = Math.min(widthScale, heightScale);
-
-    displayWidth = Math.min(originalWidth * scale, maxWidth);
-    displayHeight = Math.min(originalHeight * scale, maxHeight);
-  } else {
-    displayWidth = originalWidth;
-    displayHeight = originalHeight;
-  }
-
-  if (
-    aspectRatio < minAspectRatioForNoCrop &&
-    displayHeight > (4 / 3) * displayWidth
-  ) {
-    displayHeight = (4 / 3) * displayWidth;
-  }
-
-  return { width: Math.floor(displayWidth), height: Math.floor(displayHeight) };
-}
 export function guidGenerator() {
   const S4 = () =>
     (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);

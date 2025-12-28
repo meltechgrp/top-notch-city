@@ -94,7 +94,7 @@ export default function HomeScreen() {
           )}
         />
       </Box>
-      {me && <CreateButton className="" onPress={onNewChat} />}
+      <CreateButton className="" onPress={onNewChat} />
     </>
   );
 }

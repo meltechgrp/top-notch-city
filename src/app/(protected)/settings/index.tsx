@@ -34,7 +34,7 @@ export default function Setting() {
       method: "POST",
       data: { device_id: deviceId },
     });
-    removeAccount(me?.id!);
+    await removeAccount(me?.id!);
     router.dismissTo("/home");
   }
   async function onLogout() {

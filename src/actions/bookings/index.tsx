@@ -19,9 +19,11 @@ export async function sendBooking({ form }: { form: BookingForm }) {
     throw Error(error);
   }
 }
-export async function Bookings(isAgent: boolean) {
+export async function Bookings(isAgent: boolean, page: number) {
   const res = await Fetch(
-    isAgent ? "/bookings/agent/me" : "/bookings/user/me",
+    isAgent
+      ? `/bookings/agent/me?page=${page}`
+      : `/bookings/user/me?page=${page}`,
     {}
   );
   if (res?.detail) throw Error("Something went wrong!, try again.");

@@ -56,6 +56,7 @@ export function useMessages(chatId: string) {
   }, [messageData, chatId]);
 
   const messages = useChatStore(useShallow((s) => s.getMessages(chatId)));
+  // const media = useChatStore(useShallow((s) => s.getMedia(chatId)));
   const typing = useChatStore(useShallow((s) => s.getTyping(chatId)));
 
   /** --- MUTATIONS --- */
@@ -111,10 +112,9 @@ export function useMessages(chatId: string) {
             },
             status: m?.status,
             file_data: m?.media?.map((f: any) => ({
-              file_id: f.id,
+              id: f.id,
               file_url: f.file_url,
               file_type: f.file_type,
-              file_name: f.file_name,
             })),
             read: m?.read,
           });
@@ -138,5 +138,6 @@ export function useMessages(chatId: string) {
     typing,
     receiver: getReceiver(chatId),
     sender: getSender(chatId),
+    // media,
   };
 }

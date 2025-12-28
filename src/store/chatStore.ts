@@ -8,6 +8,7 @@ export type ChatState = {
   getSender: (chatId: string) => string | undefined;
   getReceiver: (chatId: string) => ReceiverInfo | undefined;
   getMessages: (chatId: string) => Message[];
+  getMedia: (chatId: string) => Media[];
   getChatList: () => Chat[];
   getTyping: (chatId: string) => boolean;
 
@@ -86,6 +87,18 @@ export const useChatStore = create<ChatState>(
       getMessages: (chatId) =>
         get().chatList.find((c) => c.details.chat_id === chatId)?.messages ??
         [],
+      getMedia: (chatId) =>
+        get()
+          .chatList.find((c) => c.details.chat_id === chatId)
+          ?.messages?.map(
+            (m) =>
+              m.file_data?.map((f) => ({
+                id: f.id,
+                url: f.file_url,
+                media_type: f.file_type as Media["media_type"],
+              })) || []
+          )
+          ?.flat() ?? [],
       getChatList: () => get().chatList.map((l) => l.details) || [],
 
       updateChatMessages: (chatId, newMessages) =>

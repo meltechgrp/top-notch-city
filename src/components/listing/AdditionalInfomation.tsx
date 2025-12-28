@@ -92,7 +92,7 @@ export default function AdditionalInfomation() {
         />
         <View className="gap-3">
           <Text className="text-sm">
-            Select/Add company/organisation that belongs to the property for
+            Select/Add (company/organisation) that owns this property for
             verification purpose{" "}
             {listing.category == "Shortlet" || listing.category == "Hotel"
               ? ""

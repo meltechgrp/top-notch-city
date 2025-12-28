@@ -12,7 +12,7 @@ export async function uploadToBucket({
   type,
 }: {
   data: UploadedFile[];
-  type: "image" | "video" | "audio";
+  type: "image" | "video" | "audio" | "all";
 }) {
   try {
     const token = await getActiveToken();
@@ -45,7 +45,7 @@ export async function uploadToBucket({
     return response.data?.files?.map((f: any) => ({
       id: f.id,
       url: f.file_url,
-      media_type: f.file_type,
+      media_type: f.file_type?.toUpperCase(),
     })) as Media[];
   } catch (error: any) {
     throw Error(error?.message);
