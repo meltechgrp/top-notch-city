@@ -47,6 +47,7 @@ export default () => ({
     edgeToEdgeEnabled: true,
     googleServicesFile: "./google-services.json",
     package: "com.meltech.topnotchcity",
+    abiFilters: ["armeabi-v7a", "arm64-v8a"],
     adaptiveIcon: {
       foregroundImage: "./src/assets/images/adaptive-icon.png",
     },
@@ -98,7 +99,6 @@ export default () => ({
   plugins: [
     "expo-asset",
     "expo-router",
-    "expo-sqlite",
     [
       "./plugins/withAndroidQueries.js",
       [

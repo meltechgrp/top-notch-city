@@ -14,7 +14,6 @@ import { LogBox, Platform } from "react-native";
 import { cacheStorage } from "@/lib/asyncStorage";
 import { NotifierWrapper } from "react-native-notifier";
 import * as Notifications from "expo-notifications";
-import { useStore } from "@/store";
 import Constants from "expo-constants";
 import { updatePushNotificationToken } from "@/actions/utills";
 import { pushNotificationResponseHandler } from "@/lib/notification";
@@ -27,10 +26,7 @@ import { enableScreens } from "react-native-screens";
 import { ImageViewerProvider } from "@/components/custom/ImageViewerProvider";
 import { registerDevice } from "@/actions/user";
 import useGetLocation from "@/hooks/useGetLocation";
-import { expoSqlite, runMigrations } from "@/db";
-import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
-
-import * as SQLite from "expo-sqlite";
+import { useMe } from "@/hooks/useMe";
 
 enableScreens(true);
 const query = new QueryClient({
@@ -40,10 +36,7 @@ const query = new QueryClient({
     },
   },
 });
-export async function resetDatabase() {
-  // ⚠️ DO NOT open the DB before this
-  await SQLite.deleteDatabaseAsync("db.db");
-}
+
 export const unstable_settings = {
   initialRouteName: "/",
 };
@@ -57,10 +50,6 @@ configureReanimatedLogger({
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  useEffect(() => {
-    runMigrations();
-  }, []);
-  useDrizzleStudio(expoSqlite);
   useNotificationObserver();
   const { retryGetLocation } = useGetLocation();
   useSuppressChatPushNotification();
@@ -77,14 +66,14 @@ export default function RootLayout() {
         <NotifierWrapper>
           <GluestackUIProvider>
             <KeyboardProvider>
-              <ImageViewerProvider>
-                <BottomSheetModalProvider>
-                  <QueryClientProvider client={query}>
+              <QueryClientProvider client={query}>
+                <ImageViewerProvider>
+                  <BottomSheetModalProvider>
                     <Slot />
                     <GlobalManager />
-                  </QueryClientProvider>
-                </BottomSheetModalProvider>
-              </ImageViewerProvider>
+                  </BottomSheetModalProvider>
+                </ImageViewerProvider>
+              </QueryClientProvider>
             </KeyboardProvider>
           </GluestackUIProvider>
         </NotifierWrapper>
@@ -98,7 +87,7 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
 }
 
 function useMountPushNotificationToken() {
-  const hasAuth = useStore((v) => v.me);
+  const hasAuth = useMe();
 
   if (Platform.OS === "web") {
     return;

@@ -50,15 +50,6 @@ interface Message {
     image_url: string;
   };
 }
-interface ChatMessages {
-  pagination: {
-    total_messages: number;
-    page: number;
-    size: number;
-    total_pages: number;
-  };
-  messages: Message[];
-}
 
 interface ReceiverInfo {
   id: string;
@@ -75,7 +66,15 @@ interface SenderInfo {
   profile_image?: string;
   status?: "offline" | "online";
 }
-
+interface ChatMessages {
+  pagination: {
+    total_messages: number;
+    page: number;
+    size: number;
+    total_pages: number;
+  };
+  messages: Message[];
+}
 interface SendMessage {
   chat_id: string;
   content: string;

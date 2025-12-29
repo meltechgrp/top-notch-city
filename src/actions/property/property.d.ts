@@ -99,13 +99,6 @@ type OwnerType =
   | "property_manager"
   | "hotel_operator";
 
-type Documents = {
-  id: string;
-  document_type: "image" | "pdf";
-  file_url: string;
-  uploaded_at: string;
-};
-
 type Ownership = {
   id: string;
   listing_role: ListingRole;
@@ -117,6 +110,13 @@ type Ownership = {
   documents: Documents[];
   created_at: string;
   updated_at: string | null;
+};
+
+type Documents = {
+  id: string;
+  document_type: "image" | "pdf";
+  file_url: string;
+  uploaded_at: string;
 };
 
 type Amenity = {

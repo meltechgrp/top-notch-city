@@ -1,32 +1,44 @@
-// db/index.ts
-import * as SQLite from "expo-sqlite";
-import { drizzle } from "drizzle-orm/expo-sqlite";
-import { migrate } from "drizzle-orm/expo-sqlite/migrator";
-import migrations from "@/db/migrations/migrations";
+import { Database } from "@nozbe/watermelondb";
+import SQLiteAdapter from "@nozbe/watermelondb/adapters/sqlite";
 
-import { properties } from "@/db/schema";
+import { schema } from "@/db/schema";
+import { migrations } from "@/db/migrations";
+import Platforms from "@/constants/Plaforms";
+import { Account, User, AgentProfile } from "@/db/models/users";
+import { Company, Address } from "@/db/models/extra";
+import { Chat, Message, MessageFile } from "@/db/models/messages";
+import {
+  Property,
+  PropertyAmenity,
+  PropertyAvailability,
+  PropertyMedia,
+  PropertyOwnership,
+} from "@/db/models/properties";
 
-export const expoSqlite = SQLite.openDatabaseSync("db.db", {
-  enableChangeListener: true,
+const adapter = new SQLiteAdapter({
+  schema,
+  migrations,
+  jsi: Platforms.isIOS(),
+  onSetUpError: (error) => {
+    console.error("DB setup error", error);
+  },
 });
 
-export const db = drizzle(expoSqlite);
-
-export async function runMigrations() {
-  try {
-    await migrate(db, migrations);
-    console.log("✅ Migrations ran successfully");
-  } catch (e) {
-    console.error("❌ Migration failed", e);
-  }
-}
-
-export async function resetDatabase() {
-  await SQLite.deleteDatabaseAsync("db.db");
-}
-
-export async function clearAllData() {
-  await db.transaction(async (tx) => {
-    await tx.delete(properties);
-  });
-}
+export const database = new Database({
+  adapter,
+  modelClasses: [
+    Account,
+    User,
+    AgentProfile,
+    Property,
+    PropertyAmenity,
+    PropertyAvailability,
+    PropertyMedia,
+    PropertyOwnership,
+    Company,
+    Address,
+    Chat,
+    Message,
+    MessageFile,
+  ],
+});

@@ -22,7 +22,7 @@ module.exports = function (api) {
           },
         },
       ],
-      ["inline-import", { extensions: [".sql"] }],
+      ["@babel/plugin-proposal-decorators", { legacy: true }],
       "react-native-worklets/plugin",
     ],
   };

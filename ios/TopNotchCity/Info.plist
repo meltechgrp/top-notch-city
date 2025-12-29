@@ -123,7 +123,7 @@
     <key>UIUserInterfaceStyle</key>
     <string>Automatic</string>
     <key>UIViewControllerBasedStatusBarAppearance</key>
-    <true/>
+    <false/>
     <key>associatedDomains</key>
     <array>
       <string>applinks:topnotchcity.com</string>
