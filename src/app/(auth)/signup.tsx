@@ -11,17 +11,17 @@ import {
 } from "@/components/ui";
 import React, { useState } from "react";
 import { Loader } from "lucide-react-native";
-import { useTempStore } from "@/store";
+import { tempStore } from "@/store/tempStore";
 import { AuthSignupInput } from "@/lib/schema";
 import { authSignup } from "@/actions/auth";
 import { CustomInput } from "@/components/custom/CustomInput";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
-import { useMultiAccount } from "@/hooks/useAccounts";
+import { useAccounts } from "@/hooks/useAccounts";
 import { getCurrent } from "@/actions/user";
 
 export default function SignUp() {
   const [loading, setLoading] = useState(false);
-  const { addAccount } = useMultiAccount();
+  const { addAccount } = useAccounts();
   const [form, setForm] = React.useState<AuthSignupInput>({
     email: "",
     first_name: "",
@@ -48,10 +48,7 @@ export default function SignUp() {
         });
         return;
       }
-      addAccount({
-        token: token,
-        user: me,
-      });
+      await addAccount(me, token);
     } catch (error) {
       showErrorAlert({
         title: "Something went wrong. Try again",
@@ -86,10 +83,7 @@ export default function SignUp() {
           alertType: "success",
         });
 
-        useTempStore.setState((v) => ({
-          ...v,
-          email: form.email,
-        }));
+        tempStore.saveEmail(form.email);
 
         router.replace("/verify-otp");
       }

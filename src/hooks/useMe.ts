@@ -1,9 +1,9 @@
-// hooks/useMe.ts
+import { useValue } from "@legendapp/state/react";
 
 import { accountStore } from "@/store/userStore";
 
 export function useMe() {
-  const data = accountStore.activeAccount.get();
+  const data = useValue(accountStore.activeAccount);
   const user = data ? data : null;
   return {
     me: user as Account,

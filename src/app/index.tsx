@@ -1,11 +1,12 @@
 import * as React from "react";
 import * as SplashScreen from "expo-splash-screen";
 import { Redirect } from "expo-router";
-import { useStore } from "@/store";
+import { mainStore } from "@/store";
 import { useMe } from "@/hooks/useMe";
+import { useValue } from "@legendapp/state/react";
 
 export default function LandingScreen() {
-  const { isOnboarded } = useStore();
+  const isOnboarded = useValue(mainStore.isOnboarded);
   const { isLoggedIn, isLoading } = useMe();
 
   const isReady = !isLoading;

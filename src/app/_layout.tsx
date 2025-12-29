@@ -87,7 +87,7 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
 }
 
 function useMountPushNotificationToken() {
-  const hasAuth = useMe();
+  const { isLoggedIn } = useMe();
 
   if (Platform.OS === "web") {
     return;
@@ -95,7 +95,7 @@ function useMountPushNotificationToken() {
 
   useEffect(() => {
     setTimeout(() => {
-      if (hasAuth) {
+      if (isLoggedIn) {
         registerForPushNotificationsAsync()
           .then((token) => {
             token && updatePushNotificationToken(token);
@@ -105,7 +105,7 @@ function useMountPushNotificationToken() {
           });
       }
     }, 5000);
-  }, [hasAuth]);
+  }, [isLoggedIn]);
 }
 
 export function useHandleNotification() {

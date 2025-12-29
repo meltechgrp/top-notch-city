@@ -27,7 +27,7 @@ import {
   makeRedirectUri,
   useAuthRequest,
 } from "expo-auth-session";
-import { useMultiAccount } from "@/hooks/useAccounts";
+import { useAccounts } from "@/hooks/useAccounts";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -58,7 +58,7 @@ export default function SignIn() {
   const { redirect } = useGlobalSearchParams() as {
     redirect: string;
   };
-  const { addAccount } = useMultiAccount();
+  const { addAccount } = useAccounts();
   const [g, response, promptAsync] = useAuthRequest(configs, discovery);
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(false);
@@ -85,10 +85,7 @@ export default function SignIn() {
         });
         return;
       }
-      addAccount({
-        user: me,
-        token: token,
-      });
+      await addAccount(me, token);
       return router.push((redirect ?? "/home") as any);
     } catch (error) {
       showErrorAlert({

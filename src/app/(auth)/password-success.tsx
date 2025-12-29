@@ -1,7 +1,7 @@
 import OnboardingScreenContainer from "@/components/onboarding/OnboardingScreenContainer";
 import { router } from "expo-router";
 import { Box, Button, ButtonText, Text, View } from "@/components/ui";
-import React, { useEffect, useRef } from "react";
+import React from "react";
 
 export default function VerifySuccess() {
   function handleSubmit() {

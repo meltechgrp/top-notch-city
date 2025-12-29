@@ -6,11 +6,12 @@ import { showErrorAlert } from "@/components/custom/CustomNotification";
 import OTPInput from "@/components/custom/OTPInput";
 import { CustomInput } from "@/components/custom/CustomInput";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
-import { useTempStore } from "@/store";
 import { router } from "expo-router";
+import { tempStore } from "@/store/tempStore";
+import { useValue } from "@legendapp/state/react";
 
 export default function NewPassword() {
-  const { email, resetEmail } = useTempStore();
+  const { email, resetEmail } = tempStore;
   const { mutateAsync: resendCode, isPending: isSending } =
     useAuthMutations().resendVerificationMutation;
   const { mutateAsync: passwordReset, isPending: resetting } =
@@ -109,8 +110,9 @@ export default function NewPassword() {
     };
   }, [codeSheetVisible]);
   useEffect(() => {
-    if (email) {
-      setForm({ ...form, email });
+    const saved = useValue(email);
+    if (saved) {
+      setForm({ ...form, email: saved });
     }
   }, [email]);
   return (

@@ -12,14 +12,15 @@ import {
 import React, { useState } from "react";
 import OTPInput from "@/components/custom/OTPInput";
 import { authOptVerify } from "@/actions/auth";
-import { useTempStore } from "@/store";
+import { tempStore } from "@/store/tempStore";
 import { Loader } from "lucide-react-native";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { useAuthMutations } from "@/tanstack/mutations/useAuthMutations";
+import { useValue } from "@legendapp/state/react";
 
 export default function VerifyOtp() {
   const [otp, setOtp] = React.useState("");
-  const { email } = useTempStore();
+  const email = useValue(tempStore.email);
   const [timer, setTimer] = useState(300);
   const [loading, setLoading] = React.useState(false);
   const { mutateAsync: resendCode, isPending: isSending } =
@@ -49,6 +50,7 @@ export default function VerifyOtp() {
           alertType: "warn",
         });
       } else if (state?.data) {
+        tempStore.resetEmail();
         router.dismissTo("/home");
       }
     } catch (error) {

@@ -2,7 +2,6 @@ import { useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { uniqueId } from "lodash-es";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
-import { ImageManipulator, SaveFormat } from "expo-image-manipulator";
 import { uploadToBucket } from "@/actions/bucket";
 import { uploadWithFakeProgress } from "@/lib/utils";
 
@@ -33,27 +32,6 @@ export function useMediaUpload({
 
   const processBeforeUpload = async (files: { url: string }[]) => {
     if (type === "audio") return files.map((f) => f.url);
-
-    if (type === "image") {
-      const compressed = await Promise.all(
-        files.map(async (f) => {
-          try {
-            const ctx = ImageManipulator.manipulate(f.url);
-            ctx.resize({ width: 1080 });
-
-            const file = await ctx.renderAsync();
-            const output = await file.saveAsync({
-              compress: 0.7,
-              format: SaveFormat.JPEG,
-            });
-            return output.uri;
-          } catch {
-            return f.url;
-          }
-        })
-      );
-      return compressed;
-    }
 
     return files.map((f) => f.url);
   };

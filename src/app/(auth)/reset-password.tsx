@@ -3,15 +3,15 @@ import { router } from "expo-router";
 import { Button, ButtonText, Text, View, Box } from "@/components/ui";
 import React from "react";
 import { CustomInput } from "@/components/custom/CustomInput";
-import { useStore, useTempStore } from "@/store";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { useAuthMutations } from "@/tanstack/mutations/useAuthMutations";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
+import { tempStore } from "@/store/tempStore";
 
 export default function ResetPassword() {
   const { mutateAsync, isPending } =
     useAuthMutations().sendPasswordResetMutation;
-  const { saveEmail } = useTempStore();
+  const { saveEmail } = tempStore;
   const [form, setForm] = React.useState({
     email: "",
   });
@@ -61,8 +61,6 @@ export default function ResetPassword() {
     if (router.canGoBack()) {
       router.back();
     } else {
-      useStore.getState().resetStore();
-      useTempStore.getState().resetStore();
       router.push("/signin");
     }
   }
