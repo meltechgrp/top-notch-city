@@ -3,24 +3,20 @@ import * as SplashScreen from "expo-splash-screen";
 import { Redirect } from "expo-router";
 import { mainStore } from "@/store";
 import { useMe } from "@/hooks/useMe";
-import { useValue } from "@legendapp/state/react";
 
 export default function LandingScreen() {
-  const isOnboarded = useValue(mainStore.isOnboarded);
-  const { isLoggedIn, isLoading } = useMe();
-
-  const isReady = !isLoading;
-
+  const isOnboarded = mainStore.isOnboarded.get();
+  const [loading, setLoading] = React.useState(true);
+  const { isLoggedIn } = useMe();
+  setTimeout(() => {
+    setLoading(false);
+  }, 1500);
   React.useEffect(() => {
-    if (isReady) {
+    if (!loading) {
       SplashScreen.hideAsync();
     }
-  }, [isReady]);
-
-  if (!isReady) {
-    return null;
-  }
-
+  }, [loading]);
+  if (loading) return null;
   if (!isOnboarded) {
     return <Redirect href="/onboarding" />;
   }

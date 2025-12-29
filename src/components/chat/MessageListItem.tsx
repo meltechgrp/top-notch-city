@@ -18,8 +18,6 @@ import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { MessageStatusIcon } from "@/components/chat/MessageStatus";
 import { router } from "expo-router";
 import { TypingIndicator } from "@/components/chat/TypingIndicator";
-import { useShallow } from "zustand/react/shallow";
-import { useChatStore } from "@/store/chatStore";
 import { useMe } from "@/hooks/useMe";
 import { ProfileImageTrigger } from "@/components/custom/ImageViewerProvider";
 import { MoreHorizontal, Trash } from "lucide-react-native";
@@ -30,7 +28,7 @@ type MessageListItemProps = {
 function MessageListItem(props: MessageListItemProps) {
   const { chat } = props;
 
-  const typing = useChatStore(useShallow((s) => s.getTyping(chat.chat_id)));
+  const typing = false;
   const queryClient = useQueryClient();
   const { me } = useMe();
   const { mutateAsync } = useMutation({

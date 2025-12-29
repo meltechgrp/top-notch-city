@@ -1,6 +1,5 @@
 import useGetLocation from "@/hooks/useGetLocation";
 import { getReverseGeocode } from "@/hooks/useReverseGeocode";
-import { useStore } from "@/store";
 import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import { useReducer, useMemo, useEffect, useCallback } from "react";
 
@@ -34,7 +33,6 @@ function searchReducer(
 // Hook
 export function useSearch() {
   const { retryGetLocation, location } = useGetLocation();
-  const { searchProperties, updateSearchProperties } = useStore();
   const [search, dispatch] = useReducer(searchReducer, {
     perPage: 90,
     purpose: "rent",
@@ -78,17 +76,17 @@ export function useSearch() {
     return data?.pages.flatMap((page) => page.results) || [];
   }, [data]);
   const total = useMemo(() => data?.pages?.[0]?.total ?? 0, [data]);
-  const available = useMemo(
-    () => searchProperties?.length || 0,
-    [searchProperties]
-  );
+  // const available = useMemo(
+  //   () => searchProperties?.length || 0,
+  //   [searchProperties]
+  // );
   function applyCachedResults() {
-    updateSearchProperties(properties || []);
+    // updateSearchProperties(properties || []);
   }
   async function refetchAndApply() {
     let { data } = await refetch();
     const properties = data?.pages.flatMap((page) => page.results) || [];
-    updateSearchProperties(properties || []);
+    // updateSearchProperties(properties || []);
   }
   const isLocation = useMemo(
     () =>
@@ -129,11 +127,11 @@ export function useSearch() {
   useEffect(() => {
     refetch();
   }, [search]);
-  useEffect(() => {
-    if (properties?.length > 0 && searchProperties?.length < 1) {
-      updateSearchProperties(properties || []);
-    }
-  }, [searchProperties, properties]);
+  // useEffect(() => {
+  //   if (properties?.length > 0 && searchProperties?.length < 1) {
+  //     updateSearchProperties(properties || []);
+  //   }
+  // }, [searchProperties, properties]);
   return {
     search: {
       setFilter,
@@ -144,7 +142,7 @@ export function useSearch() {
       filter: search,
       isLocation,
     },
-    results: { total, available },
+    results: { total, available: [] },
     query: {
       refetch,
       fetchNextPage,
@@ -153,6 +151,6 @@ export function useSearch() {
       applyCachedResults,
       refetchAndApply,
     },
-    properties: searchProperties,
+    properties: [],
   };
 }

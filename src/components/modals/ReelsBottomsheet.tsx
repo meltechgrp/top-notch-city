@@ -13,7 +13,7 @@ import BottomSheet from "../shared/BottomSheet";
 import { Icon, Switch, Text, View } from "@/components/ui";
 import { Divider } from "@/components/ui/divider";
 import { openEnquiryModal } from "@/components/globals/AuthModals";
-import { useStore } from "@/store";
+import { mainStore } from "@/store";
 
 interface ShareSheetProps {
   visible: boolean;
@@ -60,7 +60,7 @@ export function ReelsShareSheet({
   id,
   hideMute = false,
 }: ShareSheetProps) {
-  const { muted, updateMuted } = useStore();
+  const { muted, updateMuted } = mainStore.get();
   const handleShare = async (action: string) => {
     try {
       switch (action) {

@@ -11,7 +11,7 @@ import {
   View,
 } from "@/components/ui";
 import { cn } from "@/lib/utils";
-import { useTempStore } from "@/store";
+import { tempStore } from "@/store/tempStore";
 import { router, Stack, useGlobalSearchParams } from "expo-router";
 import { Plus, Save, Search } from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
@@ -20,7 +20,7 @@ export default function AgentApplication() {
   const { key } = useGlobalSearchParams() as {
     key: keyof ProfileUpdate;
   };
-  const { application, updateApplication } = useTempStore.getState();
+  const { application, updateApplication } = tempStore.get();
 
   const [showModal, setShowModal] = useState(false);
 

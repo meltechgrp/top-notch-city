@@ -9,7 +9,6 @@ import {
   View,
   ViewToken,
 } from "react-native";
-import { useStore } from "@/store";
 import debounce from "lodash-es/debounce";
 import useMessageActions from "@/components/chat/useMessageActions";
 import { cn } from "@/lib/utils";

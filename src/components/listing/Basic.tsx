@@ -1,5 +1,4 @@
 import { Box, Heading, View, Text, Icon, Pressable } from "@/components/ui";
-import { useTempStore } from "@/store";
 import { CustomInput } from "../custom/CustomInput";
 import {
   cn,
@@ -17,6 +16,8 @@ import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { getReverseGeocode } from "@/hooks/useReverseGeocode";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import { CurrencyPickerModal } from "@/components/modals/property/CurrencyModal";
+import { listingStore } from "@/store/listing";
+import { use$ } from "@legendapp/state/react";
 
 const tabs = [
   {
@@ -30,7 +31,7 @@ const tabs = [
 ];
 
 export default function PropertyListingBasic() {
-  const { listing, updateListing } = useTempStore();
+  const { listing, updateListing } = use$(listingStore);
   const { retryGetLocation } = useGetLocation();
   const [loading, setLoading] = useState(false);
   const [currencyModal, setCurrencyModal] = useState(false);

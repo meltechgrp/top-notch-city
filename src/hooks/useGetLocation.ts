@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
 import * as Location from "expo-location";
-import { useStore } from "@/store";
 
 type Options = {
   highAccuracy?: boolean;
@@ -8,8 +7,8 @@ type Options = {
 
 const useGetLocation = (options?: Options) => {
   const { highAccuracy = false } = options || {};
-  const { updateLocation, location } = useStore();
   const [granted, setGranted] = useState(false);
+  const [location, setLocation] = useState<Location.LocationObjectCoords>();
 
   const tryGetLocation = useCallback(async () => {
     // Request location permission
@@ -27,10 +26,10 @@ const useGetLocation = (options?: Options) => {
     });
 
     if (location) {
-      updateLocation(location.coords);
+      setLocation(location.coords);
       return location.coords;
     }
-  }, [highAccuracy, updateLocation]);
+  }, [highAccuracy]);
 
   useEffect(() => {
     tryGetLocation();

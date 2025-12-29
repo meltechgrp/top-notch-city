@@ -16,33 +16,31 @@ import {
 } from "@/components/ui";
 import { generateMediaUrlSingle } from "@/lib/api";
 import BackgroundView from "@/components/layouts/BackgroundView";
-import { useChatStore } from "@/store/chatStore";
 import { useBackHandler } from "@react-native-community/hooks";
 
 export default function ChatRoomScreen() {
   const { chatId } = useLocalSearchParams<{
     chatId: string;
   }>();
-  const { getReceiver } = useChatStore();
-  const receiver = getReceiver(chatId);
   useBackHandler(() => {
     router.replace("/(protected)/(tabs)/chats");
     return true;
   });
+  const receiver = null as ReceiverInfo | null;
   return (
     <>
       <Stack.Screen
         options={{
           headerTitle: () => (
             <Pressable
-              onPress={() =>
-                router.push({
-                  pathname: "/agents/[userId]",
-                  params: {
-                    userId: receiver?.id!,
-                  },
-                })
-              }
+              // onPress={() =>
+              //   router.push({
+              //     pathname: "/agents/[userId]",
+              //     params: {
+              //       userId: receiver?.id!,
+              //     },
+              //   })
+              // }
               className="flex-1 flex-row gap-4 ml-4 justify-start items-center"
             >
               <Avatar className="bg-gray-500 w-10 h-10">
@@ -93,13 +91,13 @@ export default function ChatRoomScreen() {
               behavior={"padding"}
               keyboardVerticalOffset={Platforms.isIOS() ? 100 : 80}
             >
-              <ChatRoom
+              {/* <ChatRoom
                 chatId={chatId}
                 ChatRoomFooterProps={{
                   placeholder: "Write a message",
                   defaultText: "",
                 }}
-              />
+              /> */}
             </KeyboardAvoidingView>
           </View>
         </SafeAreaView>

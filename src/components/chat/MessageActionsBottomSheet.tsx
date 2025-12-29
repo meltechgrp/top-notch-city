@@ -4,7 +4,6 @@ import { cn } from "@/lib/utils";
 import { ToastAndroid, View } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import Platforms from "@/constants/Plaforms";
-import { useStore } from "@/store";
 import { useMemo } from "react";
 import BottomSheetPlainTwo from "@/components/shared/BottomSheetPlainTwo";
 import Layout from "@/constants/Layout";

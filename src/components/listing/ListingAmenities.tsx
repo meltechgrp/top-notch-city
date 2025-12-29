@@ -1,5 +1,4 @@
 import { Box, Icon, Pressable, Text, View } from "@/components/ui";
-import { useTempStore } from "@/store";
 import React, { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -22,9 +21,10 @@ import AnimatedPressable from "@/components/custom/AnimatedPressable";
 import { format } from "date-fns";
 import { Dimensions } from "react-native";
 import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
-import { useShallow } from "zustand/react/shallow";
 import { AvailabilityPickerSheet } from "@/components/listing/AvailabilityPickerSheet";
 import { CustomInput } from "@/components/custom/CustomInput";
+import { listingStore } from "@/store/listing";
+import { use$ } from "@legendapp/state/react";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -32,7 +32,7 @@ export default function ListingAmenities() {
   const ref = React.useRef<ICarouselInstance>(null);
   const [showAvailabilityPickerSheet, setShowAvailabilityPickerSheet] =
     useState(false);
-  const { listing, updateListing } = useTempStore(useShallow((s) => s));
+  const { listing, updateListing } = use$(listingStore);
   const { data } = useQuery({
     queryKey: ["amenities"],
     queryFn: fetchAllAmenities,

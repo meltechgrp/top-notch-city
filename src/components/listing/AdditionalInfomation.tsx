@@ -1,6 +1,4 @@
 import { Box, Icon, Pressable, Text, View } from "@/components/ui";
-import { useTempStore } from "@/store";
-import { useShallow } from "zustand/react/shallow";
 import { CustomInput } from "@/components/custom/CustomInput";
 import CustomSelect from "@/components/custom/CustomSelect";
 import OptionsBottomSheet from "@/components/shared/OptionsBottomSheet";
@@ -12,9 +10,11 @@ import { fetchAllAgentCompanies } from "@/actions/property/amenity";
 import { Plus, Trash } from "lucide-react-native";
 import { Divider } from "@/components/ui/divider";
 import { formatNumber, unformatNumber } from "@/lib/utils";
+import { listingStore } from "@/store/listing";
+import { use$ } from "@legendapp/state/react";
 
 export default function AdditionalInfomation() {
-  const { listing, updateListing } = useTempStore(useShallow((s) => s));
+  const { listing, updateListing } = use$(listingStore);
   const { data } = useQuery({
     queryKey: ["companies"],
     queryFn: fetchAllAgentCompanies,

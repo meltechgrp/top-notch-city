@@ -4,7 +4,7 @@ import SQLiteAdapter from "@nozbe/watermelondb/adapters/sqlite";
 import { schema } from "@/db/schema";
 import { migrations } from "@/db/migrations";
 import Platforms from "@/constants/Plaforms";
-import { Account, User, AgentProfile } from "@/db/models/users";
+import { User } from "@/db/models/users";
 import { Company, Address } from "@/db/models/extra";
 import { Chat, Message, MessageFile } from "@/db/models/messages";
 import {
@@ -27,9 +27,7 @@ const adapter = new SQLiteAdapter({
 export const database = new Database({
   adapter,
   modelClasses: [
-    Account,
     User,
-    AgentProfile,
     Property,
     PropertyAmenity,
     PropertyAvailability,

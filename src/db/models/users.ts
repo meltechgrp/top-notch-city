@@ -1,41 +1,5 @@
 import { Model } from "@nozbe/watermelondb";
-import {
-  field,
-  text,
-  json,
-  children,
-  relation,
-} from "@nozbe/watermelondb/decorators";
-
-const sanitizeArray = (raw: any): string[] => {
-  if (!Array.isArray(raw)) return [];
-  return raw.map(String);
-};
-
-const sanitizeObject = (raw: any): Record<string, string> => {
-  if (!raw || typeof raw !== "object") return {};
-  return raw;
-};
-
-export class Account extends Model {
-  static table = "accounts";
-
-  static associations = {
-    users: { type: "belongs_to", key: "user_id" },
-  } as const;
-
-  @text("user_id") userId!: string;
-  @text("full_name") fullName!: string;
-  @text("role") role!: string;
-
-  @field("is_active") isActive!: boolean;
-  @text("token") token?: string;
-
-  @field("last_login_at") lastLoginAt!: number;
-
-  @relation("users", "user_id")
-  user!: User;
-}
+import { field, text, children } from "@nozbe/watermelondb/decorators";
 
 export class User extends Model {
   static table = "users";
@@ -77,31 +41,4 @@ export class User extends Model {
 
   @field("created_at") createdAt!: number;
   @field("updated_at") updatedAt!: number;
-}
-
-export class AgentProfile extends Model {
-  static table = "agent_profiles";
-
-  @text("user_id") userId!: string;
-
-  @text("license_number") licenseNumber?: string;
-  @text("years_of_experience") yearsOfExperience?: string;
-  @text("about") about?: string;
-  @text("website") website?: string;
-
-  @field("is_available") isAvailable!: boolean;
-  @field("average_rating") averageRating!: number;
-  @field("total_reviews") totalReviews!: number;
-
-  @json("languages", sanitizeArray) languages!: string[];
-  @json("specialties", sanitizeArray) specialties!: string[];
-
-  @json("social_links", sanitizeObject)
-  socialLinks!: Record<string, string>;
-
-  @json("working_hours", sanitizeObject)
-  workingHours!: Record<string, string>;
-
-  @json("certifications", sanitizeArray)
-  certifications!: string[];
 }

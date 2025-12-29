@@ -10,7 +10,8 @@ import ListingMediaFiles from "@/components/listing/ListingMediaFiles";
 import ListingResult from "@/components/listing/ListingResult";
 import FullHeightLoaderWrapper from "@/components/loaders/FullHeightLoaderWrapper";
 import { Box } from "@/components/ui";
-import { useTempStore } from "@/store";
+import { listingStore } from "@/store/listing";
+import { use$ } from "@legendapp/state/react";
 import { useLayout } from "@react-native-community/hooks";
 import { useRouter } from "expo-router";
 import { useMemo } from "react";
@@ -36,7 +37,7 @@ export function ListingWrapper({
     error,
   } = useUploadProperty(type, propertyId);
   const { listing, updateListing, updateListingStep, resetListing } =
-    useTempStore();
+    use$(listingStore);
 
   async function uploaHandler() {
     await uploadProperty(listing, {

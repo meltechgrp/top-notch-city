@@ -1,5 +1,4 @@
 import * as React from "react";
-import { useStore } from "@/store";
 import { router } from "expo-router";
 import { cn } from "@/lib/utils";
 import TabView from "@/components/shared/TabView";
@@ -14,10 +13,10 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Platform } from "react-native";
 import SystemNavigationBar from "react-native-system-navigation-bar";
+import { mainStore } from "@/store";
 
 export default function OnboardingScreen() {
   const [activeIndex, setActiveIndex] = React.useState(0);
-  const { setIsOnboarded } = useStore();
 
   React.useEffect(() => {
     if (Platform.OS == "android") {
@@ -28,7 +27,7 @@ export default function OnboardingScreen() {
     router.replace("/signin");
   }
   React.useEffect(() => {
-    setIsOnboarded(true);
+    mainStore.setIsOnboarded(true);
   }, []);
   return (
     <View className="flex-1 bg-background">

@@ -43,7 +43,7 @@ export default function OnboardingScreenContainer(props: Props) {
       >
         <View className="flex-1 bg-black/30">
           <SafeAreaView edges={edges} style={{ flex: 1 }}>
-            <View className="py-6 flex-1 ">
+            <View className="py-6 flex-1 relative ">
               <View className="flex-row  items-center pb-4 px-6">
                 {allowBack && (
                   <Pressable
@@ -54,14 +54,12 @@ export default function OnboardingScreenContainer(props: Props) {
                   </Pressable>
                 )}
                 {showHeader && (
-                  <View className="flex-1 gap-2 justify-center flex-row items-center ">
-                    <View className="w-60 h-14">
-                      <Image
-                        source={require("@/assets/images/logo.png")}
-                        alt="Logo"
-                        contentFit="contain"
-                      />
-                    </View>
+                  <View className=" absolute left-1/2 -translate-x-1/2 -top-2 w-48 h-10 ">
+                    <Image
+                      source={require("@/assets/images/logo.png")}
+                      alt="Logo"
+                      contentFit="contain"
+                    />
                   </View>
                 )}
                 {skip && (

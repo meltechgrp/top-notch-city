@@ -1,7 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback } from "react";
-import { useStore, useTempStore } from "@/store";
-import { useChatStore } from "@/store/chatStore";
 import {
   removeToken,
   removeActiveUser,
@@ -9,6 +7,7 @@ import {
 } from "@/lib/secureStore";
 
 import { cacheStorage } from "@/lib/asyncStorage";
+import { tempStore } from "@/store/tempStore";
 
 export default function useResetAppState() {
   const queryClient = useQueryClient();
@@ -29,10 +28,8 @@ export default function useResetAppState() {
         }
       }
       if (!options?.withStore) {
-        useStore.getState().resetStore();
+        tempStore.resetStore();
       }
-      useChatStore.getState().resetChatStore();
-      useTempStore.getState().resetStore();
 
       await queryClient.cancelQueries();
       queryClient.clear();

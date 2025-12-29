@@ -35,7 +35,6 @@ function SearchLocationBottomSheet({
   const { retryGetLocation } = useGetLocation();
   const [text, setText] = useState("");
   const [locations, setLocations] = useState<GooglePlace[]>([]);
-  // const { savedSearches, updateSavedSearch } = useStore();
   const [typing, setTyping] = useState(false);
   const [locating, setLocating] = useState(false);
   const { mutateAsync, isPending } = useMutation({

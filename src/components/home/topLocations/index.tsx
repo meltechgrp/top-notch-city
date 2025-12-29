@@ -3,18 +3,16 @@ import { router } from "expo-router";
 import { memo } from "react";
 import HorizontalProperties from "@/components/property/HorizontalProperties";
 import useGetLocation from "@/hooks/useGetLocation";
-import { useStore } from "@/store";
 
 const TopLocations = () => {
   const { location } = useGetLocation();
-  const { nearbyProperties: properties } = useStore();
   return (
     <SectionHeaderWithRef
       title="Nearby"
       titleClassName="text-gray-400 text-base"
       subTitle="Explore"
       className=""
-      hasData={properties && properties?.length > 1}
+      hasData={false}
       onSeeAllPress={() => {
         router.push({
           pathname: "/explore",
@@ -26,7 +24,7 @@ const TopLocations = () => {
       }}
     >
       <HorizontalProperties
-        data={properties || []}
+        data={[]}
         isLoading={false}
         listType={["nearby"]}
         showLike={false}

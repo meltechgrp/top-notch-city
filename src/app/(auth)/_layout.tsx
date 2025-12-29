@@ -38,12 +38,6 @@ export default function AuthLayout() {
           headerShown: false,
         }}
       />
-      <Stack.Screen
-        name="verify-success"
-        options={{
-          headerShown: false,
-        }}
-      />
     </Stack>
   );
 }

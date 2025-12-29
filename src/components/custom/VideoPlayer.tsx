@@ -14,13 +14,13 @@ import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import { cn } from "@/lib/utils";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
 import PlayerController from "@/components/custom/PlayerController";
-import { useStore } from "@/store";
 import { ReelsShareSheet } from "@/components/modals/ReelsBottomsheet";
 import config from "@/config";
 import { hapticFeed } from "@/components/HapticTab";
 import { ReelViewsController } from "@/components/reel/ReelViewsController";
 import Platforms from "@/constants/Plaforms";
 import { useLike } from "@/hooks/useLike";
+import { mainStore } from "@/store";
 
 export const VideoPlayer = memo(
   forwardRef<VideoPlayerHandle, VideoPlayerProps>(
@@ -36,7 +36,7 @@ export const VideoPlayer = memo(
       },
       ref
     ) => {
-      const { muted } = useStore();
+      const muted = mainStore.muted.get();
       const [showControls, setShowControls] = useState(false);
       const [showBottomSheet, setShowBottomSheet] = useState(false);
       const mounted = useRef(true);

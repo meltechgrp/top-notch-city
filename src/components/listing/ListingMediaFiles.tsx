@@ -4,11 +4,12 @@ import { Images } from "lucide-react-native";
 import { useState } from "react";
 import { TouchableOpacity } from "react-native";
 import ListingPhotosBottomSheet from "./ListingPhotosBottomSheet";
-import { useTempStore } from "@/store";
 import ListingVideosBottomSheet from "./ListingVideosBottomSheet";
+import { listingStore } from "@/store/listing";
+import { use$ } from "@legendapp/state/react";
 
 export default function ListingMediaFiles() {
-  const { listing, updateListing } = useTempStore();
+  const { listing, updateListing } = use$(listingStore);
   const [photosBottomSheet, setPhotosBottomSheet] = useState(false);
   const [videosBottomSheet, setVideosBottomSheet] = useState(false);
 

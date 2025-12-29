@@ -8,7 +8,6 @@ import {
   View,
 } from "@/components/ui";
 import { useLayout } from "@react-native-community/hooks";
-import { useTempStore } from "@/store";
 import { capitalize } from "lodash-es";
 import { Check, Trash } from "lucide-react-native";
 import { composeFullAddress, formatMoney } from "@/lib/utils";
@@ -16,14 +15,13 @@ import { ProfileImageTrigger } from "@/components/custom/ImageViewerProvider";
 import { generateMediaUrlSingle } from "@/lib/api";
 import { Dimensions } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
-import { useShallow } from "zustand/react/shallow";
+import { listingStore } from "@/store/listing";
+import { use$ } from "@legendapp/state/react";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 export default function ListingResult() {
-  const { listing: property, updateListing } = useTempStore(
-    useShallow((s) => s)
-  );
+  const { listing: property, updateListing } = use$(listingStore);
   const { onLayout } = useLayout();
   const availability = property.availabilityPeriod ?? [];
   const facilities = property.facilities ?? [];
@@ -41,7 +39,7 @@ export default function ListingResult() {
               label="Price"
               value={formatMoney(
                 Number(property?.price || 0),
-                property?.currency?.code || "NGN",
+                property?.currency || "NGN",
                 0
               )}
             />

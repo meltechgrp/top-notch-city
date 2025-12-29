@@ -17,15 +17,14 @@ import { getImageUrl } from "@/lib/api";
 import { useRouter } from "expo-router";
 import { useMediaUpload } from "@/hooks/useMediaUpload";
 import { format } from "date-fns";
-import { useTempStore } from "@/store";
-import { useShallow } from "zustand/react/shallow";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { useMutation } from "@tanstack/react-query";
 import { uploadAgentForm } from "@/actions/agent";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
+import { tempStore } from "@/store/tempStore";
 
 export default function AgentFormScreen() {
-  const { application, updateApplication } = useTempStore(useShallow((s) => s));
+  const { application, updateApplication } = tempStore.get();
 
   const router = useRouter();
   const { mutateAsync, isPending } = useMutation({

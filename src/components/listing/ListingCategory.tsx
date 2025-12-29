@@ -2,7 +2,6 @@ import { Box, Text, useResolvedTheme, View } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import { MotiView } from "moti";
 import { Skeleton } from "moti/skeleton";
-import { useTempStore } from "@/store";
 import { useCategoryQueries } from "@/tanstack/queries/useCategoryQueries";
 import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
@@ -12,10 +11,12 @@ import CustomSelect from "@/components/custom/CustomSelect";
 import OptionsBottomSheet from "@/components/shared/OptionsBottomSheet";
 import { Durations } from "@/constants/Amenities";
 import { Bath, Bed } from "lucide-react-native";
+import { listingStore } from "@/store/listing";
+import { use$ } from "@legendapp/state/react";
 
 export default function ListingCategory() {
   const theme = useResolvedTheme();
-  const { listing, updateListing } = useTempStore();
+  const { listing, updateListing } = use$(listingStore);
   const { subcategories, loading, refetch, categories } = useCategoryQueries();
 
   const subs = useMemo(() => {

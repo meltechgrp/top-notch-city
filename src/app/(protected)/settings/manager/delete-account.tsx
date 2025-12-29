@@ -1,19 +1,18 @@
 import { Alert, View } from "react-native";
 import { Button, ButtonText, Icon, Text } from "@/components/ui";
 import { TriangleAlert } from "lucide-react-native";
-import { useStore } from "@/store";
 import { useRouter } from "expo-router";
 import { useMutation } from "@tanstack/react-query";
 import { deleteUser } from "@/actions/user";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
-import { useMultiAccount } from "@/hooks/useAccounts";
+import { useAccounts } from "@/hooks/useAccounts";
 import { useMe } from "@/hooks/useMe";
 
 export default function DeleteAccount() {
   const { me } = useMe();
   const router = useRouter();
-  const { removeAccount } = useMultiAccount();
+  const { removeAccount } = useAccounts();
   const { mutateAsync, isPending } = useMutation({
     mutationFn: deleteUser,
     onSuccess: async () => {

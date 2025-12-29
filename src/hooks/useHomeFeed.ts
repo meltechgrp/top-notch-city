@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useStore, useTempStore } from "@/store";
 import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import { Fetch } from "@/actions/utills";
 
@@ -10,9 +9,6 @@ async function getTotal() {
   };
 }
 export function useHomeFeed() {
-  const { nearbyProperties, setNearbyProperties, location } = useStore();
-  const { updatetotalUnreadChat, totalUnreadChat } = useTempStore();
-
   /** --- featured Properties --- */
   const {
     data: allFeatured,
@@ -68,8 +64,8 @@ export function useHomeFeed() {
   } = useInfinityQueries({
     type: "search",
     filter: {
-      latitude: location?.latitude,
-      longitude: location?.longitude,
+      // latitude: location?.latitude,
+      // longitude: location?.longitude,
     },
     key: "nearby",
   });
@@ -80,7 +76,6 @@ export function useHomeFeed() {
   );
   useEffect(() => {
     if (!nearby.length) return;
-    setNearbyProperties(nearby);
   }, [nearby]);
 
   useEffect(() => {
@@ -124,15 +119,12 @@ export function useHomeFeed() {
     refetchNearby,
     getTotalCount,
   ]);
-  useEffect(() => {
-    updatetotalUnreadChat(totalCount?.total_unread || 0);
-  }, [totalCount]);
   return {
     lands,
     latest,
     featured,
     shortlets,
-    nearby: nearbyProperties || [],
+    nearby: [],
     loadingFeatured,
     loadingLand,
     loadingShortlet,
@@ -142,9 +134,8 @@ export function useHomeFeed() {
     refetchingLatest,
     refreshAll,
     refetching: refetchingNearby,
-    total: totalUnreadChat,
+    total: 0,
     getTotalCount,
-    updatetotalUnreadChat,
     refetchingShortlet,
   };
 }

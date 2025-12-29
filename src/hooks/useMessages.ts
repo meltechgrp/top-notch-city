@@ -4,7 +4,6 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import { useChatStore } from "@/store/chatStore";
 import {
   getChatMessages,
   sendMessage,
@@ -12,22 +11,21 @@ import {
   makeMessageReadAndDelivered,
 } from "@/actions/message";
 import useSound from "@/hooks/useSound";
-import { useShallow } from "zustand/react/shallow";
 
 export function useMessages(chatId: string) {
   const { playSound } = useSound();
   const queryClient = useQueryClient();
 
-  const {
-    updateChatMessages,
-    clearChatMessages,
-    getReceiver,
-    getSender,
-    addPendingMessage,
-    updateMessageStatus,
-    replaceMockMessage,
-    updateMessage,
-  } = useChatStore();
+  // const {
+  //   updateChatMessages,
+  //   clearChatMessages,
+  //   getReceiver,
+  //   getSender,
+  //   addPendingMessage,
+  //   updateMessageStatus,
+  //   replaceMockMessage,
+  //   updateMessage,
+  // } = useChatStore();
 
   /** --- FETCH MESSAGES --- */
   const {
@@ -51,13 +49,13 @@ export function useMessages(chatId: string) {
   useEffect(() => {
     if (messageData?.pages && chatId) {
       const messages = messageData.pages.flatMap((p) => p.messages);
-      updateChatMessages(chatId, messages);
+      // updateChatMessages(chatId, messages);
     }
   }, [messageData, chatId]);
 
-  const messages = useChatStore(useShallow((s) => s.getMessages(chatId)));
+  // const messages = useChatStore(useShallow((s) => s.getMessages(chatId)));
   // const media = useChatStore(useShallow((s) => s.getMedia(chatId)));
-  const typing = useChatStore(useShallow((s) => s.getTyping(chatId)));
+  // const typing = useChatStore(useShallow((s) => s.getTyping(chatId)));
 
   /** --- MUTATIONS --- */
   const { mutateAsync: send } = useMutation({ mutationFn: sendMessage });
@@ -72,16 +70,16 @@ export function useMessages(chatId: string) {
 
   async function handleSendMessage(data: Message, isEdit: boolean) {
     if (isEdit) {
-      updateMessage(chatId, data.message_id, data.content);
+      // updateMessage(chatId, data.message_id, data.content);
       await edit(
         { message_id: data.message_id, content: data.content },
         {
           onSuccess: (m) => {
-            replaceMockMessage(chatId, data.message_id, {
-              updated_at: m?.created_at,
-              content: m?.content,
-              status: m?.status,
-            });
+            // replaceMockMessage(chatId, data.message_id, {
+            //   updated_at: m?.created_at,
+            //   content: m?.content,
+            //   status: m?.status,
+            // });
             playSound("MESSAGE_SENT");
             invalidateChats();
           },
@@ -90,7 +88,7 @@ export function useMessages(chatId: string) {
       return;
     }
 
-    addPendingMessage(chatId, [data]);
+    // addPendingMessage(chatId, [data]);
     await send(
       {
         chat_id: chatId,
@@ -99,25 +97,25 @@ export function useMessages(chatId: string) {
         reply_to_message_id: data.reply_to_message_id,
       },
       {
-        onError: () => updateMessageStatus(chatId, data.message_id, "error"),
+        // onError: () => updateMessageStatus(chatId, data.message_id, "error"),
         onSuccess: (m) => {
-          replaceMockMessage(chatId, data.message_id, {
-            content: m?.content,
-            sender_info: {
-              id: m?.sender_id,
-              first_name: "",
-              last_name: "",
-              profile_image: "",
-              status: "offline",
-            },
-            status: m?.status,
-            file_data: m?.media?.map((f: any) => ({
-              id: f.id,
-              file_url: f.file_url,
-              file_type: f.file_type,
-            })),
-            read: m?.read,
-          });
+          // replaceMockMessage(chatId, data.message_id, {
+          //   content: m?.content,
+          //   sender_info: {
+          //     id: m?.sender_id,
+          //     first_name: "",
+          //     last_name: "",
+          //     profile_image: "",
+          //     status: "offline",
+          //   },
+          //   status: m?.status,
+          //   file_data: m?.media?.map((f: any) => ({
+          //     id: f.id,
+          //     file_url: f.file_url,
+          //     file_type: f.file_type,
+          //   })),
+          //   read: m?.read,
+          // });
           playSound("MESSAGE_SENT");
           invalidateChats();
         },
@@ -126,18 +124,18 @@ export function useMessages(chatId: string) {
   }
 
   return {
-    messages,
+    messages: [],
     refetchMessages,
     fetchNextPage,
     hasNextPage,
     loading: loadingMessages,
     refreshing: refreshingMessages,
     handleSendMessage,
-    clearChatMessages,
+    clearChatMessages: () => {},
     markAsRead,
-    typing,
-    receiver: getReceiver(chatId),
-    sender: getSender(chatId),
+    typing: false,
+    receiver: null,
+    sender: null,
     // media,
   };
 }

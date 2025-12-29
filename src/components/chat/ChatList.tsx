@@ -20,15 +20,15 @@ function ChatList() {
   const filteredData = useMemo(() => {
     let filtered = chats;
 
-    if (search.trim() !== "") {
-      const regex = new RegExp(search.trim(), "i");
-      filtered = filtered.filter(
-        (u) =>
-          regex.test(u.receiver.first_name) ||
-          regex.test(u.receiver.last_name) ||
-          regex.test(u.recent_message.content)
-      );
-    }
+    // if (search.trim() !== "") {
+    //   const regex = new RegExp(search.trim(), "i");
+    //   filtered = filtered.filter(
+    //     (u) =>
+    //       regex.test(u.receiver.first_name) ||
+    //       regex.test(u.receiver.last_name) ||
+    //       regex.test(u.recent_message.content)
+    //   );
+    // }
     return filtered;
   }, [chats, search]);
   useEffect(() => {
@@ -40,7 +40,7 @@ function ChatList() {
       <Box className="flex-1 mt-2">
         <ChatsStateWrapper loading={loading || isLoading}>
           <View className="flex-1">
-            <FlashList
+            {/* <FlashList
               data={filteredData}
               refreshControl={
                 <RefreshControl refreshing={false} onRefresh={refetch} />
@@ -63,7 +63,7 @@ function ChatList() {
                   buttonLabel="Refresh"
                 />
               )}
-            />
+            /> */}
           </View>
         </ChatsStateWrapper>
       </Box>

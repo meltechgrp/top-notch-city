@@ -54,12 +54,12 @@ export default function RootLayout() {
   const { retryGetLocation } = useGetLocation();
   useSuppressChatPushNotification();
   useMountPushNotificationToken();
-  useEffect(() => {
-    (async () => {
-      await retryGetLocation();
-      await registerDevice();
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async () => {
+  //     await retryGetLocation();
+  //     await registerDevice();
+  //   })();
+  // }, []);
   return (
     <>
       <GestureHandlerRootView style={{ flex: 1 }}>

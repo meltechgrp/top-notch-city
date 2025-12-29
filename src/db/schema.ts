@@ -4,20 +4,6 @@ export const schema = appSchema({
   version: 1,
   tables: [
     tableSchema({
-      name: "accounts",
-      columns: [
-        { name: "user_id", type: "string", isIndexed: true },
-
-        { name: "full_name", type: "string" },
-        { name: "role", type: "string" },
-
-        { name: "is_active", type: "boolean" },
-        { name: "token", type: "string", isOptional: true },
-        { name: "last_login_at", type: "number" },
-      ],
-    }),
-
-    tableSchema({
       name: "users",
       columns: [
         { name: "user_id", type: "string", isIndexed: true },
@@ -51,63 +37,6 @@ export const schema = appSchema({
         { name: "updated_at", type: "number" },
       ],
     }),
-
-    tableSchema({
-      name: "agent_profiles",
-      columns: [
-        { name: "user_id", type: "string", isIndexed: true },
-
-        { name: "license_number", type: "string", isOptional: true },
-        { name: "years_of_experience", type: "string", isOptional: true },
-        { name: "about", type: "string", isOptional: true },
-        { name: "website", type: "string", isOptional: true },
-
-        { name: "is_available", type: "boolean" },
-        { name: "average_rating", type: "number" },
-        { name: "total_reviews", type: "number" },
-
-        { name: "languages", type: "string" }, // JSON string
-        { name: "specialties", type: "string" }, // JSON string
-        { name: "social_links", type: "string" }, // JSON string
-        { name: "working_hours", type: "string" }, // JSON string
-        { name: "certifications", type: "string" }, // JSON string
-      ],
-    }),
-
-    tableSchema({
-      name: "companies",
-      columns: [
-        { name: "owner_id", type: "string", isIndexed: true },
-        { name: "owner_type", type: "string", isIndexed: true },
-        { name: "name", type: "string" },
-        { name: "verified", type: "boolean", isOptional: true },
-        { name: "address", type: "string", isOptional: true },
-        { name: "website", type: "string", isOptional: true },
-        { name: "email", type: "string", isOptional: true },
-        { name: "phone", type: "string", isOptional: true },
-        { name: "description", type: "string", isOptional: true },
-      ],
-    }),
-    tableSchema({
-      name: "addresses",
-      columns: [
-        { name: "owner_id", type: "string", isIndexed: true },
-        { name: "owner_type", type: "string", isIndexed: true }, // user | property | company
-
-        { name: "display_address", type: "string" },
-        { name: "street", type: "string" },
-
-        { name: "city", type: "string", isIndexed: true },
-        { name: "state", type: "string", isIndexed: true },
-        { name: "country", type: "string", isIndexed: true },
-
-        { name: "latitude", type: "number" },
-        { name: "longitude", type: "number" },
-      ],
-    }),
-
-    // properties
-
     tableSchema({
       name: "properties",
       columns: [

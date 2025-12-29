@@ -1,13 +1,11 @@
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useChatStore } from "@/store/chatStore";
 import { getChats } from "@/actions/message";
-import { useShallow } from "zustand/react/shallow";
 import { useMe } from "@/hooks/useMe";
 
 export function useChat() {
-  const { updateChatList, getMessages, updateChatListDetails } =
-    useChatStore.getState();
+  // const { updateChatList, getMessages, updateChatListDetails } =
+  //   useChatStore.getState();
   const { me } = useMe();
   const {
     data: chatData,
@@ -24,20 +22,20 @@ export function useChat() {
     if (chatData) {
       const chats = chatData?.chats?.filter(Boolean).map((c) => ({
         details: c,
-        messages: getMessages(c.chat_id),
+        messages: [],
         typing: false,
       }));
-      updateChatList(chats);
+      // updateChatList(chats);
     }
   }, [chatData]);
 
-  const chats = useChatStore(useShallow((s) => s.getChatList()));
+  // const chats = useChatStore(useShallow((s) => s.getChatList()));
   return {
-    chats: me ? chats : [],
+    chats: [],
     refetch: refetchChats,
     loading: me ? loadingChats : false,
     refreshing: refreshingChats,
-    updateChatListDetails,
+    updateChatListDetails: () => {},
     me,
   };
 }

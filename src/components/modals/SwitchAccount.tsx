@@ -11,9 +11,10 @@ import {
   Text,
   View,
 } from "@/components/ui";
-import { useMultiAccount } from "@/hooks/useAccounts";
+import { useAccounts } from "@/hooks/useAccounts";
 import { useMe } from "@/hooks/useMe";
 import { generateMediaUrlSingle } from "@/lib/api";
+import { fullName } from "@/lib/utils";
 import { router } from "expo-router";
 import { BadgeCheck, MoreHorizontal, Plus } from "lucide-react-native";
 
@@ -22,9 +23,8 @@ export default function SwitchAccountSheet({
   onDismiss,
 }: AuthModalProps) {
   const { me } = useMe();
-  const { accounts, switchToAccount, removeAccount } = useMultiAccount();
-  const { data: list } = accounts;
-
+  const { accounts, switchAccount, removeAccount } = useAccounts();
+  const list = Object.values(accounts).map((a) => a.user);
   return (
     <BottomSheet
       visible={visible}
@@ -37,10 +37,10 @@ export default function SwitchAccountSheet({
         <View className="border border-outline-100 bg-background-muted/70 overflow-hidden rounded-2xl">
           {list?.map((acc) => (
             <Pressable
-              key={acc.userId}
+              key={acc.id}
               onPress={() => {
-                if (acc.userId == me?.id) return;
-                switchToAccount(acc.userId);
+                if (acc.id == me?.id) return;
+                switchAccount(acc.id);
                 onDismiss?.();
               }}
               className="flex-row justify-between items-center gap-4 border-b border-outline-100 p-4"
@@ -55,14 +55,14 @@ export default function SwitchAccountSheet({
                   />
                 )}
                 {!acc?.profile_image && (
-                  <AvatarFallbackText>{acc.fullName}</AvatarFallbackText>
+                  <AvatarFallbackText>{fullName(acc)}</AvatarFallbackText>
                 )}
               </Avatar>
               <View className="flex-1">
-                <Text className=" text-sm font-medium">{acc.fullName}</Text>
+                <Text className=" text-sm font-medium">{fullName(acc)}</Text>
                 <Text className="text-xs capitalize">{acc.role}</Text>
               </View>
-              {acc.userId == me?.id ? (
+              {acc.id == me?.id ? (
                 <Icon size="xl" as={BadgeCheck} className="text-primary" />
               ) : (
                 <DropdownSelect
@@ -71,7 +71,7 @@ export default function SwitchAccountSheet({
                   icon={MoreHorizontal}
                   className=" p-2 border-0 rounded-md"
                   onChange={async () => {
-                    await removeAccount(acc.userId);
+                    await removeAccount(acc.id);
                     showErrorAlert({
                       title: `Account Removed`,
                     });

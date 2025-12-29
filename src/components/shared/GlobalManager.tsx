@@ -1,10 +1,10 @@
 import React, { useEffect, useCallback } from "react";
 import eventBus from "@/lib/eventBus";
 import AuthModals from "../globals/AuthModals";
-import { useMultiAccount } from "@/hooks/useAccounts";
+import { useAccounts } from "@/hooks/useAccounts";
 
 export default function GlobalManager() {
-  const { updateAccount } = useMultiAccount();
+  const { updateAccount } = useAccounts();
 
   const updateMe = useCallback(async () => {
     await updateAccount();

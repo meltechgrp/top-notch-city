@@ -87,6 +87,7 @@
     "react-native-gifted-charts": "^1.4.61",
     "react-native-keyboard-controller": "1.18.5",
     "react-native-maps": "1.20.1",
+    "react-native-mmkv": "^4.1.0",
     "react-native-notifier": "^2.0.0",
     "react-native-pager-view": "6.9.1",
     "react-native-qrcode-svg": "^6.3.15",

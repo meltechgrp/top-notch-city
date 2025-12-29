@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { FlashList, ListRenderItem } from "@shopify/flash-list";
 
 import { Box, Button, Icon, Pressable, Text, View } from "@/components/ui";
@@ -36,19 +36,17 @@ export function ProfileWrapper({
   userType = "visitor",
   userId,
 }: ProfileWrapperProps) {
-  const { isAgent, me, isLoading: loading } = useMe();
-  const id = userId || me?.id;
-  const {
-    data: user,
-    isLoading,
-    refetch,
-    isRefetching,
-  } = useQuery({
-    queryKey: ["user", id],
-    queryFn: () => getUser(id!),
-    enabled: !!id,
+  const { isAgent, me } = useMe();
+  const { data, isLoading, refetch, isRefetching } = useQuery({
+    queryKey: ["user", userId],
+    queryFn: () => getUser(userId!),
+    enabled: !!userId,
   });
   const [showActions, setShowActions] = useState(false);
+  const user = useMemo(
+    () => (userType == "owner" && me ? me : data),
+    [me, data, userType]
+  );
   const feedList = React.useMemo(() => {
     const camps = {
       id: "camps",
@@ -76,7 +74,7 @@ export function ProfileWrapper({
             showStatus={userType == "owner" && isAgent}
             isAgent={isAgent}
             isOwner={userType == "owner"}
-            profileId={id}
+            profileId={user?.id}
           />
         );
       }
@@ -90,10 +88,10 @@ export function ProfileWrapper({
       }
       return <View></View>;
     },
-    [isAgent, userType, user, id]
+    [isAgent, userType, user]
   );
 
-  if (!loading && !me && userType == "owner")
+  if (!user && userType == "owner")
     return <NotLoggedInProfile userType={"owner"} />;
   return (
     <>
@@ -144,7 +142,7 @@ export function ProfileWrapper({
       />
       <FullHeightLoaderWrapper
         LoaderComponent={<ProfileSkeleton />}
-        loading={isLoading || loading}
+        loading={isLoading}
       >
         <Box className={cn("flex-1", userType == "owner" && "pb-24")}>
           <FlashList
