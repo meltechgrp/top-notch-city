@@ -4,19 +4,28 @@ import { Redirect } from "expo-router";
 import { mainStore } from "@/store";
 import { useMe } from "@/hooks/useMe";
 
-export default function LandingScreen() {
+const LandingScreen = () => {
   const isOnboarded = mainStore.isOnboarded.get();
-  const [loading, setLoading] = React.useState(true);
   const { isLoggedIn } = useMe();
-  setTimeout(() => {
-    setLoading(false);
-  }, 1500);
+
+  const [ready, setReady] = React.useState(false);
+
   React.useEffect(() => {
-    if (!loading) {
+    const timeout = setTimeout(() => {
+      setReady(true);
+    }, 700);
+
+    return () => clearTimeout(timeout);
+  }, []);
+
+  React.useEffect(() => {
+    if (ready) {
       SplashScreen.hideAsync();
     }
-  }, [loading]);
-  if (loading) return null;
+  }, [ready]);
+
+  if (!ready) return null;
+
   if (!isOnboarded) {
     return <Redirect href="/onboarding" />;
   }
@@ -26,4 +35,6 @@ export default function LandingScreen() {
   }
 
   return <Redirect href="/home" />;
-}
+};
+
+export default LandingScreen;

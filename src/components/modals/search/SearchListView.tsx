@@ -22,16 +22,21 @@ import eventBus from "@/lib/eventBus";
 import DropdownSelect from "@/components/custom/DropdownSelect";
 import VerticalPropertyLoaderWrapper from "@/components/loaders/VerticalPropertyLoader";
 import { FlashList } from "@shopify/flash-list";
+import { Property } from "@/db/models/properties";
+import { withObservables } from "@nozbe/watermelondb/react";
+import { database } from "@/db";
+import { buildLocalQuery } from "@/store/searchStore";
+import { Q } from "@nozbe/watermelondb";
 const { width } = Dimensions.get("screen");
 
 type Props = {
+  properties: any;
   total: number;
-  properties: PropertyListItem[];
   isLoading: boolean;
   hasNextPage: boolean;
   fetchNextPage: () => Promise<any>;
   setShowFilter: () => void;
-  useMyLocation: () => Promise<void>;
+  useMyLocation: () => void;
   filter: SearchFilters;
   isTab?: boolean;
   onReset?: () => void;
@@ -43,10 +48,10 @@ function SearchListBottomSheet({
   fetchNextPage,
   hasNextPage,
   onReset,
-  total,
   useMyLocation,
   filter,
   isTab,
+  total,
 }: Props) {
   const BottomSheetScrollable = useBottomSheetScrollableCreator();
   const sheetRef = useRef<BottomSheet>(null);
@@ -54,11 +59,10 @@ function SearchListBottomSheet({
     () => (isTab ? ["20%", "40%", "60%", "90%"] : ["10%", "40%", "60%", "90%"]),
     [isTab]
   );
-
   const renderItem = useCallback(
-    ({ item }: { item: PropertyListItem }) => (
+    ({ item }: { item: Property }) => (
       <PropertyListItem
-        onPress={(data) => {
+        onPress={(data: Property) => {
           router.push({
             pathname: `/property/[propertyId]`,
             params: {
@@ -68,7 +72,7 @@ function SearchListBottomSheet({
         }}
         style={styles.itemContainer}
         isList={true}
-        data={item}
+        property={item}
         rounded={true}
       />
     ),
@@ -139,7 +143,30 @@ function SearchListBottomSheet({
   );
 }
 
-export default SearchListBottomSheet;
+const enhance = withObservables(
+  ["filter", "pagination"],
+  ({
+    filter,
+    pagination,
+  }: {
+    filter: SearchFilters;
+    pagination: { page: number; perPage: number };
+  }) => {
+    return {
+      properties: database
+        .get("properties")
+        .query(
+          ...buildLocalQuery(filter),
+          Q.where("status", "approved"),
+          Q.sortBy("updated_at", Q.desc),
+          Q.skip((pagination.page - 1) * pagination.perPage),
+          Q.take(pagination.perPage)
+        ),
+    };
+  }
+);
+
+export default enhance(SearchListBottomSheet);
 
 const styles = StyleSheet.create({
   container: {

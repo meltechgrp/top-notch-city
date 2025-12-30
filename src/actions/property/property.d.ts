@@ -50,6 +50,8 @@ type Property = {
   bathroom?: string;
   bedroom?: string;
   is_booked?: boolean;
+  total_reviews?: number;
+  avg_rating?: number;
   landarea?: number;
   bedType?: string;
   guests?: string;

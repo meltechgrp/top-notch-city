@@ -23,6 +23,7 @@ import { Colors } from "@/constants/Colors";
 import { useResolvedTheme } from "../ui";
 import { getRegionForMarkers } from "@/lib/utils";
 import eventBus from "@/lib/eventBus";
+import { Property } from "@/db/models/properties";
 
 interface MapProps {
   latitude?: number;
@@ -136,8 +137,8 @@ const Map = forwardRef<MapController, MapProps>((props, ref) => {
         const list =
           markerList ??
           markers?.map((m) => ({
-            latitude: m.address.latitude,
-            longitude: m.address.longitude,
+            latitude: m.latitude,
+            longitude: m.longitude,
           })) ??
           [];
         if (!list || list.length === 0) return;
@@ -167,8 +168,8 @@ const Map = forwardRef<MapController, MapProps>((props, ref) => {
       if (markers && markers.length > 0) {
         const region = getRegionForMarkers(
           markers.map((m) => ({
-            latitude: m.address.latitude,
-            longitude: m.address.longitude,
+            latitude: m.latitude,
+            longitude: m.longitude,
           }))
         );
         setCenter({ latitude: region.latitude, longitude: region.longitude });

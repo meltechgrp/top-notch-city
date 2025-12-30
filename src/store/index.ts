@@ -18,6 +18,8 @@ type MainStore = {
   activeUserId: string | null;
   muted: boolean;
   isOnboarded: boolean;
+  address: Address;
+  saveAddress: (data: Partial<Address>) => void;
   addAccount: (user: Me, token: string) => Promise<void>;
   activeAccount: Me | null;
   switchAccount: (userId: string) => Promise<void>;
@@ -32,6 +34,7 @@ export const mainStore = observable<MainStore>(
       muted: false,
       isOnboarded: false,
       accounts: {},
+      address: {} as Address,
       activeUserId: null,
       setIsOnboarded: (state: boolean) => {
         mainStore.isOnboarded.set(state);
@@ -40,6 +43,9 @@ export const mainStore = observable<MainStore>(
         const userId = mainStore.activeUserId.get();
         if (!userId) return null;
         return mainStore.accounts[userId].user;
+      },
+      saveAddress: (data: Partial<Address>) => {
+        mainStore.address.assign(data);
       },
 
       async addAccount(user: Me, token: string) {

@@ -1,17 +1,19 @@
 import SectionHeaderWithRef from "@/components/home/SectionHeaderWithRef";
 import HorizontalProperties from "@/components/property/HorizontalProperties";
+import { database } from "@/db";
 import { useHomeFeed } from "@/hooks/useHomeFeed";
+import { Q } from "@nozbe/watermelondb";
+import { withObservables } from "@nozbe/watermelondb/react";
 import { router } from "expo-router";
 import { memo } from "react";
 
-function FeaturedProperties() {
-  const { featured, loadingFeatured, refetchingFeatured } = useHomeFeed();
+function FeaturedProperties({ properties }: any) {
   return (
     <SectionHeaderWithRef
       title="Featured"
       titleClassName="text-gray-400 text-base"
       subTitle="See More"
-      hasData={loadingFeatured || refetchingFeatured || featured?.length > 0}
+      hasData={properties && properties?.length > 0}
       onSeeAllPress={() => {
         router.push({
           pathname: "/explore",
@@ -22,14 +24,25 @@ function FeaturedProperties() {
       }}
     >
       <HorizontalProperties
-        data={featured}
-        isLoading={loadingFeatured}
+        data={properties}
+        isLoading={false}
+        isRefetching={false}
         listType={["featured"]}
         isFeatured
-        isRefetching={refetchingFeatured}
       />
     </SectionHeaderWithRef>
   );
 }
 
-export default memo(FeaturedProperties);
+const enhance = withObservables([], () => ({
+  properties: database
+    .get("properties")
+    .query(
+      Q.where("status", "approved"),
+      Q.where("is_featured", true),
+      Q.sortBy("updated_at", Q.desc),
+      Q.take(10)
+    ),
+}));
+
+export default enhance(FeaturedProperties);

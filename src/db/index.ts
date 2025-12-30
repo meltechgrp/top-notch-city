@@ -5,7 +5,6 @@ import { schema } from "@/db/schema";
 import { migrations } from "@/db/migrations";
 import Platforms from "@/constants/Plaforms";
 import { User } from "@/db/models/users";
-import { Company, Address } from "@/db/models/extra";
 import { Chat, Message, MessageFile } from "@/db/models/messages";
 import {
   Property,
@@ -13,6 +12,7 @@ import {
   PropertyAvailability,
   PropertyMedia,
   PropertyOwnership,
+  PropertyCompany,
 } from "@/db/models/properties";
 
 const adapter = new SQLiteAdapter({
@@ -33,8 +33,7 @@ export const database = new Database({
     PropertyAvailability,
     PropertyMedia,
     PropertyOwnership,
-    Company,
-    Address,
+    PropertyCompany,
     Chat,
     Message,
     MessageFile,

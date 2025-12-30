@@ -1,13 +1,14 @@
 type SearchFilters = {
+  // Local DB filters
   city?: string;
   state?: string;
   country?: string;
   purpose?: string;
-  minPrice?: string;
-  maxPrice?: string;
   category?: string;
   subCategory?: string[];
   amenities?: string[];
+  minPrice?: string;
+  maxPrice?: string;
   minBedroom?: string;
   maxBedroom?: string;
   minBathroom?: string;
@@ -16,14 +17,15 @@ type SearchFilters = {
   maxPlots?: string;
   minLandarea?: string;
   maxLandarea?: string;
-  useGeoLocation?: boolean;
-  createdAt?: string;
-  latitude?: number;
-  longitude?: number;
-  perPage?: number;
   bedType?: string;
   guests?: string;
   viewType?: string;
+  createdAt?: string;
+
+  // Control flags (NOT DB filters)
+  latitude?: number;
+  longitude?: number;
+  useGeoLocation?: boolean;
 };
 
 type SearchHistory = {

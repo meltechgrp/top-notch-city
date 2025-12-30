@@ -27,6 +27,8 @@ import { ImageViewerProvider } from "@/components/custom/ImageViewerProvider";
 import { registerDevice } from "@/actions/user";
 import useGetLocation from "@/hooks/useGetLocation";
 import { useMe } from "@/hooks/useMe";
+import { syncPropertyFeed } from "@/db/queries/syncPropertyFeed";
+import { mainStore } from "@/store";
 
 enableScreens(true);
 const query = new QueryClient({
@@ -51,15 +53,20 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   useNotificationObserver();
-  const { retryGetLocation } = useGetLocation();
+  const { address, location } = useGetLocation({ withAddress: true });
   useSuppressChatPushNotification();
   useMountPushNotificationToken();
-  // useEffect(() => {
-  //   (async () => {
-  //     await retryGetLocation();
-  //     await registerDevice();
-  //   })();
-  // }, []);
+  useEffect(() => {
+    (async () => {
+      await syncPropertyFeed();
+      await registerDevice();
+    })();
+  }, []);
+  useEffect(() => {
+    if (address || location) {
+      mainStore.saveAddress({ ...address, ...location });
+    }
+  }, [address, location]);
   return (
     <>
       <GestureHandlerRootView style={{ flex: 1 }}>

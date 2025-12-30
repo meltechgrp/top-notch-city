@@ -9,10 +9,13 @@ import {
 export class Property extends Model {
   static table = "properties";
   static associations = {
-    property_media: { type: "has_many", foreignKey: "property_id" },
-    property_availabilities: { type: "has_many", foreignKey: "property_id" },
-    property_ownership: { type: "has_many", foreignKey: "property_id" },
-    property_amenities: { type: "has_many", foreignKey: "property_id" },
+    property_media: { type: "has_many", foreignKey: "property_server_id" },
+    property_availabilities: {
+      type: "has_many",
+      foreignKey: "property_server_id",
+    },
+    property_ownership: { type: "has_many", foreignKey: "property_server_id" },
+    property_amenities: { type: "has_many", foreignKey: "property_server_id" },
   } as const;
 
   @children("property_media")
@@ -26,57 +29,83 @@ export class Property extends Model {
 
   @children("property_amenities")
   amenities!: PropertyAmenity[];
-  @text("property_id") propertyId!: string;
+  @text("property_server_id") property_server_id!: string;
   @text("title") title!: string;
   @text("slug") slug!: string;
   @text("description") description?: string;
 
   @field("price") price!: number;
   @text("currency") currency!: string;
+  @text("duration") duration?: string;
+  @text("category") category!: string;
+  @text("subcategory") subcategory!: string;
+  @text("address") address!: string;
 
   @text("status") status!: string;
   @text("purpose") purpose!: string;
+  @text("thumbnail") thumbnail?: string;
 
-  @field("is_featured") isFeatured!: boolean;
-  @field("is_booked") isBooked?: boolean;
+  @field("is_featured") is_featured!: boolean;
+  @field("is_booked") is_booked?: boolean;
 
-  @text("bathroom") bathroom?: string;
-  @text("bedroom") bedroom?: string;
-  @field("landarea") landArea?: number;
+  @text("view_type") view_type?: string;
+  @field("bathroom") bathroom!: number;
+  @field("bedroom") bedroom!: number;
+  @field("landarea") landarea!: number;
+  @field("plots") plots!: number;
 
-  @text("bed_type") bedType?: string;
-  @text("guests") guests?: string;
+  @text("bed_type") bed_type?: string;
+  @field("guests") guests?: number;
 
-  @text("discount") discount?: string;
+  @field("discount") discount?: number;
+  @field("caution_fee") caution_fee?: number;
+  @text("is_following") is_following?: boolean;
 
-  @text("owner_id") ownerId!: string;
+  @text("server_owner_id") server_owner_id!: string;
+  @field("views") views!: number;
+  @field("likes") likes!: number;
 
-  @field("created_at") createdAt!: number;
-  @field("updated_at") updatedAt!: number;
+  @field("viewed") viewed!: boolean;
+  @field("liked") liked!: boolean;
+  @field("added") added!: boolean;
+
+  @field("avg_rating") avg_rating?: number;
+  @field("total_reviews") total_reviews?: number;
+
+  @text("street") street?: string;
+
+  @text("city") city!: string;
+  @text("state") state!: string;
+  @text("country") country!: string;
+
+  @field("latitude") latitude!: number;
+  @field("longitude") longitude!: number;
+  @field("created_at") created_at!: number;
+  @field("updated_at") updated_at!: number;
 }
 
 export class PropertyMedia extends Model {
   static table = "property_media";
   static associations = {
-    properties: { type: "belongs_to", key: "property_id" },
+    properties: { type: "belongs_to", key: "property_server_id" },
   } as const;
 
-  @relation("properties", "property_id")
   property!: Property;
-  @text("property_id") propertyId!: string;
+  @text("property_server_id") property_server_id!: string;
+  @text("server_image_id") server_image_id!: string;
   @text("url") url!: string;
-  @text("media_type") mediaType!: string; // IMAGE | VIDEO | AUDIO
+  @text("media_type") mediaType!: string;
 }
 
 export class PropertyAvailability extends Model {
   static table = "property_availabilities";
   static associations = {
-    properties: { type: "belongs_to", key: "property_id" },
+    properties: { type: "belongs_to", key: "property_server_id" },
   } as const;
 
-  @relation("properties", "property_id")
+  @relation("properties", "property_server_id")
   property!: Property;
-  @text("property_id") propertyId!: string;
+  @text("property_server_id") property_server_id!: string;
   @field("start") start!: number;
   @field("end") end!: number;
 }
@@ -84,12 +113,12 @@ export class PropertyAvailability extends Model {
 export class PropertyOwnership extends Model {
   static table = "property_ownership";
   static associations = {
-    properties: { type: "belongs_to", key: "property_id" },
+    properties: { type: "belongs_to", key: "property_server_id" },
   } as const;
 
-  @relation("properties", "property_id")
+  @relation("properties", "property_server_id")
   property!: Property;
-  @text("property_id") propertyId!: string;
+  @text("property_server_id") property_server_id!: string;
 
   @text("listing_role") listingRole!: string;
   @text("owner_type") ownerType!: string;
@@ -99,20 +128,31 @@ export class PropertyOwnership extends Model {
 
   @text("verification_status") verificationStatus!: string;
   @text("verification_note") verificationNote?: string;
-
-  @field("created_at") createdAt!: number;
-  @field("updated_at") updatedAt?: number;
 }
 
 export class PropertyAmenity extends Model {
   static table = "property_amenities";
   static associations = {
-    properties: { type: "belongs_to", key: "property_id" },
+    properties: { type: "belongs_to", key: "property_server_id" },
   } as const;
 
-  @relation("properties", "property_id")
+  @relation("properties", "property_server_id")
   property!: Property;
-  @text("property_id") propertyId!: string;
+  @text("property_server_id") property_server_id!: string;
   @text("amenity_id") amenityId!: string;
   @text("name") name!: string;
+}
+export class PropertyCompany extends Model {
+  static table = "companies";
+
+  @text("property_id") propertyId!: string;
+
+  @text("name") name!: string;
+  @field("verified") verified?: boolean;
+
+  @text("address") address?: string;
+  @text("website") website?: string;
+  @text("email") email?: string;
+  @text("phone") phone?: string;
+  @text("description") description?: string;
 }

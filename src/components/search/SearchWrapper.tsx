@@ -5,10 +5,13 @@ import { Dimensions, StyleSheet } from "react-native";
 import SearchMapView from "@/components/search/SearchMapView";
 import SearchLocationBottomSheet from "@/components/modals/search/SearchLocationBottomSheet";
 import SearchFilterBottomSheet from "@/components/modals/search/SearchFilterBottomSheet";
-import { useSearch } from "@/hooks/useSearch";
 import { router, useGlobalSearchParams } from "expo-router";
 import SearchListBottomSheet from "@/components/modals/search/SearchListView";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { buildLocalQuery, searchStore } from "@/store/searchStore";
+import { use$ } from "@legendapp/state/react";
+import { database } from "@/db";
+import { Q } from "@nozbe/watermelondb";
 
 interface SearchWrapperProps {
   disableBack?: boolean;
@@ -27,25 +30,46 @@ export default function SearchWrapper({
       category: string;
       locate: string;
     };
+  const {
+    total,
+    loading,
+    filter,
+    updateFilter,
+    resetFilter,
+    useMyLocation,
+    pagination,
+    nextPage,
+  } = use$(searchStore);
   const { height: totalHeight } = Dimensions.get("screen");
   const [showFilter, setShowFilter] = useState(false);
-  const { search, results, query, properties } = useSearch();
   const [locationBottomSheet, setLocationBottomSheet] = useState(false);
-
+  searchStore.filter.onChange(async (f) => {
+    searchStore.loading.set(true);
+    try {
+      const count = await database
+        .get("properties")
+        .query(...buildLocalQuery(f.value))
+        .fetchCount();
+      console.log(count);
+      searchStore.total.set(count);
+    } finally {
+      searchStore.loading.set(false);
+    }
+  });
   useEffect(() => {
     if (latitude && longitude) {
-      search.setFilters({
+      updateFilter({
         latitude: Number(latitude),
         longitude: Number(longitude),
       });
-    }
-    if (locate) {
+    } else if (locate) {
       setLocationBottomSheet(true);
-    }
-    if (category) {
-      search.setFilters({
+    } else if (category) {
+      updateFilter({
         category: category,
       });
+    } else {
+      useMyLocation();
     }
     router.setParams({
       latitude: undefined,
@@ -55,6 +79,35 @@ export default function SearchWrapper({
       locate: undefined,
     });
   }, [latitude, longitude, reset, category, locate]);
+  //   let cancelled = false;
+
+  //   async function fetchData() {
+  //     const filter = searchStore.filter.get();
+
+  //     searchStore.loading.set(true);
+
+  //     try {
+  //       const count = await database
+  //         .get("properties")
+  //         .query(...buildLocalQuery(filter))
+  //         .fetchCount();
+  //       console.log(count);
+  //       if (!cancelled) {
+  //         searchStore.total.set(count);
+  //       }
+  //     } finally {
+  //       if (!cancelled) {
+  //         searchStore.loading.set(false);
+  //       }
+  //     }
+  //   }
+
+  //   fetchData();
+
+  //   return () => {
+  //     cancelled = true;
+  //   };
+  // }, [filterSnapshot]);
 
   return (
     <>
@@ -62,59 +115,45 @@ export default function SearchWrapper({
         <SafeAreaView edges={["bottom"]} className="flex-1 bg-background">
           <Box className="flex-1 relative">
             <SearchHeader
-              filter={search.filter}
+              filter={filter}
               setLocationBottomSheet={() => setLocationBottomSheet(true)}
               setShowFilter={() => setShowFilter(true)}
               disableBack={disableBack}
             />
 
             <View style={StyleSheet.absoluteFill}>
-              <SearchMapView
-                height={totalHeight}
-                properties={properties}
-                latitude={
-                  search.filter?.latitude
-                    ? Number(search.filter.latitude)
-                    : undefined
-                }
-                onUpdate={search.setFilters}
-                longitude={
-                  search.filter?.longitude
-                    ? Number(search.filter.longitude)
-                    : undefined
-                }
-              />
+              <SearchMapView height={totalHeight} filter={filter} />
             </View>
           </Box>
 
           <SearchListBottomSheet
             setShowFilter={() => setShowFilter(true)}
-            isLoading={query.loading}
+            isLoading={loading}
             hasNextPage={false}
-            onReset={search.resetFilters}
-            filter={search.filter}
-            fetchNextPage={async () => {}}
-            properties={properties}
-            useMyLocation={search.useMyLocation}
-            total={results.available}
+            total={total}
+            onReset={resetFilter}
+            filter={filter}
+            fetchNextPage={async () => nextPage()}
+            pagination={pagination}
+            useMyLocation={useMyLocation}
             isTab={isTab}
           />
         </SafeAreaView>
       </View>
       <SearchLocationBottomSheet
         show={locationBottomSheet}
-        filter={search.filter}
+        filter={filter}
         onDismiss={() => setLocationBottomSheet(false)}
-        onUpdate={search.setFilters}
+        onUpdate={updateFilter}
       />
       <SearchFilterBottomSheet
         show={showFilter}
         onDismiss={() => setShowFilter(false)}
-        onReset={search.resetSome}
-        onUpdate={search.setFilters}
-        loading={query.loading}
-        filter={search.filter}
-        total={results.total}
+        onReset={resetFilter}
+        onUpdate={updateFilter}
+        loading={loading}
+        filter={filter}
+        total={total}
         showPurpose
       />
     </>

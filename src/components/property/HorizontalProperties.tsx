@@ -90,7 +90,7 @@ function HorizontalProperties({
               imageStyle={imageStyle}
               imageWrapperClassName={imageWrapperClassName}
               isHorizontal
-              data={property}
+              property={property}
               subClassName={subClassName}
               showTitle={showTitle}
               style={style}

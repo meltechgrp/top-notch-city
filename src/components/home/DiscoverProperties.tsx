@@ -2,14 +2,17 @@ import { View } from "@/components/ui";
 import Map from "../location/map";
 import HomeNavigation from "./HomeNavigation";
 import { router } from "expo-router";
-import { memo } from "react";
+import { withObservables } from "@nozbe/watermelondb/react";
+import { database } from "@/db";
+import { Q } from "@nozbe/watermelondb";
 
 type Props = {
   className?: string;
   mapHeight: number;
+  properties: any;
 };
 const DiscoverProperties = (props: Props) => {
-  const { className, mapHeight } = props;
+  const { className, mapHeight, properties } = props;
   return (
     <View style={{ flex: 1, height: mapHeight }} className={className}>
       <View className="overflow-hidden relative flex-1">
@@ -17,7 +20,7 @@ const DiscoverProperties = (props: Props) => {
           <HomeNavigation />
         </View>
         <Map
-          markers={[]}
+          markers={properties || []}
           onDoublePress={() =>
             router.push({
               pathname: "/explore",
@@ -30,4 +33,13 @@ const DiscoverProperties = (props: Props) => {
   );
 };
 
-export default memo(DiscoverProperties);
+const enhance = withObservables(["state", "city"], ({ state, city }) => ({
+  properties: database
+    .get("properties")
+    .query(
+      Q.where("status", "approved"),
+      Q.or(Q.where("state", state), Q.where("city", city))
+    ),
+}));
+
+export default enhance(DiscoverProperties);

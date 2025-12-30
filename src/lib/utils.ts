@@ -77,8 +77,8 @@ export function fullName(user: any) {
 }
 export const FindAmenity = (item: string, data?: any): any => {
   return (
-    data?.amenities?.find((a: any) => a.name == item)?.value ||
     data?.[item.toLowerCase()] ||
+    data?.amenities?.find((a: any) => a.name === item)?.value ||
     null
   );
 };

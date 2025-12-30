@@ -1,17 +1,17 @@
 import SectionHeaderWithRef from "@/components/home/SectionHeaderWithRef";
 import HorizontalProperties from "@/components/property/HorizontalProperties";
-import { useHomeFeed } from "@/hooks/useHomeFeed";
+import { database } from "@/db";
+import { Q } from "@nozbe/watermelondb";
+import { withObservables } from "@nozbe/watermelondb/react";
 import { router } from "expo-router";
-import { memo } from "react";
 
-function ApartmentsProperties() {
-  const { latest, loadingLatest, refetchingLatest } = useHomeFeed();
+function ApartmentsProperties({ properties }: any) {
   return (
     <SectionHeaderWithRef
       title="Properties"
       titleClassName="text-gray-400 text-base"
       subTitle="See More"
-      hasData={loadingLatest || refetchingLatest || latest?.length > 0}
+      hasData={properties && properties?.length > 0}
       onSeeAllPress={() => {
         router.push({
           pathname: "/explore",
@@ -22,13 +22,27 @@ function ApartmentsProperties() {
       }}
     >
       <HorizontalProperties
-        data={latest}
-        isLoading={loadingLatest}
-        isRefetching={refetchingLatest}
+        data={properties}
+        isLoading={false}
+        isRefetching={false}
         listType={["latest"]}
       />
     </SectionHeaderWithRef>
   );
 }
 
-export default memo(ApartmentsProperties);
+const enhance = withObservables([], () => ({
+  properties: database
+    .get("properties")
+    .query(
+      Q.where("status", "approved"),
+      Q.or(
+        Q.where("category", "Residential"),
+        Q.where("category", "Commercial")
+      ),
+      Q.sortBy("updated_at", Q.desc),
+      Q.take(1)
+    ),
+}));
+
+export default enhance(ApartmentsProperties);

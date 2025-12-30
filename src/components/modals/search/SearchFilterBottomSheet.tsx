@@ -37,7 +37,7 @@ type Props = {
   showPurpose?: boolean;
   loading: boolean;
   total: number;
-  onReset: (values: (keyof SearchFilters)[]) => void;
+  onReset: () => void;
 };
 
 function SearchFilterBottomSheet({
@@ -102,19 +102,7 @@ function SearchFilterBottomSheet({
       rightComponent={
         <AnimatedPressable
           className="px-4 py-1.5 border border-outline-100 bg-background-muted rounded-2xl"
-          onPress={() =>
-            onReset([
-              "minBedroom",
-              "maxBedroom",
-              "maxBathroom",
-              "minBathroom",
-              "maxPrice",
-              "minPrice",
-              "amenities",
-              "subCategory",
-              "category",
-            ])
-          }
+          onPress={onReset}
         >
           <Text>Reset</Text>
         </AnimatedPressable>
@@ -186,6 +174,7 @@ function SearchFilterBottomSheet({
                   value={filter.minPrice || "No min"}
                   options={PRICE1}
                   format
+                  showSearch={false}
                   className="bg-background-muted"
                   onChange={(val) => onUpdate({ minPrice: val as any })}
                 />
@@ -193,6 +182,7 @@ function SearchFilterBottomSheet({
                   value={filter.maxPrice || "No max"}
                   options={PRICE2}
                   format
+                  showSearch={false}
                   className="bg-background-muted"
                   onChange={(val) => onUpdate({ maxPrice: val as any })}
                 />
@@ -204,12 +194,14 @@ function SearchFilterBottomSheet({
                 <DropdownSelect
                   value={filter.minBedroom || "No min"}
                   options={OPTIONS1}
+                  showSearch={false}
                   className="bg-background-muted"
                   onChange={(val) => onUpdate({ minBedroom: val as any })}
                 />
                 <DropdownSelect
                   value={filter.maxBedroom || "No max"}
                   options={OPTIONS2}
+                  showSearch={false}
                   className="bg-background-muted"
                   onChange={(val) => onUpdate({ maxBedroom: val as any })}
                 />
@@ -221,12 +213,14 @@ function SearchFilterBottomSheet({
                 <DropdownSelect
                   value={filter.minBathroom || "No min"}
                   options={OPTIONS1}
+                  showSearch={false}
                   className="bg-background-muted"
                   onChange={(val) => onUpdate({ minBathroom: val as any })}
                 />
                 <DropdownSelect
                   value={filter.maxBathroom || "No max"}
                   options={OPTIONS2}
+                  showSearch={false}
                   className="bg-background-muted"
                   onChange={(val) => onUpdate({ maxBathroom: val as any })}
                 />

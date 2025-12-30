@@ -2,12 +2,12 @@ import { cn } from "@/lib/utils";
 import { Badge, Text, View } from "../ui";
 
 interface Props {
-  property: Property;
+  property: any;
 }
 
 export function PropertyBadge({ property: { purpose, category } }: Props) {
   if (purpose == "rent") {
-    if (category.name == "Shortlet" || category.name == "Hotel") {
+    if (category == "Shortlet" || category == "Hotel") {
       return (
         <Badge className=" self-start px-3 rounded-2xl bg-green-600">
           <Text>Available</Text>
