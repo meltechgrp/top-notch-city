@@ -1,5 +1,4 @@
-import React, { useMemo } from "react";
-import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
+import React from "react";
 import { router } from "expo-router";
 import { EmptyState } from "@/components/property/EmptyPropertyCard";
 import { House } from "lucide-react-native";

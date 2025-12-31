@@ -1,58 +1,58 @@
 import { View } from "@/components/ui";
 import { RefreshControl } from "react-native-gesture-handler";
-import { Dimensions, NativeScrollEvent } from "react-native";
 import React, {
   forwardRef,
-  memo,
   ReactNode,
   useCallback,
-  useImperativeHandle,
+  useEffect,
+  useMemo,
+  useRef,
   useState,
 } from "react";
 import PropertyListItem from "./PropertyListItem";
 import { useRouter } from "expo-router";
-import { useAnimatedScrollHandler } from "react-native-reanimated";
-import { AnimatedFlashList } from "../shared/AnimatedFlashList";
-import { cn, deduplicate } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import VerticalPropertyLoaderWrapper from "@/components/loaders/VerticalPropertyLoader";
 import { EmptyState } from "@/components/property/EmptyPropertyCard";
 import { House } from "lucide-react-native";
+import { withObservables } from "@nozbe/watermelondb/react";
+import { database } from "@/db";
+import { Q } from "@nozbe/watermelondb";
+import { buildListQuery } from "@/store/searchStore";
+import { FlashList, FlashListRef } from "@shopify/flash-list";
+import { InteractionManager } from "react-native";
 
 interface Props {
-  category?: string;
   className?: string;
+  search?: string;
+  tab?: string;
   isEmptyTitle?: string;
-  scrollY?: any;
   showLike?: boolean;
-  disableCount?: boolean;
   isAdmin?: boolean;
-  profileId?: string;
-  onScroll?: (e: NativeScrollEvent) => any;
+  agentId?: string;
   scrollEnabled?: boolean;
   isHorizontal?: boolean;
   showsVerticalScrollIndicator?: boolean;
   isLoading?: boolean;
   isRefetching?: boolean;
-  hasNextPage?: boolean;
+  perPage?: number;
+  page?: number;
   showStatus?: boolean;
-  data: Property[];
-  scrollElRef?: any;
+  properties: any[];
+  total: any;
   disableHeader?: boolean;
   refetch: () => Promise<any>;
-  fetchNextPage?: () => Promise<any>;
+  fetchPrevPage?: React.Dispatch<React.SetStateAction<number>>;
+  fetchNextPage?: React.Dispatch<React.SetStateAction<number>>;
   headerTopComponent?: any;
   headerHeight?: number;
-  listRef?: any;
-  listType?: any[];
   ListEmptyComponent?: ReactNode;
-  onPress?: (data: Props["data"][0]) => void;
+  onPress?: (data: Props["properties"][0]) => void;
 }
-const { height } = Dimensions.get("window");
 const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
   {
-    scrollY,
     scrollEnabled = true,
-    data,
+    properties,
     isLoading,
     showsVerticalScrollIndicator = false,
     refetch,
@@ -62,31 +62,26 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
     disableHeader,
     className,
     onPress,
-    scrollElRef,
     headerHeight,
     isEmptyTitle,
-    hasNextPage,
+    perPage = 10,
+    page = 1,
     showStatus = false,
     ListEmptyComponent,
     isRefetching,
     showLike = true,
-    listType,
+    total,
+    fetchPrevPage,
+    tab,
+    search,
   },
   ref
 ) {
+  const listRef = useRef<FlashListRef<any>>(null);
   const router = useRouter();
+  const loadingNextPageRef = useRef(false);
+  const prevLength = useRef(0);
   const [refreshing, setRefreshing] = useState(false);
-
-  const onScrollToTop = useCallback(() => {
-    scrollElRef?.current?.scrollToOffset({
-      animated: true,
-      offset: headerHeight || 0,
-    });
-  }, [scrollElRef, headerHeight]);
-
-  useImperativeHandle(ref, () => ({
-    scrollToTop: onScrollToTop,
-  }));
 
   async function onRefresh() {
     try {
@@ -97,7 +92,12 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
       setRefreshing(false);
     }
   }
-
+  const hasNextPage = useMemo(() => {
+    return page * perPage < total;
+  }, [page, perPage, total]);
+  const hasPrevPage = useMemo(() => {
+    return page > 1;
+  }, [page]);
   const renderItem = useCallback(
     ({ item, index }: { item: any; index: number }) => {
       return (
@@ -112,43 +112,45 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
             });
           }}
           isList={true}
-          listType={listType}
           showLike={showLike}
           showStatus={showStatus}
           isHorizontal={isHorizontal}
-          data={item}
+          property={item}
           rounded={true}
         />
       );
     },
     [onPress, router, showStatus, isHorizontal]
   );
-  const scrollHandler = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      "worklet";
-      if (scrollY) {
-        scrollY.value = event.contentOffset.y;
-      }
-    },
-  });
-
+  useEffect(() => {
+    if (
+      properties?.length &&
+      properties.length !== prevLength.current &&
+      page == 1
+    ) {
+      requestAnimationFrame(() => {
+        listRef.current?.scrollToOffset({ offset: 0, animated: true });
+      });
+    }
+    prevLength.current = properties?.length || 0;
+  }, [properties, page]);
   return (
     <VerticalPropertyLoaderWrapper
       className={className}
       headerHeight={headerHeight}
       loading={isLoading || false}
     >
-      <AnimatedFlashList
-        data={deduplicate(data, "id")}
+      <FlashList
+        data={properties}
+        ref={listRef}
         renderItem={renderItem}
         scrollEnabled={scrollEnabled}
         horizontal={isHorizontal}
         refreshing={refreshing}
+        keyboardDismissMode="on-drag"
         showsVerticalScrollIndicator={showsVerticalScrollIndicator}
-        onScroll={scrollHandler}
         className={"flex-1"}
         contentContainerClassName={cn("", className)}
-        ref={scrollElRef}
         ItemSeparatorComponent={() => <View className={"h-5"} />}
         scrollEventThrottle={16}
         refreshControl={
@@ -162,9 +164,19 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
             <>{headerTopComponent}</>
           ) : undefined
         }
-        keyExtractor={(item: any, index) => item.id}
+        keyExtractor={(item) => item.id}
+        onStartReached={() => {
+          if (hasPrevPage) fetchPrevPage?.((p) => p - 1);
+        }}
         onEndReached={() => {
-          if (hasNextPage && !isLoading) fetchNextPage?.();
+          if (!hasNextPage || loadingNextPageRef.current) return;
+
+          loadingNextPageRef.current = true;
+          fetchNextPage?.((p) => p + 1);
+
+          setTimeout(() => {
+            loadingNextPageRef.current = false;
+          }, 300);
         }}
         onEndReachedThreshold={0.2}
         ListEmptyComponent={() => (
@@ -191,4 +203,33 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
   );
 });
 
-export default memo(VerticalProperties);
+const enhance = withObservables(
+  ["agentId", "role", "search", "tab", "page", "perPage"],
+  ({ agentId, role, search, tab, page = 1, perPage = 10 }) => {
+    return {
+      properties: database.get("properties").query(
+        ...buildListQuery({
+          filter: search,
+          role: role,
+          agentId: agentId,
+          tab: tab,
+        }),
+        Q.sortBy("updated_at", Q.desc),
+        Q.take(page * perPage)
+      ),
+      total: database
+        .get("properties")
+        .query(
+          ...buildListQuery({
+            filter: search,
+            role: role,
+            agentId: agentId,
+            tab: tab,
+          })
+        )
+        .observeCount(),
+    };
+  }
+);
+
+export default enhance(VerticalProperties);

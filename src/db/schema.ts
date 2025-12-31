@@ -26,16 +26,16 @@ export const schema = appSchema({
       name: "properties",
       columns: [
         { name: "property_server_id", type: "string", isIndexed: true },
-        { name: "title", type: "string" },
+        { name: "title", type: "string", isIndexed: true },
         { name: "slug", type: "string", isIndexed: true },
 
         { name: "description", type: "string", isOptional: true },
 
         { name: "price", type: "number", isIndexed: true },
-        { name: "currency", type: "string" },
-        { name: "category", type: "string" },
-        { name: "subcategory", type: "string" },
-        { name: "address", type: "string" },
+        { name: "currency", type: "string", isIndexed: true },
+        { name: "category", type: "string", isIndexed: true },
+        { name: "subcategory", type: "string", isIndexed: true },
+        { name: "address", type: "string", isIndexed: true },
 
         { name: "status", type: "string", isIndexed: true },
         { name: "purpose", type: "string", isIndexed: true },
@@ -47,9 +47,9 @@ export const schema = appSchema({
         { name: "is_following", type: "boolean", isOptional: true },
         { name: "views", type: "number" },
         { name: "likes", type: "number" },
-        { name: "viewed", type: "boolean" },
-        { name: "liked", type: "boolean" },
-        { name: "added", type: "boolean" },
+        { name: "viewed", type: "boolean", isIndexed: true },
+        { name: "liked", type: "boolean", isIndexed: true },
+        { name: "added", type: "boolean", isIndexed: true },
         { name: "avg_rating", type: "number", isOptional: true },
         { name: "total_reviews", type: "number", isOptional: true },
         { name: "duration", type: "string", isOptional: true },
@@ -59,7 +59,7 @@ export const schema = appSchema({
         { name: "plots", type: "number", isIndexed: true },
 
         { name: "bed_type", type: "string", isOptional: true },
-        { name: "guests", type: "number", isOptional: true },
+        { name: "guests", type: "number", isOptional: true, isIndexed: true },
         { name: "discount", type: "number", isOptional: true },
         { name: "view_type", type: "string", isOptional: true },
         { name: "caution_fee", type: "number", isOptional: true },

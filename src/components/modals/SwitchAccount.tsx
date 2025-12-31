@@ -15,6 +15,7 @@ import { useAccounts } from "@/hooks/useAccounts";
 import { useMe } from "@/hooks/useMe";
 import { generateMediaUrlSingle } from "@/lib/api";
 import { fullName } from "@/lib/utils";
+import { mainStore } from "@/store";
 import { router } from "expo-router";
 import { BadgeCheck, MoreHorizontal, Plus } from "lucide-react-native";
 
@@ -38,9 +39,10 @@ export default function SwitchAccountSheet({
           {list?.map((acc) => (
             <Pressable
               key={acc.id}
-              onPress={() => {
+              onPress={async () => {
                 if (acc.id == me?.id) return;
                 switchAccount(acc.id);
+                mainStore.propertyLastSyncAt.set(0);
                 onDismiss?.();
               }}
               className="flex-row justify-between items-center gap-4 border-b border-outline-100 p-4"
@@ -71,11 +73,11 @@ export default function SwitchAccountSheet({
                   icon={MoreHorizontal}
                   className=" p-2 border-0 rounded-md"
                   onChange={async () => {
+                    onDismiss?.();
                     await removeAccount(acc.id);
                     showErrorAlert({
                       title: `Account Removed`,
                     });
-                    onDismiss?.();
                   }}
                   options={["Remove"]}
                 />

@@ -11,6 +11,7 @@ import {
   fetchIncremental,
   getLocalPropertyIndex,
   getPropertyDeleteRule,
+  resetDatabase,
 } from "@/db/helpers";
 import { useMe } from "@/hooks/useMe";
 import { mainStore } from "@/store";
@@ -18,10 +19,12 @@ import { mainStore } from "@/store";
 const BATCH_SIZE = 10;
 
 export function usePropertyFeedSync(auto = true) {
-  const { isAdmin, isAgent } = useMe();
+  const { isAdmin, isAgent, me } = useMe();
   const [syncing, setSyncing] = useState(false);
   const hasAutoSynced = useRef(false);
   const resync = useCallback(async () => {
+    console.log("starting property sync");
+    // await resetDatabase();
     if (syncing) return;
     try {
       setSyncing(true);
@@ -104,7 +107,12 @@ export function usePropertyFeedSync(auto = true) {
     } finally {
       setSyncing(false);
     }
-  }, [isAdmin, isAgent, syncing]);
+  }, [isAdmin, isAgent, syncing, me]);
+  useEffect(() => {
+    if (auto && me) {
+      resync();
+    }
+  }, [me, auto]);
   useEffect(() => {
     if (!auto || hasAutoSynced.current) return;
 

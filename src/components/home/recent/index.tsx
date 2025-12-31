@@ -40,7 +40,7 @@ const enhance = withObservables([], () => ({
         Q.where("category", "Commercial")
       ),
       Q.sortBy("updated_at", Q.desc),
-      Q.take(1)
+      Q.take(10)
     ),
 }));
 

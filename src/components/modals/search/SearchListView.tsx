@@ -1,6 +1,6 @@
 import { Dimensions, StyleSheet, View } from "react-native";
 import { useCallback, useMemo, useRef } from "react";
-import { Box, Button, Icon, Text } from "@/components/ui";
+import { Button, Icon, Text } from "@/components/ui";
 import BottomSheet, {
   useBottomSheetInternal,
   useBottomSheetScrollableCreator,

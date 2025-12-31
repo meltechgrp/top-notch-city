@@ -1,97 +1,46 @@
 import { Box, View } from "@/components/ui";
-import { FilterComponent } from "@/components/admin/shared/FilterComponent";
-import { useMemo, useState } from "react";
-import { useRefreshOnFocus } from "@/hooks/useRefreshOnFocus";
+import FilterComponent from "@/components/admin/shared/FilterComponent";
+import { useEffect, useState } from "react";
 import VerticalProperties from "@/components/property/VerticalProperties";
-import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
+import { useMe } from "@/hooks/useMe";
+import { usePropertyFeedSync } from "@/db/queries/syncPropertyFeed";
 
 export default function AdminProperties() {
+  const { resync } = usePropertyFeedSync(false);
   const [search, setSearch] = useState("");
-
-  const [actveTab, setActiveTab] = useState("all");
-  const {
-    data,
-    refetch,
-    isLoading,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useInfinityQueries({ type: "admin" });
-
-  const propertyData = useMemo(
-    () => data?.pages.flatMap((page) => page.results) || [],
-    [data]
-  );
-  const filteredData = useMemo(() => {
-    let filtered = propertyData;
-
-    if (actveTab !== "all") {
-      filtered = filtered.filter((u) => u.status.toLowerCase() === actveTab);
-    }
-    if (search.trim() !== "") {
-      const regex = new RegExp(search.trim(), "i");
-      filtered = filtered.filter(
-        (u) =>
-          regex.test(u.category.name) ||
-          regex.test(u.subcategory.name) ||
-          regex.test(u.purpose) ||
-          regex.test(u.price.toString()) ||
-          regex.test(u.status)
-      );
-    }
-    return filtered;
-  }, [propertyData, search, actveTab]);
-  const tabs = useMemo(() => {
-    const all = propertyData.length;
-    const rejected = propertyData.filter(
-      (item) => item.status == "rejected"
-    ).length;
-    const approved = propertyData.filter(
-      (item) => item.status === "approved"
-    ).length;
-    const pending = propertyData.filter(
-      (item) => item.status === "pending"
-    ).length;
-    const sold = propertyData.filter((item) => item.status === "sold").length;
-    const flagged = propertyData.filter(
-      (item) => item.status === "flagged"
-    ).length;
-
-    return [
-      { title: "all", total: all },
-      { title: "pending", total: pending },
-      { title: "approved", total: approved },
-      { title: "sold", total: sold },
-      { title: "rejected", total: rejected },
-      { title: "flagged", total: flagged },
-    ];
-  }, [propertyData]);
-  const headerComponent = useMemo(() => {
-    return (
-      <FilterComponent
-        search={search}
-        onSearch={setSearch}
-        tabs={tabs}
-        tab={actveTab}
-        onUpdate={setActiveTab}
-        searchPlaceholder="Search by name"
-      />
-    );
-  }, [search, setSearch, tabs, actveTab]);
-  useRefreshOnFocus(refetch);
+  const { me } = useMe();
+  const debouncedSearch = useDebouncedValue(search, 400);
+  const [activeTab, setActiveTab] = useState("all");
+  const [page, setPage] = useState(1);
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch, activeTab]);
   return (
     <>
       <Box className=" flex-1 px-2 pt-2">
+        <FilterComponent
+          search={search}
+          onSearch={setSearch}
+          tab={activeTab}
+          filter={debouncedSearch}
+          showTabs={true}
+          onUpdate={setActiveTab}
+          searchPlaceholder="Search by location or category"
+        />
         <View className="flex-1">
           <VerticalProperties
-            headerTopComponent={headerComponent}
-            data={filteredData}
             showStatus
-            isLoading={isLoading || isFetchingNextPage}
+            showLike={false}
+            role={me?.role}
             className="pb-40"
-            hasNextPage={hasNextPage}
-            fetchNextPage={fetchNextPage}
-            refetch={refetch}
+            search={debouncedSearch}
+            tab={activeTab}
+            perPage={10}
+            page={page}
+            refetch={resync}
+            fetchNextPage={setPage}
+            fetchPrevPage={setPage}
           />
         </View>
       </Box>
