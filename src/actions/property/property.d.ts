@@ -4,7 +4,6 @@ type Result = {
   per_page: number;
   pages: number;
   results: Property[];
-  user_location?: LocationData;
 };
 
 type Category = {

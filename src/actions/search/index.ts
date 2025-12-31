@@ -4,7 +4,8 @@ import { Fetch } from "../utills";
 export async function searchProperties(
   page: number,
   perPage: number,
-  filters?: SearchFilters
+  filters?: SearchFilters,
+  updated_after?: number
 ): Promise<Result> {
   const query = new URLSearchParams();
   if (filters?.city) query.append("city", filters.city);

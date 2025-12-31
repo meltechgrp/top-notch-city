@@ -8,85 +8,126 @@ import {
   propertyCompaniesCollection,
   propertyOwnerCollection,
 } from "@/db/collections";
+import { chunkArray } from "@/db/helpers";
 import { normalizeProperty } from "@/db/normalizers/property";
 import { Q } from "@nozbe/watermelondb";
 
-export async function syncProperties(serverProperties: any[]) {
-  try {
-    const updatedUsers = new Set<string>();
+type SyncInput = {
+  create: any[];
+  update: { server: any; local: any }[];
+  delete: any[];
+  batchSize: number;
+};
+
+export async function syncProperties({
+  create = [],
+  update = [],
+  delete: toDelete = [],
+  batchSize,
+}: SyncInput) {
+  console.log(
+    `🧩 create=${create.length}, update=${update.length}, delete=${toDelete.length}`
+  );
+
+  if (toDelete.length) {
+    await database.write(async () => {
+      const deletions = toDelete.flatMap((p) =>
+        [
+          propertiesCollection,
+          propertyMediaCollection,
+          propertyAmenityCollection,
+          propertyAvailabilityCollection,
+          propertyOwnershipCollection,
+          propertyCompaniesCollection,
+        ].flatMap(async (collection) =>
+          (
+            await collection.query(Q.where("property_server_id", p.id)).fetch()
+          ).map((m: any) => m.prepareDestroyPermanently())
+        )
+      );
+
+      await database.batch(...(await Promise.all(deletions)).flat());
+    });
+  }
+
+  const toUpsert = [...create, ...update.map((u) => u.server)];
+  if (!toUpsert.length) return;
+
+  const batches = chunkArray(toUpsert, batchSize);
+
+  for (let i = 0; i < batches.length; i++) {
+    const batchItems = batches[i];
+
+    console.log(
+      `🔄 Syncing batch ${i + 1}/${batches.length} (${batchItems.length})`
+    );
 
     await database.write(async () => {
-      const batch: any[] = [];
+      const ops: any[] = [];
+      const updatedOwners = new Set<string>();
 
-      for (const raw of serverProperties) {
+      for (const raw of batchItems) {
         const n = normalizeProperty(raw);
-        if (n == null) continue;
+        if (!n) continue;
+
         const propertyId = n.property.property_server_id;
-        const existing = await propertiesCollection
+
+        const [existingProperty] = await propertiesCollection
           .query(Q.where("property_server_id", propertyId))
           .fetch();
 
-        let propertyModel;
+        const propertyModel = existingProperty
+          ? existingProperty.prepareUpdate((p) => Object.assign(p, n.property))
+          : propertiesCollection.prepareCreate((p) =>
+              Object.assign(p, n.property)
+            );
 
-        if (existing.length > 0) {
-          propertyModel = existing[0].prepareUpdate((p) => {
-            Object.assign(p, n.property);
-          });
-        } else {
-          propertyModel = propertiesCollection.prepareCreate((p) => {
-            Object.assign(p, n.property);
-          });
-        }
+        ops.push(propertyModel);
 
-        batch.push(propertyModel);
-
-        const destroyByPropertyId = async (collection: any) =>
+        const clearRelations = async (collection: any) =>
           (
             await collection
               .query(Q.where("property_server_id", propertyId))
               .fetch()
           ).map((m: any) => m.prepareDestroyPermanently());
 
-        batch.push(
-          ...(await destroyByPropertyId(propertyMediaCollection)),
-          ...(await destroyByPropertyId(propertyAmenityCollection)),
-          ...(await destroyByPropertyId(propertyAvailabilityCollection)),
-          ...(await destroyByPropertyId(propertyOwnershipCollection)),
-          ...(await destroyByPropertyId(propertyCompaniesCollection))
+        ops.push(
+          ...(await clearRelations(propertyMediaCollection)),
+          ...(await clearRelations(propertyAmenityCollection)),
+          ...(await clearRelations(propertyAvailabilityCollection)),
+          ...(await clearRelations(propertyOwnershipCollection)),
+          ...(await clearRelations(propertyCompaniesCollection))
         );
 
-        if (n.media) {
-          batch.push(
+        if (n.media)
+          ops.push(
             ...n.media.map((m) =>
               propertyMediaCollection.prepareCreate((pm) =>
                 Object.assign(pm, m)
               )
             )
           );
-        }
 
-        if (n.amenities) {
-          batch.push(
+        if (n.amenities)
+          ops.push(
             ...n.amenities.map((a) =>
               propertyAmenityCollection.prepareCreate((pa) =>
                 Object.assign(pa, a)
               )
             )
           );
-        }
 
-        if (n.availabilities) {
-          batch.push(
+        if (n.availabilities)
+          ops.push(
             ...n.availabilities.map((av) =>
               propertyAvailabilityCollection.prepareCreate((pa) =>
                 Object.assign(pa, av)
               )
             )
           );
-        }
 
         if (n.ownership) {
-          batch.push(
+          ops.push(
             propertyOwnershipCollection.prepareCreate((o) =>
               Object.assign(o, n.ownership)
             )
@@ -96,45 +137,38 @@ export async function syncProperties(serverProperties: any[]) {
         if (n.owner) {
           const serverUserId = n.owner.server_user_id;
 
-          const existingUser = await propertyOwnerCollection
+          const [existingOwner] = await propertyOwnerCollection
             .query(Q.where("server_user_id", serverUserId))
             .fetch();
 
-          if (existingUser.length > 0) {
-            const user = existingUser[0];
-
-            if (!updatedUsers.has(user.id)) {
-              updatedUsers.add(user.id);
-
-              batch.push(
-                user.prepareUpdate((u) => {
-                  Object.assign(u, n.owner);
-                })
+          if (existingOwner) {
+            if (!updatedOwners.has(existingOwner.id)) {
+              updatedOwners.add(existingOwner.id);
+              ops.push(
+                existingOwner.prepareUpdate((u) => Object.assign(u, n.owner))
               );
             }
           } else {
-            batch.push(
-              propertyOwnerCollection.prepareCreate((u) => {
-                Object.assign(u, n.owner);
-              })
+            ops.push(
+              propertyOwnerCollection.prepareCreate((u) =>
+                Object.assign(u, n.owner)
+              )
             );
           }
         }
 
         for (const company of n.companies || []) {
-          batch.push(
+          ops.push(
             propertyCompaniesCollection.prepareCreate((c) =>
-              Object.assign(c, {
-                ...company,
-              })
+              Object.assign(c, company)
             )
           );
         }
       }
 
-      await database.batch(...batch);
+      await database.batch(...ops);
     });
-  } catch (error) {
-    console.log(error);
   }
+
+  console.log("✅ Property sync completed");
 }

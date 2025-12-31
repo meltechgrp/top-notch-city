@@ -148,12 +148,18 @@ export async function fetchUserProperties({
 }
 // 👤 Fetch agent properties (paginated)
 export async function fetchAgentProperties({
-  pageParam,
+  pageParam = 1,
+  perPage = 10,
 }: {
   pageParam: number;
+  perPage?: number;
+  updated_after?: number;
 }) {
   try {
-    const res = await Fetch(`/agent/my-properties?page=${pageParam}`, {});
+    const res = await Fetch(
+      `/agent/my-properties?page=${pageParam}&per_page=${perPage}`,
+      {}
+    );
     if (res?.detail) throw new Error("Failed to fetch user properties");
     return res as Result;
   } catch (error) {
@@ -164,11 +170,17 @@ export async function fetchAgentProperties({
 // 👨‍💼 Fetch admin properties (paginated)
 export async function fetchAdminProperties({
   pageParam,
+  perPage = 10,
 }: {
   pageParam: number;
+  perPage?: number;
+  updated_after?: number;
 }) {
   try {
-    const res = await Fetch(`/admin/properties?page=${pageParam}`, {});
+    const res = await Fetch(
+      `/admin/properties?page=${pageParam}&per_page=${perPage}`,
+      {}
+    );
     if (res?.detail) throw new Error("Failed to fetch admin properties");
     return res as Result;
   } catch (error) {

@@ -27,7 +27,7 @@ import { ImageViewerProvider } from "@/components/custom/ImageViewerProvider";
 import { registerDevice } from "@/actions/user";
 import useGetLocation from "@/hooks/useGetLocation";
 import { useMe } from "@/hooks/useMe";
-import { syncPropertyFeed } from "@/db/queries/syncPropertyFeed";
+import { usePropertyFeedSync } from "@/db/queries/syncPropertyFeed";
 import { mainStore } from "@/store";
 
 enableScreens(true);
@@ -53,12 +53,12 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   useNotificationObserver();
+  usePropertyFeedSync();
   const { address, location } = useGetLocation({ withAddress: true });
   useSuppressChatPushNotification();
   useMountPushNotificationToken();
   useEffect(() => {
     (async () => {
-      await syncPropertyFeed();
       await registerDevice();
     })();
   }, []);
