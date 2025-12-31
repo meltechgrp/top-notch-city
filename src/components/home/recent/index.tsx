@@ -25,7 +25,6 @@ function ApartmentsProperties({ properties }: any) {
         data={properties}
         isLoading={false}
         isRefetching={false}
-        listType={["latest"]}
       />
     </SectionHeaderWithRef>
   );

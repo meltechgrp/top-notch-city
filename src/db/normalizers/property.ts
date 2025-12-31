@@ -21,7 +21,7 @@ export function normalizeProperty(p: Property) {
       thumbnail: p?.media?.find((m) => m.media_type == "IMAGE")?.url,
       guests: Number(p?.guests || 0),
       address: composeFullAddress(p.address),
-      duration: Number(p?.duration || 0),
+      duration: p?.duration,
       plots: Number(FindAmenity("Plots", p) || p?.plots || 0),
       bedroom: Number(FindAmenity("Bedroom", p) || p?.bedroom || 0),
       bathroom: Number(FindAmenity("Bathroom", p) || p?.bathroom || 0),

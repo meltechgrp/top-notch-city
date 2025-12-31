@@ -3,7 +3,6 @@ import {
   ChevronLeftIcon,
   Icon,
   Pressable,
-  Text,
   useResolvedTheme,
   View,
 } from "@/components/ui";
@@ -28,17 +27,17 @@ import Animated, {
 } from "react-native-reanimated";
 import { PropertyFooter } from "@/components/property/PropertyFooter";
 import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
-import { useTempStore } from "@/store";
 import { scheduleOnRN } from "react-native-worklets";
-import { PropertySkeletonCard } from "@/components/property/PropertyCardSkeleton";
 import { PropertySkeletonScreen } from "@/components/property/PropertySkeletonScreen";
+import { use$ } from "@legendapp/state/react";
+import { listingStore } from "@/store/listing";
 
 const { height } = Dimensions.get("window");
 const HERO_HEIGHT = height / 2.2;
 
 export default function PropertyItem() {
   const { propertyId } = useLocalSearchParams() as { propertyId: string };
-  const { updateListing } = useTempStore();
+  const { updateListing } = use$(listingStore);
   const { width, onLayout } = useLayout();
   const theme = useResolvedTheme();
   const detailsY = useSharedValue(0);

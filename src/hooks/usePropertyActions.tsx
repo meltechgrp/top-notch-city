@@ -2,7 +2,7 @@ import { useMe } from "@/hooks/useMe";
 import { usePropertyStatusMutations } from "@/tanstack/mutations/usePropertyStatusMutations";
 import { useMemo } from "react";
 
-export function usePropertyActions({ property }: { property: PropertyItem }) {
+export function usePropertyActions({ property }: { property: Property }) {
   const { me: user, isAdmin, isAgent } = useMe();
   const { mutateAsync: approve } = usePropertyStatusMutations().approveMutation;
   const { mutateAsync: reject } = usePropertyStatusMutations().rejectMutation;
@@ -16,7 +16,7 @@ export function usePropertyActions({ property }: { property: PropertyItem }) {
     usePropertyStatusMutations().softDeleteMutation;
 
   const isOwner = useMemo(
-    () => property?.ownerId === user?.id,
+    () => property?.owner.id === user?.id,
     [property, user]
   );
 

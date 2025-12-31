@@ -1,11 +1,9 @@
 import SectionHeaderWithRef from "@/components/home/SectionHeaderWithRef";
 import HorizontalProperties from "@/components/property/HorizontalProperties";
 import { database } from "@/db";
-import { useHomeFeed } from "@/hooks/useHomeFeed";
 import { Q } from "@nozbe/watermelondb";
 import { withObservables } from "@nozbe/watermelondb/react";
 import { router } from "expo-router";
-import { memo } from "react";
 
 function FeaturedProperties({ properties }: any) {
   return (
@@ -27,7 +25,6 @@ function FeaturedProperties({ properties }: any) {
         data={properties}
         isLoading={false}
         isRefetching={false}
-        listType={["featured"]}
         isFeatured
       />
     </SectionHeaderWithRef>

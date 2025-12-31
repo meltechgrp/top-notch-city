@@ -1,4 +1,5 @@
 import { Model } from "@nozbe/watermelondb";
+import { writer } from "@nozbe/watermelondb/decorators";
 import {
   field,
   text,
@@ -17,7 +18,12 @@ export class Property extends Model {
     property_ownership: { type: "has_many", foreignKey: "property_server_id" },
     property_amenities: { type: "has_many", foreignKey: "property_server_id" },
   } as const;
-
+  @writer async markAsLiked() {
+    await this.update((d) => {
+      d.liked = !d.liked;
+      d.likes = d.liked ? d.likes + 1 : d.likes - 1;
+    });
+  }
   @children("property_media")
   media!: PropertyMedia[];
 

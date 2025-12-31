@@ -102,7 +102,7 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
     ({ item, index }: { item: any; index: number }) => {
       return (
         <PropertyListItem
-          onPress={(data) => {
+          onPress={(data: any) => {
             if (onPress) return onPress(data);
             router.push({
               pathname: `/property/[propertyId]`,

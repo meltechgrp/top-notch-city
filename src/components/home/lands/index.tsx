@@ -25,7 +25,6 @@ const Lands = ({ properties }: any) => {
         data={properties}
         isLoading={false}
         isRefetching={false}
-        listType={["trending-lands"]}
       />
     </SectionHeaderWithRef>
   );

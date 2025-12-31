@@ -1,16 +1,14 @@
 import CreateButton from "@/components/custom/CreateButton";
 import DiscoverProperties from "@/components/home/DiscoverProperties";
 import { Box, View } from "@/components/ui";
-import { ListRenderItem, RefreshControl } from "react-native";
+import { ListRenderItem } from "react-native";
 import ShortletProperties from "@/components/home/shortlet";
 import FeaturedProperties from "@/components/home/featured";
 import ApartmentProperties from "@/components/home/recent";
 import Lands from "@/components/home/lands";
 import { FlashList } from "@shopify/flash-list";
 import { router } from "expo-router";
-import { useHomeFeed } from "@/hooks/useHomeFeed";
 import React, { useCallback } from "react";
-import useGetLocation from "@/hooks/useGetLocation";
 import NearbyProperties from "@/components/home/topLocations";
 import { use$ } from "@legendapp/state/react";
 import { mainStore } from "@/store";
@@ -18,7 +16,6 @@ const MAP_HEIGHT = 400;
 
 export default function HomeScreen() {
   const address = use$(mainStore.address);
-  const { refreshAll, refetching } = useHomeFeed();
   const feedList = React.useMemo(() => {
     const topLocations = {
       id: "locations",
@@ -88,9 +85,9 @@ export default function HomeScreen() {
     <>
       <Box className="flex-1">
         <FlashList
-          refreshControl={
-            <RefreshControl refreshing={refetching} onRefresh={refreshAll} />
-          }
+          // refreshControl={
+          //   <RefreshControl refreshing={refetching} onRefresh={refreshAll} />
+          // }
           ListHeaderComponent={
             <DiscoverProperties
               state={address?.state || ""}

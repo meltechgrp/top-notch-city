@@ -24,7 +24,6 @@ function ShortletProperties({ properties }: any) {
       <HorizontalProperties
         data={properties}
         isLoading={false}
-        listType={["shortlet"]}
         isRefetching={false}
       />
     </SectionHeaderWithRef>

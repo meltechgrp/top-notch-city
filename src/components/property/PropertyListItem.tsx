@@ -38,7 +38,6 @@ type Props = {
   isList?: boolean;
   isFeatured?: boolean;
   showLike?: boolean;
-  listType?: any[];
   rounded?: boolean;
   showTitle?: boolean;
   isHorizontal?: boolean;
@@ -59,14 +58,13 @@ function PropertyListItem(props: Props) {
     showStatus,
     isFeatured,
     showLike,
-    listType,
     imageWrapperClassName,
     imageStyle,
     showTitle = true,
     subClassName,
   } = props;
   const { me } = useMe();
-  const { toggleLike } = useLike({ queryKey: listType });
+  const { toggleLike } = useLike();
   const { bannerHeight } = Layout;
   const { price, status, server_owner_id } = data;
   const isMine = useMemo(
@@ -93,10 +91,11 @@ function PropertyListItem(props: Props) {
       );
     }
   };
-  function handleLike() {
+  async function handleLike() {
     if (!me) {
       return openAccessModal({ visible: true });
     } else {
+      await data.markAsLiked();
       toggleLike({ id: data.id });
     }
   }
@@ -176,10 +175,10 @@ function PropertyListItem(props: Props) {
             </Text>
             <Text className="text-base text-white">
               {data.purpose == "rent" &&
-                data?.duration &&
+                Number(data?.duration) > 0 &&
                 `/${Durations.find((d) => d.value == data.duration)?.label?.toLowerCase()}`}
               {(data.category == "Shortlet" || data.category == "Hotel") &&
-                !data?.duration &&
+                Number(data?.duration) < 1 &&
                 "/night"}
             </Text>
           </View>

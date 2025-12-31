@@ -1,34 +1,19 @@
 import SectionHeaderWithRef from "@/components/home/SectionHeaderWithRef";
 import HorizontalProperties from "@/components/property/HorizontalProperties";
-import { mapPropertyList } from "@/lib/utils";
-import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import { router } from "expo-router";
-import { memo, useMemo } from "react";
+import { memo } from "react";
 
 interface SimilarPropertiesProps {
   property: Property;
 }
 
 function SimilarProperties({ property }: SimilarPropertiesProps) {
-  const { data, isLoading, isFetching } = useInfinityQueries({
-    type: "search",
-    filter: {
-      latitude: property.address?.latitude,
-      longitude: property.address?.longitude,
-      category: property.category?.name,
-    },
-  });
-
-  const properties = useMemo(
-    () => data?.pages.flatMap((r) => r.results) || [],
-    [data]
-  );
   return (
     <SectionHeaderWithRef
       title="Similar Properties"
       titleClassName="text-gray-400 text-base"
       subTitle="See More"
-      hasData={isLoading || properties?.length > 0}
+      hasData={false}
       onSeeAllPress={() => {
         router.push({
           pathname: "/explore",
@@ -40,10 +25,10 @@ function SimilarProperties({ property }: SimilarPropertiesProps) {
       }}
     >
       <HorizontalProperties
-        data={properties}
-        isLoading={isLoading}
+        data={[]}
+        isLoading={false}
         showLike={false}
-        isRefetching={isFetching}
+        isRefetching={false}
       />
     </SectionHeaderWithRef>
   );

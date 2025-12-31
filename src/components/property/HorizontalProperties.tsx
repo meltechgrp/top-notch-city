@@ -17,7 +17,6 @@ interface Props {
   snapToInterval?: number;
   isFeatured?: boolean;
   hasNextPage?: boolean;
-  listType?: any[];
   imageWrapperClassName?: string;
   subClassName?: string;
   contentContainerClassName?: string;
@@ -37,7 +36,6 @@ function HorizontalProperties({
   className,
   onPress,
   isFeatured,
-  listType,
   showLike = true,
   showStatus = false,
   style,
@@ -83,7 +81,6 @@ function HorizontalProperties({
             <PropertyListItem
               key={property.id}
               showLike={showLike}
-              listType={listType}
               isFeatured={isFeatured}
               showStatus={showStatus}
               rounded

@@ -33,8 +33,6 @@ const NearbyProperties = ({
         data={properties}
         isLoading={false}
         isRefetching={false}
-        listType={["nearby"]}
-        showLike={false}
       />
     </SectionHeaderWithRef>
   );
