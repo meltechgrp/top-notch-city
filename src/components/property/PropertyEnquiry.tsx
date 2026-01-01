@@ -8,15 +8,15 @@ import { SpinningLoader } from "../loaders/SpinningLoader";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { Send } from "lucide-react-native";
 import { ExternalLink } from "@/components/ExternalLink";
-import { useMe } from "@/hooks/useMe";
 import { fullName } from "@/lib/utils";
+import { Property } from "@/db/models/properties";
 
 interface PropertyEnquiryProps {
   property: Property;
+  me: Account;
 }
 
-export function PropertyEnquiry({ property }: PropertyEnquiryProps) {
-  const { me } = useMe();
+export function PropertyEnquiry({ property, me }: PropertyEnquiryProps) {
   const { mutateAsync, isPending } = useMutation({
     mutationFn: sendEquiry,
     onSuccess: () =>
@@ -33,10 +33,10 @@ export function PropertyEnquiry({ property }: PropertyEnquiryProps) {
   const [formData, setFormData] = useState<Enquiry>({
     full_name: me ? fullName(me) : "",
     email: me?.email || "",
-    message: `I am interested in your property at ${property.address.display_address}`,
+    message: `I am interested in your property at ${property.address}`,
     type: "enquiry",
     address: "",
-    property_id: property.id,
+    property_id: property.property_server_id,
   });
 
   const handleUpdate = (field: keyof typeof formData) => (value: string) => {

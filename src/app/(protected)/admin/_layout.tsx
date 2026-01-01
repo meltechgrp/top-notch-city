@@ -15,11 +15,6 @@ export default function ProtectedRoutesLayout() {
     <Stack
       screenOptions={{
         headerShown: true,
-        gestureEnabled: true,
-        animationDuration: 1000,
-        animationTypeForReplace: "push",
-        headerTitleAlign: "center",
-        animation: "slide_from_right",
         headerBackVisible: false,
         headerShadowVisible: true,
         headerLeft: headerLeft(),

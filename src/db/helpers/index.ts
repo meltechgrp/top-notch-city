@@ -1,5 +1,9 @@
-import { propertiesCollection } from "@/db/collections";
+import {
+  propertiesCollection,
+  propertyMediaCollection,
+} from "@/db/collections";
 import { database } from "@/db";
+import { Q } from "@nozbe/watermelondb";
 
 export async function resetDatabase() {
   await database.write(async () => {
@@ -9,6 +13,17 @@ export async function resetDatabase() {
 
 export async function getLocalPropertyIndex() {
   const props = await propertiesCollection.query().fetch();
+
+  return props.map((p) => ({
+    id: p.property_server_id,
+    updated_at: p.updated_at,
+    status: p.status,
+  })) as any[];
+}
+export async function getLocalProperty(slug: string) {
+  const props = await propertiesCollection
+    .query(Q.where("slug", slug), Q.take(1))
+    .fetch();
 
   return props.map((p) => ({
     id: p.property_server_id,

@@ -15,11 +15,13 @@ import {
 } from "@/db/helpers";
 import { useMe } from "@/hooks/useMe";
 import { mainStore } from "@/store";
+import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 
 const BATCH_SIZE = 10;
 
 export function usePropertyFeedSync(auto = true) {
   const { isAdmin, isAgent, me } = useMe();
+  const { isInternetReachable, isConnected } = useNetworkStatus();
   const [syncing, setSyncing] = useState(false);
   const hasAutoSynced = useRef(false);
   const resync = useCallback(async () => {
@@ -114,11 +116,16 @@ export function usePropertyFeedSync(auto = true) {
     }
   }, [me, auto]);
   useEffect(() => {
-    if (!auto || hasAutoSynced.current) return;
+    if (auto && isInternetReachable) {
+      resync();
+    }
+  }, [isInternetReachable]);
+  useEffect(() => {
+    if (!auto || !isInternetReachable || hasAutoSynced.current) return;
 
     hasAutoSynced.current = true;
     resync();
-  }, [auto, resync]);
+  }, [auto, isInternetReachable]);
   return {
     syncing,
     resync,

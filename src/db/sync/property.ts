@@ -13,17 +13,17 @@ import { normalizeProperty } from "@/db/normalizers/property";
 import { Q } from "@nozbe/watermelondb";
 
 type SyncInput = {
-  create: any[];
-  update: { server: any; local: any }[];
-  delete: any[];
-  batchSize: number;
+  create?: any[];
+  update?: any[];
+  delete?: any[];
+  batchSize?: number;
 };
 
 export async function syncProperties({
   create = [],
   update = [],
   delete: toDelete = [],
-  batchSize,
+  batchSize = 10,
 }: SyncInput) {
   console.log(
     `🧩 create=${create.length}, update=${update.length}, delete=${toDelete.length}`
@@ -50,7 +50,7 @@ export async function syncProperties({
     });
   }
 
-  const toUpsert = [...create, ...update.map((u) => u.server)];
+  const toUpsert = [...create, ...update];
   if (!toUpsert.length) return;
 
   const batches = chunkArray(toUpsert, batchSize);

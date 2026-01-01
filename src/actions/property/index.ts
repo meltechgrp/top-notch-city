@@ -1,4 +1,3 @@
-import config from "@/config";
 import { Fetch } from "../utills";
 
 export async function fetchProperty({ id }: { id: string }) {

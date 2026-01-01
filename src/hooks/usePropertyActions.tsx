@@ -1,3 +1,4 @@
+import { Property } from "@/db/models/properties";
 import { useMe } from "@/hooks/useMe";
 import { usePropertyStatusMutations } from "@/tanstack/mutations/usePropertyStatusMutations";
 import { useMemo } from "react";
@@ -16,7 +17,7 @@ export function usePropertyActions({ property }: { property: Property }) {
     usePropertyStatusMutations().softDeleteMutation;
 
   const isOwner = useMemo(
-    () => property?.owner.id === user?.id,
+    () => property?.server_owner_id === user?.id,
     [property, user]
   );
 

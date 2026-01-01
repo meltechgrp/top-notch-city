@@ -18,6 +18,7 @@ type MainStore = {
   activeUserId: string | null;
   muted: boolean;
   propertyLastSyncAt: number;
+  locationLastSyncAt: number;
   isOnboarded: boolean;
   address: Address;
   saveAddress: (data: Partial<Address>) => void;
@@ -35,6 +36,7 @@ export const mainStore = observable<MainStore>(
       muted: false,
       isOnboarded: false,
       propertyLastSyncAt: 0,
+      locationLastSyncAt: 0,
       accounts: {},
       address: {} as Address,
       activeUserId: null,

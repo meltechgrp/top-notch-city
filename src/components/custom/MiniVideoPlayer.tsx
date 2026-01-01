@@ -56,11 +56,16 @@ export const MiniVideoPlayer = ({
     }
   }, [canPlay, isPlaying]);
   function togglePlay() {
+    if (!canPlay) return;
     if (isPlaying) player.pause();
     else player.play();
   }
   return (
-    <Pressable onPress={togglePlay} style={[{ width: "100%" }, style]}>
+    <Pressable
+      disabled={!canPlay}
+      onPress={togglePlay}
+      style={[{ width: "100%" }, style]}
+    >
       <View
         style={{
           width: "100%",

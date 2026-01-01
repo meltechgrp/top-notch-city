@@ -8,31 +8,50 @@ import { useState } from "react";
 import WishListButton from "@/components/property/WishListButton";
 import PropertyActionsBottomSheet from "@/components/modals/property/PropertyActionsBottomSheet";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
+import { Property } from "@/db/models/properties";
+import { AnimatedLikeButton } from "@/components/custom/AnimatedLikeButton";
+import { openAccessModal } from "@/components/globals/AuthModals";
+import { useLike } from "@/hooks/useLike";
 
 interface Props {
   property: Property;
   hasScrolledToDetails?: boolean;
+  me: Account;
 }
 
 export default function PropertyHeader({
   property,
   hasScrolledToDetails,
+  me,
 }: Props) {
   const theme = useResolvedTheme();
   const { isOwner, actions } = usePropertyActions({
     property,
   });
+  const { toggleLike } = useLike();
   const [openActions, setOpenActions] = useState(false);
+
+  async function handleLike() {
+    if (!me) {
+      return openAccessModal({ visible: true });
+    } else {
+      await property.markAsLiked();
+      toggleLike({ id: property.id });
+    }
+  }
   return (
     <>
       <View className="pr-4 flex-row bg-background/60 px-4 rounded-full mr-4 items-center gap-2">
         {property.status == "approved" && (
-          <WishListButton
-            id={property.id}
-            slug={property.slug}
-            isAdded={!!property.owner_interaction.added_to_wishlist}
-            hasScrolledToDetails={hasScrolledToDetails}
-          />
+          <Pressable onPress={handleLike}>
+            <AnimatedLikeButton
+              liked={property?.liked || false}
+              className="w-8 h-8 text-white"
+            />
+          </Pressable>
+        )}
+        {property.status == "approved" && !isOwner && (
+          <WishListButton property={property} me={me} />
         )}
         {isOwner && (
           <Pressable
@@ -42,7 +61,7 @@ export default function PropertyHeader({
                 pathname: "/property/[propertyId]/edit",
                 params: {
                   propertyId: property.id,
-                  userId: property.owner.id,
+                  userId: property.server_owner_id,
                 },
               })
             }

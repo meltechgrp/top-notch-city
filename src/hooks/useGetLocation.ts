@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
 import * as Location from "expo-location";
 import { getReverseGeocode } from "@/hooks/useReverseGeocode";
+import { mainStore } from "@/store";
 
 type Options = {
   highAccuracy?: boolean;
   withAddress?: boolean;
 };
-
+const TTL = 60 * 60 * 1000;
 const useGetLocation = (options?: Options) => {
+  const locationLastSyncAt = mainStore.locationLastSyncAt.get();
   const { highAccuracy = false, withAddress = false } = options || {};
   const [granted, setGranted] = useState(false);
   const [location, setLocation] = useState<Location.LocationObjectCoords>();
@@ -20,29 +22,36 @@ const useGetLocation = (options?: Options) => {
   }>();
 
   const tryGetLocation = useCallback(async () => {
-    // Request location permission
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== "granted") {
-      setGranted(false);
+    if (locationLastSyncAt && Date.now() - locationLastSyncAt < TTL) {
       return;
+    }
+    // Request location permission
+    const { status } = await Location.getForegroundPermissionsAsync();
+
+    if (status !== "granted") {
+      const req = await Location.requestForegroundPermissionsAsync();
+      if (req.status !== "granted") {
+        setGranted(false);
+        return;
+      }
     }
 
     setGranted(true);
-
     // Get user location
     let location = await Location.getCurrentPositionAsync({
-      accuracy: Location.Accuracy.High,
+      accuracy: highAccuracy
+        ? Location.Accuracy.High
+        : Location.Accuracy.Balanced,
     });
 
-    if (location) {
-      setLocation(location.coords);
-      if (withAddress) {
-        const add = await getReverseGeocode(location.coords);
-        add?.addressComponents && setAddress(add.addressComponents);
-      }
-      return location.coords;
+    setLocation(location.coords);
+    if (withAddress) {
+      const add = await getReverseGeocode(location.coords);
+      add?.addressComponents && setAddress(add.addressComponents);
     }
-  }, [highAccuracy]);
+    mainStore.locationLastSyncAt.set(Date.now());
+    return location.coords;
+  }, [highAccuracy, withAddress, locationLastSyncAt]);
 
   useEffect(() => {
     tryGetLocation();

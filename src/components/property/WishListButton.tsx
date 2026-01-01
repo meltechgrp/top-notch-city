@@ -1,71 +1,32 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  addToWishList,
-  likeProperty,
-  removeFromWishList,
-} from "@/actions/property";
+import { useMutation } from "@tanstack/react-query";
+import { addToWishList, removeFromWishList } from "@/actions/property";
 import { memo } from "react";
 import { cn } from "@/lib/utils";
 import { openAccessModal } from "@/components/globals/AuthModals";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
-import { AnimatedLikeButton } from "@/components/custom/AnimatedLikeButton";
-import { useMe } from "@/hooks/useMe";
+import { Icon } from "@/components/ui";
+import { Bookmark } from "lucide-react-native";
+import { Property } from "@/db/models/properties";
 
 interface Props {
-  isAdded: boolean;
-  id: string;
-  slug: string;
+  property: Property;
   className?: string;
-  hasScrolledToDetails?: boolean;
+  me: Account;
 }
 
-const PropertyWishListButton = ({ isAdded, id, className, slug }: Props) => {
-  const client = useQueryClient();
-  const { me } = useMe();
+const PropertyWishListButton = ({ property, className, me }: Props) => {
   const { mutate } = useMutation({
     mutationFn: async () => {
-      await likeProperty({ id });
-      isAdded ? await removeFromWishList({ id }) : await addToWishList({ id });
-    },
-
-    onMutate: async () => {
-      await client.cancelQueries({ queryKey: ["properties", slug] });
-
-      const previousData = client.getQueryData<Property | undefined>([
-        "properties",
-        slug,
-      ]);
-
-      client.setQueryData<Property | undefined>(["properties", slug], (old) => {
-        if (!old) return old;
-        return {
-          ...old,
-          owner_interaction: {
-            ...old.owner_interaction,
-            liked: !old.owner_interaction?.liked,
-          },
-          interaction: {
-            ...old.interaction,
-            liked: old.owner_interaction?.liked
-              ? old.interaction.liked - 1
-              : old.interaction.liked + 1,
-          },
-        };
-      });
-
-      return { previousData };
-    },
-    onError: (_err, _vars, ctx) => {
-      console.log(_err);
-      if (ctx?.previousData) {
-        client.setQueryData(["properties", slug], ctx.previousData);
-      }
+      property?.added
+        ? await removeFromWishList({ id: property.property_server_id })
+        : await addToWishList({ id: property.property_server_id });
     },
   });
-  function hnadleWishList() {
+  async function hnadleWishList() {
     if (!me) {
       return openAccessModal({ visible: true });
     } else {
+      await property.addToWishlist();
       mutate();
     }
   }
@@ -74,7 +35,13 @@ const PropertyWishListButton = ({ isAdded, id, className, slug }: Props) => {
       onPress={hnadleWishList}
       className={cn("px-2", className)}
     >
-      <AnimatedLikeButton className="h-7 w-7" liked={isAdded} />
+      <Icon
+        as={Bookmark}
+        className={cn(
+          "w-8 h-8",
+          property?.added ? "text-info-100 fill-info-100" : "text-white"
+        )}
+      />
     </AnimatedPressable>
   );
 };

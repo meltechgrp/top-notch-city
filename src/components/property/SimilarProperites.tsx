@@ -1,37 +1,52 @@
 import SectionHeaderWithRef from "@/components/home/SectionHeaderWithRef";
 import HorizontalProperties from "@/components/property/HorizontalProperties";
+import { database } from "@/db";
+import { Property } from "@/db/models/properties";
+import { Q } from "@nozbe/watermelondb";
+import { withObservables } from "@nozbe/watermelondb/react";
 import { router } from "expo-router";
-import { memo } from "react";
 
 interface SimilarPropertiesProps {
   property: Property;
+  properties: any[];
 }
 
-function SimilarProperties({ property }: SimilarPropertiesProps) {
+function SimilarProperties({ property, properties }: SimilarPropertiesProps) {
   return (
     <SectionHeaderWithRef
       title="Similar Properties"
       titleClassName="text-gray-400 text-base"
       subTitle="See More"
-      hasData={false}
+      hasData={properties && properties?.length > 0}
       onSeeAllPress={() => {
         router.push({
           pathname: "/explore",
           params: {
-            latitude: property.address?.latitude.toString(),
-            longitude: property.address?.longitude.toString(),
+            latitude: property?.latitude.toString(),
+            longitude: property?.longitude.toString(),
+            category: property.category,
           },
         });
       }}
     >
       <HorizontalProperties
-        data={[]}
+        data={properties}
         isLoading={false}
-        showLike={false}
         isRefetching={false}
       />
     </SectionHeaderWithRef>
   );
 }
 
-export default memo(SimilarProperties);
+const enhance = withObservables(["property"], ({ property }) => ({
+  properties: database
+    .get("properties")
+    .query(
+      Q.where("status", "approved"),
+      Q.where("category", property.category),
+      Q.sortBy("updated_at", Q.desc),
+      Q.take(10)
+    ),
+}));
+
+export default enhance(SimilarProperties);

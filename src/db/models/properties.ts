@@ -24,6 +24,17 @@ export class Property extends Model {
       d.likes = d.liked ? d.likes + 1 : d.likes - 1;
     });
   }
+  @writer async markAsViewed() {
+    await this.update((d) => {
+      d.views = d.views + 1;
+      d.viewed = true;
+    });
+  }
+  @writer async addToWishlist() {
+    await this.update((d) => {
+      d.added = !d.added;
+    });
+  }
   @children("property_media")
   media!: PropertyMedia[];
 
@@ -100,7 +111,7 @@ export class PropertyMedia extends Model {
   @text("property_server_id") property_server_id!: string;
   @text("server_image_id") server_image_id!: string;
   @text("url") url!: string;
-  @text("media_type") mediaType!: string;
+  @text("media_type") media_type!: string;
 }
 
 export class PropertyAvailability extends Model {

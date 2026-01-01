@@ -26,19 +26,16 @@ import {
   VectorSquare,
 } from "lucide-react-native";
 import { useRouter } from "expo-router";
-import React, { memo } from "react";
+import React, { useMemo } from "react";
 import {
   generateMediaUrl,
   generateMediaUrlSingle,
   getImageUrl,
 } from "@/lib/api";
-import { useLayout } from "@react-native-community/hooks";
 import {
   formatDateDistance,
   formatMoney,
   formatNumberCompact,
-  composeFullAddress,
-  generateTitle,
   fullName,
 } from "@/lib/utils";
 import { LongDescription } from "@/components/custom/LongDescription";
@@ -55,17 +52,59 @@ import { ExternalLink } from "@/components/ExternalLink";
 import ModalScreen from "@/components/shared/ModalScreen";
 import { PropertyBadge } from "@/components/property/PropertyBadge";
 import { Durations } from "@/constants/Amenities";
+import {
+  Property,
+  PropertyAmenity,
+  PropertyMedia,
+} from "@/db/models/properties";
+import { withObservables } from "@nozbe/watermelondb/react";
+import {
+  propertyAmenityCollection,
+  propertyMediaCollection,
+  propertyOwnerCollection,
+} from "@/db/collections";
+import { Q } from "@nozbe/watermelondb";
+import { useLayout } from "@react-native-community/hooks";
+import { User } from "@/db/models/users";
 
 interface PropertyDetailsBottomSheetProps {
   property: Property;
+  me: Account;
+  media: PropertyMedia[];
+  owner: User[];
+  amenities: PropertyAmenity[];
 }
 
 const PropertyDetailsBottomSheet = ({
   property,
+  me,
+  media: files,
+  owner: user,
+  amenities,
 }: PropertyDetailsBottomSheetProps) => {
   const router = useRouter();
-  const { width, onLayout } = useLayout();
-  const mainImage = property?.media?.find((img) => img.media_type == "IMAGE");
+  const { onLayout, width } = useLayout();
+  const media = useMemo(() => {
+    if (files) {
+      return files.map((m) => ({
+        url: m.url,
+        media_type: m.media_type,
+        id: m.server_image_id,
+      }));
+    }
+    if (property?.thumbnail) {
+      return [
+        {
+          url: property.thumbnail,
+          media_type: "IMAGE",
+          id: property.thumbnail,
+        },
+      ];
+    }
+    return [];
+  }, [property.thumbnail, files]) as Media[];
+  const owner = user?.[0];
+  const mainImage = property?.thumbnail;
   return (
     <>
       <SafeAreaView edges={["bottom"]} className="flex-1 bg-transparent">
@@ -83,7 +122,7 @@ const PropertyDetailsBottomSheet = ({
                   <Text className="text-white text-2xl font-bold">
                     {formatMoney(
                       property.price,
-                      property?.currency?.code || "NGN",
+                      property?.currency || "NGN",
                       0
                     )}
                   </Text>
@@ -91,8 +130,8 @@ const PropertyDetailsBottomSheet = ({
                     {property.purpose == "rent" &&
                       property?.duration &&
                       `/${Durations.find((d) => d.value == property.duration)?.label?.toLowerCase()}`}
-                    {(property.category.name == "Shortlet" ||
-                      property.category.name == "Hotel") &&
+                    {(property.category == "Shortlet" ||
+                      property.category == "Hotel") &&
                       !property?.duration &&
                       "/night"}
                   </Text>
@@ -102,13 +141,13 @@ const PropertyDetailsBottomSheet = ({
               <View className="flex-row items-center">
                 <View className="flex-row gap-1 items-center my-px">
                   <Icon as={Home} size="sm" className="text-primary" />
-                  <Text className=" text-sm">{generateTitle(property)}</Text>
+                  <Text className=" text-sm">{property.title}</Text>
                 </View>
-                {(property.category.name == "Shortlet" ||
-                  property.category.name == "Hotel") && (
+                {(property.category == "Shortlet" ||
+                  property.category == "Hotel") && (
                   <Text className="text-white text-sm font-medium">
                     {" "}
-                    - {property.category.name}
+                    - {property.category}
                   </Text>
                 )}
               </View>
@@ -120,7 +159,7 @@ const PropertyDetailsBottomSheet = ({
                       numberOfLines={2}
                       className="text-white flex-1 text-xs"
                     >
-                      {composeFullAddress(property.address)}
+                      {property.address}
                     </Text>
                   </View>
                 )}
@@ -129,20 +168,20 @@ const PropertyDetailsBottomSheet = ({
                   <View className="flex-row h-8 gap-2 bg-black/40 rounded-2xl py-0 px-3 items-center">
                     <Icon as={Eye} size="sm" className="text-white" />
                     <Text className="text-white font-medium text-sm ">
-                      {formatNumberCompact(property?.interaction.viewed || 0)}
+                      {formatNumberCompact(property?.views || 0)}
                     </Text>
                   </View>
                   <View className="flex-row h-8 gap-2 bg-black/40 rounded-2xl py-0 px-3 items-center">
                     <Icon as={Heart} size="sm" className="text-white" />
                     <Text className="text-white font-medium text-sm ">
-                      {formatNumberCompact(property?.interaction.liked || 0)}
+                      {formatNumberCompact(property?.likes || 0)}
                     </Text>
                   </View>
                 </View>
               </View>
             </View>
             <View className="gap-4 px-4 pb-2 -mt-2">
-              {property.category.name !== "Land" ? (
+              {property.category !== "Land" ? (
                 <View className="flex-row gap-4 mt-2">
                   <View className="flex-row flex-1 bg-background-muted rounded-xl p-4 items-center justify-center gap-2">
                     <Icon size="sm" as={Bed} className="text-primary" />
@@ -191,12 +230,9 @@ const PropertyDetailsBottomSheet = ({
                     <Heading size="lg">Media</Heading>
                   </View>
 
-                  <ProfileImageTrigger image={property?.media || []} index={0}>
+                  <ProfileImageTrigger image={media} index={0}>
                     <View className="bg-background-muted rounded-xl p-4">
-                      <ImageGrid
-                        media={property?.media || []}
-                        width={(width - 110) / 5}
-                      />
+                      <ImageGrid media={media} width={(width - 110) / 5} />
                     </View>
                   </ProfileImageTrigger>
                 </View>
@@ -216,14 +252,17 @@ const PropertyDetailsBottomSheet = ({
               </View>
               <View className="flex-row justify-around">
                 <Text className="">
-                  {formatDateDistance(property.created_at, true)}
+                  {formatDateDistance(
+                    new Date(property.created_at).toString(),
+                    true
+                  )}
                 </Text>
                 <Text>
-                  {property.interaction.viewed}{" "}
+                  {property.views}{" "}
                   <Text className="text-typography/80">Views</Text>
                 </Text>
                 <Text>
-                  {property.interaction.liked}{" "}
+                  {property.likes}{" "}
                   <Text className="text-typography/80">Likes</Text>
                 </Text>
               </View>
@@ -232,10 +271,10 @@ const PropertyDetailsBottomSheet = ({
                   Features
                 </Heading>
                 <View className="flex-row gap-4 flex-wrap px-2">
-                  {property?.amenities?.slice(0, 6).map((a) => (
+                  {amenities?.map((a) => (
                     <View key={a.name} className="w-[46%] ">
-                      <View className="bg-background rounded-full py-1 px-3 gap-1 flex-row items-center self-start">
-                        <Text numberOfLines={1} className="text-sm">
+                      <View className="bg-info-100 rounded-full py-2 px-3 gap-1 flex-row items-center self-start">
+                        <Text numberOfLines={1} className="text-sm capitalize">
                           {a.name}
                         </Text>
                       </View>
@@ -248,16 +287,16 @@ const PropertyDetailsBottomSheet = ({
                   )} */}
                 </View>
               </View>
-              {property.category.name !== "Shortlet" &&
+              {property.category !== "Shortlet" &&
                 property.status == "approved" && (
                   <View className="bg-background-muted border border-outline-100 rounded-xl p-4 mx-4">
                     <View className="h-40 bg-background/70">
-                      {mainImage?.url && (
+                      {mainImage && (
                         <Image
                           rounded
                           source={{
-                            uri: generateMediaUrlSingle(mainImage?.url),
-                            cacheKey: mainImage?.id,
+                            uri: generateMediaUrlSingle(mainImage),
+                            cacheKey: mainImage,
                           }}
                         />
                       )}
@@ -268,8 +307,7 @@ const PropertyDetailsBottomSheet = ({
                       </Text>
                       <Text className="mt-1 text-sm text-typography/90">
                         We'll connect you with an expert to take you on a
-                        private tour on this property at{" "}
-                        {composeFullAddress(property.address)}.
+                        private tour on this property at {property.address}.
                       </Text>
                     </View>
                     <Button
@@ -277,15 +315,11 @@ const PropertyDetailsBottomSheet = ({
                         openBookingModal({
                           visible: true,
                           property_id: property.id,
-                          agent_id: property.owner.id,
-                          availableDates: property?.availabilities,
-                          image:
-                            property?.media.find((i) => i.media_type == "IMAGE")
-                              ?.url || "",
-                          title: property.title,
-                          address: composeFullAddress(property.address),
+                          agent_id: property.server_owner_id,
+                          image: property?.thumbnail!,
+                          address: property.address,
                           booking_type:
-                            property.category.name == "Shortlet"
+                            property.category == "Shortlet"
                               ? "reservation"
                               : "inspection",
                         });
@@ -300,10 +334,24 @@ const PropertyDetailsBottomSheet = ({
                 )}
               <View className="bg-background-muted border border-outline-100 p-2 rounded-xl mx-4 gap-2">
                 <View className="rounded-xl overflow-hidden">
-                  <CustomCenterSheet address={property.address} />
+                  <CustomCenterSheet
+                    address={
+                      {
+                        latitude: property.latitude,
+                        longitude: property.longitude,
+                      } as Address
+                    }
+                  />
                 </View>
               </View>
-              <PropertyNearbySection address={property.address} />
+              <PropertyNearbySection
+                address={
+                  {
+                    latitude: property.latitude,
+                    longitude: property.longitude,
+                  } as Address
+                }
+              />
               <View className="px-4 gap-6">
                 <View className="bg-background-muted p-4 rounded-xl gap-4">
                   <View className={"flex-row gap-2 items-center "}>
@@ -311,35 +359,31 @@ const PropertyDetailsBottomSheet = ({
 
                     <View className="flex-1">
                       <Text className="text-lg text-typography font-medium">
-                        {fullName(property?.owner)}
+                        {fullName(owner)}
                       </Text>
                     </View>
                   </View>
                   <Button
                     className="h-12 gap-1 bg-gray-600"
                     onPress={() => {
-                      if (!property?.owner) return;
+                      if (!property?.server_owner_id) return;
                       router.push({
                         pathname: "/agents/[userId]",
                         params: {
-                          userId: property.owner.id,
+                          userId: property.server_owner_id,
                         },
                       });
                     }}
                   >
                     <Avatar className=" w-10 h-10 mr-4">
-                      <AvatarFallbackText>
-                        {fullName(property?.owner)}
-                      </AvatarFallbackText>
-                      <AvatarImage
-                        source={getImageUrl(property?.owner?.profile_image)}
-                      />
+                      <AvatarFallbackText>{fullName(owner)}</AvatarFallbackText>
+                      <AvatarImage source={getImageUrl(undefined)} />
                     </Avatar>
                     <ButtonText>Portfolio</ButtonText>
                     <Icon as={ChevronRight} color="white" />
                   </Button>
                 </View>
-                <PropertyEnquiry property={property} />
+                <PropertyEnquiry me={me} property={property} />
               </View>
               <SimilarProperties property={property} />
               <View className="p-4 border border-warning-100 mx-4 rounded-xl">
@@ -432,4 +476,20 @@ function ImageGrid({ width, media }: { width: number; media: Media[] }) {
   );
 }
 
-export default memo(PropertyDetailsBottomSheet);
+const enhance = withObservables(
+  ["property"],
+  ({ property }: { property: Property }) => ({
+    property: property.observe(),
+    media: propertyMediaCollection
+      .query(Q.where("property_server_id", property.property_server_id))
+      .observe(),
+    owner: propertyOwnerCollection
+      .query(Q.where("server_user_id", property.server_owner_id), Q.take(1))
+      .observe(),
+    amenities: propertyAmenityCollection
+      .query(Q.where("property_server_id", property.property_server_id))
+      .observe(),
+  })
+);
+
+export default enhance(PropertyDetailsBottomSheet);

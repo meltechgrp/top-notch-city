@@ -11,6 +11,7 @@ import { Dimensions, ScrollView } from "react-native";
 import { ImageContentFit } from "expo-image";
 import { generateMediaUrl, generateMediaUrlSingle } from "@/lib/api";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { MiniVideoPlayer } from "@/components/custom/MiniVideoPlayer";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const INTERACTIVE_ZONE_WIDTH = SCREEN_WIDTH / 2.8;
@@ -113,15 +114,33 @@ function PropertyCarousel({
           onSnapToItem={setSelectedIndex}
           style={{ width: width }}
           data={media}
-          renderItem={({ item }) => (
-            <Image
-              style={{ height: 500, flex: 1 }}
-              source={{
-                uri: generateMediaUrlSingle(item.url),
-                cacheKey: item.id,
-              }}
-            />
-          )}
+          renderItem={({ item }) => {
+            const isVideo = item.media_type === "VIDEO";
+            return (
+              <View key={item.id} className="flex-1">
+                {isVideo ? (
+                  <MiniVideoPlayer
+                    uri={generateMediaUrlSingle(item.url)}
+                    style={{ height: 500, flex: 1 }}
+                    rounded
+                    canPlay={false}
+                    autoPlay={false}
+                    showLoading={false}
+                    showPlayBtn
+                  />
+                ) : (
+                  <Image
+                    style={{ height: 500, flex: 1 }}
+                    source={{
+                      uri: generateMediaUrlSingle(item.url),
+                      cacheKey: item.id,
+                    }}
+                    rounded
+                  />
+                )}
+              </View>
+            );
+          }}
           pagingEnabled={true}
           mode={stackMode ? "horizontal-stack" : undefined}
           modeConfig={

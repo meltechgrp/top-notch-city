@@ -53,7 +53,6 @@ export function BookingCard({ booking }: Props) {
       agent_id: booking.agent?.id,
       booking_type: booking.booking_type,
       image: booking.property.image,
-      title: booking.property.title,
       address: composeFullAddress(booking.property.address),
       onDismiss: handleInvalidate,
     });

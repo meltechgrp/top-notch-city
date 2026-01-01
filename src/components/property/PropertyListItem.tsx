@@ -231,7 +231,7 @@ function PropertyListItem(props: Props) {
 }
 
 const enhance = withObservables(["property"], ({ property }) => ({
-  property,
+  property: property.observe(),
 }));
 
 export default enhance(PropertyListItem);

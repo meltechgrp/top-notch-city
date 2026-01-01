@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import { ScrollView, StyleProp, ViewStyle } from "react-native";
 import { useMemo, useCallback, memo } from "react";
 import { cn, deduplicate } from "@/lib/utils";
+import { shuffle } from "lodash";
 
 interface Props {
   category?: string;
@@ -56,7 +57,7 @@ function HorizontalProperties({
 
       router.push({
         pathname: "/property/[propertyId]",
-        params: { propertyId: property.id },
+        params: { propertyId: property.slug },
       });
     },
     [router, onPress]
@@ -77,7 +78,7 @@ function HorizontalProperties({
         ? skeletonItems.map((_, i) => (
             <PropertySkeletonCard isHorizontal key={i} />
           ))
-        : deduplicate(data, "id").map((property) => (
+        : shuffle(data).map((property) => (
             <PropertyListItem
               key={property.id}
               showLike={showLike}

@@ -5,7 +5,7 @@ import {
   openBookingModal,
 } from "@/components/globals/AuthModals";
 import { Icon, Pressable, Text, View } from "@/components/ui";
-import { useMe } from "@/hooks/useMe";
+import { Property } from "@/db/models/properties";
 import { cn, composeFullAddress } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
 import { router } from "expo-router";
@@ -14,10 +14,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 interface PropertyFooterProps {
   property: Property;
+  me: Account;
 }
 
-export function PropertyFooter({ property }: PropertyFooterProps) {
-  const { me, isAgent } = useMe();
+export function PropertyFooter({ property, me }: PropertyFooterProps) {
   const { mutateAsync } = useMutation({
     mutationFn: startChat,
   });
@@ -32,21 +32,17 @@ export function PropertyFooter({ property }: PropertyFooterProps) {
         <View className="flex-row gap-4 px-4 pt-2 pb-0 flex-1">
           <Pressable
             both
-            disabled={me?.id == property?.owner.id}
+            disabled={me?.id == property?.server_owner_id}
             onPress={() => {
               openBookingModal({
                 visible: true,
-                property_id: property.id,
-                agent_id: property.owner.id,
-                availableDates: property?.availabilities,
-                image:
-                  property?.media.find((i) => i.media_type == "IMAGE")?.url ||
-                  "",
-                title: property.title,
-                address: composeFullAddress(property.address),
+                property_id: property.property_server_id,
+                agent_id: property.server_owner_id,
+                image: property.thumbnail!,
+                address: property.address,
                 booking_type:
-                  property.category.name == "Shortlet" ||
-                  property.category.name == "Hotel"
+                  property.category == "Shortlet" ||
+                  property.category == "Hotel"
                     ? "reservation"
                     : "inspection",
               });
@@ -55,15 +51,14 @@ export function PropertyFooter({ property }: PropertyFooterProps) {
           >
             <Icon size="xl" as={BookCheck} className="text-primary" />
             <Text size="md" className=" font-medium text-white">
-              {property.category.name == "Shortlet" ||
-              property.category.name == "Hotel"
+              {property.category == "Shortlet" || property.category == "Hotel"
                 ? "Book"
                 : "Book a visit"}
             </Text>
           </Pressable>
           <Pressable
             both
-            disabled={me?.id == property?.owner.id}
+            disabled={me?.id == property?.server_owner_id}
             onPress={async () => {
               if (!me) {
                 return openAccessModal({ visible: true });
@@ -71,7 +66,7 @@ export function PropertyFooter({ property }: PropertyFooterProps) {
               await mutateAsync(
                 {
                   property_id: property?.id!,
-                  member_id: property?.owner.id!,
+                  member_id: property?.server_owner_id!,
                 },
                 {
                   onError: (e) => {

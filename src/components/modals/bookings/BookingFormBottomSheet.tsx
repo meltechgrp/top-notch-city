@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { View } from "react-native";
 import { ButtonsInput, CustomInput } from "../../custom/CustomInput";
 import { Button, ButtonText, Text, Image, Icon } from "../../ui";
@@ -22,6 +22,8 @@ import DropdownSelect from "@/components/custom/DropdownSelect";
 import { ExternalLink } from "@/components/ExternalLink";
 import ModalScreen from "@/components/shared/ModalScreen";
 import { useMe } from "@/hooks/useMe";
+import { propertyAvailabilityCollection } from "@/db/collections";
+import { Q } from "@nozbe/watermelondb";
 
 export type BookingFormProps = {
   visible: boolean;
@@ -30,8 +32,6 @@ export type BookingFormProps = {
   property_id: string;
   agent_id: string;
   image: string;
-  title: string;
-  availableDates?: Availabilities[];
   address?: string;
 };
 
@@ -43,11 +43,10 @@ export const BookingFormBottomSheet = ({
   agent_id,
   image,
   address,
-  title,
-  availableDates,
 }: BookingFormProps) => {
   const { me } = useMe();
   const [dateSheetVisible, setDateSheetVisible] = useState(false);
+  const [availableDates, setAvailableDates] = useState<Availabilities[]>([]);
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: sendBooking,
@@ -147,7 +146,20 @@ export const BookingFormBottomSheet = ({
     if (h > 17) return setHours(setMinutes(date, 30), 17);
     return date;
   };
-  console.log(availableDates);
+  useEffect(() => {
+    async function getDates() {
+      const dates = await propertyAvailabilityCollection.query(
+        Q.where("property_server_id", property_id)
+      );
+      const available = dates?.map((a) => ({
+        start: new Date(a.start).toString(),
+        end: new Date(a.end).toString(),
+        id: property_id,
+      }));
+      setAvailableDates(available);
+    }
+    getDates();
+  }, [property_id]);
   return (
     <>
       <ModalScreen
