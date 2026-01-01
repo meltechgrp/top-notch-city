@@ -29,6 +29,7 @@ import useGetLocation from "@/hooks/useGetLocation";
 import { useMe } from "@/hooks/useMe";
 import { usePropertyFeedSync } from "@/db/queries/syncPropertyFeed";
 import { mainStore } from "@/store";
+import { useChatsSync } from "@/db/queries/syncChats";
 
 enableScreens(true);
 const query = new QueryClient({
@@ -54,6 +55,7 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   useNotificationObserver();
   usePropertyFeedSync();
+  useChatsSync();
   const { address, location } = useGetLocation({ withAddress: true });
   useSuppressChatPushNotification();
   useMountPushNotificationToken();

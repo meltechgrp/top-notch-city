@@ -70,12 +70,15 @@ export function normalizeProperty(p: Property) {
       server_user_id: p.owner.id,
       slug: p.owner.slug,
       email: p.owner.email,
-      phone: p.owner.phone,
       first_name: p.owner.first_name,
       last_name: p.owner.last_name,
+      role: "agent",
       profile_image: p.owner.profile_image,
       status: "offline",
-      role: "agent",
+      views_count: 0,
+      likes_count: 0,
+      total_properties: 0,
+      followers_count: 0,
     };
 
     const ownership = p?.ownership && {

@@ -21,7 +21,7 @@ const BATCH_SIZE = 10;
 
 export function usePropertyFeedSync(auto = true) {
   const { isAdmin, isAgent, me } = useMe();
-  const { isInternetReachable, isConnected } = useNetworkStatus();
+  const { isInternetReachable } = useNetworkStatus();
   const [syncing, setSyncing] = useState(false);
   const hasAutoSynced = useRef(false);
   const resync = useCallback(async () => {
@@ -109,17 +109,12 @@ export function usePropertyFeedSync(auto = true) {
     } finally {
       setSyncing(false);
     }
-  }, [isAdmin, isAgent, syncing, me]);
+  }, [isAdmin, isAgent, syncing, me, isInternetReachable]);
   useEffect(() => {
     if (auto && me) {
       resync();
     }
   }, [me, auto]);
-  useEffect(() => {
-    if (auto && isInternetReachable) {
-      resync();
-    }
-  }, [isInternetReachable]);
   useEffect(() => {
     if (!auto || !isInternetReachable || hasAutoSynced.current) return;
 
@@ -129,5 +124,47 @@ export function usePropertyFeedSync(auto = true) {
   return {
     syncing,
     resync,
+  };
+}
+
+export function diffMessages({
+  serverMessages,
+  localMessages,
+  mode,
+}: {
+  serverMessages: Message[];
+  localMessages: any[];
+  mode: "full" | "incremental";
+}) {
+  const serverMap = new Map(serverMessages.map((m) => [m.message_id, m]));
+
+  const pull = diffServerAndLocal({
+    server: serverMessages,
+    local: localMessages,
+    serverIdKey: "message_id",
+    localIdKey: "server_message_id",
+    mode,
+    shouldUpdate: (local, server) =>
+      !!server.updated_at &&
+      new Date(server.updated_at).getTime() > (local.updated_at ?? 0),
+    shouldDelete: (local, serverMap) => !serverMap.has(local.server_message_id),
+  });
+
+  const pushCreate = localMessages.filter(
+    (m) =>
+      m.sync_status === "dirty" &&
+      (m.status === "pending" || m.status === "error")
+  );
+
+  const pushUpdate = localMessages.filter(
+    (m) => m.sync_status === "dirty" && m.status !== "pending" && !m.deleted_at
+  );
+
+  return {
+    pullCreate: pull.toCreate,
+    pullUpdate: pull.toUpdate,
+    pullDelete: pull.toDelete,
+    pushCreate,
+    pushUpdate,
   };
 }

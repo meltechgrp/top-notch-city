@@ -8,6 +8,19 @@ interface ChatList {
   messages: Message[];
   typing?: boolean;
 }
+interface ChatMessages {
+  pagination: {
+    total_messages: number;
+    page: number;
+    size: number;
+    total_pages: number;
+  };
+  block_status: {
+    you_blocked_other: boolean;
+    other_blocked_you: boolean;
+  };
+  messages: Message[];
+}
 interface Chat {
   chat_id: string;
   property_id?: string;
@@ -33,7 +46,7 @@ interface Message {
   receiver_info?: ReceiverInfo;
   sender_info: SenderInfo;
   read: boolean;
-  status: "pending" | "seen" | "delivered" | "sent" | "error";
+  status: "pending" | "seen" | "delivered" | "sent" | "failed";
   updated_at?: string;
   deleted_at?: string;
   isMock?: boolean;
@@ -76,6 +89,7 @@ interface ChatMessages {
   messages: Message[];
 }
 interface SendMessage {
+  id: string;
   chat_id: string;
   content: string;
   files?: FileData[];
@@ -85,5 +99,6 @@ interface SendMessage {
 interface FileData {
   id: string;
   file_url: string;
+  is_local?: boolean;
   file_type: Media["media_type"];
 }

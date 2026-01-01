@@ -10,29 +10,36 @@ export class Chat extends Model {
   static table = "chats";
 
   static associations = {
-    users: { type: "belongs_to", key: "server_sender_id" },
     messages: { type: "has_many", foreignKey: "server_chat_id" },
+    users: { type: "belongs_to", key: "server_sender_id" },
   } as const;
 
-  @text("server_chat_id") chatId!: string;
+  @text("server_chat_id") server_chat_id!: string;
 
-  @text("property_server_id") propertyId?: string;
+  @text("property_server_id") property_server_id?: string;
 
-  @text("server_sender_id") senderId!: string;
-  @text("server_receiver_id") receiverId!: string;
+  @text("server_sender_id") server_sender_id!: string;
+  @text("server_receiver_id") server_receiver_id!: string;
 
-  @relation("users", "server_sender_id") sender!: any;
-  @relation("users", "server_receiver_id") receiver!: any;
+  @text("recent_message_id") recent_message_id?: string;
+  @text("recent_message_content") recent_message_content?: string;
+  @text("recent_message_sender_id") recent_message_sender_id?: string;
 
-  @text("recent_message_id") recentMessageId?: string;
-  @text("recent_message_content") recentMessageContent?: string;
-  @text("recent_message_sender_id") recentMessageSenderId?: string;
+  @field("recent_message_created_at")
+  recent_message_created_at?: number;
 
-  @field("recent_message_created_at") recentMessageCreatedAt?: number;
-  @text("recent_message_status") recentMessageStatus?: string;
+  @text("recent_message_status")
+  recent_message_status?: string;
 
-  @field("unread_count") unreadCount!: number;
-  @field("updated_at") updatedAt!: number;
+  @field("you_blocked_other") you_blocked_other?: boolean;
+  @field("other_blocked_you") other_blocked_you?: boolean;
+
+  @field("unread_count") unread_count!: number;
+  @field("total_messages") total_messages!: number;
+
+  @text("sync_status") sync_status!: "synced" | "dirty";
+  @field("updated_at") updated_at!: number;
+  @field("deleted_at") deleted_at?: number;
 
   @children("messages") messages!: Message[];
 }
@@ -46,31 +53,32 @@ export class Message extends Model {
     message_files: { type: "has_many", foreignKey: "server_message_id" },
   } as const;
 
-  @text("server_message_id") messageId!: string;
-  @text("chat_id") chatId!: string;
+  @text("server_message_id") server_message_id!: string;
+  @text("server_chat_id") server_chat_id!: string;
 
-  @text("server_sender_id") senderId!: string;
-  @text("receiver_id") receiverId!: string;
-
-  @relation("users", "server_sender_id") sender!: any;
-  @relation("users", "receiver_id") receiver!: any;
-
+  @text("server_sender_id") server_sender_id!: string;
+  @text("server_receiver_id") server_receiver_id!: string;
   @text("content") content!: string;
+  @text("status")
+  status!: "pending" | "sent" | "delivered" | "failed" | "seen";
 
-  @text("status") status!: string;
-  @field("read") read!: boolean;
-  @field("is_edited") isEdited?: boolean;
+  @text("sync_status")
+  sync_status!: "synced" | "dirty" | "deleted";
 
-  @text("reply_to_message_id") replyToMessageId?: string;
+  @field("is_edited") is_edited!: boolean;
+  @text("reply_to_message_id") reply_to_message_id?: string;
+  @text("property_server_id") property_server_id?: string;
 
-  @text("property_id") propertyId?: string;
+  @field("deleted_for_me_at") deleted_for_me_at?: number;
+  @field("deleted_for_all_at") deleted_for_all_at?: number;
+  @field("deleted_at") deleted_at?: number;
 
-  @field("created_at") createdAt!: number;
-  @field("updated_at") updatedAt!: number;
-  @field("deleted_at") deletedAt?: number;
+  @field("created_at") created_at!: number;
+  @field("updated_at") updated_at!: number;
 
-  @field("is_mock") isMock?: boolean;
+  @field("is_mock") is_mock?: boolean;
 
+  @relation("chats", "server_chat_id") chat!: any;
   @children("message_files") files!: MessageFile[];
 }
 
@@ -81,12 +89,15 @@ export class MessageFile extends Model {
     messages: { type: "belongs_to", key: "server_message_id" },
   } as const;
 
-  @text("server_message_id") messageId!: string;
-  @relation("messages", "server_message_id") message!: Message;
+  @text("server_message_file_id") server_message_file_id!: string;
+  @text("server_message_id") server_message_id!: string;
+  @relation("messages", "server_message_id") message!: any;
 
   @text("url") url!: string;
-  @text("file_type") fileType!: string;
-  @text("mime_type") mimeType?: string;
+  @field("is_local") is_local?: boolean;
 
-  @field("created_at") createdAt!: number;
+  @text("file_type") file_type!: "image" | "video" | "audio";
+
+  @text("upload_status")
+  upload_status!: "pending" | "uploading" | "uploaded" | "failed";
 }

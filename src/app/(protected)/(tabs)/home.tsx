@@ -53,23 +53,23 @@ export default function HomeScreen() {
   type FeedList = any;
   const renderItem: ListRenderItem<FeedList> = useCallback(
     ({ item }) => {
-      if (item.id === "locations") {
-        return (
-          <NearbyProperties state={address?.state || ""} location={address} />
-        );
-      }
-      if (item.id === "featured") {
-        return <FeaturedProperties />;
-      }
-      if (item.id === "shortlet") {
-        return <ShortletProperties />;
-      }
-      if (item.id === "apartment") {
-        return <ApartmentProperties />;
-      }
-      if (item.id === "lands") {
-        return <Lands />;
-      }
+      // if (item.id === "locations") {
+      //   return (
+      //     <NearbyProperties state={address?.state || ""} location={address} />
+      //   );
+      // }
+      // if (item.id === "featured") {
+      //   return <FeaturedProperties />;
+      // }
+      // if (item.id === "shortlet") {
+      //   return <ShortletProperties />;
+      // }
+      // if (item.id === "apartment") {
+      //   return <ApartmentProperties />;
+      // }
+      // if (item.id === "lands") {
+      //   return <Lands />;
+      // }
       if (item.id === "bottomPlaceHolder") {
         return <View className="h-24" />;
       }
@@ -88,13 +88,13 @@ export default function HomeScreen() {
           // refreshControl={
           //   <RefreshControl refreshing={refetching} onRefresh={refreshAll} />
           // }
-          ListHeaderComponent={
-            <DiscoverProperties
-              state={address?.state || ""}
-              city={address?.city || ""}
-              mapHeight={MAP_HEIGHT}
-            />
-          }
+          // ListHeaderComponent={
+          //   <DiscoverProperties
+          //     state={address?.state || ""}
+          //     city={address?.city || ""}
+          //     mapHeight={MAP_HEIGHT}
+          //   />
+          // }
           showsVerticalScrollIndicator={false}
           data={feedList}
           keyExtractor={(item) => item.id}

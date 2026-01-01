@@ -155,12 +155,6 @@ export const ProfileImageTrigger = ({
   );
 };
 
-type Media = {
-  id: string;
-  url: string;
-  media_type?: "IMAGE" | "VIDEO" | "AUDIO";
-};
-
 const CLOSE_THRESHOLD = 140;
 
 const ProfileImageViewer = ({
@@ -214,13 +208,19 @@ const ProfileImageViewer = ({
                 {item.media_type === "VIDEO" ? (
                   <MiniVideoPlayer
                     canPlay={i === index}
-                    uri={generateMediaUrlSingle(item.url)}
+                    uri={
+                      item?.is_local
+                        ? item.url
+                        : generateMediaUrlSingle(item.url)
+                    }
                     autoPlay
                   />
                 ) : (
                   <Image
                     source={{
-                      uri: generateMediaUrlSingle(item.url),
+                      uri: item?.is_local
+                        ? item.url
+                        : generateMediaUrlSingle(item.url),
                       cacheKey: item.id,
                     }}
                     style={{ width: SCREEN_W, height: SCREEN_H }}
@@ -254,11 +254,19 @@ const ProfileImageViewer = ({
                       showPlayBtn
                       canPlay={false}
                       showLoading={false}
-                      uri={generateMediaUrlSingle(item.url)}
+                      uri={
+                        item?.is_local
+                          ? item.url
+                          : generateMediaUrlSingle(item.url)
+                      }
                     />
                   ) : (
                     <Image
-                      source={{ uri: generateMediaUrlSingle(item.url) }}
+                      source={{
+                        uri: item?.is_local
+                          ? item.url
+                          : generateMediaUrlSingle(item.url),
+                      }}
                       style={styles.thumb}
                     />
                   )}

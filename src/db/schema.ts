@@ -8,18 +8,26 @@ export const schema = appSchema({
       columns: [
         { name: "server_user_id", type: "string", isIndexed: true },
         { name: "email", type: "string", isIndexed: true },
-        { name: "phone", type: "string", isOptional: true },
-
-        { name: "first_name", type: "string" },
-        { name: "last_name", type: "string" },
+        { name: "first_name", type: "string", isIndexed: true },
+        { name: "last_name", type: "string", isIndexed: true },
+        { name: "role", type: "string" },
         { name: "slug", type: "string", isIndexed: true },
 
+        { name: "phone", type: "string", isOptional: true },
         { name: "gender", type: "string", isOptional: true },
         { name: "date_of_birth", type: "string", isOptional: true },
 
         { name: "status", type: "string", isOptional: true },
         { name: "profile_image", type: "string", isOptional: true },
-        { name: "role", type: "string" },
+        { name: "views_count", type: "number" },
+        { name: "likes_count", type: "number" },
+        { name: "total_properties", type: "number" },
+        { name: "followers_count", type: "number" },
+        { name: "is_blocked_by_admin", type: "boolean", isOptional: true },
+        { name: "is_following", type: "boolean", isOptional: true },
+        { name: "is_available", type: "boolean", isOptional: true },
+        { name: "is_superuser", type: "boolean", isOptional: true },
+        { name: "verified", type: "boolean", isOptional: true },
       ],
     }),
     tableSchema({
@@ -149,18 +157,24 @@ export const schema = appSchema({
         { name: "server_sender_id", type: "string", isIndexed: true },
         { name: "server_receiver_id", type: "string", isIndexed: true },
 
-        // recent message snapshot
+        // snapshot
         { name: "recent_message_id", type: "string", isOptional: true },
         { name: "recent_message_content", type: "string", isOptional: true },
         { name: "recent_message_sender_id", type: "string", isOptional: true },
         { name: "recent_message_created_at", type: "number", isOptional: true },
         { name: "recent_message_status", type: "string", isOptional: true },
+        { name: "you_blocked_other", type: "boolean", isOptional: true },
+        { name: "other_blocked_you", type: "boolean", isOptional: true },
+        { name: "total_messages", type: "number" },
 
         { name: "unread_count", type: "number" },
 
+        { name: "sync_status", type: "string" }, // synced | dirty
         { name: "updated_at", type: "number", isIndexed: true },
+        { name: "deleted_at", type: "number", isOptional: true },
       ],
     }),
+
     tableSchema({
       name: "messages",
       columns: [
@@ -172,30 +186,36 @@ export const schema = appSchema({
 
         { name: "content", type: "string" },
 
-        { name: "status", type: "string" },
-        { name: "read", type: "boolean" },
+        { name: "status", type: "string" }, // pending | sent | delivered | read | failed
+        { name: "sync_status", type: "string" }, // synced | dirty | deleted
         { name: "is_edited", type: "boolean", isIndexed: true },
 
         { name: "reply_to_message_id", type: "string", isOptional: true },
-
         { name: "property_server_id", type: "string", isOptional: true },
 
-        { name: "created_at", type: "number", isIndexed: true },
-        { name: "updated_at", type: "number" },
+        // deletion scopes
+        { name: "deleted_for_me_at", type: "number", isOptional: true },
+        { name: "deleted_for_all_at", type: "number", isOptional: true },
         { name: "deleted_at", type: "number", isOptional: true },
 
-        { name: "is_mock", type: "boolean", isOptional: true },
+        { name: "created_at", type: "number", isIndexed: true },
+        { name: "updated_at", type: "number", isIndexed: true },
+
+        { name: "is_mock", type: "boolean" },
       ],
     }),
     tableSchema({
       name: "message_files",
       columns: [
         { name: "server_message_id", type: "string", isIndexed: true },
+        { name: "server_message_file_id", type: "string", isIndexed: true },
 
         { name: "url", type: "string" },
-        { name: "file_type", type: "string" },
+        { name: "is_local", type: "boolean", isOptional: true },
 
-        { name: "created_at", type: "number" },
+        { name: "file_type", type: "string" }, // image | video | audio
+
+        { name: "upload_status", type: "string" }, // pending | uploading | uploaded | failed
       ],
     }),
   ],

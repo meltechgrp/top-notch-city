@@ -75,6 +75,7 @@ type Media = {
   id: string;
   url: string;
   media_type: "IMAGE" | "VIDEO" | "AUDIO";
+  is_local?: boolean;
 };
 
 type Availabilities = {

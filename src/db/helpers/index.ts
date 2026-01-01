@@ -1,9 +1,11 @@
 import {
+  chatCollection,
+  messageCollection,
   propertiesCollection,
-  propertyMediaCollection,
 } from "@/db/collections";
 import { database } from "@/db";
 import { Q } from "@nozbe/watermelondb";
+import { Message } from "@/db/models/messages";
 
 export async function resetDatabase() {
   await database.write(async () => {
@@ -11,6 +13,27 @@ export async function resetDatabase() {
   });
 }
 
+export async function getLocalChatIndex() {
+  const props = await chatCollection.query().fetch();
+
+  return props.map((p) => ({
+    id: p.server_chat_id,
+    updated_at: p.updated_at,
+    sync_status: p.sync_status,
+  })) as any[];
+}
+export async function getLocalMessagesIndex() {
+  const props = await messageCollection.query().fetch();
+
+  return props.map((p) => ({
+    id: p.server_message_id,
+    updated_at: p.updated_at,
+    sync_status: p.sync_status,
+    deleted_for_me: p.deleted_for_me_at,
+    deleted_for_all: p.deleted_for_all_at,
+    status: p.status,
+  })) as any[];
+}
 export async function getLocalPropertyIndex() {
   const props = await propertiesCollection.query().fetch();
 
@@ -32,7 +55,7 @@ export async function getLocalProperty(slug: string) {
   })) as any[];
 }
 
-export function compareDates({ server, local }: { server: any; local: any }) {
+export function compareDates(local: any, server: any) {
   const localUpdated = local?.id == server?.id ? local?.updated_at : undefined;
   if (!localUpdated) return false;
   return Date.parse(server?.updated_at) != localUpdated;
@@ -45,7 +68,7 @@ export function chunkArray<T>(arr: T[], size: number): T[][] {
   }
   return chunks;
 }
-export function diffServerAndLocal({
+export function diffServerAndLocal<TServer, TLocal>({
   server,
   local,
   serverIdKey,
@@ -54,22 +77,24 @@ export function diffServerAndLocal({
   shouldUpdate,
   mode,
 }: {
-  server: any[];
-  local: any[];
-  serverIdKey: string;
-  localIdKey: string;
-  shouldDelete: Function;
-  shouldUpdate: Function;
+  server: TServer[];
+  local: TLocal[];
+  serverIdKey: keyof TServer;
+  localIdKey: keyof TLocal;
+  shouldDelete: (local: TLocal, serverMap: Map<any, TServer>) => boolean;
+  shouldUpdate: (local: TLocal, server: TServer) => boolean;
   mode: "full" | "incremental";
 }) {
-  const serverMap = new Map(server.map((s) => [s[serverIdKey], s]));
+  const serverMap = new Map(server.map((s: any) => [s[serverIdKey], s]));
 
-  const toCreate = [];
-  const toUpdate = [];
-  const toDelete = [];
+  const localMap = new Map(local.map((l: any) => [l[localIdKey], l]));
+
+  const toCreate: TServer[] = [];
+  const toUpdate: TServer[] = [];
+  const toDelete: TLocal[] = [];
 
   for (const s of server) {
-    const localItem = local.find((l) => l[localIdKey] === s[serverIdKey]);
+    const localItem = localMap.get((s as any)[serverIdKey]);
 
     if (!localItem) {
       toCreate.push(s);
@@ -78,7 +103,6 @@ export function diffServerAndLocal({
     }
   }
 
-  // ❗ Only allow delete on FULL sync
   if (mode === "full") {
     for (const l of local) {
       if (shouldDelete(l, serverMap)) {
@@ -139,4 +163,84 @@ export async function fetchIncremental<T>(
   }
 
   return results.slice(0, maxItems);
+}
+
+export function diffChats({
+  serverChats,
+  localChats,
+  mode,
+}: {
+  serverChats: Chat[];
+  localChats: any[];
+  mode: "full" | "incremental";
+}) {
+  const serverMap = new Map(serverChats.map((c) => [c.chat_id, c]));
+
+  const pull = diffServerAndLocal({
+    server: serverChats,
+    local: localChats,
+    serverIdKey: "chat_id",
+    localIdKey: "server_chat_id",
+    mode,
+    shouldUpdate: (local, server) =>
+      local.recent_message_id !== server.recent_message?.message_id,
+    shouldDelete: (local, serverMap) => !serverMap.has(local.server_chat_id),
+  });
+
+  const push = localChats.filter(
+    (c) => c.sync_status === "dirty" && !serverMap.has(c.server_chat_id)
+  );
+
+  return {
+    pullCreate: pull.toCreate,
+    pullUpdate: pull.toUpdate,
+    pullDelete: pull.toDelete,
+    pushDelete: push,
+  };
+}
+
+export function diffMessages({
+  serverMessages,
+  localMessages,
+  mode,
+}: {
+  serverMessages: any[];
+  localMessages: Message[];
+  mode: "full" | "incremental";
+}) {
+  const pull = diffServerAndLocal({
+    server: serverMessages,
+    local: localMessages,
+    serverIdKey: "message_id",
+    localIdKey: "server_message_id",
+    mode,
+    shouldUpdate: (local, server) =>
+      !!server.updated_at &&
+      new Date(server.updated_at).getTime() > (local.updated_at ?? 0),
+    shouldDelete: (local, serverMap) => !serverMap.has(local.server_message_id),
+  });
+
+  const pushCreate = localMessages.filter(
+    (m) => m.sync_status === "dirty" && !m.is_edited
+  );
+
+  const pushUpdate = localMessages.filter(
+    (m) => m.sync_status === "dirty" && m.is_edited
+  );
+  const pushDeleteMe = localMessages.filter(
+    (m) => m.sync_status === "dirty" && m.deleted_for_me_at
+  );
+  const pushDeleteAll = localMessages.filter(
+    (m) => m.sync_status === "dirty" && m.deleted_for_all_at
+  );
+
+  return {
+    pullCreate: pull.toCreate,
+    pullUpdate: pull.toUpdate,
+    pullDelete: pull.toDelete,
+    pushCreate,
+    pushUpdate,
+    pushDeleteMe,
+    pushDeleteAll,
+  };
 }

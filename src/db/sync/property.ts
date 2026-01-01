@@ -6,7 +6,7 @@ import {
   propertyAvailabilityCollection,
   propertyOwnershipCollection,
   propertyCompaniesCollection,
-  propertyOwnerCollection,
+  userCollection,
 } from "@/db/collections";
 import { chunkArray } from "@/db/helpers";
 import { normalizeProperty } from "@/db/normalizers/property";
@@ -64,7 +64,6 @@ export async function syncProperties({
 
     await database.write(async () => {
       const ops: any[] = [];
-      const updatedOwners = new Set<string>();
 
       for (const raw of batchItems) {
         const n = normalizeProperty(raw);
@@ -137,22 +136,13 @@ export async function syncProperties({
         if (n.owner) {
           const serverUserId = n.owner.server_user_id;
 
-          const [existingOwner] = await propertyOwnerCollection
+          const [existingOwner] = await userCollection
             .query(Q.where("server_user_id", serverUserId))
             .fetch();
 
-          if (existingOwner) {
-            if (!updatedOwners.has(existingOwner.id)) {
-              updatedOwners.add(existingOwner.id);
-              ops.push(
-                existingOwner.prepareUpdate((u) => Object.assign(u, n.owner))
-              );
-            }
-          } else {
+          if (!existingOwner) {
             ops.push(
-              propertyOwnerCollection.prepareCreate((u) =>
-                Object.assign(u, n.owner)
-              )
+              userCollection.prepareCreate((u) => Object.assign(u, n.owner))
             );
           }
         }

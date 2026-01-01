@@ -61,7 +61,7 @@ import { withObservables } from "@nozbe/watermelondb/react";
 import {
   propertyAmenityCollection,
   propertyMediaCollection,
-  propertyOwnerCollection,
+  userCollection,
 } from "@/db/collections";
 import { Q } from "@nozbe/watermelondb";
 import { useLayout } from "@react-native-community/hooks";
@@ -483,7 +483,7 @@ const enhance = withObservables(
     media: propertyMediaCollection
       .query(Q.where("property_server_id", property.property_server_id))
       .observe(),
-    owner: propertyOwnerCollection
+    owner: userCollection
       .query(Q.where("server_user_id", property.server_owner_id), Q.take(1))
       .observe(),
     amenities: propertyAmenityCollection

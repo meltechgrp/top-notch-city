@@ -1,4 +1,12 @@
+import { uploadToBucket } from "@/actions/bucket";
 import { Fetch } from "@/actions/utills";
+import {
+  chatCollection,
+  messageCollection,
+  messageFilesCollection,
+} from "@/db/collections";
+import { normalizeMessageFiles } from "@/db/normalizers/message";
+import { Q } from "@nozbe/watermelondb";
 
 export async function startChat({ property_id, member_id }: StartChat) {
   if (property_id) {
@@ -27,6 +35,7 @@ export async function sendMessage({
   content,
   files,
   reply_to_message_id,
+  id,
 }: SendMessage) {
   try {
     const formData = new FormData();
@@ -34,8 +43,17 @@ export async function sendMessage({
     if (reply_to_message_id)
       formData.append("reply_to_message_id", reply_to_message_id);
     if (content) formData.append("content", content);
-    files?.forEach((item) => {
-      formData.append("chat_media_ids", item.id);
+    files?.forEach(async (item) => {
+      if (item.is_local) {
+        const [file] = await uploadToBucket({
+          data: [{ url: item.file_url }],
+          type: item.file_type?.toLowerCase() as any,
+        });
+
+        file && formData.append("chat_media_ids", file.id);
+      } else {
+        formData.append("chat_media_ids", item.id);
+      }
     });
     const result = await Fetch(`/send/messages`, {
       method: "POST",
@@ -44,7 +62,7 @@ export async function sendMessage({
       },
       data: formData,
     });
-    return result as {
+    const data = result as {
       type: string;
       chat_id: string;
       message_id: string;
@@ -57,38 +75,68 @@ export async function sendMessage({
       status: Message["status"];
       reply_to_message_id?: string;
     };
-  } catch (error) {
-    throw Error("Something went wrong");
+
+    const msg = await messageCollection.find(id);
+    await msg.update((m) => {
+      m.status = data.status;
+      m.server_message_id = data.message_id;
+      m.created_at = Date.parse(data.created_at);
+    });
+    if (data.media && data.media?.length > 0) {
+      const files = await messageFilesCollection
+        .query(Q.where("server_message_id", data.message_id))
+        .fetch();
+      await Promise.all(files.map((f) => f.destroyPermanently()));
+      await Promise.all(
+        normalizeMessageFiles(data.media, data.message_id).map((a) =>
+          messageFilesCollection.create((pa) => Object.assign(pa, a))
+        )
+      );
+    }
+  } catch (e) {
+    const msg = await messageCollection.find(id);
+    await msg.update((m) => {
+      m.status = "failed";
+    });
   }
 }
 export async function editMessage({
   message_id,
   content,
+  id,
 }: {
   message_id: string;
   content: string;
+  id: string;
 }) {
-  const result = await Fetch(
-    `/messages/${message_id}?new_content=${content} `,
-    {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
-  return result as {
-    type: string;
-    chat_id: string;
-    message_id: string;
-    content: string;
-    media: FileData[];
-    created_at: string;
-    sender_id: string;
-    sender_name: string;
-    read: boolean;
-    status: Message["status"];
-  };
+  try {
+    const result = await Fetch(
+      `/messages/${message_id}?new_content=${content} `,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const data = result as {
+      type: string;
+      chat_id: string;
+      message_id: string;
+      content: string;
+      status: Message["status"];
+    };
+
+    const msg = await messageCollection.find(id);
+    await msg.update((m) => {
+      m.status = data.status;
+    });
+  } catch (error) {
+    const msg = await messageCollection.find(id);
+    await msg.update((m) => {
+      m.status = "failed";
+    });
+  }
 }
 
 export async function getChats() {
@@ -99,13 +147,15 @@ export async function getChats() {
 export async function getChatMessages({
   pageParam,
   chatId,
+  size = 20,
 }: {
   pageParam: number;
+  size?: number;
   chatId: string;
 }) {
   try {
     const res = await Fetch(
-      `/chat/${chatId}/messages?page=${pageParam}&size=20`,
+      `/chat/${chatId}/messages?page=${pageParam}&size=${size}`,
       {}
     );
     if (res?.detail) throw new Error("Failed to fetch messages");
@@ -138,13 +188,15 @@ export async function sendTyping({
 }
 
 export async function deleteChat(chat_id: string) {
-  await Fetch(`/chat/${chat_id}/delete-for-me`, {
-    method: "DELETE",
-  });
+  try {
+    await Fetch(`/chat/${chat_id}/delete-for-me`, {
+      method: "DELETE",
+    });
+  } catch (error) {}
 }
 export async function deleteChatMessage({
   message_id,
-  delete_for_everyone,
+  delete_for_everyone = false,
 }: {
   message_id: string;
   delete_for_everyone: boolean;
