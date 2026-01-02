@@ -1,4 +1,6 @@
-import { Model } from "@nozbe/watermelondb";
+import { userCollection } from "@/db/collections";
+import { Model, Q } from "@nozbe/watermelondb";
+import { writer } from "@nozbe/watermelondb/decorators";
 import {
   field,
   text,
@@ -11,15 +13,31 @@ export class Chat extends Model {
 
   static associations = {
     messages: { type: "has_many", foreignKey: "server_chat_id" },
-    users: { type: "belongs_to", key: "server_sender_id" },
   } as const;
 
+  @writer async deleteChat() {
+    const messages = this.messages;
+    const ops: any[] = [];
+    for (const m of messages) {
+      const files = m.files;
+      ops.push(...files.map((f) => f.prepareDestroyPermanently()));
+      ops.push(m.prepareDestroyPermanently());
+    }
+    ops.push(super.prepareDestroyPermanently());
+    await this.database.batch(...ops);
+  }
+  @writer async softDeleteChat() {
+    await this.update((m) => {
+      m.deleted_at = Date.now();
+      m.sync_status = "deleted";
+    });
+  }
   @text("server_chat_id") server_chat_id!: string;
 
   @text("property_server_id") property_server_id?: string;
 
   @text("server_sender_id") server_sender_id!: string;
-  @text("server_receiver_id") server_receiver_id!: string;
+  @text("server_user_id") server_user_id!: string;
 
   @text("recent_message_id") recent_message_id?: string;
   @text("recent_message_content") recent_message_content?: string;
@@ -29,15 +47,20 @@ export class Chat extends Model {
   recent_message_created_at?: number;
 
   @text("recent_message_status")
-  recent_message_status?: string;
-
+  recent_message_status?: "pending" | "sent" | "delivered" | "failed" | "seen";
+  get receivers() {
+    return userCollection.query(
+      Q.where("server_user_id", this.server_user_id),
+      Q.take(1)
+    );
+  }
   @field("you_blocked_other") you_blocked_other?: boolean;
   @field("other_blocked_you") other_blocked_you?: boolean;
 
   @field("unread_count") unread_count!: number;
   @field("total_messages") total_messages!: number;
 
-  @text("sync_status") sync_status!: "synced" | "dirty";
+  @text("sync_status") sync_status!: "synced" | "dirty" | "deleted";
   @field("updated_at") updated_at!: number;
   @field("deleted_at") deleted_at?: number;
 
@@ -52,7 +75,38 @@ export class Message extends Model {
     users: { type: "belongs_to", key: "server_sender_id" },
     message_files: { type: "has_many", foreignKey: "server_message_id" },
   } as const;
-
+  @writer async softDeleteMessage(all: boolean) {
+    if (all) {
+      await this.update((m) => {
+        m.deleted_for_all_at = Date.now();
+        m.sync_status = "deleted";
+      });
+    } else {
+      await this.update((m) => {
+        m.deleted_for_me_at = Date.now();
+        m.sync_status = "deleted";
+      });
+    }
+  }
+  @writer async deleteMessage() {
+    const ops: any[] = [];
+    const files = this.files;
+    ops.push(...files.map((f) => f.prepareDestroyPermanently()));
+    ops.push(super.prepareDestroyPermanently());
+    await this.database.batch(...ops);
+  }
+  get receivers() {
+    return userCollection.query(
+      Q.where("server_user_id", this.server_receiver_id),
+      Q.take(1)
+    );
+  }
+  get senders() {
+    return userCollection.query(
+      Q.where("server_user_id", this.server_sender_id),
+      Q.take(1)
+    );
+  }
   @text("server_message_id") server_message_id!: string;
   @text("server_chat_id") server_chat_id!: string;
 

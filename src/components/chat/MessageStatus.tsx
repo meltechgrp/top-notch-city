@@ -1,25 +1,19 @@
 import { Icon } from "@/components/ui";
-import {
-  Check,
-  CheckCheck,
-  CircleAlert,
-  Clock,
-  Eye,
-} from "lucide-react-native";
+import { Check, CheckCheck, CircleAlert, Clock } from "lucide-react-native";
 import { View } from "react-native";
 
 export function MessageStatusIcon({ status }: { status: Message["status"] }) {
   switch (status) {
     case "pending":
-      return <Clock size={14} color="gray" />;
-    case "error":
-      return <CircleAlert size={14} color="red" />;
+      return <Icon as={Clock} size="md" className="text-gray-400" />;
+    case "failed":
+      return <Icon as={CircleAlert} size={"md"} className="text-info-100" />;
     case "sent":
-      return <Check size={14} color="gray" />;
+      return <Icon as={Check} size="md" className="text-gray-400" />;
     case "delivered":
-      return <CheckCheck size={14} color="gray" />;
+      return <Icon as={CheckCheck} size="md" className="text-gray-400" />;
     case "seen":
-      return <Icon as={CheckCheck} size="sm" className="ml-1 text-primary" />;
+      return <Icon as={CheckCheck} size="md" className=" text-primary" />;
     default:
       return <View />;
   }

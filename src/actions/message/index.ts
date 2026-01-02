@@ -1,12 +1,5 @@
 import { uploadToBucket } from "@/actions/bucket";
 import { Fetch } from "@/actions/utills";
-import {
-  chatCollection,
-  messageCollection,
-  messageFilesCollection,
-} from "@/db/collections";
-import { normalizeMessageFiles } from "@/db/normalizers/message";
-import { Q } from "@nozbe/watermelondb";
 
 export async function startChat({ property_id, member_id }: StartChat) {
   if (property_id) {
@@ -35,108 +28,68 @@ export async function sendMessage({
   content,
   files,
   reply_to_message_id,
-  id,
 }: SendMessage) {
-  try {
-    const formData = new FormData();
-    if (chat_id) formData.append("chat_id", chat_id);
-    if (reply_to_message_id)
-      formData.append("reply_to_message_id", reply_to_message_id);
-    if (content) formData.append("content", content);
-    files?.forEach(async (item) => {
-      if (item.is_local) {
-        const [file] = await uploadToBucket({
-          data: [{ url: item.file_url }],
-          type: item.file_type?.toLowerCase() as any,
-        });
+  const formData = new FormData();
+  if (chat_id) formData.append("chat_id", chat_id);
+  if (reply_to_message_id)
+    formData.append("reply_to_message_id", reply_to_message_id);
+  if (content) formData.append("content", content);
+  files?.forEach(async (item) => {
+    if (item.is_local) {
+      const [file] = await uploadToBucket({
+        data: [{ url: item.file_url }],
+        type: item.file_type?.toLowerCase() as any,
+      });
 
-        file && formData.append("chat_media_ids", file.id);
-      } else {
-        formData.append("chat_media_ids", item.id);
-      }
-    });
-    const result = await Fetch(`/send/messages`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      data: formData,
-    });
-    const data = result as {
-      type: string;
-      chat_id: string;
-      message_id: string;
-      content: string;
-      media: FileData[];
-      created_at: string;
-      sender_id: string;
-      sender_name: string;
-      read: boolean;
-      status: Message["status"];
-      reply_to_message_id?: string;
-    };
-
-    const msg = await messageCollection.find(id);
-    await msg.update((m) => {
-      m.status = data.status;
-      m.server_message_id = data.message_id;
-      m.created_at = Date.parse(data.created_at);
-    });
-    if (data.media && data.media?.length > 0) {
-      const files = await messageFilesCollection
-        .query(Q.where("server_message_id", data.message_id))
-        .fetch();
-      await Promise.all(files.map((f) => f.destroyPermanently()));
-      await Promise.all(
-        normalizeMessageFiles(data.media, data.message_id).map((a) =>
-          messageFilesCollection.create((pa) => Object.assign(pa, a))
-        )
-      );
+      file && formData.append("chat_media_ids", file.id);
+    } else {
+      formData.append("chat_media_ids", item.id);
     }
-  } catch (e) {
-    const msg = await messageCollection.find(id);
-    await msg.update((m) => {
-      m.status = "failed";
-    });
-  }
+  });
+  const result = await Fetch(`/send/messages`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    data: formData,
+  });
+  return result as {
+    type: string;
+    chat_id: string;
+    message_id: string;
+    content: string;
+    media: FileData[];
+    created_at: string;
+    sender_id: string;
+    sender_name: string;
+    read: boolean;
+    status: Message["status"];
+    reply_to_message_id?: string;
+  };
 }
 export async function editMessage({
   message_id,
   content,
-  id,
 }: {
   message_id: string;
   content: string;
-  id: string;
 }) {
-  try {
-    const result = await Fetch(
-      `/messages/${message_id}?new_content=${content} `,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    const data = result as {
-      type: string;
-      chat_id: string;
-      message_id: string;
-      content: string;
-      status: Message["status"];
-    };
-
-    const msg = await messageCollection.find(id);
-    await msg.update((m) => {
-      m.status = data.status;
-    });
-  } catch (error) {
-    const msg = await messageCollection.find(id);
-    await msg.update((m) => {
-      m.status = "failed";
-    });
-  }
+  const result = await Fetch(
+    `/messages/${message_id}?new_content=${content} `,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return result as {
+    type: string;
+    chat_id: string;
+    message_id: string;
+    content: string;
+    status: Message["status"];
+  };
 }
 
 export async function getChats() {

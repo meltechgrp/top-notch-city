@@ -7,7 +7,7 @@ import { useMe } from "@/hooks/useMe";
 import { usePropertyFeedSync } from "@/db/queries/syncPropertyFeed";
 
 export default function AdminProperties() {
-  const { resync } = usePropertyFeedSync(false);
+  const { resync } = usePropertyFeedSync();
   const [search, setSearch] = useState("");
   const { me } = useMe();
   const debouncedSearch = useDebouncedValue(search, 400);

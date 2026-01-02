@@ -1,10 +1,10 @@
-export function normalizeChat(server: Chat) {
+export function normalizeChat(server: ServerChat) {
   return {
     server_chat_id: server.chat_id,
     property_server_id: server.property_id ?? null,
 
     server_sender_id: server.sender_id,
-    server_receiver_id: server.receiver.id,
+    server_user_id: server.receiver.id,
 
     recent_message_id: server.recent_message?.message_id ?? null,
     recent_message_content: server.recent_message?.content ?? null,
@@ -20,7 +20,7 @@ export function normalizeChat(server: Chat) {
   };
 }
 
-export function normalizeMessage(server: Message, chatId: string) {
+export function normalizeMessage(server: ServerMessage, chatId: string) {
   return {
     server_message_id: server.message_id,
     server_chat_id: chatId,
@@ -43,8 +43,8 @@ export function normalizeMessage(server: Message, chatId: string) {
 
     deleted_at: server.deleted_at ? Date.parse(server.deleted_at) : null,
 
-    sync_status: "synced",
-    is_mock: false,
+    sync_status: server?.isMock ? "dirty" : "synced",
+    is_mock: server?.isMock ?? false,
   };
 }
 
@@ -55,6 +55,7 @@ export function normalizeUser(user: ReceiverInfo) {
     last_name: user.last_name,
     profile_image: user.profile_image ?? null,
     status: user.status,
+    last_seen: user?.last_seen ? Date.parse(user?.last_seen) : 0,
     role: "user", // or infer
     slug: user.id, // fallback if backend doesn't send
     email: "", // optional
@@ -71,6 +72,7 @@ export function normalizeMessageFiles(files: FileData[], messageId: string) {
     server_message_id: messageId,
     server_message_file_id: f.id,
     url: f.file_url,
+    is_local: f?.is_local || false,
     file_type: f.file_type?.toUpperCase(),
     upload_status: "uploaded",
   }));

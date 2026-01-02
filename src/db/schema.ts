@@ -17,6 +17,7 @@ export const schema = appSchema({
         { name: "gender", type: "string", isOptional: true },
         { name: "date_of_birth", type: "string", isOptional: true },
 
+        { name: "last_seen", type: "number", isOptional: true },
         { name: "status", type: "string", isOptional: true },
         { name: "profile_image", type: "string", isOptional: true },
         { name: "views_count", type: "number" },
@@ -72,7 +73,7 @@ export const schema = appSchema({
         { name: "view_type", type: "string", isOptional: true },
         { name: "caution_fee", type: "number", isOptional: true },
 
-        { name: "server_owner_id", type: "string", isIndexed: true },
+        { name: "server_user_id", type: "string", isIndexed: true },
         { name: "street", type: "string", isOptional: true },
         { name: "city", type: "string", isOptional: true, isIndexed: true },
         { name: "state", type: "string", isIndexed: true },
@@ -155,7 +156,7 @@ export const schema = appSchema({
         { name: "property_server_id", type: "string", isOptional: true },
 
         { name: "server_sender_id", type: "string", isIndexed: true },
-        { name: "server_receiver_id", type: "string", isIndexed: true },
+        { name: "server_user_id", type: "string", isIndexed: true },
 
         // snapshot
         { name: "recent_message_id", type: "string", isOptional: true },

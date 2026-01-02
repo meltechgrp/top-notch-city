@@ -9,12 +9,14 @@ import {
   userCollection,
 } from "@/db/collections";
 import { chunkArray } from "@/db/helpers";
+import { fullName } from "@/lib/utils";
+import { Chat } from "@/db/models/messages";
 
 type SyncInput = {
-  pullCreate: any[];
-  pullUpdate: any[];
-  pullDelete: any[];
-  pushDelete: any[];
+  pullCreate: ServerChat[];
+  pullUpdate: ServerChat[];
+  pullDelete: ServerChat[];
+  pushDelete: Chat[];
   batchSize?: number;
 };
 
@@ -56,7 +58,7 @@ export async function syncChatsEngine({
   const batches = chunkArray(toUpsert, batchSize);
 
   for (let i = 0; i < batches.length; i++) {
-    const batchItems = batches[i] as Chat[];
+    const batchItems = batches[i];
 
     console.log(
       `🔄 Syncing batch ${i + 1}/${batches.length} (${batchItems.length})`
@@ -64,6 +66,7 @@ export async function syncChatsEngine({
 
     await database.write(async () => {
       const ops: any[] = [];
+      const updatedOwners = new Set<string>();
 
       for (const raw of batchItems) {
         if (!raw) continue;
@@ -97,6 +100,24 @@ export async function syncChatsEngine({
                 Object.assign(u, normalizeUser(raw.receiver))
               )
             );
+          }
+        }
+        if (raw?.receiver) {
+          const serverUserId = raw?.receiver.id;
+          const [existingOwner] = await userCollection
+            .query(Q.where("server_user_id", serverUserId))
+            .fetch();
+          if (!existingOwner) {
+            if (!updatedOwners.has(serverUserId)) {
+              updatedOwners.add(serverUserId);
+
+              console.log(`creating user ${fullName(raw?.receiver)}`);
+              ops.push(
+                userCollection.prepareCreate((u) =>
+                  Object.assign(u, normalizeUser(raw.receiver))
+                )
+              );
+            }
           }
         }
       }

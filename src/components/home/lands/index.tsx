@@ -2,10 +2,11 @@ import SectionHeaderWithRef from "@/components/home/SectionHeaderWithRef";
 import { router } from "expo-router";
 import HorizontalProperties from "@/components/property/HorizontalProperties";
 import { withObservables } from "@nozbe/watermelondb/react";
-import { database } from "@/db";
 import { Q } from "@nozbe/watermelondb";
+import { propertiesCollection } from "@/db/collections";
+import { Property } from "@/db/models/properties";
 
-const Lands = ({ properties }: any) => {
+const Lands = ({ properties }: { properties: Property[] }) => {
   return (
     <SectionHeaderWithRef
       title="Lands"
@@ -31,14 +32,12 @@ const Lands = ({ properties }: any) => {
 };
 
 const enhance = withObservables([], () => ({
-  properties: database
-    .get("properties")
-    .query(
-      Q.where("status", "approved"),
-      Q.where("category", "Land"),
-      Q.sortBy("updated_at", Q.desc),
-      Q.take(10)
-    ),
+  properties: propertiesCollection.query(
+    Q.where("status", "approved"),
+    Q.where("category", "Land"),
+    Q.sortBy("updated_at", Q.desc),
+    Q.take(10)
+  ),
 }));
 
 export default enhance(Lands);

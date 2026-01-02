@@ -21,7 +21,7 @@ export function usePropertyDataSync(id: string, auto = true) {
       });
       if (!property?.id) return;
       const local = await getLocalProperty(id);
-      if (compareDates({ server: [property], local })) return;
+      if (compareDates([property], local)) return;
       await syncProperties({
         update: [property],
         batchSize: BATCH_SIZE,

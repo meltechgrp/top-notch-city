@@ -1,14 +1,16 @@
+import { messagesActions } from "@/components/chat";
 import { ChatRoomMessageProps } from "@/components/chat/ChatRoomMessage";
 import QuoteMessage from "@/components/chat/ChatRoomQuoteMessage";
 import Editor, { EditorComponentRefHandle } from "@/components/custom/Editor";
 import { useMe } from "@/hooks/useMe";
+import useSound from "@/hooks/useSound";
 import { guidGenerator } from "@/lib/utils";
 import React, { useCallback } from "react";
 import { View } from "react-native";
 
 type Props = View["props"] & {
   chatId: string;
-  onPost: (data: Message, isEdit: boolean) => void;
+  onPost: (isEdit: boolean) => void;
   placeholder?: string;
   defaultText?: string;
   activeQuoteMsg: ChatRoomMessageProps["message"] | undefined;
@@ -32,27 +34,43 @@ const ChatRoomFooter = React.forwardRef<EditorComponentRefHandle, Props>(
       receiver,
     } = props;
     const { me } = useMe();
-    function onSubmit({ text, files }: { text: string; files: Media[] }) {
+
+    const { playSound } = useSound();
+
+    const { saveLocalMessage, editServerMessage } = messagesActions();
+    async function onSubmit({ text, files }: { text: string; files: Media[] }) {
       if (me) {
         const tempId = guidGenerator();
-        const mock: Message = {
-          message_id: isEditing ? selectedMessage?.message_id! : tempId,
+        const mock: ServerMessage = {
+          message_id: isEditing ? selectedMessage?.server_message_id! : tempId,
           created_at: new Date().toString(),
+          updated_at: new Date().toString(),
           content: text,
           sender_info: {
             id: me.id,
           },
-          reply_to_message_id: activeQuoteMsg?.message_id,
-          isMock: true,
+          receiver_info: {
+            ...receiver,
+          },
+          reply_to_message_id: activeQuoteMsg?.server_message_id,
+          isMock: !isEditing,
           status: "pending",
           file_data: files?.map((f) => ({
             id: f.id,
             file_url: f.url,
+            is_local: true,
             file_type: f.media_type,
           })),
-          read: false,
         };
-        onPost(mock, isEditing);
+        await saveLocalMessage({
+          data: mock,
+          chatId,
+          playSound: () => playSound("MESSAGE_SENT"),
+        });
+        if (isEditing) {
+          await editServerMessage({ data: mock });
+        }
+        onPost(isEditing);
         clearActiveQuoteMsg();
       }
     }

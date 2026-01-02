@@ -315,7 +315,7 @@ const PropertyDetailsBottomSheet = ({
                         openBookingModal({
                           visible: true,
                           property_id: property.id,
-                          agent_id: property.server_owner_id,
+                          agent_id: property.server_user_id,
                           image: property?.thumbnail!,
                           address: property.address,
                           booking_type:
@@ -366,11 +366,11 @@ const PropertyDetailsBottomSheet = ({
                   <Button
                     className="h-12 gap-1 bg-gray-600"
                     onPress={() => {
-                      if (!property?.server_owner_id) return;
+                      if (!property?.server_user_id) return;
                       router.push({
                         pathname: "/agents/[userId]",
                         params: {
-                          userId: property.server_owner_id,
+                          userId: property.server_user_id,
                         },
                       });
                     }}
@@ -484,7 +484,7 @@ const enhance = withObservables(
       .query(Q.where("property_server_id", property.property_server_id))
       .observe(),
     owner: userCollection
-      .query(Q.where("server_user_id", property.server_owner_id), Q.take(1))
+      .query(Q.where("server_user_id", property.server_user_id), Q.take(1))
       .observe(),
     amenities: propertyAmenityCollection
       .query(Q.where("property_server_id", property.property_server_id))

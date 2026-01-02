@@ -14,25 +14,12 @@ export async function resetDatabase() {
 }
 
 export async function getLocalChatIndex() {
-  const props = await chatCollection.query().fetch();
-
-  return props.map((p) => ({
-    id: p.server_chat_id,
-    updated_at: p.updated_at,
-    sync_status: p.sync_status,
-  })) as any[];
+  return await chatCollection.query().fetch();
 }
-export async function getLocalMessagesIndex() {
-  const props = await messageCollection.query().fetch();
-
-  return props.map((p) => ({
-    id: p.server_message_id,
-    updated_at: p.updated_at,
-    sync_status: p.sync_status,
-    deleted_for_me: p.deleted_for_me_at,
-    deleted_for_all: p.deleted_for_all_at,
-    status: p.status,
-  })) as any[];
+export async function getLocalMessagesIndex(chatId: string) {
+  return await messageCollection
+    .query(Q.where("server_chat_id", chatId))
+    .fetch();
 }
 export async function getLocalPropertyIndex() {
   const props = await propertiesCollection.query().fetch();
@@ -170,7 +157,7 @@ export function diffChats({
   localChats,
   mode,
 }: {
-  serverChats: Chat[];
+  serverChats: ServerChat[];
   localChats: any[];
   mode: "full" | "incremental";
 }) {
@@ -184,7 +171,8 @@ export function diffChats({
     mode,
     shouldUpdate: (local, server) =>
       local.recent_message_id !== server.recent_message?.message_id,
-    shouldDelete: (local, serverMap) => !serverMap.has(local.server_chat_id),
+    shouldDelete: (local, serverMap) =>
+      local?.server_chat_id && !serverMap.has(local.server_chat_id),
   });
 
   const push = localChats.filter(
@@ -204,7 +192,7 @@ export function diffMessages({
   localMessages,
   mode,
 }: {
-  serverMessages: any[];
+  serverMessages: ServerMessage[];
   localMessages: Message[];
   mode: "full" | "incremental";
 }) {
@@ -217,7 +205,8 @@ export function diffMessages({
     shouldUpdate: (local, server) =>
       !!server.updated_at &&
       new Date(server.updated_at).getTime() > (local.updated_at ?? 0),
-    shouldDelete: (local, serverMap) => !serverMap.has(local.server_message_id),
+    shouldDelete: (local, serverMap) =>
+      !!local?.server_message_id && !serverMap.has(local.server_message_id),
   });
 
   const pushCreate = localMessages.filter(

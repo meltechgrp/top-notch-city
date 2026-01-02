@@ -1,69 +1,51 @@
 import MessageListItem from "@/components/chat/MessageListItem";
 import { Box, View } from "@/components/ui";
 import { FlashList } from "@shopify/flash-list";
-import React, { memo, useEffect, useMemo, useState } from "react";
 import { RefreshControl } from "react-native";
-import { useChat } from "@/hooks/useChat";
-import { Users } from "lucide-react-native";
+import { MessageSquare, Plus } from "lucide-react-native";
 import ChatsStateWrapper from "@/components/chat/ChatsStateWrapper";
 import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
-import { useWebSocketHandler } from "@/hooks/useWebSocketHandler";
-import { useMe } from "@/hooks/useMe";
 import eventBus from "@/lib/eventBus";
+import { withObservables } from "@nozbe/watermelondb/react";
+import { chatCollection } from "@/db/collections";
+import { Q } from "@nozbe/watermelondb";
+import { Chat } from "@/db/models/messages";
+import { useChatsSync } from "@/db/queries/syncChats";
+import { router } from "expo-router";
 
-function ChatList() {
-  const { chats, loading, refreshing, refetch } = useChat();
-  const { me, isLoading } = useMe();
-  const { connect } = useWebSocketHandler();
-  const [search, setSearch] = useState("");
+interface ChatListProps {
+  chats: Chat[];
+}
 
-  const filteredData = useMemo(() => {
-    let filtered = chats;
-
-    // if (search.trim() !== "") {
-    //   const regex = new RegExp(search.trim(), "i");
-    //   filtered = filtered.filter(
-    //     (u) =>
-    //       regex.test(u.receiver.first_name) ||
-    //       regex.test(u.receiver.last_name) ||
-    //       regex.test(u.recent_message.content)
-    //   );
-    // }
-    return filtered;
-  }, [chats, search]);
-  useEffect(() => {
-    connect();
-  }, []);
-  console.log(me);
+function ChatList({ chats }: ChatListProps) {
+  const { resync, syncing } = useChatsSync();
   return (
     <>
       <Box className="flex-1 mt-2">
-        <ChatsStateWrapper loading={loading || isLoading}>
+        <ChatsStateWrapper loading={!chats}>
           <View className="flex-1">
-            {/* <FlashList
-              data={filteredData}
+            <FlashList
+              data={chats}
               refreshControl={
-                <RefreshControl refreshing={false} onRefresh={refetch} />
+                <RefreshControl refreshing={syncing} onRefresh={resync} />
               }
               ListFooterComponent={<View className="h-16"></View>}
               contentContainerClassName="pt-2"
-              keyExtractor={(item) => item.chat_id}
+              keyExtractor={(item) => item.server_chat_id}
               renderItem={({ item }) => <MessageListItem chat={item} />}
               onScroll={() => eventBus.dispatchEvent("SWIPEABLE_OPEN", null)}
               ListEmptyComponent={() => (
                 <MiniEmptyState
-                  icon={Users}
+                  icon={MessageSquare}
                   className="mt-8"
-                  title="No message Found"
-                  description="Clear search to see other messages"
-                  onPress={() => {
-                    setSearch("");
-                    refetch();
-                  }}
-                  buttonLabel="Refresh"
+                  title="No chat Found"
+                  description="chats will be displayed here when available!"
+                  onPress={() => router.push("/start")}
+                  subIcon={Plus}
+                  buttonLabel="Start a Chat"
                 />
               )}
-            /> */}
+            />
           </View>
         </ChatsStateWrapper>
       </Box>
@@ -71,4 +53,10 @@ function ChatList() {
   );
 }
 
-export default memo(ChatList);
+const enhance = withObservables([], () => ({
+  chats: chatCollection
+    .query(Q.where("deleted_at", Q.eq(null)), Q.sortBy("updated_at", Q.desc))
+    .observe(),
+}));
+
+export default enhance(ChatList);

@@ -113,7 +113,7 @@ const enhance = withObservables(
         .get("properties")
         .query(
           Q.and(
-            Q.where("server_owner_id", profileId),
+            Q.where("server_user_id", profileId),
             Q.where("status", isOwner ? Q.notEq("deleted") : "approved")
           ),
           Q.sortBy("updated_at", Q.desc),

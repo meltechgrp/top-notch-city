@@ -3,9 +3,10 @@ import HorizontalProperties from "@/components/property/HorizontalProperties";
 import { router } from "expo-router";
 import { withObservables } from "@nozbe/watermelondb/react";
 import { Q } from "@nozbe/watermelondb";
-import { database } from "@/db";
+import { propertiesCollection } from "@/db/collections";
+import { Property } from "@/db/models/properties";
 
-function ShortletProperties({ properties }: any) {
+function ShortletProperties({ properties }: { properties: Property[] }) {
   return (
     <SectionHeaderWithRef
       title="Shortlets/Hotels"
@@ -31,14 +32,12 @@ function ShortletProperties({ properties }: any) {
 }
 
 const enhance = withObservables([], () => ({
-  properties: database
-    .get("properties")
-    .query(
-      Q.where("status", "approved"),
-      Q.or(Q.where("category", "Hotel"), Q.where("category", "Shortlet")),
-      Q.sortBy("updated_at", Q.desc),
-      Q.take(10)
-    ),
+  properties: propertiesCollection.query(
+    Q.where("status", "approved"),
+    Q.or(Q.where("category", "Hotel"), Q.where("category", "Shortlet")),
+    Q.sortBy("updated_at", Q.desc),
+    Q.take(10)
+  ),
 }));
 
 export default enhance(ShortletProperties);

@@ -4,8 +4,8 @@ interface StartChat {
 }
 
 interface ChatList {
-  details: Chat;
-  messages: Message[];
+  details: ServerChat;
+  messages: ServerMessage[];
   typing?: boolean;
 }
 interface ChatMessages {
@@ -19,9 +19,9 @@ interface ChatMessages {
     you_blocked_other: boolean;
     other_blocked_you: boolean;
   };
-  messages: Message[];
+  messages: ServerMessage[];
 }
-interface Chat {
+interface ServerChat {
   chat_id: string;
   property_id?: string;
   receiver: ReceiverInfo;
@@ -38,14 +38,13 @@ interface Chat {
   unread_count: number;
 }
 
-interface Message {
+interface ServerMessage {
   content: string;
   created_at: string;
   message_id: string;
   file_data: FileData[];
   receiver_info?: ReceiverInfo;
   sender_info: SenderInfo;
-  read: boolean;
   status: "pending" | "seen" | "delivered" | "sent" | "failed";
   updated_at?: string;
   deleted_at?: string;
@@ -79,17 +78,7 @@ interface SenderInfo {
   profile_image?: string;
   status?: "offline" | "online";
 }
-interface ChatMessages {
-  pagination: {
-    total_messages: number;
-    page: number;
-    size: number;
-    total_pages: number;
-  };
-  messages: Message[];
-}
 interface SendMessage {
-  id: string;
   chat_id: string;
   content: string;
   files?: FileData[];

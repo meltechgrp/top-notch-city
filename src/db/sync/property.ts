@@ -10,6 +10,7 @@ import {
 } from "@/db/collections";
 import { chunkArray } from "@/db/helpers";
 import { normalizeProperty } from "@/db/normalizers/property";
+import { fullName } from "@/lib/utils";
 import { Q } from "@nozbe/watermelondb";
 
 type SyncInput = {
@@ -64,6 +65,7 @@ export async function syncProperties({
 
     await database.write(async () => {
       const ops: any[] = [];
+      const updatedOwners = new Set<string>();
 
       for (const raw of batchItems) {
         const n = normalizeProperty(raw);
@@ -135,15 +137,18 @@ export async function syncProperties({
 
         if (n.owner) {
           const serverUserId = n.owner.server_user_id;
-
           const [existingOwner] = await userCollection
             .query(Q.where("server_user_id", serverUserId))
             .fetch();
-
           if (!existingOwner) {
-            ops.push(
-              userCollection.prepareCreate((u) => Object.assign(u, n.owner))
-            );
+            if (!updatedOwners.has(serverUserId)) {
+              updatedOwners.add(serverUserId);
+
+              console.log(`creating user ${fullName(n.owner)}`);
+              ops.push(
+                userCollection.prepareCreate((u) => Object.assign(u, n.owner))
+              );
+            }
           }
         }
 

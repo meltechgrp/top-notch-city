@@ -4,16 +4,10 @@ import axios from "axios";
 
 export type UploadedFile = {
   url: string;
-  id?: string;
+  type: "image" | "video" | "audio" | "all";
 };
 
-export async function uploadToBucket({
-  data,
-  type,
-}: {
-  data: UploadedFile[];
-  type: "image" | "video" | "audio" | "all";
-}) {
+export async function uploadToBucket({ data }: { data: UploadedFile[] }) {
   try {
     const token = await getActiveToken();
     if (!token) throw new Error("Authentication token missing");
@@ -21,7 +15,7 @@ export async function uploadToBucket({
     const formData = new FormData();
 
     data.forEach((item, index) => {
-      const isImage = type === "image";
+      const isImage = item.type === "image";
       const fileName = isImage ? `image_${index}.jpg` : `video_${index}.mp4`;
       const mimeType = isImage ? "image/jpeg" : "video/mp4";
 

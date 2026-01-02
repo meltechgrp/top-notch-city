@@ -3,6 +3,10 @@ import { field, text } from "@nozbe/watermelondb/decorators";
 
 export class User extends Model {
   static table = "users";
+
+  static associations = {
+    chats: { type: "has_many", foreignKey: "server_user_id" },
+  } as const;
   @text("server_user_id") server_user_id!: string;
   @text("email") email!: string;
   @text("slug") slug!: string;
@@ -14,6 +18,7 @@ export class User extends Model {
   @text("gender") gender?: string;
   @text("date_of_birth") date_of_birth?: string;
   @text("status") status?: string;
+  @field("last_seen") last_seen?: number;
   @text("profile_image") profile_image?: string;
 
   @field("views_count") views_count!: number;

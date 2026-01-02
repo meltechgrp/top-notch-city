@@ -5,6 +5,7 @@ import { Icon } from "@/components/ui";
 import { House, RefreshCcw } from "lucide-react-native";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import { cn } from "@/lib/utils";
+import { hapticFeed } from "@/components/HapticTab";
 
 interface EmptyStateProps {
   icon?: any;
@@ -56,7 +57,10 @@ export function MiniEmptyState({
             <Text className="text-sm text-center px-4">{description}</Text>
             {onPress && (
               <Button
-                onPress={onPress}
+                onPress={() => {
+                  hapticFeed(true);
+                  onPress();
+                }}
                 className="mt-4 px-4 py-2 h-12 border border-outline-100"
               >
                 {loading ? (

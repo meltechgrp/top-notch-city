@@ -1,3 +1,4 @@
+import { User } from "@/db/models/users";
 import { Model } from "@nozbe/watermelondb";
 import { writer } from "@nozbe/watermelondb/decorators";
 import {
@@ -17,6 +18,7 @@ export class Property extends Model {
     },
     property_ownership: { type: "has_many", foreignKey: "property_server_id" },
     property_amenities: { type: "has_many", foreignKey: "property_server_id" },
+    owner: { type: "belongs_to", key: "server_user_id" },
   } as const;
   @writer async markAsLiked() {
     await this.update((d) => {
@@ -46,6 +48,8 @@ export class Property extends Model {
 
   @children("property_amenities")
   amenities!: PropertyAmenity[];
+
+  @relation("users", "server_user_id") owner!: User;
   @text("property_server_id") property_server_id!: string;
   @text("title") title!: string;
   @text("slug") slug!: string;
@@ -78,7 +82,7 @@ export class Property extends Model {
   @field("caution_fee") caution_fee?: number;
   @text("is_following") is_following?: boolean;
 
-  @text("server_owner_id") server_owner_id!: string;
+  @text("server_user_id") server_user_id!: string;
   @field("views") views!: number;
   @field("likes") likes!: number;
 

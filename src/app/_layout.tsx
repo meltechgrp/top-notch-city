@@ -27,9 +27,8 @@ import { ImageViewerProvider } from "@/components/custom/ImageViewerProvider";
 import { registerDevice } from "@/actions/user";
 import useGetLocation from "@/hooks/useGetLocation";
 import { useMe } from "@/hooks/useMe";
-import { usePropertyFeedSync } from "@/db/queries/syncPropertyFeed";
 import { mainStore } from "@/store";
-import { useChatsSync } from "@/db/queries/syncChats";
+import { useSyncer } from "@/hooks/useSyncer";
 
 enableScreens(true);
 const query = new QueryClient({
@@ -53,9 +52,7 @@ configureReanimatedLogger({
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  useNotificationObserver();
-  usePropertyFeedSync();
-  useChatsSync();
+  useSyncer({});
   const { address, location } = useGetLocation({ withAddress: true });
   useSuppressChatPushNotification();
   useMountPushNotificationToken();

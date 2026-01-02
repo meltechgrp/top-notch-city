@@ -13,7 +13,7 @@ export function normalizeProperty(p: Property) {
       purpose: p.purpose,
       is_featured: p.is_featured ?? false,
       is_booked: p.is_booked ?? false,
-      server_owner_id: p.owner.id,
+      server_user_id: p.owner.id,
       bed_type: p?.bedType,
       view_type: p?.viewType,
       caution_fee: p.caution_fee,

@@ -19,27 +19,27 @@ export default function HomeScreen() {
   const feedList = React.useMemo(() => {
     const topLocations = {
       id: "locations",
-      _typename: "Locations",
+      type: "Locations",
     } as any;
     const featured = {
       id: "featured",
-      __typename: "Featured",
+      type: "Featured",
     } as any;
     const shortlets = {
       id: "shortlet",
-      __typename: "Shortlet",
+      type: "Shortlet",
     } as any;
     const apartment = {
       id: "apartment",
-      _typename: "Apartments",
+      type: "Apartments",
     } as any;
     const lands = {
       id: "lands",
-      _typename: "Lands",
+      type: "Lands",
     } as any;
     const bottomPlaceHolder = {
       id: "bottomPlaceHolder",
-      __typename: "bottomPlaceHolder",
+      type: "bottomPlaceHolder",
     } as any;
     return [
       topLocations,
@@ -53,23 +53,23 @@ export default function HomeScreen() {
   type FeedList = any;
   const renderItem: ListRenderItem<FeedList> = useCallback(
     ({ item }) => {
-      // if (item.id === "locations") {
-      //   return (
-      //     <NearbyProperties state={address?.state || ""} location={address} />
-      //   );
-      // }
-      // if (item.id === "featured") {
-      //   return <FeaturedProperties />;
-      // }
-      // if (item.id === "shortlet") {
-      //   return <ShortletProperties />;
-      // }
-      // if (item.id === "apartment") {
-      //   return <ApartmentProperties />;
-      // }
-      // if (item.id === "lands") {
-      //   return <Lands />;
-      // }
+      if (item.id === "locations") {
+        return (
+          <NearbyProperties state={address?.state || ""} location={address} />
+        );
+      }
+      if (item.id === "featured") {
+        return <FeaturedProperties />;
+      }
+      if (item.id === "shortlet") {
+        return <ShortletProperties />;
+      }
+      if (item.id === "apartment") {
+        return <ApartmentProperties />;
+      }
+      if (item.id === "lands") {
+        return <Lands />;
+      }
       if (item.id === "bottomPlaceHolder") {
         return <View className="h-24" />;
       }
@@ -88,13 +88,16 @@ export default function HomeScreen() {
           // refreshControl={
           //   <RefreshControl refreshing={refetching} onRefresh={refreshAll} />
           // }
-          // ListHeaderComponent={
-          //   <DiscoverProperties
-          //     state={address?.state || ""}
-          //     city={address?.city || ""}
-          //     mapHeight={MAP_HEIGHT}
-          //   />
-          // }
+          ListHeaderComponent={
+            <DiscoverProperties
+              state={address?.state || ""}
+              city={address?.city || ""}
+              mapHeight={MAP_HEIGHT}
+            />
+          }
+          getItemType={(item) => {
+            return item.id;
+          }}
           showsVerticalScrollIndicator={false}
           data={feedList}
           keyExtractor={(item) => item.id}

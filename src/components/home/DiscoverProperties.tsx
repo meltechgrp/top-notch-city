@@ -3,13 +3,14 @@ import Map from "../location/map";
 import HomeNavigation from "./HomeNavigation";
 import { router } from "expo-router";
 import { withObservables } from "@nozbe/watermelondb/react";
-import { database } from "@/db";
 import { Q } from "@nozbe/watermelondb";
+import { propertiesCollection } from "@/db/collections";
+import { Property } from "@/db/models/properties";
 
 type Props = {
   className?: string;
   mapHeight: number;
-  properties: any;
+  properties: Property[];
 };
 const DiscoverProperties = (props: Props) => {
   const { className, mapHeight, properties } = props;
@@ -34,12 +35,10 @@ const DiscoverProperties = (props: Props) => {
 };
 
 const enhance = withObservables(["state", "city"], ({ state, city }) => ({
-  properties: database
-    .get("properties")
-    .query(
-      Q.where("status", "approved"),
-      Q.or(Q.where("state", state), Q.where("city", city))
-    ),
+  properties: propertiesCollection.query(
+    Q.where("status", "approved"),
+    Q.or(Q.where("state", state), Q.where("city", city))
+  ),
 }));
 
 export default enhance(DiscoverProperties);

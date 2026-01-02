@@ -218,7 +218,10 @@ function PropertyWrapper({ properties, slug }: PropertyWrapperProps) {
 }
 
 const enhance = withObservables(["slug"], ({ slug }) => ({
-  properties: propertiesCollection.query(Q.where("slug", slug), Q.take(1)),
+  properties: propertiesCollection.query(
+    Q.where("slug", slug || null),
+    Q.take(1)
+  ),
 }));
 
 export default enhance(PropertyWrapper);

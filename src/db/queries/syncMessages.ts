@@ -1,10 +1,5 @@
 import { getChatMessages } from "@/actions/message";
-import {
-  diffMessages,
-  getLocalChatIndex,
-  getLocalMessagesIndex,
-} from "@/db/helpers";
-import { syncChatsEngine } from "@/db/sync/chat";
+import { diffMessages, getLocalMessagesIndex } from "@/db/helpers";
 import { syncMessagesEngine } from "@/db/sync/message";
 import { useMe } from "@/hooks/useMe";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
@@ -32,7 +27,7 @@ export function useMessagesSync({
         size: 50,
       });
       if (!messageResult?.messages) return;
-      const local = await getLocalMessagesIndex();
+      const local = await getLocalMessagesIndex(chatId);
       const {
         pullCreate,
         pullDelete,

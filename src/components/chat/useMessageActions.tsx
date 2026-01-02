@@ -4,7 +4,7 @@ import { Alert } from "react-native";
 import { useMutation } from "@tanstack/react-query";
 import { deleteChatMessage } from "@/actions/message";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
-import { useChatStore } from "@/store/chatStore";
+import { Message } from "@/db/models/messages";
 
 type Args = {
   focusEditor: () => void;
@@ -14,10 +14,6 @@ type Args = {
 
 export default function useMessageActions(args: Args) {
   const { focusEditor, setEditorText, chatId } = args;
-  const { deleteChatMessage: deleteMessage } = useChatStore.getState();
-  function invalidate(chatId: string, messageId: string, soft: boolean) {
-    deleteMessage(chatId, messageId, soft);
-  }
   const { mutateAsync } = useMutation({
     mutationFn: deleteChatMessage,
   });
@@ -40,7 +36,7 @@ export default function useMessageActions(args: Args) {
     null
   );
   async function handleDelete() {
-    if (!selectedMessage?.message_id) return;
+    if (!selectedMessage?.server_message_id) return;
 
     Alert.alert("Confirm delete", "Delete message for yourself in this chat?", [
       {
@@ -52,7 +48,7 @@ export default function useMessageActions(args: Args) {
         onPress: async () => {
           await mutateAsync(
             {
-              message_id: selectedMessage.message_id,
+              message_id: selectedMessage.server_message_id,
               delete_for_everyone: false,
             },
             {
@@ -62,7 +58,7 @@ export default function useMessageActions(args: Args) {
                   duration: 3000,
                   title: "Message deleted.",
                 });
-                invalidate(chatId, selectedMessage.message_id, true);
+                // invalidate(chatId, selectedMessage.message_id, true);
                 setIsDeletingMessageId(null);
               },
               onError: (err) => {
@@ -80,7 +76,7 @@ export default function useMessageActions(args: Args) {
     ]);
   }
   async function handleDeleteAll() {
-    if (!selectedMessage?.message_id) return;
+    if (!selectedMessage?.server_message_id) return;
 
     Alert.alert(
       "Confirm delete",
@@ -95,7 +91,7 @@ export default function useMessageActions(args: Args) {
           onPress: async () => {
             await mutateAsync(
               {
-                message_id: selectedMessage.message_id,
+                message_id: selectedMessage.server_message_id,
                 delete_for_everyone: true,
               },
               {
@@ -105,7 +101,7 @@ export default function useMessageActions(args: Args) {
                     duration: 3000,
                     title: "Message deleted.",
                   });
-                  invalidate(chatId, selectedMessage.message_id, true);
+                  // invalidate(chatId, selectedMessage.message_id, true);
                   setIsDeletingMessageId(null);
                 },
                 onError: (err) => {

@@ -66,11 +66,8 @@ function PropertyListItem(props: Props) {
   const { me } = useMe();
   const { toggleLike } = useLike();
   const { bannerHeight } = Layout;
-  const { price, status, server_owner_id } = data;
-  const isMine = useMemo(
-    () => me?.id === server_owner_id,
-    [me, server_owner_id]
-  );
+  const { price, status, server_user_id } = data;
+  const isMine = useMemo(() => me?.id === server_user_id, [me, server_user_id]);
   const isAdmin = useMemo(() => me?.role == "admin", [me]);
   const Actions = () => {
     if (isFeatured) {

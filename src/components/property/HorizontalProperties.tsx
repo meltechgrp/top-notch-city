@@ -3,8 +3,9 @@ import PropertyListItem from "@/components/property/PropertyListItem";
 import { useRouter } from "expo-router";
 import { ScrollView, StyleProp, ViewStyle } from "react-native";
 import { useMemo, useCallback, memo } from "react";
-import { cn, deduplicate } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { shuffle } from "lodash";
+import { Property } from "@/db/models/properties";
 
 interface Props {
   category?: string;

@@ -11,7 +11,11 @@ import {
   TouchableOpacity,
 } from "react-native";
 import PostTextContent from "./PostTextContent";
-import { generateMediaUrl, generateMediaUrlSingle } from "@/lib/api";
+import {
+  generateMediaUrl,
+  generateMediaUrlSingle,
+  getImageUrl,
+} from "@/lib/api";
 import { hapticFeed } from "@/components/HapticTab";
 import { MessageStatusIcon } from "@/components/chat/MessageStatus";
 import { router } from "expo-router";
@@ -19,36 +23,45 @@ import { RotateCcw } from "lucide-react-native";
 import QuoteMessage from "@/components/chat/ChatRoomQuoteMessage";
 import { ProfileImageTrigger } from "@/components/custom/ImageViewerProvider";
 import { MiniVideoPlayer } from "@/components/custom/MiniVideoPlayer";
+import { Message, MessageFile } from "@/db/models/messages";
+import { withObservables } from "@nozbe/watermelondb/react";
+import { messageCollection, propertiesCollection } from "@/db/collections";
+import { Q } from "@nozbe/watermelondb";
+import { Property } from "@/db/models/properties";
 
 export type ChatRoomMessageProps = View["props"] & {
   me: Account;
-  sender?: string;
   message: Message;
+  files: MessageFile[];
+  property: Property[];
+  quotes: Message[];
   onLongPress: (message: Message) => void;
   isDeleting?: boolean;
   resendMessage?: (msg: Message) => void;
 };
-export default function ChatRoomMessage(props: ChatRoomMessageProps) {
+function ChatRoomMessage(props: ChatRoomMessageProps) {
   const {
     me,
-    sender,
     onLongPress,
     isDeleting,
     message,
     resendMessage,
+    files,
+    property: [property],
+    quotes: [quote],
     ...others
   } = props;
   const images = useMemo(
     () =>
-      message?.file_data?.map((item) => ({
+      files?.map((item) => ({
         id: item.id,
-        url: item.file_url,
-        media_type: item.file_type,
+        url: item.url,
+        media_type: item.file_type?.toLowerCase(),
       })),
-    [message]
+    [files]
   ) as Media[];
   const isMine = React.useMemo(
-    () => message.sender_info?.id === me?.id,
+    () => message.server_sender_id === me?.id,
     [me, message]
   );
   const formatedTime = React.useMemo(
@@ -67,7 +80,7 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
           isMine ? "justify-end" : "justify-start"
         )}
       >
-        {!isMine && !message?.deleted_at && message?.updated_at && (
+        {!isMine && !message?.deleted_at && message?.is_edited && (
           <Text className="text-[10px] text-typography">Edited</Text>
         )}
         {!isMine && message?.deleted_at && (
@@ -77,7 +90,7 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
         {isMine && <MessageStatusIcon status={message.status} />}
       </View>
     ),
-    [formatedTime, message.content, message.status, message.updated_at]
+    [formatedTime, message.content]
   );
   const pressProps = {
     onLongPress: () => {
@@ -170,7 +183,7 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
                 ))}
               </View>
             ) : null}
-            {message?.property_info && (
+            {property && (
               <View
                 className={cn(
                   "gap-1 flex-row flex-wrap ",
@@ -182,30 +195,27 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
                     router.push({
                       pathname: "/(protected)/property/[propertyId]",
                       params: {
-                        propertyId: message.property_info?.id!,
+                        propertyId: property.slug!,
                       },
                     })
                   }
                   className={cn(["rounded-2xl mb-1 flex-1 h-40"])}
                 >
-                  <Image
-                    source={{
-                      uri: generateMediaUrl({
-                        url: message.property_info?.image_url,
-                        media_type: "IMAGE",
-                        id: message.property_info?.id!,
-                      }).uri,
-                    }}
-                    rounded
-                    alt={"property"}
-                  />
+                  {property.thumbnail && (
+                    <Image
+                      source={{
+                        uri: generateMediaUrlSingle(property.thumbnail),
+                        cacheKey: property.property_server_id,
+                      }}
+                      rounded
+                      alt={"property"}
+                    />
+                  )}
                 </Pressable>
               </View>
             )}
 
-            {!!message?.reply_to && (
-              <QuoteMessage quote={message.reply_to as any} />
-            )}
+            {!!quote && <QuoteMessage quote={quote} me={me} />}
             <Pressable
               className={cn([
                 "rounded-lg  justify-end overflow-hidden gap-1",
@@ -227,7 +237,7 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
             </Pressable>
             {!isMine && <View className="flex-1" />}
           </View>
-          {message.status == "error" && (
+          {message.status == "failed" && (
             <TouchableOpacity
               onPress={() => {
                 if (resendMessage) {
@@ -244,3 +254,21 @@ export default function ChatRoomMessage(props: ChatRoomMessageProps) {
     </>
   );
 }
+
+const enhance = withObservables(
+  ["message"],
+  ({ message }: { message: Message }) => ({
+    message: message.observe(),
+    files: message.files,
+    property: propertiesCollection.query(
+      Q.where("property_server_id", message.property_server_id || null),
+      Q.take(1)
+    ),
+    quotes: messageCollection.query(
+      Q.where("server_message_id", message.reply_to_message_id || null),
+      Q.take(1)
+    ),
+  })
+);
+
+export default enhance(ChatRoomMessage);

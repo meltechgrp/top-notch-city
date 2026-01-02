@@ -5,12 +5,13 @@ import {
   AvatarFallbackText,
   AvatarImage,
   Icon,
+  Image,
   Pressable,
   Text,
   View,
 } from "../ui";
 import { cn, formatMessageTime, fullName } from "@/lib/utils";
-import { generateMediaUrlSingle } from "@/lib/api";
+import { generateMediaUrlSingle, getImageUrl } from "@/lib/api";
 import SwipeableWrapper from "@/components/shared/SwipeableWrapper";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteChat } from "@/actions/message";
@@ -19,14 +20,20 @@ import { MessageStatusIcon } from "@/components/chat/MessageStatus";
 import { router } from "expo-router";
 import { TypingIndicator } from "@/components/chat/TypingIndicator";
 import { useMe } from "@/hooks/useMe";
-import { ProfileImageTrigger } from "@/components/custom/ImageViewerProvider";
-import { MoreHorizontal, Trash } from "lucide-react-native";
-
+import { ImageIcon, MoreHorizontal, Trash } from "lucide-react-native";
+import { Chat } from "@/db/models/messages";
+import { withObservables } from "@nozbe/watermelondb/react";
+import { User } from "@/db/models/users";
+const LEAD = "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0";
 type MessageListItemProps = {
   chat: Chat;
+  receivers: User[];
 };
 function MessageListItem(props: MessageListItemProps) {
-  const { chat } = props;
+  const {
+    chat,
+    receivers: [user],
+  } = props;
 
   const typing = false;
   const queryClient = useQueryClient();
@@ -40,20 +47,20 @@ function MessageListItem(props: MessageListItemProps) {
   }, [chat]);
 
   const isMine = React.useMemo(
-    () => chat?.recent_message.sender_id === me?.id,
+    () => chat?.recent_message_sender_id === me?.id,
     [me, chat]
   );
   const formatedTime = React.useMemo(
     () =>
-      chat
-        ? formatMessageTime(new Date(chat.recent_message.created_at), {
+      chat?.recent_message_created_at
+        ? formatMessageTime(new Date(chat.recent_message_created_at), {
             hideTimeForFullDate: true,
           })
         : "",
     []
   );
   async function handleDelete() {
-    await mutateAsync(chat.chat_id, {
+    await mutateAsync(chat.server_chat_id, {
       onSuccess: () => {
         queryClient.invalidateQueries({
           queryKey: ["chats"],
@@ -71,6 +78,7 @@ function MessageListItem(props: MessageListItemProps) {
       },
     });
   }
+  const isImage = chat?.recent_message_content?.trim() == "image";
   return (
     <SwipeableWrapper
       rightActions={[
@@ -102,8 +110,7 @@ function MessageListItem(props: MessageListItemProps) {
           router.push({
             pathname: "/chats/[chatId]",
             params: {
-              chatId: chat.chat_id,
-              userId: chat.receiver.id,
+              chatId: chat.server_chat_id,
             },
           })
         }
@@ -115,31 +122,34 @@ function MessageListItem(props: MessageListItemProps) {
               router.push({
                 pathname: "/agents/[userId]",
                 params: {
-                  userId: chat.sender_id,
+                  userId: chat.server_user_id,
                 },
               })
             }
+            className="w-16 h-16 rounded-full overflow-hidden"
           >
-            <Avatar className="bg-gray-500 w-16 h-16">
-              <AvatarFallbackText className="text-typography text-xl">
-                {fullName(chat.receiver)}
-              </AvatarFallbackText>
-              {chat.receiver.status == "online" && <AvatarBadge />}
-              {chat.receiver.profile_image && (
-                <AvatarImage
-                  source={{
-                    uri: generateMediaUrlSingle(chat.receiver.profile_image),
-                    cache: "force-cache",
-                  }}
-                />
-              )}
-            </Avatar>
+            {user?.profile_image ? (
+              <Image
+                source={{
+                  uri: generateMediaUrlSingle(user?.profile_image),
+                  cacheKey: user?.profile_image,
+                }}
+                rounded
+              />
+            ) : (
+              <Avatar className="bg-gray-500 w-16 h-16">
+                <AvatarFallbackText className="text-typography text-xl">
+                  {fullName(user)}
+                </AvatarFallbackText>
+                {user?.status == "online" ? <AvatarBadge /> : null}
+              </Avatar>
+            )}
           </Pressable>
           <View className="flex-1 pr-4 border-b border-outline">
             <View className="flex-row items-center justify-between">
               <View className="flex-row items-center flex-1  pr-4">
                 <Text numberOfLines={1} className=" text-base font-medium">
-                  {fullName(chat.receiver)}
+                  {fullName(user)}
                 </Text>
               </View>
               <Text
@@ -152,23 +162,35 @@ function MessageListItem(props: MessageListItemProps) {
               </Text>
             </View>
             {typing && <TypingIndicator />}
-            {!typing && chat?.recent_message && (
+            {!typing && chat?.recent_message_content && (
               <View className="flex flex-row gap-4 w-full">
-                <View className="flex-1 flex-row gap-2 items-center overflow-hidden">
-                  {isMine && (
-                    <MessageStatusIcon status={chat?.recent_message?.status} />
+                <View className="relative flex-1 flex-row gap-1">
+                  {isMine && chat?.recent_message_status && (
+                    <View className="absolute left-0 top-px z-10">
+                      <MessageStatusIcon status={chat.recent_message_status} />
+                    </View>
                   )}
-                  <Text
-                    className="text-typography/60 text-sm"
-                    ellipsizeMode="tail"
-                    numberOfLines={2}
-                  >
-                    {chat?.recent_message?.content
-                      ? chat?.recent_message.content
-                      : chat?.recent_message?.file_data?.length
-                        ? "Media"
-                        : ""}
-                  </Text>
+
+                  {isImage ? (
+                    <View className="flex-row items-center gap-px">
+                      <Text>{isMine ? LEAD : ""}</Text>
+                      <Icon
+                        size="sm"
+                        as={ImageIcon}
+                        className="text-gray-400"
+                      />
+                      <Text>Image</Text>
+                    </View>
+                  ) : (
+                    <Text
+                      className="text-typography/60 text-sm"
+                      numberOfLines={2}
+                      ellipsizeMode="tail"
+                    >
+                      {isMine && !isImage ? LEAD : ""}
+                      {chat?.recent_message_content || "New message"}
+                    </Text>
+                  )}
                 </View>
                 <View className="flex-row w-8 items-center gap-1">
                   {!!unreadCount && (
@@ -191,4 +213,9 @@ function MessageListItem(props: MessageListItemProps) {
   );
 }
 
-export default memo(MessageListItem);
+const enhance = withObservables(["chat"], ({ chat }: { chat: Chat }) => ({
+  chat: chat.observe(),
+  receivers: chat.receivers,
+}));
+
+export default enhance(MessageListItem);

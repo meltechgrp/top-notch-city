@@ -33,7 +33,7 @@ function MessageActionsBottomSheet(props: Props) {
     message,
   } = props;
   const { me } = useMe();
-  const isMine = me?.id === message?.sender_info?.id;
+  const isMine = me?.id === message?.server_sender_id;
 
   const messageActions = useMemo(() => {
     return [
