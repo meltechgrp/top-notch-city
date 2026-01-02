@@ -1,6 +1,6 @@
 import { composeFullAddress, FindAmenity, generateTitle } from "@/lib/utils";
 
-export function normalizeProperty(p: Property) {
+export function normalizeProperty(p: ServerProperty) {
   try {
     const property = {
       property_server_id: p.id,

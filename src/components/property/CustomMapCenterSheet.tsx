@@ -11,7 +11,7 @@ import DropdownSelect from "@/components/custom/DropdownSelect";
 import eventBus from "@/lib/eventBus";
 
 interface CustomCenterSheetProps {
-  address: Property["address"];
+  address: ServerProperty["address"];
 }
 
 export function CustomCenterSheet({ address }: CustomCenterSheetProps) {

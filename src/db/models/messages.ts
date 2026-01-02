@@ -1,5 +1,5 @@
-import { userCollection } from "@/db/collections";
-import { Model, Q } from "@nozbe/watermelondb";
+import { User } from "@/db/models/users";
+import { Model, Q, Query } from "@nozbe/watermelondb";
 import { writer } from "@nozbe/watermelondb/decorators";
 import {
   field,
@@ -49,10 +49,12 @@ export class Chat extends Model {
   @text("recent_message_status")
   recent_message_status?: "pending" | "sent" | "delivered" | "failed" | "seen";
   get receivers() {
-    return userCollection.query(
-      Q.where("server_user_id", this.server_user_id),
-      Q.take(1)
-    );
+    return this.collections
+      .get("users")
+      .query(
+        Q.where("server_user_id", this.server_user_id),
+        Q.take(1)
+      ) as unknown as Query<User>;
   }
   @field("you_blocked_other") you_blocked_other?: boolean;
   @field("other_blocked_you") other_blocked_you?: boolean;
@@ -96,16 +98,18 @@ export class Message extends Model {
     await this.database.batch(...ops);
   }
   get receivers() {
-    return userCollection.query(
-      Q.where("server_user_id", this.server_receiver_id),
-      Q.take(1)
-    );
+    return this.collections
+      .get("users")
+      .query(
+        Q.where("server_user_id", this.server_receiver_id),
+        Q.take(1)
+      ) as unknown as Query<User>;
   }
   get senders() {
-    return userCollection.query(
+    return this.collection.query(
       Q.where("server_user_id", this.server_sender_id),
       Q.take(1)
-    );
+    ) as unknown as Query<User>;
   }
   @text("server_message_id") server_message_id!: string;
   @text("server_chat_id") server_chat_id!: string;

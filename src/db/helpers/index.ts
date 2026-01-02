@@ -102,7 +102,7 @@ export function diffServerAndLocal<TServer, TLocal>({
 }
 
 export function getPropertyDeleteRule(role: "user" | "agent" | "admin") {
-  return (local: Property, serverMap: Map<string, any>) => {
+  return (local: ServerProperty, serverMap: Map<string, any>) => {
     const serverProp = serverMap.get(local.id);
 
     if (!serverProp) return true;

@@ -8,7 +8,7 @@ export async function fetchProperty({ id }: { id: string }) {
       throw new Error("Failed to fetch property");
     }
 
-    return res as Property;
+    return res as ServerProperty;
   } catch (error) {
     console.log(error);
     throw new Error("Failed to fetch property");
@@ -21,7 +21,7 @@ export async function fetchWishlist() {
       throw new Error("Failed to fetch wishlist");
     }
 
-    return res as Property[];
+    return res as ServerProperty[];
   } catch (error) {
     throw new Error("Failed to fetch wishlist");
   }

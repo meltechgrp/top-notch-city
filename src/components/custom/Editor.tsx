@@ -7,7 +7,7 @@ import React, {
   useState,
 } from "react";
 import { Keyboard, TextInput, TextInputProps, View } from "react-native";
-import { CameraIcon, Send } from "lucide-react-native";
+import { CameraIcon, Plus, Send } from "lucide-react-native";
 import { Icon, Pressable } from "../ui";
 import MediaPicker, { MediaPickerRef } from "@/components/custom/MediaPicker";
 import { sendTyping } from "@/actions/message";
@@ -107,9 +107,7 @@ const EditorComponent = React.forwardRef<
     return () => clearTimeout(timeout);
   }, [typing, text]);
   return (
-    <View
-      className={cn("w-full relative border-t border-t-outline", className)}
-    >
+    <View className={cn("w-full relative", className)}>
       {HeaderComponent && <HeaderComponent />}
       <MediaPicker
         ref={mediaPickerRef as any}
@@ -120,22 +118,22 @@ const EditorComponent = React.forwardRef<
       />
 
       <View className={cn("w-full px-4 pt-3 pb-2", style)}>
-        <View className="flex-row items-start">
-          {!noMedia && (
-            <View className="flex-row items-end">
+        <View className="flex-row items-end">
+          <View
+            className={cn(
+              "flex-row bg-background-muted min-h-12 items-end rounded-[2rem] border border-outline-100 px-2 py-1  flex-1",
+              text.length > 20 && "rouneded-3xl"
+            )}
+          >
+            {!noMedia && text?.length == 0 && (
               <Pressable
-                className={cn(
-                  "h-12 w-12 items-center justify-center rounded-xl disabled:opacity-50"
-                )}
+                className={cn(" p-1.5 pr-0 disabled:opacity-50")}
                 onPress={() => mediaPickerRef.current?.pick?.()}
                 disabled={media.length >= fileLimit}
               >
-                <Icon as={CameraIcon} />
+                <Icon size="xl" as={CameraIcon} />
               </Pressable>
-            </View>
-          )}
-
-          <View className="flex-row items-center p-2  flex-1">
+            )}
             <TextInput
               ref={textInputRef}
               autoFocus={autoFocus}
@@ -146,17 +144,17 @@ const EditorComponent = React.forwardRef<
               }}
               value={text}
               onChangeText={handleTyping}
-              className="flex-1 text-typography max-h-[100px]"
+              className="flex-1 px-4 py-2 rounded-3xl text-typography max-h-[100px]"
               multiline={true}
               placeholder={placeholder}
-              placeholderTextColor={"#A0AEC0"}
+              placeholderClassName="text-typography/80"
             />
           </View>
 
           <View className="flex-row items-end pl-2 gap-x-4">
             <Pressable
               className={cn(
-                "bg-primary h-12 w-12 items-center justify-center rounded-xl",
+                "bg-primary h-12 w-12 items-center justify-center rounded-full",
                 !isComposing && "opacity-50"
               )}
               onPress={onSubmit}

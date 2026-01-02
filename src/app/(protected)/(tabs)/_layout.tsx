@@ -12,16 +12,19 @@ import {
   UserCircle,
 } from "lucide-react-native";
 import { Colors } from "@/constants/Colors";
-import { Icon, Pressable, useResolvedTheme, View } from "@/components/ui";
+import { Icon, Pressable, Text, useResolvedTheme, View } from "@/components/ui";
 import { useMe } from "@/hooks/useMe";
 import { useQuery } from "@tanstack/react-query";
 import { getTotal } from "@/actions/message";
+import { useNetworkStatus } from "@/hooks/useNetworkStatus";
+import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 
 export const unstable_settings = {
   initialRouteName: "/home",
 };
 export default function TabLayout() {
   const theme = useResolvedTheme();
+  const { isInternetReachable, isOffline } = useNetworkStatus();
   const { me, isAdmin, isAgent } = useMe();
   const { data } = useQuery({
     queryKey: ["total-pending"],
@@ -65,6 +68,24 @@ export default function TabLayout() {
         name="chats"
         options={() => ({
           title: "Messages",
+          headerTitle: () => (
+            <View>
+              {!isInternetReachable || isOffline ? (
+                <View className="flex-row items-center -mt-1 gap-2">
+                  <SpinningLoader size={20} />
+                  <Text className="text-base font-medium">
+                    {isOffline
+                      ? "Waiting for network"
+                      : !isInternetReachable
+                        ? "Connecting..."
+                        : ""}
+                  </Text>
+                </View>
+              ) : (
+                <Text className="text-lg font-medium">Messages</Text>
+              )}
+            </View>
+          ),
           tabBarIcon: ({ color }) => (
             <MessageSquareMore size={22} color={color} />
           ),

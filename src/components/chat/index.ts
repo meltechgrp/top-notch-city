@@ -4,15 +4,19 @@ import {
   chatCollection,
   messageCollection,
   messageFilesCollection,
+  userCollection,
 } from "@/db/collections";
 import { Q } from "@nozbe/watermelondb";
 import {
   normalizeChat,
   normalizeMessage,
   normalizeMessageFiles,
+  normalizeUser,
 } from "@/db/normalizers/message";
 import { Message } from "@/db/models/messages";
 import { uploadToBucket } from "@/actions/bucket";
+import { User } from "@/db/models/users";
+import { fullName } from "@/lib/utils";
 
 export async function editServerMessage({ data }: { data: ServerMessage }) {
   try {
@@ -243,6 +247,34 @@ export const updateMessageStatus = async ({
     await database.batch(...ops);
   });
 };
+export const updateMessage = async ({
+  message,
+  chatId,
+}: {
+  message: ServerMessage;
+  chatId: string;
+}) => {
+  await saveLocalMessage({ data: message, chatId });
+};
+export const updateUserStatus = async ({
+  userId,
+  status,
+}: {
+  userId: string;
+  status: User["status"];
+}) => {
+  await database.write(async () => {
+    const [user] = await userCollection
+      .query(Q.where("server_user_id", userId))
+      .fetch();
+
+    if (user) {
+      await user.update((c) => {
+        c.status = status;
+      });
+    }
+  });
+};
 export const deleteChat = async (chatId: string) => {
   try {
     await deleteChat(chatId);
@@ -255,14 +287,65 @@ export const deleteChat = async (chatId: string) => {
     }
   } catch (error) {}
 };
-export const updateChatDetails = async (data: ServerChat) => {
-  const [chat] = await chatCollection
-    .query(Q.where("server_chat_id", data.chat_id))
-    .fetch();
+export const updateChats = async (data: ServerChat[]) => {
+  await database.write(async () => {
+    const ops: any[] = [];
+    const updatedOwners = new Set<string>();
 
-  if (chat) {
-    await chat.update((c) => Object.assign(c, normalizeChat(data)));
-  }
+    for (const raw of data) {
+      if (!raw) continue;
+
+      const chatId = raw.chat_id;
+
+      const [existingChat] = await chatCollection
+        .query(Q.where("server_chat_id", chatId))
+        .fetch();
+
+      const chatModel = existingChat
+        ? existingChat.prepareUpdate((p) =>
+            Object.assign(p, normalizeChat(raw))
+          )
+        : chatCollection.prepareCreate((p) =>
+            Object.assign(p, normalizeChat(raw))
+          );
+
+      ops.push(chatModel);
+
+      if (raw?.receiver) {
+        console.log(raw.receiver);
+        const serverUserId = raw?.receiver.id;
+        const [existingOwner] = await userCollection
+          .query(Q.where("server_user_id", serverUserId))
+          .fetch();
+        if (!existingOwner) {
+          if (!updatedOwners.has(serverUserId)) {
+            updatedOwners.add(serverUserId);
+
+            console.log(`creating user ${fullName(raw?.receiver)}`);
+            ops.push(
+              userCollection.prepareCreate((u) =>
+                Object.assign(u, normalizeUser(raw.receiver))
+              )
+            );
+          }
+        } else {
+          if (!updatedOwners.has(serverUserId)) {
+            updatedOwners.add(serverUserId);
+
+            console.log(`updating user ${fullName(raw?.receiver)}`);
+            ops.push(
+              existingOwner.prepareUpdate((u) => {
+                u.status = raw.receiver.status;
+                u.profile_image = raw.receiver.profile_image;
+              })
+            );
+          }
+        }
+      }
+    }
+
+    await database.batch(...ops);
+  });
 };
 export function messagesActions() {
   return {
@@ -272,5 +355,8 @@ export function messagesActions() {
     addIncomingMessage,
     deleteMessage,
     updateMessageStatus,
+    updateUserStatus,
+    updateMessage,
+    updateChats,
   };
 }

@@ -27,7 +27,7 @@ export function useReels() {
   };
 }
 
-export function propertyToReelVideo(properties: Property[]) {
+export function propertyToReelVideo(properties: ServerProperty[]) {
   return properties
     .map((p) => {
       let v = p.media.find((m) => m.media_type === "VIDEO");

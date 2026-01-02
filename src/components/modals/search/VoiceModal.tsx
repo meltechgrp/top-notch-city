@@ -14,7 +14,7 @@ interface VoiceModalProps {
   visible: boolean;
   onClose: () => void;
   title?: string;
-  onUpload: (data: Property[]) => void;
+  onUpload: (data: ServerProperty[]) => void;
 }
 
 export const VoiceModal: React.FC<VoiceModalProps> = ({

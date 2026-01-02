@@ -10,7 +10,6 @@ import {
 } from "@/db/collections";
 import { chunkArray } from "@/db/helpers";
 import { normalizeProperty } from "@/db/normalizers/property";
-import { fullName } from "@/lib/utils";
 import { Q } from "@nozbe/watermelondb";
 
 type SyncInput = {
@@ -19,7 +18,6 @@ type SyncInput = {
   delete?: any[];
   batchSize?: number;
 };
-
 export async function syncProperties({
   create = [],
   update = [],
@@ -31,23 +29,27 @@ export async function syncProperties({
   );
 
   if (toDelete.length) {
-    await database.write(async () => {
-      const deletions = toDelete.flatMap((p) =>
-        [
-          propertiesCollection,
-          propertyMediaCollection,
-          propertyAmenityCollection,
-          propertyAvailabilityCollection,
-          propertyOwnershipCollection,
-          propertyCompaniesCollection,
-        ].flatMap(async (collection) =>
-          (
-            await collection.query(Q.where("property_server_id", p.id)).fetch()
-          ).map((m: any) => m.prepareDestroyPermanently())
-        )
-      );
+    const deleteIds = toDelete.map((p) => p.id);
 
-      await database.batch(...(await Promise.all(deletions)).flat());
+    const collections = [
+      propertiesCollection,
+      propertyMediaCollection,
+      propertyAmenityCollection,
+      propertyAvailabilityCollection,
+      propertyOwnershipCollection,
+      propertyCompaniesCollection,
+    ];
+
+    const deletions = await Promise.all(
+      collections.map((c) =>
+        c.query(Q.where("property_server_id", Q.oneOf(deleteIds))).fetch()
+      )
+    );
+
+    await database.write(async () => {
+      await database.batch(
+        ...deletions.flat().map((m: any) => m.prepareDestroyPermanently())
+      );
     });
   }
 
@@ -57,75 +59,140 @@ export async function syncProperties({
   const batches = chunkArray(toUpsert, batchSize);
 
   for (let i = 0; i < batches.length; i++) {
-    const batchItems = batches[i];
+    const rawBatch = batches[i];
 
     console.log(
-      `🔄 Syncing batch ${i + 1}/${batches.length} (${batchItems.length})`
+      `🔄 Syncing batch ${i + 1}/${batches.length} (${rawBatch.length})`
     );
 
+    const normalized = rawBatch.map(normalizeProperty).filter(Boolean) as any[];
+
+    const propertyIds = normalized.map((n) => n.property.property_server_id);
+
+    const ownerIds = normalized
+      .map((n) => n.owner?.server_user_id)
+      .filter(Boolean);
+
+    /* -------- Pre-fetch existing records -------- */
+    const [
+      existingProperties,
+      existingOwners,
+      medias,
+      amenities,
+      availabilities,
+      ownerships,
+      companies,
+    ] = await Promise.all([
+      propertiesCollection
+        .query(Q.where("property_server_id", Q.oneOf(propertyIds)))
+        .fetch(),
+      userCollection
+        .query(Q.where("server_user_id", Q.oneOf(ownerIds)))
+        .fetch(),
+      propertyMediaCollection
+        .query(Q.where("property_server_id", Q.oneOf(propertyIds)))
+        .fetch(),
+      propertyAmenityCollection
+        .query(Q.where("property_server_id", Q.oneOf(propertyIds)))
+        .fetch(),
+      propertyAvailabilityCollection
+        .query(Q.where("property_server_id", Q.oneOf(propertyIds)))
+        .fetch(),
+      propertyOwnershipCollection
+        .query(Q.where("property_server_id", Q.oneOf(propertyIds)))
+        .fetch(),
+      propertyCompaniesCollection
+        .query(Q.where("property_server_id", Q.oneOf(propertyIds)))
+        .fetch(),
+    ]);
+
+    /* -------- Build lookup maps -------- */
+    const propertyMap = new Map(
+      existingProperties.map((p) => [p.property_server_id, p])
+    );
+
+    const ownerMap = new Map(existingOwners.map((u) => [u.server_user_id, u]));
+
+    const clearMap = (rows: any[], key: string) => {
+      const map = new Map<string, any[]>();
+      for (const r of rows) {
+        const id = r[key];
+        if (!map.has(id)) map.set(id, []);
+        map.get(id)!.push(r);
+      }
+      return map;
+    };
+
+    const mediaMap = clearMap(medias, "property_server_id");
+    const amenityMap = clearMap(amenities, "property_server_id");
+    const availabilityMap = clearMap(availabilities, "property_server_id");
+    const ownershipMap = clearMap(ownerships, "property_server_id");
+    const companyMap = clearMap(companies, "property_server_id");
+
+    /* ---------------- WRITE ---------------- */
     await database.write(async () => {
       const ops: any[] = [];
-      const updatedOwners = new Set<string>();
 
-      for (const raw of batchItems) {
-        const n = normalizeProperty(raw);
-        if (!n) continue;
+      const preparedProperties = new Set<string>();
+      const preparedOwners = new Set<string>();
 
+      for (const n of normalized) {
         const propertyId = n.property.property_server_id;
 
-        const [existingProperty] = await propertiesCollection
-          .query(Q.where("property_server_id", propertyId))
-          .fetch();
+        /* ---- PROPERTY ---- */
+        const existing = propertyMap.get(propertyId);
 
-        const propertyModel = existingProperty
-          ? existingProperty.prepareUpdate((p) => Object.assign(p, n.property))
-          : propertiesCollection.prepareCreate((p) =>
-              Object.assign(p, n.property)
+        if (!preparedProperties.has(propertyId)) {
+          preparedProperties.add(propertyId);
+
+          if (existing) {
+            ops.push(
+              existing.prepareUpdate((p) => Object.assign(p, n.property))
             );
+          } else {
+            ops.push(
+              propertiesCollection.prepareCreate((p) =>
+                Object.assign(p, n.property)
+              )
+            );
+          }
 
-        ops.push(propertyModel);
+          /* ---- CLEAR RELATIONS ---- */
+          [
+            mediaMap,
+            amenityMap,
+            availabilityMap,
+            ownershipMap,
+            companyMap,
+          ].forEach((map) => {
+            map
+              .get(propertyId)
+              ?.forEach((m: any) => ops.push(m.prepareDestroyPermanently()));
+          });
+        }
 
-        const clearRelations = async (collection: any) =>
-          (
-            await collection
-              .query(Q.where("property_server_id", propertyId))
-              .fetch()
-          ).map((m: any) => m.prepareDestroyPermanently());
-
-        ops.push(
-          ...(await clearRelations(propertyMediaCollection)),
-          ...(await clearRelations(propertyAmenityCollection)),
-          ...(await clearRelations(propertyAvailabilityCollection)),
-          ...(await clearRelations(propertyOwnershipCollection)),
-          ...(await clearRelations(propertyCompaniesCollection))
+        /* ---- RELATIONS ---- */
+        n.media?.forEach((m: any) =>
+          ops.push(
+            propertyMediaCollection.prepareCreate((pm) => Object.assign(pm, m))
+          )
         );
 
-        if (n.media)
+        n.amenities?.forEach((a: any) =>
           ops.push(
-            ...n.media.map((m) =>
-              propertyMediaCollection.prepareCreate((pm) =>
-                Object.assign(pm, m)
-              )
+            propertyAmenityCollection.prepareCreate((pa) =>
+              Object.assign(pa, a)
             )
-          );
+          )
+        );
 
-        if (n.amenities)
+        n.availabilities?.forEach((av: any) =>
           ops.push(
-            ...n.amenities.map((a) =>
-              propertyAmenityCollection.prepareCreate((pa) =>
-                Object.assign(pa, a)
-              )
+            propertyAvailabilityCollection.prepareCreate((pa) =>
+              Object.assign(pa, av)
             )
-          );
-
-        if (n.availabilities)
-          ops.push(
-            ...n.availabilities.map((av) =>
-              propertyAvailabilityCollection.prepareCreate((pa) =>
-                Object.assign(pa, av)
-              )
-            )
-          );
+          )
+        );
 
         if (n.ownership) {
           ops.push(
@@ -135,29 +202,35 @@ export async function syncProperties({
           );
         }
 
-        if (n.owner) {
-          const serverUserId = n.owner.server_user_id;
-          const [existingOwner] = await userCollection
-            .query(Q.where("server_user_id", serverUserId))
-            .fetch();
-          if (!existingOwner) {
-            if (!updatedOwners.has(serverUserId)) {
-              updatedOwners.add(serverUserId);
+        n.companies?.forEach((c: any) =>
+          ops.push(
+            propertyCompaniesCollection.prepareCreate((pc) =>
+              Object.assign(pc, c)
+            )
+          )
+        );
 
-              console.log(`creating user ${fullName(n.owner)}`);
+        /* ---- OWNER ---- */
+        if (n.owner) {
+          const id = n.owner.server_user_id;
+          const existingOwner = ownerMap.get(id);
+
+          if (!preparedOwners.has(id)) {
+            preparedOwners.add(id);
+
+            if (existingOwner) {
+              ops.push(
+                existingOwner.prepareUpdate((u) => {
+                  u.status = n.owner.status;
+                  u.profile_image = n.owner.profile_image;
+                })
+              );
+            } else {
               ops.push(
                 userCollection.prepareCreate((u) => Object.assign(u, n.owner))
               );
             }
           }
-        }
-
-        for (const company of n.companies || []) {
-          ops.push(
-            propertyCompaniesCollection.prepareCreate((c) =>
-              Object.assign(c, company)
-            )
-          );
         }
       }
 

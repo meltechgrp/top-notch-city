@@ -83,7 +83,7 @@ export const FindAmenity = (item: string, data?: any): any => {
   );
 };
 
-export function generateTitle(property: Property) {
+export function generateTitle(property: ServerProperty) {
   switch (property?.category?.name?.trim()) {
     case "Residential":
       return `${FindAmenity("Bedroom", property) || ""} Bedroom ${property?.subcategory?.name || ""}`.trim();

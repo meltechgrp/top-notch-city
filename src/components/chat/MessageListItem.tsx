@@ -24,6 +24,8 @@ import { ImageIcon, MoreHorizontal, Trash } from "lucide-react-native";
 import { Chat } from "@/db/models/messages";
 import { withObservables } from "@nozbe/watermelondb/react";
 import { User } from "@/db/models/users";
+import { tempStore } from "@/store/tempStore";
+import { use$ } from "@legendapp/state/react";
 const LEAD = "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0";
 type MessageListItemProps = {
   chat: Chat;
@@ -35,7 +37,7 @@ function MessageListItem(props: MessageListItemProps) {
     receivers: [user],
   } = props;
 
-  const typing = false;
+  const typing = use$(tempStore.getTyping(chat.server_chat_id));
   const queryClient = useQueryClient();
   const { me } = useMe();
   const { mutateAsync } = useMutation({
@@ -78,6 +80,7 @@ function MessageListItem(props: MessageListItemProps) {
       },
     });
   }
+  // console.log(user);
   const isImage = chat?.recent_message_content?.trim() == "image";
   return (
     <SwipeableWrapper

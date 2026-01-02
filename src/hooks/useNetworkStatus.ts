@@ -22,7 +22,7 @@ const normalizeState = (state: NetInfoState): NetworkStatus => {
   return {
     isConnected,
     isInternetReachable,
-    isOffline: !isConnected || !isInternetReachable,
+    isOffline: !isConnected,
     type: state.type,
     isWifi: state.type === NetInfoStateType.wifi,
     isCellular: state.type === NetInfoStateType.cellular,

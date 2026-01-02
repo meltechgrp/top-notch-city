@@ -1,16 +1,14 @@
 import { database } from "@/db";
-import { normalizeChat, normalizeUser } from "@/db/normalizers/message";
 import { Q } from "@nozbe/watermelondb";
 import { deleteChat } from "@/actions/message";
 import {
   chatCollection,
   messageCollection,
   messageFilesCollection,
-  userCollection,
 } from "@/db/collections";
 import { chunkArray } from "@/db/helpers";
-import { fullName } from "@/lib/utils";
 import { Chat } from "@/db/models/messages";
+import { updateChats } from "@/components/chat";
 
 type SyncInput = {
   pullCreate: ServerChat[];
@@ -28,7 +26,7 @@ export async function syncChatsEngine({
   batchSize = 10,
 }: SyncInput) {
   console.log(
-    `🧩 create=${pullCreate?.length}, update=${pullUpdate?.length}, delete=${pullDelete?.length}, server delete=${pushDelete?.length}`
+    `🧩 create=${pullCreate?.length}, update=${pullUpdate?.length}, delete=${pullDelete?.length}, server-delete=${pushDelete?.length}`
   );
   if (pushDelete?.length) {
     await Promise.all(
@@ -64,66 +62,7 @@ export async function syncChatsEngine({
       `🔄 Syncing batch ${i + 1}/${batches.length} (${batchItems.length})`
     );
 
-    await database.write(async () => {
-      const ops: any[] = [];
-      const updatedOwners = new Set<string>();
-
-      for (const raw of batchItems) {
-        if (!raw) continue;
-
-        const chatId = raw.chat_id;
-
-        const [existingChat] = await chatCollection
-          .query(Q.where("server_chat_id", chatId))
-          .fetch();
-
-        const chatModel = existingChat
-          ? existingChat.prepareUpdate((p) =>
-              Object.assign(p, normalizeChat(raw))
-            )
-          : chatCollection.prepareCreate((p) =>
-              Object.assign(p, normalizeChat(raw))
-            );
-
-        ops.push(chatModel);
-
-        if (raw?.receiver) {
-          const serverUserId = raw.receiver.id;
-
-          const [existingOwner] = await userCollection
-            .query(Q.where("server_user_id", serverUserId))
-            .fetch();
-
-          if (!existingOwner) {
-            ops.push(
-              userCollection.prepareCreate((u) =>
-                Object.assign(u, normalizeUser(raw.receiver))
-              )
-            );
-          }
-        }
-        if (raw?.receiver) {
-          const serverUserId = raw?.receiver.id;
-          const [existingOwner] = await userCollection
-            .query(Q.where("server_user_id", serverUserId))
-            .fetch();
-          if (!existingOwner) {
-            if (!updatedOwners.has(serverUserId)) {
-              updatedOwners.add(serverUserId);
-
-              console.log(`creating user ${fullName(raw?.receiver)}`);
-              ops.push(
-                userCollection.prepareCreate((u) =>
-                  Object.assign(u, normalizeUser(raw.receiver))
-                )
-              );
-            }
-          }
-        }
-      }
-
-      await database.batch(...ops);
-    });
+    await updateChats(batchItems);
   }
 
   console.log("✅ Chat sync completed");

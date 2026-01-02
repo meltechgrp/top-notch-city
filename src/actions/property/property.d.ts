@@ -3,7 +3,7 @@ type Result = {
   page: number;
   per_page: number;
   pages: number;
-  results: Property[];
+  results: ServerProperty[];
 };
 
 type Category = {
@@ -26,10 +26,10 @@ type CategorySections = {
 
 type PropertyResponse = {
   count: number;
-  properties: Property[];
+  properties: ServerProperty[];
 };
 
-type Property = {
+type ServerProperty = {
   id: string;
   title: string;
   slug: string;

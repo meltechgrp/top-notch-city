@@ -5,6 +5,7 @@ import { withObservables } from "@nozbe/watermelondb/react";
 import { chatCollection } from "@/db/collections";
 import { Q } from "@nozbe/watermelondb";
 import { Chat } from "@/db/models/messages";
+import { Box } from "@/components/ui";
 
 interface ChatWrapperProps {
   chats: Chat[];
@@ -13,22 +14,24 @@ interface ChatWrapperProps {
 
 function ChatWrapper({ chats }: ChatWrapperProps) {
   return (
-    <KeyboardAvoidingView
-      style={{
-        flex: 1,
-        // maxHeight: 600,
-      }}
-      behavior={"padding"}
-      keyboardVerticalOffset={Platforms.isIOS() ? 100 : 80}
-    >
-      <ChatRoom
-        chat={chats[0]}
-        ChatRoomFooterProps={{
-          placeholder: "Write a message",
-          defaultText: "",
+    <Box className="flex-1">
+      <KeyboardAvoidingView
+        style={{
+          flex: 1,
+          // maxHeight: 600,
         }}
-      />
-    </KeyboardAvoidingView>
+        behavior={"padding"}
+        keyboardVerticalOffset={Platforms.isIOS() ? 70 : 80}
+      >
+        <ChatRoom
+          chat={chats[0]}
+          ChatRoomFooterProps={{
+            placeholder: "Write a message",
+            defaultText: "",
+          }}
+        />
+      </KeyboardAvoidingView>
+    </Box>
   );
 }
 

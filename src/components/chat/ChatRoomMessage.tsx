@@ -11,11 +11,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import PostTextContent from "./PostTextContent";
-import {
-  generateMediaUrl,
-  generateMediaUrlSingle,
-  getImageUrl,
-} from "@/lib/api";
+import { generateMediaUrlSingle } from "@/lib/api";
 import { hapticFeed } from "@/components/HapticTab";
 import { MessageStatusIcon } from "@/components/chat/MessageStatus";
 import { router } from "expo-router";

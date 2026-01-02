@@ -31,6 +31,10 @@ import { Q } from "@nozbe/watermelondb";
 import { FlashList, FlashListRef } from "@shopify/flash-list";
 import { makeMessageReadAndDelivered } from "@/actions/message";
 import { useMessagesSync } from "@/db/queries/syncMessages";
+import { use$ } from "@legendapp/state/react";
+import { tempStore } from "@/store/tempStore";
+import { useNetworkStatus } from "@/hooks/useNetworkStatus";
+import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 
 type Props = {
   chat: Chat;
@@ -51,11 +55,12 @@ function ChatRoom(props: Props) {
     chatId: chat.server_chat_id,
   });
   const { me } = useMe();
+  const { isInternetReachable, isOffline } = useNetworkStatus();
   const [currentTitle, setCurrentTitle] = React.useState("");
   const listRef = React.useRef<FlashListRef<Message> | null>(null);
   const fadeAnim = React.useRef(new Animated.Value(1)).current;
   const scrollToBottom = () => {
-    listRef.current?.scrollToOffset({ animated: true, offset: 0 });
+    listRef.current?.scrollToEnd({ animated: true });
   };
 
   const {
@@ -126,7 +131,7 @@ function ChatRoom(props: Props) {
     }
   );
 
-  const typing = false;
+  const typing = use$(tempStore.getTyping(chat.server_chat_id));
   React.useEffect(() => {
     if (me && chat?.unread_count > 0) {
       makeMessageReadAndDelivered({ chatId: chat.server_chat_id });
@@ -146,7 +151,7 @@ function ChatRoom(props: Props) {
                   },
                 })
               }
-              className="flex-1 flex-row gap-4 ml-4 justify-start items-center"
+              className="flex-1 ml-4 flex-row gap-4 justify-start items-center"
             >
               {receiver?.profile_image ? (
                 <View className="w-12 h-12 rounded-full overflow-hidden">
@@ -178,7 +183,18 @@ function ChatRoom(props: Props) {
                 <Heading size="lg" numberOfLines={1} className="">
                   {fullName(receiver)}
                 </Heading>
-                {receiver?.status == "online" ? (
+                {!isInternetReachable || isOffline ? (
+                  <View className="flex-row items-center -mt-1 gap-2">
+                    <SpinningLoader size={16} />
+                    <Text className="sm">
+                      {isOffline
+                        ? "Waiting for network"
+                        : !isInternetReachable
+                          ? "Connecting..."
+                          : ""}
+                    </Text>
+                  </View>
+                ) : receiver?.status == "online" ? (
                   <Text className=" text-xs text-gray-500">Online</Text>
                 ) : (
                   <Text className=" text-xs text-gray-500">
@@ -244,13 +260,13 @@ function ChatRoom(props: Props) {
           </View>
         )}
 
-        <SafeAreaView edges={["bottom"]} className="bg-background">
+        <SafeAreaView edges={["bottom"]} className="bg-transparent">
           <ChatRoomFooter
             chatId={chat.server_chat_id}
             onPost={(isEdit) => {
               exitEditMode();
               if (!isEdit) {
-                setTimeout(scrollToBottom, 100);
+                scrollToBottom();
               }
             }}
             receiver={receiver}
@@ -262,7 +278,7 @@ function ChatRoom(props: Props) {
             isEditing={isEditing}
             selectedMessage={selectedMessage}
             {...ChatRoomFooterProps}
-            className="pb-0 bg-background border-t border-outline"
+            className=""
           />
         </SafeAreaView>
         <MessageActionsBottomSheet

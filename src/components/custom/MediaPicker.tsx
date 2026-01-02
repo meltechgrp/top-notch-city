@@ -26,17 +26,10 @@ export type MediaPickerRef = {
 const MediaPicker = React.forwardRef<MediaPickerRef, Props>((props, ref) => {
   const { media, max = 3, onChange, className } = props;
 
-  const [previewFiles, setPreviewFiles] = React.useState<UploadedFile[]>([]);
-
   const currentCount = media?.length || 0;
-  const { pickMedia, takeMedia, progressMap, processFiles } = useMediaUpload({
+  const { pickMedia, takeMedia } = useMediaUpload({
     type: "all",
     onFiles: (media) => {
-      setPreviewFiles(media);
-      processFiles(media);
-    },
-    onSuccess: (media) => {
-      setPreviewFiles([]);
       onChange((prev) => {
         const merged = [...prev, ...media]
           .filter(
@@ -46,7 +39,7 @@ const MediaPicker = React.forwardRef<MediaPickerRef, Props>((props, ref) => {
         return merged;
       });
     },
-    onError: () => setPreviewFiles([]),
+    onSuccess: (media) => {},
     maxSelection: max - currentCount,
   });
 
@@ -63,7 +56,7 @@ const MediaPicker = React.forwardRef<MediaPickerRef, Props>((props, ref) => {
       take: takeMedia,
     };
   }, []);
-  if (!media.length && !previewFiles.length) return null;
+  if (!media.length) return null;
   return (
     <ScrollView
       horizontal
@@ -74,27 +67,6 @@ const MediaPicker = React.forwardRef<MediaPickerRef, Props>((props, ref) => {
         className={cn("flex-row gap-x-2 bg-transparent", className)}
         layout={LinearTransition}
       >
-        {previewFiles.map((file) => {
-          const progress = Math.round(progressMap[file.id] ?? 0);
-
-          return (
-            <View
-              key={file.id}
-              style={{ width: ITEM_SIZE, height: ITEM_SIZE }}
-              className="rounded-xl bg-background-muted items-center justify-center"
-            >
-              <MotiView
-                from={{ rotate: "0deg" }}
-                animate={{ rotate: "360deg" }}
-                transition={{ loop: true, duration: 900 }}
-                className="w-8 h-8 border-2 border-outline-200 border-t-primary rounded-full"
-              />
-              <Text className="absolute text-xs text-primary font-semibold">
-                {progress}%
-              </Text>
-            </View>
-          );
-        })}
         {media.map((m, i) => {
           const isVideo = m.media_type === "VIDEO";
 

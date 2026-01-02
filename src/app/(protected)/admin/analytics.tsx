@@ -34,19 +34,16 @@ export default function AdminAnalytics() {
           title="User Distribution"
           data={[
             { value: data?.totalNormalUsers, label: "users" },
-            { value: data?.totalAdmin, label: "admins" },
+            { value: data?.totalAdmins, label: "admins" },
             { value: data?.totalAgents, label: "agents" },
-            { value: data?.totalAdminAgent, label: "admin agents" },
+            { value: data?.totalAdminAgents, label: "admin agents" },
           ]}
         />
         <BarChartCard
           title="User Stats"
           data={fillLast6Months(data?.totalUsersWithinLast6Months)}
         />
-        <BarChartCard
-          title="Devices Stats"
-          data={fillLast6Months(data?.totalDevicesLast6Months)}
-        />
+
         <View>
           <LineChartCard title="Property Views" data={views} />
         </View>
