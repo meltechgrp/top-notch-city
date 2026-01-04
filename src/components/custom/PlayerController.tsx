@@ -3,7 +3,7 @@ import ReelInteractionBar from "@/components/reel/ReelInteractionBar";
 import { Icon, Pressable, Text, useResolvedTheme, View } from "@/components/ui";
 import { Divider } from "@/components/ui/divider";
 import { Colors } from "@/constants/Colors";
-import { cn, formatMessageTime, formatMoney } from "@/lib/utils";
+import { cn, formatMessageTime, formatMoney, formatTime } from "@/lib/utils";
 import { router } from "expo-router";
 import { ChevronRight, House, MapPin } from "lucide-react-native";
 import { memo, useEffect } from "react";
@@ -51,13 +51,6 @@ function PlayerController({
     progress.set(currentTime);
     duration.set(length);
   }, [length, currentTime]);
-  // format mm:ss
-  const formatTime = (ms: number) => {
-    const totalSec = Math.floor(ms);
-    const min = Math.floor(totalSec / 60);
-    const sec = totalSec % 60;
-    return `${min}:${sec < 10 ? "0" : ""}${sec}`;
-  };
   return (
     <View className="absolute ios:bottom-0 bottom-10 w-full left-0 right-0 ">
       {/* Time */}

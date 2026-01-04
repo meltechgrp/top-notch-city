@@ -5,10 +5,10 @@ import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { uploadToBucket } from "@/actions/bucket";
 import { uploadWithFakeProgress } from "@/lib/utils";
 
-type MediaType = "image" | "video" | "audio" | "all";
+export type MediaType = "image" | "video" | "audio" | "all";
 
 type UseMediaUploadOptions = {
-  onSuccess: (media: UploadedFile[]) => void;
+  onSuccess?: (media: UploadedFile[]) => void;
   onFiles: (media: UploadedFile[]) => void;
   onError?: () => void;
   type: MediaType;
@@ -46,8 +46,7 @@ export function useMediaUpload({
                 const uploaded = await uploadWithFakeProgress(
                   () =>
                     uploadToBucket({
-                      data: [{ url: item.url }],
-                      type,
+                      data: [{ url: item.url, type }],
                     }),
                   (p) => updateProgress(item.id, p),
                   type == "video" || type == "all"
@@ -69,7 +68,7 @@ export function useMediaUpload({
         media_type: results[index].media_type,
       }));
 
-      onSuccess(uploaded);
+      onSuccess?.(uploaded);
     } catch (error) {
       showErrorAlert({
         title: "Upload failed. Try again.",
@@ -113,6 +112,7 @@ export function useMediaUpload({
       allowsMultipleSelection: true,
       orderedSelection: true,
       quality: type === "video" ? 1 : undefined,
+      presentationStyle: ImagePicker.UIImagePickerPresentationStyle.FULL_SCREEN,
     });
 
     if (result.canceled) return;
@@ -124,6 +124,7 @@ export function useMediaUpload({
       id: uniqueId("media_"),
       media_type: type.toUpperCase() as Media["media_type"],
       loading: true,
+      is_local: true,
       progress: 0,
     })) as UploadedFile[];
 
@@ -160,6 +161,7 @@ export function useMediaUpload({
     const files = result.assets.map((a) => ({
       url: a.uri,
       id: uniqueId("media_"),
+      is_local: true,
       media_type: type.toUpperCase() as Media["media_type"],
       loading: true,
       progress: 0,

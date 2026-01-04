@@ -9,28 +9,26 @@ import React, { useCallback } from "react";
 import { Dimensions } from "react-native";
 import ChatList from "@/components/chat/ChatList";
 import { SmallTabBar } from "@/components/custom/CustomTabbarHeader";
-import { useBooking } from "@/hooks/useBooking";
 
 export default function MessagesScreen() {
   const { me, isLoading } = useMe();
   const layout = Dimensions.get("window");
   const [index, setIndex] = React.useState(0);
-  const { counts } = useBooking();
   const routes = React.useMemo(
     () => [
       { key: "chats", title: "Chats" },
       {
         key: "reservation",
         title: "Reservations",
-        count: counts.reservations,
+        count: 0,
       },
       {
         key: "inspection",
         title: "Inspections",
-        count: counts.inspections,
+        count: 0,
       },
     ],
-    [counts]
+    []
   );
   const renderScene = ({ route }: any) => {
     switch (route.key) {

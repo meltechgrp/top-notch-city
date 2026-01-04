@@ -1,10 +1,11 @@
 import { messagesActions } from "@/components/chat";
 import { ChatRoomMessageProps } from "@/components/chat/ChatRoomMessage";
 import QuoteMessage from "@/components/chat/ChatRoomQuoteMessage";
-import Editor, { EditorComponentRefHandle } from "@/components/custom/Editor";
+import Editor, { EditorComponentRefHandle } from "@/components/editor";
+import { User } from "@/db/models/users";
 import { useMe } from "@/hooks/useMe";
 import useSound from "@/hooks/useSound";
-import { guidGenerator } from "@/lib/utils";
+import { fullName, guidGenerator } from "@/lib/utils";
 import React, { useCallback } from "react";
 import { View } from "react-native";
 
@@ -16,7 +17,7 @@ type Props = View["props"] & {
   activeQuoteMsg: ChatRoomMessageProps["message"] | undefined;
   clearActiveQuoteMsg: () => void;
   isEditing: boolean;
-  receiver: ReceiverInfo;
+  receiver: User;
   selectedMessage: ChatRoomMessageProps["message"] | undefined;
 };
 
@@ -50,7 +51,7 @@ const ChatRoomFooter = React.forwardRef<EditorComponentRefHandle, Props>(
             id: me.id,
           },
           receiver_info: {
-            ...receiver,
+            id: receiver.server_user_id,
           },
           reply_to_message_id: activeQuoteMsg?.server_message_id,
           isMock: !isEditing,
@@ -97,6 +98,7 @@ const ChatRoomFooter = React.forwardRef<EditorComponentRefHandle, Props>(
           autoFocus={false}
           value={props.defaultText}
           ref={ref}
+          fullName={fullName(receiver)}
           noMedia={isEditing}
         />
       </View>

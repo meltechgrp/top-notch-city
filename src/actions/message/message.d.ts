@@ -43,7 +43,7 @@ interface ServerMessage {
   created_at: string;
   message_id: string;
   file_data: FileData[];
-  receiver_info?: ReceiverInfo;
+  receiver_info?: SenderInfo;
   sender_info: SenderInfo;
   status: "pending" | "seen" | "delivered" | "sent" | "failed";
   updated_at?: string;

@@ -260,7 +260,7 @@ function ChatRoom(props: Props) {
           </View>
         )}
 
-        <SafeAreaView edges={["bottom"]} className="bg-transparent">
+        <SafeAreaView edges={["bottom"]} className="bg-background">
           <ChatRoomFooter
             chatId={chat.server_chat_id}
             onPost={(isEdit) => {

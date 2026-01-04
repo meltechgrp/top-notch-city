@@ -40,7 +40,7 @@ export const VideoPlayer = memo(
       const [showControls, setShowControls] = useState(false);
       const [showBottomSheet, setShowBottomSheet] = useState(false);
       const mounted = useRef(true);
-      const { toggleLike } = useLike({ queryKey: ["reels"] });
+      const { toggleLike } = useLike();
       // Setup player
       const player = useVideoPlayer(
         { uri: reel.video, useCaching: true },

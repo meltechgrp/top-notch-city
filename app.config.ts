@@ -3,6 +3,7 @@ export default () => ({
   slug: "topnotch-city",
   newArchEnabled: true,
   version: "1.1.0",
+  deepLinks: true,
   orientation: "portrait",
   icon: "./src/assets/images/icon.png",
   scheme: "com.meltech.topnotchcity",
@@ -152,10 +153,31 @@ export default () => ({
       },
     ],
     [
+      "expo-camera",
+      {
+        cameraPermission:
+          "$(PRODUCT_NAME) needs access to your camera so you can take photos and videos of properties, upload property listings, and update your profile picture.",
+        microphonePermission:
+          "$(PRODUCT_NAME) requires microphone access to record audio when creating video tours of properties or capturing voice notes.",
+        recordAudioAndroid: true,
+      },
+    ],
+    [
+      "expo-media-library",
+      {
+        photosPermission:
+          "$(PRODUCT_NAME) needs access to your photo library so you can upload property images, select profile pictures, send image, and share media for property listings.",
+        savePhotosPermission:
+          "Allow $(PRODUCT_NAME) to save photos to your library.",
+        isAccessMediaLocationEnabled: true,
+        granularPermissions: ["audio", "photo"],
+      },
+    ],
+    [
       "expo-image-picker",
       {
         photosPermission:
-          "$(PRODUCT_NAME) needs access to your photo library so you can upload property images, select profile pictures, and share media for property listings.",
+          "$(PRODUCT_NAME) needs access to your photo library so you can upload property images, select profile pictures,  send image, and share media for property listings.",
         cameraPermission:
           "$(PRODUCT_NAME) needs access to your camera so you can take photos and videos of properties, upload property listings, and update your profile picture.",
         microphonePermission:

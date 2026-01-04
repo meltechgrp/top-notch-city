@@ -12,6 +12,7 @@ import {
   ChevronLeftIcon,
   LogIn,
   Settings,
+  Share,
   User,
 } from "lucide-react-native";
 import ProfileSkeleton from "@/components/skeleton/ProfileSkeleton";
@@ -130,10 +131,25 @@ export function ProfileWrapper({
             <View className="px-2 flex-row gap-4">
               {user && userType == "owner" && (
                 <Pressable
-                  className="p-2 bg-background-muted rounded-full"
+                  className="p-2 rounded-full"
                   onPress={() => router.push("/(protected)/settings")}
                 >
                   <Icon as={Settings} className="w-6 h-6" />
+                </Pressable>
+              )}
+              {user && userType != "owner" && (
+                <Pressable
+                  className="p-2 rounded-full"
+                  onPress={() =>
+                    router.push({
+                      pathname: "/agents/[userId]/qrcode",
+                      params: {
+                        userId: user.id,
+                      },
+                    })
+                  }
+                >
+                  <Icon as={Share} className="w-6 h-6" />
                 </Pressable>
               )}
             </View>
