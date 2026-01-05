@@ -28,8 +28,11 @@ export async function editServerMessage({ data }: { data: ServerMessage }) {
       .query(Q.where("server_message_id", data.message_id), Q.take(1))
       .fetch();
     if (msg?.length) {
-      await msg[0].update((m) => {
-        m.status = data.status;
+      await database.write(async () => {
+        await msg[0].update((m) => {
+          m.status = "sent";
+          m.sync_status = "synced";
+        });
       });
     }
   } catch (error) {
@@ -37,8 +40,10 @@ export async function editServerMessage({ data }: { data: ServerMessage }) {
       .query(Q.where("server_message_id", data.message_id), Q.take(1))
       .fetch();
     if (msg?.length) {
-      await msg[0].update((m) => {
-        m.status = "failed";
+      await database.write(async () => {
+        await msg[0].update((m) => {
+          m.status = "failed";
+        });
       });
     }
   }
@@ -58,21 +63,30 @@ export async function sendServerMessage({
       reply_to_message_id: data.reply_to_message_id,
     });
     if (!m) throw Error("Something went wrong");
+    console.log(m);
     const [msg] = await messageCollection
       .query(Q.where("server_message_id", data.message_id), Q.take(1))
       .fetch();
-    await msg.update((msg) => {
-      msg.status = m.status;
-      msg.server_message_id = m.message_id;
-      msg.created_at = Date.parse(m.created_at);
-      msg.updated_at = Date.parse(m.created_at);
+    console.log(msg?.server_message_id, "sent");
+    await database.write(async () => {
+      await msg.update((msg) => {
+        msg.status = "sent";
+        msg.server_message_id = m.message_id;
+        msg.created_at = Date.parse(m.created_at);
+        msg.updated_at = Date.parse(m.created_at);
+        msg.sync_status = "synced";
+      });
     });
   } catch (error) {
+    console.log(error);
     const [msg] = await messageCollection
       .query(Q.where("server_message_id", data.message_id), Q.take(1))
       .fetch();
-    await msg.update((m) => {
-      m.status = "failed";
+
+    await database.write(async () => {
+      await msg.update((m) => {
+        m.status = "failed";
+      });
     });
   }
 }
@@ -106,15 +120,21 @@ export async function sendServerMessageManual({
       })),
     });
     if (!m) throw Error("Something went wrong");
-    await message.update((msg) => {
-      msg.status = m.status;
-      msg.server_message_id = m.message_id;
-      msg.created_at = Date.parse(m.created_at);
-      msg.updated_at = Date.parse(m.created_at);
+
+    await database.write(async () => {
+      await message.update((msg) => {
+        msg.status = m.status;
+        msg.server_message_id = m.message_id;
+        msg.created_at = Date.parse(m.created_at);
+        msg.updated_at = Date.parse(m.created_at);
+        msg.sync_status = "synced";
+      });
     });
   } catch (error) {
-    await message.update((m) => {
-      m.status = "failed";
+    await database.write(async () => {
+      await message.update((m) => {
+        m.status = "failed";
+      });
     });
   }
 }
@@ -205,7 +225,9 @@ export const deleteMessage = async ({
       .fetch();
 
     if (msg) {
-      await msg.deleteMessage();
+      await database.write(async () => {
+        await msg.deleteMessage();
+      });
     }
   } catch (error) {}
 };
@@ -283,7 +305,9 @@ export const deleteChat = async (chatId: string) => {
       .fetch();
 
     if (chat) {
-      await chat.deleteChat();
+      await database.write(async () => {
+        await chat.deleteChat();
+      });
     }
   } catch (error) {}
 };

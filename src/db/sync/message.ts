@@ -11,7 +11,11 @@ import {
 } from "@/db/collections";
 import { chunkArray } from "@/db/helpers";
 import { Message } from "@/db/models/messages";
-import { deleteMessage, sendServerMessageManual } from "@/components/chat";
+import {
+  deleteMessage,
+  editServerMessage,
+  sendServerMessageManual,
+} from "@/components/chat";
 
 type SyncInput = {
   chatId: string;
@@ -66,6 +70,28 @@ export async function syncMessagesEngine({
       await sendServerMessageManual({ message, chatId });
     }
   }
+  if (pushUpdate?.length) {
+    for (const message of pushUpdate) {
+      await editServerMessage({
+        data: {
+          message_id: message.server_message_id,
+          created_at: new Date(message.created_at).toString(),
+          updated_at: new Date(message.updated_at).toString(),
+          content: message.content,
+          sender_info: {
+            id: message.server_sender_id,
+          },
+          receiver_info: {
+            id: message.server_receiver_id,
+          },
+          reply_to_message_id: message?.server_message_id,
+          isMock: false,
+          status: "pending",
+          file_data: [],
+        },
+      });
+    }
+  }
   if (pullDelete?.length) {
     await database.write(async () => {
       const ops = [];
@@ -111,6 +137,7 @@ export async function syncMessagesEngine({
           .fetch();
 
         if (existing.length) {
+          console.log(msg.status);
           ops.push(
             existing[0].prepareUpdate((m: any) =>
               Object.assign(m, normalizeMessage(msg, chatId))

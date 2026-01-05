@@ -35,6 +35,8 @@ import { use$ } from "@legendapp/state/react";
 import { tempStore } from "@/store/tempStore";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
+import Platforms from "@/constants/Plaforms";
 
 type Props = {
   chat: Chat;
@@ -51,7 +53,7 @@ function ChatRoom(props: Props) {
   } = props;
 
   useMessagesSync({
-    auto: chat.unread_count > 0 || messages?.length < 1,
+    auto: true,
     chatId: chat.server_chat_id,
   });
   const { me } = useMe();
@@ -137,6 +139,9 @@ function ChatRoom(props: Props) {
       makeMessageReadAndDelivered({ chatId: chat.server_chat_id });
     }
   }, [chat?.unread_count, me]);
+  React.useEffect(() => {
+    scrollToBottom();
+  }, []);
   return (
     <>
       <Stack.Screen
@@ -232,7 +237,6 @@ function ChatRoom(props: Props) {
             {currentTitle}
           </Text>
         </Animated.View>
-
         <View className="flex-1 w-full">
           <FlashList
             keyboardShouldPersistTaps="handled"

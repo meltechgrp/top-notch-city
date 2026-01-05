@@ -28,10 +28,10 @@ export function useSyncer({ auto = true, reset = false }: SyncerOptions) {
       syncingRef.current = true;
       console.log("🔄 Starting sync");
 
-      await syncProperties();
-      if (me) {
-        await syncChats();
-      }
+      // await syncProperties();
+      // if (me) {
+      //   await syncChats();
+      // }
 
       console.log("✅ Sync completed");
     } finally {

@@ -7,6 +7,7 @@ type SearchState = {
   hasNextPage: boolean;
   loading: boolean;
   filter: SearchFilters;
+  search: SearchFilters;
   pagination: {
     perPage: number;
     page: number;
@@ -15,6 +16,7 @@ type SearchState = {
   updateFilter: (data: Partial<SearchFilters>) => void;
   useMyLocation: () => void;
   fetch: () => void;
+  saveFilter: () => void;
   nextPage: () => void;
 };
 
@@ -27,6 +29,7 @@ export const searchStore = observable<SearchState>({
   hasNextPage: false,
   loading: false,
   filter: initial,
+  search: initial,
   pagination: {
     perPage: 5,
     page: 1,
@@ -49,6 +52,9 @@ export const searchStore = observable<SearchState>({
   },
   useMyLocation() {
     searchStore.filter.assign(mainStore.address.get());
+  },
+  saveFilter() {
+    searchStore.search.assign(searchStore.filter.get());
   },
   nextPage() {
     searchStore.pagination.page.set((p) => p + 1);
@@ -148,7 +154,7 @@ export function buildListQuery({
   }
 
   if (agentId) {
-    conditions.push(Q.where("server_owner_id", agentId));
+    conditions.push(Q.where("server_user_id", agentId));
   }
   if (role === "user") {
     conditions.push(Q.where("status", "approved"));

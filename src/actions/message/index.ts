@@ -37,8 +37,9 @@ export async function sendMessage({
   files?.forEach(async (item) => {
     if (item.is_local) {
       const [file] = await uploadToBucket({
-        data: [{ url: item.file_url }],
-        type: item.file_type?.toLowerCase() as any,
+        data: [
+          { url: item.file_url, type: item.file_type?.toLowerCase() as any },
+        ],
       });
 
       file && formData.append("chat_media_ids", file.id);
@@ -63,7 +64,7 @@ export async function sendMessage({
     sender_id: string;
     sender_name: string;
     read: boolean;
-    status: Message["status"];
+    status: ServerMessage["status"];
     reply_to_message_id?: string;
   };
 }
@@ -88,13 +89,13 @@ export async function editMessage({
     chat_id: string;
     message_id: string;
     content: string;
-    status: Message["status"];
+    status: ServerMessage["status"];
   };
 }
 
 export async function getChats() {
   const chats = await Fetch("/chats");
-  return chats as { total: number; chats: Chat[] };
+  return chats as { total: number; chats: ServerChat[] };
 }
 
 export async function getChatMessages({

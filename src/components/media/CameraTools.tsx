@@ -40,7 +40,7 @@ export default function CameraTools({
     >
       <Pressable
         onPress={() => setCameraTorch((prevValue) => !prevValue)}
-        className="p-2 bg-background/50"
+        className="p-2"
       >
         <Icon
           as={cameraTorch ? Flashlight : FlashlightOff}
@@ -51,7 +51,7 @@ export default function CameraTools({
         onPress={() =>
           setCameraFlash((prevValue) => (prevValue === "off" ? "on" : "off"))
         }
-        className="p-2 bg-background/50"
+        className="p-2"
       >
         <Icon as={cameraFlash ? Zap : ZapOff} className="w-7 h-7" />
       </Pressable>
@@ -61,7 +61,7 @@ export default function CameraTools({
             setCameraZoom((prevValue) => prevValue + 0.01);
           }
         }}
-        className="p-2 bg-background/50"
+        className="p-2"
       >
         <Icon as={ZoomIn} className="w-7 h-7" />
       </Pressable>
@@ -71,7 +71,7 @@ export default function CameraTools({
             setCameraZoom((prevValue) => prevValue - 0.01);
           }
         }}
-        className="p-2 bg-background/50"
+        className="p-2"
       >
         <Icon as={ZoomOut} className="w-7 h-7" />
       </Pressable>

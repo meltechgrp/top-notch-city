@@ -2,6 +2,7 @@ import { Dimensions, StyleSheet, View } from "react-native";
 import { useCallback, useMemo, useRef } from "react";
 import { Button, Icon, Text } from "@/components/ui";
 import BottomSheet, {
+  BottomSheetFlashList,
   useBottomSheetInternal,
   useBottomSheetScrollableCreator,
 } from "@gorhom/bottom-sheet";
@@ -113,14 +114,13 @@ function SearchListBottomSheet({
         headerHeight={20}
         loading={isLoading || false}
       >
-        <FlashList
+        <BottomSheetFlashList
           data={properties}
           renderItem={renderItem}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item: any) => item.id}
           onEndReached={() => {
             if (hasNextPage && !isLoading) fetchNextPage?.();
           }}
-          renderScrollComponent={BottomSheetScrollable}
           onEndReachedThreshold={0.1}
           scrollEventThrottle={16}
           ListEmptyComponent={() => (

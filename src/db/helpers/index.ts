@@ -5,7 +5,7 @@ import {
 } from "@/db/collections";
 import { database } from "@/db";
 import { Q } from "@nozbe/watermelondb";
-import { Message } from "@/db/models/messages";
+import { Chat, Message } from "@/db/models/messages";
 
 export async function resetDatabase() {
   await database.write(async () => {
@@ -158,7 +158,7 @@ export function diffChats({
   mode,
 }: {
   serverChats: ServerChat[];
-  localChats: any[];
+  localChats: Chat[];
   mode: "full" | "incremental";
 }) {
   const serverMap = new Map(serverChats.map((c) => [c.chat_id, c]));
@@ -172,11 +172,13 @@ export function diffChats({
     shouldUpdate: (local, server) =>
       local.recent_message_id !== server.recent_message?.message_id,
     shouldDelete: (local, serverMap) =>
-      local?.server_chat_id && !serverMap.has(local.server_chat_id),
+      !!local?.server_chat_id &&
+      local.sync_status === "synced" &&
+      !serverMap.has(local.server_chat_id),
   });
 
   const push = localChats.filter(
-    (c) => c.sync_status === "dirty" && !serverMap.has(c.server_chat_id)
+    (c) => c.sync_status === "deleted" && !serverMap.has(c.server_chat_id)
   );
 
   return {
@@ -204,23 +206,26 @@ export function diffMessages({
     mode,
     shouldUpdate: (local, server) =>
       !!server.updated_at &&
-      new Date(server.updated_at).getTime() > (local.updated_at ?? 0),
+      new Date(server.updated_at).getTime() > (local.updated_at ?? 0) &&
+      local?.sync_status == "synced",
     shouldDelete: (local, serverMap) =>
-      !!local?.server_message_id && !serverMap.has(local.server_message_id),
+      !!local?.server_message_id &&
+      local?.sync_status == "synced" &&
+      !serverMap.has(local.server_message_id),
   });
 
   const pushCreate = localMessages.filter(
-    (m) => m.sync_status === "dirty" && !m.is_edited
+    (m) => m.sync_status === "dirty" && m.is_mock
   );
 
   const pushUpdate = localMessages.filter(
-    (m) => m.sync_status === "dirty" && m.is_edited
+    (m) => m.sync_status === "dirty" && m.is_edited && !m.is_mock
   );
   const pushDeleteMe = localMessages.filter(
-    (m) => m.sync_status === "dirty" && m.deleted_for_me_at
+    (m) => m.sync_status === "deleted" && m.deleted_for_me_at
   );
   const pushDeleteAll = localMessages.filter(
-    (m) => m.sync_status === "dirty" && m.deleted_for_all_at
+    (m) => m.sync_status === "deleted" && m.deleted_for_all_at
   );
 
   return {

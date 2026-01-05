@@ -2,19 +2,22 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
+  Keyboard,
   ScrollView,
   StyleSheet,
   TextInput,
 } from "react-native";
 import { View, Pressable, Image, Icon, Text, Badge } from "@/components/ui";
-import { ImagePlusIcon, Send, Trash2, X } from "lucide-react-native";
+import { ImagePlusIcon, Trash2, X } from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MiniVideoPlayer } from "@/components/custom/MiniVideoPlayer";
 import { cn } from "@/lib/utils";
-import { EditorOnchangeArgs } from "@/components/custom/Editor";
+import { EditorOnchangeArgs } from "@/components/editor";
 import { SendButton } from "@/components/editor/SendButton";
-import { KeyboardAvoidingView } from "react-native-keyboard-controller";
-import Platforms from "@/constants/Plaforms";
+import {
+  KeyboardAvoidingView,
+  useKeyboardState,
+} from "react-native-keyboard-controller";
 
 const { width: W, height: H } = Dimensions.get("window");
 type Props = {
@@ -45,6 +48,7 @@ export default function MediaPreviewView({
   const insets = useSafeAreaInsets();
   const scrollRef = useRef<ScrollView>(null);
   const [index, setIndex] = useState(initialIndex);
+  const [id, setId] = useState<string | null>(media[index].id || null);
   const [text, setText] = useState("");
 
   const translateY = React.useRef(new Animated.Value(H)).current;
@@ -63,29 +67,42 @@ export default function MediaPreviewView({
       animated: false,
     });
   }, [index]);
-
+  useEffect(() => {
+    if (index) {
+      setId(media[index].id);
+    }
+  }, [index]);
   if (!visible) return null;
-
+  const { isVisible } = useKeyboardState();
   return (
-    <Animated.View style={[styles.container, { transform: [{ translateY }] }]}>
+    <Animated.View
+      className={"bg-background"}
+      style={[styles.container, { transform: [{ translateY }] }]}
+    >
       <KeyboardAvoidingView
         style={{
           flex: 1,
           // maxHeight: 600,
         }}
-        className="bg-background"
+        className="bg-background-muted"
         behavior={"padding"}
         keyboardVerticalOffset={0}
       >
-        <View className="flex-1 bg-background relative">
+        <View className="flex-1 bg-background-muted relative">
           <Pressable
             onPress={onClose}
             style={[styles.closeBtn, { top: insets.top + 12 }]}
             className="border border-outline-100"
           >
-            <Icon as={X} className="text-primary w-8 h-8" />
+            <Icon as={X} className="text-primary w-7 h-7" />
           </Pressable>
-
+          <Pressable
+            onPress={() => id && onDelete(id)}
+            style={[{ top: insets.top + 12 }]}
+            className="border p-2 z-50 absolute right-8 rounded-lg border-outline-100 bg-background-muted"
+          >
+            <Icon as={Trash2} className="text-primary w-8 h-8" />
+          </Pressable>
           <ScrollView
             ref={scrollRef}
             horizontal
@@ -125,52 +142,46 @@ export default function MediaPreviewView({
           </ScrollView>
 
           {/* Thumbnails */}
-          <View
-            style={[
-              styles.ThumbScroll,
-              { bottom: insets.bottom + (isChat ? 80 : 20) },
-            ]}
-          >
-            <ScrollView
-              horizontal
-              decelerationRate="fast"
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{
-                paddingLeft: 12,
-                paddingRight: 12,
-              }}
+          {!isVisible && (
+            <View
+              style={[
+                styles.ThumbScroll,
+                { bottom: insets.bottom + (isChat ? 80 : 20) },
+              ]}
             >
-              {media.map((item, i) => (
-                <Pressable
-                  key={item.id}
-                  onPress={() => setIndex(i)}
-                  style={[styles.thumbWrap]}
-                  className={cn(
-                    " relative border-outline-100",
-                    i === index && "border-primary"
-                  )}
-                >
-                  {item.media_type === "VIDEO" ? (
-                    <MiniVideoPlayer
-                      uri={item.url}
-                      canPlay={false}
-                      showPlayBtn
-                    />
-                  ) : (
-                    <Image source={{ uri: item.url }} style={styles.thumb} />
-                  )}
-                  {i === index && (
-                    <Pressable
-                      onPress={() => onDelete(item.id)}
-                      className="border p-2 z-50 rounded-lg absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 border-outline-100 bg-background-muted"
-                    >
-                      <Icon as={Trash2} className="text-primary w-5 h-5" />
-                    </Pressable>
-                  )}
-                </Pressable>
-              ))}
-            </ScrollView>
-          </View>
+              <ScrollView
+                horizontal
+                decelerationRate="fast"
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{
+                  paddingLeft: 12,
+                  paddingRight: 12,
+                }}
+              >
+                {media.map((item, i) => (
+                  <Pressable
+                    key={item.id}
+                    onPress={() => setIndex(i)}
+                    style={[styles.thumbWrap]}
+                    className={cn(
+                      " relative border-outline-100",
+                      i === index && "border-primary"
+                    )}
+                  >
+                    {item.media_type === "VIDEO" ? (
+                      <MiniVideoPlayer
+                        uri={item.url}
+                        canPlay={false}
+                        showPlayBtn
+                      />
+                    ) : (
+                      <Image source={{ uri: item.url }} style={styles.thumb} />
+                    )}
+                  </Pressable>
+                ))}
+              </ScrollView>
+            </View>
+          )}
 
           {/* Chat Input */}
           {isChat && (
@@ -186,7 +197,10 @@ export default function MediaPreviewView({
               >
                 <Pressable
                   className="p-2.5 border border-outline-100 rounded-full"
-                  onPress={pickMedia}
+                  onPress={() => {
+                    Keyboard.dismiss();
+                    pickMedia();
+                  }}
                   disabled={media.length >= max}
                 >
                   <Icon size="xl" as={ImagePlusIcon} />
@@ -199,24 +213,17 @@ export default function MediaPreviewView({
                   multiline={true}
                   placeholderClassName="text-typography/80"
                 />
+                <SendButton
+                  className="ml-auto"
+                  onPress={() => {
+                    onUpload({ text: text, files: media });
+                  }}
+                />
               </View>
             </View>
           )}
         </View>
       </KeyboardAvoidingView>
-      <View className="h-24 bg-background p-6 flex-row justify-between items-center">
-        {fullName && (
-          <Badge className="px-5 py-2 bg-background border border-outline-100">
-            <Text>{fullName}</Text>
-          </Badge>
-        )}
-        <SendButton
-          className="ml-auto"
-          onPress={() => {
-            onUpload({ text: text, files: media });
-          }}
-        />
-      </View>
     </Animated.View>
   );
 }

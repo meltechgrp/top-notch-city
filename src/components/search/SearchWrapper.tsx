@@ -1,6 +1,6 @@
 import SearchHeader from "@/components/search/Searchheader";
 import { Box, View } from "@/components/ui";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useDeferredValue } from "react";
 import { Dimensions, StyleSheet } from "react-native";
 import SearchMapView from "@/components/search/SearchMapView";
 import SearchLocationBottomSheet from "@/components/modals/search/SearchLocationBottomSheet";
@@ -39,23 +39,13 @@ export default function SearchWrapper({
     useMyLocation,
     pagination,
     nextPage,
+    search,
+    saveFilter,
   } = use$(searchStore);
   const { height: totalHeight } = Dimensions.get("screen");
   const [showFilter, setShowFilter] = useState(false);
   const [locationBottomSheet, setLocationBottomSheet] = useState(false);
-  searchStore.filter.onChange(async (f) => {
-    searchStore.loading.set(true);
-    try {
-      const count = await database
-        .get("properties")
-        .query(...buildLocalQuery(f.value))
-        .fetchCount();
-      console.log(count);
-      searchStore.total.set(count);
-    } finally {
-      searchStore.loading.set(false);
-    }
-  });
+  const deferredText = useDeferredValue(filter);
   useEffect(() => {
     if (latitude && longitude) {
       updateFilter({
@@ -79,36 +69,21 @@ export default function SearchWrapper({
       locate: undefined,
     });
   }, [latitude, longitude, reset, category, locate]);
-  //   let cancelled = false;
-
-  //   async function fetchData() {
-  //     const filter = searchStore.filter.get();
-
-  //     searchStore.loading.set(true);
-
-  //     try {
-  //       const count = await database
-  //         .get("properties")
-  //         .query(...buildLocalQuery(filter))
-  //         .fetchCount();
-  //       console.log(count);
-  //       if (!cancelled) {
-  //         searchStore.total.set(count);
-  //       }
-  //     } finally {
-  //       if (!cancelled) {
-  //         searchStore.loading.set(false);
-  //       }
-  //     }
-  //   }
-
-  //   fetchData();
-
-  //   return () => {
-  //     cancelled = true;
-  //   };
-  // }, [filterSnapshot]);
-
+  useEffect(() => {
+    const count = async () => {
+      searchStore.loading.set(true);
+      try {
+        const count = await database
+          .get("properties")
+          .query(...buildLocalQuery(deferredText))
+          .fetchCount();
+        searchStore.total.set(count);
+      } finally {
+        searchStore.loading.set(false);
+      }
+    };
+    count();
+  }, [deferredText]);
   return (
     <>
       <View className="flex-1 bg-background">
@@ -122,7 +97,7 @@ export default function SearchWrapper({
             />
 
             <View style={StyleSheet.absoluteFill}>
-              <SearchMapView height={totalHeight} filter={filter} />
+              <SearchMapView height={totalHeight} filter={search} />
             </View>
           </Box>
 
@@ -132,7 +107,7 @@ export default function SearchWrapper({
             hasNextPage={false}
             total={total}
             onReset={resetFilter}
-            filter={filter}
+            filter={search}
             fetchNextPage={async () => nextPage()}
             pagination={pagination}
             useMyLocation={useMyLocation}
@@ -148,7 +123,10 @@ export default function SearchWrapper({
       />
       <SearchFilterBottomSheet
         show={showFilter}
-        onDismiss={() => setShowFilter(false)}
+        onDismiss={() => {
+          saveFilter();
+          setShowFilter(false);
+        }}
         onReset={resetFilter}
         onUpdate={updateFilter}
         loading={loading}

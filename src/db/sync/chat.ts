@@ -13,7 +13,7 @@ import { updateChats } from "@/components/chat";
 type SyncInput = {
   pullCreate: ServerChat[];
   pullUpdate: ServerChat[];
-  pullDelete: ServerChat[];
+  pullDelete: Chat[];
   pushDelete: Chat[];
   batchSize?: number;
 };
@@ -36,13 +36,12 @@ export async function syncChatsEngine({
   if (pullDelete?.length) {
     await database.write(async () => {
       const deletions = pullDelete.flatMap((p) =>
-        [chatCollection, messageCollection, messageFilesCollection].flatMap(
-          async (collection) =>
-            (
-              await collection
-                .query(Q.where("server_chat_id", p.chat_id))
-                .fetch()
-            ).map((m: any) => m.prepareDestroyPermanently())
+        [chatCollection, messageCollection].flatMap(async (collection) =>
+          (
+            await collection
+              .query(Q.where("server_chat_id", p.server_chat_id))
+              .fetch()
+          ).map((m: any) => m.prepareDestroyPermanently())
         )
       );
 

@@ -1,5 +1,5 @@
 import { sendTyping } from "@/actions/message";
-import { EditorOnchangeArgs } from "@/components/custom/Editor";
+import { EditorOnchangeArgs } from "@/components/editor";
 import { useDeferredValue, useEffect, useRef, useState } from "react";
 
 type RecorderState = "idle" | "recording" | "paused";

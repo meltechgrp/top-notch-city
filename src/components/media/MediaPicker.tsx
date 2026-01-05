@@ -19,7 +19,7 @@ import { scheduleOnRN } from "react-native-worklets";
 import MediaWrapper from "@/components/media/MediaWrapper";
 import { MediaType, useMediaUpload } from "@/hooks/useMediaUpload";
 import MediaPreviewView from "@/components/media/MediaPreviewView";
-import { EditorOnchangeArgs } from "@/components/custom/Editor";
+import { EditorOnchangeArgs } from "@/components/editor";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const SHEET_HEIGHT = SCREEN_HEIGHT;
@@ -53,16 +53,16 @@ const MediaPicker = React.forwardRef<MediaPickerRef, MediaPickerProps>(
     } = props;
     const [media, setMedia] = useState<UploadedFile[]>([]);
     const [visible, setVisible] = useState(false);
+    const [previewVisible, setPreviewVisible] = React.useState<boolean>(false);
 
     const { pickMedia } = useMediaUpload({
       onFiles: (m) => {
-        setVisible(true);
+        setPreviewVisible(true);
         setMedia(m);
       },
       maxSelection: max,
       type,
     });
-    const [previewVisible, setPreviewVisible] = React.useState<boolean>(false);
     const translateY = useSharedValue(SCREEN_HEIGHT);
 
     const animatedStyle = useAnimatedStyle(() => ({
@@ -102,6 +102,11 @@ const MediaPicker = React.forwardRef<MediaPickerRef, MediaPickerProps>(
       open();
       await pickMedia();
     };
+    function handleSend(arg: EditorOnchangeArgs) {
+      onSend(arg);
+      setPreviewVisible(false);
+      close();
+    }
     useImperativeHandle(ref, () => {
       return {
         open: open,
@@ -143,26 +148,26 @@ const MediaPicker = React.forwardRef<MediaPickerRef, MediaPickerProps>(
                 onClose={close}
                 openPreview={() => setPreviewVisible(true)}
               />
-              {previewVisible && (
-                <MediaPreviewView
-                  onDelete={(id) => {
-                    setMedia((m) => m.filter((f) => f.id != id));
-                    if (media?.length! > 0) {
-                      setPreviewVisible(false);
-                    }
-                  }}
-                  fullName={fullName}
-                  max={max}
-                  pickMedia={pickMedia}
-                  onClose={() => setPreviewVisible(false)}
-                  visible={previewVisible}
-                  onUpload={onSend}
-                  media={media}
-                  isChat={isChat}
-                />
-              )}
             </Animated.View>
           </GestureDetector>
+          {previewVisible && (
+            <MediaPreviewView
+              onDelete={(id) => {
+                setMedia((m) => m.filter((f) => f.id != id));
+                if (media?.length! > 0) {
+                  setPreviewVisible(false);
+                }
+              }}
+              fullName={fullName}
+              max={max}
+              pickMedia={pickMedia}
+              onClose={() => setPreviewVisible(false)}
+              visible={previewVisible}
+              onUpload={handleSend}
+              media={media}
+              isChat={isChat}
+            />
+          )}
         </Modal>
       </>
     );

@@ -38,7 +38,8 @@ const ChatRoomFooter = React.forwardRef<EditorComponentRefHandle, Props>(
 
     const { playSound } = useSound();
 
-    const { saveLocalMessage, editServerMessage } = messagesActions();
+    const { saveLocalMessage, editServerMessage, sendServerMessage } =
+      messagesActions();
     async function onSubmit({ text, files }: { text: string; files: Media[] }) {
       if (me) {
         const tempId = guidGenerator();
@@ -70,6 +71,8 @@ const ChatRoomFooter = React.forwardRef<EditorComponentRefHandle, Props>(
         });
         if (isEditing) {
           await editServerMessage({ data: mock });
+        } else {
+          sendServerMessage({ data: mock, chatId });
         }
         onPost(isEditing);
         clearActiveQuoteMsg();

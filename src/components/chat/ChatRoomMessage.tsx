@@ -21,9 +21,15 @@ import { ProfileImageTrigger } from "@/components/custom/ImageViewerProvider";
 import { MiniVideoPlayer } from "@/components/custom/MiniVideoPlayer";
 import { Message, MessageFile } from "@/db/models/messages";
 import { withObservables } from "@nozbe/watermelondb/react";
-import { messageCollection, propertiesCollection } from "@/db/collections";
+import {
+  messageCollection,
+  messageFilesCollection,
+  propertiesCollection,
+} from "@/db/collections";
 import { Q } from "@nozbe/watermelondb";
 import { Property } from "@/db/models/properties";
+import { messagesActions } from "@/components/chat";
+import AudioPreviewPlayer from "@/components/editor/AudioPreviewPlayer";
 
 export type ChatRoomMessageProps = View["props"] & {
   me: Account;
@@ -33,7 +39,6 @@ export type ChatRoomMessageProps = View["props"] & {
   quotes: Message[];
   onLongPress: (message: Message) => void;
   isDeleting?: boolean;
-  resendMessage?: (msg: Message) => void;
 };
 function ChatRoomMessage(props: ChatRoomMessageProps) {
   const {
@@ -41,18 +46,20 @@ function ChatRoomMessage(props: ChatRoomMessageProps) {
     onLongPress,
     isDeleting,
     message,
-    resendMessage,
     files,
     property: [property],
     quotes: [quote],
     ...others
   } = props;
+
+  const { sendServerMessage } = messagesActions();
   const images = useMemo(
     () =>
       files?.map((item) => ({
         id: item.id,
         url: item.url,
         media_type: item.file_type?.toLowerCase(),
+        is_local: item.is_local,
       })),
     [files]
   ) as Media[];
@@ -86,7 +93,7 @@ function ChatRoomMessage(props: ChatRoomMessageProps) {
         {isMine && <MessageStatusIcon status={message.status} />}
       </View>
     ),
-    [formatedTime, message.content]
+    [formatedTime, message?.status, message?.is_edited, message?.deleted_at]
   );
   const pressProps = {
     onLongPress: () => {
@@ -112,7 +119,32 @@ function ChatRoomMessage(props: ChatRoomMessageProps) {
 
     Keyboard.dismiss();
   };
-
+  async function resendMessage() {
+    if (me) {
+      const mock: ServerMessage = {
+        message_id: message.server_message_id,
+        created_at: new Date(message.created_at).toString(),
+        updated_at: new Date(message.updated_at).toString(),
+        content: message.content,
+        sender_info: {
+          id: me.id,
+        },
+        receiver_info: {
+          id: message.server_receiver_id,
+        },
+        reply_to_message_id: message?.server_message_id,
+        isMock: true,
+        status: "pending",
+        file_data: files?.map((f) => ({
+          id: f.id,
+          file_url: f.url,
+          is_local: true,
+          file_type: f.file_type?.toUpperCase() as Media["media_type"],
+        })),
+      };
+      sendServerMessage({ data: mock, chatId: message.server_chat_id });
+    }
+  }
   return (
     <>
       <View className="flex-row w-full gap-2 items-center">
@@ -140,38 +172,64 @@ function ChatRoomMessage(props: ChatRoomMessageProps) {
                   isMine ? "items-end" : "items-start"
                 )}
               >
-                {chunk(images, 2).map((row, i) => (
-                  <View key={i} className="flex-row gap-1">
+                {chunk(images?.slice(0, 4), 2).map((row, a) => (
+                  <View key={a} className="flex-row gap-1">
                     {row.map((item, i) => {
+                      const isMore = images?.length > 4 && i == 1 && a == 1;
+                      const more = images?.length - 4;
                       const isVideo = item.media_type === "VIDEO";
+                      const isAudio = item.media_type === "AUDIO";
                       return (
                         <View
                           key={item.id}
                           className={cn(["rounded-2xl mb-1 flex-1 h-40"])}
                         >
-                          <ProfileImageTrigger
-                            image={images}
-                            index={i}
-                            className="flex-1"
-                          >
-                            {isVideo ? (
-                              <MiniVideoPlayer
-                                uri={generateMediaUrlSingle(item.url)}
-                                rounded
-                                canPlay
-                                autoPlay={false}
-                                showPlayBtn
-                              />
-                            ) : (
-                              <Image
-                                source={{
-                                  uri: generateMediaUrlSingle(item.url),
-                                  cacheKey: item.id,
-                                }}
-                                rounded
-                              />
-                            )}
-                          </ProfileImageTrigger>
+                          {!isAudio ? (
+                            <ProfileImageTrigger
+                              image={images}
+                              index={i}
+                              className="flex-1 relative"
+                            >
+                              {isVideo ? (
+                                <MiniVideoPlayer
+                                  uri={
+                                    item.is_local
+                                      ? item.url
+                                      : generateMediaUrlSingle(item.url)
+                                  }
+                                  rounded
+                                  canPlay
+                                  autoPlay={false}
+                                  showPlayBtn
+                                />
+                              ) : (
+                                <Image
+                                  source={{
+                                    uri: item.is_local
+                                      ? item.url
+                                      : generateMediaUrlSingle(item.url),
+                                    cacheKey: item.id,
+                                  }}
+                                  rounded
+                                />
+                              )}
+                              {isMore && (
+                                <View className=" absolute inset-0 bg-background/90 justify-center items-center ">
+                                  <Text className="text-lg font-bold">
+                                    + {more}
+                                  </Text>
+                                </View>
+                              )}
+                            </ProfileImageTrigger>
+                          ) : (
+                            <AudioPreviewPlayer
+                              url={
+                                item.is_local
+                                  ? item.url
+                                  : generateMediaUrlSingle(item.url)
+                              }
+                            />
+                          )}
                         </View>
                       );
                     })}
@@ -233,11 +291,11 @@ function ChatRoomMessage(props: ChatRoomMessageProps) {
             </Pressable>
             {!isMine && <View className="flex-1" />}
           </View>
-          {message.status == "failed" && (
+          {(message.status == "failed" || message.status == "pending") && (
             <TouchableOpacity
               onPress={() => {
                 if (resendMessage) {
-                  resendMessage(message);
+                  resendMessage();
                 }
               }}
               className="pr-2 w-6 pl-4 justify-center items-center"
@@ -255,7 +313,9 @@ const enhance = withObservables(
   ["message"],
   ({ message }: { message: Message }) => ({
     message: message.observe(),
-    files: message.files,
+    files: messageFilesCollection.query(
+      Q.where("server_message_id", message.server_message_id || null)
+    ),
     property: propertiesCollection.query(
       Q.where("property_server_id", message.property_server_id || null),
       Q.take(1)
