@@ -1,10 +1,10 @@
-import { Listing } from "@/store";
 import { getActiveToken } from "@/lib/secureStore";
 import config from "@/config";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Fetch } from "@/actions/utills";
+import { Listing } from "@/store/listing";
 
-const parseApiError = (data: any, status: number) => {
+export const parseApiError = (data: any, status: number) => {
   if (data?.detail) {
     if (typeof data?.detail == "string") {
       const parts = data?.detail?.split(":");
@@ -21,7 +21,6 @@ const parseApiError = (data: any, status: number) => {
 
 const buildPropertyFormData = (listing: Listing) => {
   const fd = new FormData();
-  console.log(listing?.listing_role, listing?.owner_type);
   if (listing?.title) fd.append("title", listing.title);
   if (listing?.description) fd.append("description", listing.description);
   if (listing?.price) fd.append("price", listing.price);

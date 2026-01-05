@@ -12,6 +12,7 @@ import { Q } from "@nozbe/watermelondb";
 import { Chat } from "@/db/models/messages";
 import { useChatsSync } from "@/db/queries/syncChats";
 import { router } from "expo-router";
+import { useEffect } from "react";
 
 interface ChatListProps {
   chats: Chat[];
@@ -19,6 +20,9 @@ interface ChatListProps {
 
 function ChatList({ chats }: ChatListProps) {
   const { resync, syncing } = useChatsSync();
+  useEffect(() => {
+    resync();
+  }, []);
   return (
     <>
       <Box className="flex-1 mt-2">
@@ -27,7 +31,7 @@ function ChatList({ chats }: ChatListProps) {
             <FlashList
               data={chats}
               refreshControl={
-                <RefreshControl refreshing={syncing} onRefresh={resync} />
+                <RefreshControl refreshing={false} onRefresh={resync} />
               }
               ListFooterComponent={<View className="h-16"></View>}
               contentContainerClassName="pt-2"

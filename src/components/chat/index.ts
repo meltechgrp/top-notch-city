@@ -69,13 +69,29 @@ export async function sendServerMessage({
       .fetch();
     console.log(msg?.server_message_id, "sent");
     await database.write(async () => {
-      await msg.update((msg) => {
-        msg.status = "sent";
-        msg.server_message_id = m.message_id;
-        msg.created_at = Date.parse(m.created_at);
-        msg.updated_at = Date.parse(m.created_at);
-        msg.sync_status = "synced";
-      });
+      const ops: any[] = [];
+      ops.push(
+        msg.prepareUpdate((msg) => {
+          msg.status = "sent";
+          msg.server_message_id = m.message_id;
+          msg.created_at = Date.parse(m.created_at);
+          msg.updated_at = Date.parse(m.created_at);
+          msg.sync_status = "synced";
+        })
+      );
+      const existingFiles = await messageFilesCollection
+        .query(Q.where("server_message_id", data.message_id))
+        .fetch();
+
+      ops.push(...existingFiles.map((f) => f.prepareDestroyPermanently()));
+
+      if (m.media?.length) {
+        ops.push(
+          ...normalizeMessageFiles(m.media, m.message_id).map((f) =>
+            messageFilesCollection.prepareCreate((m) => Object.assign(m, f))
+          )
+        );
+      }
     });
   } catch (error) {
     console.log(error);
@@ -101,21 +117,13 @@ export async function sendServerMessageManual({
     const files = await messageFilesCollection
       .query(Q.where("server_message_id", message.server_message_id))
       .fetch();
-    const bucketFiles = files
-      ? await uploadToBucket({
-          data: files.map((f) => ({
-            type: f.file_type?.toLowerCase() as any,
-            url: f.url,
-          })),
-        })
-      : [];
     const m = await sendMessage({
       chat_id: chatId,
       content: message.content,
       reply_to_message_id: message.reply_to_message_id,
-      files: bucketFiles.map((f) => ({
+      files: files.map((f) => ({
         id: f.id,
-        file_type: f.media_type as any,
+        file_type: f.file_type as any,
         file_url: f.url,
       })),
     });

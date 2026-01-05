@@ -25,9 +25,9 @@ import { AnimatedLikeButton } from "@/components/custom/AnimatedLikeButton";
 import { useLike } from "@/hooks/useLike";
 import { useMe } from "@/hooks/useMe";
 import { Durations } from "@/constants/Amenities";
-import { withObservables } from "@nozbe/watermelondb/react";
 import { Property } from "@/db/models/properties";
 import { generateMediaUrlSingle } from "@/lib/api";
+import { withPropertyWriter } from "@/store/utils";
 
 type Props = {
   property: Property;
@@ -92,8 +92,8 @@ function PropertyListItem(props: Props) {
     if (!me) {
       return openAccessModal({ visible: true });
     } else {
-      await data.markAsLiked();
-      toggleLike({ id: data.id });
+      await withPropertyWriter(data.id, (p) => p.markAsLiked());
+      toggleLike({ id: data.property_server_id });
     }
   }
   return (
@@ -153,6 +153,7 @@ function PropertyListItem(props: Props) {
             {showLike && (
               <Pressable
                 onPress={handleLike}
+                both
                 className={"p-2 rounded-full bg-black/50"}
               >
                 <AnimatedLikeButton
@@ -226,9 +227,4 @@ function PropertyListItem(props: Props) {
     </Pressable>
   );
 }
-
-const enhance = withObservables(["property"], ({ property }) => ({
-  property: property.observe(),
-}));
-
-export default enhance(PropertyListItem);
+export default PropertyListItem;

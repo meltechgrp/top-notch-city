@@ -30,30 +30,42 @@ export async function sendMessage({
   reply_to_message_id,
 }: SendMessage) {
   const formData = new FormData();
+  console.log(files);
   if (chat_id) formData.append("chat_id", chat_id);
-  if (reply_to_message_id)
+  if (reply_to_message_id) {
     formData.append("reply_to_message_id", reply_to_message_id);
+  }
   if (content) formData.append("content", content);
-  files?.forEach(async (item) => {
-    if (item.is_local) {
-      const [file] = await uploadToBucket({
-        data: [
-          { url: item.file_url, type: item.file_type?.toLowerCase() as any },
-        ],
-      });
 
-      file && formData.append("chat_media_ids", file.id);
-    } else {
-      formData.append("chat_media_ids", item.id);
-    }
-  });
+  if (files?.length) {
+    await Promise.all(
+      files.map(async (item) => {
+        if (item.is_local) {
+          const [file] = await uploadToBucket({
+            data: [
+              {
+                url: item.file_url,
+                type: item.file_type?.toLowerCase() as any,
+              },
+            ],
+          });
+
+          if (file?.id) {
+            formData.append("chat_media_ids", file.id);
+          }
+        } else {
+          formData.append("chat_media_ids", item.id);
+        }
+      })
+    );
+  }
+
   const result = await Fetch(`/send/messages`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
+    // ❌ DO NOT set Content-Type when sending FormData
     data: formData,
   });
+
   return result as {
     type: string;
     chat_id: string;
@@ -68,6 +80,7 @@ export async function sendMessage({
     reply_to_message_id?: string;
   };
 }
+
 export async function editMessage({
   message_id,
   content,

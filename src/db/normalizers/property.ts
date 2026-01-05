@@ -42,6 +42,7 @@ export function normalizeProperty(p: ServerProperty) {
       country: p.address?.country,
       latitude: p.address.latitude,
       longitude: p.address.longitude,
+      sync_status: "synced",
       created_at: Date.parse(p.created_at),
       updated_at: p.updated_at
         ? Date.parse(p.updated_at)

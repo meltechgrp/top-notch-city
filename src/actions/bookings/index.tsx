@@ -1,4 +1,6 @@
 import { Fetch } from "@/actions/utills";
+import config from "@/config";
+import { getActiveToken } from "@/lib/secureStore";
 
 export async function sendBooking({ form }: { form: BookingForm }) {
   try {
@@ -38,26 +40,24 @@ export async function updateBookingStatus({
   status: BookingStatus;
   note?: string;
 }) {
-  try {
-    const res = await Fetch(`/bookings/${booking_id}/status`, {
+  const fd = new FormData();
+  fd.append("status", status);
+  note && fd.append("note", note);
+  const authToken = await getActiveToken();
+  const data = await fetch(
+    `${config.origin}/api/bookings/${booking_id}/status`,
+    {
       method: "PATCH",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
+        ...(authToken && { Authorization: `Bearer ${authToken}` }),
       },
-      data: note
-        ? {
-            booking_id,
-            status,
-            note,
-          }
-        : {
-            booking_id,
-            status,
-          },
-    });
-    if (res?.detail) throw Error("Something went wrong!, try again.");
-    return res as Booking[];
-  } catch (error) {
-    throw Error("Something went wrong!");
+      body: fd,
+    }
+  );
+  const res = await data.json();
+  if (res?.detail) {
+    throw Error(res?.detail);
   }
+  return res as Booking[];
 }

@@ -1,8 +1,8 @@
 import WaveBar from "@/components/editor/audio/WaveBar";
-import React, { memo, useEffect, useMemo, useRef, useState } from "react";
+import { cn } from "@/lib/utils";
+import React, { memo, useEffect, useMemo, useState } from "react";
 import { View, PanResponder } from "react-native";
 import Animated, {
-  SharedValue,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
@@ -12,6 +12,7 @@ type Props = {
   duration: number;
   currentTime: number;
   isPlaying: boolean;
+  isChat?: boolean;
   seekTo?: (sec: number) => void;
 };
 
@@ -19,7 +20,13 @@ const BAR_WIDTH = 2;
 const BAR_GAP = 4;
 const BAR_TOTAL = BAR_WIDTH + BAR_GAP;
 
-function PlaybackWaveform({ duration, currentTime, isPlaying, seekTo }: Props) {
+function PlaybackWaveform({
+  duration,
+  currentTime,
+  isPlaying,
+  seekTo,
+  isChat,
+}: Props) {
   const [wid, setWidth] = useState(0);
   const playheadX = useSharedValue(0);
   const width = wid - 15;
@@ -54,7 +61,10 @@ function PlaybackWaveform({ duration, currentTime, isPlaying, seekTo }: Props) {
   return (
     <View
       onLayout={(e) => setWidth(e.nativeEvent.layout.width)}
-      className="h-6 flex-1 rounded-full bg-background-muted overflow-hidden flex-row items-center px-2"
+      className={cn(
+        "h-6 flex-1 rounded-full bg-background-muted overflow-hidden flex-row items-center px-2",
+        isChat && "h-8 rounded-lg"
+      )}
     >
       {Array.from({ length: bars }).map((_, i) => (
         <WaveBar key={i} index={i} playheadX={playheadX} />

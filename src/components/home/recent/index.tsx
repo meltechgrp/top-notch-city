@@ -1,12 +1,10 @@
 import SectionHeaderWithRef from "@/components/home/SectionHeaderWithRef";
 import HorizontalProperties from "@/components/property/HorizontalProperties";
-import { propertiesCollection } from "@/db/collections";
-import { Property } from "@/db/models/properties";
-import { Q } from "@nozbe/watermelondb";
-import { withObservables } from "@nozbe/watermelondb/react";
+import { apartments } from "@/store/homeFeed";
 import { router } from "expo-router";
 
-function ApartmentsProperties({ properties }: { properties: Property[] }) {
+function ApartmentsProperties() {
+  const properties = apartments.get();
   return (
     <SectionHeaderWithRef
       title="Properties"
@@ -31,13 +29,4 @@ function ApartmentsProperties({ properties }: { properties: Property[] }) {
   );
 }
 
-const enhance = withObservables([], () => ({
-  properties: propertiesCollection.query(
-    Q.where("status", "approved"),
-    Q.or(Q.where("category", "Residential"), Q.where("category", "Commercial")),
-    Q.sortBy("updated_at", Q.desc),
-    Q.take(10)
-  ),
-}));
-
-export default enhance(ApartmentsProperties);
+export default ApartmentsProperties;

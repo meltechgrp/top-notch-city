@@ -26,11 +26,11 @@ export default function SectionHeaderWithRef(props: Props) {
   return (
     <View
       style={[style]}
-      className={cn("my-4 bg-transparent hidden", hasData && "flex", className)}
+      className={cn("my-1 bg-transparent hidden", hasData && "flex", className)}
     >
       <View className="flex-row justify-between py-2 mb-1 px-4 items-center">
         <Heading
-          className={cn("text-xl font-bold text-typography/80", titleClassName)}
+          className={cn("text-lg font-bold text-typography/80", titleClassName)}
         >
           {title}
         </Heading>

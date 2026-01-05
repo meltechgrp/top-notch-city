@@ -1,12 +1,7 @@
 import { User } from "@/db/models/users";
 import { Model } from "@nozbe/watermelondb";
 import { writer } from "@nozbe/watermelondb/decorators";
-import {
-  field,
-  text,
-  children,
-  relation,
-} from "@nozbe/watermelondb/decorators";
+import { field, text, relation } from "@nozbe/watermelondb/decorators";
 
 export class Property extends Model {
   static table = "properties";
@@ -24,30 +19,23 @@ export class Property extends Model {
     await this.update((d) => {
       d.liked = !d.liked;
       d.likes = d.liked ? d.likes + 1 : d.likes - 1;
+      d.sync_status = "dirty";
     });
   }
   @writer async markAsViewed() {
     await this.update((d) => {
       d.views = d.views + 1;
       d.viewed = true;
+      d.sync_status = "dirty";
     });
   }
   @writer async addToWishlist() {
     await this.update((d) => {
       d.added = !d.added;
+      d.sync_status = "dirty";
     });
   }
-  @children("property_media")
-  media!: PropertyMedia[];
-
-  @children("property_availabilities")
-  availabilities!: PropertyAvailability[];
-
-  @children("property_ownership")
-  ownerships!: PropertyOwnership[];
-
-  @children("property_amenities")
-  amenities!: PropertyAmenity[];
+  @text("sync_status") sync_status!: "synced" | "dirty" | "deleted";
 
   @relation("users", "server_user_id") owner!: User;
   @text("property_server_id") property_server_id!: string;

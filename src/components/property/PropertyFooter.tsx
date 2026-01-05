@@ -6,7 +6,7 @@ import {
 } from "@/components/globals/AuthModals";
 import { Icon, Pressable, Text, View } from "@/components/ui";
 import { Property } from "@/db/models/properties";
-import { cn, composeFullAddress } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { BookCheck, MessageCircle } from "lucide-react-native";
@@ -32,12 +32,12 @@ export function PropertyFooter({ property, me }: PropertyFooterProps) {
         <View className="flex-row gap-4 px-4 pt-2 pb-0 flex-1">
           <Pressable
             both
-            disabled={me?.id == property?.server_owner_id}
+            disabled={me?.id == property?.server_user_id || property.is_booked}
             onPress={() => {
               openBookingModal({
                 visible: true,
                 property_id: property.property_server_id,
-                agent_id: property.server_owner_id,
+                agent_id: property.server_user_id,
                 image: property.thumbnail!,
                 address: property.address,
                 booking_type:
@@ -58,7 +58,7 @@ export function PropertyFooter({ property, me }: PropertyFooterProps) {
           </Pressable>
           <Pressable
             both
-            disabled={me?.id == property?.server_owner_id}
+            disabled={me?.id == property?.server_user_id}
             onPress={async () => {
               if (!me) {
                 return openAccessModal({ visible: true });
@@ -66,7 +66,7 @@ export function PropertyFooter({ property, me }: PropertyFooterProps) {
               await mutateAsync(
                 {
                   property_id: property?.id!,
-                  member_id: property?.server_owner_id!,
+                  member_id: property?.server_user_id!,
                 },
                 {
                   onError: (e) => {

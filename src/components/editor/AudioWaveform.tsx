@@ -6,6 +6,7 @@ type Props = {
   currentTime: number;
   isPlaying?: boolean;
   isRecording?: boolean;
+  isChat?: boolean;
   seekTo?: (sec: number) => void;
 };
 
@@ -17,6 +18,7 @@ export default function AudioWaveform(props: Props) {
   return (
     <PlaybackWaveform
       duration={props.duration}
+      isChat={props.isChat}
       currentTime={props.currentTime}
       isPlaying={!!props.isPlaying}
       seekTo={props.seekTo}

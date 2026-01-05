@@ -31,11 +31,9 @@ export async function uploadToBucket({ data }: { data: UploadedFile[] }) {
     const response = await axios.post(url, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "multipart/form-data",
         Accept: "application/json",
       },
     });
-
     return response.data?.files?.map((f: any) => ({
       id: f.id,
       url: f.file_url,

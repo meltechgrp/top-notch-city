@@ -96,7 +96,7 @@ export const mainStore = observable<MainStore>(
       },
     },
     persist: {
-      name: "topnotch",
+      name: "topnotch-main",
     },
   })
 );

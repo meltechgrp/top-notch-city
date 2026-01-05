@@ -1,12 +1,17 @@
 import { cn, guidGenerator } from "@/lib/utils";
-import React, { memo, useEffect, useImperativeHandle } from "react";
-import { Alert, Keyboard, TextInput, TextInputProps, View } from "react-native";
+import React, {
+  memo,
+  useDeferredValue,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
+import { Keyboard, TextInput, TextInputProps, View } from "react-native";
 import MediaPicker, { MediaPickerRef } from "@/components/media/MediaPicker";
 import {
   useAudioRecorder,
-  AudioModule,
   RecordingPresets,
-  setAudioModeAsync,
   useAudioRecorderState,
 } from "expo-audio";
 
@@ -15,16 +20,16 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { useChatComposer } from "@/components/editor/useChatComposer";
 import { AudioRecorderComposer } from "@/components/editor/AudioRecorderComposer";
 import { ActionButtons } from "@/components/editor/ActionButtons";
 import { SendButton } from "@/components/editor/SendButton";
+import { sendTyping } from "@/actions/message";
 
+type RecorderState = "idle" | "recording" | "paused";
 export type EditorOnchangeArgs = { text: string; files: Media[] };
 type Props = View["props"] & {
   onBlur?: () => void;
   onSend: (arg: EditorOnchangeArgs) => void;
-  onUpdate?: (arg: EditorOnchangeArgs) => void;
   fileLimit?: number;
   placeholder?: string;
   commentId?: string | null;
@@ -47,7 +52,6 @@ const EditorComponent = React.forwardRef<
     style,
     placeholder,
     onSend,
-    onUpdate,
     commentId,
     onBlur,
     className,
@@ -63,19 +67,33 @@ const EditorComponent = React.forwardRef<
   const mediaPickerRef = React.useRef<MediaPickerRef>(null);
   const inputRef = React.useRef<TextInput>(null);
 
-  const {
-    recorder,
-    setRecorder,
-    isComposing,
-    submit,
-    text,
-    setText,
-    media,
-    setMedia,
-  } = useChatComposer({
-    onSend,
-    chatId,
-  });
+  const [text, setText] = useState(value);
+  const [typing, setTyping] = useState(false);
+  const [recorder, setRecorder] = useState<RecorderState>("idle");
+  const typingTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const deferredText = useDeferredValue(text);
+  const isComposing = text.length > 0;
+
+  function submit() {
+    if (!text.trim()) return;
+    onSend({ text: text || " ", files: [] });
+    setText("");
+  }
+  useEffect(() => {
+    if (!typing) setTyping(true);
+
+    if (typingTimeout.current) clearTimeout(typingTimeout.current);
+    typingTimeout.current = setTimeout(() => {
+      setTyping(false);
+    }, 2000);
+  }, [deferredText]);
+  useEffect(() => {
+    const t = setTimeout(() => {
+      sendTyping({ chat_id: chatId, is_typing: typing });
+    }, 500);
+    return () => clearTimeout(t);
+  }, [typing, deferredText]);
 
   // 🎧 Audio
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
@@ -106,8 +124,9 @@ const EditorComponent = React.forwardRef<
     setRecorder("idle");
   }
 
-  function sendAudio() {
+  async function sendAudio() {
     if (!url) return;
+    await audioRecorder.stop();
     submit();
     onSend({
       text: "",
@@ -222,7 +241,11 @@ const EditorComponent = React.forwardRef<
             {(isComposing || recorder !== "idle") && (
               <Animated.View style={sendStyle}>
                 <SendButton
-                  onPress={recorder === "paused" ? sendAudio : submit}
+                  onPress={
+                    recorder === "paused" || recorder === "recording"
+                      ? sendAudio
+                      : submit
+                  }
                 />
               </Animated.View>
             )}

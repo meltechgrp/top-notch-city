@@ -58,9 +58,10 @@ export function useBooking() {
         alertType: "success",
       });
     },
-    onError: () => {
+    onError: (e) => {
+      console.log(e);
       showErrorAlert({
-        title: "Something went wrong!",
+        title: e?.message || "Something went wrong!",
         alertType: "error",
       });
     },

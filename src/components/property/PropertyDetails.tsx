@@ -49,7 +49,6 @@ import SimilarProperties from "@/components/property/SimilarProperites";
 import { PropertyEnquiry } from "@/components/property/PropertyEnquiry";
 import { KeyboardDismissPressable } from "@/components/shared/KeyboardDismissPressable";
 import { ExternalLink } from "@/components/ExternalLink";
-import ModalScreen from "@/components/shared/ModalScreen";
 import { PropertyBadge } from "@/components/property/PropertyBadge";
 import { Durations } from "@/constants/Amenities";
 import {
@@ -288,6 +287,7 @@ const PropertyDetailsBottomSheet = ({
                 </View>
               </View>
               {property.category !== "Shortlet" &&
+                property.category !== "Hotel" &&
                 property.status == "approved" && (
                   <View className="bg-background-muted border border-outline-100 rounded-xl p-4 mx-4">
                     <View className="h-40 bg-background/70">

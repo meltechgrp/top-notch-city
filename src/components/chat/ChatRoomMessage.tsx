@@ -58,7 +58,7 @@ function ChatRoomMessage(props: ChatRoomMessageProps) {
       files?.map((item) => ({
         id: item.id,
         url: item.url,
-        media_type: item.file_type?.toLowerCase(),
+        media_type: item.file_type?.toUpperCase(),
         is_local: item.is_local,
       })),
     [files]
@@ -177,20 +177,64 @@ function ChatRoomMessage(props: ChatRoomMessageProps) {
                     {row.map((item, i) => {
                       const isMore = images?.length > 4 && i == 1 && a == 1;
                       const more = images?.length - 4;
-                      const isVideo = item.media_type === "VIDEO";
-                      const isAudio = item.media_type === "AUDIO";
-                      return (
-                        <View
-                          key={item.id}
-                          className={cn(["rounded-2xl mb-1 flex-1 h-40"])}
-                        >
-                          {!isAudio ? (
-                            <ProfileImageTrigger
-                              image={images}
-                              index={i}
-                              className="flex-1 relative"
+                      switch (item.media_type) {
+                        case "AUDIO":
+                          return (
+                            <View
+                              key={item.id}
+                              className={cn(["rounded-2xl px-4 flex-1"])}
                             >
-                              {isVideo ? (
+                              <AudioPreviewPlayer
+                                isChat
+                                url={
+                                  item.is_local
+                                    ? item.url
+                                    : generateMediaUrlSingle(item.url)
+                                }
+                              />
+                            </View>
+                          );
+                        case "IMAGE":
+                          return (
+                            <View
+                              key={item.id}
+                              className={cn(["rounded-2xl mb-1 flex-1 h-40"])}
+                            >
+                              <ProfileImageTrigger
+                                image={images}
+                                index={i}
+                                className="flex-1 relative"
+                              >
+                                <Image
+                                  source={{
+                                    uri: item.is_local
+                                      ? item.url
+                                      : generateMediaUrlSingle(item.url),
+                                    cacheKey: item.id,
+                                  }}
+                                  rounded
+                                />
+                                {isMore && (
+                                  <View className=" absolute inset-0 bg-background/90 justify-center items-center ">
+                                    <Text className="text-lg font-bold">
+                                      + {more}
+                                    </Text>
+                                  </View>
+                                )}
+                              </ProfileImageTrigger>
+                            </View>
+                          );
+                        case "VIDEO":
+                          return (
+                            <View
+                              key={item.id}
+                              className={cn(["rounded-2xl mb-1 flex-1 h-40"])}
+                            >
+                              <ProfileImageTrigger
+                                image={images}
+                                index={i}
+                                className="flex-1 relative"
+                              >
                                 <MiniVideoPlayer
                                   uri={
                                     item.is_local
@@ -202,36 +246,19 @@ function ChatRoomMessage(props: ChatRoomMessageProps) {
                                   autoPlay={false}
                                   showPlayBtn
                                 />
-                              ) : (
-                                <Image
-                                  source={{
-                                    uri: item.is_local
-                                      ? item.url
-                                      : generateMediaUrlSingle(item.url),
-                                    cacheKey: item.id,
-                                  }}
-                                  rounded
-                                />
-                              )}
-                              {isMore && (
-                                <View className=" absolute inset-0 bg-background/90 justify-center items-center ">
-                                  <Text className="text-lg font-bold">
-                                    + {more}
-                                  </Text>
-                                </View>
-                              )}
-                            </ProfileImageTrigger>
-                          ) : (
-                            <AudioPreviewPlayer
-                              url={
-                                item.is_local
-                                  ? item.url
-                                  : generateMediaUrlSingle(item.url)
-                              }
-                            />
-                          )}
-                        </View>
-                      );
+                                {isMore && (
+                                  <View className=" absolute inset-0 bg-background/90 justify-center items-center ">
+                                    <Text className="text-lg font-bold">
+                                      + {more}
+                                    </Text>
+                                  </View>
+                                )}
+                              </ProfileImageTrigger>
+                            </View>
+                          );
+                        default:
+                          return <></>;
+                      }
                     })}
                   </View>
                 ))}
@@ -291,7 +318,7 @@ function ChatRoomMessage(props: ChatRoomMessageProps) {
             </Pressable>
             {!isMine && <View className="flex-1" />}
           </View>
-          {(message.status == "failed" || message.status == "pending") && (
+          {message.status == "failed" && (
             <TouchableOpacity
               onPress={() => {
                 if (resendMessage) {

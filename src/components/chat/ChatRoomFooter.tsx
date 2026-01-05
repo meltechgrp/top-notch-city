@@ -41,6 +41,7 @@ const ChatRoomFooter = React.forwardRef<EditorComponentRefHandle, Props>(
     const { saveLocalMessage, editServerMessage, sendServerMessage } =
       messagesActions();
     async function onSubmit({ text, files }: { text: string; files: Media[] }) {
+      console.log(text, files);
       if (me) {
         const tempId = guidGenerator();
         const mock: ServerMessage = {

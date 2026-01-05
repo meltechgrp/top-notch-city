@@ -1,7 +1,7 @@
 import CreateButton from "@/components/custom/CreateButton";
 import DiscoverProperties from "@/components/home/DiscoverProperties";
 import { Box, View } from "@/components/ui";
-import { ListRenderItem } from "react-native";
+import { ListRenderItem, RefreshControl } from "react-native";
 import ShortletProperties from "@/components/home/shortlet";
 import FeaturedProperties from "@/components/home/featured";
 import ApartmentProperties from "@/components/home/recent";
@@ -10,12 +10,11 @@ import { FlashList } from "@shopify/flash-list";
 import { router } from "expo-router";
 import React, { useCallback } from "react";
 import NearbyProperties from "@/components/home/topLocations";
-import { use$ } from "@legendapp/state/react";
-import { mainStore } from "@/store";
+import { usePropertyFeedSync } from "@/db/queries/syncPropertyFeed";
 const MAP_HEIGHT = 400;
 
 export default function HomeScreen() {
-  const address = use$(mainStore.address);
+  const { resync } = usePropertyFeedSync();
   const feedList = React.useMemo(() => {
     const topLocations = {
       id: "locations",
@@ -51,32 +50,27 @@ export default function HomeScreen() {
     ];
   }, []);
   type FeedList = any;
-  const renderItem: ListRenderItem<FeedList> = useCallback(
-    ({ item }) => {
-      if (item.id === "locations") {
-        return (
-          <NearbyProperties state={address?.state || ""} location={address} />
-        );
-      }
-      if (item.id === "featured") {
-        return <FeaturedProperties />;
-      }
-      if (item.id === "shortlet") {
-        return <ShortletProperties />;
-      }
-      if (item.id === "apartment") {
-        return <ApartmentProperties />;
-      }
-      if (item.id === "lands") {
-        return <Lands />;
-      }
-      if (item.id === "bottomPlaceHolder") {
-        return <View className="h-24" />;
-      }
-      return <View></View>;
-    },
-    [address]
-  );
+  const renderItem: ListRenderItem<FeedList> = useCallback(({ item }) => {
+    if (item.id === "locations") {
+      return <NearbyProperties />;
+    }
+    if (item.id === "featured") {
+      return <FeaturedProperties />;
+    }
+    if (item.id === "shortlet") {
+      return <ShortletProperties />;
+    }
+    if (item.id === "apartment") {
+      return <ApartmentProperties />;
+    }
+    if (item.id === "lands") {
+      return <Lands />;
+    }
+    if (item.id === "bottomPlaceHolder") {
+      return <View className="h-24" />;
+    }
+    return <View></View>;
+  }, []);
   const onNewChat = () => {
     router.push("/start");
   };
@@ -85,16 +79,10 @@ export default function HomeScreen() {
     <>
       <Box className="flex-1">
         <FlashList
-          // refreshControl={
-          //   <RefreshControl refreshing={refetching} onRefresh={refreshAll} />
-          // }
-          ListHeaderComponent={
-            <DiscoverProperties
-              state={address?.state || ""}
-              city={address?.city || ""}
-              mapHeight={MAP_HEIGHT}
-            />
+          refreshControl={
+            <RefreshControl refreshing={false} onRefresh={resync} />
           }
+          ListHeaderComponent={<DiscoverProperties mapHeight={MAP_HEIGHT} />}
           getItemType={(item) => {
             return item.id;
           }}
