@@ -1,14 +1,10 @@
 import { database } from "@/db";
 import { Q } from "@nozbe/watermelondb";
-import { deleteChat } from "@/actions/message";
-import {
-  chatCollection,
-  messageCollection,
-  messageFilesCollection,
-} from "@/db/collections";
+import { chatCollection, messageCollection } from "@/db/collections";
 import { chunkArray } from "@/db/helpers";
 import { Chat } from "@/db/models/messages";
 import { updateChats } from "@/components/chat";
+import { deleteChatRequest } from "@/actions/message";
 
 type SyncInput = {
   pullCreate: ServerChat[];
@@ -30,7 +26,9 @@ export async function syncChatsEngine({
   );
   if (pushDelete?.length) {
     await Promise.all(
-      pushDelete.map(async (item) => await deleteChat(item.server_chat_id))
+      pushDelete.map(
+        async (item) => await deleteChatRequest(item.server_chat_id)
+      )
     );
   }
   if (pullDelete?.length) {

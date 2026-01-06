@@ -65,6 +65,7 @@ export default function useMessageActions(args: Args) {
         text: "Yes",
         style: "destructive",
         onPress: async () => {
+          await selectedMessage.softDeleteMessage(false);
           await mutateAsync(
             {
               message_id: selectedMessage.server_message_id,
@@ -108,6 +109,7 @@ export default function useMessageActions(args: Args) {
           text: "Yes",
           style: "destructive",
           onPress: async () => {
+            await selectedMessage.softDeleteMessage(true);
             await mutateAsync(
               {
                 message_id: selectedMessage.server_message_id,

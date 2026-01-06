@@ -1,5 +1,5 @@
 import { router, Tabs } from "expo-router";
-import React from "react";
+import React, { useEffect } from "react";
 import { HapticTab } from "@/components/HapticTab";
 import {
   Home,
@@ -26,11 +26,17 @@ export default function TabLayout() {
   const theme = useResolvedTheme();
   const { isInternetReachable, isOffline } = useNetworkStatus();
   const { me, isAdmin, isAgent } = useMe();
-  const { data } = useQuery({
+  const { data, refetch } = useQuery({
     queryKey: ["total-pending"],
     queryFn: getTotal,
+    enabled: !!me,
   });
   const total = data?.total_unread || 0;
+  useEffect(() => {
+    if (me) {
+      refetch();
+    }
+  }, [me]);
   return (
     <Tabs
       screenOptions={{

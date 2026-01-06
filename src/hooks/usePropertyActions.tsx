@@ -17,7 +17,7 @@ export function usePropertyActions({ property }: { property: Property }) {
     usePropertyStatusMutations().softDeleteMutation;
 
   const isOwner = useMemo(
-    () => property?.server_owner_id === user?.id,
+    () => property?.server_user_id === user?.id,
     [property, user]
   );
 

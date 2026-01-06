@@ -1,6 +1,7 @@
 import FilterComponent from "@/components/admin/shared/FilterComponent";
 import VerticalProperties from "@/components/property/VerticalProperties";
 import { Box, Icon, Pressable, View } from "@/components/ui";
+import { usePropertyFeedSync } from "@/db/queries/syncPropertyFeed";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useMe } from "@/hooks/useMe";
 import { Stack, useGlobalSearchParams, useRouter } from "expo-router";
@@ -8,6 +9,7 @@ import { PlusCircle } from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
 
 export default function AgentProperties() {
+  const { resync } = usePropertyFeedSync();
   const { userId } = useGlobalSearchParams() as { userId: string };
   const router = useRouter();
   const [search, setSearch] = useState("");
@@ -64,7 +66,7 @@ export default function AgentProperties() {
           tab={activeTab}
           perPage={20}
           page={page}
-          refetch={async () => {}}
+          refetch={resync}
           fetchNextPage={setPage}
           fetchPrevPage={setPage}
           className="pb-24"

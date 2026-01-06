@@ -154,7 +154,7 @@ export async function sendTyping({
   });
 }
 
-export async function deleteChat(chat_id: string) {
+export async function deleteChatRequest(chat_id: string) {
   try {
     await Fetch(`/chat/${chat_id}/delete-for-me`, {
       method: "DELETE",

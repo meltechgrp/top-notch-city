@@ -52,7 +52,8 @@ export const listingStore = observable<ListingState>({
   listing: initialListing,
 
   resetListing() {
-    listingStore.listing.set(initialListing);
+    listingStore.listing.delete();
+    listingStore.listing.assign(initialListing);
   },
 
   updateListing(data) {

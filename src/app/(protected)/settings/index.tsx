@@ -19,12 +19,12 @@ import { openAccessModal } from "@/components/globals/AuthModals";
 import { Fetch } from "@/actions/utills";
 import { getUniqueIdSync } from "react-native-device-info";
 import LogoutButton from "@/components/settings/LogoutButton";
-import { useMultiAccount } from "@/hooks/useAccounts";
+import { useAccounts } from "@/hooks/useAccounts";
 import { NotLoggedInProfile } from "@/components/profile/ProfileWrapper";
 import { useMe } from "@/hooks/useMe";
 
 export default function Setting() {
-  const { removeAccount } = useMultiAccount();
+  const { removeAccount } = useAccounts();
   const { me, isAdmin, isAgent } = useMe();
   const router = useRouter();
   const deviceId = getUniqueIdSync();

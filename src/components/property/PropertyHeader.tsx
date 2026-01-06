@@ -61,7 +61,7 @@ export default function PropertyHeader({
                 pathname: "/property/[propertyId]/edit",
                 params: {
                   propertyId: property.id,
-                  userId: property.server_owner_id,
+                  userId: property.server_user_id,
                 },
               })
             }

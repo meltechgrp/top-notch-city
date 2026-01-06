@@ -6,7 +6,7 @@ import ReelList from "@/components/reel/ReelList";
 import ReelTabs from "@/components/reel/ReelTabs";
 import { useFocusEffect } from "expo-router";
 
-const TABS = ["Lands", "Videos", "Agents"];
+const TABS = ["Videos"];
 
 export default function ReelScreen() {
   const pagerRef = useRef<PagerView>(null);

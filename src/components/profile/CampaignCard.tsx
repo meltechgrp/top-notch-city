@@ -38,7 +38,10 @@ export default function CampaignCard({
         <Text className="text-sm text-typography/70 mt-1">{subtitle}</Text>
         <Pressable
           className="bg-primary flex-row gap-2 items-center self-end mt-3 px-4 py-2 rounded-xl"
-          onPress={() => router.push(actionRoute as any)}
+          onPress={() => {
+            router.setParams({ propertyId: undefined });
+            router.push(actionRoute as any);
+          }}
         >
           <Text className="text-white text-sm font-medium">{actionLabel}</Text>
           <Icon as={ChevronRight} />

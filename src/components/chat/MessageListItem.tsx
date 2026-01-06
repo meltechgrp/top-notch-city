@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React from "react";
 import {
   Avatar,
   AvatarBadge,
@@ -12,9 +12,7 @@ import {
 import { cn, formatMessageTime, fullName } from "@/lib/utils";
 import { generateMediaUrlSingle } from "@/lib/api";
 import SwipeableWrapper from "@/components/shared/SwipeableWrapper";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteChat } from "@/actions/message";
-import { showErrorAlert } from "@/components/custom/CustomNotification";
+import { deleteChat } from "@/components/chat";
 import { MessageStatusIcon } from "@/components/chat/MessageStatus";
 import { router } from "expo-router";
 import { TypingIndicator } from "@/components/chat/TypingIndicator";
@@ -37,11 +35,7 @@ function MessageListItem(props: MessageListItemProps) {
   } = props;
 
   const typing = use$(tempStore.getTyping(chat.server_chat_id));
-  const queryClient = useQueryClient();
   const { me } = useMe();
-  const { mutateAsync } = useMutation({
-    mutationFn: deleteChat,
-  });
   const unreadCount = React.useMemo(() => {
     const c = chat?.unread_count || 0;
     return c > 99 ? "99+" : c;
@@ -61,23 +55,9 @@ function MessageListItem(props: MessageListItemProps) {
     []
   );
   async function handleDelete() {
-    await mutateAsync(chat.server_chat_id, {
-      onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: ["chats"],
-        });
-        showErrorAlert({
-          title: "Chat deleted successfully!",
-          alertType: "success",
-        });
-      },
-      onError: () => {
-        showErrorAlert({
-          title: "Something went wrong. Try again!",
-          alertType: "error",
-        });
-      },
-    });
+    console.log("base");
+    await chat.softDeleteChat();
+    await deleteChat(chat.server_chat_id);
   }
   const isImage = chat?.recent_message_content?.trim() == "image";
   return (

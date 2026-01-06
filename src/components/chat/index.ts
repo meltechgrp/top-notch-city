@@ -1,4 +1,9 @@
-import { sendMessage, editMessage, deleteChatMessage } from "@/actions/message";
+import {
+  sendMessage,
+  editMessage,
+  deleteChatMessage,
+  deleteChatRequest,
+} from "@/actions/message";
 import { database } from "@/db";
 import {
   chatCollection,
@@ -15,34 +20,40 @@ import {
 } from "@/db/normalizers/message";
 import { Message } from "@/db/models/messages";
 import { User } from "@/db/models/users";
-import { fullName } from "@/lib/utils";
-import { Copy, Edit, Reply, Trash } from "lucide-react-native";
 
 export async function editServerMessage({ data }: { data: ServerMessage }) {
+  const [chat] = await chatCollection
+    .query(Q.where("recent_message_id", data.message_id), Q.take(1))
+    .fetch();
+  const [msg] = await messageCollection
+    .query(Q.where("server_message_id", data.message_id), Q.take(1))
+    .fetch();
   try {
     await editMessage({
       message_id: data.message_id,
       content: data.content,
     });
-    const msg = await messageCollection
-      .query(Q.where("server_message_id", data.message_id), Q.take(1))
-      .fetch();
-    if (msg?.length) {
+    if (msg) {
       await database.write(async () => {
-        await msg[0].update((m) => {
+        if (chat) {
+          await chat.update((m) => {
+            m.recent_message_status = "sent";
+          });
+        }
+        await msg.update((m) => {
           m.status = "sent";
           m.sync_status = "synced";
         });
       });
     }
   } catch (error) {
-    const msg = await messageCollection
-      .query(Q.where("server_message_id", data.message_id), Q.take(1))
-      .fetch();
-    if (msg?.length) {
+    if (msg) {
       await database.write(async () => {
-        await msg[0].update((m) => {
+        await msg.update((m) => {
           m.status = "failed";
+        });
+        await chat.update((c) => {
+          c.recent_message_status = "failed";
         });
       });
     }
@@ -55,6 +66,16 @@ export async function sendServerMessage({
   data: ServerMessage;
   chatId: string;
 }) {
+  const [chat] = await chatCollection
+    .query(Q.where("server_chat_id", chatId), Q.take(1))
+    .fetch();
+  const [msg] = await messageCollection
+    .query(Q.where("server_message_id", data.message_id), Q.take(1))
+    .fetch();
+
+  const existingFiles = await messageFilesCollection
+    .query(Q.where("server_message_id", data.message_id))
+    .fetch();
   try {
     const m = await sendMessage({
       chat_id: chatId,
@@ -63,24 +84,27 @@ export async function sendServerMessage({
       reply_to_message_id: data.reply_to_message_id,
     });
     if (!m) throw Error("Something went wrong");
-    const [msg] = await messageCollection
-      .query(Q.where("server_message_id", data.message_id), Q.take(1))
-      .fetch();
-
-    const existingFiles = await messageFilesCollection
-      .query(Q.where("server_message_id", data.message_id))
-      .fetch();
     if (msg) {
       await database.write(async () => {
         const ops: any[] = [];
-        ops.push(
-          msg.prepareUpdate((msg) => {
-            msg.status = "sent";
-            msg.server_message_id = m.message_id;
-            msg.created_at = Date.parse(m.created_at);
-            msg.sync_status = "synced";
-          })
-        );
+        if (chat) {
+          ops.push(
+            chat.prepareUpdate((c) => {
+              c.recent_message_status = "sent";
+              c.sync_status = "synced";
+            })
+          );
+        }
+        if (msg) {
+          ops.push(
+            msg.prepareUpdate((msg) => {
+              msg.status = "sent";
+              msg.server_message_id = m.message_id;
+              msg.created_at = Date.parse(m.created_at);
+              msg.sync_status = "synced";
+            })
+          );
+        }
         if (m.media?.length) {
           m.media.forEach((serverFile, index) => {
             const localFile = existingFiles[index];
@@ -120,13 +144,12 @@ export async function sendServerMessage({
       });
     }
   } catch (error) {
-    const [msg] = await messageCollection
-      .query(Q.where("server_message_id", data.message_id), Q.take(1))
-      .fetch();
-
     await database.write(async () => {
       await msg.update((m) => {
         m.status = "failed";
+      });
+      await chat.update((c) => {
+        c.recent_message_status = "failed";
       });
     });
   }
@@ -209,6 +232,7 @@ export async function saveLocalMessage({
         existing[0].prepareUpdate((m) => {
           m.content = data.content;
           m.status = data.status;
+          m.is_edited = true;
           m.reply_to_message_id = data.reply_to_message_id;
           m.updated_at = Date.parse(data.created_at);
           m.sync_status = "dirty";
@@ -335,19 +359,44 @@ export const updateUserStatus = async ({
   });
 };
 export const deleteChat = async (chatId: string) => {
-  try {
-    await deleteChat(chatId);
-    const [chat] = await chatCollection
+  await deleteChatRequest(chatId);
+
+  await database.write(async () => {
+    const ops: any[] = [];
+    const chats = await chatCollection
       .query(Q.where("server_chat_id", chatId))
       .fetch();
 
-    if (chat) {
-      await database.write(async () => {
-        await chat.deleteChat();
+    chats.forEach((c) => {
+      ops.push(c.prepareDestroyPermanently());
+    });
+
+    const messages = await messageCollection
+      .query(Q.where("server_chat_id", chatId))
+      .fetch();
+
+    if (messages.length) {
+      const messageIds = messages.map((m) => m.server_message_id);
+
+      const files = await messageFilesCollection
+        .query(Q.where("server_message_id", Q.oneOf(messageIds)))
+        .fetch();
+
+      files.forEach((f) => {
+        ops.push(f.prepareDestroyPermanently());
+      });
+
+      messages.forEach((m) => {
+        ops.push(m.prepareDestroyPermanently());
       });
     }
-  } catch (error) {}
+
+    if (ops.length) {
+      await database.batch(...ops);
+    }
+  });
 };
+
 export const updateChats = async (data: ServerChat[]) => {
   await database.write(async () => {
     const ops: any[] = [];
@@ -373,7 +422,6 @@ export const updateChats = async (data: ServerChat[]) => {
       ops.push(chatModel);
 
       if (raw?.receiver) {
-        console.log(raw.receiver);
         const serverUserId = raw?.receiver.id;
         const [existingOwner] = await userCollection
           .query(Q.where("server_user_id", serverUserId))
@@ -382,7 +430,6 @@ export const updateChats = async (data: ServerChat[]) => {
           if (!updatedOwners.has(serverUserId)) {
             updatedOwners.add(serverUserId);
 
-            console.log(`creating user ${fullName(raw?.receiver)}`);
             ops.push(
               userCollection.prepareCreate((u) =>
                 Object.assign(u, normalizeUser(raw.receiver))
@@ -393,7 +440,6 @@ export const updateChats = async (data: ServerChat[]) => {
           if (!updatedOwners.has(serverUserId)) {
             updatedOwners.add(serverUserId);
 
-            console.log(`updating user ${fullName(raw?.receiver)}`);
             ops.push(
               existingOwner.prepareUpdate((u) => {
                 u.status = raw.receiver.status;
@@ -408,57 +454,7 @@ export const updateChats = async (data: ServerChat[]) => {
     await database.batch(...ops);
   });
 };
-export const getMessageActions = ({
-  message,
-  isMine,
-}: {
-  message?: Message;
-  isMine: boolean;
-}) => {
-  return [
-    ...(message?.content?.trim()
-      ? [
-          {
-            title: "Copy",
-            value: "copy",
-            destructive: false,
-            icon: Copy,
-          },
-        ]
-      : []),
 
-    {
-      title: "Reply",
-      value: "reply",
-      destructive: false,
-      icon: Reply,
-    },
-
-    ...(isMine && message?.content?.trim()
-      ? [
-          {
-            title: "Edit",
-            value: "edit",
-            destructive: false,
-            icon: Edit,
-          },
-        ]
-      : []),
-
-    {
-      title: "Delete for me",
-      value: "delete",
-      destructive: true,
-      icon: Trash,
-    },
-    {
-      title: "Delete for all",
-      value: "deleteall",
-      destructive: true,
-      icon: Trash,
-    },
-  ];
-};
 export function messagesActions() {
   return {
     sendServerMessage,
@@ -470,6 +466,5 @@ export function messagesActions() {
     updateUserStatus,
     updateMessage,
     updateChats,
-    getMessageActions,
   };
 }
