@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { View } from "react-native";
 import { Play, Pause } from "lucide-react-native";
 import { Icon, Pressable, Text } from "@/components/ui";
@@ -10,8 +10,7 @@ type Props = {
   url: string | null;
   isChat?: boolean;
 };
-
-export default function AudioPreviewPlayer({ url, isChat }: Props) {
+function AudioPreviewPlayer({ url, isChat }: Props) {
   if (!url) {
     return null;
   }
@@ -48,7 +47,11 @@ export default function AudioPreviewPlayer({ url, isChat }: Props) {
         />
       </View>
 
-      <Text className="text-sm ml-2">{formatTime(status.currentTime)}</Text>
+      <Text className="text-sm ml-2">
+        {formatTime(status.playing ? status.currentTime : player.duration)}
+      </Text>
     </View>
   );
 }
+
+export default memo(AudioPreviewPlayer);

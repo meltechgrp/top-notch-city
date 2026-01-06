@@ -54,7 +54,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   useSyncer({});
-  const { address, location } = useGetLocation({ withAddress: true });
+  const { address, location } = useGetLocation({ withAddress: false });
   useSuppressChatPushNotification();
   useMountPushNotificationToken();
   useEffect(() => {

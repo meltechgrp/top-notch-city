@@ -2,9 +2,9 @@ type Me = {
   email: string;
   phone: string | null;
   first_name: string;
+  last_name: string;
   slug: string;
   agent_profile?: AgentProfile;
-  last_name: string;
   gender: "male" | "female" | null;
   date_of_birth: string | null;
   status: "online" | "offline" | "idle";

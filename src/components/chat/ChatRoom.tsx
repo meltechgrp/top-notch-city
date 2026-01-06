@@ -35,8 +35,6 @@ import { use$ } from "@legendapp/state/react";
 import { tempStore } from "@/store/tempStore";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
-import { KeyboardAvoidingView } from "react-native-keyboard-controller";
-import Platforms from "@/constants/Plaforms";
 
 type Props = {
   chat: Chat;
@@ -101,6 +99,7 @@ function ChatRoom(props: Props) {
           className={cn(index === messages?.length - 1 ? "mt-4" : "")}
           onLongPress={handleMessageLongPress}
           isDeleting={isDeletingMessageId === item.server_message_id}
+          handleReply={handleReply}
         />
       );
     },
@@ -201,14 +200,12 @@ function ChatRoom(props: Props) {
                   </View>
                 ) : receiver?.status == "online" ? (
                   <Text className=" text-xs text-gray-500">Online</Text>
-                ) : (
+                ) : receiver?.last_seen ? (
                   <Text className=" text-xs text-gray-500">
                     Last seen:{" "}
-                    {receiver?.last_seen
-                      ? formatMessageTime(new Date(receiver?.last_seen))
-                      : ""}
+                    {formatMessageTime(new Date(receiver?.last_seen))}
                   </Text>
-                )}
+                ) : null}
               </View>
             </Pressable>
           ),

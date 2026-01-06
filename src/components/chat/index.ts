@@ -14,9 +14,9 @@ import {
   normalizeUser,
 } from "@/db/normalizers/message";
 import { Message } from "@/db/models/messages";
-import { uploadToBucket } from "@/actions/bucket";
 import { User } from "@/db/models/users";
 import { fullName } from "@/lib/utils";
+import { Copy, Edit, Reply, Trash } from "lucide-react-native";
 
 export async function editServerMessage({ data }: { data: ServerMessage }) {
   try {
@@ -63,38 +63,63 @@ export async function sendServerMessage({
       reply_to_message_id: data.reply_to_message_id,
     });
     if (!m) throw Error("Something went wrong");
-    console.log(m);
     const [msg] = await messageCollection
       .query(Q.where("server_message_id", data.message_id), Q.take(1))
       .fetch();
-    console.log(msg?.server_message_id, "sent");
-    await database.write(async () => {
-      const ops: any[] = [];
-      ops.push(
-        msg.prepareUpdate((msg) => {
-          msg.status = "sent";
-          msg.server_message_id = m.message_id;
-          msg.created_at = Date.parse(m.created_at);
-          msg.updated_at = Date.parse(m.created_at);
-          msg.sync_status = "synced";
-        })
-      );
-      const existingFiles = await messageFilesCollection
-        .query(Q.where("server_message_id", data.message_id))
-        .fetch();
 
-      ops.push(...existingFiles.map((f) => f.prepareDestroyPermanently()));
-
-      if (m.media?.length) {
+    const existingFiles = await messageFilesCollection
+      .query(Q.where("server_message_id", data.message_id))
+      .fetch();
+    if (msg) {
+      await database.write(async () => {
+        const ops: any[] = [];
         ops.push(
-          ...normalizeMessageFiles(m.media, m.message_id).map((f) =>
-            messageFilesCollection.prepareCreate((m) => Object.assign(m, f))
-          )
+          msg.prepareUpdate((msg) => {
+            msg.status = "sent";
+            msg.server_message_id = m.message_id;
+            msg.created_at = Date.parse(m.created_at);
+            msg.sync_status = "synced";
+          })
         );
-      }
-    });
+        if (m.media?.length) {
+          m.media.forEach((serverFile, index) => {
+            const localFile = existingFiles[index];
+
+            if (localFile) {
+              ops.push(
+                localFile.prepareUpdate((f) => {
+                  f.server_message_file_id = serverFile.id;
+                  f.server_message_id = m.message_id;
+                  f.url = serverFile.file_url;
+                  f.file_type = serverFile.file_type?.toUpperCase() as any;
+                  f.is_local = false;
+                })
+              );
+            } else {
+              ops.push(
+                messageFilesCollection.prepareCreate((f) => {
+                  f.server_message_file_id = serverFile.id;
+                  f.server_message_id = m.message_id;
+                  f.url = serverFile.file_url;
+                  f.file_type = serverFile.file_type?.toUpperCase() as any;
+                  f.is_local = false;
+                })
+              );
+            }
+          });
+          if (existingFiles.length > m.media.length) {
+            ops.push(
+              ...existingFiles
+                .slice(m.media.length)
+                .map((f) => f.prepareDestroyPermanently())
+            );
+          }
+        }
+
+        await database.batch(...ops);
+      });
+    }
   } catch (error) {
-    console.log(error);
     const [msg] = await messageCollection
       .query(Q.where("server_message_id", data.message_id), Q.take(1))
       .fetch();
@@ -186,12 +211,16 @@ export async function saveLocalMessage({
           m.status = data.status;
           m.reply_to_message_id = data.reply_to_message_id;
           m.updated_at = Date.parse(data.created_at);
+          m.sync_status = "dirty";
         })
       );
     } else {
       ops.push(
         messageCollection.prepareCreate((m: any) =>
-          Object.assign(m, normalizeMessage(data, chatId))
+          Object.assign(m, {
+            ...normalizeMessage(data, chatId),
+            sync_status: "dirty",
+          })
         )
       );
 
@@ -379,6 +408,57 @@ export const updateChats = async (data: ServerChat[]) => {
     await database.batch(...ops);
   });
 };
+export const getMessageActions = ({
+  message,
+  isMine,
+}: {
+  message?: Message;
+  isMine: boolean;
+}) => {
+  return [
+    ...(message?.content?.trim()
+      ? [
+          {
+            title: "Copy",
+            value: "copy",
+            destructive: false,
+            icon: Copy,
+          },
+        ]
+      : []),
+
+    {
+      title: "Reply",
+      value: "reply",
+      destructive: false,
+      icon: Reply,
+    },
+
+    ...(isMine && message?.content?.trim()
+      ? [
+          {
+            title: "Edit",
+            value: "edit",
+            destructive: false,
+            icon: Edit,
+          },
+        ]
+      : []),
+
+    {
+      title: "Delete for me",
+      value: "delete",
+      destructive: true,
+      icon: Trash,
+    },
+    {
+      title: "Delete for all",
+      value: "deleteall",
+      destructive: true,
+      icon: Trash,
+    },
+  ];
+};
 export function messagesActions() {
   return {
     sendServerMessage,
@@ -390,5 +470,6 @@ export function messagesActions() {
     updateUserStatus,
     updateMessage,
     updateChats,
+    getMessageActions,
   };
 }

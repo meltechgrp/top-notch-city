@@ -3,7 +3,7 @@ import { Property } from "@/db/models/properties";
 import { observable } from "@legendapp/state";
 import { syncObservable } from "@legendapp/state/sync";
 import { persistentObservable } from "@/store/persist";
-import { Model, Q } from "@nozbe/watermelondb";
+import { Model } from "@nozbe/watermelondb";
 
 export async function withPropertyWriter(
   id: string,
@@ -12,7 +12,6 @@ export async function withPropertyWriter(
   const model = await database.get<Property>("properties").find(id);
   await fn(model);
 }
-
 export const toPropertySnapshot = (p: Property) =>
   ({
     id: p.id,

@@ -41,7 +41,6 @@ const ChatRoomFooter = React.forwardRef<EditorComponentRefHandle, Props>(
     const { saveLocalMessage, editServerMessage, sendServerMessage } =
       messagesActions();
     async function onSubmit({ text, files }: { text: string; files: Media[] }) {
-      console.log(text, files);
       if (me) {
         const tempId = guidGenerator();
         const mock: ServerMessage = {
@@ -85,6 +84,8 @@ const ChatRoomFooter = React.forwardRef<EditorComponentRefHandle, Props>(
           <QuoteMessage
             quote={activeQuoteMsg!}
             forEditor={true}
+            receiver={receiver}
+            me={me}
             onClear={clearActiveQuoteMsg}
           />
         </View>

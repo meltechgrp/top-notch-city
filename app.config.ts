@@ -46,6 +46,7 @@ export default () => ({
   },
   android: {
     edgeToEdgeEnabled: true,
+    predictiveBackGestureEnabled: false,
     googleServicesFile: "./google-services.json",
     package: "com.meltech.topnotchcity",
     abiFilters: ["armeabi-v7a", "arm64-v8a"],
@@ -216,6 +217,7 @@ export default () => ({
   ],
   experiments: {
     typedRoutes: true,
+    reactCompiler: true,
   },
   extra: {
     router: {},

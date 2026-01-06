@@ -3,7 +3,6 @@ import {
   Avatar,
   AvatarBadge,
   AvatarFallbackText,
-  AvatarImage,
   Icon,
   Image,
   Pressable,
@@ -11,7 +10,7 @@ import {
   View,
 } from "../ui";
 import { cn, formatMessageTime, fullName } from "@/lib/utils";
-import { generateMediaUrlSingle, getImageUrl } from "@/lib/api";
+import { generateMediaUrlSingle } from "@/lib/api";
 import SwipeableWrapper from "@/components/shared/SwipeableWrapper";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteChat } from "@/actions/message";
@@ -80,7 +79,6 @@ function MessageListItem(props: MessageListItemProps) {
       },
     });
   }
-  // console.log(user);
   const isImage = chat?.recent_message_content?.trim() == "image";
   return (
     <SwipeableWrapper

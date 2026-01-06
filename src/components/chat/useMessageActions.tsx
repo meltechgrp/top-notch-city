@@ -5,6 +5,9 @@ import { useMutation } from "@tanstack/react-query";
 import { deleteChatMessage } from "@/actions/message";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { Message } from "@/db/models/messages";
+import { ToastAndroid } from "react-native";
+import * as Clipboard from "expo-clipboard";
+import Platforms from "@/constants/Plaforms";
 
 type Args = {
   focusEditor: () => void;
@@ -26,9 +29,25 @@ export default function useMessageActions(args: Args) {
     setShowMessageActionsModal(true);
     setSelectedMessage(message);
   }
-
-  function handleReply() {
-    setActiveQuoteMessage(selectedMessage);
+  const handleCopy = async () => {
+    if (selectedMessage?.content) {
+      await Clipboard.setStringAsync(selectedMessage.content);
+      ToastAndroid.show("Message copied to clipboard", 1500);
+      Platforms.isIOS() &&
+        showErrorAlert({
+          title: "Message copied to clipboard",
+          alertType: "success",
+          duration: 1500,
+        });
+    }
+  };
+  function handleReply(message?: Message) {
+    if (message) {
+      setSelectedMessage(message);
+      setActiveQuoteMessage(message);
+    } else {
+      setActiveQuoteMessage(selectedMessage);
+    }
     focusEditor();
   }
 
@@ -145,5 +164,6 @@ export default function useMessageActions(args: Args) {
     exitEditMode,
     handleEdit,
     handleDeleteAll,
+    handleCopy,
   };
 }

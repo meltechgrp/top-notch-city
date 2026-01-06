@@ -5,29 +5,21 @@ import { Colors } from "@/constants/Colors";
 import { CloseIcon, Icon, Image, Text } from "@/components/ui";
 import { cn, fullName } from "@/lib/utils";
 import { chunk } from "lodash-es";
-import { generateMediaUrl, getImageUrl } from "@/lib/api";
-import { withObservables } from "@nozbe/watermelondb/react";
-import { Message, MessageFile } from "@/db/models/messages";
+import { getImageUrl } from "@/lib/api";
+import { MessageFile } from "@/db/models/messages";
 import { User } from "@/db/models/users";
 
 type QuoteMessageProps = {
   onClear?: () => void;
   forEditor?: boolean;
   me: Account;
-  receivers: User[];
-  files: MessageFile[];
+  receiver: User;
+  files?: MessageFile[];
   quote: ChatRoomMessageProps["message"];
 };
 
 const QuoteMessage = (props: QuoteMessageProps) => {
-  const {
-    quote,
-    forEditor,
-    onClear,
-    me,
-    receivers: [receiver],
-    files,
-  } = props;
+  const { quote, forEditor, onClear, me, receiver, files } = props;
 
   const isMine = quote?.server_sender_id === me?.id;
 
@@ -102,10 +94,4 @@ const QuoteMessage = (props: QuoteMessageProps) => {
   );
 };
 
-const enhance = withObservables(["quote"], ({ quote }: { quote: Message }) => ({
-  quote: quote.observe(),
-  files: quote.files,
-  receivers: quote.receivers.observe(),
-}));
-
-export default enhance(QuoteMessage);
+export default QuoteMessage;
