@@ -29,7 +29,7 @@ export default function DevicePermissions() {
 
       setStatuses({
         Camera: camera.granted ? "Allowed" : "Not Allowed",
-        "Location Services": location.granted ? "Allowed" : "Not Allowed",
+        "Location Services": location?.granted ? "Allowed" : "Not Allowed",
         Microphone: microphone.granted ? "Allowed" : "Not Allowed",
         Notifications: notifications.granted ? "Allowed" : "Not Allowed",
       });

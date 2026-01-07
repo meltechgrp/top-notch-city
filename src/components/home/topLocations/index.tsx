@@ -1,11 +1,20 @@
 import SectionHeaderWithRef from "@/components/home/SectionHeaderWithRef";
 import { router } from "expo-router";
 import HorizontalProperties from "@/components/property/HorizontalProperties";
-import { nearby } from "@/store/homeFeed";
-import { mainStore } from "@/store";
+import { withObservables } from "@nozbe/watermelondb/react";
+import { Q } from "@nozbe/watermelondb";
+import { propertiesCollection } from "@/db/collections";
+import { Property } from "@/db/models/properties";
 
-const NearbyProperties = () => {
-  const properties = nearby.get();
+const NearbyProperties = ({
+  properties,
+  latitude = 3.4,
+  longitude = 4.1,
+}: {
+  properties: Property[];
+  latitude: number;
+  longitude: number;
+}) => {
   return (
     <SectionHeaderWithRef
       title="Nearby"
@@ -17,8 +26,8 @@ const NearbyProperties = () => {
         router.push({
           pathname: "/explore",
           params: {
-            latitude: mainStore.address?.latitude.get(),
-            longitude: mainStore.address?.longitude.get(),
+            latitude: latitude,
+            longitude: longitude,
           },
         });
       }}
@@ -32,4 +41,19 @@ const NearbyProperties = () => {
   );
 };
 
-export default NearbyProperties;
+const enhance = withObservables(
+  ["latitude", "longitude"],
+  ({ latitude, longitude }) => ({
+    properties: propertiesCollection.query(
+      Q.where("status", "approved"),
+      Q.or(
+        Q.where("latitude", Q.gte(latitude)),
+        Q.where("longitude", Q.gte(longitude))
+      ),
+      Q.sortBy("updated_at", Q.desc),
+      Q.take(10)
+    ),
+  })
+);
+
+export default enhance(NearbyProperties);

@@ -103,7 +103,7 @@ export default function PropertyHeader({
             actionText={option.actionText}
             requireReason={option.requireReason}
             onConfirm={option.onConfirm}
-            propertyId={property.id}
+            propertyId={property.property_server_id}
             className={option.className}
             onDismiss={() => setOpenActions(false)}
             onPress={onPress}

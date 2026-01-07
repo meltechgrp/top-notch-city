@@ -12,11 +12,7 @@ export function PropertyBadge({
   if (purpose == "rent") {
     if (category == "Shortlet" || category == "Hotel") {
       if (is_booked) {
-        return (
-          <Badge className=" self-start px-3 rounded-2xl bg-info-100">
-            <Text>Booked</Text>
-          </Badge>
-        );
+        return null;
       } else {
         return (
           <Badge className=" self-start px-3 rounded-2xl bg-green-600">

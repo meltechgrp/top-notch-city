@@ -1,10 +1,11 @@
 import SectionHeaderWithRef from "@/components/home/SectionHeaderWithRef";
 import HorizontalProperties from "@/components/property/HorizontalProperties";
-import { featured } from "@/store/homeFeed";
+import { database } from "@/db";
+import { Q } from "@nozbe/watermelondb";
+import { withObservables } from "@nozbe/watermelondb/react";
 import { router } from "expo-router";
 
-function FeaturedProperties() {
-  const properties = featured.get();
+function FeaturedProperties({ properties }: any) {
   return (
     <SectionHeaderWithRef
       title="Featured"
@@ -30,4 +31,15 @@ function FeaturedProperties() {
   );
 }
 
-export default FeaturedProperties;
+const enhance = withObservables([], () => ({
+  properties: database
+    .get("properties")
+    .query(
+      Q.where("status", "approved"),
+      Q.where("is_featured", true),
+      Q.sortBy("updated_at", Q.desc),
+      Q.take(10)
+    ),
+}));
+
+export default enhance(FeaturedProperties);

@@ -384,8 +384,8 @@ const PropertyDetailsBottomSheet = ({
                   </Button>
                 </View>
                 <PropertyEnquiry me={me} property={property} />
+                <SimilarProperties property={property} />
               </View>
-              <SimilarProperties property={property} />
               <View className="p-4 border border-warning-100 mx-4 rounded-xl">
                 <Text className="text-typography/60 text-sm">
                   The information related to this real estate property for{" "}

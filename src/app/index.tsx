@@ -3,7 +3,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { Redirect } from "expo-router";
 import { mainStore } from "@/store";
 import { useMe } from "@/hooks/useMe";
-import { Box, Image } from "@/components/ui";
+import { Box, Image, View } from "@/components/ui";
 import splash from "@/assets/images/splash.png";
 
 SplashScreen.preventAutoHideAsync();
@@ -40,11 +40,13 @@ const LandingScreen = () => {
   }
   return (
     <Box className="flex-1 items-center justify-center">
-      <Image
-        source={splash}
-        style={{ width: 200, height: 200 }}
-        contentFit="contain"
-      />
+      <View style={{ width: 200, height: 200 }}>
+        <Image
+          source={splash}
+          style={{ width: 200, height: 200 }}
+          contentFit="contain"
+        />
+      </View>
     </Box>
   );
 };

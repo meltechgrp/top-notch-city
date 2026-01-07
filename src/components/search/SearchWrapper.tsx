@@ -11,7 +11,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { buildLocalQuery, searchStore } from "@/store/searchStore";
 import { use$ } from "@legendapp/state/react";
 import { database } from "@/db";
-import { Q } from "@nozbe/watermelondb";
 
 interface SearchWrapperProps {
   disableBack?: boolean;

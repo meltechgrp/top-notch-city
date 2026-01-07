@@ -1,3 +1,4 @@
+import { Property } from "@/db/models/properties";
 import { Badge, Text } from "../ui";
 
 export function PropertyStatus({ status }: { status: Property["status"] }) {

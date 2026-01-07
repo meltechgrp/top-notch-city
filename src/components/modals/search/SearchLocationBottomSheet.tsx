@@ -149,8 +149,8 @@ function SearchLocationBottomSheet({
         country: item?.addressComponents?.country || "",
         displayName: item.displayName || "",
         isSuggestion: true,
-        longitude: item?.location.longitude,
-        latitude: item?.location.latitude,
+        longitude: item?.location?.longitude,
+        latitude: item?.location?.latitude,
       }))
     : [];
 

@@ -92,7 +92,7 @@ function PropertyListItem(props: Props) {
     if (!me) {
       return openAccessModal({ visible: true });
     } else {
-      await withPropertyWriter(data.id, (p) => p.markAsLiked());
+      await data.markAsLiked();
       toggleLike({ id: data.property_server_id });
     }
   }

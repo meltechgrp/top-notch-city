@@ -8,13 +8,15 @@ import ApartmentProperties from "@/components/home/recent";
 import Lands from "@/components/home/lands";
 import { FlashList } from "@shopify/flash-list";
 import { router } from "expo-router";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import NearbyProperties from "@/components/home/topLocations";
 import { usePropertyFeedSync } from "@/db/queries/syncPropertyFeed";
+import useGetLocation from "@/hooks/useGetLocation";
 const MAP_HEIGHT = 400;
 
 export default function HomeScreen() {
   const { resync } = usePropertyFeedSync();
+  const { location, retryGetLocation } = useGetLocation();
   const feedList = React.useMemo(() => {
     const topLocations = {
       id: "locations",
@@ -50,31 +52,41 @@ export default function HomeScreen() {
     ];
   }, []);
   type FeedList = any;
-  const renderItem: ListRenderItem<FeedList> = useCallback(({ item }) => {
-    if (item.id === "locations") {
-      return <NearbyProperties />;
-    }
-    if (item.id === "featured") {
-      return <FeaturedProperties />;
-    }
-    if (item.id === "shortlet") {
-      return <ShortletProperties />;
-    }
-    if (item.id === "apartment") {
-      return <ApartmentProperties />;
-    }
-    if (item.id === "lands") {
-      return <Lands />;
-    }
-    if (item.id === "bottomPlaceHolder") {
-      return <View className="h-24" />;
-    }
-    return <View></View>;
-  }, []);
+  const renderItem: ListRenderItem<FeedList> = useCallback(
+    ({ item }) => {
+      if (item.id === "locations") {
+        return (
+          <NearbyProperties
+            latitude={location?.latitude || 0}
+            longitude={location?.longitude || 0}
+          />
+        );
+      }
+      if (item.id === "featured") {
+        return <FeaturedProperties />;
+      }
+      if (item.id === "shortlet") {
+        return <ShortletProperties />;
+      }
+      if (item.id === "apartment") {
+        return <ApartmentProperties />;
+      }
+      if (item.id === "lands") {
+        return <Lands />;
+      }
+      if (item.id === "bottomPlaceHolder") {
+        return <View className="h-24" />;
+      }
+      return <View></View>;
+    },
+    [location]
+  );
   const onNewChat = () => {
     router.push("/start");
   };
-
+  useEffect(() => {
+    retryGetLocation();
+  }, []);
   return (
     <>
       <Box className="flex-1">
@@ -82,7 +94,13 @@ export default function HomeScreen() {
           refreshControl={
             <RefreshControl refreshing={false} onRefresh={resync} />
           }
-          ListHeaderComponent={<DiscoverProperties mapHeight={MAP_HEIGHT} />}
+          ListHeaderComponent={
+            <DiscoverProperties
+              latitude={location?.latitude || 0}
+              longitude={location?.longitude || 0}
+              mapHeight={MAP_HEIGHT}
+            />
+          }
           getItemType={(item) => {
             return item.id;
           }}

@@ -252,9 +252,9 @@ const Map = forwardRef<MapController, MapProps>((props, ref) => {
             strokeWidth={5}
           />
         )}
-        {markers?.map((place, i) => (
+        {markers?.map((place) => (
           <CustomPropertyMarker
-            key={place.id + i}
+            key={place.id}
             onPress={(data) => onMarkerPress && onMarkerPress(data)}
             property={place}
           />

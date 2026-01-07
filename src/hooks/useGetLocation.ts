@@ -22,9 +22,6 @@ const useGetLocation = (options?: Options) => {
   }>();
 
   const tryGetLocation = useCallback(async () => {
-    if (locationLastSyncAt && Date.now() - locationLastSyncAt < TTL) {
-      return;
-    }
     // Request location permission
     const { status } = await Location.getForegroundPermissionsAsync();
 
@@ -44,13 +41,13 @@ const useGetLocation = (options?: Options) => {
         : Location.Accuracy.Balanced,
     });
 
-    setLocation(location.coords);
+    setLocation(location?.coords);
     if (withAddress) {
-      const add = await getReverseGeocode(location.coords);
+      const add = await getReverseGeocode(location?.coords);
       add?.addressComponents && setAddress(add.addressComponents);
     }
     mainStore.locationLastSyncAt.set(Date.now());
-    return location.coords;
+    return location?.coords;
   }, [highAccuracy, withAddress, locationLastSyncAt]);
 
   useEffect(() => {

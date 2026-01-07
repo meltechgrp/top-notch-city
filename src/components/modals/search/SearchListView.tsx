@@ -2,9 +2,8 @@ import { Dimensions, StyleSheet, View } from "react-native";
 import { useCallback, useMemo, useRef } from "react";
 import { Button, Icon, Text } from "@/components/ui";
 import BottomSheet, {
-  BottomSheetFlashList,
+  BottomSheetFlatList,
   useBottomSheetInternal,
-  useBottomSheetScrollableCreator,
 } from "@gorhom/bottom-sheet";
 import { Colors } from "@/constants/Colors";
 import { formatNumber } from "@/lib/utils";
@@ -22,20 +21,19 @@ import Animated, {
 import eventBus from "@/lib/eventBus";
 import DropdownSelect from "@/components/custom/DropdownSelect";
 import VerticalPropertyLoaderWrapper from "@/components/loaders/VerticalPropertyLoader";
-import { FlashList } from "@shopify/flash-list";
 import { Property } from "@/db/models/properties";
 import { withObservables } from "@nozbe/watermelondb/react";
-import { database } from "@/db";
 import { buildLocalQuery } from "@/store/searchStore";
 import { Q } from "@nozbe/watermelondb";
+import { propertiesCollection } from "@/db/collections";
 const { width } = Dimensions.get("screen");
 
 type Props = {
-  properties: any;
+  properties: Property[];
   total: number;
   isLoading: boolean;
   hasNextPage: boolean;
-  fetchNextPage: () => Promise<any>;
+  fetchNextPage: () => Promise<Property[]>;
   setShowFilter: () => void;
   useMyLocation: () => void;
   filter: SearchFilters;
@@ -54,7 +52,6 @@ function SearchListBottomSheet({
   isTab,
   total,
 }: Props) {
-  const BottomSheetScrollable = useBottomSheetScrollableCreator();
   const sheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(
     () => (isTab ? ["20%", "40%", "60%", "90%"] : ["10%", "40%", "60%", "90%"]),
@@ -114,7 +111,7 @@ function SearchListBottomSheet({
         headerHeight={20}
         loading={isLoading || false}
       >
-        <BottomSheetFlashList
+        <BottomSheetFlatList
           data={properties}
           renderItem={renderItem}
           keyExtractor={(item: any) => item.id}
@@ -153,15 +150,13 @@ const enhance = withObservables(
     pagination: { page: number; perPage: number };
   }) => {
     return {
-      properties: database
-        .get("properties")
-        .query(
-          ...buildLocalQuery(filter),
-          Q.where("status", "approved"),
-          Q.sortBy("updated_at", Q.desc),
-          Q.skip((pagination.page - 1) * pagination.perPage),
-          Q.take(pagination.perPage)
-        ),
+      properties: propertiesCollection.query(
+        ...buildLocalQuery(filter),
+        Q.where("status", "approved"),
+        Q.sortBy("updated_at", Q.desc),
+        Q.skip((pagination.page - 1) * pagination.perPage),
+        Q.take(pagination.perPage)
+      ),
     };
   }
 );

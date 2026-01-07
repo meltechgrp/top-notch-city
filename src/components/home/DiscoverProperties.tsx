@@ -5,15 +5,15 @@ import { router } from "expo-router";
 import { withObservables } from "@nozbe/watermelondb/react";
 import { Q } from "@nozbe/watermelondb";
 import { propertiesCollection } from "@/db/collections";
-import { nearby } from "@/store/homeFeed";
+import { Property } from "@/db/models/properties";
 
 type Props = {
   className?: string;
   mapHeight: number;
+  properties: Property[];
 };
 const DiscoverProperties = (props: Props) => {
-  const { className, mapHeight } = props;
-  const properties = nearby.get();
+  const { className, mapHeight, properties } = props;
   return (
     <View style={{ flex: 1, height: mapHeight }} className={className}>
       <View className="overflow-hidden relative flex-1">
@@ -34,4 +34,17 @@ const DiscoverProperties = (props: Props) => {
   );
 };
 
-export default DiscoverProperties;
+const enhance = withObservables(
+  ["latitude", "longitude"],
+  ({ latitude, longitude }) => ({
+    properties: propertiesCollection.query(
+      Q.where("status", "approved"),
+      Q.or(
+        Q.where("latitude", Q.gte(latitude)),
+        Q.where("longitude", Q.gte(longitude))
+      )
+    ),
+  })
+);
+
+export default enhance(DiscoverProperties);

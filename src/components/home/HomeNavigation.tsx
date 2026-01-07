@@ -44,7 +44,7 @@ function HomeNavigation() {
         </View>
         <NotificationBarButton />
       </View>
-      <MediaPicker ref={mediaPickerRef as any} media={[]} onChange={() => {}} />
+      <MediaPicker ref={mediaPickerRef as any} onSend={()=> {}} />
     </>
   );
 }

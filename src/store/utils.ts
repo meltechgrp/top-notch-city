@@ -15,36 +15,36 @@ export async function withPropertyWriter(
 export const toPropertySnapshot = (p: Property) =>
   ({
     id: p.id,
-    property_server_id: p.id,
-    title: p.title,
-    slug: p.slug,
-    description: p.description,
-    price: p.price,
-    currency: p.currency,
-    status: p.status,
-    purpose: p.purpose,
-    is_featured: p.is_featured ?? false,
-    is_booked: p.is_booked ?? false,
-    server_user_id: p.owner.id,
-    caution_fee: p.caution_fee,
+    property_server_id: p?.property_server_id,
+    title: p?.title,
+    slug: p?.slug,
+    description: p?.description,
+    price: p?.price,
+    currency: p?.currency,
+    status: p?.status,
+    purpose: p?.purpose,
+    is_featured: p?.is_featured ?? false,
+    is_booked: p?.is_booked ?? false,
+    server_user_id: p?.owner?.id,
+    caution_fee: p?.caution_fee,
     thumbnail: p?.thumbnail,
-    address: p.address,
+    address: p?.address,
     duration: p?.duration,
-    plots: p.plots,
-    bedroom: p.bedroom,
-    bathroom: p.bathroom,
-    landarea: p.landarea,
+    plots: p?.plots,
+    bedroom: p?.bedroom,
+    bathroom: p?.bathroom,
+    landarea: p?.landarea,
     category: p?.category,
     subcategory: p?.subcategory,
-    views: p.views,
-    likes: p.likes,
-    viewed: p.viewed,
-    liked: p.liked,
-    added: p.added,
-    latitude: p.latitude,
-    longitude: p.longitude,
-    created_at: p.created_at,
-    updated_at: p.updated_at,
+    views: p?.views,
+    likes: p?.likes,
+    viewed: p?.viewed,
+    liked: p?.liked,
+    added: p?.added,
+    latitude: p?.latitude,
+    longitude: p?.longitude,
+    created_at: p?.created_at,
+    updated_at: p?.updated_at,
   }) as unknown as Property;
 
 type DBBackedOptions<M extends Model, S> = {
@@ -84,9 +84,9 @@ export function createDBBackedObservable<M extends Model, S>(
               const index = current.findIndex((s: any) => s.id === m.id);
               if (index === -1) return;
               //@ts-ignore
-              state$[index].likes.set(m.likes);
+              state$[index]?.likes.set(m?.likes);
               //@ts-ignore
-              state$[index].liked.set(m.liked);
+              state$[index]?.liked.set(m.liked);
             });
           });
 
