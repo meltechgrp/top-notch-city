@@ -1,61 +1,16 @@
-import { mainStore } from "@/store";
 import { observable } from "@legendapp/state";
 import { Q } from "@nozbe/watermelondb";
 
 type SearchState = {
-  total: number;
-  filterTotal: number;
-  hasNextPage: boolean;
-  loading: boolean;
-  filter: SearchFilters;
-  search: SearchFilters;
-  pagination: {
-    perPage: number;
-    page: number;
-  };
-  resetFilter: () => void;
-  updateFilter: (data: Partial<SearchFilters>) => void;
-  useMyLocation: () => void;
-  saveFilter: (data: Partial<SearchFilters>) => void;
-  nextPage: () => void;
-};
-
-const initial: SearchFilters = {
-  purpose: "rent",
+  searchProperties: ServerProperty[];
+  updateSearchProperties: (data: ServerProperty[]) => void;
 };
 
 export const searchStore = observable<SearchState>({
-  total: 0,
-  filterTotal: 0,
-  hasNextPage: false,
-  loading: false,
-  filter: initial,
-  search: initial,
-  pagination: {
-    perPage: 5,
-    page: 1,
-  },
+  searchProperties: [],
 
-  resetFilter() {
-    searchStore.filter.delete();
-    searchStore.search.delete();
-    searchStore.filter.purpose.set("rent");
-    searchStore.search.purpose.set("rent");
-    searchStore.filter.assign(mainStore.address.get());
-    searchStore.search.assign(mainStore.address.get());
-  },
-
-  updateFilter(data) {
-    searchStore.filter.assign(data);
-  },
-  useMyLocation() {
-    searchStore.filter.assign(mainStore.address.get());
-  },
-  saveFilter(d) {
-    searchStore.search.assign(d);
-  },
-  nextPage() {
-    searchStore.pagination.page.set((p) => p + 1);
+  updateSearchProperties(data) {
+    searchStore.searchProperties.set(data);
   },
 });
 

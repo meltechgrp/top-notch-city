@@ -8,8 +8,8 @@ export async function searchProperties(
   updated_after?: number
 ): Promise<Result> {
   const query = new URLSearchParams();
-  if (filters?.city) query.append("city", filters.city);
-  if (filters?.state) query.append("state", filters.state);
+  // if (filters?.city) query.append("city", filters.city);
+  // if (filters?.state) query.append("state", filters.state);
   if (filters?.latitude) query.append("latitude", String(filters.latitude));
   if (filters?.longitude) query.append("longitude", String(filters.longitude));
   if (filters?.country) query.append("country", filters.country);

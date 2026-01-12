@@ -22,7 +22,7 @@ export async function syncProperties({
   create = [],
   update = [],
   delete: toDelete = [],
-  batchSize = 10,
+  batchSize = 5,
 }: SyncInput) {
   console.log(
     `🧩 create=${create.length}, update=${update.length}, delete=${toDelete.length}`

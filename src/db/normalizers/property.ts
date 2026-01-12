@@ -1,3 +1,4 @@
+import { Property } from "@/db/models/properties";
 import { composeFullAddress, FindAmenity, generateTitle } from "@/lib/utils";
 
 export function normalizeProperty(p: ServerProperty) {
@@ -118,3 +119,49 @@ export function normalizeProperty(p: ServerProperty) {
 }
 
 export type PropertyDefault = ReturnType<typeof normalizeProperty>;
+
+export function transformServerProperty(data: ServerProperty[]) {
+  return data.map((p) => ({
+    property_server_id: p.id,
+    title: generateTitle(p),
+    slug: p.slug,
+    description: p.description,
+    price: p.price,
+    currency: p.currency?.code || "NGN",
+    status: p.status,
+    purpose: p.purpose,
+    is_featured: p.is_featured ?? false,
+    is_booked: p.is_booked ?? false,
+    server_user_id: p.owner.id,
+    bed_type: p?.bedType,
+    view_type: p?.viewType,
+    is_enabled: p?.is_enabled || true,
+    caution_fee: p.caution_fee,
+    discount: Number(p?.discount || 0),
+    thumbnail: p?.media?.find((m) => m.media_type == "IMAGE")?.url,
+    guests: Number(p?.guests || 0),
+    address: composeFullAddress(p.address),
+    duration: p?.duration,
+    plots: Number(FindAmenity("Plots", p) || p?.plots || 0),
+    bedroom: Number(FindAmenity("Bedroom", p) || p?.bedroom || 0),
+    bathroom: Number(FindAmenity("Bathroom", p) || p?.bathroom || 0),
+    landarea: Number(FindAmenity("Landarea", p) || p?.landarea || 0),
+    category: p?.category?.name || "",
+    subcategory: p?.subcategory?.name || "",
+    total_reviews: Number(p?.total_reviews || 0),
+    avg_rating: Number(p?.avg_rating || 0),
+    is_following: p?.is_following || false,
+    views: Number(p?.interaction?.viewed ?? 0),
+    likes: Number(p?.interaction?.liked ?? 0),
+    viewed: p?.owner_interaction?.viewed || false,
+    liked: p?.owner_interaction?.liked || false,
+    added: p?.owner_interaction?.added_to_wishlist || false,
+    street: p.address?.street,
+    city: p.address?.city,
+    state: p.address?.state,
+    country: p.address?.country,
+    latitude: p.address.latitude,
+    longitude: p.address.longitude,
+    created_at: Date.parse(p.created_at),
+  })) as unknown as Property[];
+}

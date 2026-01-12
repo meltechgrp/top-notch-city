@@ -32,7 +32,7 @@ const PRICE2 = [
 type Props = {
   show: boolean;
   onDismiss: () => void;
-  onSave: (values: Partial<SearchFilters>) => void;
+  onApply: (values: Partial<SearchFilters>) => void;
   onUpdate: (values: Partial<SearchFilters>) => void;
   filter: SearchFilters;
   showPurpose?: boolean;
@@ -50,7 +50,7 @@ function SearchFilterBottomSheet({
   onReset,
   loading,
   total,
-  onSave,
+  onApply,
 }: Props) {
   const { subcategories, categories } = useCategoryQueries();
   const { data, isLoading, refetch } = useQuery({
@@ -75,7 +75,7 @@ function SearchFilterBottomSheet({
         <View className="flex-row bg-background gap-4 px-4 pt-2 android:pb-2 justify-center items-center">
           <Button
             onPress={() => {
-              onSave(filter);
+              onApply(filter);
               onDismiss();
             }}
             className="h-12 flex-1"

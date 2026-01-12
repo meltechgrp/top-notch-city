@@ -19,6 +19,7 @@ type Props = {
   show: boolean;
   filter: SearchFilters;
   onDismiss: () => void;
+  refetchAndApply: () => void;
   onUpdate: (values: Partial<SearchFilters>) => void;
 };
 
@@ -31,6 +32,7 @@ function SearchLocationBottomSheet({
   onDismiss,
   filter,
   onUpdate,
+  refetchAndApply,
 }: Props) {
   const { retryGetLocation } = useGetLocation();
   const [text, setText] = useState("");
@@ -95,7 +97,7 @@ function SearchLocationBottomSheet({
       state: item?.state,
       city: item?.city,
       country: item?.country,
-      useGeoLocation: false,
+      useGeoLocation: true,
       longitude: item.longitude,
       latitude: item.latitude,
     };
@@ -112,6 +114,7 @@ function SearchLocationBottomSheet({
     // if (!exists) hnadleSave(newSearch);
 
     onUpdate(newSearch);
+    refetchAndApply();
     onDismiss();
     setText("");
     setLocations([]);

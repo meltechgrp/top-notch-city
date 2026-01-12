@@ -15,7 +15,7 @@ import {
 import { useMe } from "@/hooks/useMe";
 import { mainStore } from "@/store";
 
-const BATCH_SIZE = 10;
+const BATCH_SIZE = 5;
 
 export function usePropertyFeedSync() {
   const { isAdmin, isAgent, me } = useMe();

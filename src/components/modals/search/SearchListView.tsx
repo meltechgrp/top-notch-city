@@ -6,7 +6,7 @@ import BottomSheet, {
   useBottomSheetInternal,
 } from "@gorhom/bottom-sheet";
 import { Colors } from "@/constants/Colors";
-import { formatNumber } from "@/lib/utils";
+import { deduplicate, formatNumber } from "@/lib/utils";
 import PropertyListItem from "@/components/property/PropertyListItem";
 import { router } from "expo-router";
 import { HouseIcon, Layers, MapIcon, Send } from "lucide-react-native";
@@ -22,10 +22,6 @@ import eventBus from "@/lib/eventBus";
 import DropdownSelect from "@/components/custom/DropdownSelect";
 import VerticalPropertyLoaderWrapper from "@/components/loaders/VerticalPropertyLoader";
 import { Property } from "@/db/models/properties";
-import { withObservables } from "@nozbe/watermelondb/react";
-import { buildLocalQuery } from "@/store/searchStore";
-import { Q } from "@nozbe/watermelondb";
-import { propertiesCollection } from "@/db/collections";
 const { width } = Dimensions.get("screen");
 
 type Props = {
@@ -35,6 +31,7 @@ type Props = {
   hasNextPage: boolean;
   fetchNextPage: () => Promise<Property[]>;
   setShowFilter: () => void;
+  refetch: () => void;
   useMyLocation: () => void;
   filter: SearchFilters;
   isTab?: boolean;
@@ -51,6 +48,7 @@ function SearchListBottomSheet({
   filter,
   isTab,
   total,
+  refetch,
 }: Props) {
   const sheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(
@@ -112,7 +110,7 @@ function SearchListBottomSheet({
         loading={isLoading || false}
       >
         <BottomSheetFlatList
-          data={properties}
+          data={deduplicate(properties, "property_server_id")}
           renderItem={renderItem}
           keyExtractor={(item: any) => item.id}
           onEndReached={() => {
@@ -140,28 +138,7 @@ function SearchListBottomSheet({
   );
 }
 
-const enhance = withObservables(
-  ["filter", "pagination"],
-  ({
-    filter,
-    pagination,
-  }: {
-    filter: SearchFilters;
-    pagination: { page: number; perPage: number };
-  }) => {
-    return {
-      properties: propertiesCollection.query(
-        ...buildLocalQuery(filter),
-        Q.where("status", "approved"),
-        Q.sortBy("updated_at", Q.desc),
-        Q.skip((pagination.page - 1) * pagination.perPage),
-        Q.take(pagination.perPage)
-      ),
-    };
-  }
-);
-
-export default enhance(SearchListBottomSheet);
+export default SearchListBottomSheet;
 
 const styles = StyleSheet.create({
   container: {

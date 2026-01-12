@@ -158,7 +158,7 @@ export function useInfinityQueries({
     }
     case "search": {
       return useInfiniteQuery({
-        queryKey: key ? [key] : ["search", filter],
+        queryKey: ["search", filter],
         queryFn: ({ pageParam = 1 }) =>
           searchProperties(pageParam, perPage, filter),
         getNextPageParam: (lastPage) => {

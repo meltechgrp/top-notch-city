@@ -1,6 +1,6 @@
 import SearchHeader from "@/components/search/Searchheader";
 import { Box, View } from "@/components/ui";
-import React, { useEffect, useState, useDeferredValue } from "react";
+import React, { useEffect, useState } from "react";
 import { Dimensions, StyleSheet } from "react-native";
 import SearchMapView from "@/components/search/SearchMapView";
 import SearchLocationBottomSheet from "@/components/modals/search/SearchLocationBottomSheet";
@@ -8,10 +8,7 @@ import SearchFilterBottomSheet from "@/components/modals/search/SearchFilterBott
 import { router, useGlobalSearchParams } from "expo-router";
 import SearchListBottomSheet from "@/components/modals/search/SearchListView";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { buildLocalQuery, searchStore } from "@/store/searchStore";
-import { use$, useValue } from "@legendapp/state/react";
-import { database } from "@/db";
-import useGetLocation from "@/hooks/useGetLocation";
+import { useSearch } from "@/hooks/useSearch";
 
 interface SearchWrapperProps {
   disableBack?: boolean;
@@ -22,7 +19,6 @@ export default function SearchWrapper({
   disableBack = false,
   isTab = false,
 }: SearchWrapperProps) {
-  const { location, retryGetLocation } = useGetLocation();
   const { latitude, longitude, reset, category, locate } =
     useGlobalSearchParams() as {
       latitude: string;
@@ -31,63 +27,24 @@ export default function SearchWrapper({
       category: string;
       locate: string;
     };
-  const {
-    updateFilter,
-    resetFilter,
-    useMyLocation,
-    pagination,
-    nextPage,
-    saveFilter,
-  } = searchStore.get(true);
-  const filter = useValue(searchStore.filter);
-  const total = useValue(searchStore.total);
-  const filterTotal = useValue(searchStore.filterTotal);
-  const search = useValue(searchStore.search);
-  const loading = useValue(searchStore.loading);
+  const { search, results, query, properties } = useSearch();
   const { height: totalHeight } = Dimensions.get("screen");
   const [showFilter, setShowFilter] = useState(false);
   const [locationBottomSheet, setLocationBottomSheet] = useState(false);
-  searchStore.filter.onChange(async (f) => {
-    searchStore.loading.set(true);
-    try {
-      const count = await database
-        .get("properties")
-        .query(...buildLocalQuery(f.value))
-        .fetchCount();
-      searchStore.filterTotal.set(count);
-    } finally {
-      searchStore.loading.set(false);
-    }
-  });
-  searchStore.search.onChange(async (f) => {
-    searchStore.loading.set(true);
-    try {
-      const count = await database
-        .get("properties")
-        .query(...buildLocalQuery(f.value))
-        .fetchCount();
-      searchStore.total.set(count);
-    } finally {
-      searchStore.loading.set(false);
-    }
-  });
   useEffect(() => {
     if (latitude && longitude) {
-      updateFilter({
+      search.setFilters({
         latitude: Number(latitude),
         longitude: Number(longitude),
       });
+      query.refetchAndApply();
     } else if (locate) {
       setLocationBottomSheet(true);
     } else if (category) {
-      updateFilter({
+      search.setFilters({
         category: category,
       });
-    } else {
-      saveFilter({
-        latitude: location?.latitude,
-        longitude: location?.longitude,
-      });
+      query.refetchAndApply();
     }
     router.setParams({
       latitude: undefined,
@@ -97,62 +54,57 @@ export default function SearchWrapper({
       locate: undefined,
     });
   }, [latitude, longitude, reset, category, locate, location]);
-  useEffect(() => {
-    retryGetLocation();
-  }, []);
   return (
     <>
       <View className="flex-1 bg-background">
         <SafeAreaView edges={["bottom"]} className="flex-1 bg-background">
           <Box className="flex-1 relative">
             <SearchHeader
-              filter={filter}
+              filter={search.filter}
               setLocationBottomSheet={() => setLocationBottomSheet(true)}
               setShowFilter={() => setShowFilter(true)}
               disableBack={disableBack}
             />
 
             <View style={StyleSheet.absoluteFill}>
-              <SearchMapView height={totalHeight} filter={search} />
+              <SearchMapView
+                properties={properties}
+                height={totalHeight}
+                filters={search.filter}
+              />
             </View>
           </Box>
 
           <SearchListBottomSheet
             setShowFilter={() => setShowFilter(true)}
-            isLoading={loading}
-            hasNextPage={false}
-            total={total}
-            onReset={resetFilter}
-            filter={search}
-            fetchNextPage={async () => nextPage()}
-            pagination={pagination}
-            useMyLocation={useMyLocation}
+            isLoading={query.loading}
+            refetch={query.refetchAndApply}
+            hasNextPage={query.hasNextPage}
+            filter={search.filter}
+            fetchNextPage={query.fetchNextPage as any}
+            properties={properties}
+            useMyLocation={search.useMyLocation}
+            total={results.available}
             isTab={isTab}
           />
         </SafeAreaView>
       </View>
       <SearchLocationBottomSheet
         show={locationBottomSheet}
-        filter={filter}
+        filter={search.filter}
         onDismiss={() => setLocationBottomSheet(false)}
-        onUpdate={(d) => {
-          saveFilter(d);
-          updateFilter(d);
-        }}
+        onUpdate={search.setFilters}
+        refetchAndApply={query.refetchAndApply as any}
       />
       <SearchFilterBottomSheet
         show={showFilter}
-        onSave={saveFilter}
-        onDismiss={() => {
-          setShowFilter(false);
-        }}
-        onReset={() => {
-          resetFilter();
-        }}
-        onUpdate={updateFilter}
-        loading={loading}
-        filter={filter}
-        total={filterTotal}
+        onDismiss={() => setShowFilter(false)}
+        onApply={query.applyCachedResults as any}
+        onReset={search.resetSome as any}
+        onUpdate={search.setFilters}
+        loading={query.loading}
+        filter={search.filter}
+        total={results.total}
         showPurpose
       />
     </>
