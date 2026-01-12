@@ -53,7 +53,7 @@ class MainApplication : Application(), ReactApplication {
     }
     loadReactNative(this)
     ApplicationLifecycleDispatcher.onApplicationCreate(this)
-    registerActivityLifecycleCallbacks(lifecycleCallbacks)}
+  registerActivityLifecycleCallbacks(lifecycleCallbacks)}
 
   override fun onConfigurationChanged(newConfig: Configuration) {
     super.onConfigurationChanged(newConfig)
