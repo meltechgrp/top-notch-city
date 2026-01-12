@@ -55,6 +55,7 @@ export class Property extends Model {
   @text("thumbnail") thumbnail?: string;
 
   @field("is_featured") is_featured!: boolean;
+  @field("is_enabled") is_enabled!: boolean;
   @field("is_booked") is_booked?: boolean;
 
   @text("view_type") view_type?: string;

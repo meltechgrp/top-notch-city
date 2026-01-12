@@ -41,6 +41,7 @@ type ServerProperty = {
   status: PropertyStatus;
   purpose: PropertyPurpose;
   is_featured: boolean;
+  is_enabled: boolean;
   duration?: string;
   category: Category;
   subcategory: SubCategory;

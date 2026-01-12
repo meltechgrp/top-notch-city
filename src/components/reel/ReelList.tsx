@@ -19,7 +19,7 @@ import { useDebouncedVisibility } from "@/hooks/useDebouncedVisibility";
 
 const { height: h, width } = Dimensions.get("window");
 
-function ReelList({ visible }: { visible: boolean }) {
+function ReelList() {
   const {
     reels,
     hasNextPage,
@@ -84,12 +84,12 @@ function ReelList({ visible }: { visible: boolean }) {
         }}
         reel={item}
         fullScreen
-        shouldPlay={visible && index === currentIndex}
+        shouldPlay={index === currentIndex}
       />
     ),
-    [currentIndex, visible]
+    [currentIndex]
   );
-  useDebouncedVisibility({ visible, currentIndex, reels, playersRef });
+  useDebouncedVisibility({ visible: true, currentIndex, reels, playersRef });
   return (
     <>
       <Box className="flex-1">

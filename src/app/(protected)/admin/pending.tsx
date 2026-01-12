@@ -15,6 +15,9 @@ export default function PendingProperties() {
   useEffect(() => {
     setPage(1);
   }, [debouncedSearch]);
+  useEffect(() => {
+    resync();
+  }, []);
   return (
     <>
       <Box className=" flex-1 px-2 pt-2">

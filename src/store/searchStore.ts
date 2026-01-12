@@ -4,6 +4,7 @@ import { Q } from "@nozbe/watermelondb";
 
 type SearchState = {
   total: number;
+  filterTotal: number;
   hasNextPage: boolean;
   loading: boolean;
   filter: SearchFilters;
@@ -15,8 +16,7 @@ type SearchState = {
   resetFilter: () => void;
   updateFilter: (data: Partial<SearchFilters>) => void;
   useMyLocation: () => void;
-  fetch: () => void;
-  saveFilter: () => void;
+  saveFilter: (data: Partial<SearchFilters>) => void;
   nextPage: () => void;
 };
 
@@ -26,6 +26,7 @@ const initial: SearchFilters = {
 
 export const searchStore = observable<SearchState>({
   total: 0,
+  filterTotal: 0,
   hasNextPage: false,
   loading: false,
   filter: initial,
@@ -36,15 +37,12 @@ export const searchStore = observable<SearchState>({
   },
 
   resetFilter() {
-    searchStore.filter.minBedroom.set(undefined);
-    searchStore.filter.maxBedroom.set(undefined);
-    searchStore.filter.maxBathroom.set(undefined);
-    searchStore.filter.maxPrice.set(undefined);
-    searchStore.filter.minPrice.set(undefined);
-    searchStore.filter.amenities.set(undefined);
-    searchStore.filter.category.set(undefined);
-    searchStore.filter.subCategory.set(undefined);
+    searchStore.filter.delete();
+    searchStore.search.delete();
     searchStore.filter.purpose.set("rent");
+    searchStore.search.purpose.set("rent");
+    searchStore.filter.assign(mainStore.address.get());
+    searchStore.search.assign(mainStore.address.get());
   },
 
   updateFilter(data) {
@@ -53,71 +51,52 @@ export const searchStore = observable<SearchState>({
   useMyLocation() {
     searchStore.filter.assign(mainStore.address.get());
   },
-  saveFilter() {
-    searchStore.search.assign(searchStore.filter.get());
+  saveFilter(d) {
+    searchStore.search.assign(d);
   },
   nextPage() {
     searchStore.pagination.page.set((p) => p + 1);
   },
-  async fetch() {
-    const filter = searchStore.filter.get();
-    const userState = mainStore.address.state.get();
-
-    searchStore.loading.set(true);
-
-    // if (shouldFetchFromServer(filter, userState)) {
-    //   const res = await fetch("/search", {
-    //     method: "POST",
-    //     body: JSON.stringify(filter),
-    //   }).then((r) => r.json());
-
-    //   searchStore.total.set(res.total);
-    //   searchStore.properties.set(res.data);
-    //   searchStore.loading.set(false);
-    //   return;
-    // }
-  },
 });
-
-function shouldFetchFromServer(filter: SearchFilters, currentState?: string) {
-  if (!filter.latitude || !filter.longitude) return false;
-  if (!filter.state) return true;
-  return filter.state !== currentState;
-}
 
 export function buildLocalQuery(filter: SearchFilters) {
   const conditions: any[] = [];
 
-  // if (filter.state) {
-  //   conditions.push(Q.where("state", filter.state));
-  // }
+  if (filter?.longitude && filter?.latitude) {
+    conditions.push(
+      Q.or(
+        Q.where("latitude", Q.between(filter.latitude, filter.latitude + 1)),
+        Q.where("longitude", Q.between(filter.longitude, filter.longitude + 1))
+      )
+    );
+  }
 
-  if (filter.purpose) {
+  if (filter?.purpose) {
     conditions.push(Q.where("purpose", filter.purpose));
   }
-  if (filter.category) {
+  if (filter?.category) {
     conditions.push(Q.where("category", filter.category));
   }
-  if (Array.isArray(filter.subCategory) && filter.subCategory?.length > 0) {
+  if (Array.isArray(filter?.subCategory) && filter.subCategory?.length > 0) {
     conditions.push(Q.where("category", Q.oneOf(filter.subCategory)));
   }
 
-  if (filter.minBedroom) {
+  if (filter?.minBedroom) {
     conditions.push(Q.where("bedroom", Q.gte(Number(filter.minBedroom))));
   }
 
-  if (filter.maxBedroom) {
+  if (filter?.maxBedroom) {
     conditions.push(Q.where("bedroom", Q.lte(Number(filter.maxBedroom))));
   }
 
-  if (filter.minPrice) {
+  if (filter?.minPrice) {
     conditions.push(Q.where("price", Q.gte(Number(filter.minPrice))));
   }
 
-  if (filter.maxPrice) {
+  if (filter?.maxPrice) {
     conditions.push(Q.where("price", Q.lte(Number(filter.maxPrice))));
   }
-  if (filter.amenities) {
+  if (filter?.amenities) {
     conditions.push(
       Q.on("amenities", Q.where("name", Q.oneOf(filter.amenities)))
     );

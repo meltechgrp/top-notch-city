@@ -16,6 +16,7 @@ export function normalizeProperty(p: ServerProperty) {
       server_user_id: p.owner.id,
       bed_type: p?.bedType,
       view_type: p?.viewType,
+      is_enabled: p?.is_enabled || true,
       caution_fee: p.caution_fee,
       discount: Number(p?.discount || 0),
       thumbnail: p?.media?.find((m) => m.media_type == "IMAGE")?.url,

@@ -100,6 +100,7 @@ export default () => ({
   jsEngine: "hermes",
   plugins: [
     "expo-asset",
+    "react-native-compressor",
     "expo-router",
     [
       "./plugins/withAndroidQueries.js",

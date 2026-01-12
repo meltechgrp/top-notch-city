@@ -21,7 +21,7 @@ const NearbyProperties = ({
       titleClassName="text-gray-400 text-base"
       subTitle="Explore"
       className=""
-      hasData={location && properties && properties?.length > 0}
+      hasData={properties && properties?.length > 0}
       onSeeAllPress={() => {
         router.push({
           pathname: "/explore",

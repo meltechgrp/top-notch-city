@@ -51,6 +51,7 @@ export const schema = appSchema({
         { name: "thumbnail", type: "string", isOptional: true },
 
         { name: "is_featured", type: "boolean" },
+        { name: "is_enabled", type: "boolean" },
         { name: "is_booked", type: "boolean", isOptional: true },
 
         { name: "sync_status", type: "string" }, // synced | dirty

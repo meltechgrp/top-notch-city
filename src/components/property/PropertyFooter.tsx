@@ -65,7 +65,7 @@ export function PropertyFooter({ property, me }: PropertyFooterProps) {
               }
               await mutateAsync(
                 {
-                  property_id: property?.id!,
+                  property_id: property?.property_server_id!,
                   member_id: property?.server_user_id!,
                 },
                 {

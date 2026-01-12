@@ -9,8 +9,9 @@ import { router, useGlobalSearchParams } from "expo-router";
 import SearchListBottomSheet from "@/components/modals/search/SearchListView";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { buildLocalQuery, searchStore } from "@/store/searchStore";
-import { use$ } from "@legendapp/state/react";
+import { use$, useValue } from "@legendapp/state/react";
 import { database } from "@/db";
+import useGetLocation from "@/hooks/useGetLocation";
 
 interface SearchWrapperProps {
   disableBack?: boolean;
@@ -21,6 +22,7 @@ export default function SearchWrapper({
   disableBack = false,
   isTab = false,
 }: SearchWrapperProps) {
+  const { location, retryGetLocation } = useGetLocation();
   const { latitude, longitude, reset, category, locate } =
     useGlobalSearchParams() as {
       latitude: string;
@@ -30,21 +32,45 @@ export default function SearchWrapper({
       locate: string;
     };
   const {
-    total,
-    loading,
-    filter,
     updateFilter,
     resetFilter,
     useMyLocation,
     pagination,
     nextPage,
-    search,
     saveFilter,
-  } = use$(searchStore);
+  } = searchStore.get(true);
+  const filter = useValue(searchStore.filter);
+  const total = useValue(searchStore.total);
+  const filterTotal = useValue(searchStore.filterTotal);
+  const search = useValue(searchStore.search);
+  const loading = useValue(searchStore.loading);
   const { height: totalHeight } = Dimensions.get("screen");
   const [showFilter, setShowFilter] = useState(false);
   const [locationBottomSheet, setLocationBottomSheet] = useState(false);
-  const deferredText = useDeferredValue(filter);
+  searchStore.filter.onChange(async (f) => {
+    searchStore.loading.set(true);
+    try {
+      const count = await database
+        .get("properties")
+        .query(...buildLocalQuery(f.value))
+        .fetchCount();
+      searchStore.filterTotal.set(count);
+    } finally {
+      searchStore.loading.set(false);
+    }
+  });
+  searchStore.search.onChange(async (f) => {
+    searchStore.loading.set(true);
+    try {
+      const count = await database
+        .get("properties")
+        .query(...buildLocalQuery(f.value))
+        .fetchCount();
+      searchStore.total.set(count);
+    } finally {
+      searchStore.loading.set(false);
+    }
+  });
   useEffect(() => {
     if (latitude && longitude) {
       updateFilter({
@@ -58,7 +84,10 @@ export default function SearchWrapper({
         category: category,
       });
     } else {
-      useMyLocation();
+      saveFilter({
+        latitude: location?.latitude,
+        longitude: location?.longitude,
+      });
     }
     router.setParams({
       latitude: undefined,
@@ -67,22 +96,10 @@ export default function SearchWrapper({
       category: undefined,
       locate: undefined,
     });
-  }, [latitude, longitude, reset, category, locate]);
+  }, [latitude, longitude, reset, category, locate, location]);
   useEffect(() => {
-    const count = async () => {
-      searchStore.loading.set(true);
-      try {
-        const count = await database
-          .get("properties")
-          .query(...buildLocalQuery(deferredText))
-          .fetchCount();
-        searchStore.total.set(count);
-      } finally {
-        searchStore.loading.set(false);
-      }
-    };
-    count();
-  }, [deferredText]);
+    retryGetLocation();
+  }, []);
   return (
     <>
       <View className="flex-1 bg-background">
@@ -118,19 +135,24 @@ export default function SearchWrapper({
         show={locationBottomSheet}
         filter={filter}
         onDismiss={() => setLocationBottomSheet(false)}
-        onUpdate={updateFilter}
+        onUpdate={(d) => {
+          saveFilter(d);
+          updateFilter(d);
+        }}
       />
       <SearchFilterBottomSheet
         show={showFilter}
+        onSave={saveFilter}
         onDismiss={() => {
-          saveFilter();
           setShowFilter(false);
         }}
-        onReset={resetFilter}
+        onReset={() => {
+          resetFilter();
+        }}
         onUpdate={updateFilter}
         loading={loading}
         filter={filter}
-        total={total}
+        total={filterTotal}
         showPurpose
       />
     </>

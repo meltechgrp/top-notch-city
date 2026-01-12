@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import {
   updatePropertyStatus,
   deleteProperty,
@@ -8,15 +8,6 @@ import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { router } from "expo-router";
 
 export function usePropertyStatusMutations() {
-  const queryClient = useQueryClient();
-
-  const invalidate = (id: string) => {
-    queryClient.invalidateQueries({ queryKey: ["properties", id] });
-    queryClient.invalidateQueries({ queryKey: ["agent-property"] });
-    queryClient.invalidateQueries({ queryKey: ["admins-properties"] });
-    queryClient.invalidateQueries({ queryKey: ["pending-properties"] });
-  };
-
   const createStatusMutation = (action: string) =>
     useMutation({
       mutationFn: ({
@@ -32,7 +23,6 @@ export function usePropertyStatusMutations() {
           alertType: "success",
           duration: 3000,
         });
-        invalidate(propertyId);
       },
       onError: () =>
         showErrorAlert({
@@ -51,7 +41,7 @@ export function usePropertyStatusMutations() {
         alertType: "success",
         duration: 3000,
       });
-      invalidate(propertyId);
+
       router.back();
     },
     onError: () =>
@@ -70,7 +60,7 @@ export function usePropertyStatusMutations() {
         alertType: "success",
         duration: 3000,
       });
-      invalidate(propertyId);
+
       router.back();
     },
     onError: () =>

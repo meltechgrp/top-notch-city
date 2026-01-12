@@ -5,7 +5,6 @@ import { Button, ButtonText, Text, Image, Icon } from "../../ui";
 import { useMutation } from "@tanstack/react-query";
 import { sendBooking } from "@/actions/bookings";
 import { SpinningLoader } from "../../loaders/SpinningLoader";
-import { DateTimePickerSheet } from "./DateTimePickerSheet";
 import { generateMediaUrlSingle } from "@/lib/api";
 import {
   setHours,
@@ -24,6 +23,7 @@ import ModalScreen from "@/components/shared/ModalScreen";
 import { useMe } from "@/hooks/useMe";
 import { propertyAvailabilityCollection } from "@/db/collections";
 import { Q } from "@nozbe/watermelondb";
+import { cn } from "@/lib/utils";
 
 export type BookingFormProps = {
   visible: boolean;
@@ -45,7 +45,6 @@ export const BookingFormBottomSheet = ({
   address,
 }: BookingFormProps) => {
   const { me } = useMe();
-  const [dateSheetVisible, setDateSheetVisible] = useState(false);
   const [availableDates, setAvailableDates] = useState<Availabilities[]>([]);
 
   const { mutateAsync, isPending } = useMutation({
@@ -63,7 +62,7 @@ export const BookingFormBottomSheet = ({
       });
     },
   });
-
+  const [error, setError] = useState(false);
   const [formData, setFormData] = useState<BookingForm>({
     booking_type,
     property_id,
@@ -160,6 +159,10 @@ export const BookingFormBottomSheet = ({
     }
     getDates();
   }, [property_id]);
+
+  const isTimeAllowedForInspection = (hour: number) => {
+    return hour >= 8 && hour <= 18;
+  };
   return (
     <>
       <ModalScreen
@@ -215,13 +218,21 @@ export const BookingFormBottomSheet = ({
                 </Text>
               </View>
             )}
+            <View className="mt-4">
+              {booking_type === "reservation" ? (
+                <ReservationDatesInfo availableDates={availableDates} />
+              ) : (
+                <View className="border border-primary/50 px-4 py-4 rounded-xl ">
+                  <Text className="text-sm text-typography/90">
+                    Inspection is between 8am to 5:30pm
+                  </Text>
+                </View>
+              )}
+            </View>
 
             <Text className="text-sm mt-8 text-typography/80">
               Select Date:
             </Text>
-            {booking_type === "reservation" && (
-              <ReservationDatesInfo availableDates={availableDates} />
-            )}
             <View className="mb-4 mt-2">
               <DatePicker
                 label="Select Date"
@@ -231,8 +242,9 @@ export const BookingFormBottomSheet = ({
                 formatPattern="dd MMMM, yyyy"
                 minimumDate={new Date()}
                 onChange={(val) => {
-                  const next = new Date(val);
-
+                  let next = new Date(val);
+                  next = setHours(next, next.getHours());
+                  next = setMinutes(next, next.getMinutes());
                   if (isReservation && !isReservationDateAllowed(next)) {
                     showErrorAlert({
                       title: "Date not available",
@@ -255,22 +267,29 @@ export const BookingFormBottomSheet = ({
                 label="Select Time"
                 mode="time"
                 disabled={!formData.scheduled_date}
-                placeholder="mm:hh"
-                formatPattern="mm:hh a"
+                placeholder="hh:mm"
+                formatPattern="hh:mm a"
+                className={cn(error && "border-primary")}
                 value={formData.scheduled_date}
-                minimumDate={
-                  formData.scheduled_date && isToday(formData.scheduled_date)
-                    ? new Date()
-                    : undefined
-                }
+                minimumDate={new Date()}
                 maximumDate={
-                  booking_type === "inspection"
-                    ? setHours(setMinutes(new Date(), 30), 17)
-                    : undefined
+                  isReservation ? undefined : new Date(new Date().setHours(18))
                 }
                 onChange={(val) => {
                   if (!formData.scheduled_date) return;
+                  if (
+                    !isReservation &&
+                    !isTimeAllowedForInspection(new Date(val).getHours())
+                  ) {
+                    setError(true);
+                    setFormData((p) => ({
+                      ...p,
+                      scheduled_date: null,
+                    }));
+                    return;
+                  }
 
+                  setError(false);
                   let next = new Date(val);
                   next = setHours(formData.scheduled_date, next.getHours());
                   next = setMinutes(next, next.getMinutes());
@@ -396,17 +415,6 @@ export const BookingFormBottomSheet = ({
           </View>
         </View>
       </ModalScreen>
-
-      <DateTimePickerSheet
-        visible={dateSheetVisible}
-        onDismiss={() => setDateSheetVisible(false)}
-        availableDates={availableDates}
-        isReservation={booking_type == "reservation"}
-        onSelect={(d) => {
-          updateField("scheduled_date", d);
-          setDateSheetVisible(false);
-        }}
-      />
     </>
   );
 };
@@ -425,8 +433,8 @@ export function ReservationDatesInfo({ availableDates }: Props) {
       </Text>
 
       {availableDates.map((range, index) => {
-        const start = format(parseISO(range.start), "MMM dd, yyyy");
-        const end = format(parseISO(range.end), "MMM dd, yyyy");
+        const start = format(new Date(range.start), "MMM dd, yyyy");
+        const end = format(new Date(range.end), "MMM dd, yyyy");
 
         return (
           <View
