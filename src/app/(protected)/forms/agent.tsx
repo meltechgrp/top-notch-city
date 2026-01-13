@@ -22,9 +22,11 @@ import { useMutation } from "@tanstack/react-query";
 import { uploadAgentForm } from "@/actions/agent";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import { tempStore } from "@/store/tempStore";
+import { use$, useValue } from "@legendapp/state/react";
 
 export default function AgentFormScreen() {
-  const { application, updateApplication } = tempStore.get();
+  const { updateApplication } = tempStore.get();
+  const application = use$(tempStore.application);
 
   const router = useRouter();
   const { mutateAsync, isPending } = useMutation({
@@ -94,9 +96,9 @@ export default function AgentFormScreen() {
       onSuccess: () => {
         router.push("/forms/success");
       },
-      onError: () => {
+      onError: (e) => {
         showErrorAlert({
-          title: "Something went wrong during upload.",
+          title: e?.message || "Something went wrong during upload.",
           alertType: "error",
         });
       },

@@ -122,6 +122,7 @@ export type PropertyDefault = ReturnType<typeof normalizeProperty>;
 
 export function transformServerProperty(data: ServerProperty[]) {
   return data.map((p) => ({
+    id: p.id,
     property_server_id: p.id,
     title: generateTitle(p),
     slug: p.slug,

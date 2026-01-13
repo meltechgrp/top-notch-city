@@ -112,7 +112,7 @@ function SearchListBottomSheet({
         <BottomSheetFlatList
           data={deduplicate(properties, "property_server_id")}
           renderItem={renderItem}
-          keyExtractor={(item: any) => item.id}
+          keyExtractor={(item: any) => item.property_server_id}
           onEndReached={() => {
             if (hasNextPage && !isLoading) fetchNextPage?.();
           }}

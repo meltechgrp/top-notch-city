@@ -40,7 +40,7 @@ export function DocumentModal({
     setForm((p) => ({ ...p, [key]: value }));
 
   const save = () => {
-    if (!form.documents_ids?.trim())
+    if (!form.documents_ids?.trim() && !form.documents)
       return showErrorAlert({
         title: "Please add a Document",
         alertType: "warn",
@@ -110,7 +110,7 @@ export function DocumentModal({
                     />
                   ) : (
                     <View className="w-full h-full justify-center items-center">
-                      <Icon as={ImageIcon} size={40} />
+                      <Icon as={ImageIcon} size={"sm"} />
                       <Text>Upload document</Text>
                     </View>
                   )}

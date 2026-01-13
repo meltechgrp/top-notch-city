@@ -254,7 +254,7 @@ const Map = forwardRef<MapController, MapProps>((props, ref) => {
         )}
         {markers?.map((place) => (
           <CustomPropertyMarker
-            key={place.id}
+            key={place.property_server_id}
             onPress={(data) => onMarkerPress && onMarkerPress(data)}
             property={place}
           />

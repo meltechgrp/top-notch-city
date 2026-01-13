@@ -32,13 +32,16 @@ import { withObservables } from "@nozbe/watermelondb/react";
 import { Q } from "@nozbe/watermelondb";
 import { useMe } from "@/hooks/useMe";
 import { propertiesCollection } from "@/db/collections";
+import { viewProperty } from "@/actions/property";
+import { Property } from "@/db/models/properties";
+import { listingStore } from "@/store/listing";
 
 const { height } = Dimensions.get("window");
 const HERO_HEIGHT = height / 2.2;
 
 interface PropertyWrapperProps {
   slug: string;
-  properties: any[];
+  properties: Property[];
 }
 
 function PropertyWrapper({ properties, slug }: PropertyWrapperProps) {
@@ -109,8 +112,43 @@ function PropertyWrapper({ properties, slug }: PropertyWrapperProps) {
     );
   }
   useEffect(() => {
-    (async () => await property.markAsLiked())();
+    (async () => await viewProperty({ id: property.property_server_id }))();
   }, []);
+  useEffect(() => {
+    if (property) {
+      listingStore.updateListing({
+        title: property.title,
+        description: property?.description || "",
+        duration: property?.duration,
+        purpose: property?.purpose,
+        category: property?.category,
+        bedroom: property?.bedroom?.toString(),
+        bathroom: property?.bathroom?.toString(),
+        bedType: property?.bed_type,
+        guests: property?.guests?.toString(),
+        landarea: property?.landarea?.toString(),
+        plots: property?.plots?.toString(),
+        viewType: property?.view_type,
+        discount: property?.discount?.toString(),
+        caution_fee: property?.caution_fee?.toString(),
+        subCategory: property?.subcategory,
+        price: property.price?.toString(),
+        address: {
+          displayName: property?.address,
+          addressComponents: {
+            country: property?.country,
+            state: property?.state,
+            city: property?.city,
+            street: property?.street,
+          },
+          location: {
+            latitude: property?.latitude,
+            longitude: property?.longitude,
+          },
+        },
+      });
+    }
+  }, [property]);
   return (
     <>
       <Stack.Screen

@@ -39,7 +39,7 @@ export function ListingWrapper({
     uploading: loading,
     error,
   } = useUploadProperty(type, propertyId);
-  const { updateListing, updateListingStep, resetListing } = listingStore.get();
+  const { updateListing, updateListingStep } = listingStore.get();
   const listing = useValue(listingStore.listing);
 
   async function uploaHandler() {
@@ -68,12 +68,6 @@ export function ListingWrapper({
       },
     });
   }
-  useEffect(() => {
-    console.log(propertyId);
-    if (!propertyId) {
-      resetListing();
-    }
-  }, [propertyId]);
   const Steps = useMemo(() => {
     switch (listing.step) {
       case 1:

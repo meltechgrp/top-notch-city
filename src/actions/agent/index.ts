@@ -1,58 +1,66 @@
 import { format } from "date-fns";
 import { Fetch } from "../utills";
+import { getActiveToken } from "@/lib/secureStore";
+import config from "@/config";
 
 export async function uploadAgentForm(form: Partial<Application>) {
-  try {
-    const data = new FormData();
+  const data = new FormData();
 
-    form?.phone && data.append("phone", form.phone);
-    form?.about && data.append("about", form.about);
-    form?.website && data.append("website", form.website);
-    form?.license_number && data.append("license_number", form.license_number);
-    form?.profile_image &&
-      data.append("profile_image_id", form.profile_image.id);
+  const authToken = await getActiveToken();
+  form?.phone && data.append("phone", form.phone);
+  form?.about && data.append("about", form.about);
+  form?.website && data.append("website", form.website);
+  form?.license_number && data.append("license_number", form.license_number);
+  form?.profile_image && data.append("profile_image_id", form.profile_image.id);
 
-    if (form.date_of_birth) {
-      data.append(
-        "birthdate",
-        format(new Date(form.date_of_birth), "yyyy-MM-dd")
-      );
-    }
-    if (form?.address) {
-      Object.entries(form?.address).map(([field, value]) => {
-        value && data.append(field, value.toString());
-      });
-    }
-    if (form?.specialties) {
-      form.specialties.map((val) => {
-        data.append("specialties", val.toString());
-      });
-    }
-    if (form?.documents) {
-      form.documents.map((val) => {
-        data.append("document_types", val.document_types.toString());
-        val?.documents && data.append("documents", val?.documents?.toString());
-        val.documents_ids &&
-          data.append("documents_ids", val.documents_ids.toString());
-      });
-    }
-    if (form?.languages) {
-      form.languages.map((val) => {
-        data.append("languages", val.toString());
-      });
-    }
-    const res = await Fetch("/agent/apply", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      data,
-    });
-    return res.data;
-  } catch (error) {
-    console.log(error);
-    throw error;
+  if (form.date_of_birth) {
+    data.append(
+      "birthdate",
+      format(new Date(form.date_of_birth), "yyyy-MM-dd")
+    );
   }
+  if (form?.address) {
+    Object.entries(form?.address).map(([field, value]) => {
+      value && data.append(field, value.toString());
+    });
+  }
+  if (form?.specialties) {
+    form.specialties.map((val) => {
+      data.append("specialties", val.toString());
+    });
+  }
+  if (form?.documents) {
+    form.documents.map((val) => {
+      data.append("document_types", val.document_types.toString());
+      val?.documents && data.append("documents", val?.documents?.toString());
+      val.documents_ids &&
+        data.append("documents_ids", val.documents_ids.toString());
+    });
+  }
+  if (form?.languages) {
+    form.languages.map((val) => {
+      data.append("languages", val.toString());
+    });
+  }
+  const formdata = await fetch(`${config.origin}/api/agent/apply`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      ...(authToken && { Authorization: `Bearer ${authToken}` }),
+    },
+    body: data,
+  });
+  const res = await formdata.json();
+  if (res?.detail) {
+    if (typeof res?.detail == "object") {
+      const errs = Object.values(res?.detail);
+      console.log(errs);
+      throw Error(errs[0] as string);
+    }
+
+    throw Error(res?.detail);
+  }
+  return res as Booking[];
 }
 
 export async function getAgentApplications({
