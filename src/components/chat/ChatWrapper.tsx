@@ -38,7 +38,7 @@ function ChatWrapper({ chats }: ChatWrapperProps) {
 const enhance = withObservables(["chatId"], ({ chatId }) => {
   return {
     chats: chatCollection
-      .query(Q.where("server_chat_id", chatId), Q.take(1))
+      .query(Q.where("server_chat_id", chatId || null), Q.take(1))
       .observe(),
   };
 });

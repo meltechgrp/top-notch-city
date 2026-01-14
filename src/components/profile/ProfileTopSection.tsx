@@ -28,6 +28,10 @@ import { Rating } from "@/components/agent/Rating";
 import { ProfileImageTrigger } from "@/components/custom/ImageViewerProvider";
 import { LinearGradient } from "expo-linear-gradient";
 import { TouchableOpacity } from "react-native";
+import { useMutation } from "@tanstack/react-query";
+import { startChat } from "@/actions/message";
+import { useChatsSync } from "@/db/queries/syncChats";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
 
 export function ProfileTopSection({
   user,
@@ -45,11 +49,44 @@ export function ProfileTopSection({
     agentId: user.id,
     is_following: user.is_following || false,
   });
+
+  const { mutateAsync: message } = useMutation({
+    mutationFn: startChat,
+  });
+  const { resync } = useChatsSync();
   const handlePress = () => {
     if (!user) {
       return openAccessModal({ visible: true });
     }
     mutateAsync();
+  };
+  const handlePress2 = async () => {
+    if (!user) {
+      return openAccessModal({ visible: true });
+    }
+
+    await message(
+      {
+        member_id: user.id,
+      },
+      {
+        onError: (e) => {
+          showErrorAlert({
+            title: "Unable to start chat",
+            alertType: "error",
+          });
+        },
+        onSuccess: async (data) => {
+          await resync();
+          router.replace({
+            pathname: "/chats/[chatId]",
+            params: {
+              chatId: data,
+            },
+          });
+        },
+      }
+    );
   };
 
   const ActionButtons = {
@@ -60,7 +97,7 @@ export function ProfileTopSection({
         icon: Check,
       },
       {
-        action: handlePress,
+        action: handlePress2,
         label: "Message",
         icon: MessageCircle,
       },

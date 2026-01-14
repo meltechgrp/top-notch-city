@@ -6,6 +6,7 @@ import {
 } from "@/components/globals/AuthModals";
 import { Icon, Pressable, Text, View } from "@/components/ui";
 import { Property } from "@/db/models/properties";
+import { useChatsSync } from "@/db/queries/syncChats";
 import { cn } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
 import { router } from "expo-router";
@@ -21,6 +22,7 @@ export function PropertyFooter({ property, me }: PropertyFooterProps) {
   const { mutateAsync } = useMutation({
     mutationFn: startChat,
   });
+  const { resync } = useChatsSync();
   return (
     <View
       className={cn(
@@ -40,6 +42,7 @@ export function PropertyFooter({ property, me }: PropertyFooterProps) {
                 agent_id: property.server_user_id,
                 image: property.thumbnail!,
                 address: property.address,
+
                 booking_type:
                   property.category == "Shortlet" ||
                   property.category == "Hotel"
@@ -75,7 +78,8 @@ export function PropertyFooter({ property, me }: PropertyFooterProps) {
                       alertType: "error",
                     });
                   },
-                  onSuccess: (data) => {
+                  onSuccess: async (data) => {
+                    await resync();
                     router.replace({
                       pathname: "/chats/[chatId]",
                       params: {

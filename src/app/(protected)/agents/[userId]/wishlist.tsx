@@ -11,7 +11,7 @@ export default function Wishlist() {
   });
   const list = useMemo(() => data || [], [data]);
   return (
-    <View className="flex-1 bg-background px-4">
+    <View className="flex-1 bg-background p-4">
       <VerticalProperties
         isLoading={isLoading}
         data={list as any}

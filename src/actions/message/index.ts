@@ -14,7 +14,7 @@ export async function startChat({ property_id, member_id }: StartChat) {
     );
     return result as string;
   } else {
-    const result = await Fetch(`/chat/start?member_id=${member_id}`, {
+    const result = await Fetch(`/chat/start/agent?agent_id=${member_id}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

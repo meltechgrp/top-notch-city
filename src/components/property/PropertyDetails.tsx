@@ -26,7 +26,7 @@ import {
   VectorSquare,
 } from "lucide-react-native";
 import { useRouter } from "expo-router";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import {
   generateMediaUrl,
   generateMediaUrlSingle,
@@ -65,6 +65,7 @@ import {
 import { Q } from "@nozbe/watermelondb";
 import { useLayout } from "@react-native-community/hooks";
 import { User } from "@/db/models/users";
+import { listingStore } from "@/store/listing";
 
 interface PropertyDetailsBottomSheetProps {
   property: Property;
@@ -104,6 +105,15 @@ const PropertyDetailsBottomSheet = ({
   }, [property.thumbnail, files]) as Media[];
   const owner = user?.[0];
   const mainImage = property?.thumbnail;
+  useEffect(() => {
+    if (media) {
+      listingStore.updateListing({
+        photos: media?.filter((img) => img.media_type == "IMAGE"),
+        videos: media?.filter((img) => img.media_type == "VIDEO"),
+        facilities: amenities?.map((f) => f.name),
+      });
+    }
+  }, [media]);
   return (
     <>
       <SafeAreaView edges={["bottom"]} className="flex-1 bg-transparent">
@@ -272,7 +282,7 @@ const PropertyDetailsBottomSheet = ({
                 <View className="flex-row gap-4 flex-wrap px-2">
                   {amenities?.map((a) => (
                     <View key={a.name} className="w-[46%] ">
-                      <View className="bg-info-100 rounded-full py-2 px-3 gap-1 flex-row items-center self-start">
+                      <View className="bg-background rounded-full py-2 px-3 gap-1 flex-row items-center self-start">
                         <Text numberOfLines={1} className="text-sm capitalize">
                           {a.name}
                         </Text>

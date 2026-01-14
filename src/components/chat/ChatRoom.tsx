@@ -298,7 +298,7 @@ function ChatRoom(props: Props) {
 
 const enhance = withObservables(["chat"], ({ chat }: { chat: Chat }) => ({
   chat: chat,
-  receivers: chat.receivers.observe(),
+  receivers: chat?.receivers,
   messages: messageCollection
     .query(Q.where("server_chat_id", chat.server_chat_id))
     .observe(),

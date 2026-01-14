@@ -2,162 +2,173 @@ import { Property } from "@/db/models/properties";
 import { transformServerProperty } from "@/db/normalizers/property";
 import useGetLocation from "@/hooks/useGetLocation";
 import { getReverseGeocode } from "@/hooks/useReverseGeocode";
-import { searchStore } from "@/store/searchStore";
 import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
-import { useValue } from "@legendapp/state/react";
-import { useReducer, useMemo, useEffect, useCallback, useState } from "react";
+import { useReducer, useMemo, useCallback, useEffect, useState } from "react";
 
 type SearchAction =
-  | { type: "SET_FILTERS"; payload: Partial<SearchFilters> }
-  | { type: "RESET_FILTERS" }
-  | { type: "RESET_SOME"; fields: (keyof SearchFilters)[] };
+  | { type: "SET"; payload: Partial<SearchFilters> }
+  | { type: "RESET" }
+  | { type: "RESET_FIELDS"; fields: (keyof SearchFilters)[] };
 
-// Reducer
 function searchReducer(
   state: SearchFilters,
   action: SearchAction
 ): SearchFilters {
   switch (action.type) {
-    case "SET_FILTERS":
+    case "SET":
       return { ...state, ...action.payload };
-    case "RESET_SOME": {
-      const newState = { ...state };
-      action.fields.forEach((field) => {
-        delete newState[field];
-      });
-      return newState;
+
+    case "RESET_FIELDS": {
+      const next = { ...state };
+      action.fields.forEach((k) => delete next[k]);
+      return next;
     }
-    case "RESET_FILTERS":
+
+    case "RESET":
       return {};
+
     default:
       return state;
   }
 }
 
-// Hook
+/* ---------------- Hook ---------------- */
+
 export function useSearch() {
-  const { retryGetLocation, location } = useGetLocation();
-  const [searchProperties, updateSearchProperties] = useState<Property[]>([]);
+  const [committedProperties, setcommittedProperties] = useState<Property[]>(
+    []
+  );
+  const { location, retryGetLocation } = useGetLocation();
+
   const [search, dispatch] = useReducer(searchReducer, {
     purpose: "rent",
     useGeoLocation: true,
-    latitude: location?.latitude,
-    longitude: location?.longitude,
   });
+
+  /* ----------- PREVIEW QUERY (NO STORE WRITE) ----------- */
+
   const {
     data,
     refetch,
-    isLoading,
     fetchNextPage,
     hasNextPage,
-    isFetchingNextPage,
+    isLoading,
     isFetching,
+    isFetchingNextPage,
   } = useInfinityQueries({
     type: "search",
     filter: search,
-    enabled: false,
+    enabled: true,
   });
+
+  const previewProperties = useMemo(
+    () => data?.pages.flatMap((p) => p.results) ?? [],
+    [data]
+  );
+
+  const total = data?.pages?.[0]?.total ?? 0;
+
+  /* ---------------- Commit APIs ---------------- */
+
+  const applyCachedResults = useCallback(() => {
+    setcommittedProperties(transformServerProperty(previewProperties));
+  }, [previewProperties]);
+
+  const refetchAndApply = useCallback(async () => {
+    const { data } = await refetch();
+    const results = data?.pages.flatMap((p) => p.results) ?? [];
+
+    setcommittedProperties(transformServerProperty(results));
+  }, [refetch]);
+
+  /* ---------------- Location ---------------- */
+
+  const useMyLocation = useCallback(async () => {
+    const coords = location ?? (await retryGetLocation());
+    if (!coords) return;
+
+    dispatch({
+      type: "SET",
+      payload: {
+        latitude: coords.latitude,
+        longitude: coords.longitude,
+      },
+    });
+
+    const address = await getReverseGeocode(coords);
+
+    dispatch({
+      type: "SET",
+      payload: {
+        country: address?.addressComponents?.country,
+        state: address?.addressComponents?.state,
+        city: address?.addressComponents?.city,
+      },
+    });
+
+    // IMPORTANT: location commits immediately
+    await refetchAndApply();
+  }, [location, retryGetLocation, refetchAndApply]);
+
+  /* ---------------- Filters API ---------------- */
+
   const setFilter = useCallback(
-    (field: keyof SearchFilters, value: string | string[] | undefined) =>
-      dispatch({ type: "SET_FILTERS", payload: { [field]: value } }),
+    (key: keyof SearchFilters, value: any) =>
+      dispatch({ type: "SET", payload: { [key]: value } }),
     []
   );
 
   const setFilters = useCallback(
     (values: Partial<SearchFilters>) =>
-      dispatch({ type: "SET_FILTERS", payload: values }),
+      dispatch({ type: "SET", payload: values }),
     []
   );
-  const resetSome = (fields: (keyof SearchFilters)[]) => {
-    dispatch({ type: "RESET_SOME", fields });
-  };
 
-  const resetFilters = () => {
-    dispatch({ type: "RESET_FILTERS" });
-  };
-
-  const properties = useMemo(() => {
-    return data?.pages.flatMap((page) => page.results) || [];
-  }, [data]);
-  const total = useMemo(() => data?.pages?.[0]?.total ?? 0, [data]);
-  const available = useMemo(
-    () => searchProperties?.length || 0,
-    [searchProperties]
+  const resetSome = useCallback(
+    (fields: (keyof SearchFilters)[]) =>
+      dispatch({ type: "RESET_FIELDS", fields }),
+    []
   );
-  function applyCachedResults() {
-    updateSearchProperties(transformServerProperty(properties || []));
-  }
-  async function refetchAndApply() {
-    let { data } = await refetch();
-    const properties = data?.pages.flatMap((page) => page.results) || [];
-    updateSearchProperties(transformServerProperty(properties || []));
-  }
-  const isLocation = useMemo(
-    () =>
-      search?.latitude == location?.latitude &&
-      search?.longitude == location?.longitude,
-    [search, location]
-  );
-  async function useMyLocation() {
-    if (location) {
-      setFilters({
-        latitude: location.latitude,
-        longitude: location.longitude,
-      });
-      refetchAndApply();
-      const address = await getReverseGeocode(location);
-      setFilters({
-        country: address?.addressComponents?.country,
-        state: address?.addressComponents?.state,
-        city: address?.addressComponents?.city,
-      });
-    } else {
-      const locate = await retryGetLocation();
-      setFilters({
-        latitude: locate?.latitude,
-        longitude: locate?.longitude,
-      });
-      refetchAndApply();
-      if (locate) {
-        const address = await getReverseGeocode(locate);
-        setFilters({
-          country: address?.addressComponents?.country,
-          state: address?.addressComponents?.state,
-          city: address?.addressComponents?.city,
-        });
-      }
-    }
-  }
   useEffect(() => {
-    refetch();
-  }, [search]);
-  useEffect(() => {
-    if (!location || properties?.length == 0) {
+    if (!location && !committedProperties.length) {
       useMyLocation();
-    } else {
-      updateSearchProperties(transformServerProperty(properties || []));
     }
-    applyCachedResults();
-  }, [location, properties]);
+  }, [location]);
+  const resetFilters = useCallback(() => dispatch({ type: "RESET" }), []);
+  useEffect(() => {
+    if (committedProperties?.length < 0) {
+      setcommittedProperties(transformServerProperty(previewProperties));
+    }
+  }, [previewProperties, committedProperties]);
+  const isLocation =
+    search.latitude === location?.latitude &&
+    search.longitude === location?.longitude;
+  console.log(committedProperties?.length, "here");
   return {
     search: {
+      filter: search,
       setFilter,
       setFilters,
       resetSome,
       resetFilters,
       useMyLocation,
-      filter: search,
       isLocation,
     },
-    results: { total, available },
+
+    results: {
+      total,
+      available: committedProperties.length,
+    },
+    properties: committedProperties,
+
     query: {
+      loading: isLoading || isFetching,
       refetch,
       fetchNextPage,
       hasNextPage,
-      loading: isLoading || isFetching,
+      isFetchingNextPage,
       applyCachedResults,
       refetchAndApply,
     },
-    properties: searchProperties,
   };
 }

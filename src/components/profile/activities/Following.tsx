@@ -37,6 +37,7 @@ function FollowingList({ userId }: { userId: string }) {
       <FilterComponent
         search={search}
         onSearch={setSearch}
+        showTabs={false}
         className="mt-2"
         searchPlaceholder="Search by name"
       />

@@ -117,6 +117,7 @@ function PropertyWrapper({ properties, slug }: PropertyWrapperProps) {
   useEffect(() => {
     if (property) {
       listingStore.updateListing({
+        step: 1,
         title: property.title,
         description: property?.description || "",
         duration: property?.duration,
