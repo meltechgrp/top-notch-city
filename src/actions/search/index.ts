@@ -5,10 +5,10 @@ export async function searchProperties(
   page: number,
   perPage: number,
   filters?: SearchFilters,
-  updated_after?: number
+  updated_after?: number,
 ): Promise<Result> {
   const query = new URLSearchParams();
-  // if (filters?.city) query.append("city", filters.city);
+  if (filters?.keyword) query.append("keyword", filters.keyword);
   // if (filters?.state) query.append("state", filters.state);
   if (filters?.latitude) query.append("latitude", String(filters.latitude));
   if (filters?.longitude) query.append("longitude", String(filters.longitude));
@@ -44,18 +44,21 @@ export async function searchProperties(
   if (filters?.createdAt && filters.createdAt !== "any")
     query.append(
       "created_at",
-      format(new Date(filters.createdAt), "yyyy-MM-dd")
+      format(new Date(filters.createdAt), "yyyy-MM-dd"),
     );
   if (filters?.amenities?.length) {
     filters?.amenities.forEach((amenity) =>
-      query.append("amenities_filter", amenity)
+      query.append("amenities_filter", amenity),
     );
   }
 
   query.append("page", String(page));
   query.append("per_page", "99");
   query.append("sortBy", "created_at");
-  query.append("use_geo_location", String(filters?.useGeoLocation) || "true");
+  query.append(
+    "use_geo_location",
+    String(filters?.keyword ? false : filters?.latitude ? true : false),
+  );
   query.append("radius_km", "100");
   query.append("sort_order", "desc");
   const path = `/properties/search/?${query.toString()}`;
@@ -68,7 +71,7 @@ export async function searchProperties(
   }
 }
 export async function voiceSearchProperties(
-  audioUrl?: string
+  audioUrl?: string,
 ): Promise<Result> {
   const query = new URLSearchParams();
   const formData = new FormData();

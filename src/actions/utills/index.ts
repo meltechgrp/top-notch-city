@@ -1,25 +1,64 @@
 import { getActiveToken } from "@/lib/secureStore";
 import config from "@/config";
-import axios, { AxiosRequestConfig } from "axios";
 import { getUniqueIdSync } from "react-native-device-info";
 import { useEffect, useRef, useState } from "react";
 
-export async function Fetch(url: string, options: AxiosRequestConfig = {}) {
+type FetchOptions = {
+  method?: string;
+  headers?: HeadersInit;
+  data?: any;
+  withAuth?: boolean;
+};
+
+export async function Fetch(url: string, options: FetchOptions = {}) {
   const authToken = await getActiveToken();
   const deviceId = getUniqueIdSync();
-  const res = await axios({
-    baseURL: `${config.origin}/api`,
-    url,
-    method: options.method || "GET",
+  // @ts-ignore
+  const contentType = options.headers?.["Content-Type"] ?? "application/json";
+  let body;
+
+  if (options.data && options.method !== "GET") {
+    if (contentType === "application/x-www-form-urlencoded") {
+      const params = new URLSearchParams();
+      Object.entries(options.data).forEach(([key, value]) => {
+        if (value !== null && value !== undefined) {
+          params.append(key, String(value));
+        }
+      });
+      body = params.toString();
+    } else {
+      body = JSON.stringify(options.data);
+    }
+  }
+
+  const response = await fetch(`${config.origin}/api${url}`, {
+    method: options.method ?? "GET",
     headers: {
+      "Content-Type": contentType,
       ...(authToken && { Authorization: `Bearer ${authToken}` }),
       "X-DID": deviceId,
       ...options.headers,
     },
-    data: options.data,
+    body: body,
   });
-  return res.data;
+
+  console.log("Fetch URL:", url, "Response:", response.status);
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    throw new Error(errorBody || `Request failed: ${response.status}`);
+  }
+
+  // auto-handle empty responses
+  const contentTypes = response.headers.get("content-type");
+
+  if (contentTypes?.includes("application/json")) {
+    return response.json();
+  }
+
+  return response.text();
 }
+
 export function useWebSocketConnection(url: string | null) {
   const ws = useRef<WebSocket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
@@ -138,12 +177,12 @@ export interface OSMPlace {
 }
 
 export async function fetchPlaceFromTextQuery(
-  query: string
+  query: string,
 ): Promise<OSMPlace[]> {
   if (!query || query.trim().length === 0) return [];
 
   const endpoint = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&q=${encodeURIComponent(
-    query
+    query,
   )}`;
 
   try {
@@ -183,7 +222,7 @@ export async function fetchPlaceFromTextQuery(
 }
 
 export async function fetchPlaceFromTextQueryGoogle(
-  query: string
+  query: string,
 ): Promise<GooglePlace[]> {
   if (!query || query.trim().length === 0) return [];
 

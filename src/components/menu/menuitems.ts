@@ -91,6 +91,13 @@ export const getQuickMenuItems = ({
       description: "Update your greeting message",
     },
     {
+      label: "Find Agents",
+      icon: Users,
+      link: "/agents",
+      role: "agent",
+      description: "Discover verified agents near you.",
+    },
+    {
       label: "Analytics",
       icon: ChartColumn,
       link: `/agents/${me?.id}/analytics`,

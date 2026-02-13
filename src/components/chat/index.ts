@@ -92,7 +92,7 @@ export async function sendServerMessage({
             chat.prepareUpdate((c) => {
               c.recent_message_status = "sent";
               c.sync_status = "synced";
-            })
+            }),
           );
         }
         if (msg) {
@@ -102,13 +102,12 @@ export async function sendServerMessage({
               msg.server_message_id = m.message_id;
               msg.created_at = Date.parse(m.created_at);
               msg.sync_status = "synced";
-            })
+            }),
           );
         }
         if (m.media?.length) {
           m.media.forEach((serverFile, index) => {
             const localFile = existingFiles[index];
-
             if (localFile) {
               ops.push(
                 localFile.prepareUpdate((f) => {
@@ -117,7 +116,7 @@ export async function sendServerMessage({
                   f.url = serverFile.file_url;
                   f.file_type = serverFile.file_type?.toUpperCase() as any;
                   f.is_local = false;
-                })
+                }),
               );
             } else {
               ops.push(
@@ -127,7 +126,7 @@ export async function sendServerMessage({
                   f.url = serverFile.file_url;
                   f.file_type = serverFile.file_type?.toUpperCase() as any;
                   f.is_local = false;
-                })
+                }),
               );
             }
           });
@@ -135,15 +134,15 @@ export async function sendServerMessage({
             ops.push(
               ...existingFiles
                 .slice(m.media.length)
-                .map((f) => f.prepareDestroyPermanently())
+                .map((f) => f.prepareDestroyPermanently()),
             );
           }
         }
-
         await database.batch(...ops);
       });
     }
   } catch (error) {
+    console.log(error);
     await database.write(async () => {
       await msg.update((m) => {
         m.status = "failed";
@@ -219,7 +218,7 @@ export async function saveLocalMessage({
           c.recent_message_id = data.message_id;
           c.recent_message_status = data.status;
           c.recent_message_sender_id = data.sender_info.id;
-        })
+        }),
       );
     }
 
@@ -236,7 +235,7 @@ export async function saveLocalMessage({
           m.reply_to_message_id = data.reply_to_message_id;
           m.updated_at = Date.parse(data.created_at);
           m.sync_status = "dirty";
-        })
+        }),
       );
     } else {
       ops.push(
@@ -244,16 +243,16 @@ export async function saveLocalMessage({
           Object.assign(m, {
             ...normalizeMessage(data, chatId),
             sync_status: "dirty",
-          })
-        )
+          }),
+        ),
       );
 
       if (data.isMock) {
         if (data.file_data?.length) {
           ops.push(
             ...normalizeMessageFiles(data.file_data, data.message_id).map((f) =>
-              messageFilesCollection.prepareCreate((m) => Object.assign(m, f))
-            )
+              messageFilesCollection.prepareCreate((m) => Object.assign(m, f)),
+            ),
           );
         }
       }
@@ -265,7 +264,7 @@ export async function saveLocalMessage({
 }
 export const addIncomingMessage = async (
   chatId: string,
-  message: ServerMessage
+  message: ServerMessage,
 ) => {
   await saveLocalMessage({ data: message, chatId });
 };
@@ -311,7 +310,7 @@ export const updateMessageStatus = async ({
       ops.push(
         chat.prepareUpdate((c) => {
           c.recent_message_status = status;
-        })
+        }),
       );
     }
 
@@ -323,7 +322,7 @@ export const updateMessageStatus = async ({
       ops.push(
         existing[0].prepareUpdate((m) => {
           m.status = status;
-        })
+        }),
       );
     }
 
@@ -413,10 +412,10 @@ export const updateChats = async (data: ServerChat[]) => {
 
       const chatModel = existingChat
         ? existingChat.prepareUpdate((p) =>
-            Object.assign(p, normalizeChat(raw))
+            Object.assign(p, normalizeChat(raw)),
           )
         : chatCollection.prepareCreate((p) =>
-            Object.assign(p, normalizeChat(raw))
+            Object.assign(p, normalizeChat(raw)),
           );
 
       ops.push(chatModel);
@@ -432,8 +431,8 @@ export const updateChats = async (data: ServerChat[]) => {
 
             ops.push(
               userCollection.prepareCreate((u) =>
-                Object.assign(u, normalizeUser(raw.receiver))
-              )
+                Object.assign(u, normalizeUser(raw.receiver)),
+              ),
             );
           }
         } else {
@@ -444,7 +443,7 @@ export const updateChats = async (data: ServerChat[]) => {
               existingOwner.prepareUpdate((u) => {
                 u.status = raw.receiver.status;
                 u.profile_image = raw.receiver.profile_image;
-              })
+              }),
             );
           }
         }

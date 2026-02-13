@@ -61,7 +61,7 @@ const enhance = withObservables([], () => ({
   chats: chatCollection
     .query(
       Q.where("deleted_at", Q.eq(null)),
-      Q.sortBy("recent_message_created_at", Q.desc)
+      Q.sortBy("recent_message_created_at", Q.desc),
     )
     .observe(),
 }));

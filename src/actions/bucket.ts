@@ -27,11 +27,11 @@ export async function uploadToBucket({ data }: { data: UploadedFile[] }) {
     });
 
     const url = `${config.origin}/api/bucket/upload/`;
-
+    console.log(data);
     const response = await axios.post(url, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
-        Accept: "application/json",
+        "Content-Type": "multipart/form-data",
       },
     });
     return response.data?.files?.map((f: any) => ({
@@ -40,6 +40,7 @@ export async function uploadToBucket({ data }: { data: UploadedFile[] }) {
       media_type: f.file_type?.toUpperCase(),
     })) as Media[];
   } catch (error: any) {
+    console.log(error);
     throw Error(error?.message);
   }
 }

@@ -45,7 +45,7 @@ export default function SearchWrapper({
   useFocusEffect(
     useCallback(() => {
       onTabChange(0);
-    }, [])
+    }, []),
   );
   useEffect(() => {
     if (latitude && longitude) {
@@ -55,7 +55,7 @@ export default function SearchWrapper({
       });
       query.refetchAndApply();
     } else if (locate) {
-      setLocationBottomSheet(true);
+      // setLocationBottomSheet(true);
     } else if (category) {
       search.setFilters({
         category: category,
@@ -76,8 +76,10 @@ export default function SearchWrapper({
         <Box className="flex-1 relative">
           <SearchHeader
             filter={search.filter}
+            onUpdate={search.setFilters}
             setLocationBottomSheet={() => setLocationBottomSheet(true)}
             setShowFilter={() => setShowFilter(true)}
+            refetch={query.refetchAndApply}
             disableBack={disableBack}
           />
           <SearchTabs

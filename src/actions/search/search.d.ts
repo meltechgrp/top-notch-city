@@ -1,5 +1,5 @@
 type SearchFilters = {
-  // Local DB filters
+  keyword?: string;
   city?: string;
   state?: string;
   country?: string;

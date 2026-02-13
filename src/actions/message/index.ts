@@ -10,7 +10,7 @@ export async function startChat({ property_id, member_id }: StartChat) {
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
     return result as string;
   } else {
@@ -29,56 +29,65 @@ export async function sendMessage({
   files,
   reply_to_message_id,
 }: SendMessage) {
-  const formData = new FormData();
-  console.log(files);
-  if (chat_id) formData.append("chat_id", chat_id);
-  if (reply_to_message_id) {
-    formData.append("reply_to_message_id", reply_to_message_id);
+  try {
+    const chat_media_ids: string[] = [];
+    console.log(files, chat_id);
+    try {
+      if (files?.length) {
+        await Promise.all(
+          files.map(async (item) => {
+            if (item.is_local) {
+              const [file] = await uploadToBucket({
+                data: [
+                  {
+                    url: item.file_url,
+                    type: item.file_type?.toLowerCase() as any,
+                  },
+                ],
+              });
+
+              if (file?.id) {
+                chat_media_ids.push(file.id);
+              }
+            } else {
+            }
+          }),
+        );
+      }
+    } catch (error) {
+      return null;
+    }
+
+    const result = await Fetch(`/send/messages`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      data: {
+        chat_id,
+        content: content || "",
+        reply_to_message_id: reply_to_message_id || null,
+        chat_media_ids: chat_media_ids,
+      },
+    });
+
+    return result as {
+      type: string;
+      chat_id: string;
+      message_id: string;
+      content: string;
+      media: FileData[];
+      created_at: string;
+      sender_id: string;
+      sender_name: string;
+      read: boolean;
+      status: ServerMessage["status"];
+      reply_to_message_id?: string;
+    };
+  } catch (error: any) {
+    console.log(error);
+    throw Error(error?.message || "Something went wrong");
   }
-  if (content) formData.append("content", content);
-
-  if (files?.length) {
-    await Promise.all(
-      files.map(async (item) => {
-        if (item.is_local) {
-          const [file] = await uploadToBucket({
-            data: [
-              {
-                url: item.file_url,
-                type: item.file_type?.toLowerCase() as any,
-              },
-            ],
-          });
-
-          if (file?.id) {
-            formData.append("chat_media_ids", file.id);
-          }
-        } else {
-          formData.append("chat_media_ids", item.id);
-        }
-      })
-    );
-  }
-
-  const result = await Fetch(`/send/messages`, {
-    method: "POST",
-    // ❌ DO NOT set Content-Type when sending FormData
-    data: formData,
-  });
-
-  return result as {
-    type: string;
-    chat_id: string;
-    message_id: string;
-    content: string;
-    media: FileData[];
-    created_at: string;
-    sender_id: string;
-    sender_name: string;
-    read: boolean;
-    status: ServerMessage["status"];
-    reply_to_message_id?: string;
-  };
 }
 
 export async function editMessage({
@@ -95,7 +104,7 @@ export async function editMessage({
       headers: {
         "Content-Type": "application/json",
       },
-    }
+    },
   );
   return result as {
     type: string;
@@ -123,7 +132,7 @@ export async function getChatMessages({
   try {
     const res = await Fetch(
       `/chat/${chatId}/messages?page=${pageParam}&size=${size}`,
-      {}
+      {},
     );
     if (res?.detail) throw new Error("Failed to fetch messages");
     return res as ChatMessages;
@@ -172,7 +181,7 @@ export async function deleteChatMessage({
     `/soft/delete/messages/${message_id}?delete_for_everyone=${delete_for_everyone}`,
     {
       method: "DELETE",
-    }
+    },
   );
 }
 

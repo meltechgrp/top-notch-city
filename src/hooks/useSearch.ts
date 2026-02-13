@@ -12,7 +12,7 @@ type SearchAction =
 
 function searchReducer(
   state: SearchFilters,
-  action: SearchAction
+  action: SearchAction,
 ): SearchFilters {
   switch (action.type) {
     case "SET":
@@ -36,12 +36,11 @@ function searchReducer(
 
 export function useSearch() {
   const [committedProperties, setcommittedProperties] = useState<Property[]>(
-    []
+    [],
   );
   const { location, retryGetLocation } = useGetLocation();
 
   const [search, dispatch] = useReducer(searchReducer, {
-    purpose: "rent",
     useGeoLocation: true,
   });
 
@@ -63,7 +62,7 @@ export function useSearch() {
 
   const previewProperties = useMemo(
     () => data?.pages.flatMap((p) => p.results) ?? [],
-    [data]
+    [data],
   );
 
   const total = data?.pages?.[0]?.total ?? 0;
@@ -115,19 +114,19 @@ export function useSearch() {
   const setFilter = useCallback(
     (key: keyof SearchFilters, value: any) =>
       dispatch({ type: "SET", payload: { [key]: value } }),
-    []
+    [],
   );
 
   const setFilters = useCallback(
     (values: Partial<SearchFilters>) =>
       dispatch({ type: "SET", payload: values }),
-    []
+    [],
   );
 
   const resetSome = useCallback(
     (fields: (keyof SearchFilters)[]) =>
       dispatch({ type: "RESET_FIELDS", fields }),
-    []
+    [],
   );
   useEffect(() => {
     if (!location && !committedProperties.length) {

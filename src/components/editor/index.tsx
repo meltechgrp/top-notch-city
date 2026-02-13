@@ -206,7 +206,7 @@ const EditorComponent = React.forwardRef<
                   }
                 }}
                 className={cn(
-                  " px-4 min-h-12 py-3 bg-background-muted flex-1 border border-outline-100 rounded-3xl text-typography max-h-[100px]"
+                  " px-4 min-h-12 py-3 bg-background-muted flex-1 border border-outline-100 placeholder:text-typography rounded-3xl text-typography max-h-[100px]",
                 )}
                 style={{
                   textAlignVertical: text.length === 0 ? "bottom" : "top",

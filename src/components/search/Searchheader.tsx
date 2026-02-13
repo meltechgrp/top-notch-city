@@ -1,31 +1,41 @@
-import { ChevronLeftIcon, Settings2 } from "lucide-react-native";
+import { ChevronLeftIcon, SearchIcon, Settings2 } from "lucide-react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
   Easing,
 } from "react-native-reanimated";
+import { debounce } from "lodash-es";
 import { Icon, Pressable, Text, View } from "@/components/ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ViewProps } from "react-native";
-import { memo, useEffect } from "react";
-import { composeFullAddress } from "@/lib/utils";
+import { memo, useEffect, useMemo, useState } from "react";
 import AnimatedPressable from "@/components/custom/AnimatedPressable";
 import { router } from "expo-router";
+import { Keyboard } from "react-native";
+import { useRef } from "react";
+import { CustomInput } from "@/components/custom/CustomInput";
 
 interface Props extends Partial<ViewProps> {
   setLocationBottomSheet: () => void;
   setShowFilter: () => void;
+  refetch: () => Promise<void>;
   filter: SearchFilters;
   disableBack?: boolean;
+  onUpdate: (values: Partial<SearchFilters>) => void;
 }
 function SearchHeader({
   setShowFilter,
   setLocationBottomSheet,
   filter,
   disableBack,
+  onUpdate,
+  refetch,
   ...props
 }: Props) {
+  const typingTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const [text, setText] = useState("");
   const translateY = useSharedValue(50);
   useEffect(() => {
     translateY.value = withTiming(0, {
@@ -36,6 +46,26 @@ function SearchHeader({
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: translateY.value }],
   }));
+  const debouncedSearch = useMemo(
+    () =>
+      debounce(async (val: string) => {
+        onUpdate({ keyword: val });
+        await refetch();
+        Keyboard.dismiss();
+      }, 2000), // user stops typing for 2s
+    [refetch, onUpdate],
+  );
+
+  useEffect(() => {
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [debouncedSearch]);
+
+  const onChangeText = (val: string) => {
+    setText(val);
+    debouncedSearch(val);
+  };
   return (
     <>
       <View
@@ -62,17 +92,26 @@ function SearchHeader({
                   </Pressable>
                 )}
 
-                <View className={"flex-1 flex-row gap-3"}>
-                  <Pressable
-                    onPress={setLocationBottomSheet}
-                    className="h-12 bg-background-muted flex-1 rounded-full flex-row items-center px-2 py-1"
-                  >
-                    <Text numberOfLines={1} className="flex-1 text-sm px-2">
-                      {filter?.state
-                        ? composeFullAddress(filter)
-                        : "Search for a state, city or location..."}
-                    </Text>
-                  </Pressable>
+                <View className={"flex-1"}>
+                  <View className="px-1 overflow-hidden flex-row gap-2 flex-1 items-center bg-background-muted rounded-full border border-outline-200">
+                    <CustomInput
+                      placeholder="Search for a state or city"
+                      value={text}
+                      containerClassName=" border-0 p-0 min-h-12 flex-1"
+                      className="h-12 border-0 p-0"
+                      autoFocus
+                      numberOfLines={1}
+                      onUpdate={onChangeText}
+                      onSubmitEditing={() => {}}
+                      submitBehavior={"blurAndSubmit"}
+                      enablesReturnKeyAutomatically
+                      returnKeyLabel="Search"
+                      returnKeyType="search"
+                    />
+                    <View className=" ml-auto p-2 bg-primary rounded-full">
+                      <Icon as={SearchIcon} />
+                    </View>
+                  </View>
                 </View>
 
                 <AnimatedPressable
@@ -80,7 +119,7 @@ function SearchHeader({
                   onPress={setShowFilter}
                 >
                   <Icon as={Settings2} size="md" className="text-white" />
-                  <Text className="text-white text-sm">Filter</Text>
+                  {/* <Text className="text-white text-sm">Filter</Text> */}
                 </AnimatedPressable>
               </View>
             </View>
