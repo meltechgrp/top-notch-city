@@ -26,14 +26,14 @@ function Messagefiles({ files, isMine }: MessagefilesProps) {
         media_type: item.file_type?.toUpperCase(),
         is_local: item.is_local,
       })),
-    [files]
+    [files],
   ) as Media[];
   if (!files) return null;
   return (
     <View
       className={cn(
         "gap-1 flex-row flex-wrap ",
-        isMine ? "items-end" : "items-start"
+        isMine ? "items-end" : "items-start",
       )}
     >
       {chunk(files?.slice(0, 4), 2).map((row, a) => (
@@ -50,6 +50,7 @@ function Messagefiles({ files, isMine }: MessagefilesProps) {
                   >
                     <AudioPreviewPlayer
                       isChat
+                      isMine={isMine}
                       url={
                         item.is_local
                           ? item.url
@@ -132,7 +133,7 @@ const enhance = withObservables(
     files: messageFilesCollection
       .query(Q.where("server_message_id", server_message_id || null))
       .observe(),
-  })
+  }),
 );
 
 export default enhance(Messagefiles);

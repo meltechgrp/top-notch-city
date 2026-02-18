@@ -49,14 +49,14 @@ function ChatRoomMessage(props: ChatRoomMessageProps) {
   } = props;
   const isMine = React.useMemo(
     () => message.server_sender_id === me?.id,
-    [me, message]
+    [me, message],
   );
   const formatedTime = React.useMemo(
     () =>
       formatMessageTime(message.created_at as unknown as Date, {
         onlyTime: true,
       }),
-    []
+    [],
   );
 
   const messageInfo = React.useMemo(
@@ -64,7 +64,7 @@ function ChatRoomMessage(props: ChatRoomMessageProps) {
       <View
         className={cn(
           "flex-row items-center pb-1 px-2 gap-1",
-          isMine ? "justify-end" : "justify-start"
+          isMine ? "justify-end" : "justify-start",
         )}
       >
         {!isMine && !message?.deleted_at && message?.is_edited && (
@@ -77,7 +77,7 @@ function ChatRoomMessage(props: ChatRoomMessageProps) {
         {isMine && <MessageStatusIcon status={message.status} />}
       </View>
     ),
-    [formatedTime, message?.status, message?.is_edited, message?.deleted_at]
+    [formatedTime, message?.status, message?.is_edited, message?.deleted_at],
   );
   const pressProps = {
     onLongPress: () => {
@@ -129,7 +129,7 @@ function ChatRoomMessage(props: ChatRoomMessageProps) {
                 className={cn(
                   "max-w-[80%] p-1 rounded-xl",
                   isMine ? "bg-gray-600" : "bg-background-muted",
-                  isMine ? "items-end" : "items-start"
+                  isMine ? "items-end" : "items-start",
                 )}
               >
                 <MessageFiles
@@ -140,7 +140,7 @@ function ChatRoomMessage(props: ChatRoomMessageProps) {
                   <View
                     className={cn(
                       "gap-1 flex-row flex-wrap ",
-                      isMine ? "items-end" : "items-start"
+                      isMine ? "items-end" : "items-start",
                     )}
                   >
                     <Pressable
@@ -218,13 +218,13 @@ const enhance = withObservables(
     message: message.observe(),
     property: propertiesCollection.query(
       Q.where("property_server_id", message.property_server_id || null),
-      Q.take(1)
+      Q.take(1),
     ),
     quotes: messageCollection.query(
       Q.where("server_message_id", message.reply_to_message_id || null),
-      Q.take(1)
+      Q.take(1),
     ),
-  })
+  }),
 );
 
 export default enhance(ChatRoomMessage);

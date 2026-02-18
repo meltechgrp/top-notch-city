@@ -1,6 +1,7 @@
 import { format, isThisYear, isToday, subDays, subMonths } from "date-fns";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import eventBus from "@/lib/eventBus";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -18,7 +19,7 @@ export function toNaira(amountInKobo: number) {
 
 export function formatMessageTime(
   time: Date,
-  opt?: { hideTimeForFullDate?: boolean; onlyTime?: boolean }
+  opt?: { hideTimeForFullDate?: boolean; onlyTime?: boolean },
 ) {
   const { hideTimeForFullDate } = opt || {
     hideTimeForFullDate: false,
@@ -35,7 +36,7 @@ export function formatMessageTime(
   }
   return format(
     localDate,
-    `MM/dd/yyyy${hideTimeForFullDate ? "" : ", h:mm a"}`
+    `MM/dd/yyyy${hideTimeForFullDate ? "" : ", h:mm a"}`,
   );
 }
 export function toKobo(amountInNaira: number) {
@@ -44,7 +45,7 @@ export function toKobo(amountInNaira: number) {
 
 export function formatToNaira(
   amountInKobo: number,
-  fractionDigits: number = 2
+  fractionDigits: number = 2,
 ) {
   return formatMoney(toNaira(amountInKobo), "NGN", fractionDigits);
 }
@@ -52,7 +53,7 @@ export function formatToNaira(
 export function formatMoney(
   amount: number,
   currency: string,
-  fractionDigits: number = 2
+  fractionDigits: number = 2,
 ) {
   return new Intl.NumberFormat("en-NG", {
     style: "currency",
@@ -116,7 +117,7 @@ export function composeFullAddress(address: ParsedAddress, cityOnly?: boolean) {
     address?.city,
     address?.lga,
     address?.state,
-    address?.country
+    address?.country,
   );
 }
 export function joinWithComma(...arr: Array<string | undefined | null>) {
@@ -125,7 +126,7 @@ export function joinWithComma(...arr: Array<string | undefined | null>) {
 
 export function formatDateDistance(date: string, full?: boolean) {
   const seconds = Math.floor(
-    (new Date().getTime() - new Date(date).getTime()) / 1000
+    (new Date().getTime() - new Date(date).getTime()) / 1000,
   );
   let interval = Math.floor(seconds / 31536000);
   if (interval > 1) {
@@ -148,7 +149,7 @@ export function formatDateDistance(date: string, full?: boolean) {
 }
 
 export function getRegionForMarkers(
-  markers: { latitude: number; longitude: number }[]
+  markers: { latitude: number; longitude: number }[],
 ) {
   if (markers.length === 0) {
     return {
@@ -192,7 +193,7 @@ type EntryKeyMap = {
 
 export function fillMissingTimeSeries<T extends Record<string, any>>(
   data: T[],
-  { dateKey, valueKey }: EntryKeyMap
+  { dateKey, valueKey }: EntryKeyMap,
 ): T[] {
   if (data.length === 0) return [];
 
@@ -235,7 +236,7 @@ type ComparisonResult = {
 };
 
 export function compareRealCurrentMonth(
-  data?: MonthlyData[]
+  data?: MonthlyData[],
 ): ComparisonResult {
   if (!data || data.length < 2) {
     return { rate: 0, direction: false };
@@ -243,7 +244,7 @@ export function compareRealCurrentMonth(
 
   // Sort ascending by date
   const sorted = [...data].sort(
-    (a, b) => new Date(a.month).getTime() - new Date(b.month).getTime()
+    (a, b) => new Date(a.month).getTime() - new Date(b.month).getTime(),
   );
 
   // Format real system current month "YYYY-MM"
@@ -344,7 +345,7 @@ export function guidGenerator() {
 export async function uploadWithFakeProgress(
   uploadFn: () => Promise<Media[]>,
   onProgress: (val: number) => void,
-  isVideo: boolean
+  isVideo: boolean,
 ) {
   let progress = 0;
 
@@ -374,3 +375,8 @@ export const formatTime = (ms: number) => {
   const sec = totalSec % 60;
   return `${min}:${sec < 10 ? "0" : ""}${sec}`;
 };
+
+// show snackbar message
+export function showSnackbar(option: SnackBarOption) {
+  eventBus.dispatchEvent("addSnackBar", option);
+}

@@ -47,16 +47,16 @@ export async function editServerMessage({ data }: { data: ServerMessage }) {
       });
     }
   } catch (error) {
-    if (msg) {
-      await database.write(async () => {
-        await msg.update((m) => {
-          m.status = "failed";
-        });
-        await chat.update((c) => {
-          c.recent_message_status = "failed";
-        });
-      });
-    }
+    // if (msg) {
+    //   await database.write(async () => {
+    //     await msg.update((m) => {
+    //       m.status = "failed";
+    //     });
+    //     await chat.update((c) => {
+    //       c.recent_message_status = "failed";
+    //     });
+    //   });
+    // }
   }
 }
 export async function sendServerMessage({
@@ -209,7 +209,7 @@ export async function saveLocalMessage({
       .query(Q.where("server_chat_id", chatId))
       .fetch();
 
-    if (chat && (data?.isMock || chat.recent_message_id == data.message_id)) {
+    if (chat && data?.isMock && chat.recent_message_id == data.message_id) {
       ops.push(
         chat.prepareUpdate((c) => {
           c.recent_message_content =

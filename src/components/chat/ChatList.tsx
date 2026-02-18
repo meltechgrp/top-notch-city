@@ -13,6 +13,7 @@ import { Chat } from "@/db/models/messages";
 import { useChatsSync } from "@/db/queries/syncChats";
 import { router } from "expo-router";
 import { useEffect } from "react";
+import { useWebSocketHandler } from "@/hooks/useWebSocketHandler";
 
 interface ChatListProps {
   chats: Chat[];
@@ -20,8 +21,10 @@ interface ChatListProps {
 
 function ChatList({ chats }: ChatListProps) {
   const { resync, syncing } = useChatsSync();
+  const { connect } = useWebSocketHandler();
   useEffect(() => {
     resync();
+    connect();
   }, []);
   return (
     <>

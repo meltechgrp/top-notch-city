@@ -30,7 +30,7 @@ export default function PropertyBottomSheet(props: Props) {
               },
             });
           }}
-          data={data}
+          property={data}
         />
       </View>
     </BottomSheet>

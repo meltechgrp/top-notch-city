@@ -12,7 +12,7 @@ export function normalizeChat(server: ServerChat) {
     recent_message_created_at: server.recent_message
       ? Date.parse(server.recent_message.created_at)
       : null,
-    recent_message_status: server.recent_message?.status ?? null,
+    recent_message_status: server.recent_message?.status ?? "sent",
 
     unread_count: server.unread_count,
     updated_at: Date.now(), // or server updated_at if provided

@@ -39,10 +39,10 @@ export function useBooking() {
 
     return {
       revPending: unique.filter(
-        (b) => b.booking_type === "reservation" && b.status === "pending"
+        (b) => b.booking_type === "reservation" && b.status === "pending",
       ),
       inspPending: unique.filter(
-        (b) => b.booking_type === "inspection" && b.status === "pending"
+        (b) => b.booking_type === "inspection" && b.status === "pending",
       ),
       revList: unique.filter((b) => b.booking_type === "reservation"),
       inspList: unique.filter((b) => b.booking_type === "inspection"),
@@ -61,7 +61,8 @@ export function useBooking() {
     onError: (e) => {
       console.log(e);
       showErrorAlert({
-        title: e?.message || "Something went wrong!",
+        title:
+          typeof e?.message == "string" ? e?.message : "Something went wrong!",
         alertType: "error",
       });
     },
@@ -69,7 +70,7 @@ export function useBooking() {
   const updateStatus = (
     bookingId: string,
     status: BookingStatus,
-    note?: string
+    note?: string,
   ): Promise<any> =>
     mutateAsync({
       booking_id: bookingId,

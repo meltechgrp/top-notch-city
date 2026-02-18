@@ -43,7 +43,7 @@ function MessageListItem(props: MessageListItemProps) {
 
   const isMine = React.useMemo(
     () => chat?.recent_message_sender_id === me?.id,
-    [me, chat]
+    [me, chat],
   );
   const formatedTime = React.useMemo(
     () =>
@@ -52,7 +52,7 @@ function MessageListItem(props: MessageListItemProps) {
             hideTimeForFullDate: true,
           })
         : "",
-    []
+    [],
   );
   async function handleDelete() {
     console.log("base");
@@ -136,13 +136,13 @@ function MessageListItem(props: MessageListItemProps) {
               <Text
                 className={cn(
                   "text-typography/60 text-xs",
-                  unreadCount && "text-primary"
+                  unreadCount && "text-primary",
                 )}
               >
                 {formatedTime}
               </Text>
             </View>
-            {typing && <TypingIndicator />}
+            {/* {typing && <TypingIndicator />} */}
             {!typing && chat?.recent_message_content && (
               <View className="flex flex-row gap-4 w-full">
                 <View className="relative flex-1 flex-row gap-1">
@@ -178,7 +178,7 @@ function MessageListItem(props: MessageListItemProps) {
                     <View
                       className={cn(
                         "flex-row items-center  h-[18px] bg-primary rounded-full justify-center ml-auto",
-                        unreadCount === "99+" ? "w-[32px]" : "w-[20px]"
+                        unreadCount === "99+" ? "w-[32px]" : "w-[20px]",
                       )}
                     >
                       <Text className="text-white text-xs">{unreadCount}</Text>

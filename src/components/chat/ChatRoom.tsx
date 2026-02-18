@@ -35,6 +35,7 @@ import { use$ } from "@legendapp/state/react";
 import { tempStore } from "@/store/tempStore";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
+import { useWebSocketHandler } from "@/hooks/useWebSocketHandler";
 
 type Props = {
   chat: Chat;
@@ -56,6 +57,7 @@ function ChatRoom(props: Props) {
   });
   const { me } = useMe();
   const { isInternetReachable, isOffline } = useNetworkStatus();
+  useWebSocketHandler();
   const [currentTitle, setCurrentTitle] = React.useState("");
   const listRef = React.useRef<FlashListRef<Message> | null>(null);
   const fadeAnim = React.useRef(new Animated.Value(1)).current;
@@ -103,7 +105,7 @@ function ChatRoom(props: Props) {
         />
       );
     },
-    [isDeletingMessageId, me, handleMessageLongPress, messages.length]
+    [isDeletingMessageId, me, handleMessageLongPress, messages.length],
   );
   const changeTitle = (newTitle: string) => {
     if (newTitle === currentTitle) return;
@@ -129,7 +131,7 @@ function ChatRoom(props: Props) {
         else if (isYesterday(createdAt)) title = "Yesterday";
         changeTitle(title);
       }
-    }
+    },
   );
 
   const typing = use$(tempStore.getTyping(chat.server_chat_id));
@@ -245,6 +247,7 @@ function ChatRoom(props: Props) {
             }}
             maintainVisibleContentPosition={{
               startRenderingFromBottom: true,
+              autoscrollToBottomThreshold: 0,
             }}
             renderItem={RenderItem}
             data={messages}

@@ -4,7 +4,7 @@ type BookingForm = {
   booking_type: Bookingtype;
   duration_days?: string;
   scheduled_time?: { hour: number; minute: number } | null;
-  scheduled_date: Date | null;
+  scheduled_date: string | null;
   property_id: string;
   additional_request?: string[];
   guest?: string;

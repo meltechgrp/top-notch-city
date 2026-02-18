@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 import { ButtonsInput, CustomInput } from "../../custom/CustomInput";
 import { Button, ButtonText, Text, Image, Icon } from "../../ui";
@@ -11,7 +11,6 @@ import {
   setMinutes,
   isWithinInterval,
   parseISO,
-  isToday,
   format,
 } from "date-fns";
 import DatePicker from "@/components/custom/DatePicker";
@@ -23,7 +22,7 @@ import ModalScreen from "@/components/shared/ModalScreen";
 import { useMe } from "@/hooks/useMe";
 import { propertyAvailabilityCollection } from "@/db/collections";
 import { Q } from "@nozbe/watermelondb";
-import { cn } from "@/lib/utils";
+import { cn, showSnackbar } from "@/lib/utils";
 
 export type BookingFormProps = {
   visible: boolean;
@@ -56,9 +55,9 @@ export const BookingFormBottomSheet = ({
       }),
     onError: (e) => {
       console.log(e);
-      showErrorAlert({
-        title: e?.message || "Something went wrong, try again!",
-        alertType: "error",
+      showSnackbar({
+        message: e?.message || "Something went wrong, try again!",
+        type: "error",
       });
     },
   });
@@ -83,9 +82,9 @@ export const BookingFormBottomSheet = ({
 
   const handleSubmit = async () => {
     if (!formData.scheduled_date) {
-      return showErrorAlert({
-        title: "Select date and time",
-        alertType: "warn",
+      return showSnackbar({
+        message: "Select date and time",
+        type: "warning",
       });
     }
 
@@ -94,16 +93,16 @@ export const BookingFormBottomSheet = ({
         !Number(formData.duration_days) ||
         Number(formData.duration_days) <= 0
       ) {
-        return showErrorAlert({
-          title: "Enter valid duration",
-          alertType: "warn",
+        return showSnackbar({
+          message: "Enter valid duration",
+          type: "warning",
         });
       }
 
       if (!Number(formData.guest) || Number(formData.guest) <= 0) {
-        return showErrorAlert({
-          title: "Enter number of guests",
-          alertType: "warn",
+        return showSnackbar({
+          message: "Enter number of guests",
+          type: "warning",
         });
       }
     }
@@ -148,7 +147,7 @@ export const BookingFormBottomSheet = ({
   useEffect(() => {
     async function getDates() {
       const dates = await propertyAvailabilityCollection.query(
-        Q.where("property_server_id", property_id)
+        Q.where("property_server_id", property_id),
       );
       const available = dates?.map((a) => ({
         start: new Date(a.start).toString(),
@@ -255,7 +254,7 @@ export const BookingFormBottomSheet = ({
 
                   setFormData((p) => ({
                     ...p,
-                    scheduled_date: next,
+                    scheduled_date: next.toISOString(),
                   }));
                 }}
                 maximumDate={undefined}
@@ -271,7 +270,7 @@ export const BookingFormBottomSheet = ({
                 formatPattern="hh:mm a"
                 className={cn(error && "border-primary")}
                 value={formData.scheduled_date}
-                minimumDate={new Date()}
+                minimumDate={undefined}
                 maximumDate={
                   isReservation ? undefined : new Date(new Date().setHours(18))
                 }
@@ -300,7 +299,7 @@ export const BookingFormBottomSheet = ({
 
                   setFormData((p) => ({
                     ...p,
-                    scheduled_date: next,
+                    scheduled_date: next.toISOString(),
                   }));
                 }}
               />

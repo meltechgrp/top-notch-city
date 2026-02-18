@@ -9,8 +9,9 @@ import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
 type Props = {
   url: string | null;
   isChat?: boolean;
+  isMine?: boolean;
 };
-function AudioPreviewPlayer({ url, isChat }: Props) {
+function AudioPreviewPlayer({ url, isChat, isMine }: Props) {
   if (!url) {
     return null;
   }
@@ -27,7 +28,7 @@ function AudioPreviewPlayer({ url, isChat }: Props) {
     <View
       className={cn(
         "flex-row items-center gap-3 flex-1",
-        isChat && "flex-col items-start gap-1 pt-2 -mb-5"
+        isChat && "flex-col items-start gap-1 pt-2 -mb-5",
       )}
     >
       <View className="flex-row flex-1 gap-3 items-center">
@@ -47,7 +48,7 @@ function AudioPreviewPlayer({ url, isChat }: Props) {
         />
       </View>
 
-      <Text className="text-sm ml-2">
+      <Text className={cn("text-sm ml-2", !isMine && "ml-auto")}>
         {formatTime(status.playing ? status.currentTime : player.duration)}
       </Text>
     </View>
