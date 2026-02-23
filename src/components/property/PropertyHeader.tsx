@@ -60,7 +60,7 @@ export default function PropertyHeader({
               router.push({
                 pathname: "/property/[propertyId]/edit",
                 params: {
-                  propertyId: property.id,
+                  propertyId: property.property_server_id,
                   userId: property.server_user_id,
                 },
               })
@@ -74,7 +74,7 @@ export default function PropertyHeader({
               as={Edit}
               className={cn(
                 " text-white w-7 h-7",
-                hasScrolledToDetails && theme == "light" && "text-black"
+                hasScrolledToDetails && theme == "light" && "text-black",
               )}
             />
           </Pressable>

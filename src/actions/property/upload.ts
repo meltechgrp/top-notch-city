@@ -49,7 +49,8 @@ const buildPropertyFormData = (listing: Listing) => {
     const { location, addressComponents, placeId, displayName } =
       listing.address;
 
-    if (location?.latitude) fd.append("latitude", location?.latitude.toString());
+    if (location?.latitude)
+      fd.append("latitude", location?.latitude.toString());
     if (location?.longitude)
       fd.append("longitude", location?.longitude.toString());
 
@@ -93,7 +94,7 @@ const buildPropertyFormData = (listing: Listing) => {
 const uploadPropertyRequest = async (
   listing: Listing,
   type: "add" | "edit",
-  propertyId?: string
+  propertyId?: string,
 ) => {
   const token = await getActiveToken();
   const form = buildPropertyFormData(listing);

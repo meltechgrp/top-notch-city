@@ -32,7 +32,7 @@ export default function ListingMediaFiles() {
                   " gap-4 p-6 py-3 flex-row items-center rounded-2xl border border-outline-300",
                   listing.photos &&
                     listing.photos.length > 0 &&
-                    "border border-primary"
+                    "border border-primary",
                 )}
               >
                 <Icon as={Images} className="text-primary" />
@@ -53,20 +53,21 @@ export default function ListingMediaFiles() {
                   " gap-4 p-6 py-3 flex-row items-center rounded-2xl border border-outline-300",
                   listing.videos &&
                     listing.videos.length > 0 &&
-                    "border border-primary"
+                    "border border-primary",
                 )}
               >
                 <Icon as={Images} className="text-primary" />
                 <Text>Upload videos</Text>
                 <Avatar className=" ml-auto">
                   <Text size="lg" className="text-white">
-                    {listing?.videos ? listing?.videos.length : 0}
+                    {(listing?.videos ? listing?.videos.length : 0).toString()}
                   </Text>
                 </Avatar>
               </View>
             </TouchableOpacity>
           </View>
           <View className="p-4 border rounded-xl mt-6 border-primary/50 gap-2">
+            <Text>Warning:</Text>
             <Text className="text-sm">
               1.⁠ ⁠The video or image must be clear and of high quality.
             </Text>
