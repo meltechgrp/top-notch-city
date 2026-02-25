@@ -7,6 +7,7 @@ import {
 } from "@/lib/schema";
 import { Fetch } from "../utills";
 import config from "@/config";
+import { getUniqueIdSync } from "react-native-device-info";
 
 export async function authOptVerify({
   otp,
@@ -81,10 +82,11 @@ export async function loginWithSocial({
 }
 
 export async function authSignup(
-  form: AuthSignupInput
+  form: AuthSignupInput,
 ): Promise<ActionResponse<AuthSignupInput>> {
   try {
     const parsed = AuthSignupSchema.safeParse(form);
+    const deviceId = getUniqueIdSync();
     if (!parsed.success) {
       const err = parsed.error.flatten();
       return {
@@ -107,6 +109,7 @@ export async function authSignup(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "X-DID": deviceId,
       },
       body: JSON.stringify({
         email,
@@ -137,7 +140,7 @@ export async function authSignup(
 }
 
 export async function authLogin(
-  form: AuthLoginInput
+  form: AuthLoginInput,
 ): Promise<ActionResponse<AuthLoginInput>> {
   try {
     const parsed = AuthLoginSchema.safeParse(form);

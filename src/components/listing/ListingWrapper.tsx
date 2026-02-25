@@ -12,11 +12,10 @@ import FullHeightLoaderWrapper from "@/components/loaders/FullHeightLoaderWrappe
 import { Box } from "@/components/ui";
 import { usePropertyFeedSync } from "@/db/queries/syncPropertyFeed";
 import { listingStore } from "@/store/listing";
-import { observe } from "@legendapp/state";
-import { use$, useValue } from "@legendapp/state/react";
+import { useValue } from "@legendapp/state/react";
 import { useLayout } from "@react-native-community/hooks";
 import { useRouter } from "expo-router";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import Animated, { FadeInRight, FadeOutLeft } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -60,7 +59,7 @@ export function ListingWrapper({
         });
       },
       onError: (e) => {
-        console.log(e?.message, "here");
+        console.log(e, "here");
         showErrorAlert({
           title: e?.message || "Something went wrong",
           alertType: "error",

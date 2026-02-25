@@ -67,7 +67,7 @@ export default function ListingMediaFiles() {
             </TouchableOpacity>
           </View>
           <View className="p-4 border rounded-xl mt-6 border-primary/50 gap-2">
-            <Text>Warning:</Text>
+            <Text>Note:</Text>
             <Text className="text-sm">
               1.⁠ ⁠The video or image must be clear and of high quality.
             </Text>

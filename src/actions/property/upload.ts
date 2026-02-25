@@ -3,6 +3,7 @@ import config from "@/config";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Fetch } from "@/actions/utills";
 import { Listing } from "@/store/listing";
+import axios from "axios";
 
 export const parseApiError = (data: any, status: number) => {
   if (data?.detail) {
@@ -104,20 +105,26 @@ const uploadPropertyRequest = async (
       ? `${config.origin}/api/properties/${propertyId}`
       : `${config.origin}/api/properties/`;
 
-  const data = await Fetch(url, {
-    method: type === "edit" ? "PUT" : "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    data: form,
-  });
+  console.log(type, url, type, propertyId);
+  try {
+    const response = await fetch(url, {
+      method: type === "edit" ? "PUT" : "POST",
+      body: form,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-  if (data?.detail) {
-    throw new Error(parseApiError(data, 400));
+    return await response.json();
+  } catch (error: any) {
+    console.log(error);
+    if (error.response) {
+      throw new Error(
+        parseApiError(error.response.data, error.response.status),
+      );
+    }
+    throw new Error(error);
   }
-
-  return data;
 };
 export function useUploadProperty(type: "edit" | "add", propertyId?: string) {
   const queryClient = useQueryClient();

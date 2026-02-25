@@ -54,7 +54,10 @@ export function FilterComponent({
         <View className="flex-row gap-2 items-center h-12 border border-outline-100 px-2 py-1 rounded-xl bg-background-muted">
           <Icon as={Search} className="text-primary" />
           <TextInput
-            className={cn("rounded-xl text-typography flex-1 ", inputClassName)}
+            className={cn(
+              "rounded-xl text-typography placeholder:text-typography p-0  flex-1 ",
+              inputClassName,
+            )}
             value={search}
             placeholder={
               searchPlaceholder ?? "Search by name, email or phone..."
@@ -78,7 +81,7 @@ export function FilterComponent({
                   variant="solid"
                   className={cn(
                     "flex-row border border-background-muted gap-3 py-1.5 px-3 rounded-xl items-center justify-between",
-                    tab == key && " border-primary"
+                    tab == key && " border-primary",
                   )}
                   action="muted"
                 >
@@ -114,7 +117,7 @@ const enhance = withObservables(
           .get("properties")
           .query(
             ...buildListQuery({ filter, agentId }),
-            Q.where("status", "pending")
+            Q.where("status", "pending"),
           )
           .observeCount()
       : of(0),
@@ -123,7 +126,7 @@ const enhance = withObservables(
           .get("properties")
           .query(
             ...buildListQuery({ filter, agentId }),
-            Q.where("status", "approved")
+            Q.where("status", "approved"),
           )
           .observeCount()
       : of(0),
@@ -132,7 +135,7 @@ const enhance = withObservables(
           .get("properties")
           .query(
             ...buildListQuery({ filter, agentId }),
-            Q.where("status", "rejected")
+            Q.where("status", "rejected"),
           )
           .observeCount()
       : of(0),
@@ -141,11 +144,11 @@ const enhance = withObservables(
           .get("properties")
           .query(
             ...buildListQuery({ filter, agentId }),
-            Q.where("status", "flagged")
+            Q.where("status", "flagged"),
           )
           .observeCount()
       : of(0),
-  })
+  }),
 );
 
 export default enhance(FilterComponent);

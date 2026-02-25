@@ -10,8 +10,10 @@ import {
 } from "@/components/ui";
 import React from "react";
 import { CheckCircle } from "lucide-react-native";
+import { listingStore } from "@/store/listing";
 
 export default function ListingSuccess() {
+  const { updateListing, resetListing } = listingStore.get();
   const { userId } = useLocalSearchParams() as { userId: string };
   const router = useRouter();
   return (
@@ -38,14 +40,15 @@ export default function ListingSuccess() {
               variant="outline"
               className="flex-1 h-12 mt-4"
               size="md"
-              onPress={() =>
+              onPress={() => {
+                resetListing();
                 router.dismissTo({
                   pathname: "/agents/[userId]/properties/add",
                   params: {
                     userId,
                   },
-                })
-              }
+                });
+              }}
             >
               <ButtonText>Upload again</ButtonText>
             </Button>
