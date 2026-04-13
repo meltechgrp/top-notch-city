@@ -13,21 +13,23 @@ export function useMessagesSync({
   chatId: string;
 }) {
   const [syncing, setSyncing] = useState(false);
-  const hasAutoSynced = useRef(false);
+  const syncingRef = useRef(false);
   const { me } = useMe();
   const { isInternetReachable } = useNetworkStatus();
 
   const resync = useCallback(async () => {
+    if (!me || !chatId || syncingRef.current) return;
     try {
+      syncingRef.current = true;
       setSyncing(true);
-      if (!me) return;
-      const messageResult = await getChatMessages({
-        chatId,
-        pageParam: 1,
-        size: 50,
-      });
+
+      const [messageResult, local] = await Promise.all([
+        getChatMessages({ chatId, pageParam: 1, size: 50 }),
+        getLocalMessagesIndex(chatId),
+      ]);
+
       if (!messageResult?.messages) return;
-      const local = await getLocalMessagesIndex(chatId);
+
       const {
         pullCreate,
         pullDelete,
@@ -41,6 +43,7 @@ export function useMessagesSync({
         localMessages: local,
         mode: "full",
       });
+
       await syncMessagesEngine({
         chatId,
         pullCreate,
@@ -59,21 +62,15 @@ export function useMessagesSync({
         },
       });
     } finally {
+      syncingRef.current = false;
       setSyncing(false);
     }
-  }, [me, isInternetReachable]);
-  useEffect(() => {
-    if (auto && me) {
-      resync();
-    }
-  }, [me, auto]);
-  useEffect(() => {
-    if (!auto || !isInternetReachable || hasAutoSynced.current || me || chatId)
-      return;
+  }, [me, chatId]);
 
-    hasAutoSynced.current = true;
+  useEffect(() => {
+    if (!auto || !isInternetReachable || !me || !chatId) return;
     resync();
-  }, [auto, isInternetReachable, me, chatId]);
+  }, [auto, isInternetReachable, me, chatId, resync]);
 
   return {
     syncing,

@@ -17,7 +17,7 @@ import { getReverseGeocode } from "@/hooks/useReverseGeocode";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import { CurrencyPickerModal } from "@/components/modals/property/CurrencyModal";
 import { listingStore } from "@/store/listing";
-import { use$ } from "@legendapp/state/react";
+import { useValue } from "@legendapp/state/react";
 
 const tabs = [
   {
@@ -31,7 +31,8 @@ const tabs = [
 ];
 
 export default function PropertyListingBasic() {
-  const { listing, updateListing } = use$(listingStore);
+  const listing = useValue(listingStore.listing);
+  const updateListing = listingStore.updateListing;
   const { retryGetLocation } = useGetLocation();
   const [loading, setLoading] = useState(false);
   const [currencyModal, setCurrencyModal] = useState(false);

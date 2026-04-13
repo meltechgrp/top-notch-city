@@ -135,14 +135,13 @@ export function useSearch() {
   }, [location]);
   const resetFilters = useCallback(() => dispatch({ type: "RESET" }), []);
   useEffect(() => {
-    if (committedProperties?.length < 0) {
+    if (committedProperties?.length === 0 && previewProperties?.length > 0) {
       setcommittedProperties(transformServerProperty(previewProperties));
     }
-  }, [previewProperties, committedProperties]);
+  }, [previewProperties]);
   const isLocation =
     search.latitude === location?.latitude &&
     search.longitude === location?.longitude;
-  console.log(committedProperties?.length, "here");
   return {
     search: {
       filter: search,

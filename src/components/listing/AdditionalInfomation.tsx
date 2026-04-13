@@ -11,10 +11,11 @@ import { Plus, Trash } from "lucide-react-native";
 import { Divider } from "@/components/ui/divider";
 import { formatNumber, unformatNumber } from "@/lib/utils";
 import { listingStore } from "@/store/listing";
-import { use$ } from "@legendapp/state/react";
+import { useValue } from "@legendapp/state/react";
 
 export default function AdditionalInfomation() {
-  const { listing, updateListing } = use$(listingStore);
+  const listing = useValue(listingStore.listing);
+  const updateListing = listingStore.updateListing;
   const { data } = useQuery({
     queryKey: ["companies"],
     queryFn: fetchAllAgentCompanies,

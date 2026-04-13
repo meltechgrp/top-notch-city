@@ -16,10 +16,10 @@ export class Chat extends Model {
   } as const;
 
   @writer async deleteChat() {
-    const messages = this.messages;
+    const messages = await this.messages.fetch();
     const ops: any[] = [];
     for (const m of messages) {
-      const files = m.files;
+      const files = await m.files.fetch();
       ops.push(...files.map((f) => f.prepareDestroyPermanently()));
       ops.push(m.prepareDestroyPermanently());
     }
@@ -66,7 +66,7 @@ export class Chat extends Model {
   @field("updated_at") updated_at!: number;
   @field("deleted_at") deleted_at?: number;
 
-  @children("messages") messages!: Message[];
+  @children("messages") messages!: Query<Message>;
 }
 
 export class Message extends Model {
@@ -92,7 +92,7 @@ export class Message extends Model {
   }
   @writer async deleteMessage() {
     const ops: any[] = [];
-    const files = this.files;
+    const files = await this.files.fetch();
     ops.push(...files.map((f) => f.prepareDestroyPermanently()));
     ops.push(super.prepareDestroyPermanently());
     await this.database.batch(...ops);
@@ -137,7 +137,7 @@ export class Message extends Model {
   @field("is_mock") is_mock?: boolean;
 
   @relation("chats", "server_chat_id") chat!: any;
-  @children("message_files") files!: MessageFile[];
+  @children("message_files") files!: Query<MessageFile>;
 }
 
 export class MessageFile extends Model {

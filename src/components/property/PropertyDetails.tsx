@@ -46,6 +46,7 @@ import { MiniVideoPlayer } from "@/components/custom/MiniVideoPlayer";
 import { openBookingModal } from "@/components/globals/AuthModals";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SimilarProperties from "@/components/property/SimilarProperites";
+import PropertyReviews from "@/components/property/PropertyReviews";
 import { PropertyEnquiry } from "@/components/property/PropertyEnquiry";
 import { KeyboardDismissPressable } from "@/components/shared/KeyboardDismissPressable";
 import { ExternalLink } from "@/components/ExternalLink";
@@ -394,6 +395,10 @@ const PropertyDetailsBottomSheet = ({
                   </Button>
                 </View>
                 <PropertyEnquiry me={me} property={property} />
+                <PropertyReviews
+                  propertyId={property.property_server_id}
+                  me={me}
+                />
                 <SimilarProperties property={property} />
               </View>
               <View className="p-4 border border-warning-100 mx-4 rounded-xl">

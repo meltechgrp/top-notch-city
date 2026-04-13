@@ -69,7 +69,6 @@ export class Property extends Model {
 
   @field("discount") discount?: number;
   @field("caution_fee") caution_fee?: number;
-  @text("is_following") is_following?: boolean;
 
   @text("server_user_id") server_user_id!: string;
   @field("views") views!: number;
@@ -154,8 +153,11 @@ export class PropertyAmenity extends Model {
 }
 export class PropertyCompany extends Model {
   static table = "companies";
+  static associations = {
+    properties: { type: "belongs_to", key: "property_server_id" },
+  } as const;
 
-  @text("property_id") propertyId!: string;
+  @text("property_server_id") property_server_id!: string;
 
   @text("name") name!: string;
   @field("verified") verified?: boolean;

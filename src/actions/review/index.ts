@@ -53,3 +53,30 @@ export async function deleteReview({ review_id }: { review_id: string }) {
   if (res?.detail) throw Error("Failed to delete review");
   return res as { message: string };
 }
+
+export async function getPropertyReviews({
+  property_id,
+}: {
+  property_id: string;
+}) {
+  const res = await Fetch(`/properties/${property_id}/reviews`);
+  if (res?.detail) throw Error("Failed to fetch property reviews");
+  return res as PropertyReview[];
+}
+
+export async function createPropertyReview({
+  property_id,
+  rating,
+  comment,
+}: {
+  property_id: string;
+  rating: number;
+  comment: string;
+}) {
+  const res = await Fetch(`/properties/${property_id}/reviews`, {
+    method: "POST",
+    data: { property_id, rating, comment },
+  });
+  if (res?.detail) throw Error("Failed to create review");
+  return res as PropertyReview;
+}

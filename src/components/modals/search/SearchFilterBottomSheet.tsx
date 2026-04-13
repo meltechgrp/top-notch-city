@@ -66,6 +66,7 @@ function SearchFilterBottomSheet({
     queryFn: fetchAllViewTypes,
   });
   const options = [
+    { label: "All", value: "" },
     { label: "For Rent", value: "rent" },
     { label: "For Sale", value: "sell" },
   ];
@@ -126,13 +127,13 @@ function SearchFilterBottomSheet({
                     onPress={() => onUpdate({ purpose: value })}
                     className={cn(
                       "px-10 flex-1 border border-outline-100 rounded-2xl py-1 bg-background-muted justify-center flex-row gap-1 items-center",
-                      filter.purpose === value && "bg-primary"
+                      (filter.purpose ?? "") === value && "bg-primary"
                     )}
                   >
                     <Heading
                       className={cn(
                         "text-base",
-                        filter.purpose === value && "text-white"
+                        (filter.purpose ?? "") === value && "text-white"
                       )}
                     >
                       {label}

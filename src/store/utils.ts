@@ -10,7 +10,9 @@ export async function withPropertyWriter(
   fn: (p: Property) => Promise<void>
 ) {
   const model = await database.get<Property>("properties").find(id);
-  await fn(model);
+  await database.write(async () => {
+    await fn(model);
+  });
 }
 export const toPropertySnapshot = (p: Property) =>
   ({
@@ -25,7 +27,7 @@ export const toPropertySnapshot = (p: Property) =>
     purpose: p?.purpose,
     is_featured: p?.is_featured ?? false,
     is_booked: p?.is_booked ?? false,
-    server_user_id: p?.owner?.id,
+    server_user_id: p?.server_user_id,
     caution_fee: p?.caution_fee,
     thumbnail: p?.thumbnail,
     address: p?.address,
@@ -73,21 +75,25 @@ export function createDBBackedObservable<M extends Model, S>(
 
       set: () => {},
 
-      subscribe: () => {
+      subscribe: ({ update }) => {
         const sub = options
           .observe()
-          .observeWithColumns(["likes", "liked"])
+          .observeWithColumns([
+            "likes",
+            "liked",
+            "status",
+            "price",
+            "title",
+            "thumbnail",
+            "address",
+            "views",
+            "viewed",
+            "added",
+            "is_featured",
+            "updated_at",
+          ])
           .subscribe((models) => {
-            const current = state$.peek();
-
-            models.forEach((m) => {
-              const index = current.findIndex((s: any) => s.id === m.id);
-              if (index === -1) return;
-              //@ts-ignore
-              state$[index]?.likes.set(m?.likes);
-              //@ts-ignore
-              state$[index]?.liked.set(m.liked);
-            });
+            update(models.map(options.map));
           });
 
         return sub.unsubscribe;

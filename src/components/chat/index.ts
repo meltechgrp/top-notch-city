@@ -203,38 +203,51 @@ export async function saveLocalMessage({
   chatId: string;
   playSound?: () => void;
 }) {
+  const [chat, existing] = await Promise.all([
+    chatCollection
+      .query(Q.where("server_chat_id", chatId), Q.take(1))
+      .fetch()
+      .then((rows) => rows[0]),
+    messageCollection
+      .query(Q.where("server_message_id", data.message_id), Q.take(1))
+      .fetch()
+      .then((rows) => rows[0]),
+  ]);
+
   await database.write(async () => {
     const ops: any[] = [];
-    const [chat] = await chatCollection
-      .query(Q.where("server_chat_id", chatId))
-      .fetch();
+    const createdAt = Date.parse(data.created_at);
+    const isIncoming = !data?.isMock;
+    const shouldBumpRecent =
+      !!chat &&
+      (!chat.recent_message_created_at ||
+        createdAt >= chat.recent_message_created_at);
 
-    if (chat && data?.isMock && chat.recent_message_id == data.message_id) {
+    if (chat && shouldBumpRecent) {
       ops.push(
         chat.prepareUpdate((c) => {
           c.recent_message_content =
-            data?.content || (data?.file_data ? "Media" : undefined);
-          c.recent_message_created_at = Date.parse(data.created_at);
+            data?.content || (data?.file_data?.length ? "Media" : undefined);
+          c.recent_message_created_at = createdAt;
           c.recent_message_id = data.message_id;
           c.recent_message_status = data.status;
           c.recent_message_sender_id = data.sender_info.id;
+          if (isIncoming) {
+            c.unread_count = (c.unread_count ?? 0) + (existing ? 0 : 1);
+          }
         }),
       );
     }
 
-    const existing = await messageCollection
-      .query(Q.where("server_message_id", data.message_id))
-      .fetch();
-
-    if (existing.length) {
+    if (existing) {
       ops.push(
-        existing[0].prepareUpdate((m) => {
+        existing.prepareUpdate((m) => {
           m.content = data.content;
           m.status = data.status;
           m.is_edited = true;
           m.reply_to_message_id = data.reply_to_message_id;
-          m.updated_at = Date.parse(data.created_at);
-          m.sync_status = "dirty";
+          m.updated_at = createdAt;
+          m.sync_status = data?.isMock ? "dirty" : "synced";
         }),
       );
     } else {
@@ -242,23 +255,21 @@ export async function saveLocalMessage({
         messageCollection.prepareCreate((m: any) =>
           Object.assign(m, {
             ...normalizeMessage(data, chatId),
-            sync_status: "dirty",
+            sync_status: data?.isMock ? "dirty" : "synced",
           }),
         ),
       );
 
-      if (data.isMock) {
-        if (data.file_data?.length) {
-          ops.push(
-            ...normalizeMessageFiles(data.file_data, data.message_id).map((f) =>
-              messageFilesCollection.prepareCreate((m) => Object.assign(m, f)),
-            ),
-          );
-        }
+      if (data.file_data?.length) {
+        ops.push(
+          ...normalizeMessageFiles(data.file_data, data.message_id).map((f) =>
+            messageFilesCollection.prepareCreate((m) => Object.assign(m, f)),
+          ),
+        );
       }
     }
 
-    await database.batch(...ops);
+    if (ops.length) await database.batch(...ops);
   });
   playSound?.();
 }
@@ -397,60 +408,83 @@ export const deleteChat = async (chatId: string) => {
 };
 
 export const updateChats = async (data: ServerChat[]) => {
+  if (!data?.length) return;
+
+  const chatIds = data.map((d) => d.chat_id).filter(Boolean);
+  const receiverIds = data
+    .map((d) => d?.receiver?.id)
+    .filter(Boolean) as string[];
+
+  const [existingChats, existingUsers] = await Promise.all([
+    chatCollection.query(Q.where("server_chat_id", Q.oneOf(chatIds))).fetch(),
+    receiverIds.length
+      ? userCollection
+          .query(Q.where("server_user_id", Q.oneOf(receiverIds)))
+          .fetch()
+      : Promise.resolve([]),
+  ]);
+
+  const chatMap = new Map(existingChats.map((c) => [c.server_chat_id, c]));
+  const userMap = new Map(existingUsers.map((u) => [u.server_user_id, u]));
+
   await database.write(async () => {
     const ops: any[] = [];
-    const updatedOwners = new Set<string>();
+    const handledUsers = new Set<string>();
 
     for (const raw of data) {
       if (!raw) continue;
+      const normalized = normalizeChat(raw);
+      const existingChat = chatMap.get(raw.chat_id);
 
-      const chatId = raw.chat_id;
-
-      const [existingChat] = await chatCollection
-        .query(Q.where("server_chat_id", chatId))
-        .fetch();
-
-      const chatModel = existingChat
-        ? existingChat.prepareUpdate((p) =>
-            Object.assign(p, normalizeChat(raw)),
-          )
-        : chatCollection.prepareCreate((p) =>
-            Object.assign(p, normalizeChat(raw)),
+      if (existingChat) {
+        const changed =
+          existingChat.recent_message_id !== normalized.recent_message_id ||
+          existingChat.recent_message_content !==
+            normalized.recent_message_content ||
+          existingChat.recent_message_status !==
+            normalized.recent_message_status ||
+          existingChat.recent_message_created_at !==
+            normalized.recent_message_created_at ||
+          existingChat.recent_message_sender_id !==
+            normalized.recent_message_sender_id ||
+          existingChat.unread_count !== normalized.unread_count;
+        if (changed) {
+          ops.push(
+            existingChat.prepareUpdate((p) => Object.assign(p, normalized)),
           );
-
-      ops.push(chatModel);
-
-      if (raw?.receiver) {
-        const serverUserId = raw?.receiver.id;
-        const [existingOwner] = await userCollection
-          .query(Q.where("server_user_id", serverUserId))
-          .fetch();
-        if (!existingOwner) {
-          if (!updatedOwners.has(serverUserId)) {
-            updatedOwners.add(serverUserId);
-
-            ops.push(
-              userCollection.prepareCreate((u) =>
-                Object.assign(u, normalizeUser(raw.receiver)),
-              ),
-            );
-          }
-        } else {
-          if (!updatedOwners.has(serverUserId)) {
-            updatedOwners.add(serverUserId);
-
-            ops.push(
-              existingOwner.prepareUpdate((u) => {
-                u.status = raw.receiver.status;
-                u.profile_image = raw.receiver.profile_image;
-              }),
-            );
-          }
         }
+      } else {
+        ops.push(
+          chatCollection.prepareCreate((p) => Object.assign(p, normalized)),
+        );
+      }
+
+      if (!raw.receiver) continue;
+      const serverUserId = raw.receiver.id;
+      if (handledUsers.has(serverUserId)) continue;
+      handledUsers.add(serverUserId);
+
+      const existingOwner = userMap.get(serverUserId);
+      if (!existingOwner) {
+        ops.push(
+          userCollection.prepareCreate((u) =>
+            Object.assign(u, normalizeUser(raw.receiver)),
+          ),
+        );
+      } else if (
+        existingOwner.status !== raw.receiver.status ||
+        existingOwner.profile_image !== raw.receiver.profile_image
+      ) {
+        ops.push(
+          existingOwner.prepareUpdate((u) => {
+            u.status = raw.receiver.status;
+            u.profile_image = raw.receiver.profile_image;
+          }),
+        );
       }
     }
 
-    await database.batch(...ops);
+    if (ops.length) await database.batch(...ops);
   });
 };
 

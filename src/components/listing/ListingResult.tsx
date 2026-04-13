@@ -16,12 +16,13 @@ import { generateMediaUrlSingle } from "@/lib/api";
 import { Dimensions } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import { listingStore } from "@/store/listing";
-import { use$ } from "@legendapp/state/react";
+import { useValue } from "@legendapp/state/react";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 export default function ListingResult() {
-  const { listing: property, updateListing } = use$(listingStore);
+  const property = useValue(listingStore.listing);
+  const updateListing = listingStore.updateListing;
   const { onLayout } = useLayout();
   const availability = property.availabilityPeriod ?? [];
   const facilities = property.facilities ?? [];

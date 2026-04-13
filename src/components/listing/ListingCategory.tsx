@@ -12,11 +12,12 @@ import OptionsBottomSheet from "@/components/shared/OptionsBottomSheet";
 import { Durations } from "@/constants/Amenities";
 import { Bath, Bed } from "lucide-react-native";
 import { listingStore } from "@/store/listing";
-import { use$ } from "@legendapp/state/react";
+import { useValue } from "@legendapp/state/react";
 
 export default function ListingCategory() {
   const theme = useResolvedTheme();
-  const { listing, updateListing } = use$(listingStore);
+  const listing = useValue(listingStore.listing);
+  const updateListing = listingStore.updateListing;
   const { subcategories, loading, refetch, categories } = useCategoryQueries();
 
   const subs = useMemo(() => {

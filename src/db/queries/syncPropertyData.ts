@@ -12,16 +12,14 @@ export function usePropertyDataSync(id: string, auto = true) {
   const { isInternetReachable, isConnected } = useNetworkStatus();
   const hasAutoSynced = useRef(false);
   const resync = useCallback(async () => {
-    console.log("starting property sync");
     if (syncing || !id) return;
     try {
       setSyncing(true);
-      const property = await fetchProperty({
-        id,
-      });
+      const property = await fetchProperty({ id });
       if (!property?.id) return;
       const local = await getLocalProperty(id);
-      if (compareDates([property], local)) return;
+      const localEntry = local?.[0];
+      if (localEntry && compareDates(localEntry, property)) return;
       await syncProperties({
         update: [property],
         batchSize: BATCH_SIZE,

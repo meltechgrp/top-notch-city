@@ -21,6 +21,7 @@ import { withObservables } from "@nozbe/watermelondb/react";
 import { messageCollection, propertiesCollection } from "@/db/collections";
 import { Q } from "@nozbe/watermelondb";
 import { Property } from "@/db/models/properties";
+import { of } from "rxjs";
 import MessageFiles from "@/components/chat/MessageFiles";
 import ReplySwipeableWrapper from "@/components/chat/ReplySwipeableWrapper";
 import { User } from "@/db/models/users";
@@ -49,14 +50,14 @@ function ChatRoomMessage(props: ChatRoomMessageProps) {
   } = props;
   const isMine = React.useMemo(
     () => message.server_sender_id === me?.id,
-    [me, message],
+    [me?.id, message.server_sender_id],
   );
   const formatedTime = React.useMemo(
     () =>
       formatMessageTime(message.created_at as unknown as Date, {
         onlyTime: true,
       }),
-    [],
+    [message.created_at],
   );
 
   const messageInfo = React.useMemo(
@@ -214,17 +215,26 @@ function ChatRoomMessage(props: ChatRoomMessageProps) {
 
 const enhance = withObservables(
   ["message"],
-  ({ message }: { message: Message }) => ({
-    message: message.observe(),
-    property: propertiesCollection.query(
-      Q.where("property_server_id", message.property_server_id || null),
-      Q.take(1),
-    ),
-    quotes: messageCollection.query(
-      Q.where("server_message_id", message.reply_to_message_id || null),
-      Q.take(1),
-    ),
-  }),
+  ({ message }: { message: Message }) => {
+    const propertyId = message.property_server_id;
+    const replyId = message.reply_to_message_id;
+    return {
+      message: message.observe(),
+      property: propertyId
+        ? propertiesCollection
+            .query(
+              Q.where("property_server_id", propertyId),
+              Q.take(1),
+            )
+            .observe()
+        : of([] as Property[]),
+      quotes: replyId
+        ? messageCollection
+            .query(Q.where("server_message_id", replyId), Q.take(1))
+            .observe()
+        : of([] as Message[]),
+    };
+  },
 );
 
-export default enhance(ChatRoomMessage);
+export default React.memo(enhance(ChatRoomMessage));

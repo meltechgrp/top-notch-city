@@ -74,7 +74,7 @@ export function buildListQuery({
 }: BuildListQueryArgs) {
   const conditions: any[] = [];
 
-  if (filter && filter?.trim().length > 2) {
+  if (filter && filter.trim().length > 2) {
     const search = filter.trim();
     conditions.push(
       Q.or(
@@ -83,19 +83,18 @@ export function buildListQuery({
         Q.where("address", Q.includes(search))
       )
     );
-  } else {
-    conditions?.splice(0, conditions.length);
   }
 
   if (agentId) {
     conditions.push(Q.where("server_user_id", agentId));
   }
+
   if (role === "user") {
     conditions.push(Q.where("status", "approved"));
   }
 
   if (role === "agent" || role === "admin") {
-    if (tab && tab != "all") conditions.push(Q.where("status", tab));
+    if (tab && tab !== "all") conditions.push(Q.where("status", tab));
   }
 
   return conditions;

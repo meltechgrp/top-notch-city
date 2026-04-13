@@ -1,8 +1,8 @@
 import { mainStore } from "@/store";
-import { use$ } from "@legendapp/state/react";
+import { useValue } from "@legendapp/state/react";
 
 export function useMe() {
-  const user = use$(mainStore.activeAccount) as Account;
+  const user = useValue(mainStore.activeAccount) as Account | null;
   return {
     me: user as Account,
     isLoading: false,

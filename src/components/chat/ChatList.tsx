@@ -12,7 +12,7 @@ import { Q } from "@nozbe/watermelondb";
 import { Chat } from "@/db/models/messages";
 import { useChatsSync } from "@/db/queries/syncChats";
 import { router } from "expo-router";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useWebSocketHandler } from "@/hooks/useWebSocketHandler";
 
 interface ChatListProps {
@@ -21,11 +21,21 @@ interface ChatListProps {
 
 function ChatList({ chats }: ChatListProps) {
   const { resync, syncing } = useChatsSync();
-  const { connect } = useWebSocketHandler();
+  useWebSocketHandler();
+
   useEffect(() => {
     resync();
-    connect();
-  }, []);
+  }, [resync]);
+
+  const renderItem = useCallback(
+    ({ item }: { item: Chat }) => <MessageListItem chat={item} />,
+    [],
+  );
+
+  const onScroll = useCallback(
+    () => eventBus.dispatchEvent("SWIPEABLE_OPEN", null),
+    [],
+  );
   return (
     <>
       <Box className="flex-1 mt-2">
@@ -34,13 +44,13 @@ function ChatList({ chats }: ChatListProps) {
             <FlashList
               data={chats}
               refreshControl={
-                <RefreshControl refreshing={false} onRefresh={resync} />
+                <RefreshControl refreshing={syncing} onRefresh={resync} />
               }
               ListFooterComponent={<View className="h-16"></View>}
               contentContainerClassName="pt-2"
               keyExtractor={(item) => item.server_chat_id}
-              renderItem={({ item }) => <MessageListItem chat={item} />}
-              onScroll={() => eventBus.dispatchEvent("SWIPEABLE_OPEN", null)}
+              renderItem={renderItem}
+              onScroll={onScroll}
               ListEmptyComponent={() => (
                 <MiniEmptyState
                   icon={MessageSquare}

@@ -45,8 +45,12 @@ export async function getLocalProperty(slug: string) {
 export function compareDates(local: any, server: any) {
   const localUpdated = local?.id == server?.id ? local?.updated_at : undefined;
   if (!localUpdated) return false;
-  return true;
-  // return Date.parse(server?.updated_at) != localUpdated;
+  const serverUpdated = server?.updated_at
+    ? typeof server.updated_at === "number"
+      ? server.updated_at
+      : Date.parse(server.updated_at)
+    : 0;
+  return serverUpdated > localUpdated;
 }
 
 export function chunkArray<T>(arr: T[], size: number): T[][] {

@@ -2,25 +2,42 @@ import { getChats } from "@/actions/message";
 import { diffChats, getLocalChatIndex } from "@/db/helpers";
 import { syncChatsEngine } from "@/db/sync/chat";
 import { useMe } from "@/hooks/useMe";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
 export function useChatsSync() {
   const [syncing, setSyncing] = useState(false);
+  const syncingRef = useRef(false);
   const { me } = useMe();
 
   const resync = useCallback(async () => {
+    if (!me || syncingRef.current) return;
     try {
+      syncingRef.current = true;
       setSyncing(true);
-      if (!me) return;
       console.log("starting chats sync");
-      const res = await getChats();
-      if (!res?.total || res?.total == 0) return;
-      const local = await getLocalChatIndex();
+
+      const [res, local] = await Promise.all([
+        getChats(),
+        getLocalChatIndex(),
+      ]);
+
+      const serverChats = res?.chats ?? [];
+
       const { pullCreate, pullDelete, pullUpdate, pushDelete } = diffChats({
         localChats: local,
-        serverChats: res.chats,
+        serverChats,
         mode: "full",
       });
+
+      if (
+        !pullCreate.length &&
+        !pullUpdate.length &&
+        !pullDelete.length &&
+        !pushDelete.length
+      ) {
+        return;
+      }
+
       await syncChatsEngine({
         pullCreate,
         pullUpdate,
@@ -28,6 +45,7 @@ export function useChatsSync() {
         pushDelete,
       });
     } finally {
+      syncingRef.current = false;
       setSyncing(false);
     }
   }, [me]);

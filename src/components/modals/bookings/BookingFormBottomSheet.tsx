@@ -12,6 +12,7 @@ import {
   isWithinInterval,
   parseISO,
   format,
+  isSunday,
 } from "date-fns";
 import DatePicker from "@/components/custom/DatePicker";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
@@ -119,10 +120,10 @@ export const BookingFormBottomSheet = ({
   };
 
   const isReservationDateAllowed = (date: Date) => {
-    return availableDates?.some((range) => {
-      const start = parseISO(range.start);
-      const end = parseISO(range.end);
-
+    if (!availableDates?.length) return true;
+    return availableDates.some((range) => {
+      const start = new Date(range.start);
+      const end = new Date(range.end);
       return (
         isSameDay(date, start) ||
         isSameDay(date, end) ||
@@ -133,25 +134,49 @@ export const BookingFormBottomSheet = ({
       );
     });
   };
+
   const isSameDay = (a: Date, b: Date) =>
     a.getFullYear() === b.getFullYear() &&
     a.getMonth() === b.getMonth() &&
     a.getDate() === b.getDate();
 
+  const isInspectionDateAllowed = (date: Date) => {
+    return !isSunday(date);
+  };
+
+  const INSPECTION_START_HOUR = 8;
+  const INSPECTION_END_HOUR = 17;
+  const INSPECTION_END_MINUTE = 30;
+
   const clampInspectionTime = (date: Date) => {
     const h = date.getHours();
-    if (h < 8) return setHours(setMinutes(date, 0), 8);
-    if (h > 17) return setHours(setMinutes(date, 30), 17);
+    const m = date.getMinutes();
+    if (h < INSPECTION_START_HOUR)
+      return setHours(setMinutes(date, 0), INSPECTION_START_HOUR);
+    if (
+      h > INSPECTION_END_HOUR ||
+      (h === INSPECTION_END_HOUR && m > INSPECTION_END_MINUTE)
+    )
+      return setHours(setMinutes(date, INSPECTION_END_MINUTE), INSPECTION_END_HOUR);
     return date;
   };
+
+  const isTimeAllowedForInspection = (hour: number, minute: number) => {
+    if (hour < INSPECTION_START_HOUR) return false;
+    if (hour > INSPECTION_END_HOUR) return false;
+    if (hour === INSPECTION_END_HOUR && minute > INSPECTION_END_MINUTE)
+      return false;
+    return true;
+  };
+
   useEffect(() => {
     async function getDates() {
-      const dates = await propertyAvailabilityCollection.query(
-        Q.where("property_server_id", property_id),
-      );
+      const dates = await propertyAvailabilityCollection
+        .query(Q.where("property_server_id", property_id))
+        .fetch();
       const available = dates?.map((a) => ({
-        start: new Date(a.start).toString(),
-        end: new Date(a.end).toString(),
+        start: new Date(a.start).toISOString(),
+        end: new Date(a.end).toISOString(),
         id: property_id,
       }));
       setAvailableDates(available);
@@ -159,9 +184,6 @@ export const BookingFormBottomSheet = ({
     getDates();
   }, [property_id]);
 
-  const isTimeAllowedForInspection = (hour: number) => {
-    return hour >= 8 && hour <= 18;
-  };
   return (
     <>
       <ModalScreen
@@ -223,7 +245,7 @@ export const BookingFormBottomSheet = ({
               ) : (
                 <View className="border border-primary/50 px-4 py-4 rounded-xl ">
                   <Text className="text-sm text-typography/90">
-                    Inspection is between 8am to 5:30pm
+                    Inspection is between 8am to 5:30pm, every day except Sunday
                   </Text>
                 </View>
               )}
@@ -242,8 +264,15 @@ export const BookingFormBottomSheet = ({
                 minimumDate={new Date()}
                 onChange={(val) => {
                   let next = new Date(val);
-                  next = setHours(next, next.getHours());
-                  next = setMinutes(next, next.getMinutes());
+
+                  if (!isReservation && !isInspectionDateAllowed(next)) {
+                    showErrorAlert({
+                      title: "Inspections are not available on Sundays",
+                      alertType: "warn",
+                    });
+                    return;
+                  }
+
                   if (isReservation && !isReservationDateAllowed(next)) {
                     showErrorAlert({
                       title: "Date not available",
@@ -272,26 +301,33 @@ export const BookingFormBottomSheet = ({
                 value={formData.scheduled_date}
                 minimumDate={undefined}
                 maximumDate={
-                  isReservation ? undefined : new Date(new Date().setHours(18))
+                  isReservation
+                    ? undefined
+                    : new Date(new Date().setHours(INSPECTION_END_HOUR, INSPECTION_END_MINUTE))
                 }
                 onChange={(val) => {
                   if (!formData.scheduled_date) return;
+
+                  const picked = new Date(val);
                   if (
                     !isReservation &&
-                    !isTimeAllowedForInspection(new Date(val).getHours())
+                    !isTimeAllowedForInspection(
+                      picked.getHours(),
+                      picked.getMinutes()
+                    )
                   ) {
                     setError(true);
-                    setFormData((p) => ({
-                      ...p,
-                      scheduled_date: null,
-                    }));
+                    showErrorAlert({
+                      title: "Inspection hours are 8:00 AM to 5:30 PM",
+                      alertType: "warn",
+                    });
                     return;
                   }
 
                   setError(false);
-                  let next = new Date(val);
-                  next = setHours(formData.scheduled_date, next.getHours());
-                  next = setMinutes(next, next.getMinutes());
+                  let base = new Date(formData.scheduled_date);
+                  let next = setHours(base, picked.getHours());
+                  next = setMinutes(next, picked.getMinutes());
 
                   if (booking_type === "inspection") {
                     next = clampInspectionTime(next);

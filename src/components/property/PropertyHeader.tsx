@@ -12,6 +12,7 @@ import { Property } from "@/db/models/properties";
 import { AnimatedLikeButton } from "@/components/custom/AnimatedLikeButton";
 import { openAccessModal } from "@/components/globals/AuthModals";
 import { useLike } from "@/hooks/useLike";
+import { InteractionManager } from "react-native";
 
 interface Props {
   property: Property;
@@ -30,6 +31,15 @@ export default function PropertyHeader({
   });
   const { toggleLike } = useLike();
   const [openActions, setOpenActions] = useState(false);
+  const [pendingAction, setPendingAction] =
+    useState<ConfirmationActionConfig | null>(null);
+
+  const handleActionSelect = (option: ConfirmationActionConfig) => {
+    setOpenActions(false);
+    InteractionManager.runAfterInteractions(() => {
+      setPendingAction(option);
+    });
+  };
 
   async function handleLike() {
     if (!me) {
@@ -93,23 +103,21 @@ export default function PropertyHeader({
         isOpen={openActions}
         onDismiss={() => setOpenActions(false)}
         options={actions.filter((action) => action.visible)}
-        OptionComponent={({ index, option, onPress }) => (
-          <ConfirmationModal
-            key={index}
-            visible={option.visible}
-            index={index}
-            header={option.header}
-            description={option.description}
-            actionText={option.actionText}
-            requireReason={option.requireReason}
-            onConfirm={option.onConfirm}
-            propertyId={property.property_server_id}
-            className={option.className}
-            onDismiss={() => setOpenActions(false)}
-            onPress={onPress}
-          />
-        )}
+        onSelect={handleActionSelect}
       />
+      {pendingAction && (
+        <ConfirmationModal
+          visible={!!pendingAction}
+          header={pendingAction.header}
+          description={pendingAction.description}
+          actionText={pendingAction.actionText}
+          requireReason={pendingAction.requireReason}
+          onConfirm={pendingAction.onConfirm}
+          propertyId={property.property_server_id}
+          className={pendingAction.className}
+          onDismiss={() => setPendingAction(null)}
+        />
+      )}
     </>
   );
 }

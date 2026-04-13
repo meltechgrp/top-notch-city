@@ -64,6 +64,7 @@ function HorizontalProperties({
     [router, onPress]
   );
 
+  const shuffled = useMemo(() => shuffle(data), [data]);
   const isBusy = isLoading || isRefetching;
   return (
     <ScrollView
@@ -79,7 +80,7 @@ function HorizontalProperties({
         ? skeletonItems.map((_, i) => (
             <PropertySkeletonCard isHorizontal key={i} />
           ))
-        : shuffle(data).map((property) => (
+        : shuffled.map((property) => (
             <PropertyListItem
               key={property.id}
               showLike={showLike}

@@ -22,11 +22,11 @@ import { useMutation } from "@tanstack/react-query";
 import { uploadAgentForm } from "@/actions/agent";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import { tempStore } from "@/store/tempStore";
-import { use$, useValue } from "@legendapp/state/react";
+import { useValue } from "@legendapp/state/react";
 
 export default function AgentFormScreen() {
   const { updateApplication } = tempStore.get();
-  const application = use$(tempStore.application);
+  const application = useValue(tempStore.application);
 
   const router = useRouter();
   const { mutateAsync, isPending } = useMutation({

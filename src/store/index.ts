@@ -6,6 +6,7 @@ import {
   setToken,
   removeToken,
 } from "@/lib/secureStore";
+
 export const profileDefault = require("@/assets/images/Avatar.png");
 
 export type AccountEntry = {
@@ -22,9 +23,9 @@ type MainStore = {
   chatsLastSyncAt: number;
   isOnboarded: boolean;
   address: Address;
+  activeAccount: () => Me | null;
   saveAddress: (data: Partial<Address>) => void;
   addAccount: (user: Me, token: string) => Promise<void>;
-  activeAccount: Me | null;
   switchAccount: (userId: string) => Promise<void>;
   removeAccount: (userId: string) => Promise<void>;
   reset: () => void;
@@ -42,15 +43,20 @@ export const mainStore = observable<MainStore>(
       accounts: {},
       address: {} as Address,
       activeUserId: null,
-      setIsOnboarded: (state: boolean) => {
-        mainStore.isOnboarded.set(state);
-      },
-      activeAccount: () => {
+
+      activeAccount: (): Me | null => {
         const userId = mainStore.activeUserId.get();
         if (!userId) return null;
-        return mainStore.accounts[userId].user;
+        const entry = mainStore.accounts[userId];
+        if (!entry || entry.peek() == null) return null;
+        return entry.user.get() ?? null;
       },
-      saveAddress: (data: Partial<Address>) => {
+
+      setIsOnboarded(state: boolean) {
+        mainStore.isOnboarded.set(state);
+      },
+
+      saveAddress(data: Partial<Address>) {
         mainStore.address.assign(data);
       },
 
@@ -68,21 +74,24 @@ export const mainStore = observable<MainStore>(
       },
 
       async switchAccount(userId: string) {
-        if (!mainStore.accounts[userId]) return;
+        const entry = mainStore.accounts[userId].peek();
+        if (!entry) return;
 
         mainStore.activeUserId.set(userId);
         await setActiveUserId(userId);
       },
 
       async removeAccount(userId: string) {
-        delete mainStore.accounts[userId];
+        mainStore.accounts[userId].delete();
 
         await removeToken(userId);
 
         if (mainStore.activeUserId.peek() === userId) {
-          const next = Object.keys(mainStore.accounts.peek())[0];
+          const remaining = mainStore.accounts.peek();
+          const next = Object.keys(remaining)[0];
           if (next) {
-            await mainStore.switchAccount(next);
+            mainStore.activeUserId.set(next);
+            await setActiveUserId(next);
           } else {
             mainStore.activeUserId.set(null);
             await removeActiveUser();
@@ -93,6 +102,9 @@ export const mainStore = observable<MainStore>(
       reset() {
         mainStore.accounts.set({});
         mainStore.activeUserId.set(null);
+        mainStore.propertyLastSyncAt.set(0);
+        mainStore.locationLastSyncAt.set(0);
+        mainStore.chatsLastSyncAt.set(0);
       },
     },
     persist: {

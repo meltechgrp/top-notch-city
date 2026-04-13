@@ -22,7 +22,7 @@ import { Chat } from "@/db/models/messages";
 import { withObservables } from "@nozbe/watermelondb/react";
 import { User } from "@/db/models/users";
 import { tempStore } from "@/store/tempStore";
-import { use$ } from "@legendapp/state/react";
+import { useValue } from "@legendapp/state/react";
 const LEAD = "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0";
 type MessageListItemProps = {
   chat: Chat;
@@ -34,17 +34,19 @@ function MessageListItem(props: MessageListItemProps) {
     receivers: [user],
   } = props;
 
-  const typing = use$(tempStore.getTyping(chat.server_chat_id));
+  const typing = useValue(() => tempStore.getTyping(chat.server_chat_id));
   const { me } = useMe();
+
   const unreadCount = React.useMemo(() => {
     const c = chat?.unread_count || 0;
     return c > 99 ? "99+" : c;
-  }, [chat]);
+  }, [chat?.unread_count]);
 
   const isMine = React.useMemo(
     () => chat?.recent_message_sender_id === me?.id,
-    [me, chat],
+    [me?.id, chat?.recent_message_sender_id],
   );
+
   const formatedTime = React.useMemo(
     () =>
       chat?.recent_message_created_at
@@ -52,7 +54,7 @@ function MessageListItem(props: MessageListItemProps) {
             hideTimeForFullDate: true,
           })
         : "",
-    [],
+    [chat?.recent_message_created_at],
   );
   async function handleDelete() {
     console.log("base");
@@ -195,8 +197,17 @@ function MessageListItem(props: MessageListItemProps) {
 }
 
 const enhance = withObservables(["chat"], ({ chat }: { chat: Chat }) => ({
-  chat: chat.observe(),
+  chat: chat.observeWithColumns([
+    "recent_message_id",
+    "recent_message_content",
+    "recent_message_sender_id",
+    "recent_message_created_at",
+    "recent_message_status",
+    "unread_count",
+    "you_blocked_other",
+    "other_blocked_you",
+  ]),
   receivers: chat.receivers,
 }));
 
-export default enhance(MessageListItem);
+export default React.memo(enhance(MessageListItem));

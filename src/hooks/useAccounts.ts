@@ -2,16 +2,19 @@ import config from "@/config";
 import useResetAppState from "@/hooks/useResetAppState";
 import { getActiveAccount } from "@/lib/secureStore";
 import { mainStore } from "@/store";
+import { useValue } from "@legendapp/state/react";
 import { useCallback } from "react";
 
 export function useAccounts() {
+  const accounts = useValue(mainStore.accounts);
   const resetAppState = useResetAppState();
+
   const handleInvalidAuth = useCallback(async () => {
     await resetAppState();
   }, [resetAppState]);
 
   return {
-    accounts: mainStore.accounts.get(),
+    accounts,
     activeAccount: mainStore.activeAccount,
     addAccount: mainStore.addAccount,
     switchAccount: mainStore.switchAccount,

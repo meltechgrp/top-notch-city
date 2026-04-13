@@ -31,7 +31,7 @@ import { Q } from "@nozbe/watermelondb";
 import { FlashList, FlashListRef } from "@shopify/flash-list";
 import { makeMessageReadAndDelivered } from "@/actions/message";
 import { useMessagesSync } from "@/db/queries/syncMessages";
-import { use$ } from "@legendapp/state/react";
+import { useValue } from "@legendapp/state/react";
 import { tempStore } from "@/store/tempStore";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
@@ -95,17 +95,21 @@ function ChatRoom(props: Props) {
     ({ item, index }: { item: Message; index: number }) => {
       return (
         <ChatRoomMessage
-          key={item.server_message_id}
           me={me!}
           message={item}
-          className={cn(index === messages?.length - 1 ? "mt-4" : "")}
+          className={index === 0 ? "mt-4" : ""}
           onLongPress={handleMessageLongPress}
           isDeleting={isDeletingMessageId === item.server_message_id}
           handleReply={handleReply}
         />
       );
     },
-    [isDeletingMessageId, me, handleMessageLongPress, messages.length],
+    [me, handleMessageLongPress, handleReply, isDeletingMessageId],
+  );
+
+  const ListHeader = React.useCallback(
+    () => <MessageListHeader receiver={receiver} />,
+    [receiver],
   );
   const changeTitle = (newTitle: string) => {
     if (newTitle === currentTitle) return;
@@ -134,7 +138,7 @@ function ChatRoom(props: Props) {
     },
   );
 
-  const typing = use$(tempStore.getTyping(chat.server_chat_id));
+  const typing = useValue(() => tempStore.getTyping(chat.server_chat_id));
   React.useEffect(() => {
     if (me && chat?.unread_count > 0) {
       makeMessageReadAndDelivered({ chatId: chat.server_chat_id });
@@ -253,9 +257,7 @@ function ChatRoom(props: Props) {
             data={messages}
             onViewableItemsChanged={onViewableItemsChanged.current}
             scrollEventThrottle={16}
-            ListHeaderComponent={() => (
-              <MessageListHeader receiver={receiver} />
-            )}
+            ListHeaderComponent={ListHeader}
           />
         </View>
         {typing && (
@@ -300,11 +302,22 @@ function ChatRoom(props: Props) {
 }
 
 const enhance = withObservables(["chat"], ({ chat }: { chat: Chat }) => ({
-  chat: chat,
+  chat: chat.observe(),
   receivers: chat?.receivers,
   messages: messageCollection
-    .query(Q.where("server_chat_id", chat.server_chat_id))
-    .observe(),
+    .query(
+      Q.where("server_chat_id", chat.server_chat_id),
+      Q.sortBy("created_at", Q.asc),
+    )
+    .observeWithColumns([
+      "content",
+      "status",
+      "is_edited",
+      "deleted_at",
+      "reply_to_message_id",
+      "sync_status",
+      "updated_at",
+    ]),
 }));
 
 export default enhance(ChatRoom);

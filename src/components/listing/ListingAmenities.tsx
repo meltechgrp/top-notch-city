@@ -24,7 +24,7 @@ import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
 import { AvailabilityPickerSheet } from "@/components/listing/AvailabilityPickerSheet";
 import { CustomInput } from "@/components/custom/CustomInput";
 import { listingStore } from "@/store/listing";
-import { use$ } from "@legendapp/state/react";
+import { useValue } from "@legendapp/state/react";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -32,7 +32,8 @@ export default function ListingAmenities() {
   const ref = React.useRef<ICarouselInstance>(null);
   const [showAvailabilityPickerSheet, setShowAvailabilityPickerSheet] =
     useState(false);
-  const { listing, updateListing } = use$(listingStore);
+  const listing = useValue(listingStore.listing);
+  const updateListing = listingStore.updateListing;
   const { data } = useQuery({
     queryKey: ["amenities"],
     queryFn: fetchAllAmenities,

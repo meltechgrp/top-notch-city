@@ -8,14 +8,18 @@ import ApartmentProperties from "@/components/home/recent";
 import Lands from "@/components/home/lands";
 import { FlashList } from "@shopify/flash-list";
 import { router } from "expo-router";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import NearbyProperties from "@/components/home/topLocations";
 import { usePropertyFeedSync } from "@/db/queries/syncPropertyFeed";
 import useGetLocation from "@/hooks/useGetLocation";
 const MAP_HEIGHT = 400;
 
+const Separator = () => (
+  <View style={[{ height: 1 }]} className="bg-background" />
+);
+
 export default function HomeScreen() {
-  const { resync } = usePropertyFeedSync();
+  const { resync, syncing } = usePropertyFeedSync();
   const { location, retryGetLocation } = useGetLocation();
   const feedList = React.useMemo(() => {
     const topLocations = {
@@ -92,7 +96,7 @@ export default function HomeScreen() {
       <Box className="flex-1">
         <FlashList
           refreshControl={
-            <RefreshControl refreshing={false} onRefresh={resync} />
+            <RefreshControl refreshing={syncing} onRefresh={resync} />
           }
           ListHeaderComponent={
             <DiscoverProperties
@@ -101,16 +105,13 @@ export default function HomeScreen() {
               mapHeight={MAP_HEIGHT}
             />
           }
-          getItemType={(item) => {
-            return item.id;
-          }}
+          getItemType={(item) => item.id}
+          estimatedItemSize={350}
           showsVerticalScrollIndicator={false}
           data={feedList}
           keyExtractor={(item) => item.id}
           renderItem={renderItem as any}
-          ItemSeparatorComponent={() => (
-            <View style={[{ height: 1 }]} className="bg-background" />
-          )}
+          ItemSeparatorComponent={Separator}
         />
       </Box>
       <CreateButton className="" onPress={onNewChat} />
