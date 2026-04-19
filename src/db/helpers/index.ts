@@ -28,29 +28,77 @@ export async function getLocalPropertyIndex() {
     id: p.property_server_id,
     updated_at: p.updated_at,
     status: p.status,
+    is_featured: p.is_featured,
+    is_enabled: p.is_enabled,
   })) as any[];
 }
-export async function getLocalProperty(slug: string) {
+export async function getLocalProperty(ref: string) {
   const props = await propertiesCollection
-    .query(Q.where("slug", slug), Q.take(1))
+    .query(
+      Q.or(Q.where("slug", ref), Q.where("property_server_id", ref)),
+      Q.take(1)
+    )
     .fetch();
 
   return props.map((p) => ({
     id: p.property_server_id,
     updated_at: p.updated_at,
     status: p.status,
+    is_featured: p.is_featured,
+    is_enabled: p.is_enabled,
   })) as any[];
 }
 
+export async function patchLocalProperty(
+  propertyId: string,
+  updates: {
+    status?: string;
+    is_featured?: boolean;
+    updated_at?: number;
+  }
+) {
+  const [property] = await propertiesCollection
+    .query(Q.where("property_server_id", propertyId), Q.take(1))
+    .fetch();
+
+  if (!property) return false;
+
+  await database.write(async () => {
+    await property.update((p) => {
+      if (updates.status !== undefined) {
+        p.status = updates.status;
+      }
+      if (updates.is_featured !== undefined) {
+        p.is_featured = updates.is_featured;
+      }
+      if (updates.updated_at !== undefined) {
+        p.updated_at = updates.updated_at;
+      }
+    });
+  });
+
+  return true;
+}
+
 export function compareDates(local: any, server: any) {
-  const localUpdated = local?.id == server?.id ? local?.updated_at : undefined;
-  if (!localUpdated) return false;
+  const isSameProperty = local?.id == server?.id;
+  if (!isSameProperty) return false;
+
+  const localUpdated = local?.updated_at;
   const serverUpdated = server?.updated_at
     ? typeof server.updated_at === "number"
       ? server.updated_at
       : Date.parse(server.updated_at)
     : 0;
-  return serverUpdated > localUpdated;
+
+  const hasStateChange =
+    local?.status !== server?.status ||
+    Boolean(local?.is_featured) !== Boolean(server?.is_featured) ||
+    Boolean(local?.is_enabled) !== Boolean(server?.is_enabled);
+
+  if (!localUpdated) return hasStateChange;
+
+  return serverUpdated > localUpdated || hasStateChange;
 }
 
 export function chunkArray<T>(arr: T[], size: number): T[][] {

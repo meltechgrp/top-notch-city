@@ -111,6 +111,7 @@ export default function PropertyHeader({
           header={pendingAction.header}
           description={pendingAction.description}
           actionText={pendingAction.actionText}
+          payload={pendingAction.payload}
           requireReason={pendingAction.requireReason}
           onConfirm={pendingAction.onConfirm}
           propertyId={property.property_server_id}

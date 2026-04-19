@@ -14,7 +14,8 @@ type ConfirmationModalProps = {
   cancelText?: string;
   requireReason?: boolean;
   propertyId?: string;
-  onConfirm?: (data: { propertyId: string; reason?: string }) => Promise<void>;
+  payload?: Record<string, unknown>;
+  onConfirm?: (data: ConfirmationActionPayload) => Promise<unknown>;
   onDelete?: () => void | Promise<void>;
   className?: string;
 };
@@ -26,10 +27,12 @@ export function ConfirmationModal({
   onDelete,
   header,
   description,
+  actionText,
   requireReason = false,
-  confirmText = "Continue",
+  confirmText = actionText ?? "Continue",
   cancelText = "Cancel",
   propertyId,
+  payload = {},
 }: ConfirmationModalProps) {
   const [reason, setReason] = useState("");
   const [error, setError] = useState("");
@@ -55,7 +58,7 @@ export function ConfirmationModal({
       if (!propertyId) {
         await onDelete?.();
       } else {
-        await onConfirm?.({ propertyId, reason });
+        await onConfirm?.({ propertyId, reason, ...payload });
       }
       onDismiss();
     } catch {
@@ -76,7 +79,7 @@ export function ConfirmationModal({
         <View
           className={cn(
             "w-[90%] max-w-md bg-background p-6 rounded-2xl gap-1",
-            requireReason && "h-[22rem]"
+            requireReason && "h-[22rem]",
           )}
         >
           <Text className="text-xl font-semibold text-center">{header}</Text>

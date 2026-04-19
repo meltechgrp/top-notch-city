@@ -197,16 +197,7 @@ function MessageListItem(props: MessageListItemProps) {
 }
 
 const enhance = withObservables(["chat"], ({ chat }: { chat: Chat }) => ({
-  chat: chat.observeWithColumns([
-    "recent_message_id",
-    "recent_message_content",
-    "recent_message_sender_id",
-    "recent_message_created_at",
-    "recent_message_status",
-    "unread_count",
-    "you_blocked_other",
-    "other_blocked_you",
-  ]),
+  chat: chat.observe(),
   receivers: chat.receivers,
 }));
 

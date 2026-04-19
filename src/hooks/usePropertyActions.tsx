@@ -5,20 +5,30 @@ import { useMemo } from "react";
 
 export function usePropertyActions({ property }: { property: Property }) {
   const { me: user, isAdmin, isAgent } = useMe();
-  const { mutateAsync: approve } = usePropertyStatusMutations().approveMutation;
-  const { mutateAsync: reject } = usePropertyStatusMutations().rejectMutation;
-  const { mutateAsync: permanentDelete } =
-    usePropertyStatusMutations().deleteMutation;
-  const { mutateAsync: expire } = usePropertyStatusMutations().expireMutation;
-  const { mutateAsync: flag } = usePropertyStatusMutations().flagMutation;
-  const { mutateAsync: pending } = usePropertyStatusMutations().pendingMutation;
-  const { mutateAsync: sell } = usePropertyStatusMutations().sellMutation;
-  const { mutateAsync: softDelete } =
-    usePropertyStatusMutations().softDeleteMutation;
+  const {
+    approveMutation,
+    rejectMutation,
+    deleteMutation,
+    expireMutation,
+    flagMutation,
+    pendingMutation,
+    sellMutation,
+    featuredMutation,
+    softDeleteMutation,
+  } = usePropertyStatusMutations();
+  const { mutateAsync: approve } = approveMutation;
+  const { mutateAsync: reject } = rejectMutation;
+  const { mutateAsync: permanentDelete } = deleteMutation;
+  const { mutateAsync: expire } = expireMutation;
+  const { mutateAsync: flag } = flagMutation;
+  const { mutateAsync: pending } = pendingMutation;
+  const { mutateAsync: sell } = sellMutation;
+  const { mutateAsync: featured } = featuredMutation;
+  const { mutateAsync: softDelete } = softDeleteMutation;
 
   const isOwner = useMemo(
     () => property?.server_user_id === user?.id,
-    [property, user]
+    [property, user],
   );
 
   const actions: ConfirmationActionConfig[] = [
@@ -62,6 +72,23 @@ export function usePropertyActions({ property }: { property: Property }) {
       actionText: "Pending",
       description: "This will mark the property as pending again.",
       onConfirm: pending,
+    },
+    {
+      visible:
+        isAdmin && property.status !== "sold" && property.status !== "pending",
+      header: property.is_featured ? "Remove from Featured" : "Set as Featured",
+      actionText: "Featured",
+      description: property.is_featured
+        ? "This will remove the property from featured listings."
+        : "This will mark the property as a featured property.",
+      payload: {
+        is_featured: !property.is_featured,
+      },
+      onConfirm: ({ propertyId, is_featured }) =>
+        featured({
+          propertyId,
+          is_featured: Boolean(is_featured),
+        }),
     },
     {
       visible: isOwner && property.status === "approved",

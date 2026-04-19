@@ -37,6 +37,7 @@ interface AdminDashboardStats {
   totalUsersWithinLast6Months: MonthlyCount[];
   totalNormalUsers: number;
   totalAgents: number;
+  totalFeatured: number;
   totalAdminAgents: number;
   totalAdmins: number;
   totalStaff: number;

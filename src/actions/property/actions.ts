@@ -3,7 +3,7 @@ import { Fetch } from "../utills";
 export async function updatePropertyStatus(
   propertyId: string,
   action: string,
-  reason?: string
+  reason?: string,
 ) {
   const res = await Fetch(`/properties/status/${propertyId}/${action}`, {
     method: "PATCH",
@@ -43,6 +43,28 @@ export async function softDeleteProperty(propertyId: string) {
   });
   if (res?.detail) {
     throw new Error("Failed to delete property");
+  }
+  return await res;
+}
+export async function featuedProperty(
+  propertyId: string,
+  is_featured: boolean,
+) {
+  if (typeof is_featured !== "boolean") {
+    throw new Error("Missing featured state");
+  }
+
+  const res = await Fetch(
+    `/properties/${propertyId}/feature?is_featured=${String(is_featured)}`,
+    {
+      method: "PUT",
+      data: {
+        is_featured,
+      },
+    },
+  );
+  if (res?.detail) {
+    throw new Error("Failed to update property");
   }
   return await res;
 }

@@ -52,7 +52,7 @@ export default function PropertyReviews({ propertyId, me }: Props) {
               onPress={() => setShowAddReview(true)}
               className="flex-row items-center gap-1 px-3 py-1.5 bg-primary rounded-full"
             >
-              <Icon as={Star} size={14} className="text-white" />
+              <Icon as={Star} className="text-white" />
               <Text className="text-white text-xs font-medium">
                 Write a Review
               </Text>
@@ -64,11 +64,7 @@ export default function PropertyReviews({ propertyId, me }: Props) {
 
         {!isLoading && (!reviews || reviews.length === 0) && (
           <View className="items-center py-6 gap-2">
-            <Icon
-              as={MessageSquare}
-              size={32}
-              className="text-typography/30"
-            />
+            <Icon as={MessageSquare} className="text-typography/30" />
             <Text className="text-typography/50 text-sm">No reviews yet</Text>
             {me && (
               <Text className="text-typography/40 text-xs">
@@ -81,9 +77,7 @@ export default function PropertyReviews({ propertyId, me }: Props) {
         {reviews && reviews.length > 0 && (
           <>
             <View className="flex-row items-center gap-3 bg-background-muted rounded-xl p-3">
-              <Text className="text-3xl font-bold">
-                {avgRating.toFixed(1)}
-              </Text>
+              <Text className="text-3xl font-bold">{avgRating.toFixed(1)}</Text>
               <View className="flex-1">
                 <Rating rating={avgRating} showValue={false} />
                 <Text className="text-xs text-typography/60 mt-1">
@@ -99,9 +93,7 @@ export default function PropertyReviews({ propertyId, me }: Props) {
             {reviews.length > 3 && (
               <Pressable onPress={() => setShowAll(!showAll)}>
                 <Text className="text-primary text-sm text-center font-medium">
-                  {showAll
-                    ? "Show less"
-                    : `See all ${reviews.length} reviews`}
+                  {showAll ? "Show less" : `See all ${reviews.length} reviews`}
                 </Text>
               </Pressable>
             )}
@@ -120,9 +112,7 @@ export default function PropertyReviews({ propertyId, me }: Props) {
 
 function PropertyReviewCard({ review }: { review: PropertyReview }) {
   const reviewer = review.user;
-  const name = reviewer
-    ? fullName(reviewer)
-    : "Anonymous";
+  const name = reviewer ? fullName(reviewer) : "Anonymous";
 
   return (
     <View className="bg-background-muted rounded-xl p-4 gap-2">

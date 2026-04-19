@@ -16,6 +16,7 @@ import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import BottomSheetPlain from "@/components/shared/BottomSheetPlain";
 import { cn } from "@/lib/utils";
+import BottomSheet from "@/components/shared/BottomSheet";
 
 type Props = {
   visible: boolean;
@@ -75,7 +76,7 @@ export default function AddReviewBottomSheet({
   };
 
   return (
-    <BottomSheetPlain visible={visible} onDismiss={onDismiss}>
+    <BottomSheet snapPoint={["80%"]} visible={visible} onDismiss={onDismiss}>
       <View className="p-4 py-5 bg-background-muted rounded-2xl gap-4">
         <Heading size="lg" className="text-center">
           Rate this property
@@ -90,11 +91,11 @@ export default function AddReviewBottomSheet({
             >
               <Icon
                 as={Star}
-                size={32}
+                size="xl"
                 className={cn(
                   star <= rating
                     ? "text-primary fill-primary"
-                    : "text-gray-400"
+                    : "text-gray-400",
                 )}
               />
             </Pressable>
@@ -114,12 +115,14 @@ export default function AddReviewBottomSheet({
           </Text>
         )}
 
-        <CustomInput
-          value={comment}
-          onUpdate={setComment}
-          placeholder="Share your experience..."
-          multiline
-        />
+        <View className="h-60">
+          <CustomInput
+            value={comment}
+            onUpdate={setComment}
+            placeholder="Share your experience..."
+            multiline
+          />
+        </View>
 
         <Button
           onPress={handleSubmit}
@@ -127,9 +130,11 @@ export default function AddReviewBottomSheet({
           className="h-12 rounded-xl"
         >
           {isPending && <SpinningLoader />}
-          <ButtonText>{isPending ? "Submitting..." : "Submit Review"}</ButtonText>
+          <ButtonText>
+            {isPending ? "Submitting..." : "Submit Review"}
+          </ButtonText>
         </Button>
       </View>
-    </BottomSheetPlain>
+    </BottomSheet>
   );
 }

@@ -32,12 +32,18 @@ type SnackBarOption = {
   backdrop?: boolean;
 };
 
+type ConfirmationActionPayload = {
+  propertyId: string;
+  reason?: string;
+} & Record<string, unknown>;
+
 type ConfirmationActionConfig = {
   visible: boolean;
   header: string;
   description: string;
   actionText: string;
-  onConfirm: (data: { propertyId: string; reason?: string }) => Promise<void>;
+  onConfirm: (data: ConfirmationActionPayload) => Promise<unknown>;
+  payload?: Record<string, unknown>;
   requireReason?: boolean;
   className?: string;
   iconClassName?: string;

@@ -14,6 +14,7 @@ import {
   Clock,
   BookPlus,
   Zap,
+  House,
 } from "lucide-react-native";
 
 type MenuProps = {
@@ -148,6 +149,13 @@ export const getQuickMenuItems = ({
       link: "/admin/reports",
       role: "admin",
       description: "Review enquiries and submitted reports.",
+    },
+    {
+      label: "Featured",
+      icon: House,
+      link: "/admin/featured",
+      role: "admin",
+      description: "Manage feautured properties",
     },
     {
       label: "Block/Ban",

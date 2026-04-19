@@ -133,7 +133,7 @@ const PropertyDetailsBottomSheet = ({
                     {formatMoney(
                       property.price,
                       property?.currency || "NGN",
-                      0
+                      0,
                     )}
                   </Text>
                   <Text className="text-base text-white">
@@ -264,7 +264,7 @@ const PropertyDetailsBottomSheet = ({
                 <Text className="">
                   {formatDateDistance(
                     new Date(property.created_at).toString(),
-                    true
+                    true,
                   )}
                 </Text>
                 <Text>
@@ -281,8 +281,8 @@ const PropertyDetailsBottomSheet = ({
                   Features
                 </Heading>
                 <View className="flex-row gap-4 flex-wrap px-2">
-                  {amenities?.map((a) => (
-                    <View key={a.name} className="w-[46%] ">
+                  {amenities?.map((a, i) => (
+                    <View key={a.name + i} className="w-[46%] ">
                       <View className="bg-background rounded-full py-2 px-3 gap-1 flex-row items-center self-start">
                         <Text numberOfLines={1} className="text-sm capitalize">
                           {a.name}
@@ -504,7 +504,7 @@ const enhance = withObservables(
     amenities: propertyAmenityCollection
       .query(Q.where("property_server_id", property.property_server_id))
       .observe(),
-  })
+  }),
 );
 
 export default enhance(PropertyDetailsBottomSheet);

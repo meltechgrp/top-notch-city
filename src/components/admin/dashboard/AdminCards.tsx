@@ -112,6 +112,15 @@ export default function AdminCards() {
             showDirection={false}
           />
         </View>
+        <View className="flex-row gap-4">
+          <DashboardCard
+            title="Featured"
+            icon={House}
+            total={0}
+            onPress={() => router.push("/admin/featured")}
+            showDirection={false}
+          />
+        </View>
       </View>
     </View>
   );

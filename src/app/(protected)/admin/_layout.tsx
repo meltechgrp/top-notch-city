@@ -47,6 +47,12 @@ export default function ProtectedRoutesLayout() {
         }}
       />
       <Stack.Screen
+        name="featured"
+        options={{
+          headerTitle: "Featured Properties",
+        }}
+      />
+      <Stack.Screen
         name="analytics"
         options={{
           headerTitle: "Admin Analytics",
