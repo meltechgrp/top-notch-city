@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Animated, View, ViewToken } from "react-native";
+import { Animated, Platform, View, ViewToken } from "react-native";
 import useMessageActions from "@/components/chat/useMessageActions";
 import { cn, formatMessageTime, fullName } from "@/lib/utils";
 import {
@@ -147,6 +147,16 @@ function ChatRoom(props: Props) {
   React.useEffect(() => {
     scrollToBottom();
   }, []);
+  const didInitialScrollRef = React.useRef(false);
+  React.useEffect(() => {
+    if (Platform.OS === "ios") return;
+    if (didInitialScrollRef.current) return;
+    if (!messages?.length) return;
+    didInitialScrollRef.current = true;
+    requestAnimationFrame(() => {
+      listRef.current?.scrollToEnd({ animated: false });
+    });
+  }, [messages?.length]);
   return (
     <>
       <Stack.Screen
@@ -249,10 +259,14 @@ function ChatRoom(props: Props) {
             contentContainerStyle={{
               paddingBottom: 10,
             }}
-            maintainVisibleContentPosition={{
-              startRenderingFromBottom: true,
-              autoscrollToBottomThreshold: 0,
-            }}
+            maintainVisibleContentPosition={
+              Platform.OS === "ios"
+                ? {
+                    startRenderingFromBottom: true,
+                    autoscrollToBottomThreshold: 0,
+                  }
+                : { autoscrollToBottomThreshold: 0 }
+            }
             renderItem={RenderItem}
             data={messages}
             onViewableItemsChanged={onViewableItemsChanged.current}

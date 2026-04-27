@@ -93,7 +93,7 @@ export function generateTitle(property: ServerProperty) {
       return `${property?.subcategory?.name || "Commercial Space"} ${property?.purpose ? `for ${property?.purpose}` : ""}`.trim();
 
     case "Land":
-      return `${FindAmenity("Total Plot", property) || 1} Plot${FindAmenity("Total Plot", property) > 1 ? "s" : ""} of Land`;
+      return `${property?.title || "Land"}`;
 
     case "Hotel":
     case "Shortlet":

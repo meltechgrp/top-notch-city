@@ -30,7 +30,9 @@ export function useWebSocketHandler() {
     (async () => {
       const authToken = await getActiveToken();
       if (cancelled || !authToken) return;
-      connectWebSocket(`wss://app.topnotchcity.com/ws/?token=${authToken}`);
+      connectWebSocket(
+        `wss://app.topnotchcity.com/ws/?token=${encodeURIComponent(authToken)}`
+      );
     })();
 
     return () => {

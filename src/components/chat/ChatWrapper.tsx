@@ -18,10 +18,9 @@ function ChatWrapper({ chats }: ChatWrapperProps) {
       <KeyboardAvoidingView
         style={{
           flex: 1,
-          // maxHeight: 600,
         }}
-        behavior={"padding"}
-        keyboardVerticalOffset={Platforms.isIOS() ? 70 : 80}
+        behavior={Platforms.isIOS() ? "padding" : undefined}
+        keyboardVerticalOffset={Platforms.isIOS() ? 70 : 0}
       >
         <ChatRoom
           chat={chats[0]}

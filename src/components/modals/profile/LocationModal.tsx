@@ -2,27 +2,55 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Modal, TextInput, TouchableOpacity, ScrollView } from "react-native";
 import { MapPin, X } from "lucide-react-native";
 import { debounce } from "lodash-es";
-import { composeFullAddress } from "@/lib/utils";
 import { Icon, Pressable, Text, View } from "@/components/ui";
 import { useMutation } from "@tanstack/react-query";
 import { fetchPlaceFromTextQueryGoogle } from "@/actions/utills";
 import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
+import {
+  checkDailyRateLimit,
+  consumeDailyRateLimit,
+} from "@/lib/rateLimit";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
+
+const RATE_LIMIT_BUCKET = "location_search_upload";
+const RATE_LIMIT_MAX = 10;
 
 export function LocationModal({
   open,
   onClose,
   onSelect,
   handleUseLocation,
+  rateLimit,
 }: {
   open: boolean;
   onClose: () => void;
   handleUseLocation: () => void;
   onSelect: (data: GooglePlace) => void;
+  rateLimit?: boolean;
 }) {
   const [query, setQuery] = useState("");
   const [locations, setLocations] = useState<GooglePlace[]>([]);
   const { mutateAsync, isPending } = useMutation({
-    mutationFn: fetchPlaceFromTextQueryGoogle,
+    mutationFn: async (q: string) => {
+      if (rateLimit) {
+        const status = await checkDailyRateLimit(
+          RATE_LIMIT_BUCKET,
+          RATE_LIMIT_MAX
+        );
+        if (!status.allowed) {
+          showErrorAlert({
+            title: `Daily limit reached (${RATE_LIMIT_MAX}/day). Try again tomorrow.`,
+            alertType: "warn",
+          });
+          throw new Error("rate_limited");
+        }
+      }
+      const results = await fetchPlaceFromTextQueryGoogle(q);
+      if (rateLimit && results.length > 0) {
+        await consumeDailyRateLimit(RATE_LIMIT_BUCKET, RATE_LIMIT_MAX);
+      }
+      return results;
+    },
     mutationKey: [query],
     onSuccess: (data) => {
       setLocations(data);

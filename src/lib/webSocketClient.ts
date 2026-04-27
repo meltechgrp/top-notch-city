@@ -91,9 +91,11 @@ function openSocket() {
   socket.onmessage = (event) => {
     try {
       const data = JSON.parse(event.data);
-      if (data?.type !== "ping") {
-        // pong only when we receive something meaningful
-        state.socket?.send("pong");
+      if (data?.type === "ping") {
+        if (state.socket?.readyState === WebSocket.OPEN) {
+          state.socket.send(JSON.stringify({ type: "pong" }));
+        }
+        return;
       }
       subscribers.forEach((handler) => handler(data));
     } catch {

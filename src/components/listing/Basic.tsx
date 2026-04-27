@@ -179,6 +179,7 @@ export default function PropertyListingBasic() {
         handleUseLocation={handleUseLocation}
         onClose={() => setShowModal?.(false)}
         onSelect={(place) => updateListing({ address: place })}
+        rateLimit
       />
       <CurrencyPickerModal
         open={currencyModal}
