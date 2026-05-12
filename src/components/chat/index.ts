@@ -20,6 +20,8 @@ import {
 } from "@/db/normalizers/message";
 import { Message } from "@/db/models/messages";
 import { User } from "@/db/models/users";
+import { mainStore } from "@/store";
+import { tempStore } from "@/store/tempStore";
 
 export async function editServerMessage({ data }: { data: ServerMessage }) {
   const [chat] = await chatCollection
@@ -217,7 +219,8 @@ export async function saveLocalMessage({
   await database.write(async () => {
     const ops: any[] = [];
     const createdAt = Date.parse(data.created_at);
-    const isIncoming = !data?.isMock;
+    const activeUserId = mainStore.activeUserId.peek();
+    const isIncoming = !data?.isMock && data.sender_info.id !== activeUserId;
     const shouldBumpRecent =
       !!chat &&
       (!chat.recent_message_created_at ||
@@ -270,9 +273,32 @@ export async function saveLocalMessage({
     }
 
     if (ops.length) await database.batch(...ops);
+
+    if (isIncoming && !existing) {
+      tempStore.incrementTotalUnreadChat();
+    }
   });
   playSound?.();
 }
+
+export async function markChatReadLocal(chatId: string) {
+  const [chat] = await chatCollection
+    .query(Q.where("server_chat_id", chatId), Q.take(1))
+    .fetch();
+
+  if (!chat || !chat.unread_count) return;
+
+  const unreadCount = chat.unread_count;
+
+  await database.write(async () => {
+    await chat.update((c) => {
+      c.unread_count = 0;
+    });
+  });
+
+  tempStore.decrementTotalUnreadChat(unreadCount);
+}
+
 export const addIncomingMessage = async (
   chatId: string,
   message: ServerMessage,
@@ -499,5 +525,6 @@ export function messagesActions() {
     updateUserStatus,
     updateMessage,
     updateChats,
+    markChatReadLocal,
   };
 }

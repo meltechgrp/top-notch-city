@@ -15,11 +15,12 @@ type Props = {
 
 export default function RequestListItem({ request, onPress }: Props) {
   const query = useQueryClient();
+  const user = request.user;
   const { mutateAsync, isPending } = useMutation({
     mutationFn: deleteApplication,
     onSuccess: () => {
       query.invalidateQueries({
-        queryKey: ["applications"],
+        queryKey: ["agent-applications"],
       });
     },
   });
@@ -64,10 +65,11 @@ export default function RequestListItem({ request, onPress }: Props) {
         >
           <Pressable
             onPress={() =>
+              user?.id &&
               router.push({
                 pathname: "/admin/users/[userId]",
                 params: {
-                  userId: request.user.id,
+                  userId: user.id,
                 },
               })
             }
@@ -75,7 +77,7 @@ export default function RequestListItem({ request, onPress }: Props) {
             <Avatar>
               <AvatarImage
                 source={{
-                  uri: generateMediaUrlSingle(request.user.profile_image),
+                  uri: generateMediaUrlSingle(user?.profile_image || ""),
                   cache: "force-cache",
                 }}
               />
@@ -84,7 +86,7 @@ export default function RequestListItem({ request, onPress }: Props) {
           <View className=" flex-1">
             <View className="flex-row justify-between items-center mb-2">
               <Text className="text-lg font-semibold">
-                {fullName(request.user)}
+                {fullName(user) || "Agent application"}
               </Text>
               <Text
                 className={`text-xs px-2 py-1 rounded-full ${
@@ -99,7 +101,7 @@ export default function RequestListItem({ request, onPress }: Props) {
               </Text>
             </View>
             <Text className="text-sm text-typography">
-              {request.user.email}
+              {user?.email || "No email provided"}
             </Text>
           </View>
         </Pressable>

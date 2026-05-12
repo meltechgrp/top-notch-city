@@ -31,7 +31,7 @@ export function useWebSocketHandler() {
       const authToken = await getActiveToken();
       if (cancelled || !authToken) return;
       connectWebSocket(
-        `wss://app.topnotchcity.com/ws/?token=${encodeURIComponent(authToken)}`
+        `wss://app.topnotchcity.com/ws/?token=${encodeURIComponent(authToken)}`,
       );
     })();
 
@@ -84,7 +84,7 @@ export function useWebSocketHandler() {
           });
           return;
         case "unread_count_update":
-          tempStore.updatetotalUnreadChat(data.total_unread);
+          tempStore.updatetotalUnreadChat(data.total_unread || 0);
           return;
         case "typing":
           tempStore.setTyping(data.chat_id, data.is_typing);

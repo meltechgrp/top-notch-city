@@ -1,6 +1,4 @@
 import { Fetch } from "@/actions/utills";
-import config from "@/config";
-import { getActiveToken } from "@/lib/secureStore";
 
 export async function sendBooking({ form }: { form: BookingForm }) {
   try {
@@ -41,22 +39,17 @@ export async function updateBookingStatus({
   status: BookingStatus;
   note?: string;
 }) {
-  const authToken = await getActiveToken();
-  const data = await fetch(
-    `${config.origin}/api/bookings/${booking_id}/status`,
-    {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        ...(authToken && { Authorization: `Bearer ${authToken}` }),
-      },
-      body: JSON.stringify({
-        status: status,
-        note: note || null,
-      }),
+  const res = await Fetch(`/bookings/${booking_id}/status`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
     },
-  );
-  const res = await data.json();
+    data: {
+      status,
+      note: note || null,
+    },
+  });
+
   if (res?.detail) {
     throw Error(res?.detail);
   }

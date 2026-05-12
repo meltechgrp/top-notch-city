@@ -36,6 +36,7 @@ import { tempStore } from "@/store/tempStore";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import { useWebSocketHandler } from "@/hooks/useWebSocketHandler";
+import { markChatReadLocal } from "@/components/chat";
 
 type Props = {
   chat: Chat;
@@ -141,9 +142,10 @@ function ChatRoom(props: Props) {
   const typing = useValue(() => tempStore.getTyping(chat.server_chat_id));
   React.useEffect(() => {
     if (me && chat?.unread_count > 0) {
+      markChatReadLocal(chat.server_chat_id);
       makeMessageReadAndDelivered({ chatId: chat.server_chat_id });
     }
-  }, [chat?.unread_count, me]);
+  }, [chat?.server_chat_id, chat?.unread_count, me]);
   React.useEffect(() => {
     scrollToBottom();
   }, []);

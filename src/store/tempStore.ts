@@ -46,6 +46,18 @@ export const tempStore = observable({
     tempStore.totalUnreadChat.set(data);
   },
 
+  incrementTotalUnreadChat(data = 1) {
+    tempStore.totalUnreadChat.set(
+      Math.max(0, tempStore.totalUnreadChat.peek() + data),
+    );
+  },
+
+  decrementTotalUnreadChat(data = 1) {
+    tempStore.totalUnreadChat.set(
+      Math.max(0, tempStore.totalUnreadChat.peek() - data),
+    );
+  },
+
   updateApplication(data: Partial<Application>) {
     tempStore.application.assign(data);
   },

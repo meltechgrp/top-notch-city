@@ -287,7 +287,7 @@ export function ButtonsInput({
 export function DateInput({
   value,
   onUpdate,
-  modal = false,
+  modal = true,
   label,
   className,
   containerClassName,

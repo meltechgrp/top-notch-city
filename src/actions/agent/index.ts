@@ -70,7 +70,37 @@ export async function getAgentApplications({
   const res = await Fetch(
     `/admin/agent/applications?page=${pageParam}&per_page=20`,
   );
-  return res as AgentResult;
+  if (res?.detail) throw Error("Failed to fetch agent applications");
+
+  if (Array.isArray(res)) {
+    return {
+      total: res.length,
+      page: pageParam,
+      per_page: 20,
+      total_pages: 1,
+      results: res,
+    } as AgentResult;
+  }
+
+  const results =
+    res?.results ?? res?.applications ?? res?.data ?? res?.items ?? [];
+  const total = Number(res?.total ?? res?.count ?? results.length);
+  const perPage = Number(res?.per_page ?? res?.perPage ?? 20);
+  const totalPages = Number(
+    res?.total_pages ??
+      res?.pages ??
+      res?.last_page ??
+      Math.max(1, Math.ceil(total / perPage)),
+  );
+
+  return {
+    ...res,
+    total,
+    page: Number(res?.page ?? res?.current_page ?? pageParam),
+    per_page: perPage,
+    total_pages: totalPages,
+    results: Array.isArray(results) ? results : [],
+  } as AgentResult;
 }
 export async function getMyApplications() {
   try {

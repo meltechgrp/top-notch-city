@@ -34,13 +34,13 @@ export const VideoPlayer = memo(
         shouldPlay = false,
         inTab = true,
       },
-      ref
+      ref,
     ) => {
       const muted = mainStore.muted.get();
       const [showControls, setShowControls] = useState(false);
       const [showBottomSheet, setShowBottomSheet] = useState(false);
       const mounted = useRef(true);
-      const { toggleLike } = useLike();
+      const { toggleLike } = useLike({ queryKey: ["reels"] });
       // Setup player
       const player = useVideoPlayer(
         { uri: reel.video, useCaching: true },
@@ -52,14 +52,14 @@ export const VideoPlayer = memo(
           } catch (e) {
             console.warn("VideoPlayer setup failed", e);
           }
-        }
+        },
       );
       ReelViewsController({
         id: reel.id,
         viewed: reel.owner_interaction.viewed,
       });
       let currentTime = Math.round(
-        useEvent(player, "timeUpdate")?.currentTime || 0
+        useEvent(player, "timeUpdate")?.currentTime || 0,
       );
       let length = Math.round(useEvent(player, "sourceLoad")?.duration || 0);
       const isPlaying = useEvent(player, "playingChange", {
@@ -124,7 +124,7 @@ export const VideoPlayer = memo(
           },
           status: player.status,
         }),
-        [player]
+        [player],
       );
       useEffect(() => {
         return () => {
@@ -150,7 +150,7 @@ export const VideoPlayer = memo(
               <View
                 className={cn(
                   "relative w-full h-full bg-background-muted ",
-                  rounded && "rounded-xl overflow-hidden"
+                  rounded && "rounded-xl overflow-hidden",
                 )}
               >
                 <VideoView
@@ -184,7 +184,7 @@ export const VideoPlayer = memo(
                             as={Play}
                             className={cn(
                               "text-primary fill-primary w-12 h-12",
-                              !fullScreen && "w-8 h-8"
+                              !fullScreen && "w-8 h-8",
                             )}
                           />
                         )}
@@ -215,6 +215,6 @@ export const VideoPlayer = memo(
           />
         </>
       );
-    }
-  )
+    },
+  ),
 );

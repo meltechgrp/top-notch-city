@@ -31,7 +31,7 @@ const GEOAPIFY_API_KEY = "438412e74fa84ff7ac9693e83e9ff154";
 const BASE_URL = "https://api.geoapify.com/v2/places";
 
 export async function getNearbyPlaces(
-  options: GetNearbyOptions
+  options: GetNearbyOptions,
 ): Promise<NearbyPOI[]> {
   const { latitude, longitude, radiusMeters = 1000, limit = 10 } = options;
   if (!latitude || !longitude) return [];
@@ -44,13 +44,13 @@ export async function getNearbyPlaces(
   ];
 
   const fetchPlacesByCategory = async (
-    category: POICategory
+    category: POICategory,
   ): Promise<NearbyPOI[]> => {
     const url = new URL(BASE_URL);
     url.searchParams.append("categories", category);
     url.searchParams.append(
       "filter",
-      `circle:${longitude},${latitude},${radiusMeters}`
+      `circle:${longitude},${latitude},${radiusMeters}`,
     );
     url.searchParams.append("limit", limit.toString());
     url.searchParams.append("apiKey", GEOAPIFY_API_KEY);
@@ -125,7 +125,7 @@ export async function likeProperty({ id }: { id: string }) {
       headers: {
         "Content-Type": "application/json",
       },
-      data: JSON.stringify({ property_id: id }),
+      data: { property_id: id },
     });
     return res;
   } catch (error) {
