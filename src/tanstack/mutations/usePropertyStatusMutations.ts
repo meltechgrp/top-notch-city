@@ -55,7 +55,7 @@ export function usePropertyStatusMutations() {
     eventBus.dispatchEvent("REFRESH_DASHBOARD", null);
   };
 
-  const createStatusMutation = (action: string) =>
+  const useStatusMutation = (action: string) =>
     useMutation({
       mutationFn: ({
         propertyId,
@@ -153,12 +153,12 @@ export function usePropertyStatusMutations() {
   });
 
   return {
-    approveMutation: createStatusMutation("approve"),
-    rejectMutation: createStatusMutation("reject"),
-    sellMutation: createStatusMutation("sell"),
-    expireMutation: createStatusMutation("expire"),
-    flagMutation: createStatusMutation("flag"),
-    pendingMutation: createStatusMutation("reset-to-pending"),
+    approveMutation: useStatusMutation("approve"),
+    rejectMutation: useStatusMutation("reject"),
+    sellMutation: useStatusMutation("sell"),
+    expireMutation: useStatusMutation("expire"),
+    flagMutation: useStatusMutation("flag"),
+    pendingMutation: useStatusMutation("reset-to-pending"),
     deleteMutation,
     softDeleteMutation,
     featuredMutation,

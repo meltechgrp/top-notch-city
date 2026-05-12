@@ -7,7 +7,7 @@ import { Model } from "@nozbe/watermelondb";
 
 export async function withPropertyWriter(
   id: string,
-  fn: (p: Property) => Promise<void>
+  fn: (p: Property) => Promise<void>,
 ) {
   const model = await database.get<Property>("properties").find(id);
   await database.write(async () => {
@@ -61,7 +61,7 @@ type DBBackedOptions<M extends Model, S> = {
 };
 
 export function createDBBackedObservable<M extends Model, S>(
-  options: DBBackedOptions<M, S>
+  options: DBBackedOptions<M, S>,
 ) {
   const state$ = observable<S[]>([]);
 
@@ -93,7 +93,7 @@ export function createDBBackedObservable<M extends Model, S>(
             "updated_at",
           ])
           .subscribe((models) => {
-            update(models.map(options.map));
+            update({ value: models.map(options.map) });
           });
 
         return sub.unsubscribe;
@@ -102,7 +102,7 @@ export function createDBBackedObservable<M extends Model, S>(
       persist: {
         name: options.key,
       },
-    })
+    }),
   );
 
   return state$;

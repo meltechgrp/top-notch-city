@@ -90,7 +90,7 @@ const ChatRoomFooter = React.forwardRef<EditorComponentRefHandle, Props>(
           />
         </View>
       ),
-      [activeQuoteMsg, clearActiveQuoteMsg]
+      [activeQuoteMsg, clearActiveQuoteMsg],
     );
     return (
       <View>
@@ -108,7 +108,9 @@ const ChatRoomFooter = React.forwardRef<EditorComponentRefHandle, Props>(
         />
       </View>
     );
-  }
+  },
 );
+
+ChatRoomFooter.displayName = "ChatRoomFooter";
 
 export default ChatRoomFooter;

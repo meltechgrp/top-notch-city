@@ -171,7 +171,9 @@ const MediaPicker = React.forwardRef<MediaPickerRef, MediaPickerProps>(
         </Modal>
       </>
     );
-  }
+  },
 );
+
+MediaPicker.displayName = "MediaPicker";
 
 export default MediaPicker;

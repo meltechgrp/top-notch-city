@@ -82,7 +82,7 @@ export function useSearch() {
 
   /* ---------------- Location ---------------- */
 
-  const useMyLocation = useCallback(async () => {
+  const handleUseMyLocation = useCallback(async () => {
     const coords = location ?? (await retryGetLocation());
     if (!coords) return;
 
@@ -130,9 +130,9 @@ export function useSearch() {
   );
   useEffect(() => {
     if (!location && !committedProperties.length) {
-      useMyLocation();
+      handleUseMyLocation();
     }
-  }, [location]);
+  }, [committedProperties.length, handleUseMyLocation, location]);
   const resetFilters = useCallback(() => dispatch({ type: "RESET" }), []);
   useEffect(() => {
     if (committedProperties?.length === 0 && previewProperties?.length > 0) {
@@ -149,7 +149,7 @@ export function useSearch() {
       setFilters,
       resetSome,
       resetFilters,
-      useMyLocation,
+      useMyLocation: handleUseMyLocation,
       isLocation,
     },
 

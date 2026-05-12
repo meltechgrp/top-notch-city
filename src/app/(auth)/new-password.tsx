@@ -12,6 +12,7 @@ import { useValue } from "@legendapp/state/react";
 
 export default function NewPassword() {
   const { email, resetEmail } = tempStore;
+  const savedEmail = useValue(email);
   const { mutateAsync: resendCode, isPending: isSending } =
     useAuthMutations().resendVerificationMutation;
   const { mutateAsync: passwordReset, isPending: resetting } =
@@ -44,7 +45,7 @@ export default function NewPassword() {
               alertType: "warn",
             });
           },
-        }
+        },
       );
     } catch (error) {
       showErrorAlert({ title: "Failed to resend code.", alertType: "warn" });
@@ -90,7 +91,7 @@ export default function NewPassword() {
             alertType: "warn",
           });
         },
-      }
+      },
     );
   };
 
@@ -110,11 +111,10 @@ export default function NewPassword() {
     };
   }, [codeSheetVisible]);
   useEffect(() => {
-    const saved = useValue(email);
-    if (saved) {
-      setForm({ ...form, email: saved });
+    if (savedEmail) {
+      setForm((prev) => ({ ...prev, email: savedEmail }));
     }
-  }, [email]);
+  }, [savedEmail]);
   return (
     <OnboardingScreenContainer allowBack={false}>
       <Box className="w-[98%] bg-background/90 max-w-[26rem] gap-6 mt-4 mx-auto rounded-xl p-6">

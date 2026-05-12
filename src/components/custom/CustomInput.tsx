@@ -99,7 +99,7 @@ function CustomInputComponent({
             textAlignVertical: "top" as const,
           }
         : {},
-    [multiline, height]
+    [multiline, height],
   );
 
   const textColor = useMemo(() => ({ color: Colors[theme].text }), [theme]);
@@ -120,8 +120,6 @@ function CustomInputComponent({
         return <DateInput value={value} onUpdate={onUpdate} />;
       case "documents":
         return <DocumentsInput value={value} onUpdate={onUpdate} />;
-      case "date_of_birth":
-        return <DateInput value={value} onUpdate={onUpdate} />;
       case "specialties":
         return (
           <AgentServiceInput
@@ -163,7 +161,7 @@ function CustomInputComponent({
       className={cn(
         "py-px min-h-[5rem] gap-2 rounded-xl",
         !title && "min-h-[3.5rem]",
-        containerClassName
+        containerClassName,
       )}
     >
       {title && (
@@ -186,7 +184,7 @@ function CustomInputComponent({
           "bg-background-muted ios:flex-1 flex-row justify-between items-center border border-outline-100 px-4 rounded-xl",
           multiline ? "min-h-40" : "h-[3.5rem]",
           inputType && "hidden",
-          className
+          className,
         )}
       >
         <TextInput
@@ -195,7 +193,7 @@ function CustomInputComponent({
           autoCapitalize="sentences"
           className={cn(
             "text-typography placeholder:text-typography/80 focus:outline-none flex-1 h-full rounded-xl",
-            multiline && "px-0 pt-1"
+            multiline && "px-0 pt-1",
           )}
           value={value}
           secureTextEntry={secure}
@@ -301,12 +299,20 @@ export function DateInput({
   containerClassName?: string;
   withMinDate?: boolean;
 }) {
+  const dateValue = useMemo(() => {
+    if (isDate(value)) return value;
+    if (typeof value !== "string" || !value) return null;
+
+    const parsed = new Date(value);
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
+  }, [value]);
+
   return (
     <View className={cn("items-center mb-8", containerClassName)}>
       <DatePicker
         label={label || "Date of Birth"}
         placeholder="Day/Month/Year"
-        value={isDate(value) ? value : null}
+        value={dateValue}
         onChange={(val) => onUpdate(format(new Date(val), "yyyy-MM-dd"))}
         mode="date"
         modal={modal}
@@ -691,7 +697,7 @@ export function LocationInput({
     (addr: GooglePlace | null) => {
       onUpdate(addr ? JSON.stringify(addr) : "");
     },
-    [onUpdate]
+    [onUpdate],
   );
 
   const handleUseLocation = useCallback(async () => {

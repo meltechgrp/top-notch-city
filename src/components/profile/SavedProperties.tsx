@@ -48,7 +48,7 @@ export default function SavedPropertiesTabView({ showStatus = false }: IProps) {
             onPress={() => handlePress(property)}
             isList
             showStatus={showStatus}
-            data={property}
+            property={property}
             rounded
           />
         ))}

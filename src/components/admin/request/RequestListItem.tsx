@@ -26,29 +26,34 @@ export default function RequestListItem({ request, onPress }: Props) {
   return (
     <>
       <SwipeableWrapper
-        leftAction={
+        leftActions={
           request.status === "pending"
-            ? async () => {
-                if (request.status !== "pending") return null;
-                await mutateAsync(
-                  {
-                    application_id: request.application_id,
+            ? [
+                {
+                  type: "danger",
+                  onPress: async () => {
+                    if (request.status !== "pending") return;
+                    await mutateAsync(
+                      {
+                        application_id: request.application_id,
+                      },
+                      {
+                        onSettled: () =>
+                          showErrorAlert({
+                            title: "Applcation deleted successfully",
+                            alertType: "success",
+                          }),
+                        onError: () =>
+                          showErrorAlert({
+                            title: "Error occuried, try again!",
+                            alertType: "error",
+                          }),
+                      },
+                    );
                   },
-                  {
-                    onSettled: () =>
-                      showErrorAlert({
-                        title: "Applcation deleted successfully",
-                        alertType: "success",
-                      }),
-                    onError: () =>
-                      showErrorAlert({
-                        title: "Error occuried, try again!",
-                        alertType: "error",
-                      }),
-                  }
-                );
-              }
-            : undefined
+                },
+              ]
+            : []
         }
       >
         <Pressable

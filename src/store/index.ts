@@ -25,6 +25,7 @@ type MainStore = {
   address: Address;
   activeAccount: () => Me | null;
   saveAddress: (data: Partial<Address>) => void;
+  updateMuted: (state: boolean) => void;
   addAccount: (user: Me, token: string) => Promise<void>;
   switchAccount: (userId: string) => Promise<void>;
   removeAccount: (userId: string) => Promise<void>;
@@ -58,6 +59,10 @@ export const mainStore = observable<MainStore>(
 
       saveAddress(data: Partial<Address>) {
         mainStore.address.assign(data);
+      },
+
+      updateMuted(state: boolean) {
+        mainStore.muted.set(state);
       },
 
       async addAccount(user: Me, token: string) {
@@ -110,5 +115,5 @@ export const mainStore = observable<MainStore>(
     persist: {
       name: "topnotch-main",
     },
-  })
+  }),
 );

@@ -27,10 +27,10 @@ export default function AdditionalInfomation() {
       <Box className="py-2 flex-1 px-4 gap-4">
         <View className="gap-1">
           <Text className="text-xl font-medium">
-            Who's listing this property for rent?
+            Who{"'"}s listing this property for rent?
           </Text>
           <Text className="text-xs text-typography/90">
-            Enter your information, unless you're creating the listing for
+            Enter your information, unless you{"'"}re creating the listing for
             someone else and they should be the main contact person.
           </Text>
         </View>

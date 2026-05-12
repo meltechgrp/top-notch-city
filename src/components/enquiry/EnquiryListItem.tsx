@@ -23,25 +23,30 @@ export default function EnquiryListItem({ enquiry, onPress }: Props) {
   return (
     <>
       <SwipeableWrapper
-        leftAction={async () => {
-          await mutateAsync(
-            {
-              enquiry_id: enquiry?.id,
+        leftActions={[
+          {
+            type: "danger",
+            onPress: async () => {
+              await mutateAsync(
+                {
+                  enquiry_id: enquiry?.id,
+                },
+                {
+                  onSettled: () =>
+                    showErrorAlert({
+                      title: "Applcation deleted successfully",
+                      alertType: "success",
+                    }),
+                  onError: () =>
+                    showErrorAlert({
+                      title: "Error occuried, try again!",
+                      alertType: "error",
+                    }),
+                },
+              );
             },
-            {
-              onSettled: () =>
-                showErrorAlert({
-                  title: "Applcation deleted successfully",
-                  alertType: "success",
-                }),
-              onError: () =>
-                showErrorAlert({
-                  title: "Error occuried, try again!",
-                  alertType: "error",
-                }),
-            }
-          );
-        }}
+          },
+        ]}
       >
         <Pressable
           onPress={() => {

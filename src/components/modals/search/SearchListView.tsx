@@ -32,7 +32,7 @@ type Props = {
   fetchNextPage: () => Promise<Property[]>;
   setShowFilter: () => void;
   refetch: () => void;
-  useMyLocation: () => void;
+  onUseMyLocation: () => void;
   filter: SearchFilters;
   isTab?: boolean;
   onReset?: () => void;
@@ -44,7 +44,7 @@ function SearchListBottomSheet({
   fetchNextPage,
   hasNextPage,
   onReset,
-  useMyLocation,
+  onUseMyLocation,
   filter,
   isTab,
   total,
@@ -53,7 +53,7 @@ function SearchListBottomSheet({
   const sheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(
     () => (isTab ? ["20%", "40%", "60%", "90%"] : ["10%", "40%", "60%", "90%"]),
-    [isTab]
+    [isTab],
   );
   const renderItem = useCallback(
     ({ item }: { item: Property }) => (
@@ -72,7 +72,7 @@ function SearchListBottomSheet({
         rounded={true}
       />
     ),
-    []
+    [],
   );
   return (
     <BottomSheet
@@ -94,7 +94,7 @@ function SearchListBottomSheet({
           filter={filter}
           total={total}
           isLoading={isLoading}
-          useMyLocation={useMyLocation}
+          onUseMyLocation={onUseMyLocation}
           toggleList={() => sheetRef.current?.snapToIndex(0)}
         />
       )}
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
 
 export const CustomHandle = ({
   total,
-  useMyLocation,
+  onUseMyLocation,
   filter,
   toggleList,
   isLoading,
@@ -169,14 +169,14 @@ export const CustomHandle = ({
       animatedIndex.value,
       [1.2, 2],
       [0, 56],
-      Extrapolation.CLAMP
+      Extrapolation.CLAMP,
     );
 
     const opacity = interpolate(
       animatedIndex.value,
       [1.2, 2],
       [1, 0],
-      Extrapolation.CLAMP
+      Extrapolation.CLAMP,
     );
 
     return {
@@ -190,7 +190,7 @@ export const CustomHandle = ({
       animatedIndex.value,
       [2.6, 3],
       [1, 0],
-      Extrapolation.CLAMP
+      Extrapolation.CLAMP,
     );
 
     return {
@@ -202,7 +202,7 @@ export const CustomHandle = ({
       animatedIndex.value,
       [0.8, 1.2, 3],
       [80, 40, 25],
-      Extrapolation.CLAMP
+      Extrapolation.CLAMP,
     );
 
     return {
@@ -233,7 +233,7 @@ export const CustomHandle = ({
             className="p-4 bg-background-muted/70 rounded-full"
             onPress={() => {
               toggleList();
-              useMyLocation();
+              onUseMyLocation();
             }}
           >
             <Icon as={Send} size="xl" />

@@ -68,7 +68,7 @@ export type MapController = {
 
 const DEFAULT_LAT_DELTA = 0.1;
 const DEFAULT_LONG_DELTA = 0.1;
-const Map = forwardRef<MapController, MapProps>((props, ref) => {
+const Map = forwardRef<MapController, MapProps>(function Map(props, ref) {
   const {
     latitude: lat,
     longitude: long,
@@ -127,7 +127,7 @@ const Map = forwardRef<MapController, MapProps>((props, ref) => {
                 },
                 zoom: 12,
               },
-              { duration }
+              { duration },
             );
           } catch {}
         }
@@ -149,7 +149,7 @@ const Map = forwardRef<MapController, MapProps>((props, ref) => {
 
       getMapType: () => mapType,
     }),
-    [mapType, markers]
+    [mapType, markers],
   );
   useEffect(() => {
     const handler = (type: MapType) => {
@@ -170,7 +170,7 @@ const Map = forwardRef<MapController, MapProps>((props, ref) => {
           markers.map((m) => ({
             latitude: m.latitude,
             longitude: m.longitude,
-          }))
+          })),
         );
         setCenter({ latitude: region.latitude, longitude: region.longitude });
         mapRef.current?.animateToRegion(region, 850);

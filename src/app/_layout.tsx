@@ -110,11 +110,9 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
 function useMountPushNotificationToken() {
   const { isLoggedIn } = useMe();
 
-  if (Platform.OS === "web") {
-    return;
-  }
-
   useEffect(() => {
+    if (Platform.OS === "web") return;
+
     setTimeout(() => {
       if (isLoggedIn) {
         registerForPushNotificationsAsync()
@@ -149,7 +147,7 @@ function useNotificationObserver() {
     const subscription = Notifications.addNotificationResponseReceivedListener(
       (response) => {
         pushNotificationResponseHandler(response);
-      }
+      },
     );
 
     return () => {
@@ -173,7 +171,7 @@ export async function registerForPushNotificationsAsync() {
   }
 
   const hasRequested = await cacheStorage.get(
-    "REQUESTED_FOR_PUSH_NOTIFICATION_PERMISSION"
+    "REQUESTED_FOR_PUSH_NOTIFICATION_PERMISSION",
   );
 
   if (hasRequested === "True") {
@@ -195,7 +193,7 @@ export async function registerForPushNotificationsAsync() {
     cacheStorage.set(
       "REQUESTED_FOR_PUSH_NOTIFICATION_PERMISSION",
       "True",
-      TWENTY_FOUR_HOURS
+      TWENTY_FOUR_HOURS,
     );
   }
   if (finalStatus !== "granted") {

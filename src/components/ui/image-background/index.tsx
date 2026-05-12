@@ -7,3 +7,5 @@ export const ImageBackground = React.forwardRef<
 >(({ className, ...props }, ref) => {
   return <RNImageBackground className={className} {...props} ref={ref} />;
 });
+
+ImageBackground.displayName = "ImageBackground";

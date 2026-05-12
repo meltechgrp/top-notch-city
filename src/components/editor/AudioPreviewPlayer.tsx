@@ -12,11 +12,13 @@ type Props = {
   isMine?: boolean;
 };
 function AudioPreviewPlayer({ url, isChat, isMine }: Props) {
+  const player = useAudioPlayer({ uri: url || "" });
+  const status = useAudioPlayerStatus(player);
+
   if (!url) {
     return null;
   }
-  const player = useAudioPlayer({ uri: url });
-  const status = useAudioPlayerStatus(player);
+
   function onPlay() {
     player.seekTo(0);
     player.play();

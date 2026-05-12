@@ -72,11 +72,11 @@ export function UserActionsBottomSheet({
                     alertType: "error",
                   });
                 },
-              }
+              },
             );
           },
         },
-      ]
+      ],
     );
   };
 
@@ -91,7 +91,7 @@ export function UserActionsBottomSheet({
           style: "destructive",
           onPress: async () => {
             await mutateSuspend(
-              { user_id: user.id, suspended: user.is_blocked_by_admin },
+              { user_id: user.id, suspended: !!user.is_blocked_by_admin },
               {
                 onSuccess(data) {
                   if (data?.message) {
@@ -111,11 +111,11 @@ export function UserActionsBottomSheet({
                     alertType: "error",
                   });
                 },
-              }
+              },
             );
           },
         },
-      ]
+      ],
     );
   };
 
@@ -154,11 +154,11 @@ export function UserActionsBottomSheet({
                     alertType: "error",
                   });
                 },
-              }
+              },
             );
           },
         },
-      ]
+      ],
     );
   };
 
@@ -195,11 +195,11 @@ export function UserActionsBottomSheet({
                     alertType: "error",
                   });
                 },
-              }
+              },
             );
           },
         },
-      ]
+      ],
     );
   }
   return (

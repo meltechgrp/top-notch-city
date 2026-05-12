@@ -1,80 +1,56 @@
 import { useTheme } from "@/components/layouts/ThemeProvider";
-import {
-  Box,
-  Text,
-  Radio,
-  RadioGroup,
-  RadioIndicator,
-  RadioLabel,
-  RadioIcon,
-  View,
-} from "@/components/ui";
+import { Box, Icon, Text, View } from "@/components/ui";
 import { cn } from "@/lib/utils";
-import { CircleIcon } from "lucide-react-native";
+import { CheckCircle2, Circle } from "lucide-react-native";
 import React from "react";
 import { TouchableOpacity } from "react-native";
+
+const OPTIONS = [
+  { value: "light", label: "Light Mode", description: undefined },
+  { value: "dark", label: "Dark Mode", description: undefined },
+  {
+    value: "system",
+    label: "System Default",
+    description: "This will make use of your device settings",
+  },
+] as const;
 
 export default function ThemeScreen() {
   const { theme, toggleTheme } = useTheme();
   return (
     <Box className="flex-1">
-      <RadioGroup value={theme} onChange={toggleTheme} className="p-4">
-        <View className="gap-8">
-          <TouchableOpacity
-            className={cn(
-              "p-6 py-4 rounded-xl bg-background-muted border border-background-muted",
-              theme == "light" && " border-primary"
-            )}
-          >
-            <Radio className=" justify-between items-center h-12" value="light">
-              <RadioLabel className=" font-regular text-lg">
-                Light Mode
-              </RadioLabel>
-              <RadioIndicator size="lg">
-                <RadioIcon size="md" as={CircleIcon} />
-              </RadioIndicator>
-            </Radio>
-          </TouchableOpacity>
-          <TouchableOpacity
-            className={cn(
-              "p-6 py-4 rounded-xl bg-background-muted border border-background-muted",
-              theme == "dark" && " border-primary"
-            )}
-          >
-            <Radio className=" justify-between items-center h-12" value="dark">
-              <RadioLabel className=" font-regular text-lg">
-                Dark Mode
-              </RadioLabel>
-              <RadioIndicator size="lg">
-                <RadioIcon size="md" as={CircleIcon} />
-              </RadioIndicator>
-            </Radio>
-          </TouchableOpacity>
-          <TouchableOpacity
-            className={cn(
-              "p-6 py-4 rounded-xl bg-background-muted border border-background-muted",
-              theme == "system" && " border-primary"
-            )}
-          >
-            <Radio
-              className=" justify-between items-center h-12"
-              value="system"
+      <View className="gap-8 p-4">
+        {OPTIONS.map((option) => {
+          const active = theme === option.value;
+
+          return (
+            <TouchableOpacity
+              key={option.value}
+              onPress={() => toggleTheme(option.value)}
+              className={cn(
+                "p-6 py-4 rounded-xl bg-background-muted border border-background-muted",
+                active && "border-primary",
+              )}
             >
-              <View>
-                <RadioLabel className=" font-regular text-lg">
-                  System Default
-                </RadioLabel>
-                <Text size="sm" className=" font-light">
-                  This will make use of your device settings
-                </Text>
+              <View className="flex-row justify-between items-center min-h-12">
+                <View>
+                  <Text className="font-regular text-lg">{option.label}</Text>
+                  {!!option.description && (
+                    <Text size="sm" className="font-light">
+                      {option.description}
+                    </Text>
+                  )}
+                </View>
+                <Icon
+                  size="xl"
+                  as={active ? CheckCircle2 : Circle}
+                  className={active ? "text-primary" : "text-typography/60"}
+                />
               </View>
-              <RadioIndicator size="lg">
-                <RadioIcon size="md" as={CircleIcon} />
-              </RadioIndicator>
-            </Radio>
-          </TouchableOpacity>
-        </View>
-      </RadioGroup>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
     </Box>
   );
 }

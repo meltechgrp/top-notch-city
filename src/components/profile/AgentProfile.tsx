@@ -16,7 +16,6 @@ import { openAccessModal } from "@/components/globals/AuthModals";
 import { useMe } from "@/hooks/useMe";
 
 function AgentProfile({ data }: { data: AgentInfo }) {
-  if (data.is_following) return null;
   const client = useQueryClient();
   const { me, isAdmin, isAgent } = useMe();
   const { mutate } = useMutation({
@@ -72,6 +71,9 @@ function AgentProfile({ data }: { data: AgentInfo }) {
       client.invalidateQueries({ queryKey: ["agents"] });
     },
   });
+
+  if (data.is_following) return null;
+
   const handlePress = () => {
     if (!me) {
       return openAccessModal({ visible: true });

@@ -15,7 +15,7 @@ import { tempStore } from "@/store/tempStore";
 import { useValue } from "@legendapp/state/react";
 import { router, Stack, useGlobalSearchParams } from "expo-router";
 import { Plus, Save, Search } from "lucide-react-native";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 export default function AgentApplication() {
   const { key } = useGlobalSearchParams() as {
@@ -35,44 +35,84 @@ export default function AgentApplication() {
     }
   }, [config]);
 
-  if (!config) {
-    return <View />;
-  }
+  const parseValue = useCallback(
+    (field: string): any => {
+      if (!config) return "";
 
-  const parseValue = (field: string): any => {
-    // @ts-ignore
-    const source = me?.[field];
+      if (config.isAddress) {
+        const address = me?.address;
+        if (!address || Object.keys(address).length === 0) return "";
 
-    if (config.isArray) {
-      return Array.isArray(source) ? source.join(",") : "";
-    }
-    if (key == "date_of_birth") {
+        return JSON.stringify({
+          displayName: [
+            address.street,
+            address.city,
+            address.state,
+            address.country,
+          ]
+            .filter(Boolean)
+            .join(", "),
+          addressComponents: address,
+          location: {
+            latitude: address.latitude,
+            longitude: address.longitude,
+          },
+        });
+      }
+
+      // @ts-ignore
+      const source = me?.[field];
+
+      if (config.isArray) {
+        return Array.isArray(source) ? source.join(", ") : "";
+      }
+      if (key == "date_of_birth") {
+        return source || "";
+      }
+      if (config.isCompany || config.isDocument) {
+        return JSON.stringify(source || []);
+      }
+      if (config.inputType && typeof source === "object" && source !== null) {
+        return JSON.stringify(source);
+      }
+
       return source || "";
-    }
-    if (config.isCompany || config.inputType) {
-      return JSON.stringify(source || "");
-    }
-
-    return source || "";
-  };
+    },
+    [config, key, me],
+  );
 
   const initialState = useMemo(() => {
     const out: Record<string, any> = {};
-    config.fields.forEach((f) => {
-      out[f] = parseValue(f);
+    if (!config) return out;
+
+    config.inputs.forEach((input) => {
+      out[input.key] = parseValue(input.key);
+    });
+    config.fields.forEach((field) => {
+      if (out[field] === undefined) {
+        out[field] = parseValue(field);
+      }
     });
     return out;
-  }, [me]);
+  }, [config, parseValue]);
 
   const [form, setForm] = useState(initialState);
+
+  useEffect(() => {
+    setForm(initialState);
+  }, [initialState]);
 
   const updateField = (field: string, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSave = async () => {
+    if (!config) return;
+
     if (config.isAddress) {
-      const data = JSON.parse(form[key]);
+      const data = JSON.parse(form.address || "null");
+      if (!data?.addressComponents) return;
+
       let address: any = {};
       Object.entries(data?.addressComponents).forEach(([field, value]) => {
         address[field] = value;
@@ -83,13 +123,15 @@ export default function AgentApplication() {
         address: address,
       });
     } else if (config.isDocument) {
-      const data = JSON.parse(form[key]);
-      console.log(data);
+      const data = JSON.parse(form[key] || "[]");
       updateApplication({
-        documents: data,
+        documents: Array.isArray(data) ? data : [],
       });
     } else if (config.isArray) {
-      const data = form[key].split(", ");
+      const data = String(form[key] || "")
+        .split(",")
+        .map((v) => v.trim())
+        .filter(Boolean);
       updateApplication({
         [key]: data,
       });
@@ -102,6 +144,11 @@ export default function AgentApplication() {
     }
     router.back();
   };
+
+  if (!config) {
+    return <View />;
+  }
+
   return (
     <>
       <Stack.Screen
@@ -113,7 +160,7 @@ export default function AgentApplication() {
               <Pressable
                 className={cn(
                   "items-center w-20 and gap-2 px-3 flex-row",
-                  config.isAddress && "w-28"
+                  config.isAddress && "w-28",
                 )}
                 onPress={() => setShowModal(true)}
               >

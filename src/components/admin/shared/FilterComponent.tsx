@@ -11,6 +11,7 @@ import { buildListQuery } from "@/store/searchStore";
 
 type Props = {
   tab?: string;
+  tabs?: { title: string; total: number }[];
   all?: any;
   pending?: any;
   approved?: any;
@@ -30,6 +31,7 @@ export function FilterComponent({
   tab,
   searchPlaceholder,
   all,
+  tabs: tabsProp,
   pending,
   flagged,
   approved,
@@ -41,13 +43,15 @@ export function FilterComponent({
   inputClassName,
   showTabs = true,
 }: Props) {
-  const tabs = {
-    all: all,
-    pending: pending,
-    approved: approved,
-    rejected: rejected,
-    flagged: flagged,
-  };
+  const tabs =
+    tabsProp ??
+    Object.entries({
+      all: all,
+      pending: pending,
+      approved: approved,
+      rejected: rejected,
+      flagged: flagged,
+    }).map(([title, total]) => ({ title, total }));
   return (
     <View className={cn("gap-3 mb-4", className)}>
       <View className="gap-2">
@@ -74,23 +78,23 @@ export function FilterComponent({
             decelerationRate="fast"
             showsHorizontalScrollIndicator={false}
           >
-            {Object.entries(tabs)?.map(([key, val]) => (
-              <Pressable key={key} onPress={() => onUpdate?.(key)}>
+            {tabs.map(({ title, total }) => (
+              <Pressable key={title} onPress={() => onUpdate?.(title)}>
                 <Badge
                   size="sm"
                   variant="solid"
                   className={cn(
                     "flex-row border border-background-muted gap-3 py-1.5 px-3 rounded-xl items-center justify-between",
-                    tab == key && " border-primary",
+                    tab == title && " border-primary",
                   )}
                   action="muted"
                 >
                   <BadgeText className="text-base font-medium capitalize">
-                    {key}
+                    {title}
                   </BadgeText>
                   <View className="ml-auto">
                     <Text size="md" className="text-primary">
-                      {val}
+                      {total}
                     </Text>
                   </View>
                 </Badge>

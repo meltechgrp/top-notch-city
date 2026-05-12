@@ -120,12 +120,14 @@ export async function getUsers({ pageParam }: { pageParam: number }) {
 }
 
 export async function updateProfileField(
-  form: { field: keyof ProfileUpdate; value: string }[]
+  form: { field: keyof ProfileUpdate; value: string }[],
 ) {
   try {
     const formData = new FormData();
     form.map(({ field, value }) => {
-      formData.append(field, value);
+      if (value === undefined || value === null) return;
+
+      formData.append(field, String(value));
     });
 
     const res = await Fetch("/users/me", {
@@ -135,12 +137,12 @@ export async function updateProfileField(
       },
       data: formData,
     });
-    eventBus.dispatchEvent("REFRESH_PROFILE", null);
 
     if (res?.detail) {
       throw new Error("Failed to update profile");
     }
 
+    eventBus.dispatchEvent("REFRESH_PROFILE", null);
     return res;
   } catch (error) {
     throw error;

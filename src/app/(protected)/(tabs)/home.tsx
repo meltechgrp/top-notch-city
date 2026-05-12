@@ -83,7 +83,7 @@ export default function HomeScreen() {
       }
       return <View></View>;
     },
-    [location]
+    [location],
   );
   const onNewChat = () => {
     router.push("/start");
@@ -106,7 +106,6 @@ export default function HomeScreen() {
             />
           }
           getItemType={(item) => item.id}
-          estimatedItemSize={350}
           showsVerticalScrollIndicator={false}
           data={feedList}
           keyExtractor={(item) => item.id}

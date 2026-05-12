@@ -39,7 +39,7 @@ export default function NotificationScreen() {
         data: items,
       }))
       .sort(
-        (a, b) => new Date(b.title).getTime() - new Date(a.title).getTime()
+        (a, b) => new Date(b.title).getTime() - new Date(a.title).getTime(),
       );
   }, [data]);
   const { onRefresh } = useRefresh(refetch);
@@ -63,7 +63,7 @@ export default function NotificationScreen() {
     return () => {
       eventBus.removeEventListener(
         "PROPERTY_HORIZONTAL_LIST_REFRESH",
-        onRefresh
+        onRefresh,
       );
     };
   }, []);
@@ -79,7 +79,8 @@ export default function NotificationScreen() {
                 No notifications yet
               </Heading>
               <Text size="md" className="text-center">
-                Your notifications will appear here once you've received them.
+                Your notifications will appear here once you{"'"}ve received
+                them.
               </Text>
             </View>
           }

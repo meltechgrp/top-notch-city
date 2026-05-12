@@ -43,33 +43,39 @@ export default function SwipeableWrapper({
     }
   };
 
-  const renderActions = (actions: SwipeAction[]) => () => (
-    <Animated.View style={{ flexDirection: "row" }}>
-      {actions.map((action, index) => (
-        <RectButton
-          key={index}
-          style={[
-            styles.action,
-            {
-              width: action.width ?? 80,
-              borderRadius: withBorder ? 10 : 0,
-            },
-          ]}
-          onPress={() => {
-            triggerHaptics(action.type);
-            action.onPress();
-            reanimatedRef.current?.close();
-          }}
-        >
-          {action.component ?? (
-            <View className="flex-1 items-center justify-center bg-gray-600">
-              <Text className="text-white">Action</Text>
-            </View>
-          )}
-        </RectButton>
-      ))}
-    </Animated.View>
-  );
+  const renderActions = (actions: SwipeAction[]) => {
+    function SwipeActions() {
+      return (
+        <Animated.View style={{ flexDirection: "row" }}>
+          {actions.map((action, index) => (
+            <RectButton
+              key={index}
+              style={[
+                styles.action,
+                {
+                  width: action.width ?? 80,
+                  borderRadius: withBorder ? 10 : 0,
+                },
+              ]}
+              onPress={() => {
+                triggerHaptics(action.type);
+                action.onPress();
+                reanimatedRef.current?.close();
+              }}
+            >
+              {action.component ?? (
+                <View className="flex-1 items-center justify-center bg-gray-600">
+                  <Text className="text-white">Action</Text>
+                </View>
+              )}
+            </RectButton>
+          ))}
+        </Animated.View>
+      );
+    }
+
+    return SwipeActions;
+  };
 
   function handleSwipeOpen() {
     eventBus.dispatchEvent("SWIPEABLE_OPEN", null);

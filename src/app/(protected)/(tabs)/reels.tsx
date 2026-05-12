@@ -1,10 +1,9 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { StyleSheet } from "react-native";
 import { Box, View } from "@/components/ui";
 import PagerView from "react-native-pager-view";
 import ReelList from "@/components/reel/ReelList";
 import ReelTabs from "@/components/reel/ReelTabs";
-import { useFocusEffect } from "expo-router";
 
 const TABS = ["Videos"];
 
@@ -31,7 +30,7 @@ export default function ReelScreen() {
           onPageSelected={(e) => setCurrentPage(e.nativeEvent.position)}
         >
           <View key="videos" style={{ flex: 1 }}>
-            <ReelList visible={currentPage == 1} />
+            <ReelList />
           </View>
         </PagerView>
       </Box>

@@ -50,6 +50,7 @@ export default function MediaPreviewView({
   const [index, setIndex] = useState(initialIndex);
   const [id, setId] = useState<string | null>(media[index].id || null);
   const [text, setText] = useState("");
+  const { isVisible } = useKeyboardState();
 
   const translateY = React.useRef(new Animated.Value(H)).current;
 
@@ -73,7 +74,6 @@ export default function MediaPreviewView({
     }
   }, [index]);
   if (!visible) return null;
-  const { isVisible } = useKeyboardState();
   return (
     <Animated.View
       className={"bg-background"}
@@ -165,7 +165,7 @@ export default function MediaPreviewView({
                     style={[styles.thumbWrap]}
                     className={cn(
                       " relative border-outline-100",
-                      i === index && "border-primary"
+                      i === index && "border-primary",
                     )}
                   >
                     {item.media_type === "VIDEO" ? (
@@ -192,7 +192,7 @@ export default function MediaPreviewView({
               <View
                 className={cn(
                   "flex-row w-[85%] bg-background min-h-12 items-end rounded-[2rem] border border-outline-100 px-2 py-1",
-                  text.length > 20 && "rounded-3xl"
+                  text.length > 20 && "rounded-3xl",
                 )}
               >
                 <Pressable

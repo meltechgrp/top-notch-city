@@ -15,9 +15,7 @@ interface Props {
 
 const ReelLikeButton = ({ liked, id, className, isLand }: Props) => {
   const { me } = useMe();
-  const { toggleLike, isPending } = useLike({
-    queryKey: [isLand ? "lands" : "reels"],
-  });
+  const { toggleLike, isPending } = useLike();
 
   function handleLike() {
     if (!me) {

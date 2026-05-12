@@ -24,7 +24,7 @@ export default function AmenityItem({ item }: Props) {
       },
       {
         onSuccess: () => setAmenityBottomSheet(false),
-      }
+      },
     );
   }
   async function deleteHandler() {
@@ -32,14 +32,14 @@ export default function AmenityItem({ item }: Props) {
       { id: item.id },
       {
         onSuccess: () => setAmenityBottomSheet(false),
-      }
+      },
     );
   }
   return (
     <>
       <SwipeableWrapper
-        rightAction={() => setAmenityBottomSheet(true)}
-        leftAction={() => deleteHandler()}
+        rightActions={[{ onPress: () => setAmenityBottomSheet(true) }]}
+        leftActions={[{ onPress: () => deleteHandler(), type: "danger" }]}
       >
         <View className="flex-1 p-6 py-5 border-t border-outline flex-row justify-between items-center bg-background-muted">
           <View className="flex-row gap-2 items-center">

@@ -226,7 +226,7 @@ const PropertyDetailsBottomSheet = ({
             <View className=" pt-2 flex-1 gap-6 pb-20">
               <View className="gap-3 p-4 flex bg-background-muted mx-4 rounded-xl">
                 <Heading size="lg" className="font-bold">
-                  What's special
+                  What{"'"}s special
                 </Heading>
                 <LongDescription
                   numberOfLines={8}
@@ -317,7 +317,7 @@ const PropertyDetailsBottomSheet = ({
                         Tour with an Agent
                       </Text>
                       <Text className="mt-1 text-sm text-typography/90">
-                        We'll connect you with an expert to take you on a
+                        We{"'"}ll connect you with an expert to take you on a
                         private tour on this property at {property.address}.
                       </Text>
                     </View>

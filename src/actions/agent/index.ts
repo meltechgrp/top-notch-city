@@ -16,7 +16,7 @@ export async function uploadAgentForm(form: Partial<Application>) {
   if (form.date_of_birth) {
     data.append(
       "birthdate",
-      format(new Date(form.date_of_birth), "yyyy-MM-dd")
+      format(new Date(form.date_of_birth), "yyyy-MM-dd"),
     );
   }
   if (form?.address) {
@@ -45,7 +45,6 @@ export async function uploadAgentForm(form: Partial<Application>) {
   const formdata = await fetch(`${config.origin}/api/agent/apply`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
       ...(authToken && { Authorization: `Bearer ${authToken}` }),
     },
     body: data,
@@ -69,7 +68,7 @@ export async function getAgentApplications({
   pageParam: number;
 }) {
   const res = await Fetch(
-    `/admin/agent/applications?page=${pageParam}&per_page=20`
+    `/admin/agent/applications?page=${pageParam}&per_page=20`,
   );
   return res as AgentResult;
 }
@@ -150,7 +149,7 @@ export async function getAgents({
   state?: string;
 }) {
   return (await Fetch(
-    `/agents/search?per_page=${perPage}&page=${pageParam}&sort_by_top_properties=true`
+    `/agents/search?per_page=${perPage}&page=${pageParam}&sort_by_top_properties=true`,
   )) as AgentResult2;
 }
 
@@ -183,7 +182,7 @@ export async function searchAgents({
   filter?.sort_by_top_properties &&
     params.append(
       "sort_by_top_properties",
-      String(filter?.sort_by_top_properties)
+      String(filter?.sort_by_top_properties),
     );
 
   params.append("page", pageParam.toString());

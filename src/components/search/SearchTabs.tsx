@@ -10,14 +10,14 @@ type IProps = {
   total?: number;
   isLocation?: boolean;
   loading?: boolean;
-  useMyLocation: () => Promise<void>;
+  onUseMyLocation: () => Promise<void>;
   activeIndex: number;
   onTabChange: (index: number) => void;
 };
 function SearchTabs(props: IProps) {
   const {
     total = 0,
-    useMyLocation,
+    onUseMyLocation,
     isLocation,
     loading,
     onTabChange,
@@ -41,7 +41,7 @@ function SearchTabs(props: IProps) {
               }}
               className={cn(
                 " py-3 bg-background-muted px-4 rounded-3xl flex-row gap-1 items-center",
-                activeIndex == 0 && "bg-primary"
+                activeIndex == 0 && "bg-primary",
               )}
             >
               <Icon size="lg" className="text-white" as={Map} />
@@ -55,7 +55,7 @@ function SearchTabs(props: IProps) {
               }}
               className={cn(
                 " py-3 bg-background-muted px-4 rounded-3xl flex-row gap-1 items-center",
-                activeIndex == 1 && "bg-primary"
+                activeIndex == 1 && "bg-primary",
               )}
             >
               <Icon size="lg" className="text-white" as={ListOrdered} />
@@ -76,9 +76,9 @@ function SearchTabs(props: IProps) {
             <AnimatedPressable
               className={cn(
                 " p-4 flex-row gap-2 items-center justify-center rounded-full bg-background-muted/70",
-                isLocation && "bg-primary"
+                isLocation && "bg-primary",
               )}
-              onPress={async () => useMyLocation()}
+              onPress={async () => onUseMyLocation()}
             >
               <Icon as={MapPin} size="xl" />
             </AnimatedPressable>

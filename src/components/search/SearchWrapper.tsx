@@ -85,7 +85,7 @@ export default function SearchWrapper({
           <SearchTabs
             total={results.available}
             isLocation={search.isLocation}
-            useMyLocation={search.useMyLocation}
+            onUseMyLocation={search.useMyLocation}
             activeIndex={currentPage}
             onTabChange={onTabChange}
             loading={query.loading}

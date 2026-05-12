@@ -77,14 +77,14 @@ function PropertyWrapper({ properties, slug }: PropertyWrapperProps) {
           translateY: interpolate(
             scrollY.value,
             [-HERO_HEIGHT, 0, HERO_HEIGHT],
-            [-HERO_HEIGHT / 2, 0, HERO_HEIGHT * 0.4]
+            [-HERO_HEIGHT / 2, 0, HERO_HEIGHT * 0.4],
           ),
         },
         {
           scale: interpolate(
             scrollY.value,
             [-HERO_HEIGHT, 0, HERO_HEIGHT],
-            [1.3, 1, 1]
+            [1.3, 1, 1],
           ),
         },
       ],
@@ -95,25 +95,17 @@ function PropertyWrapper({ properties, slug }: PropertyWrapperProps) {
       scrollY.value,
       [detailsY.value - 50, detailsY.value + 50],
       [0, 1],
-      Extrapolation.CLAMP
+      Extrapolation.CLAMP,
     );
     return {
       backgroundColor: `rgba(${theme == "dark" ? "22,24,25" : "238,236,240"},${opacity})`,
     };
   });
-  if (!property) {
-    return (
-      <Box className="flex-1 justify-center items-center">
-        <MiniEmptyState
-          title="Property not found"
-          description="This property seems to be removed or not available"
-        />
-      </Box>
-    );
-  }
   useEffect(() => {
+    if (!property?.property_server_id) return;
     (async () => await viewProperty({ id: property.property_server_id }))();
-  }, []);
+  }, [property?.property_server_id]);
+
   useEffect(() => {
     if (property) {
       listingStore.updateListing({
@@ -150,6 +142,18 @@ function PropertyWrapper({ properties, slug }: PropertyWrapperProps) {
       });
     }
   }, [property]);
+
+  if (!property) {
+    return (
+      <Box className="flex-1 justify-center items-center">
+        <MiniEmptyState
+          title="Property not found"
+          description="This property seems to be removed or not available"
+        />
+      </Box>
+    );
+  }
+
   return (
     <>
       <Stack.Screen
@@ -259,7 +263,7 @@ function PropertyWrapper({ properties, slug }: PropertyWrapperProps) {
 const enhance = withObservables(["slug"], ({ slug }) => ({
   properties: propertiesCollection.query(
     Q.where("slug", slug || null),
-    Q.take(1)
+    Q.take(1),
   ),
 }));
 

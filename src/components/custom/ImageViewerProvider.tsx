@@ -66,7 +66,7 @@ export const ImageViewerProvider = ({ children }: { children: ReactNode }) => {
   const open = (
     images: Media[] | [],
     index = 0,
-    layout: OriginLayout = null
+    layout: OriginLayout = null,
   ) => {
     setState({
       visible: true,
@@ -100,7 +100,7 @@ export const useProfileImageViewer = () => {
   const ctx = useContext(ImageViewerContext);
   if (!ctx)
     throw new Error(
-      "useProfileImageViewer must be used within ImageViewerProvider"
+      "useProfileImageViewer must be used within ImageViewerProvider",
     );
   return ctx;
 };
@@ -133,7 +133,7 @@ export const ProfileImageTrigger = ({
       ref.current?.measureInWindow?.(
         (pageX: number, pageY: number, width: number, height: number) => {
           cb({ x: pageX, y: pageY, width, height });
-        }
+        },
       ) || cb(null);
     }
   };
@@ -171,7 +171,7 @@ const ProfileImageViewer = ({
   onClose: () => void;
 }) => {
   const [index, setIndex] = useState(initialIndex || 0);
-  if (Platform.OS === "android") {
+  const renderAndroidViewer = () => {
     if (!visible) return null;
 
     return (
@@ -190,7 +190,7 @@ const ProfileImageViewer = ({
             contentOffset={{ x: SCREEN_W * index, y: 0 }}
             onMomentumScrollEnd={(e) => {
               const newIndex = Math.round(
-                e.nativeEvent.contentOffset.x / SCREEN_W
+                e.nativeEvent.contentOffset.x / SCREEN_W,
               );
               setIndex(newIndex);
             }}
@@ -277,7 +277,8 @@ const ProfileImageViewer = ({
         </View>
       </Modal>
     );
-  }
+  };
+
   const progress = useSharedValue(0);
   const translateY = useSharedValue(0);
   const scaleGesture = useSharedValue(1);
@@ -300,7 +301,7 @@ const ProfileImageViewer = ({
       backdropOpacity.value = withTiming(1, { duration: 140 });
       const safeIndex = Math.max(
         0,
-        Math.min(initialIndex || 0, images.length - 1)
+        Math.min(initialIndex || 0, images.length - 1),
       );
       setIndex(safeIndex);
     }
@@ -337,7 +338,7 @@ const ProfileImageViewer = ({
           scaleGesture.value,
           [1, 0.12],
           [0, circleBase],
-          Extrapolation.CLAMP
+          Extrapolation.CLAMP,
         );
         backdropOpacity.value = Math.max(0, 1 - drag * 1.2);
       }
@@ -384,6 +385,8 @@ const ProfileImageViewer = ({
     progress.value = 0;
     progress.value = withTiming(1, { duration: 10 });
   }, [index]);
+
+  if (Platform.OS === "android") return renderAndroidViewer();
 
   if (!visible || !images || images.length === 0) return null;
 
@@ -444,7 +447,7 @@ const ProfileImageViewer = ({
               onPress={() => {
                 backdropOpacity.value = withTiming(0, { duration: 150 });
                 progress.value = withTiming(0, { duration: 150 }, () =>
-                  scheduleOnRN(onClose)
+                  scheduleOnRN(onClose),
                 );
               }}
               className="bg-background-muted border border-outline-100"

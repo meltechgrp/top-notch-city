@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Icon, Pressable, Text, View } from "@/components/ui";
+import { Pressable, Text, View } from "@/components/ui";
 import { Star, StarHalf, Star as StarOutline } from "lucide-react-native";
 import { formatNumberCompact } from "@/lib/utils";
 
@@ -26,24 +26,17 @@ export function Rating({
     <View className="flex-row items-center">
       {showValue && <Text className="mr-2 text-sm">{rating.toFixed(1)}</Text>}
       {Array.from({ length: fullStars }).map((_, i) => (
-        <Icon
-          key={`full-${i}`}
-          as={Star}
-          size={size}
-          className="text-primary fill-primary"
-        />
+        <Star key={`full-${i}`} size={size} color="#FF4C00" fill="#FF4C00" />
       ))}
 
-      {hasHalfStar && (
-        <Icon as={StarHalf} size={size} className="text-primary fill-primary" />
-      )}
+      {hasHalfStar && <StarHalf size={size} color="#FF4C00" fill="#FF4C00" />}
 
       {Array.from({ length: emptyStars }).map((_, i) => (
-        <Icon
+        <StarOutline
           key={`empty-${i}`}
-          as={StarOutline}
           size={size}
-          className="text-gray-400 fill-gray-400"
+          color="#9CA3AF"
+          fill="#9CA3AF"
         />
       ))}
       {showValue && !!total && (

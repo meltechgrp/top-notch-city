@@ -256,4 +256,6 @@ const EditorComponent = React.forwardRef<
   );
 });
 
+EditorComponent.displayName = "EditorComponent";
+
 export default memo(EditorComponent);

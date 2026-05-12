@@ -99,7 +99,7 @@ export function PropertyEnquiry({ property, me }: PropertyEnquiryProps) {
         </ExternalLink>{" "}
         TopNotch City does not endorse any real estate professionals. We may
         share information about your recent and future site activity with your
-        agent to help them understand what you're looking for in a home
+        agent to help them understand what you{"'"}re looking for in a home
       </Text>
     </View>
   );

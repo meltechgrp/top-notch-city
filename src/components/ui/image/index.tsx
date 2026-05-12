@@ -26,13 +26,15 @@ const Image = memo(
         withHash = true,
         ...props
       },
-      ref
+      ref,
     ) => {
-      if (!source) return null;
-      const image = useImage(source as ImageSource, {
+      const image = useImage((source || null) as ImageSource, {
         maxWidth: 500,
         onError(error, retry) {},
       });
+
+      if (!source) return null;
+
       return (
         <ExpoImage
           ref={ref}
@@ -54,8 +56,8 @@ const Image = memo(
           transition={props.transition || 800}
         />
       );
-    }
-  )
+    },
+  ),
 );
 
 Image.displayName = "Image";

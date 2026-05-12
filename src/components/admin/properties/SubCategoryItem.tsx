@@ -31,7 +31,7 @@ export default function SubCategoryItem({ item, categoryId }: Props) {
       },
       {
         onSuccess: () => setCategoryBottomSheet(false),
-      }
+      },
     );
   }
   async function deleteHandler() {
@@ -42,14 +42,14 @@ export default function SubCategoryItem({ item, categoryId }: Props) {
       },
       {
         onSuccess: () => setCategoryBottomSheet(false),
-      }
+      },
     );
   }
   return (
     <>
       <SwipeableWrapper
-        rightAction={() => setCategoryBottomSheet(true)}
-        leftAction={() => deleteHandler()}
+        rightActions={[{ onPress: () => setCategoryBottomSheet(true) }]}
+        leftActions={[{ onPress: () => deleteHandler(), type: "danger" }]}
       >
         <View className="flex-1 p-6 py-5 border-t border-outline flex-row justify-between items-center bg-background-muted">
           <View className="flex-row gap-2 items-center">

@@ -10,6 +10,10 @@ type FetchOptions = {
   withAuth?: boolean;
 };
 
+function isFormData(value: unknown): value is FormData {
+  return typeof FormData !== "undefined" && value instanceof FormData;
+}
+
 export async function Fetch(url: string, options: FetchOptions = {}) {
   const authToken = await getActiveToken();
   const deviceId = getUniqueIdSync();
@@ -18,7 +22,9 @@ export async function Fetch(url: string, options: FetchOptions = {}) {
   let body;
 
   if (options.data && options.method !== "GET") {
-    if (contentType === "application/x-www-form-urlencoded") {
+    if (isFormData(options.data)) {
+      body = options.data;
+    } else if (contentType === "application/x-www-form-urlencoded") {
       const params = new URLSearchParams();
       Object.entries(options.data).forEach(([key, value]) => {
         if (value !== null && value !== undefined) {
@@ -31,14 +37,21 @@ export async function Fetch(url: string, options: FetchOptions = {}) {
     }
   }
 
+  const headers: Record<string, string> = {
+    ...(authToken && { Authorization: `Bearer ${authToken}` }),
+    "X-DID": deviceId,
+    ...(options.headers as Record<string, string> | undefined),
+  };
+
+  if (isFormData(body)) {
+    delete headers["Content-Type"];
+  } else {
+    headers["Content-Type"] = contentType;
+  }
+
   const response = await fetch(`${config.origin}/api${url}`, {
     method: options.method ?? "GET",
-    headers: {
-      "Content-Type": contentType,
-      ...(authToken && { Authorization: `Bearer ${authToken}` }),
-      "X-DID": deviceId,
-      ...options.headers,
-    },
+    headers,
     body: body,
   });
 
