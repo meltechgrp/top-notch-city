@@ -1,4 +1,5 @@
 import { Bookings, updateBookingStatus } from "@/actions/bookings";
+import { getApiErrorMessage } from "@/actions/utills";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { useMe } from "@/hooks/useMe";
 import {
@@ -61,8 +62,10 @@ export function useBooking() {
     onError: (e) => {
       console.log(e);
       showErrorAlert({
-        title:
-          typeof e?.message == "string" ? e?.message : "Something went wrong!",
+        title: getApiErrorMessage(
+          e,
+          "Could not update this booking. Please try again.",
+        ),
         alertType: "error",
       });
     },

@@ -1,4 +1,4 @@
-import { Fetch } from "@/actions/utills";
+import { ApiError, Fetch, getApiErrorMessage } from "@/actions/utills";
 
 export async function sendBooking({ form }: { form: BookingForm }) {
   try {
@@ -17,7 +17,7 @@ export async function sendBooking({ form }: { form: BookingForm }) {
     return res;
   } catch (error: any) {
     console.log(error);
-    throw Error(error);
+    throw Error(getApiErrorMessage(error, "Unable to create booking."));
   }
 }
 export async function Bookings(isAgent: boolean, page: number) {
@@ -39,19 +39,51 @@ export async function updateBookingStatus({
   status: BookingStatus;
   note?: string;
 }) {
-  const res = await Fetch(`/bookings/${booking_id}/status`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    data: {
-      status,
-      note: note || null,
-    },
-  });
+  const data = {
+    status,
+    note: note || undefined,
+  };
+
+  let res;
+
+  try {
+    res = await Fetch(`/bookings/${booking_id}/status`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      data,
+    });
+  } catch (error) {
+    const shouldRetry =
+      error instanceof ApiError &&
+      [404, 405, 415, 422].includes(error.status || 0);
+
+    if (!shouldRetry) {
+      throw Error(
+        getApiErrorMessage(
+          error,
+          "We could not update this booking. Please try again.",
+        ),
+      );
+    }
+
+    res = await Fetch(`/bookings/${booking_id}/status`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      data,
+    });
+  }
 
   if (res?.detail) {
-    throw Error(res?.detail);
+    throw Error(
+      getApiErrorMessage(
+        res,
+        "We could not update this booking. Please try again.",
+      ),
+    );
   }
   return res as Booking[];
 }

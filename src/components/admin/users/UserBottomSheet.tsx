@@ -9,6 +9,7 @@ import {
   updateRole,
   verifyEmail,
 } from "@/actions/user";
+import { getApiErrorMessage } from "@/actions/utills";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { Ban, Check, ChevronDown, Trash, User } from "lucide-react-native";
@@ -191,7 +192,10 @@ export function UserActionsBottomSheet({
                 onError: (e) => {
                   console.log(e);
                   showErrorAlert({
-                    title: "Something went wrong. Try again!",
+                    title: getApiErrorMessage(
+                      e,
+                      "Could not update this user's role. Please try again.",
+                    ),
                     alertType: "error",
                   });
                 },

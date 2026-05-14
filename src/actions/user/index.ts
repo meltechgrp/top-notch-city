@@ -1,5 +1,5 @@
 import eventBus from "@/lib/eventBus";
-import { Fetch } from "../utills";
+import { ApiError, Fetch, getApiErrorMessage } from "../utills";
 import { getUniqueIdSync, getDeviceName } from "react-native-device-info";
 import { Platform } from "react-native";
 import config from "@/config";
@@ -231,16 +231,42 @@ export async function updateRole({
   user_id: string;
   role: Me["role"];
 }) {
-  const res = await Fetch(`/${user_id}/role`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: { new_role: role },
-  });
+  const request = (url: string) =>
+    Fetch(url, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: { new_role: role },
+    });
+
+  let res;
+
+  try {
+    res = await request(`/admin/users/${user_id}/role`);
+  } catch (error) {
+    const shouldRetry =
+      error instanceof ApiError && [404, 405].includes(error.status || 0);
+
+    if (!shouldRetry) {
+      throw new Error(
+        getApiErrorMessage(
+          error,
+          "Could not update this user's role. Please try again.",
+        ),
+      );
+    }
+
+    res = await request(`/${user_id}/role`);
+  }
 
   if (res?.detail) {
-    throw new Error("Failed to update user role");
+    throw new Error(
+      getApiErrorMessage(
+        res,
+        "Could not update this user's role. Please try again.",
+      ),
+    );
   }
   return res as string;
 }

@@ -10,8 +10,68 @@ type FetchOptions = {
   withAuth?: boolean;
 };
 
+export class ApiError extends Error {
+  status?: number;
+  body?: unknown;
+
+  constructor(message: string, status?: number, body?: unknown) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    this.body = body;
+  }
+}
+
 function isFormData(value: unknown): value is FormData {
   return typeof FormData !== "undefined" && value instanceof FormData;
+}
+
+export function getApiErrorMessage(
+  error: unknown,
+  fallback = "Something went wrong. Please try again.",
+): string {
+  const value =
+    error instanceof ApiError
+      ? error.body
+      : error instanceof Error
+        ? error.message
+        : error;
+
+  if (typeof value === "string") {
+    try {
+      return getApiErrorMessage(JSON.parse(value), fallback);
+    } catch {
+      return value.replace(/^Error:\s*/i, "").trim() || fallback;
+    }
+  }
+
+  if (Array.isArray(value)) {
+    return value
+      .map((item) => getApiErrorMessage(item, ""))
+      .filter(Boolean)
+      .join("\n");
+  }
+
+  if (value && typeof value === "object") {
+    const record = value as Record<string, any>;
+    const detail = record.detail ?? record.message ?? record.error;
+
+    if (typeof detail === "string") return detail;
+    if (Array.isArray(detail)) return getApiErrorMessage(detail, fallback);
+    if (detail && typeof detail === "object") {
+      return Object.entries(detail)
+        .map(([field, message]) => {
+          const text = Array.isArray(message) ? message.join(", ") : message;
+          return `${field}: ${String(text)}`;
+        })
+        .join("\n");
+    }
+
+    const first = Object.values(record).find(Boolean);
+    if (first) return getApiErrorMessage(first, fallback);
+  }
+
+  return fallback;
 }
 
 export async function Fetch(url: string, options: FetchOptions = {}) {
@@ -58,8 +118,18 @@ export async function Fetch(url: string, options: FetchOptions = {}) {
   console.log("Fetch URL:", url, "Response:", response.status);
 
   if (!response.ok) {
-    const errorBody = await response.text();
-    throw new Error(errorBody || `Request failed: ${response.status}`);
+    const errorText = await response.text();
+    let errorBody: unknown = errorText;
+
+    try {
+      errorBody = JSON.parse(errorText);
+    } catch {}
+
+    throw new ApiError(
+      getApiErrorMessage(errorBody, `Request failed: ${response.status}`),
+      response.status,
+      errorBody,
+    );
   }
 
   // auto-handle empty responses
