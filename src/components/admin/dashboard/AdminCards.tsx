@@ -116,7 +116,7 @@ export default function AdminCards() {
           <DashboardCard
             title="Featured"
             icon={House}
-            total={0}
+            total={data?.totalFeaturedProperties}
             onPress={() => router.push("/admin/featured")}
             showDirection={false}
           />

@@ -39,7 +39,7 @@ export function UserActionsBottomSheet({
     mutationFn: suspendUser,
   });
 
-  const { mutateAsync: mutateRole, isPending: roling } = useMutation({
+  const { mutate: mutateRole, isPending: roling } = useMutation({
     mutationFn: updateRole,
   });
   const handleVerify = () => {
@@ -163,7 +163,7 @@ export function UserActionsBottomSheet({
     );
   };
 
-  async function handleRole(val: Me["role"]) {
+  function handleRole(val: Me["role"]) {
     Alert.alert(
       "Confirm User Role",
       "Are you sure you want to change this user role?",
@@ -172,19 +172,27 @@ export function UserActionsBottomSheet({
         {
           text: "Change",
           style: "default",
-          onPress: async () => {
-            console.log(val);
-            await mutateRole(
+          onPress: () => {
+            mutateRole(
               { user_id: user.id, role: val },
               {
                 onSuccess(data) {
                   if (data) {
+                    const message =
+                      typeof data === "string"
+                        ? data
+                        : data.message || "User role updated successfully";
+
+                    setShowRoles(false);
                     onDismiss();
                     queryClient.invalidateQueries({
                       queryKey: ["user", user.id],
                     });
+                    queryClient.invalidateQueries({
+                      queryKey: ["users"],
+                    });
                     showErrorAlert({
-                      title: data,
+                      title: message,
                       alertType: "success",
                     });
                   }
