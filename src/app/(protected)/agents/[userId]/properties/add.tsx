@@ -6,10 +6,11 @@ import { useEffect } from "react";
 
 export default function SellAddScreen() {
   const { userId } = useLocalSearchParams() as { userId: string };
+  const resetListing = listingStore((state) => state.resetListing);
 
   useEffect(() => {
-    listingStore.resetListing();
-  }, []);
+    resetListing();
+  }, [resetListing]);
   return (
     <>
       <Stack.Screen

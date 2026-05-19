@@ -52,45 +52,27 @@ import { KeyboardDismissPressable } from "@/components/shared/KeyboardDismissPre
 import { ExternalLink } from "@/components/ExternalLink";
 import { PropertyBadge } from "@/components/property/PropertyBadge";
 import { Durations } from "@/constants/Amenities";
-import {
-  Property,
-  PropertyAmenity,
-  PropertyMedia,
-} from "@/db/models/properties";
-import { withObservables } from "@nozbe/watermelondb/react";
-import {
-  propertyAmenityCollection,
-  propertyMediaCollection,
-  userCollection,
-} from "@/db/collections";
-import { Q } from "@nozbe/watermelondb";
 import { useLayout } from "@react-native-community/hooks";
-import { User } from "@/db/models/users";
 import { listingStore } from "@/store/listing";
+import { UiProperty } from "@/lib/propertyAdapter";
 
 interface PropertyDetailsBottomSheetProps {
-  property: Property;
+  property: UiProperty;
   me: Account;
-  media: PropertyMedia[];
-  owner: User[];
-  amenities: PropertyAmenity[];
 }
 
 const PropertyDetailsBottomSheet = ({
   property,
   me,
-  media: files,
-  owner: user,
-  amenities,
 }: PropertyDetailsBottomSheetProps) => {
   const router = useRouter();
   const { onLayout, width } = useLayout();
   const media = useMemo(() => {
-    if (files) {
-      return files.map((m) => ({
+    if (property.media) {
+      return property.media.map((m) => ({
         url: m.url,
         media_type: m.media_type,
-        id: m.server_image_id,
+        id: m.id,
       }));
     }
     if (property?.thumbnail) {
@@ -103,12 +85,13 @@ const PropertyDetailsBottomSheet = ({
       ];
     }
     return [];
-  }, [property.thumbnail, files]) as Media[];
-  const owner = user?.[0];
+  }, [property.thumbnail, property.media]) as Media[];
+  const owner = property.owner;
+  const amenities = property.amenities;
   const mainImage = property?.thumbnail;
   useEffect(() => {
     if (media) {
-      listingStore.updateListing({
+      listingStore.getState().updateListing({
         photos: media?.filter((img) => img.media_type == "IMAGE"),
         videos: media?.filter((img) => img.media_type == "VIDEO"),
         facilities: amenities?.map((f) => f.name),
@@ -325,10 +308,11 @@ const PropertyDetailsBottomSheet = ({
                       onPress={() => {
                         openBookingModal({
                           visible: true,
-                          property_id: property.id,
+                          property_id: property.property_server_id,
                           agent_id: property.server_user_id,
                           image: property?.thumbnail!,
                           address: property.address,
+                          availabilities: property.availabilities,
                           booking_type:
                             property.category == "Shortlet"
                               ? "reservation"
@@ -491,20 +475,4 @@ function ImageGrid({ width, media }: { width: number; media: Media[] }) {
   );
 }
 
-const enhance = withObservables(
-  ["property"],
-  ({ property }: { property: Property }) => ({
-    property: property.observe(),
-    media: propertyMediaCollection
-      .query(Q.where("property_server_id", property.property_server_id))
-      .observe(),
-    owner: userCollection
-      .query(Q.where("server_user_id", property.server_user_id), Q.take(1))
-      .observe(),
-    amenities: propertyAmenityCollection
-      .query(Q.where("property_server_id", property.property_server_id))
-      .observe(),
-  }),
-);
-
-export default enhance(PropertyDetailsBottomSheet);
+export default PropertyDetailsBottomSheet;

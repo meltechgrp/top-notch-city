@@ -13,7 +13,7 @@ import BottomSheet from "../shared/BottomSheet";
 import { Icon, Switch, Text, View } from "@/components/ui";
 import { Divider } from "@/components/ui/divider";
 import { openEnquiryModal } from "@/components/globals/AuthModals";
-import { mainStore } from "@/store";
+import { useMainStore } from "@/store";
 
 interface ShareSheetProps {
   visible: boolean;
@@ -60,7 +60,8 @@ export function ReelsShareSheet({
   id,
   hideMute = false,
 }: ShareSheetProps) {
-  const { muted, updateMuted } = mainStore.get();
+  const muted = useMainStore((state) => state.muted);
+  const updateMuted = useMainStore((state) => state.updateMuted);
   const handleShare = async (action: string) => {
     try {
       switch (action) {
@@ -70,7 +71,7 @@ export function ReelsShareSheet({
           break;
         case "facebook":
           Linking.openURL(
-            `https://www.facebook.com/sharer/sharer.php?u=${propertyUrl}`
+            `https://www.facebook.com/sharer/sharer.php?u=${propertyUrl}`,
           );
           break;
         case "instagram":
@@ -81,12 +82,12 @@ export function ReelsShareSheet({
           break;
         case "twitter":
           Linking.openURL(
-            `https://twitter.com/intent/tweet?url=${propertyUrl}`
+            `https://twitter.com/intent/tweet?url=${propertyUrl}`,
           );
           break;
         case "email":
           Linking.openURL(
-            `mailto:?subject=Check this property&body=${propertyUrl}`
+            `mailto:?subject=Check this property&body=${propertyUrl}`,
           );
           break;
         case "native":

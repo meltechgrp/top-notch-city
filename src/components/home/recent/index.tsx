@@ -1,18 +1,31 @@
 import SectionHeaderWithRef from "@/components/home/SectionHeaderWithRef";
 import HorizontalProperties from "@/components/property/HorizontalProperties";
-import { propertiesCollection } from "@/db/collections";
-import { Property } from "@/db/models/properties";
-import { Q } from "@nozbe/watermelondb";
-import { withObservables } from "@nozbe/watermelondb/react";
+import { toUiProperties } from "@/lib/propertyAdapter";
+import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import { router } from "expo-router";
+import { useMemo } from "react";
 
-function ApartmentsProperties({ properties }: { properties: Property[] }) {
+function ApartmentsProperties() {
+  const { data, isLoading, isRefetching } = useInfinityQueries({
+    type: "latest",
+    perPage: 10,
+  });
+  const properties = useMemo(
+    () =>
+      toUiProperties(data?.pages.flatMap((page) => page.results) ?? []).filter(
+        (property) =>
+          property.category === "Residential" ||
+          property.category === "Commercial",
+      ),
+    [data],
+  );
+
   return (
     <SectionHeaderWithRef
       title="Properties"
       titleClassName="text-gray-400 text-base"
       subTitle="See More"
-      hasData={properties && properties?.length > 0}
+      hasData={properties.length > 0}
       onSeeAllPress={() => {
         router.push({
           pathname: "/explore",
@@ -24,20 +37,11 @@ function ApartmentsProperties({ properties }: { properties: Property[] }) {
     >
       <HorizontalProperties
         data={properties}
-        isLoading={false}
-        isRefetching={false}
+        isLoading={isLoading}
+        isRefetching={isRefetching}
       />
     </SectionHeaderWithRef>
   );
 }
 
-const enhance = withObservables([], () => ({
-  properties: propertiesCollection.query(
-    Q.where("status", "approved"),
-    Q.or(Q.where("category", "Residential"), Q.where("category", "Commercial")),
-    Q.sortBy("updated_at", Q.desc),
-    Q.take(10)
-  ),
-}));
-
-export default enhance(ApartmentsProperties);
+export default ApartmentsProperties;

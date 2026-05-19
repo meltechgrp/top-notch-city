@@ -42,7 +42,7 @@ export default function SwitchAccountSheet({
               onPress={async () => {
                 if (acc.id == me?.id) return;
                 switchAccount(acc.id);
-                mainStore.propertyLastSyncAt.set(0);
+                mainStore.getState().setPropertyLastSyncAt(0);
                 onDismiss?.();
               }}
               className="flex-row justify-between items-center gap-4 border-b border-outline-100 p-4"

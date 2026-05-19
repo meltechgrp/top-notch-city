@@ -1,15 +1,14 @@
 import FilterComponent from "@/components/admin/shared/FilterComponent";
 import VerticalProperties from "@/components/property/VerticalProperties";
 import { Box, Icon, Pressable, View } from "@/components/ui";
-import { usePropertyFeedSync } from "@/db/queries/syncPropertyFeed";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useMe } from "@/hooks/useMe";
+import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import { Stack, useGlobalSearchParams, useRouter } from "expo-router";
 import { PlusCircle } from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
 
 export default function AgentProperties() {
-  const { resync } = usePropertyFeedSync();
   const { userId } = useGlobalSearchParams() as { userId: string };
   const router = useRouter();
   const [search, setSearch] = useState("");
@@ -18,6 +17,15 @@ export default function AgentProperties() {
   const [activeTab, setActiveTab] = useState("all");
   const [page, setPage] = useState(1);
   const isOwner = useMemo(() => userId == me?.id, [me, userId]);
+  const { data, refetch } = useInfinityQueries({
+    type: "agent-property",
+    profileId: userId,
+    agentId: userId,
+    search: debouncedSearch,
+    status: isOwner ? activeTab : "approved",
+    perPage: 20,
+  });
+  const counts = data?.pages?.[0]?.status_counts;
   useEffect(() => {
     setPage(1);
   }, [debouncedSearch, activeTab]);
@@ -50,12 +58,17 @@ export default function AgentProperties() {
         <FilterComponent
           search={search}
           onSearch={setSearch}
-          tab={activeTab}
+          tab={isOwner ? activeTab : "approved"}
           agentId={userId}
           filter={debouncedSearch}
           showTabs={userId == me?.id}
           onUpdate={setActiveTab}
           searchPlaceholder="Search by location, category or price "
+          all={counts?.all ?? data?.pages?.[0]?.total ?? 0}
+          pending={counts?.pending ?? 0}
+          approved={counts?.approved ?? 0}
+          rejected={counts?.rejected ?? 0}
+          flagged={counts?.flagged ?? 0}
         />
         <VerticalProperties
           showStatus={isOwner}
@@ -66,7 +79,7 @@ export default function AgentProperties() {
           tab={activeTab}
           perPage={20}
           page={page}
-          refetch={resync}
+          refetch={refetch as any}
           fetchNextPage={setPage}
           fetchPrevPage={setPage}
           className="pb-24"

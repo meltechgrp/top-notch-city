@@ -16,11 +16,11 @@ import { tempStore } from "@/store/tempStore";
 import { Loader } from "lucide-react-native";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { useAuthMutations } from "@/tanstack/mutations/useAuthMutations";
-import { useValue } from "@legendapp/state/react";
 
 export default function VerifyOtp() {
   const [otp, setOtp] = React.useState("");
-  const email = useValue(tempStore.email);
+  const email = tempStore((state) => state.email);
+  const resetEmail = tempStore((state) => state.resetEmail);
   const [timer, setTimer] = useState(300);
   const [loading, setLoading] = React.useState(false);
   const { mutateAsync: resendCode, isPending: isSending } =
@@ -50,7 +50,7 @@ export default function VerifyOtp() {
           alertType: "warn",
         });
       } else if (state?.data) {
-        tempStore.resetEmail();
+        resetEmail();
         router.dismissTo("/home");
       }
     } catch (error) {
@@ -81,7 +81,7 @@ export default function VerifyOtp() {
               alertType: "warn",
             });
           },
-        }
+        },
       );
     } catch (error) {
       showErrorAlert({ title: "Failed to resend code.", alertType: "warn" });

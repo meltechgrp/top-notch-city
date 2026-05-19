@@ -1,5 +1,5 @@
-import { Property } from "@/db/models/properties";
 import { transformServerProperty } from "@/db/normalizers/property";
+import { UiProperty } from "@/lib/propertyAdapter";
 import useGetLocation from "@/hooks/useGetLocation";
 import { getReverseGeocode } from "@/hooks/useReverseGeocode";
 import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
@@ -35,7 +35,7 @@ function searchReducer(
 /* ---------------- Hook ---------------- */
 
 export function useSearch() {
-  const [committedProperties, setcommittedProperties] = useState<Property[]>(
+  const [committedProperties, setcommittedProperties] = useState<UiProperty[]>(
     [],
   );
   const { location, retryGetLocation } = useGetLocation();

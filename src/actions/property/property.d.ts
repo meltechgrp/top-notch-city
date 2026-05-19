@@ -4,6 +4,13 @@ type Result = {
   per_page: number;
   pages: number;
   results: ServerProperty[];
+  status_counts?: {
+    all?: number;
+    pending?: number;
+    approved?: number;
+    rejected?: number;
+    flagged?: number;
+  };
 };
 
 type Category = {

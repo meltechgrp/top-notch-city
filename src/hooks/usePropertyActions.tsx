@@ -1,9 +1,9 @@
-import { Property } from "@/db/models/properties";
 import { useMe } from "@/hooks/useMe";
+import { UiProperty } from "@/lib/propertyAdapter";
 import { usePropertyStatusMutations } from "@/tanstack/mutations/usePropertyStatusMutations";
 import { useMemo } from "react";
 
-export function usePropertyActions({ property }: { property: Property }) {
+export function usePropertyActions({ property }: { property: UiProperty }) {
   const { me: user, isAdmin, isAgent } = useMe();
   const {
     approveMutation,

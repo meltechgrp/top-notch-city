@@ -1,5 +1,6 @@
-import { observable } from "@legendapp/state";
-import { persistentObservable } from "@/store/persist";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
 import {
   setActiveUserId,
   removeActiveUser,
@@ -27,93 +28,121 @@ type MainStore = {
   saveAddress: (data: Partial<Address>) => void;
   updateMuted: (state: boolean) => void;
   addAccount: (user: Me, token: string) => Promise<void>;
+  updateActiveAccount: (user: Me) => void;
   switchAccount: (userId: string) => Promise<void>;
   removeAccount: (userId: string) => Promise<void>;
   reset: () => void;
   setIsOnboarded: (state: boolean) => void;
+  setPropertyLastSyncAt: (value: number) => void;
+  setLocationLastSyncAt: (value: number) => void;
+  setChatsLastSyncAt: (value: number) => void;
 };
 
-export const mainStore = observable<MainStore>(
-  persistentObservable({
-    initial: {
-      muted: false,
-      isOnboarded: false,
-      propertyLastSyncAt: 0,
-      locationLastSyncAt: 0,
-      chatsLastSyncAt: 0,
-      accounts: {},
-      address: {} as Address,
-      activeUserId: null,
+const initialState = {
+  muted: false,
+  isOnboarded: false,
+  propertyLastSyncAt: 0,
+  locationLastSyncAt: 0,
+  chatsLastSyncAt: 0,
+  accounts: {} as Record<string, AccountEntry>,
+  address: {} as Address,
+  activeUserId: null as string | null,
+};
 
-      activeAccount: (): Me | null => {
-        const userId = mainStore.activeUserId.get();
+export const useMainStore = create<MainStore>()(
+  persist(
+    (set, get) => ({
+      ...initialState,
+
+      activeAccount: () => {
+        const userId = get().activeUserId;
         if (!userId) return null;
-        const entry = mainStore.accounts[userId];
-        if (!entry || entry.peek() == null) return null;
-        return entry.user.get() ?? null;
+        return get().accounts[userId]?.user ?? null;
       },
 
-      setIsOnboarded(state: boolean) {
-        mainStore.isOnboarded.set(state);
-      },
+      setIsOnboarded: (isOnboarded) => set({ isOnboarded }),
 
-      saveAddress(data: Partial<Address>) {
-        mainStore.address.assign(data);
-      },
+      saveAddress: (data) =>
+        set((state) => ({ address: { ...state.address, ...data } })),
 
-      updateMuted(state: boolean) {
-        mainStore.muted.set(state);
-      },
+      updateMuted: (muted) => set({ muted }),
 
-      async addAccount(user: Me, token: string) {
+      addAccount: async (user, token) => {
         const now = Date.now();
 
-        mainStore.accounts[user.id].set({
-          user,
-          lastLoginAt: now,
-        });
-
-        mainStore.activeUserId.set(user.id);
+        set((state) => ({
+          accounts: {
+            ...state.accounts,
+            [user.id]: { user, lastLoginAt: now },
+          },
+          activeUserId: user.id,
+        }));
 
         await Promise.all([setActiveUserId(user.id), setToken(user.id, token)]);
       },
 
-      async switchAccount(userId: string) {
-        const entry = mainStore.accounts[userId].peek();
-        if (!entry) return;
+      updateActiveAccount: (user) =>
+        set((state) => ({
+          accounts: {
+            ...state.accounts,
+            [user.id]: {
+              user,
+              lastLoginAt: state.accounts[user.id]?.lastLoginAt ?? Date.now(),
+            },
+          },
+          activeUserId: user.id,
+        })),
 
-        mainStore.activeUserId.set(userId);
+      switchAccount: async (userId) => {
+        if (!get().accounts[userId]) return;
+        set({ activeUserId: userId });
         await setActiveUserId(userId);
       },
 
-      async removeAccount(userId: string) {
-        mainStore.accounts[userId].delete();
+      removeAccount: async (userId) => {
+        const accounts = { ...get().accounts };
+        delete accounts[userId];
 
         await removeToken(userId);
 
-        if (mainStore.activeUserId.peek() === userId) {
-          const remaining = mainStore.accounts.peek();
-          const next = Object.keys(remaining)[0];
-          if (next) {
-            mainStore.activeUserId.set(next);
-            await setActiveUserId(next);
-          } else {
-            mainStore.activeUserId.set(null);
-            await removeActiveUser();
-          }
+        if (get().activeUserId !== userId) {
+          set({ accounts });
+          return;
+        }
+
+        const next = Object.keys(accounts)[0];
+        if (next) {
+          set({ accounts, activeUserId: next });
+          await setActiveUserId(next);
+        } else {
+          set({ accounts, activeUserId: null });
+          await removeActiveUser();
         }
       },
 
-      reset() {
-        mainStore.accounts.set({});
-        mainStore.activeUserId.set(null);
-        mainStore.propertyLastSyncAt.set(0);
-        mainStore.locationLastSyncAt.set(0);
-        mainStore.chatsLastSyncAt.set(0);
-      },
-    },
-    persist: {
+      reset: () => set({ ...initialState }),
+
+      setPropertyLastSyncAt: (propertyLastSyncAt) =>
+        set({ propertyLastSyncAt }),
+      setLocationLastSyncAt: (locationLastSyncAt) =>
+        set({ locationLastSyncAt }),
+      setChatsLastSyncAt: (chatsLastSyncAt) => set({ chatsLastSyncAt }),
+    }),
+    {
       name: "topnotch-main",
+      storage: createJSONStorage(() => AsyncStorage),
+      partialize: (state) => ({
+        accounts: state.accounts,
+        activeUserId: state.activeUserId,
+        muted: state.muted,
+        propertyLastSyncAt: state.propertyLastSyncAt,
+        locationLastSyncAt: state.locationLastSyncAt,
+        chatsLastSyncAt: state.chatsLastSyncAt,
+        isOnboarded: state.isOnboarded,
+        address: state.address,
+      }),
     },
-  }),
+  ),
 );
+
+export const mainStore = useMainStore;

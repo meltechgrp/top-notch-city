@@ -4,14 +4,15 @@ import { generateMediaUrlSingle } from "@/lib/api";
 import { Image, View } from "@/components/ui";
 import { Colors } from "@/constants/Colors";
 import { memo, useState } from "react";
-import { Property } from "@/db/models/properties";
+import { UiProperty } from "@/lib/propertyAdapter";
 
 interface Props {
-  property: Property;
-  onPress: (data: Property) => void;
+  property: UiProperty;
+  onPress: (data: UiProperty) => void;
 }
 function CustomPropertyMarker({ property, onPress }: Props) {
-  const { latitude, longitude } = property;
+  const latitude = property.latitude || 0;
+  const longitude = property.longitude || 0;
   const image = property?.thumbnail
     ? generateMediaUrlSingle(property.thumbnail)
     : null;

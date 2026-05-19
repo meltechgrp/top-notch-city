@@ -13,10 +13,11 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Platform } from "react-native";
 import SystemNavigationBar from "react-native-system-navigation-bar";
-import { mainStore } from "@/store";
+import { useMainStore } from "@/store";
 
 export default function OnboardingScreen() {
   const [activeIndex, setActiveIndex] = React.useState(0);
+  const setIsOnboarded = useMainStore((state) => state.setIsOnboarded);
 
   React.useEffect(() => {
     if (Platform.OS == "android") {
@@ -27,8 +28,8 @@ export default function OnboardingScreen() {
     router.replace("/signin");
   }
   React.useEffect(() => {
-    mainStore.setIsOnboarded(true);
-  }, []);
+    setIsOnboarded(true);
+  }, [setIsOnboarded]);
   return (
     <View className="flex-1 bg-background">
       <TabView activeTab={activeIndex} onTabSelected={setActiveIndex}>
@@ -69,7 +70,7 @@ function PageDots({
           key={i}
           className={cn(
             "w-2 h-2 rounded-full mr-2",
-            activeIndex === i ? "bg-white" : "bg-gray-500"
+            activeIndex === i ? "bg-white" : "bg-gray-500",
           )}
         />
       ))}

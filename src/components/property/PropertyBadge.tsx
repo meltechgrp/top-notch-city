@@ -1,9 +1,9 @@
 import { cn } from "@/lib/utils";
 import { Badge, Text, View } from "../ui";
-import { Property } from "@/db/models/properties";
+import { UiProperty } from "@/lib/propertyAdapter";
 
 interface Props {
-  property: Property;
+  property: UiProperty;
 }
 
 export function PropertyBadge({

@@ -1,14 +1,14 @@
 import * as React from "react";
 import * as SplashScreen from "expo-splash-screen";
 import { Redirect } from "expo-router";
-import { mainStore } from "@/store";
+import { useMainStore } from "@/store";
 import { useMe } from "@/hooks/useMe";
 import { Box, Image, View } from "@/components/ui";
 import splash from "@/assets/images/splash.png";
 
 SplashScreen.preventAutoHideAsync();
 const LandingScreen = () => {
-  const isOnboarded = mainStore.isOnboarded.get();
+  const isOnboarded = useMainStore((state) => state.isOnboarded);
   const { isLoggedIn } = useMe();
 
   const [ready, setReady] = React.useState(false);

@@ -5,8 +5,8 @@ import {
   formatMoney,
   formatNumberCompact,
   fullName,
-  generateTitle,
 } from "@/lib/utils";
+import { getPropertyTitle } from "@/lib/propertyAdapter";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -79,7 +79,7 @@ export default function QRCodeButton({
                 uri: generateMediaUrlSingle(
                   preview.type === "agent"
                     ? preview.data.profile_image
-                    : preview.data.media[0].url
+                    : preview.data.media[0].url,
                 ),
               }}
               rounded
@@ -93,7 +93,7 @@ export default function QRCodeButton({
                 : formatMoney(
                     preview.data.price,
                     preview.data?.currency?.code || "NGN",
-                    0
+                    0,
                   )}
             </Text>
             {preview.type === "agent" && (
@@ -134,7 +134,7 @@ export default function QRCodeButton({
                 <View className="flex-row gap-1 items-center mt-1">
                   <Icon as={Home} size="sm" className="text-primary" />
                   <Text className=" text-sm">
-                    {generateTitle(preview.data.title)}
+                    {getPropertyTitle(preview.data)}
                   </Text>
                 </View>
               </View>

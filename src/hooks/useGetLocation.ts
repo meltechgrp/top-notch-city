@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import * as Location from "expo-location";
 import { getReverseGeocode } from "@/hooks/useReverseGeocode";
-import { mainStore } from "@/store";
+import { useMainStore } from "@/store";
 
 type Options = {
   highAccuracy?: boolean;
@@ -9,7 +9,10 @@ type Options = {
 };
 const TTL = 60 * 60 * 1000;
 const useGetLocation = (options?: Options) => {
-  const locationLastSyncAt = mainStore.locationLastSyncAt.get();
+  const locationLastSyncAt = useMainStore((state) => state.locationLastSyncAt);
+  const setLocationLastSyncAt = useMainStore(
+    (state) => state.setLocationLastSyncAt,
+  );
   const { highAccuracy = false, withAddress = false } = options || {};
   const [granted, setGranted] = useState(false);
   const [location, setLocation] = useState<Location.LocationObjectCoords>();
@@ -46,9 +49,9 @@ const useGetLocation = (options?: Options) => {
       const add = await getReverseGeocode(location?.coords);
       add?.addressComponents && setAddress(add.addressComponents);
     }
-    mainStore.locationLastSyncAt.set(Date.now());
+    setLocationLastSyncAt(Date.now());
     return location?.coords;
-  }, [highAccuracy, withAddress, locationLastSyncAt]);
+  }, [highAccuracy, withAddress, locationLastSyncAt, setLocationLastSyncAt]);
 
   useEffect(() => {
     tryGetLocation();

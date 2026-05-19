@@ -1,64 +1,94 @@
-import { observable } from "@legendapp/state";
+import { create } from "zustand";
 
 const TYPING_TTL = 3000;
 
-export const tempStore = observable({
+type TempStore = {
+  totalUnreadChat: number;
+  application: Partial<Application>;
+  email?: string;
+  typings: Record<string, boolean>;
+  typingTimers: Record<string, ReturnType<typeof setTimeout> | undefined>;
+  setTyping: (chatId: string, state: boolean) => void;
+  getTyping: (chatId: string) => boolean;
+  resetStore: () => void;
+  resetEmail: () => void;
+  saveEmail: (email: string) => void;
+  updatetotalUnreadChat: (data: number) => void;
+  incrementTotalUnreadChat: (data?: number) => void;
+  decrementTotalUnreadChat: (data?: number) => void;
+  updateApplication: (data: Partial<Application>) => void;
+  resetApplication: () => void;
+};
+
+export const useTempStore = create<TempStore>((set, get) => ({
   totalUnreadChat: 0,
-  application: {} as Partial<Application>,
-  email: undefined as string | undefined,
-  typings: {} as Record<string, boolean>,
-  typingTimers: {} as Record<string, ReturnType<typeof setTimeout>>,
+  application: {},
+  email: undefined,
+  typings: {},
+  typingTimers: {},
 
-  setTyping(chatId: string, state: boolean) {
-    tempStore.typings[chatId].set(state);
-    const existingTimer = tempStore.typingTimers[chatId].get();
-    if (existingTimer) {
-      clearTimeout(existingTimer);
-    }
-    if (state) {
-      const timer = setTimeout(() => {
-        tempStore.typings[chatId].set(false);
-        tempStore.typingTimers[chatId].set(undefined as any);
-      }, TYPING_TTL);
+  setTyping(chatId, state) {
+    const existingTimer = get().typingTimers[chatId];
+    if (existingTimer) clearTimeout(existingTimer);
 
-      tempStore.typingTimers[chatId].set(timer);
-    }
+    set((current) => ({
+      typings: { ...current.typings, [chatId]: state },
+      typingTimers: { ...current.typingTimers, [chatId]: undefined },
+    }));
+
+    if (!state) return;
+
+    const timer = setTimeout(() => {
+      set((current) => ({
+        typings: { ...current.typings, [chatId]: false },
+        typingTimers: { ...current.typingTimers, [chatId]: undefined },
+      }));
+    }, TYPING_TTL);
+
+    set((current) => ({
+      typingTimers: { ...current.typingTimers, [chatId]: timer },
+    }));
   },
 
-  getTyping(chatId: string) {
-    return !!tempStore.typings[chatId].get();
+  getTyping(chatId) {
+    return !!get().typings[chatId];
   },
+
   resetStore() {
-    tempStore.totalUnreadChat.set(0);
-    tempStore.email.set(undefined);
-    tempStore.application.set({});
+    set({ totalUnreadChat: 0, email: undefined, application: {} });
   },
 
   resetEmail() {
-    tempStore.email.set(undefined);
+    set({ email: undefined });
   },
 
-  saveEmail(email: string) {
-    tempStore.email.set(email);
+  saveEmail(email) {
+    set({ email });
   },
 
-  updatetotalUnreadChat(data: number) {
-    tempStore.totalUnreadChat.set(data);
+  updatetotalUnreadChat(totalUnreadChat) {
+    set({ totalUnreadChat });
   },
 
   incrementTotalUnreadChat(data = 1) {
-    tempStore.totalUnreadChat.set(
-      Math.max(0, tempStore.totalUnreadChat.peek() + data),
-    );
+    set((state) => ({
+      totalUnreadChat: Math.max(0, state.totalUnreadChat + data),
+    }));
   },
 
   decrementTotalUnreadChat(data = 1) {
-    tempStore.totalUnreadChat.set(
-      Math.max(0, tempStore.totalUnreadChat.peek() - data),
-    );
+    set((state) => ({
+      totalUnreadChat: Math.max(0, state.totalUnreadChat - data),
+    }));
   },
 
-  updateApplication(data: Partial<Application>) {
-    tempStore.application.assign(data);
+  updateApplication(data) {
+    set((state) => ({ application: { ...state.application, ...data } }));
   },
-});
+
+  resetApplication() {
+    set({ application: {} });
+  },
+}));
+
+export const tempStore = useTempStore;

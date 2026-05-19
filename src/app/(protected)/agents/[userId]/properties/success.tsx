@@ -13,7 +13,7 @@ import { CheckCircle } from "lucide-react-native";
 import { listingStore } from "@/store/listing";
 
 export default function ListingSuccess() {
-  const { updateListing, resetListing } = listingStore.get();
+  const resetListing = listingStore((state) => state.resetListing);
   const { userId } = useLocalSearchParams() as { userId: string };
   const router = useRouter();
   return (

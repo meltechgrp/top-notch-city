@@ -25,12 +25,11 @@ import { AnimatedLikeButton } from "@/components/custom/AnimatedLikeButton";
 import { useLike } from "@/hooks/useLike";
 import { useMe } from "@/hooks/useMe";
 import { Durations } from "@/constants/Amenities";
-import { Property } from "@/db/models/properties";
+import { UiProperty } from "@/lib/propertyAdapter";
 import { generateMediaUrlSingle } from "@/lib/api";
-import { withPropertyWriter } from "@/store/utils";
 
 type Props = {
-  property: Property;
+  property: UiProperty;
   className?: string;
   subClassName?: string;
   showFacilites?: boolean;
@@ -64,7 +63,7 @@ function PropertyListItem(props: Props) {
     subClassName,
   } = props;
   const { me } = useMe();
-  const { toggleLike } = useLike();
+  const { toggleLike } = useLike({ queryKey: ["properties"] });
   const { bannerHeight } = Layout;
   const { price, status, server_user_id } = data;
   const isMine = useMemo(() => me?.id === server_user_id, [me, server_user_id]);
@@ -92,7 +91,6 @@ function PropertyListItem(props: Props) {
     if (!me) {
       return openAccessModal({ visible: true });
     } else {
-      await data.markAsLiked();
       toggleLike({ id: data.property_server_id });
     }
   }
@@ -104,14 +102,14 @@ function PropertyListItem(props: Props) {
       className={cn(
         "relative flex-1 rounded-3xl p-2 bg-background-muted",
         isHorizontal && "w-[23rem]",
-        className
+        className,
       )}
     >
       <View
         style={[{ height: bannerHeight - 30 }, imageStyle]}
         className={cn(
           " rounded-[1.2rem] bg-background-muted/50 overflow-hidden relative flex-1",
-          imageWrapperClassName
+          imageWrapperClassName,
         )}
       >
         {data?.thumbnail && (
@@ -129,7 +127,7 @@ function PropertyListItem(props: Props) {
         <View className=" absolute top-0 w-full h-full justify-between">
           <View
             className={cn(
-              "flex-row px-3 pt-3 pb-0 items-start justify-between"
+              "flex-row px-3 pt-3 pb-0 items-start justify-between",
             )}
           >
             <Actions />

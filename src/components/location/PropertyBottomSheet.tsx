@@ -3,12 +3,12 @@ import * as React from "react";
 import { View } from "react-native";
 import { router } from "expo-router";
 import PropertyListItem from "@/components/property/PropertyListItem";
-import { Property } from "@/db/models/properties";
+import { UiProperty } from "@/lib/propertyAdapter";
 
 type Props = {
   onDismiss: () => void;
   visible: boolean;
-  data: Property;
+  data: UiProperty;
 };
 export default function PropertyBottomSheet(props: Props) {
   const { visible, onDismiss, data } = props;

@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   updatePropertyStatus,
   deleteProperty,
@@ -6,12 +6,25 @@ import {
   featuedProperty,
 } from "@/actions/property/actions";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
-import { patchLocalProperty } from "@/db/helpers";
-import { syncPropertyById } from "@/db/queries/syncPropertyData";
 import eventBus from "@/lib/eventBus";
 import { router } from "expo-router";
 
 export function usePropertyStatusMutations() {
+  const queryClient = useQueryClient();
+  const invalidateProperties = async (propertyId?: string) => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["property"] }),
+      queryClient.invalidateQueries({ queryKey: ["properties"] }),
+      queryClient.invalidateQueries({ queryKey: ["admin-properties"] }),
+      queryClient.invalidateQueries({ queryKey: ["agent-properties"] }),
+      queryClient.invalidateQueries({ queryKey: ["pending-properties"] }),
+      queryClient.invalidateQueries({ queryKey: ["featured"] }),
+      queryClient.invalidateQueries({ queryKey: ["latest"] }),
+      queryClient.invalidateQueries({ queryKey: ["shortlet"] }),
+      queryClient.invalidateQueries({ queryKey: ["trending-lands"] }),
+    ]);
+    eventBus.dispatchEvent("REFRESH_DASHBOARD", null);
+  };
   const getStatusFromAction = (action: string) => {
     switch (action) {
       case "approve":
@@ -40,19 +53,7 @@ export function usePropertyStatusMutations() {
     status?: string;
     is_featured?: boolean;
   }) => {
-    await patchLocalProperty(propertyId, {
-      status,
-      is_featured,
-      updated_at: Date.now(),
-    });
-
-    try {
-      await syncPropertyById(propertyId, { forceFreshUpdatedAt: true });
-    } catch (error) {
-      console.log("Failed to resync property after mutation", error);
-    }
-
-    eventBus.dispatchEvent("REFRESH_DASHBOARD", null);
+    await invalidateProperties(propertyId);
   };
 
   const useStatusMutation = (action: string) =>
@@ -87,7 +88,8 @@ export function usePropertyStatusMutations() {
   const deleteMutation = useMutation({
     mutationFn: ({ propertyId }: { propertyId: string }) =>
       deleteProperty(propertyId),
-    onSuccess: ({ propertyId }) => {
+    onSuccess: async (_, { propertyId }) => {
+      await invalidateProperties(propertyId);
       showErrorAlert({
         title: "Property deleted",
         alertType: "success",
@@ -106,7 +108,8 @@ export function usePropertyStatusMutations() {
   const softDeleteMutation = useMutation({
     mutationFn: ({ propertyId }: { propertyId: string }) =>
       softDeleteProperty(propertyId),
-    onSuccess: ({ propertyId }) => {
+    onSuccess: async (_, { propertyId }) => {
+      await invalidateProperties(propertyId);
       showErrorAlert({
         title: "Property deleted successfully",
         alertType: "success",

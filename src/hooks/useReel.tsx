@@ -1,5 +1,6 @@
 import { generateMediaUrl } from "@/lib/api";
-import { composeFullAddress, generateTitle } from "@/lib/utils";
+import { composeFullAddress } from "@/lib/utils";
+import { getPropertyTitle } from "@/lib/propertyAdapter";
 import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import { useMemo } from "react";
 
@@ -14,7 +15,7 @@ export function useReels() {
   } = useInfinityQueries({ type: "reels" });
   const videos = useMemo(() => {
     return propertyToReelVideo(
-      data?.pages.flatMap((page) => page.results) || []
+      data?.pages.flatMap((page) => page.results) || [],
     );
   }, [data]);
   return {
@@ -37,7 +38,7 @@ export function propertyToReelVideo(properties: ServerProperty[]) {
           video: generateMediaUrl(v).uri,
           photos: [],
           slug: p.slug,
-          title: generateTitle(p),
+          title: getPropertyTitle(p),
           description: p.description || "",
           interations: {
             liked: p.interaction?.liked || 0,

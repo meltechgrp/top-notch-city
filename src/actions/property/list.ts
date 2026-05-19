@@ -4,15 +4,25 @@ import { Fetch } from "../utills";
 export async function fetchProperties({
   pageParam,
   perPage,
+  category,
+  search,
+  status,
 }: {
   pageParam: number;
   perPage?: number;
+  category?: string;
+  search?: string;
+  status?: string;
 }) {
   try {
-    const res = await Fetch(
-      `/properties?page=${pageParam}&per_page=${perPage}`,
-      {}
-    );
+    const query = new URLSearchParams();
+    query.append("page", String(pageParam));
+    query.append("per_page", String(perPage));
+    if (category) query.append("category", category);
+    if (search) query.append("search", search);
+    if (status) query.append("status", status);
+
+    const res = await Fetch(`/properties?${query.toString()}`, {});
     if (res?.detail) throw new Error("Failed to fetch properties");
     return res as Result;
   } catch (error) {
@@ -31,7 +41,7 @@ export async function fetchFeaturedProperties({
   try {
     const res = await Fetch(
       `/properties/featured?page=${pageParam}&per_page=${perPage}`,
-      {}
+      {},
     );
     if (res?.detail) throw new Error("Failed to fetch properties");
     return res as Result;
@@ -51,7 +61,7 @@ export async function fetchShortletProperties({
   try {
     const res = await Fetch(
       `/properties/shortlet-hotel?page=${pageParam}&per_page=${perPage}`,
-      {}
+      {},
     );
     if (res?.detail) throw new Error("Failed to fetch properties");
     return res as Result;
@@ -71,7 +81,7 @@ export async function fetchTrendingLandsProperties({
   try {
     const res = await Fetch(
       `/properties/home/land?page=${pageParam}&per_page=${perPage}`,
-      {}
+      {},
     );
     if (res?.detail) throw new Error("Failed to fetch properties");
     return res as Result;
@@ -90,7 +100,7 @@ export async function fetchReels({
   try {
     const res = await Fetch(
       `/properties/videos?page=${pageParam}&per_page=${perPage}`,
-      {}
+      {},
     );
     if (res?.detail) throw new Error("Failed to fetch properties");
     return res as Result;
@@ -108,7 +118,7 @@ export async function fetchLands({
   try {
     const res = await Fetch(
       `/properties/land?page=${pageParam}&per_page=${perPage}`,
-      {}
+      {},
     );
     if (res?.detail) throw new Error("Failed to fetch properties");
     return res as Result;
@@ -118,11 +128,22 @@ export async function fetchLands({
 }
 export async function fetchPendingProperties({
   pageParam,
+  perPage = 20,
+  search,
 }: {
   pageParam: number;
+  perPage?: number;
+  search?: string;
 }) {
   try {
-    const res = await Fetch(`/admin/pending/properties?page=${pageParam}`, {});
+    const query = new URLSearchParams();
+    query.append("page", String(pageParam));
+    query.append("per_page", String(perPage));
+    if (search) query.append("search", search);
+    const res = await Fetch(
+      `/admin/pending/properties?${query.toString()}`,
+      {},
+    );
     if (res?.detail) throw new Error("Failed to fetch properties");
     return res as Result;
   } catch (error) {
@@ -134,12 +155,24 @@ export async function fetchPendingProperties({
 export async function fetchUserProperties({
   userId,
   pageParam,
+  perPage = 20,
+  status,
+  search,
 }: {
   userId?: string;
   pageParam: number;
+  perPage?: number;
+  status?: string;
+  search?: string;
 }) {
   try {
-    const res = await Fetch(`/user/${userId}?page=${pageParam}`, {});
+    const query = new URLSearchParams();
+    query.append("page", String(pageParam));
+    query.append("per_page", String(perPage));
+    if (status && status !== "all") query.append("status", status);
+    if (search) query.append("search", search);
+
+    const res = await Fetch(`/user/${userId}?${query.toString()}`, {});
     if (res?.detail) throw new Error("Failed to fetch user properties");
     return res as Result;
   } catch (error) {
@@ -150,16 +183,29 @@ export async function fetchUserProperties({
 export async function fetchAgentProperties({
   pageParam = 1,
   perPage = 10,
+  agentId,
+  status,
+  search,
 }: {
   pageParam: number;
   perPage?: number;
+  agentId?: string;
+  status?: string;
+  search?: string;
   updated_after?: number;
 }) {
   try {
-    const res = await Fetch(
-      `/agent/my-properties?page=${pageParam}&per_page=${perPage}`,
-      {}
-    );
+    const query = new URLSearchParams();
+    query.append("page", String(pageParam));
+    query.append("per_page", String(perPage));
+    if (agentId) query.append("agent_id", agentId);
+    if (status && status !== "all") query.append("status", status);
+    if (search) query.append("search", search);
+
+    const path = agentId
+      ? `/properties?${query.toString()}`
+      : `/agent/my-properties?${query.toString()}`;
+    const res = await Fetch(path, {});
     if (res?.detail) throw new Error("Failed to fetch user properties");
     return res as Result;
   } catch (error) {
@@ -171,16 +217,26 @@ export async function fetchAgentProperties({
 export async function fetchAdminProperties({
   pageParam,
   perPage = 10,
+  status,
+  search,
+  agentId,
 }: {
   pageParam: number;
   perPage?: number;
+  status?: string;
+  search?: string;
+  agentId?: string;
   updated_after?: number;
 }) {
   try {
-    const res = await Fetch(
-      `/admin/properties?page=${pageParam}&per_page=${perPage}`,
-      {}
-    );
+    const query = new URLSearchParams();
+    query.append("page", String(pageParam));
+    query.append("per_page", String(perPage));
+    if (status && status !== "all") query.append("status", status);
+    if (search) query.append("search", search);
+    if (agentId) query.append("agent_id", agentId);
+
+    const res = await Fetch(`/admin/properties?${query.toString()}`, {});
     if (res?.detail) throw new Error("Failed to fetch admin properties");
     return res as Result;
   } catch (error) {

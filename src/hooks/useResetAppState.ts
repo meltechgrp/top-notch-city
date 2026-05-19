@@ -28,7 +28,7 @@ export default function useResetAppState() {
         }
       }
       if (!options?.withStore) {
-        tempStore.resetStore();
+        tempStore.getState().resetStore();
       }
 
       await queryClient.cancelQueries();
@@ -36,7 +36,7 @@ export default function useResetAppState() {
 
       await cacheStorage.reset();
     },
-    [queryClient]
+    [queryClient],
   );
 
   return resetAppState;

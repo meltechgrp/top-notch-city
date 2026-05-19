@@ -20,7 +20,7 @@ import {
 } from "@/db/normalizers/message";
 import { Message } from "@/db/models/messages";
 import { User } from "@/db/models/users";
-import { mainStore } from "@/store";
+import { useMainStore } from "@/store";
 import { tempStore } from "@/store/tempStore";
 
 export async function editServerMessage({ data }: { data: ServerMessage }) {
@@ -219,7 +219,7 @@ export async function saveLocalMessage({
   await database.write(async () => {
     const ops: any[] = [];
     const createdAt = Date.parse(data.created_at);
-    const activeUserId = mainStore.activeUserId.peek();
+    const activeUserId = useMainStore.getState().activeUserId;
     const isIncoming = !data?.isMock && data.sender_info.id !== activeUserId;
     const shouldBumpRecent =
       !!chat &&
@@ -275,7 +275,7 @@ export async function saveLocalMessage({
     if (ops.length) await database.batch(...ops);
 
     if (isIncoming && !existing) {
-      tempStore.incrementTotalUnreadChat();
+      tempStore.getState().incrementTotalUnreadChat();
     }
   });
   playSound?.();
@@ -296,7 +296,7 @@ export async function markChatReadLocal(chatId: string) {
     });
   });
 
-  tempStore.decrementTotalUnreadChat(unreadCount);
+  tempStore.getState().decrementTotalUnreadChat(unreadCount);
 }
 
 export const addIncomingMessage = async (

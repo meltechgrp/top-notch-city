@@ -1,4 +1,4 @@
-import { observable } from "@legendapp/state";
+import { create } from "zustand";
 
 export type Listing = {
   title?: string;
@@ -48,18 +48,22 @@ const initialListing: Listing = {
   currency: "NGN",
 };
 
-export const listingStore = observable<ListingState>({
+export const useListingStore = create<ListingState>((set) => ({
   listing: initialListing,
 
   resetListing() {
-    listingStore.listing.delete();
-    listingStore.listing.assign(initialListing);
+    set({ listing: initialListing });
   },
 
   updateListing(data) {
-    listingStore.listing.assign(data);
+    set((state) => ({ listing: { ...state.listing, ...data } }));
   },
+
   updateListingStep() {
-    listingStore.listing.step.set((s) => s + 1);
+    set((state) => ({
+      listing: { ...state.listing, step: state.listing.step + 1 },
+    }));
   },
-});
+}));
+
+export const listingStore = useListingStore;

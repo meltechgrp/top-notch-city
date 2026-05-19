@@ -1,10 +1,7 @@
-import { withObservables } from "@nozbe/watermelondb/react";
 import { View } from "../ui";
 import PropertyCarousel from "./PropertyCarousel";
 import { ProfileImageTrigger } from "@/components/custom/ImageViewerProvider";
 import { useMemo } from "react";
-import { database } from "@/db";
-import { Q } from "@nozbe/watermelondb";
 
 interface PropertyHeroSectionProps {
   thumbnail: string;
@@ -23,7 +20,7 @@ function PropertyHeroSection({
       return media.map((m) => ({
         url: m.url,
         media_type: m.media_type,
-        id: m.server_image_id,
+        id: m.server_image_id || m.id,
       }));
     }
     if (thumbnail) {
@@ -55,11 +52,4 @@ function PropertyHeroSection({
   );
 }
 
-const enhance = withObservables(["propertyId"], ({ propertyId }) => ({
-  media: database
-    .get("property_media")
-    .query(Q.where("property_server_id", propertyId))
-    .observe(),
-}));
-
-export default enhance(PropertyHeroSection);
+export default PropertyHeroSection;

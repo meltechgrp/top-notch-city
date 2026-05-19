@@ -18,19 +18,31 @@ import { useRouter } from "expo-router";
 import { useMediaUpload } from "@/hooks/useMediaUpload";
 import { format } from "date-fns";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
-import { useMutation } from "@tanstack/react-query";
-import { uploadAgentForm } from "@/actions/agent";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getMyApplications, uploadAgentForm } from "@/actions/agent";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import { tempStore } from "@/store/tempStore";
-import { useValue } from "@legendapp/state/react";
+import { getMe } from "@/actions/user";
+import { useMe } from "@/hooks/useMe";
 
 export default function AgentFormScreen() {
-  const { updateApplication } = tempStore.get();
-  const application = useValue(tempStore.application);
-
+  const updateApplication = tempStore((state) => state.updateApplication);
+  const application = tempStore((state) => state.application);
+  const { me } = useMe();
+  const queryClient = useQueryClient();
   const router = useRouter();
   const { mutateAsync, isPending } = useMutation({
     mutationFn: uploadAgentForm,
+  });
+  const { data: profile } = useQuery({
+    queryKey: ["user", me?.id],
+    queryFn: getMe,
+    enabled: !!me,
+  });
+  const { data: applications } = useQuery({
+    queryKey: ["agent-application", me?.id],
+    queryFn: getMyApplications,
+    enabled: !!me,
   });
   const { pickMedia, loading, processFiles } = useMediaUpload({
     type: "image",
@@ -45,7 +57,62 @@ export default function AgentFormScreen() {
     },
   });
 
+  const existingApplication = React.useMemo(
+    () =>
+      Array.isArray(applications)
+        ? (applications.find((item) => item.status !== "rejected") ??
+          applications[0])
+        : undefined,
+    [applications],
+  );
+
+  React.useEffect(() => {
+    if (!profile && !existingApplication) return;
+    const current = tempStore.getState().application;
+    const agentProfile = profile?.agent_profile;
+    const applicationProfile = existingApplication?.profile;
+    const applicationUser = existingApplication?.user;
+
+    updateApplication({
+      phone: current.phone ?? applicationUser?.phone ?? profile?.phone,
+      gender: current.gender ?? profile?.gender ?? applicationUser?.gender,
+      date_of_birth: current.date_of_birth ?? profile?.date_of_birth,
+      address: current.address ?? profile?.address,
+      about: current.about ?? agentProfile?.about,
+      website:
+        current.website ?? applicationProfile?.website ?? agentProfile?.website,
+      license_number:
+        current.license_number ?? agentProfile?.license_number ?? undefined,
+      years_of_experience:
+        current.years_of_experience ??
+        applicationProfile?.years_of_experience ??
+        agentProfile?.years_of_experience,
+      specialties:
+        current.specialties ??
+        applicationProfile?.specialties ??
+        agentProfile?.specialties,
+      languages:
+        current.languages ??
+        applicationProfile?.languages ??
+        agentProfile?.languages,
+      companies: current.companies ?? agentProfile?.companies,
+      profile_image:
+        current.profile_image ??
+        ((profile?.profile_image || applicationUser?.profile_image
+          ? {
+              id: profile?.profile_image || applicationUser?.profile_image,
+              url: profile?.profile_image || applicationUser?.profile_image,
+              media_type: "IMAGE",
+            }
+          : undefined) as Media | undefined),
+    });
+  }, [existingApplication, profile, updateApplication]);
+
   const user = application ?? null;
+  const profileImage =
+    typeof user?.profile_image === "string"
+      ? user.profile_image
+      : user?.profile_image?.url;
 
   async function handleForm() {
     if (!application)
@@ -94,6 +161,11 @@ export default function AgentFormScreen() {
 
     await mutateAsync(application, {
       onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["user", me?.id] });
+        queryClient.invalidateQueries({
+          queryKey: ["agent-application", me?.id],
+        });
+        queryClient.invalidateQueries({ queryKey: ["agent-applications"] });
         router.push("/forms/success");
       },
       onError: (e) => {
@@ -187,9 +259,7 @@ export default function AgentFormScreen() {
                   className={cn(" w-28 h-28", loading && "bg-background-muted")}
                 >
                   {!loading && (
-                    <AvatarImage
-                      source={getImageUrl(user?.profile_image?.url)}
-                    />
+                    <AvatarImage source={getImageUrl(profileImage)} />
                   )}
                 </Avatar>
                 <View className="flex-row items-center gap-1 ">
@@ -221,7 +291,7 @@ export default function AgentFormScreen() {
                         }
                         className={cn(
                           "flex-row flex-1 justify-between items-center border-b border-b-outline-100 py-4",
-                          i == personal.length - 1 && "border-b-0"
+                          i == personal.length - 1 && "border-b-0",
                         )}
                       >
                         <Text className=" font-medium flex-1">
@@ -252,7 +322,7 @@ export default function AgentFormScreen() {
                         numberOfLines={4}
                         className={cn(
                           " flex-1 text-base",
-                          !user?.about && "text-typography/60 text-sm"
+                          !user?.about && "text-typography/60 text-sm",
                         )}
                       >
                         {user?.about ||
@@ -289,7 +359,7 @@ export default function AgentFormScreen() {
                             })
                           }
                           className={cn(
-                            "flex-row flex-1 justify-between items-center border-b border-b-outline-100 py-4"
+                            "flex-row flex-1 justify-between items-center border-b border-b-outline-100 py-4",
                           )}
                         >
                           <Text className="text-sm text-typography/80">

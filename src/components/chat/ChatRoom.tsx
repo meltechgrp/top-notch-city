@@ -31,7 +31,6 @@ import { Q } from "@nozbe/watermelondb";
 import { FlashList, FlashListRef } from "@shopify/flash-list";
 import { makeMessageReadAndDelivered } from "@/actions/message";
 import { useMessagesSync } from "@/db/queries/syncMessages";
-import { useValue } from "@legendapp/state/react";
 import { tempStore } from "@/store/tempStore";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
@@ -139,7 +138,7 @@ function ChatRoom(props: Props) {
     },
   );
 
-  const typing = useValue(() => tempStore.getTyping(chat.server_chat_id));
+  const typing = tempStore((state) => state.typings[chat.server_chat_id]);
   React.useEffect(() => {
     if (me && chat?.unread_count > 0) {
       markChatReadLocal(chat.server_chat_id);

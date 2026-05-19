@@ -23,7 +23,7 @@ import { Colors } from "@/constants/Colors";
 import { useResolvedTheme } from "../ui";
 import { getRegionForMarkers } from "@/lib/utils";
 import eventBus from "@/lib/eventBus";
-import { Property } from "@/db/models/properties";
+import { UiProperty } from "@/lib/propertyAdapter";
 
 interface MapProps {
   latitude?: number;
@@ -32,11 +32,11 @@ interface MapProps {
   showUserLocation?: boolean;
   scrollEnabled?: boolean;
   showsBuildings?: boolean;
-  activeMarker?: Property[];
+  activeMarker?: UiProperty[];
   children?: ReactNode;
-  onMarkerPress?: (data: Property) => void;
+  onMarkerPress?: (data: UiProperty) => void;
   zoomControlEnabled?: boolean;
-  markers?: Property[];
+  markers?: UiProperty[];
   marker?: LocationData;
   nearby?: NearbyPOI[];
   showRadius?: boolean;
@@ -136,10 +136,12 @@ const Map = forwardRef<MapController, MapProps>(function Map(props, ref) {
       fitToMarkers: (markerList) => {
         const list =
           markerList ??
-          markers?.map((m) => ({
-            latitude: m.latitude,
-            longitude: m.longitude,
-          })) ??
+          markers
+            ?.filter((m) => m.latitude && m.longitude)
+            .map((m) => ({
+              latitude: m.latitude!,
+              longitude: m.longitude!,
+            })) ??
           [];
         if (!list || list.length === 0) return;
         const region = getRegionForMarkers(list);
@@ -167,10 +169,12 @@ const Map = forwardRef<MapController, MapProps>(function Map(props, ref) {
     (async () => {
       if (markers && markers.length > 0) {
         const region = getRegionForMarkers(
-          markers.map((m) => ({
-            latitude: m.latitude,
-            longitude: m.longitude,
-          })),
+          markers
+            .filter((m) => m.latitude && m.longitude)
+            .map((m) => ({
+              latitude: m.latitude!,
+              longitude: m.longitude!,
+            })),
         );
         setCenter({ latitude: region.latitude, longitude: region.longitude });
         mapRef.current?.animateToRegion(region, 850);

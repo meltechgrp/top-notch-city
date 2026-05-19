@@ -83,7 +83,7 @@ export default function SignUp() {
           alertType: "success",
         });
 
-        tempStore.saveEmail(form.email);
+        tempStore.getState().saveEmail(form.email);
 
         router.replace("/verify-otp");
       }

@@ -8,14 +8,14 @@ import { useState } from "react";
 import WishListButton from "@/components/property/WishListButton";
 import PropertyActionsBottomSheet from "@/components/modals/property/PropertyActionsBottomSheet";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
-import { Property } from "@/db/models/properties";
+import { UiProperty } from "@/lib/propertyAdapter";
 import { AnimatedLikeButton } from "@/components/custom/AnimatedLikeButton";
 import { openAccessModal } from "@/components/globals/AuthModals";
 import { useLike } from "@/hooks/useLike";
 import { InteractionManager } from "react-native";
 
 interface Props {
-  property: Property;
+  property: UiProperty;
   hasScrolledToDetails?: boolean;
   me: Account;
 }
@@ -45,8 +45,7 @@ export default function PropertyHeader({
     if (!me) {
       return openAccessModal({ visible: true });
     } else {
-      await property.markAsLiked();
-      toggleLike({ id: property.id });
+      toggleLike({ id: property.property_server_id });
     }
   }
   return (

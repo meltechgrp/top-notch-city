@@ -4,15 +4,21 @@ import { useEffect, useState } from "react";
 import VerticalProperties from "@/components/property/VerticalProperties";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useMe } from "@/hooks/useMe";
-import { usePropertyFeedSync } from "@/db/queries/syncPropertyFeed";
+import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 
 export default function AdminProperties() {
-  const { resync } = usePropertyFeedSync();
   const [search, setSearch] = useState("");
   const { me } = useMe();
   const debouncedSearch = useDebouncedValue(search, 400);
   const [activeTab, setActiveTab] = useState("all");
   const [page, setPage] = useState(1);
+  const { data, refetch } = useInfinityQueries({
+    type: "admin",
+    search: debouncedSearch,
+    status: activeTab,
+    perPage: 10,
+  });
+  const counts = data?.pages?.[0]?.status_counts;
   useEffect(() => {
     setPage(1);
   }, [debouncedSearch, activeTab]);
@@ -27,6 +33,11 @@ export default function AdminProperties() {
           showTabs={true}
           onUpdate={setActiveTab}
           searchPlaceholder="Search by location or category"
+          all={counts?.all ?? data?.pages?.[0]?.total ?? 0}
+          pending={counts?.pending ?? 0}
+          approved={counts?.approved ?? 0}
+          rejected={counts?.rejected ?? 0}
+          flagged={counts?.flagged ?? 0}
         />
         <View className="flex-1">
           <VerticalProperties
@@ -38,7 +49,7 @@ export default function AdminProperties() {
             tab={activeTab}
             perPage={10}
             page={page}
-            refetch={resync}
+            refetch={refetch as any}
             fetchNextPage={setPage}
             fetchPrevPage={setPage}
           />

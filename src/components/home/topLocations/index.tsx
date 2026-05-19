@@ -1,27 +1,41 @@
 import SectionHeaderWithRef from "@/components/home/SectionHeaderWithRef";
 import { router } from "expo-router";
 import HorizontalProperties from "@/components/property/HorizontalProperties";
-import { withObservables } from "@nozbe/watermelondb/react";
-import { Q } from "@nozbe/watermelondb";
-import { propertiesCollection } from "@/db/collections";
-import { Property } from "@/db/models/properties";
+import { toUiProperties } from "@/lib/propertyAdapter";
+import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
+import { useMemo } from "react";
 
 const NearbyProperties = ({
-  properties,
   latitude = 3.4,
   longitude = 4.1,
 }: {
-  properties: Property[];
   latitude: number;
   longitude: number;
 }) => {
+  const filter = useMemo(
+    () => ({
+      latitude,
+      longitude,
+    }),
+    [latitude, longitude],
+  );
+  const { data, isLoading, isRefetching } = useInfinityQueries({
+    type: "search",
+    filter,
+    perPage: 10,
+  });
+  const properties = useMemo(
+    () => toUiProperties(data?.pages.flatMap((page) => page.results) ?? []),
+    [data],
+  );
+
   return (
     <SectionHeaderWithRef
       title="Nearby"
       titleClassName="text-gray-400 text-base"
       subTitle="Explore"
       className=""
-      hasData={properties && properties?.length > 0}
+      hasData={properties.length > 0}
       onSeeAllPress={() => {
         router.push({
           pathname: "/explore",
@@ -34,26 +48,11 @@ const NearbyProperties = ({
     >
       <HorizontalProperties
         data={properties}
-        isLoading={false}
-        isRefetching={false}
+        isLoading={isLoading}
+        isRefetching={isRefetching}
       />
     </SectionHeaderWithRef>
   );
 };
 
-const enhance = withObservables(
-  ["latitude", "longitude"],
-  ({ latitude, longitude }) => ({
-    properties: propertiesCollection.query(
-      Q.where("status", "approved"),
-      Q.or(
-        Q.where("latitude", Q.gte(latitude)),
-        Q.where("longitude", Q.gte(longitude))
-      ),
-      Q.sortBy("updated_at", Q.desc),
-      Q.take(10)
-    ),
-  })
-);
-
-export default enhance(NearbyProperties);
+export default NearbyProperties;

@@ -20,7 +20,7 @@ import { hapticFeed } from "@/components/HapticTab";
 import { ReelViewsController } from "@/components/reel/ReelViewsController";
 import Platforms from "@/constants/Plaforms";
 import { useLike } from "@/hooks/useLike";
-import { mainStore } from "@/store";
+import { useMainStore } from "@/store";
 
 export const VideoPlayer = memo(
   forwardRef<VideoPlayerHandle, VideoPlayerProps>(
@@ -36,7 +36,7 @@ export const VideoPlayer = memo(
       },
       ref,
     ) => {
-      const muted = mainStore.muted.get();
+      const muted = useMainStore((state) => state.muted);
       const [showControls, setShowControls] = useState(false);
       const [showBottomSheet, setShowBottomSheet] = useState(false);
       const mounted = useRef(true);

@@ -17,7 +17,6 @@ import { getReverseGeocode } from "@/hooks/useReverseGeocode";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import { CurrencyPickerModal } from "@/components/modals/property/CurrencyModal";
 import { listingStore } from "@/store/listing";
-import { useValue } from "@legendapp/state/react";
 
 const tabs = [
   {
@@ -31,8 +30,8 @@ const tabs = [
 ];
 
 export default function PropertyListingBasic() {
-  const listing = useValue(listingStore.listing);
-  const updateListing = listingStore.updateListing;
+  const listing = listingStore((state) => state.listing);
+  const updateListing = listingStore((state) => state.updateListing);
   const { retryGetLocation } = useGetLocation();
   const [loading, setLoading] = useState(false);
   const [currencyModal, setCurrencyModal] = useState(false);
@@ -87,13 +86,13 @@ export default function PropertyListingBasic() {
                   containerClassName={"flex-1 h-12"}
                   className={cn(
                     " px-4 flex-1  flex-row gap-1 justify-center items-center",
-                    listing?.purpose === tab.value && "bg-primary rounded-2xl"
+                    listing?.purpose === tab.value && "bg-primary rounded-2xl",
                   )}
                 >
                   <Heading
                     className={cn(
                       " text-md",
-                      listing?.purpose === tab.value && "text-white"
+                      listing?.purpose === tab.value && "text-white",
                     )}
                   >
                     {tab.label}
@@ -125,7 +124,7 @@ export default function PropertyListingBasic() {
                 <Pressable
                   onPress={() => setCurrencyModal(true)}
                   className={cn(
-                    "w-14 border border-outline-100 justify-center bg-background items-center gap-1 px-3 aspect-square rounded-full"
+                    "w-14 border border-outline-100 justify-center bg-background items-center gap-1 px-3 aspect-square rounded-full",
                   )}
                 >
                   <Text className={cn("text-xs")}>{listing?.currency}</Text>

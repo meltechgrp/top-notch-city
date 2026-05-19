@@ -32,7 +32,7 @@ export function usePropertyFeedSync() {
       setSyncing(true);
       console.log("starting property sync");
 
-      const lastSyncAt = mainStore.propertyLastSyncAt.get() || 0;
+      const lastSyncAt = mainStore.getState().propertyLastSyncAt || 0;
       const isIncremental = Boolean(lastSyncAt);
       let serverProperties: any[] = [];
 
@@ -44,7 +44,7 @@ export function usePropertyFeedSync() {
               perPage,
               updated_after: updatedAfter,
             }),
-          { updatedAfter: lastSyncAt }
+          { updatedAfter: lastSyncAt },
         );
       } else {
         serverProperties = await fetchIncremental(
@@ -56,9 +56,9 @@ export function usePropertyFeedSync() {
                 country: "Nigeria",
                 useGeoLocation: false,
               },
-              updatedAfter
+              updatedAfter,
             ),
-          { updatedAfter: lastSyncAt }
+          { updatedAfter: lastSyncAt },
         );
 
         if (isAgent) {
@@ -69,7 +69,7 @@ export function usePropertyFeedSync() {
                 perPage,
                 updated_after: updatedAfter,
               }),
-            { updatedAfter: lastSyncAt }
+            { updatedAfter: lastSyncAt },
           );
           const map = new Map();
           [...serverProperties, ...agentRes].forEach((p) => map.set(p.id, p));
@@ -90,7 +90,7 @@ export function usePropertyFeedSync() {
         serverIdKey: "id",
         localIdKey: "id",
         shouldDelete: getPropertyDeleteRule(
-          isAdmin ? "admin" : isAgent ? "agent" : "user"
+          isAdmin ? "admin" : isAgent ? "agent" : "user",
         ),
         shouldUpdate: compareDates,
         mode: isIncremental ? "incremental" : "full",
@@ -110,11 +110,11 @@ export function usePropertyFeedSync() {
         .filter((t) => t > 0);
 
       if (timestamps.length) {
-        mainStore.propertyLastSyncAt.set(Math.max(...timestamps));
+        mainStore.getState().setPropertyLastSyncAt(Math.max(...timestamps));
       }
 
       console.log(
-        `✅ Property sync done (server=${serverProperties.length}, create=${toCreate.length}, update=${toUpdate.length}, delete=${toDelete.length})`
+        `✅ Property sync done (server=${serverProperties.length}, create=${toCreate.length}, update=${toUpdate.length}, delete=${toDelete.length})`,
       );
     } catch (error) {
       console.error("Property sync error:", error);

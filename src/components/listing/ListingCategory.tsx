@@ -12,12 +12,11 @@ import OptionsBottomSheet from "@/components/shared/OptionsBottomSheet";
 import { Durations } from "@/constants/Amenities";
 import { Bath, Bed } from "lucide-react-native";
 import { listingStore } from "@/store/listing";
-import { useValue } from "@legendapp/state/react";
 
 export default function ListingCategory() {
   const theme = useResolvedTheme();
-  const listing = useValue(listingStore.listing);
-  const updateListing = listingStore.updateListing;
+  const listing = listingStore((state) => state.listing);
+  const updateListing = listingStore((state) => state.updateListing);
   const { subcategories, loading, refetch, categories } = useCategoryQueries();
 
   const subs = useMemo(() => {
@@ -77,13 +76,13 @@ export default function ListingCategory() {
                       containerClassName={"h-12"}
                       className={cn(
                         "px-6 py-2.5 border-t border-r border-outline-100 flex-1 bg-background-muted rounded-xl flex-row gap-1 justify-center items-center",
-                        listing?.category === c.name && "bg-primary/80"
+                        listing?.category === c.name && "bg-primary/80",
                       )}
                     >
                       <Text
                         className={cn(
                           " text-base",
-                          listing?.category === c.name && "text-white"
+                          listing?.category === c.name && "text-white",
                         )}
                       >
                         {c.name}
@@ -106,13 +105,13 @@ export default function ListingCategory() {
                   containerClassName="h-12"
                   className={cn(
                     " px-4 py-2.5  bg-background-muted border-t border-r border-outline-100 rounded-xl flex-row gap-1 justify-center items-center",
-                    listing?.subCategory === b.name && "bg-primary/80"
+                    listing?.subCategory === b.name && "bg-primary/80",
                   )}
                 >
                   <Text
                     className={cn(
                       " text-base",
-                      listing?.subCategory === b.name && "text-white"
+                      listing?.subCategory === b.name && "text-white",
                     )}
                   >
                     {b.name}

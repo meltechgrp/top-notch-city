@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { Fetch } from "../utills";
+import { Fetch, getApiErrorMessage } from "../utills";
 import { getActiveToken } from "@/lib/secureStore";
 import config from "@/config";
 
@@ -51,13 +51,16 @@ export async function uploadAgentForm(form: Partial<Application>) {
   });
   const res = await formdata.json();
   if (res?.detail) {
-    if (typeof res?.detail == "object") {
-      const errs = Object.values(res?.detail);
-      console.log(errs);
-      throw Error(errs[0] as string);
+    const message = getApiErrorMessage(res);
+    if (
+      /phone/i.test(message) &&
+      /(exist|unique|already|another)/i.test(message)
+    ) {
+      throw Error(
+        "This phone number is already linked to another account. Please use a different number.",
+      );
     }
-
-    throw Error(res?.detail);
+    throw Error(message);
   }
   return res as Booking[];
 }

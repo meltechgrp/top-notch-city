@@ -1,6 +1,6 @@
 import React, { memo, useCallback } from "react";
 import { RefreshControl, View } from "react-native";
-import { Property } from "@/db/models/properties";
+import { UiProperty } from "@/lib/propertyAdapter";
 import { House } from "lucide-react-native";
 import VerticalPropertyLoaderWrapper from "@/components/loaders/VerticalPropertyLoader";
 import { FlashList } from "@shopify/flash-list";
@@ -9,7 +9,7 @@ import { router } from "expo-router";
 import { EmptyState } from "@/components/property/EmptyPropertyCard";
 
 type IProps = {
-  properties: Property[];
+  properties: UiProperty[];
   isLoading: boolean;
   hasNextPage: boolean;
   refetch: () => Promise<any>;
@@ -47,7 +47,7 @@ function SearchListView(props: IProps) {
         />
       );
     },
-    [router]
+    [router],
   );
   return (
     <>

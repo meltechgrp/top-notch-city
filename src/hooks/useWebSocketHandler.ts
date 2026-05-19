@@ -55,7 +55,7 @@ export function useWebSocketHandler() {
 
       switch (data?.type) {
         case "new_message": {
-          tempStore.setTyping(data.chat_id, false);
+          tempStore.getState().setTyping(data.chat_id, false);
           await addIncomingMessage(data.chat_id, {
             message_id: data.message_id!,
             created_at: data.created_at,
@@ -84,10 +84,10 @@ export function useWebSocketHandler() {
           });
           return;
         case "unread_count_update":
-          tempStore.updatetotalUnreadChat(data.total_unread || 0);
+          tempStore.getState().updatetotalUnreadChat(data.total_unread || 0);
           return;
         case "typing":
-          tempStore.setTyping(data.chat_id, data.is_typing);
+          tempStore.getState().setTyping(data.chat_id, data.is_typing);
           return;
         case "message_deleted":
           await deleteMessage({

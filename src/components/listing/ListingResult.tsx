@@ -16,13 +16,12 @@ import { generateMediaUrlSingle } from "@/lib/api";
 import { Dimensions } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import { listingStore } from "@/store/listing";
-import { useValue } from "@legendapp/state/react";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 export default function ListingResult() {
-  const property = useValue(listingStore.listing);
-  const updateListing = listingStore.updateListing;
+  const property = listingStore((state) => state.listing);
+  const updateListing = listingStore((state) => state.updateListing);
   const { onLayout } = useLayout();
   const availability = property.availabilityPeriod ?? [];
   const facilities = property.facilities ?? [];
@@ -41,7 +40,7 @@ export default function ListingResult() {
               value={formatMoney(
                 Number(property?.price || 0),
                 property?.currency || "NGN",
-                0
+                0,
               )}
             />
             <InfoRow label="Purpose" value={capitalize(property.purpose)} />
@@ -56,7 +55,7 @@ export default function ListingResult() {
             <InfoRow
               label="Address"
               value={composeFullAddress(
-                property?.address?.addressComponents || {}
+                property?.address?.addressComponents || {},
               )}
             />
           </View>
@@ -147,7 +146,7 @@ export default function ListingResult() {
                           onPress={() => {
                             updateListing({
                               facilities: facilities.filter(
-                                (_, i) => i !== index
+                                (_, i) => i !== index,
                               ),
                             });
                           }}

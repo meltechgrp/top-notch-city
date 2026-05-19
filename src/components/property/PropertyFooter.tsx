@@ -5,16 +5,16 @@ import {
   openBookingModal,
 } from "@/components/globals/AuthModals";
 import { Icon, Pressable, Text, View } from "@/components/ui";
-import { Property } from "@/db/models/properties";
 import { useChatsSync } from "@/db/queries/syncChats";
 import { cn } from "@/lib/utils";
+import { UiProperty } from "@/lib/propertyAdapter";
 import { useMutation } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { BookCheck, MessageCircle } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 interface PropertyFooterProps {
-  property: Property;
+  property: UiProperty;
   me: Account;
 }
 
@@ -27,7 +27,7 @@ export function PropertyFooter({ property, me }: PropertyFooterProps) {
     <View
       className={cn(
         " absolute bottom-0 hidden bg-background border-t border-outline-100 w-full left-0 ",
-        property.status == "approved" && "flex"
+        property.status == "approved" && "flex",
       )}
     >
       <SafeAreaView edges={["bottom"]} className="flex-1 bg-transparent">
@@ -42,6 +42,7 @@ export function PropertyFooter({ property, me }: PropertyFooterProps) {
                 agent_id: property.server_user_id,
                 image: property.thumbnail!,
                 address: property.address,
+                availabilities: property.availabilities,
 
                 booking_type:
                   property.category == "Shortlet" ||
@@ -87,7 +88,7 @@ export function PropertyFooter({ property, me }: PropertyFooterProps) {
                       },
                     });
                   },
-                }
+                },
               );
             }}
             className="flex-row flex-1 gap-2 bg-primary p-4  rounded-xl items-center justify-center"

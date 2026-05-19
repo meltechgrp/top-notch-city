@@ -22,6 +22,9 @@ export function useInfinityQueries({
   key,
   state,
   perPage = 20,
+  search,
+  status,
+  agentId,
 }: {
   type: QueryType;
   profileId?: string;
@@ -31,6 +34,9 @@ export function useInfinityQueries({
   state?: string;
   audioUrl?: string;
   perPage?: number;
+  search?: string;
+  status?: string;
+  agentId?: string;
 }) {
   const getNextPageParam = (lastPage: { page: number; pages: number }) => {
     const { page, pages } = lastPage;
@@ -43,7 +49,7 @@ export function useInfinityQueries({
         return {
           queryKey: ["latest"],
           queryFn: ({ pageParam = 1 }) =>
-            fetchProperties({ pageParam, perPage }),
+            fetchProperties({ pageParam, perPage, search, status }),
           enabled,
         };
       }
@@ -87,30 +93,51 @@ export function useInfinityQueries({
       }
       case "pending": {
         return {
-          queryKey: ["pending-properties"],
-          queryFn: ({ pageParam = 1 }) => fetchPendingProperties({ pageParam }),
+          queryKey: ["pending-properties", search],
+          queryFn: ({ pageParam = 1 }) =>
+            fetchPendingProperties({ pageParam, perPage, search }),
           enabled,
         };
       }
       case "user": {
         return {
-          queryKey: ["properties", profileId],
+          queryKey: ["properties", profileId, status, search],
           queryFn: ({ pageParam = 1 }) =>
-            fetchUserProperties({ userId: profileId!, pageParam }),
+            fetchUserProperties({
+              userId: profileId!,
+              pageParam,
+              perPage,
+              status,
+              search,
+            }),
           enabled: !!profileId && enabled,
         };
       }
       case "agent-property": {
         return {
-          queryKey: ["properties", profileId],
-          queryFn: ({ pageParam = 1 }) => fetchAgentProperties({ pageParam }),
+          queryKey: ["agent-properties", profileId ?? agentId, status, search],
+          queryFn: ({ pageParam = 1 }) =>
+            fetchAgentProperties({
+              pageParam,
+              perPage,
+              agentId: agentId ?? profileId,
+              status,
+              search,
+            }),
           enabled,
         };
       }
       case "admin": {
         return {
-          queryKey: ["admins-properties"],
-          queryFn: ({ pageParam = 1 }) => fetchAdminProperties({ pageParam }),
+          queryKey: ["admin-properties", status, search, agentId],
+          queryFn: ({ pageParam = 1 }) =>
+            fetchAdminProperties({
+              pageParam,
+              perPage,
+              status,
+              search,
+              agentId,
+            }),
           enabled,
         };
       }

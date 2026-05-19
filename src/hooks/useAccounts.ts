@@ -1,12 +1,15 @@
 import config from "@/config";
 import useResetAppState from "@/hooks/useResetAppState";
 import { getActiveAccount } from "@/lib/secureStore";
-import { mainStore } from "@/store";
-import { useValue } from "@legendapp/state/react";
+import { useMainStore } from "@/store";
 import { useCallback } from "react";
 
 export function useAccounts() {
-  const accounts = useValue(mainStore.accounts);
+  const accounts = useMainStore((state) => state.accounts);
+  const activeAccount = useMainStore((state) => state.activeAccount);
+  const addAccount = useMainStore((state) => state.addAccount);
+  const switchAccount = useMainStore((state) => state.switchAccount);
+  const removeAccount = useMainStore((state) => state.removeAccount);
   const resetAppState = useResetAppState();
 
   const handleInvalidAuth = useCallback(async () => {
@@ -15,10 +18,10 @@ export function useAccounts() {
 
   return {
     accounts,
-    activeAccount: mainStore.activeAccount,
-    addAccount: mainStore.addAccount,
-    switchAccount: mainStore.switchAccount,
-    removeAccount: mainStore.removeAccount,
+    activeAccount,
+    addAccount,
+    switchAccount,
+    removeAccount,
     updateAccount: useCallback(async () => {
       try {
         const active = await getActiveAccount();
@@ -32,7 +35,7 @@ export function useAccounts() {
             headers: {
               Authorization: `Bearer ${active.token}`,
             },
-          }
+          },
         );
 
         if (!resp.ok) {
@@ -44,8 +47,8 @@ export function useAccounts() {
           return handleInvalidAuth();
         }
 
-        await mainStore.addAccount(me, active.token);
+        await addAccount(me, active.token);
       } catch {}
-    }, [handleInvalidAuth]),
+    }, [addAccount, handleInvalidAuth]),
   };
 }

@@ -11,7 +11,7 @@ import { tempStore } from "@/store/tempStore";
 export default function ResetPassword() {
   const { mutateAsync, isPending } =
     useAuthMutations().sendPasswordResetMutation;
-  const { saveEmail } = tempStore;
+  const saveEmail = tempStore((state) => state.saveEmail);
   const [form, setForm] = React.useState({
     email: "",
   });
@@ -48,7 +48,7 @@ export default function ResetPassword() {
               alertType: "error",
             });
           },
-        }
+        },
       );
     } catch (error) {
       showErrorAlert({

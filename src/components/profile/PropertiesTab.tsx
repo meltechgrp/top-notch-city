@@ -1,19 +1,17 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { router } from "expo-router";
 import { EmptyState } from "@/components/property/EmptyPropertyCard";
 import { House } from "lucide-react-native";
 import HorizontalProperties from "@/components/property/HorizontalProperties";
 import SectionHeaderWithRef from "@/components/home/SectionHeaderWithRef";
-import { withObservables } from "@nozbe/watermelondb/react";
-import { database } from "@/db";
-import { Q } from "@nozbe/watermelondb";
+import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
+import { toUiProperties } from "@/lib/propertyAdapter";
 
 type IProps = {
   profileId?: string;
   showStatus?: boolean;
   isOwner?: boolean;
   isAgent?: boolean;
-  properties: any;
 };
 
 function PropertiesTabView({
@@ -21,9 +19,20 @@ function PropertiesTabView({
   showStatus = false,
   isOwner = false,
   isAgent = false,
-  properties,
 }: IProps) {
-  if (properties?.length === 0) {
+  const { data, isLoading, isRefetching } = useInfinityQueries({
+    type: "user",
+    profileId,
+    status: isOwner ? undefined : "approved",
+    perPage: 8,
+    enabled: !!profileId,
+  });
+  const properties = useMemo(
+    () => toUiProperties(data?.pages.flatMap((page) => page.results) ?? []),
+    [data],
+  );
+
+  if (!isLoading && properties.length === 0) {
     const propertyLabel = "Properties";
 
     if (isOwner && isAgent) {
@@ -78,7 +87,7 @@ function PropertiesTabView({
       titleClassName="text-gray-400 text-base"
       subTitle="See All"
       className=" bg-background-muted rounded-xl -mx-4 px-4 pb-5"
-      hasData={properties?.length > 0}
+      hasData={properties.length > 0}
       onSeeAllPress={() => {
         router.push({
           pathname: "/agents/[userId]/properties",
@@ -90,11 +99,11 @@ function PropertiesTabView({
     >
       <HorizontalProperties
         data={properties}
-        isLoading={false}
+        isLoading={isLoading}
         className="w-[19rem] bg-background"
         contentContainerClassName={"px-3"}
         imageStyle={{ height: 130 }}
-        isRefetching={false}
+        isRefetching={isRefetching}
         snapToInterval={180}
         showTitle={false}
         showLike={false}
@@ -105,22 +114,4 @@ function PropertiesTabView({
   );
 }
 
-const enhance = withObservables(
-  ["profileId", "isOwner"],
-  ({ profileId, isOwner }) => {
-    return {
-      properties: database
-        .get("properties")
-        .query(
-          Q.and(
-            Q.where("server_user_id", profileId),
-            Q.where("status", isOwner ? Q.notEq("deleted") : "approved")
-          ),
-          Q.sortBy("updated_at", Q.desc),
-          Q.take(8)
-        ),
-    };
-  }
-);
-
-export default enhance(PropertiesTabView);
+export default PropertiesTabView;

@@ -10,8 +10,8 @@ import { FlashList } from "@shopify/flash-list";
 import { router } from "expo-router";
 import React, { useCallback, useEffect, useMemo } from "react";
 import NearbyProperties from "@/components/home/topLocations";
-import { usePropertyFeedSync } from "@/db/queries/syncPropertyFeed";
 import useGetLocation from "@/hooks/useGetLocation";
+import { useQueryClient } from "@tanstack/react-query";
 const MAP_HEIGHT = 400;
 
 const Separator = () => (
@@ -19,8 +19,9 @@ const Separator = () => (
 );
 
 export default function HomeScreen() {
-  const { resync, syncing } = usePropertyFeedSync();
+  const queryClient = useQueryClient();
   const { location, retryGetLocation } = useGetLocation();
+  const [refreshing, setRefreshing] = React.useState(false);
   const feedList = React.useMemo(() => {
     const topLocations = {
       id: "locations",
@@ -91,12 +92,24 @@ export default function HomeScreen() {
   useEffect(() => {
     retryGetLocation();
   }, []);
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await queryClient.invalidateQueries({ queryKey: ["home-properties"] });
+      await queryClient.invalidateQueries({ queryKey: ["featured"] });
+      await queryClient.invalidateQueries({ queryKey: ["shortlet"] });
+      await queryClient.invalidateQueries({ queryKey: ["trending-lands"] });
+      await queryClient.invalidateQueries({ queryKey: ["latest"] });
+    } finally {
+      setRefreshing(false);
+    }
+  }, [queryClient]);
   return (
     <>
       <Box className="flex-1">
         <FlashList
           refreshControl={
-            <RefreshControl refreshing={syncing} onRefresh={resync} />
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
           ListHeaderComponent={
             <DiscoverProperties

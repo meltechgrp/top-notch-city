@@ -18,18 +18,19 @@ import { RotateCcw } from "lucide-react-native";
 import QuoteMessage from "@/components/chat/ChatRoomQuoteMessage";
 import { Message } from "@/db/models/messages";
 import { withObservables } from "@nozbe/watermelondb/react";
-import { messageCollection, propertiesCollection } from "@/db/collections";
+import { messageCollection } from "@/db/collections";
 import { Q } from "@nozbe/watermelondb";
-import { Property } from "@/db/models/properties";
 import { of } from "rxjs";
 import MessageFiles from "@/components/chat/MessageFiles";
 import ReplySwipeableWrapper from "@/components/chat/ReplySwipeableWrapper";
 import { User } from "@/db/models/users";
+import { useQuery } from "@tanstack/react-query";
+import { fetchProperty } from "@/actions/property";
+import { toUiProperty, UiProperty } from "@/lib/propertyAdapter";
 
 export type ChatRoomMessageProps = View["props"] & {
   me: Account;
   message: Message;
-  property: Property[];
   receiver: User;
   quotes: Message[];
   onLongPress: (message: Message) => void;
@@ -42,7 +43,6 @@ function ChatRoomMessage(props: ChatRoomMessageProps) {
     onLongPress,
     isDeleting,
     message,
-    property: [property],
     quotes: [quote],
     handleReply,
     receiver,
@@ -105,6 +105,15 @@ function ChatRoomMessage(props: ChatRoomMessageProps) {
     Keyboard.dismiss();
   };
   async function resendMessage() {}
+  const { data: propertyData } = useQuery({
+    queryKey: ["message-property", message.property_server_id],
+    queryFn: () => fetchProperty({ id: message.property_server_id! }),
+    enabled: !!message.property_server_id,
+  });
+  const property = React.useMemo<UiProperty | null>(
+    () => (propertyData ? toUiProperty(propertyData) : null),
+    [propertyData],
+  );
 
   return (
     <>
@@ -216,18 +225,9 @@ function ChatRoomMessage(props: ChatRoomMessageProps) {
 const enhance = withObservables(
   ["message"],
   ({ message }: { message: Message }) => {
-    const propertyId = message.property_server_id;
     const replyId = message.reply_to_message_id;
     return {
       message: message.observe(),
-      property: propertyId
-        ? propertiesCollection
-            .query(
-              Q.where("property_server_id", propertyId),
-              Q.take(1),
-            )
-            .observe()
-        : of([] as Property[]),
       quotes: replyId
         ? messageCollection
             .query(Q.where("server_message_id", replyId), Q.take(1))

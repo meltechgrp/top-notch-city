@@ -1,6 +1,5 @@
 import { resetDatabase } from "@/db/helpers";
 import { useChatsSync } from "@/db/queries/syncChats";
-import { usePropertyFeedSync } from "@/db/queries/syncPropertyFeed";
 import { useMe } from "@/hooks/useMe";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { useCallback, useEffect, useRef } from "react";
@@ -14,7 +13,6 @@ export function useSyncer({ auto = true, reset = false }: SyncerOptions) {
   const { isInternetReachable } = useNetworkStatus();
   const { me } = useMe();
 
-  const { resync: syncProperties } = usePropertyFeedSync();
   const { resync: syncChats } = useChatsSync();
 
   const lastUserIdRef = useRef<string | null>(null);
@@ -28,14 +26,13 @@ export function useSyncer({ auto = true, reset = false }: SyncerOptions) {
       syncingRef.current = true;
       console.log("🔄 Starting sync");
 
-      await syncProperties();
       await syncChats();
 
       console.log("✅ Sync completed");
     } finally {
       syncingRef.current = false;
     }
-  }, [isInternetReachable, me, syncProperties, syncChats]);
+  }, [isInternetReachable, me, syncChats]);
 
   // Handle reset safely
   useEffect(() => {

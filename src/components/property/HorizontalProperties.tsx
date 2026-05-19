@@ -5,7 +5,7 @@ import { ScrollView, StyleProp, ViewStyle } from "react-native";
 import { useMemo, useCallback, memo } from "react";
 import { cn } from "@/lib/utils";
 import { shuffle } from "lodash";
-import { Property } from "@/db/models/properties";
+import { UiProperty } from "@/lib/propertyAdapter";
 
 interface Props {
   category?: string;
@@ -24,10 +24,10 @@ interface Props {
   contentContainerClassName?: string;
   imageStyle?: StyleProp<ViewStyle>;
   style?: StyleProp<ViewStyle>;
-  data: Property[];
+  data: UiProperty[];
   refetch?: () => Promise<any>;
   fetchNextPage?: () => Promise<any>;
-  onPress?: (data: Property) => void;
+  onPress?: (data: UiProperty) => void;
 }
 
 function HorizontalProperties({
@@ -53,7 +53,7 @@ function HorizontalProperties({
   const skeletonItems = useMemo(() => Array.from({ length: 5 }), []);
 
   const handlePress = useCallback(
-    (property: Property) => {
+    (property: UiProperty) => {
       if (onPress) return onPress(property);
 
       router.push({
@@ -61,7 +61,7 @@ function HorizontalProperties({
         params: { propertyId: property.slug },
       });
     },
-    [router, onPress]
+    [router, onPress],
   );
 
   const shuffled = useMemo(() => shuffle(data), [data]);

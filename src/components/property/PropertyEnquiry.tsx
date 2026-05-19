@@ -9,10 +9,10 @@ import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { Send } from "lucide-react-native";
 import { ExternalLink } from "@/components/ExternalLink";
 import { fullName } from "@/lib/utils";
-import { Property } from "@/db/models/properties";
+import { UiProperty } from "@/lib/propertyAdapter";
 
 interface PropertyEnquiryProps {
-  property: Property;
+  property: UiProperty;
   me: Account;
 }
 

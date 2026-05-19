@@ -1,18 +1,26 @@
 import SectionHeaderWithRef from "@/components/home/SectionHeaderWithRef";
 import HorizontalProperties from "@/components/property/HorizontalProperties";
+import { toUiProperties } from "@/lib/propertyAdapter";
+import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import { router } from "expo-router";
-import { withObservables } from "@nozbe/watermelondb/react";
-import { Q } from "@nozbe/watermelondb";
-import { propertiesCollection } from "@/db/collections";
-import { Property } from "@/db/models/properties";
+import { useMemo } from "react";
 
-function ShortletProperties({ properties }: { properties: Property[] }) {
+function ShortletProperties() {
+  const { data, isLoading, isRefetching } = useInfinityQueries({
+    type: "shortlet",
+    perPage: 10,
+  });
+  const properties = useMemo(
+    () => toUiProperties(data?.pages.flatMap((page) => page.results) ?? []),
+    [data],
+  );
+
   return (
     <SectionHeaderWithRef
       title="Shortlets/Hotels"
       titleClassName="text-gray-400 text-base"
       subTitle="See More"
-      hasData={properties && properties?.length > 0}
+      hasData={properties.length > 0}
       onSeeAllPress={() => {
         router.push({
           pathname: "/explore",
@@ -24,20 +32,11 @@ function ShortletProperties({ properties }: { properties: Property[] }) {
     >
       <HorizontalProperties
         data={properties}
-        isLoading={false}
-        isRefetching={false}
+        isLoading={isLoading}
+        isRefetching={isRefetching}
       />
     </SectionHeaderWithRef>
   );
 }
 
-const enhance = withObservables([], () => ({
-  properties: propertiesCollection.query(
-    Q.where("status", "approved"),
-    Q.or(Q.where("category", "Hotel"), Q.where("category", "Shortlet")),
-    Q.sortBy("updated_at", Q.desc),
-    Q.take(10)
-  ),
-}));
-
-export default enhance(ShortletProperties);
+export default ShortletProperties;

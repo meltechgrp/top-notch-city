@@ -21,8 +21,6 @@ import DropdownSelect from "@/components/custom/DropdownSelect";
 import { ExternalLink } from "@/components/ExternalLink";
 import ModalScreen from "@/components/shared/ModalScreen";
 import { useMe } from "@/hooks/useMe";
-import { propertyAvailabilityCollection } from "@/db/collections";
-import { Q } from "@nozbe/watermelondb";
 import { cn, showSnackbar } from "@/lib/utils";
 
 export type BookingFormProps = {
@@ -33,6 +31,7 @@ export type BookingFormProps = {
   agent_id: string;
   image: string;
   address?: string;
+  availabilities?: Availabilities[];
 };
 
 export const BookingFormBottomSheet = ({
@@ -43,6 +42,7 @@ export const BookingFormBottomSheet = ({
   agent_id,
   image,
   address,
+  availabilities = [],
 }: BookingFormProps) => {
   const { me } = useMe();
   const [availableDates, setAvailableDates] = useState<Availabilities[]>([]);
@@ -157,7 +157,10 @@ export const BookingFormBottomSheet = ({
       h > INSPECTION_END_HOUR ||
       (h === INSPECTION_END_HOUR && m > INSPECTION_END_MINUTE)
     )
-      return setHours(setMinutes(date, INSPECTION_END_MINUTE), INSPECTION_END_HOUR);
+      return setHours(
+        setMinutes(date, INSPECTION_END_MINUTE),
+        INSPECTION_END_HOUR,
+      );
     return date;
   };
 
@@ -170,19 +173,15 @@ export const BookingFormBottomSheet = ({
   };
 
   useEffect(() => {
-    async function getDates() {
-      const dates = await propertyAvailabilityCollection
-        .query(Q.where("property_server_id", property_id))
-        .fetch();
-      const available = dates?.map((a) => ({
+    setAvailableDates(
+      availabilities.map((a) => ({
+        ...a,
         start: new Date(a.start).toISOString(),
         end: new Date(a.end).toISOString(),
-        id: property_id,
-      }));
-      setAvailableDates(available);
-    }
-    getDates();
-  }, [property_id]);
+        id: a.id || property_id,
+      })),
+    );
+  }, [availabilities, property_id]);
 
   return (
     <>
@@ -303,7 +302,12 @@ export const BookingFormBottomSheet = ({
                 maximumDate={
                   isReservation
                     ? undefined
-                    : new Date(new Date().setHours(INSPECTION_END_HOUR, INSPECTION_END_MINUTE))
+                    : new Date(
+                        new Date().setHours(
+                          INSPECTION_END_HOUR,
+                          INSPECTION_END_MINUTE,
+                        ),
+                      )
                 }
                 onChange={(val) => {
                   if (!formData.scheduled_date) return;
@@ -313,7 +317,7 @@ export const BookingFormBottomSheet = ({
                     !isReservation &&
                     !isTimeAllowedForInspection(
                       picked.getHours(),
-                      picked.getMinutes()
+                      picked.getMinutes(),
                     )
                   ) {
                     setError(true);

@@ -4,20 +4,21 @@ import VerticalProperties from "@/components/property/VerticalProperties";
 import FilterComponent from "@/components/admin/shared/FilterComponent";
 import { useMe } from "@/hooks/useMe";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
-import { usePropertyFeedSync } from "@/db/queries/syncPropertyFeed";
+import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 
 export default function PendingProperties() {
-  const { resync } = usePropertyFeedSync();
   const [search, setSearch] = useState("");
   const { me } = useMe();
   const debouncedSearch = useDebouncedValue(search, 400);
   const [page, setPage] = useState(1);
+  const { refetch } = useInfinityQueries({
+    type: "pending",
+    search: debouncedSearch,
+    perPage: 10,
+  });
   useEffect(() => {
     setPage(1);
   }, [debouncedSearch]);
-  useEffect(() => {
-    resync();
-  }, []);
   return (
     <>
       <Box className=" flex-1 px-2 pt-2">
@@ -38,7 +39,7 @@ export default function PendingProperties() {
             perPage={10}
             tab={"pending"}
             page={page}
-            refetch={resync}
+            refetch={refetch as any}
             fetchNextPage={setPage}
             fetchPrevPage={setPage}
           />

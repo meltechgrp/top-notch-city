@@ -49,7 +49,7 @@ export function usePropertyDataSync(id: string, auto = true) {
       const localEntry = local?.[0];
       if (localEntry && !compareDates(localEntry, property)) return;
       await syncPropertyById(id, { property });
-      listingStore.updateListing({
+      listingStore.getState().updateListing({
         owner_type: property?.ownership?.owner_type || undefined,
         listing_role: property?.ownership?.listing_role || undefined,
         companies: property?.companies,

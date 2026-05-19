@@ -10,9 +10,8 @@ import ListingMediaFiles from "@/components/listing/ListingMediaFiles";
 import ListingResult from "@/components/listing/ListingResult";
 import FullHeightLoaderWrapper from "@/components/loaders/FullHeightLoaderWrapper";
 import { Box } from "@/components/ui";
-import { usePropertyFeedSync } from "@/db/queries/syncPropertyFeed";
 import { listingStore } from "@/store/listing";
-import { useValue } from "@legendapp/state/react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useLayout } from "@react-native-community/hooks";
 import { useRouter } from "expo-router";
 import { useMemo } from "react";
@@ -30,7 +29,7 @@ export function ListingWrapper({
   type,
   propertyId,
 }: ListingWrapperProps) {
-  const { resync } = usePropertyFeedSync();
+  const queryClient = useQueryClient();
   const router = useRouter();
   const { onLayout, height } = useLayout();
   const {
@@ -38,25 +37,23 @@ export function ListingWrapper({
     uploading: loading,
     error,
   } = useUploadProperty(type, propertyId);
-  const { updateListing, updateListingStep } = listingStore.get();
-  const listing = useValue(listingStore.listing);
+  const listing = listingStore((state) => state.listing);
+  const updateListing = listingStore((state) => state.updateListing);
+  const updateListingStep = listingStore((state) => state.updateListingStep);
+  const resetListing = listingStore((state) => state.resetListing);
 
   async function uploaHandler() {
     await uploadProperty(listing, {
       onSuccess: (e) => {
-        resync();
+        queryClient.invalidateQueries({ queryKey: ["properties"] });
+        queryClient.invalidateQueries({ queryKey: ["agent-properties"] });
         router.dismissTo({
           pathname: "/(protected)/agents/[userId]/properties/success",
           params: {
             userId,
           },
         });
-        listingStore.listing.delete();
-        listingStore.listing.assign({
-          purpose: "rent",
-          step: 1,
-          currency: "NGN",
-        });
+        resetListing();
       },
       onError: (e) => {
         console.log(e, "here");

@@ -2,22 +2,39 @@ import { View } from "@/components/ui";
 import Map from "../location/map";
 import HomeNavigation from "./HomeNavigation";
 import { router } from "expo-router";
-import { withObservables } from "@nozbe/watermelondb/react";
-import { Q } from "@nozbe/watermelondb";
-import { propertiesCollection } from "@/db/collections";
-import { Property } from "@/db/models/properties";
+import { toUiProperties } from "@/lib/propertyAdapter";
+import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
+import { useMemo } from "react";
 
 type Props = {
   className?: string;
   mapHeight: number;
-  properties: Property[];
+  latitude?: number;
+  longitude?: number;
 };
 const DiscoverProperties = (props: Props) => {
-  const { className, mapHeight, properties } = props;
+  const { className, mapHeight, latitude, longitude } = props;
+  const filter = useMemo(
+    () => ({
+      latitude,
+      longitude,
+    }),
+    [latitude, longitude],
+  );
+  const { data } = useInfinityQueries({
+    type: "search",
+    filter,
+    perPage: 30,
+  });
+  const properties = useMemo(
+    () => toUiProperties(data?.pages.flatMap((page) => page.results) ?? []),
+    [data],
+  );
+
   return (
     <View style={{ flex: 1, height: mapHeight }} className={className}>
       <View className="overflow-hidden relative flex-1">
-        <View className="  absolute top-16 w-full z-10">
+        <View className="absolute top-16 w-full z-10">
           <HomeNavigation />
         </View>
         <Map
@@ -34,17 +51,4 @@ const DiscoverProperties = (props: Props) => {
   );
 };
 
-const enhance = withObservables(
-  ["latitude", "longitude"],
-  ({ latitude, longitude }) => ({
-    properties: propertiesCollection.query(
-      Q.where("status", "approved"),
-      Q.or(
-        Q.where("latitude", Q.gte(latitude)),
-        Q.where("longitude", Q.gte(longitude))
-      )
-    ),
-  })
-);
-
-export default enhance(DiscoverProperties);
+export default DiscoverProperties;

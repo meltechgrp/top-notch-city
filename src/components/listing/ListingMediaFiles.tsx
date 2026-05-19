@@ -6,11 +6,10 @@ import { TouchableOpacity } from "react-native";
 import ListingPhotosBottomSheet from "./ListingPhotosBottomSheet";
 import ListingVideosBottomSheet from "./ListingVideosBottomSheet";
 import { listingStore } from "@/store/listing";
-import { useValue } from "@legendapp/state/react";
 
 export default function ListingMediaFiles() {
-  const listing = useValue(listingStore.listing);
-  const updateListing = listingStore.updateListing;
+  const listing = listingStore((state) => state.listing);
+  const updateListing = listingStore((state) => state.updateListing);
   const [photosBottomSheet, setPhotosBottomSheet] = useState(false);
   const [videosBottomSheet, setVideosBottomSheet] = useState(false);
 

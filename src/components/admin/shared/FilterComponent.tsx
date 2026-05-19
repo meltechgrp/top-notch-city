@@ -1,23 +1,19 @@
 import { Badge, BadgeText, Icon, Pressable, Text, View } from "@/components/ui";
 import { cn } from "@/lib/utils";
-import { of } from "rxjs";
-import { withObservables } from "@nozbe/watermelondb/react";
-import { database } from "@/db";
-import { Q } from "@nozbe/watermelondb";
 import { ScrollView } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { Search } from "lucide-react-native";
-import { buildListQuery } from "@/store/searchStore";
 
 type Props = {
   tab?: string;
   tabs?: { title: string; total: number }[];
-  all?: any;
-  pending?: any;
-  approved?: any;
-  flagged?: any;
-  rejected?: any;
+  all?: number;
+  pending?: number;
+  approved?: number;
+  flagged?: number;
+  rejected?: number;
   search?: string;
+  filter?: string;
   agentId?: string;
   searchPlaceholder?: string;
   onSearch: (search: string) => void;
@@ -30,12 +26,12 @@ type Props = {
 export function FilterComponent({
   tab,
   searchPlaceholder,
-  all,
+  all = 0,
   tabs: tabsProp,
-  pending,
-  flagged,
-  approved,
-  rejected,
+  pending = 0,
+  flagged = 0,
+  approved = 0,
+  rejected = 0,
   onSearch,
   onUpdate,
   search,
@@ -46,11 +42,11 @@ export function FilterComponent({
   const tabs =
     tabsProp ??
     Object.entries({
-      all: all,
-      pending: pending,
-      approved: approved,
-      rejected: rejected,
-      flagged: flagged,
+      all,
+      pending,
+      approved,
+      rejected,
+      flagged,
     }).map(([title, total]) => ({ title, total }));
   return (
     <View className={cn("gap-3 mb-4", className)}>
@@ -59,7 +55,7 @@ export function FilterComponent({
           <Icon as={Search} className="text-primary" />
           <TextInput
             className={cn(
-              "rounded-xl text-typography placeholder:text-typography p-0  flex-1 ",
+              "rounded-xl text-typography placeholder:text-typography p-0 flex-1",
               inputClassName,
             )}
             value={search}
@@ -85,7 +81,7 @@ export function FilterComponent({
                   variant="solid"
                   className={cn(
                     "flex-row border border-background-muted gap-3 py-1.5 px-3 rounded-xl items-center justify-between",
-                    tab == title && " border-primary",
+                    tab == title && "border-primary",
                   )}
                   action="muted"
                 >
@@ -107,52 +103,5 @@ export function FilterComponent({
     </View>
   );
 }
-const enhance = withObservables(
-  ["agentId", "filter", "showTabs"],
-  ({ agentId, filter, showTabs }) => ({
-    all: showTabs
-      ? database
-          .get("properties")
-          .query(...buildListQuery({ filter, agentId }))
-          .observeCount()
-      : of(0),
-    pending: showTabs
-      ? database
-          .get("properties")
-          .query(
-            ...buildListQuery({ filter, agentId }),
-            Q.where("status", "pending"),
-          )
-          .observeCount()
-      : of(0),
-    approved: showTabs
-      ? database
-          .get("properties")
-          .query(
-            ...buildListQuery({ filter, agentId }),
-            Q.where("status", "approved"),
-          )
-          .observeCount()
-      : of(0),
-    rejected: showTabs
-      ? database
-          .get("properties")
-          .query(
-            ...buildListQuery({ filter, agentId }),
-            Q.where("status", "rejected"),
-          )
-          .observeCount()
-      : of(0),
-    flagged: showTabs
-      ? database
-          .get("properties")
-          .query(
-            ...buildListQuery({ filter, agentId }),
-            Q.where("status", "flagged"),
-          )
-          .observeCount()
-      : of(0),
-  }),
-);
 
-export default enhance(FilterComponent);
+export default FilterComponent;

@@ -1,29 +1,48 @@
 import SectionHeaderWithRef from "@/components/home/SectionHeaderWithRef";
 import HorizontalProperties from "@/components/property/HorizontalProperties";
-import { database } from "@/db";
-import { Property } from "@/db/models/properties";
-import { Q } from "@nozbe/watermelondb";
-import { withObservables } from "@nozbe/watermelondb/react";
+import { toUiProperties, UiProperty } from "@/lib/propertyAdapter";
+import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import { router } from "expo-router";
+import { useMemo } from "react";
 
 interface SimilarPropertiesProps {
-  property: Property;
-  properties: any[];
+  property: UiProperty;
 }
 
-function SimilarProperties({ property, properties }: SimilarPropertiesProps) {
+function SimilarProperties({ property }: SimilarPropertiesProps) {
+  const filter = useMemo(
+    () => ({
+      category: property.category,
+      latitude: property.latitude,
+      longitude: property.longitude,
+    }),
+    [property.category, property.latitude, property.longitude],
+  );
+  const { data, isLoading, isRefetching } = useInfinityQueries({
+    type: "search",
+    filter,
+    perPage: 10,
+  });
+  const properties = useMemo(
+    () =>
+      toUiProperties(data?.pages.flatMap((page) => page.results) ?? []).filter(
+        (item) => item.id !== property.id,
+      ),
+    [data, property.id],
+  );
+
   return (
     <SectionHeaderWithRef
       title="Similar Properties"
       titleClassName="text-gray-400 text-base"
       subTitle="See More"
-      hasData={properties && properties?.length > 0}
+      hasData={properties.length > 0}
       onSeeAllPress={() => {
         router.push({
           pathname: "/explore",
           params: {
-            latitude: property?.latitude.toString(),
-            longitude: property?.longitude.toString(),
+            latitude: property?.latitude?.toString(),
+            longitude: property?.longitude?.toString(),
             category: property.category,
           },
         });
@@ -31,22 +50,11 @@ function SimilarProperties({ property, properties }: SimilarPropertiesProps) {
     >
       <HorizontalProperties
         data={properties}
-        isLoading={false}
-        isRefetching={false}
+        isLoading={isLoading}
+        isRefetching={isRefetching}
       />
     </SectionHeaderWithRef>
   );
 }
 
-const enhance = withObservables(["property"], ({ property }) => ({
-  properties: database
-    .get("properties")
-    .query(
-      Q.where("status", "approved"),
-      Q.where("category", property.category),
-      Q.sortBy("updated_at", Q.desc),
-      Q.take(10)
-    ),
-}));
-
-export default enhance(SimilarProperties);
+export default SimilarProperties;

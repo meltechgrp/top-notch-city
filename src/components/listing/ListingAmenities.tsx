@@ -24,7 +24,6 @@ import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
 import { AvailabilityPickerSheet } from "@/components/listing/AvailabilityPickerSheet";
 import { CustomInput } from "@/components/custom/CustomInput";
 import { listingStore } from "@/store/listing";
-import { useValue } from "@legendapp/state/react";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -32,8 +31,8 @@ export default function ListingAmenities() {
   const ref = React.useRef<ICarouselInstance>(null);
   const [showAvailabilityPickerSheet, setShowAvailabilityPickerSheet] =
     useState(false);
-  const listing = useValue(listingStore.listing);
-  const updateListing = listingStore.updateListing;
+  const listing = listingStore((state) => state.listing);
+  const updateListing = listingStore((state) => state.updateListing);
   const { data } = useQuery({
     queryKey: ["amenities"],
     queryFn: fetchAllAmenities,
@@ -184,7 +183,7 @@ export default function ListingAmenities() {
                         onPress={() => {
                           updateListing({
                             availabilityPeriod: availability.filter(
-                              (_, i) => i !== index
+                              (_, i) => i !== index,
                             ),
                           });
                         }}
@@ -214,7 +213,7 @@ export default function ListingAmenities() {
                   <Text
                     className={cn(
                       "text-typography/80",
-                      listing?.viewType && "text-xs -mt-1"
+                      listing?.viewType && "text-xs -mt-1",
                     )}
                   >
                     View type {!listing?.viewType ? "(optional)" : ""}
@@ -244,7 +243,7 @@ export default function ListingAmenities() {
                   <Text
                     className={cn(
                       "text-typography/80",
-                      listing?.bedType && "text-xs -mt-1"
+                      listing?.bedType && "text-xs -mt-1",
                     )}
                   >
                     Bed type {!listing?.bedType ? "(optional)" : ""}

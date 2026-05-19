@@ -27,7 +27,7 @@ import { ImageViewerProvider } from "@/components/custom/ImageViewerProvider";
 import { registerDevice } from "@/actions/user";
 import useGetLocation from "@/hooks/useGetLocation";
 import { useMe } from "@/hooks/useMe";
-import { mainStore } from "@/store";
+import { useMainStore } from "@/store";
 import { useSyncer } from "@/hooks/useSyncer";
 import { AudioModule, setAudioModeAsync } from "expo-audio";
 
@@ -54,6 +54,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   useSyncer({});
+  const saveAddress = useMainStore((state) => state.saveAddress);
   const { address, location } = useGetLocation({ withAddress: false });
   useSuppressChatPushNotification();
   useMountPushNotificationToken();
@@ -64,9 +65,9 @@ export default function RootLayout() {
   }, []);
   useEffect(() => {
     if (address || location) {
-      mainStore.saveAddress({ ...address, ...location });
+      saveAddress({ ...address, ...location });
     }
-  }, [address, location]);
+  }, [address, location, saveAddress]);
   useEffect(() => {
     (async () => {
       const status = await AudioModule.requestRecordingPermissionsAsync();

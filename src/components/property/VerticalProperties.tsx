@@ -4,10 +4,8 @@ import React, {
   forwardRef,
   ReactNode,
   useCallback,
-  useEffect,
   useMemo,
   useRef,
-  useState,
 } from "react";
 import PropertyListItem from "./PropertyListItem";
 import { useRouter } from "expo-router";
@@ -15,12 +13,9 @@ import { cn } from "@/lib/utils";
 import VerticalPropertyLoaderWrapper from "@/components/loaders/VerticalPropertyLoader";
 import { EmptyState } from "@/components/property/EmptyPropertyCard";
 import { House } from "lucide-react-native";
-import { withObservables } from "@nozbe/watermelondb/react";
-import { database } from "@/db";
-import { Q } from "@nozbe/watermelondb";
-import { buildListQuery } from "@/store/searchStore";
 import { FlashList, FlashListRef } from "@shopify/flash-list";
-import { InteractionManager } from "react-native";
+import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
+import { toUiProperties, UiProperty } from "@/lib/propertyAdapter";
 
 interface Props {
   className?: string;
@@ -38,107 +33,104 @@ interface Props {
   perPage?: number;
   page?: number;
   showStatus?: boolean;
-  properties: any[];
-  total: any;
+  properties?: UiProperty[];
+  total?: number;
   disableHeader?: boolean;
-  refetch: () => Promise<any>;
+  refetch?: () => Promise<any>;
   fetchPrevPage?: React.Dispatch<React.SetStateAction<number>>;
   fetchNextPage?: React.Dispatch<React.SetStateAction<number>>;
   headerTopComponent?: any;
   headerHeight?: number;
   ListEmptyComponent?: ReactNode;
-  onPress?: (data: Props["properties"][0]) => void;
+  onPress?: (data: UiProperty) => void;
+  role?: "user" | "agent" | "admin" | "staff" | "staff_agent";
 }
+
 const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
   {
     scrollEnabled = true,
-    properties,
-    isLoading,
+    properties: propProperties,
+    isLoading: propLoading,
     showsVerticalScrollIndicator = false,
-    refetch,
-    fetchNextPage,
+    refetch: propRefetch,
+    fetchNextPage: propFetchNextPage,
     isHorizontal = false,
     headerTopComponent,
     disableHeader,
     className,
     onPress,
     headerHeight,
-    isEmptyTitle,
     perPage = 10,
-    page = 1,
     showStatus = false,
     ListEmptyComponent,
-    isRefetching,
+    isRefetching: propRefetching,
     showLike = true,
-    total,
-    fetchPrevPage,
     tab,
     search,
+    agentId,
+    role,
   },
-  ref
+  ref,
 ) {
   const listRef = useRef<FlashListRef<any>>(null);
   const router = useRouter();
-  const loadingNextPageRef = useRef(false);
-  const prevLength = useRef(0);
-  const [refreshing, setRefreshing] = useState(false);
+  const queryType =
+    role === "admin" ? "admin" : agentId ? "agent-property" : "latest";
+  const {
+    data,
+    isLoading,
+    isRefetching,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfinityQueries({
+    type: queryType,
+    profileId: agentId,
+    agentId,
+    search,
+    status: tab,
+    perPage,
+    enabled: !propProperties,
+  });
 
-  async function onRefresh() {
-    try {
-      setRefreshing(true);
-      await refetch();
-    } catch (error) {
-    } finally {
-      setRefreshing(false);
-    }
-  }
-  const hasNextPage = useMemo(() => {
-    return page * perPage < total;
-  }, [page, perPage, total]);
-  const hasPrevPage = useMemo(() => {
-    return page > 1;
-  }, [page]);
-  const renderItem = useCallback(
-    ({ item, index }: { item: any; index: number }) => {
-      return (
-        <PropertyListItem
-          onPress={(data: any) => {
-            if (onPress) return onPress(data);
-            router.push({
-              pathname: `/property/[propertyId]`,
-              params: {
-                propertyId: data.slug,
-              },
-            });
-          }}
-          isList={true}
-          showLike={showLike}
-          showStatus={showStatus}
-          isHorizontal={isHorizontal}
-          property={item}
-          rounded={true}
-        />
-      );
-    },
-    [onPress, router, showStatus, isHorizontal]
+  const queriedProperties = useMemo(
+    () => toUiProperties(data?.pages.flatMap((page) => page.results) ?? []),
+    [data],
   );
-  useEffect(() => {
-    if (
-      properties?.length &&
-      properties.length !== prevLength.current &&
-      page == 1
-    ) {
-      requestAnimationFrame(() => {
-        listRef.current?.scrollToOffset({ offset: 0, animated: true });
-      });
-    }
-    prevLength.current = properties?.length || 0;
-  }, [properties, page]);
+  const properties = propProperties ?? queriedProperties;
+  const loading = propLoading ?? isLoading;
+  const refreshing = propRefetching ?? isRefetching;
+  const refresh = propRefetch ?? (async () => void refetch());
+
+  const renderItem = useCallback(
+    ({ item }: { item: UiProperty; index: number }) => (
+      <PropertyListItem
+        onPress={(data) => {
+          if (onPress) return onPress(data);
+          router.push({
+            pathname: `/property/[propertyId]`,
+            params: {
+              propertyId: data.slug,
+            },
+          });
+        }}
+        isList={true}
+        showLike={showLike}
+        showStatus={showStatus}
+        isHorizontal={isHorizontal}
+        property={item}
+        rounded={true}
+      />
+    ),
+    [onPress, router, showStatus, isHorizontal, showLike],
+  );
+
   return (
     <VerticalPropertyLoaderWrapper
       className={className}
       headerHeight={headerHeight}
-      loading={isLoading || false}
+      loading={loading || false}
     >
       <FlashList
         data={properties}
@@ -155,7 +147,7 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
         scrollEventThrottle={16}
         refreshControl={
           scrollEnabled ? (
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            <RefreshControl refreshing={refreshing} onRefresh={refresh} />
           ) : undefined
         }
         contentContainerStyle={{ paddingTop: headerHeight }}
@@ -165,18 +157,13 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
           ) : undefined
         }
         keyExtractor={(item) => item.id}
-        onStartReached={() => {
-          if (hasPrevPage) fetchPrevPage?.((p) => p - 1);
-        }}
         onEndReached={() => {
-          if (!hasNextPage || loadingNextPageRef.current) return;
-
-          loadingNextPageRef.current = true;
-          fetchNextPage?.((p) => p + 1);
-
-          setTimeout(() => {
-            loadingNextPageRef.current = false;
-          }, 300);
+          if (propFetchNextPage) {
+            propFetchNextPage((p) => p + 1);
+            return;
+          }
+          if (!hasNextPage || isFetchingNextPage) return;
+          void fetchNextPage();
         }}
         onEndReachedThreshold={0.2}
         ListEmptyComponent={() => (
@@ -189,7 +176,7 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
                 title="No Properties Found"
                 description="You're all caught up. New properties will appear here soon."
                 buttonLabel="Try again"
-                onPress={refetch}
+                onPress={refresh}
               />
             )}
           </>
@@ -203,33 +190,4 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
   );
 });
 
-const enhance = withObservables(
-  ["agentId", "role", "search", "tab", "page", "perPage"],
-  ({ agentId, role, search, tab, page = 1, perPage = 10 }) => {
-    return {
-      properties: database.get("properties").query(
-        ...buildListQuery({
-          filter: search,
-          role: role,
-          agentId: agentId,
-          tab: tab,
-        }),
-        Q.sortBy("updated_at", Q.desc),
-        Q.take(page * perPage)
-      ),
-      total: database
-        .get("properties")
-        .query(
-          ...buildListQuery({
-            filter: search,
-            role: role,
-            agentId: agentId,
-            tab: tab,
-          })
-        )
-        .observeCount(),
-    };
-  }
-);
-
-export default enhance(VerticalProperties);
+export default VerticalProperties;

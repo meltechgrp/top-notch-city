@@ -27,27 +27,27 @@ import { PropertyFooter } from "@/components/property/PropertyFooter";
 import { MiniEmptyState } from "@/components/shared/MiniEmptyState";
 import { scheduleOnRN } from "react-native-worklets";
 import { PropertySkeletonScreen } from "@/components/property/PropertySkeletonScreen";
-import { usePropertyDataSync } from "@/db/queries/syncPropertyData";
-import { withObservables } from "@nozbe/watermelondb/react";
-import { Q } from "@nozbe/watermelondb";
 import { useMe } from "@/hooks/useMe";
-import { propertiesCollection } from "@/db/collections";
-import { viewProperty } from "@/actions/property";
-import { Property } from "@/db/models/properties";
+import { viewProperty, fetchProperty } from "@/actions/property";
 import { listingStore } from "@/store/listing";
+import { useQuery } from "@tanstack/react-query";
+import { toUiProperty } from "@/lib/propertyAdapter";
 
 const { height } = Dimensions.get("window");
 const HERO_HEIGHT = height / 2.2;
 
 interface PropertyWrapperProps {
   slug: string;
-  properties: Property[];
 }
 
-function PropertyWrapper({ properties, slug }: PropertyWrapperProps) {
-  const { syncing, resync } = usePropertyDataSync(slug);
+function PropertyWrapper({ slug }: PropertyWrapperProps) {
+  const { data, isLoading } = useQuery({
+    queryKey: ["property", slug],
+    queryFn: () => fetchProperty({ id: slug }),
+    enabled: !!slug,
+  });
   const { width, onLayout } = useLayout();
-  const property = useMemo(() => properties?.[0] || null, [properties]);
+  const property = useMemo(() => (data ? toUiProperty(data) : null), [data]);
   const theme = useResolvedTheme();
   const detailsY = useSharedValue(0);
   const [hasScrolledToDetails, setHasScrolledToDetails] = useState(false);
@@ -70,26 +70,24 @@ function PropertyWrapper({ properties, slug }: PropertyWrapperProps) {
     },
   });
 
-  const heroAnimatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          translateY: interpolate(
-            scrollY.value,
-            [-HERO_HEIGHT, 0, HERO_HEIGHT],
-            [-HERO_HEIGHT / 2, 0, HERO_HEIGHT * 0.4],
-          ),
-        },
-        {
-          scale: interpolate(
-            scrollY.value,
-            [-HERO_HEIGHT, 0, HERO_HEIGHT],
-            [1.3, 1, 1],
-          ),
-        },
-      ],
-    };
-  });
+  const heroAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      {
+        translateY: interpolate(
+          scrollY.value,
+          [-HERO_HEIGHT, 0, HERO_HEIGHT],
+          [-HERO_HEIGHT / 2, 0, HERO_HEIGHT * 0.4],
+        ),
+      },
+      {
+        scale: interpolate(
+          scrollY.value,
+          [-HERO_HEIGHT, 0, HERO_HEIGHT],
+          [1.3, 1, 1],
+        ),
+      },
+    ],
+  }));
   const headerBgStyle = useAnimatedStyle(() => {
     const opacity = interpolate(
       scrollY.value,
@@ -108,7 +106,7 @@ function PropertyWrapper({ properties, slug }: PropertyWrapperProps) {
 
   useEffect(() => {
     if (property) {
-      listingStore.updateListing({
+      listingStore.getState().updateListing({
         step: 1,
         title: property.title,
         description: property?.description || "",
@@ -135,15 +133,15 @@ function PropertyWrapper({ properties, slug }: PropertyWrapperProps) {
             street: property?.street,
           },
           location: {
-            latitude: property?.latitude,
-            longitude: property?.longitude,
+            latitude: property?.latitude || 0,
+            longitude: property?.longitude || 0,
           },
         },
       });
     }
   }, [property]);
 
-  if (!property) {
+  if (!property && !isLoading) {
     return (
       <Box className="flex-1 justify-center items-center">
         <MiniEmptyState
@@ -153,6 +151,14 @@ function PropertyWrapper({ properties, slug }: PropertyWrapperProps) {
       </Box>
     );
   }
+
+  const header = property ? (
+    <PropertyHeader
+      hasScrolledToDetails={hasScrolledToDetails}
+      property={property}
+      me={me}
+    />
+  ) : null;
 
   return (
     <>
@@ -182,13 +188,7 @@ function PropertyWrapper({ properties, slug }: PropertyWrapperProps) {
                         color="white"
                       />
                     </Pressable>
-                    {property && (
-                      <PropertyHeader
-                        hasScrolledToDetails={hasScrolledToDetails}
-                        property={property}
-                        me={me}
-                      />
-                    )}
+                    {header}
                   </View>
                 </SafeAreaView>
               </Animated.View>
@@ -217,54 +217,42 @@ function PropertyWrapper({ properties, slug }: PropertyWrapperProps) {
               >
                 <Icon className="w-8 h-8" as={ChevronLeftIcon} color="white" />
               </Pressable>
-              {property && (
-                <PropertyHeader
-                  hasScrolledToDetails={hasScrolledToDetails}
-                  property={property}
-                  me={me}
-                />
-              )}
+              {header}
             </View>
           </SafeAreaView>
         </Animated.View>
       )}
       <FullHeightLoaderWrapper
         LoaderComponent={<PropertySkeletonScreen />}
-        loading={false}
+        loading={isLoading || !property}
       >
-        <Box onLayout={onLayout} className="flex-1 relative">
-          <Animated.ScrollView
-            scrollEventThrottle={16}
-            onScroll={scrollHandler}
-            showsVerticalScrollIndicator={false}
-          >
-            <Animated.View
-              style={[{ width, height: HERO_HEIGHT }, heroAnimatedStyle]}
+        {property && (
+          <Box onLayout={onLayout} className="flex-1 relative">
+            <Animated.ScrollView
+              scrollEventThrottle={16}
+              onScroll={scrollHandler}
+              showsVerticalScrollIndicator={false}
             >
-              <PropertyHeroSection
-                propertyId={property?.property_server_id}
-                thumbnail={property?.thumbnail}
-                width={width}
-              />
-            </Animated.View>
-            {property && (
+              <Animated.View
+                style={[{ width, height: HERO_HEIGHT }, heroAnimatedStyle]}
+              >
+                <PropertyHeroSection
+                  propertyId={property?.property_server_id}
+                  thumbnail={property?.thumbnail || ""}
+                  media={property.media}
+                  width={width}
+                />
+              </Animated.View>
               <View onLayout={onDetailsLayout}>
                 <PropertyDetails me={me} property={property} />
               </View>
-            )}
-          </Animated.ScrollView>
-          {property && <PropertyFooter me={me} property={property} />}
-        </Box>
+            </Animated.ScrollView>
+            <PropertyFooter me={me} property={property} />
+          </Box>
+        )}
       </FullHeightLoaderWrapper>
     </>
   );
 }
 
-const enhance = withObservables(["slug"], ({ slug }) => ({
-  properties: propertiesCollection.query(
-    Q.where("slug", slug || null),
-    Q.take(1),
-  ),
-}));
-
-export default enhance(PropertyWrapper);
+export default PropertyWrapper;

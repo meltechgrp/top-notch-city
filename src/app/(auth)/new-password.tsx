@@ -8,11 +8,10 @@ import { CustomInput } from "@/components/custom/CustomInput";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import { router } from "expo-router";
 import { tempStore } from "@/store/tempStore";
-import { useValue } from "@legendapp/state/react";
 
 export default function NewPassword() {
-  const { email, resetEmail } = tempStore;
-  const savedEmail = useValue(email);
+  const savedEmail = tempStore((state) => state.email);
+  const resetEmail = tempStore((state) => state.resetEmail);
   const { mutateAsync: resendCode, isPending: isSending } =
     useAuthMutations().resendVerificationMutation;
   const { mutateAsync: passwordReset, isPending: resetting } =

@@ -1,17 +1,26 @@
 import SectionHeaderWithRef from "@/components/home/SectionHeaderWithRef";
 import HorizontalProperties from "@/components/property/HorizontalProperties";
-import { database } from "@/db";
-import { Q } from "@nozbe/watermelondb";
-import { withObservables } from "@nozbe/watermelondb/react";
+import { toUiProperties } from "@/lib/propertyAdapter";
+import { useInfinityQueries } from "@/tanstack/queries/useInfinityQueries";
 import { router } from "expo-router";
+import { useMemo } from "react";
 
-function FeaturedProperties({ properties }: any) {
+function FeaturedProperties() {
+  const { data, isLoading, isRefetching } = useInfinityQueries({
+    type: "featured",
+    perPage: 10,
+  });
+  const properties = useMemo(
+    () => toUiProperties(data?.pages.flatMap((page) => page.results) ?? []),
+    [data],
+  );
+
   return (
     <SectionHeaderWithRef
       title="Featured"
       titleClassName="text-gray-400 text-base"
       subTitle="See More"
-      hasData={properties && properties?.length > 0}
+      hasData={properties.length > 0}
       onSeeAllPress={() => {
         router.push({
           pathname: "/explore",
@@ -23,23 +32,12 @@ function FeaturedProperties({ properties }: any) {
     >
       <HorizontalProperties
         data={properties}
-        isLoading={false}
-        isRefetching={false}
+        isLoading={isLoading}
+        isRefetching={isRefetching}
         isFeatured
       />
     </SectionHeaderWithRef>
   );
 }
 
-const enhance = withObservables([], () => ({
-  properties: database
-    .get("properties")
-    .query(
-      Q.where("status", "approved"),
-      Q.where("is_featured", true),
-      Q.sortBy("updated_at", Q.desc),
-      Q.take(10)
-    ),
-}));
-
-export default enhance(FeaturedProperties);
+export default FeaturedProperties;

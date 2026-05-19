@@ -19,7 +19,6 @@ import { getTotal } from "@/actions/message";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import { tempStore } from "@/store/tempStore";
-import { useValue } from "@legendapp/state/react";
 
 export const unstable_settings = {
   initialRouteName: "/home",
@@ -28,7 +27,10 @@ export default function TabLayout() {
   const theme = useResolvedTheme();
   const { isInternetReachable, isOffline } = useNetworkStatus();
   const { me, isAdmin, isAgent } = useMe();
-  const liveTotalUnread = useValue(tempStore.totalUnreadChat);
+  const liveTotalUnread = tempStore((state) => state.totalUnreadChat);
+  const updatetotalUnreadChat = tempStore(
+    (state) => state.updatetotalUnreadChat,
+  );
   const { data, refetch } = useQuery({
     queryKey: ["total-pending"],
     queryFn: getTotal,
@@ -43,9 +45,9 @@ export default function TabLayout() {
 
   useEffect(() => {
     if (data?.total_unread !== undefined) {
-      tempStore.updatetotalUnreadChat(data.total_unread);
+      updatetotalUnreadChat(data.total_unread);
     }
-  }, [data?.total_unread]);
+  }, [data?.total_unread, updatetotalUnreadChat]);
   return (
     <Tabs
       screenOptions={{

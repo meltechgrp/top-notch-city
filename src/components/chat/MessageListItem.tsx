@@ -22,7 +22,6 @@ import { Chat } from "@/db/models/messages";
 import { withObservables } from "@nozbe/watermelondb/react";
 import { User } from "@/db/models/users";
 import { tempStore } from "@/store/tempStore";
-import { useValue } from "@legendapp/state/react";
 const LEAD = "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0";
 type MessageListItemProps = {
   chat: Chat;
@@ -34,7 +33,7 @@ function MessageListItem(props: MessageListItemProps) {
     receivers: [user],
   } = props;
 
-  const typing = useValue(() => tempStore.getTyping(chat.server_chat_id));
+  const typing = tempStore((state) => state.typings[chat.server_chat_id]);
   const { me } = useMe();
 
   const unreadCount = React.useMemo(() => {

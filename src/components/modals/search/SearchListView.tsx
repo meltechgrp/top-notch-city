@@ -21,15 +21,15 @@ import Animated, {
 import eventBus from "@/lib/eventBus";
 import DropdownSelect from "@/components/custom/DropdownSelect";
 import VerticalPropertyLoaderWrapper from "@/components/loaders/VerticalPropertyLoader";
-import { Property } from "@/db/models/properties";
+import { UiProperty } from "@/lib/propertyAdapter";
 const { width } = Dimensions.get("screen");
 
 type Props = {
-  properties: Property[];
+  properties: UiProperty[];
   total: number;
   isLoading: boolean;
   hasNextPage: boolean;
-  fetchNextPage: () => Promise<Property[]>;
+  fetchNextPage: () => Promise<UiProperty[]>;
   setShowFilter: () => void;
   refetch: () => void;
   onUseMyLocation: () => void;
@@ -56,9 +56,9 @@ function SearchListBottomSheet({
     [isTab],
   );
   const renderItem = useCallback(
-    ({ item }: { item: Property }) => (
+    ({ item }: { item: UiProperty }) => (
       <PropertyListItem
-        onPress={(data: Property) => {
+        onPress={(data: UiProperty) => {
           router.push({
             pathname: `/property/[propertyId]`,
             params: {
