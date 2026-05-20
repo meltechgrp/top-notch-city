@@ -59,6 +59,13 @@ export default () => ({
       "android.permission.RECORD_AUDIO",
       "android.permission.CAMERA",
     ],
+    blockedPermissions: [
+      "android.permission.READ_EXTERNAL_STORAGE",
+      "android.permission.WRITE_EXTERNAL_STORAGE",
+      "android.permission.READ_MEDIA_IMAGES",
+      "android.permission.READ_MEDIA_VIDEO",
+      "android.permission.READ_MEDIA_AUDIO",
+    ],
     softwareKeyboardLayoutMode: "resize",
     intentFilters: [
       {
@@ -162,17 +169,6 @@ export default () => ({
         microphonePermission:
           "$(PRODUCT_NAME) requires microphone access to record audio when creating video tours of properties or capturing voice notes.",
         recordAudioAndroid: true,
-      },
-    ],
-    [
-      "expo-media-library",
-      {
-        photosPermission:
-          "$(PRODUCT_NAME) needs access to your photo library so you can upload property images, select profile pictures, send image, and share media for property listings.",
-        savePhotosPermission:
-          "Allow $(PRODUCT_NAME) to save photos to your library.",
-        isAccessMediaLocationEnabled: true,
-        granularPermissions: ["audio", "photo"],
       },
     ],
     [
