@@ -13,12 +13,11 @@ import {
 } from "lucide-react-native";
 import { Colors } from "@/constants/Colors";
 import { Icon, Pressable, Text, useResolvedTheme, View } from "@/components/ui";
-import { useMe } from "@/hooks/useMe";
-import { useQuery } from "@tanstack/react-query";
 import { getTotal } from "@/actions/message";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import { tempStore } from "@/store/tempStore";
+import { useMainStore } from "@/store";
 
 export const unstable_settings = {
   initialRouteName: "/home",
@@ -26,28 +25,37 @@ export const unstable_settings = {
 export default function TabLayout() {
   const theme = useResolvedTheme();
   const { isInternetReachable, isOffline } = useNetworkStatus();
-  const { me, isAdmin, isAgent } = useMe();
-  const liveTotalUnread = tempStore((state) => state.totalUnreadChat);
-  const updatetotalUnreadChat = tempStore(
-    (state) => state.updatetotalUnreadChat,
-  );
-  const { data, refetch } = useQuery({
-    queryKey: ["total-pending"],
-    queryFn: getTotal,
-    enabled: !!me,
+  const me = useMainStore((state) => {
+    const userId = state.activeUserId;
+    return userId ? (state.accounts[userId]?.user ?? null) : null;
   });
+  const isAgent = me?.role == "agent" || me?.role == "staff_agent";
+  const isAdmin = me?.role == "admin" || me?.is_superuser || false;
+  const liveTotalUnread = tempStore((state) => state.totalUnreadChat);
   const total = liveTotalUnread;
   useEffect(() => {
-    if (me) {
-      refetch();
-    }
-  }, [me]);
+    let mounted = true;
 
-  useEffect(() => {
-    if (data?.total_unread !== undefined) {
-      updatetotalUnreadChat(data.total_unread);
+    if (!me || isOffline || !isInternetReachable) {
+      return () => {
+        mounted = false;
+      };
     }
-  }, [data?.total_unread, updatetotalUnreadChat]);
+
+    getTotal()
+      .then((result) => {
+        if (mounted && result?.total_unread !== undefined) {
+          tempStore.getState().updatetotalUnreadChat(result.total_unread);
+        }
+      })
+      .catch((error) => {
+        console.log("Failed to fetch unread chat count", error);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [isInternetReachable, isOffline, me?.id]);
   return (
     <Tabs
       screenOptions={{

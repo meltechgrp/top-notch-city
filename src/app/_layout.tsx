@@ -10,7 +10,7 @@ import GlobalManager from "@/components/shared/GlobalManager";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import * as SplashScreen from "expo-splash-screen";
-import { Alert, LogBox, Platform } from "react-native";
+import { LogBox, Platform } from "react-native";
 import { cacheStorage } from "@/lib/asyncStorage";
 import { NotifierWrapper } from "react-native-notifier";
 import * as Notifications from "expo-notifications";
@@ -29,7 +29,6 @@ import useGetLocation from "@/hooks/useGetLocation";
 import { useMe } from "@/hooks/useMe";
 import { useMainStore } from "@/store";
 import { useSyncer } from "@/hooks/useSyncer";
-import { AudioModule, setAudioModeAsync } from "expo-audio";
 
 enableScreens(true);
 const query = new QueryClient({
@@ -60,7 +59,11 @@ export default function RootLayout() {
   useMountPushNotificationToken();
   useEffect(() => {
     (async () => {
-      await registerDevice();
+      try {
+        await registerDevice();
+      } catch (error) {
+        console.log("Failed to register device", error);
+      }
     })();
   }, []);
   useEffect(() => {
@@ -68,20 +71,6 @@ export default function RootLayout() {
       saveAddress({ ...address, ...location });
     }
   }, [address, location, saveAddress]);
-  useEffect(() => {
-    (async () => {
-      const status = await AudioModule.requestRecordingPermissionsAsync();
-      if (!status.granted) {
-        Alert.alert("Permission to access microphone was denied");
-      }
-
-      await setAudioModeAsync({
-        playsInSilentMode: true,
-        allowsRecording: true,
-        interruptionMode: "duckOthers",
-      });
-    })();
-  }, []);
   return (
     <>
       <GestureHandlerRootView style={{ flex: 1 }}>

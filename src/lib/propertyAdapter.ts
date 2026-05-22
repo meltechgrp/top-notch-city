@@ -128,8 +128,10 @@ export function toUiProperty(property: ServerProperty): UiProperty {
   };
 }
 
-export function toUiProperties(properties: ServerProperty[] = []) {
-  return properties.map(toUiProperty);
+export function toUiProperties(
+  properties: Array<ServerProperty | undefined> = [],
+) {
+  return properties.filter(Boolean).map((property) => toUiProperty(property!));
 }
 
 export function emptyPropertyResult(page = 1, perPage = 20): Result {

@@ -12,7 +12,9 @@ function ApartmentsProperties() {
   });
   const properties = useMemo(
     () =>
-      toUiProperties(data?.pages.flatMap((page) => page.results) ?? []).filter(
+      toUiProperties(
+        (data?.pages ?? []).flatMap((page) => page?.results ?? []),
+      ).filter(
         (property) =>
           property.category === "Residential" ||
           property.category === "Commercial",

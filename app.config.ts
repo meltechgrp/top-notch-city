@@ -65,6 +65,8 @@ export default () => ({
       "android.permission.READ_MEDIA_IMAGES",
       "android.permission.READ_MEDIA_VIDEO",
       "android.permission.READ_MEDIA_AUDIO",
+      "android.permission.READ_MEDIA_VISUAL_USER_SELECTED",
+      "android.permission.ACCESS_MEDIA_LOCATION",
     ],
     softwareKeyboardLayoutMode: "resize",
     intentFilters: [
@@ -142,12 +144,7 @@ export default () => ({
     "expo-secure-store",
     "expo-background-task",
     "expo-apple-authentication",
-    [
-      "expo-web-browser",
-      {
-        experimentalLauncherActivity: true,
-      },
-    ],
+    "expo-web-browser",
     [
       "expo-font",
       {

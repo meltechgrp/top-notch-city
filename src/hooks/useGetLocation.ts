@@ -25,36 +25,43 @@ const useGetLocation = (options?: Options) => {
   }>();
 
   const tryGetLocation = useCallback(async () => {
-    // Request location permission
-    const { status } = await Location.getForegroundPermissionsAsync();
+    try {
+      // Request location permission
+      const { status } = await Location.getForegroundPermissionsAsync();
 
-    if (status !== "granted") {
-      const req = await Location.requestForegroundPermissionsAsync();
-      if (req.status !== "granted") {
-        setGranted(false);
-        return;
+      if (status !== "granted") {
+        const req = await Location.requestForegroundPermissionsAsync();
+        if (req.status !== "granted") {
+          setGranted(false);
+          return;
+        }
       }
-    }
 
-    setGranted(true);
-    // Get user location
-    let location = await Location.getCurrentPositionAsync({
-      accuracy: highAccuracy
-        ? Location.Accuracy.High
-        : Location.Accuracy.Balanced,
-    });
+      setGranted(true);
+      // Get user location
+      const location = await Location.getCurrentPositionAsync({
+        accuracy: highAccuracy
+          ? Location.Accuracy.High
+          : Location.Accuracy.Balanced,
+      });
 
-    setLocation(location?.coords);
-    if (withAddress) {
-      const add = await getReverseGeocode(location?.coords);
-      add?.addressComponents && setAddress(add.addressComponents);
+      setLocation(location?.coords);
+      if (withAddress) {
+        const add = await getReverseGeocode(location?.coords);
+        add?.addressComponents && setAddress(add.addressComponents);
+      }
+      setLocationLastSyncAt(Date.now());
+      return location?.coords;
+    } catch (error) {
+      console.log("Failed to get current location", error);
+      setGranted(false);
     }
-    setLocationLastSyncAt(Date.now());
-    return location?.coords;
   }, [highAccuracy, withAddress, locationLastSyncAt, setLocationLastSyncAt]);
 
   useEffect(() => {
-    tryGetLocation();
+    tryGetLocation().catch((error) => {
+      console.log("Failed to initialize location", error);
+    });
   }, []);
 
   return {

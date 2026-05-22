@@ -5,7 +5,12 @@ import {
   ActivityIndicator,
   Alert,
 } from "react-native";
-import { useAudioRecorder, AudioModule, RecordingPresets } from "expo-audio";
+import {
+  useAudioRecorder,
+  AudioModule,
+  RecordingPresets,
+  setAudioModeAsync,
+} from "expo-audio";
 import { cn } from "@/lib/utils";
 import { Text, View } from "@/components/ui";
 import { Fetch } from "@/actions/utills";
@@ -33,10 +38,16 @@ export const VoiceModal: React.FC<VoiceModalProps> = ({
       const status = await AudioModule.requestRecordingPermissionsAsync();
       if (!status.granted) {
         Alert.alert("Permission required", "Microphone access is needed");
+        return;
       }
+      await setAudioModeAsync({
+        playsInSilentMode: true,
+        allowsRecording: true,
+        interruptionMode: "duckOthers",
+      });
     };
-    initPermissions();
-  }, []);
+    if (visible) initPermissions();
+  }, [visible]);
 
   const startRecording = async () => {
     try {
@@ -133,7 +144,7 @@ export const VoiceModal: React.FC<VoiceModalProps> = ({
             <TouchableOpacity
               className={cn(
                 "px-6 py-3 rounded-xl",
-                isRecording ? "bg-primary" : "bg-gray-500"
+                isRecording ? "bg-primary" : "bg-gray-500",
               )}
               onPress={isRecording ? stopRecording : startRecording}
             >

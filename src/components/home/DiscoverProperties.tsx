@@ -27,7 +27,10 @@ const DiscoverProperties = (props: Props) => {
     perPage: 30,
   });
   const properties = useMemo(
-    () => toUiProperties(data?.pages.flatMap((page) => page.results) ?? []),
+    () =>
+      toUiProperties(
+        (data?.pages ?? []).flatMap((page) => page?.results ?? []),
+      ),
     [data],
   );
 

@@ -109,11 +109,19 @@ export async function Fetch(url: string, options: FetchOptions = {}) {
     headers["Content-Type"] = contentType;
   }
 
-  const response = await fetch(`${config.origin}/api${url}`, {
-    method: options.method ?? "GET",
-    headers,
-    body: body,
-  });
+  let response: Response;
+
+  try {
+    response = await fetch(`${config.origin}/api${url}`, {
+      method: options.method ?? "GET",
+      headers,
+      body: body,
+    });
+  } catch (error) {
+    const message =
+      "Network request failed. Please check your internet connection and try again.";
+    throw new ApiError(message, 0, message);
+  }
 
   console.log("Fetch URL:", url, "Response:", response.status);
 

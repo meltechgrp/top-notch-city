@@ -25,7 +25,10 @@ const NearbyProperties = ({
     perPage: 10,
   });
   const properties = useMemo(
-    () => toUiProperties(data?.pages.flatMap((page) => page.results) ?? []),
+    () =>
+      toUiProperties(
+        (data?.pages ?? []).flatMap((page) => page?.results ?? []),
+      ),
     [data],
   );
 

@@ -38,8 +38,9 @@ export function useInfinityQueries({
   status?: string;
   agentId?: string;
 }) {
-  const getNextPageParam = (lastPage: { page: number; pages: number }) => {
-    const { page, pages } = lastPage;
+  const getNextPageParam = (lastPage?: { page?: number; pages?: number }) => {
+    const page = Number(lastPage?.page ?? 1);
+    const pages = Number(lastPage?.pages ?? 1);
     return page < pages ? page + 1 : undefined;
   };
 
