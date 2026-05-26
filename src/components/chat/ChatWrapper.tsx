@@ -19,8 +19,8 @@ function ChatWrapper({ chats }: ChatWrapperProps) {
         style={{
           flex: 1,
         }}
-        behavior={Platforms.isIOS() ? "padding" : undefined}
-        keyboardVerticalOffset={Platforms.isIOS() ? 70 : 0}
+        behavior="padding"
+        keyboardVerticalOffset={Platforms.isIOS() ? 70 : 80}
       >
         <ChatRoom
           chat={chats[0]}

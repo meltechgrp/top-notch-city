@@ -12,7 +12,6 @@ import { KeyboardProvider } from "react-native-keyboard-controller";
 import * as SplashScreen from "expo-splash-screen";
 import { LogBox, Platform } from "react-native";
 import { cacheStorage } from "@/lib/asyncStorage";
-import { NotifierWrapper } from "react-native-notifier";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
 import { updatePushNotificationToken } from "@/actions/utills";
@@ -29,6 +28,7 @@ import useGetLocation from "@/hooks/useGetLocation";
 import { useMe } from "@/hooks/useMe";
 import { useMainStore } from "@/store";
 import { useSyncer } from "@/hooks/useSyncer";
+import { NotificationHost } from "@/components/custom/CustomNotification";
 
 enableScreens(true);
 const query = new QueryClient({
@@ -74,20 +74,19 @@ export default function RootLayout() {
   return (
     <>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <NotifierWrapper>
-          <GluestackUIProvider>
-            <KeyboardProvider>
-              <QueryClientProvider client={query}>
-                <ImageViewerProvider>
-                  <BottomSheetModalProvider>
-                    <Slot />
-                    <GlobalManager />
-                  </BottomSheetModalProvider>
-                </ImageViewerProvider>
-              </QueryClientProvider>
-            </KeyboardProvider>
-          </GluestackUIProvider>
-        </NotifierWrapper>
+        <GluestackUIProvider>
+          <KeyboardProvider>
+            <QueryClientProvider client={query}>
+              <ImageViewerProvider>
+                <BottomSheetModalProvider>
+                  <Slot />
+                  <GlobalManager />
+                </BottomSheetModalProvider>
+              </ImageViewerProvider>
+              <NotificationHost />
+            </QueryClientProvider>
+          </KeyboardProvider>
+        </GluestackUIProvider>
       </GestureHandlerRootView>
     </>
   );

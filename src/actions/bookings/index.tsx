@@ -69,7 +69,7 @@ export async function updateBookingStatus({
     }
 
     res = await Fetch(`/bookings/${booking_id}/status`, {
-      method: "POST",
+      method: "PATCH",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },

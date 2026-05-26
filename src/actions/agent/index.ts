@@ -3,6 +3,17 @@ import { Fetch, getApiErrorMessage } from "../utills";
 import { getActiveToken } from "@/lib/secureStore";
 import config from "@/config";
 
+function asArray<T = any>(value: unknown): T[] {
+  if (Array.isArray(value)) return value.filter(Boolean) as T[];
+  if (typeof value === "string") {
+    return value
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean) as T[];
+  }
+  return [];
+}
+
 export async function uploadAgentForm(form: Partial<Application>) {
   const data = new FormData();
 
@@ -11,44 +22,61 @@ export async function uploadAgentForm(form: Partial<Application>) {
   form?.about && data.append("about", form.about);
   form?.website && data.append("website", form.website);
   form?.license_number && data.append("license_number", form.license_number);
-  form?.profile_image && data.append("profile_image_id", form.profile_image.id);
+  if (form?.profile_image) {
+    const profileImageId =
+      typeof form.profile_image === "string"
+        ? form.profile_image
+        : form.profile_image.id;
+    profileImageId && data.append("profile_image_id", profileImageId);
+  }
 
   if (form.date_of_birth) {
-    data.append(
-      "birthdate",
-      format(new Date(form.date_of_birth), "yyyy-MM-dd"),
-    );
+    const birthdate = new Date(form.date_of_birth);
+    if (!Number.isNaN(birthdate.getTime())) {
+      data.append("birthdate", format(birthdate, "yyyy-MM-dd"));
+    }
   }
   if (form?.address) {
     Object.entries(form?.address).map(([field, value]) => {
       value && data.append(field, value.toString());
     });
   }
-  if (form?.specialties) {
-    form.specialties.map((val) => {
+  const specialties = asArray<string>(form?.specialties);
+  if (specialties.length) {
+    specialties.forEach((val) => {
       data.append("specialties", val.toString());
     });
   }
-  if (form?.documents) {
-    form.documents.map((val) => {
+  const documents = asArray<AgentDocument>(form?.documents);
+  if (documents.length) {
+    documents.forEach((val) => {
+      if (!val || typeof val !== "object" || !val.document_types) return;
       data.append("document_types", val.document_types.toString());
       val?.documents && data.append("documents", val?.documents?.toString());
       val.documents_ids &&
         data.append("documents_ids", val.documents_ids.toString());
     });
   }
-  if (form?.languages) {
-    form.languages.map((val) => {
+  const languages = asArray<string>(form?.languages);
+  if (languages.length) {
+    languages.forEach((val) => {
       data.append("languages", val.toString());
     });
   }
-  const formdata = await fetch(`${config.origin}/api/agent/apply`, {
-    method: "POST",
-    headers: {
-      ...(authToken && { Authorization: `Bearer ${authToken}` }),
-    },
-    body: data,
-  });
+  let formdata: Response;
+  try {
+    formdata = await fetch(`${config.origin}/api/agent/apply`, {
+      method: "POST",
+      headers: {
+        ...(authToken && { Authorization: `Bearer ${authToken}` }),
+      },
+      body: data,
+    });
+  } catch {
+    throw Error(
+      "Network request failed. Please check your internet connection and try again.",
+    );
+  }
   const res = await formdata.json();
   if (res?.detail) {
     const message = getApiErrorMessage(res);

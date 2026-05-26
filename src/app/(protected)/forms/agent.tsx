@@ -25,6 +25,45 @@ import { tempStore } from "@/store/tempStore";
 import { getMe } from "@/actions/user";
 import { useMe } from "@/hooks/useMe";
 
+function asArray<T = any>(value: unknown): T[] {
+  if (Array.isArray(value)) return value.filter(Boolean) as T[];
+  if (typeof value === "string") {
+    return value
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean) as T[];
+  }
+  return [];
+}
+
+function asString(value: unknown) {
+  if (value === null || value === undefined) return undefined;
+  return String(value);
+}
+
+function formatBirthdate(value?: string | null) {
+  if (!value) return "N/A";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "N/A";
+  return format(date, "MMM dd, yyyy");
+}
+
+function normalizeProfileImage(value: unknown): Media | undefined {
+  if (!value) return undefined;
+  if (
+    typeof value === "object" &&
+    "url" in (value as Record<string, unknown>)
+  ) {
+    return value as Media;
+  }
+  const url = String(value);
+  return {
+    id: url,
+    url,
+    media_type: "IMAGE",
+  } as Media;
+}
+
 export default function AgentFormScreen() {
   const updateApplication = tempStore((state) => state.updateApplication);
   const application = tempStore((state) => state.application);
@@ -74,37 +113,41 @@ export default function AgentFormScreen() {
     const applicationUser = existingApplication?.user;
 
     updateApplication({
-      phone: current.phone ?? applicationUser?.phone ?? profile?.phone,
-      gender: current.gender ?? profile?.gender ?? applicationUser?.gender,
-      date_of_birth: current.date_of_birth ?? profile?.date_of_birth,
+      phone: asString(
+        current.phone ?? applicationUser?.phone ?? profile?.phone,
+      ),
+      gender: (current.gender ??
+        profile?.gender ??
+        applicationUser?.gender) as Application["gender"],
+      date_of_birth: asString(current.date_of_birth ?? profile?.date_of_birth),
       address: current.address ?? profile?.address,
-      about: current.about ?? agentProfile?.about,
-      website:
+      about: asString(current.about ?? agentProfile?.about),
+      website: asString(
         current.website ?? applicationProfile?.website ?? agentProfile?.website,
+      ),
       license_number:
-        current.license_number ?? agentProfile?.license_number ?? undefined,
-      years_of_experience:
+        asString(current.license_number ?? agentProfile?.license_number) ??
+        undefined,
+      years_of_experience: asString(
         current.years_of_experience ??
-        applicationProfile?.years_of_experience ??
-        agentProfile?.years_of_experience,
-      specialties:
-        current.specialties ??
-        applicationProfile?.specialties ??
-        agentProfile?.specialties,
-      languages:
-        current.languages ??
-        applicationProfile?.languages ??
-        agentProfile?.languages,
-      companies: current.companies ?? agentProfile?.companies,
+          applicationProfile?.years_of_experience ??
+          agentProfile?.years_of_experience,
+      ),
+      specialties: current.specialties?.length
+        ? asArray(current.specialties)
+        : asArray(applicationProfile?.specialties ?? agentProfile?.specialties),
+      languages: current.languages?.length
+        ? asArray(current.languages)
+        : asArray(applicationProfile?.languages ?? agentProfile?.languages),
+      companies: current.companies?.length
+        ? asArray(current.companies)
+        : asArray(agentProfile?.companies),
+      documents: asArray(current.documents),
       profile_image:
         current.profile_image ??
-        ((profile?.profile_image || applicationUser?.profile_image
-          ? {
-              id: profile?.profile_image || applicationUser?.profile_image,
-              url: profile?.profile_image || applicationUser?.profile_image,
-              media_type: "IMAGE",
-            }
-          : undefined) as Media | undefined),
+        normalizeProfileImage(
+          profile?.profile_image ?? applicationUser?.profile_image,
+        ),
     });
   }, [existingApplication, profile, updateApplication]);
 
@@ -128,10 +171,12 @@ export default function AgentFormScreen() {
     if (!application?.address) missingFields.push("Address");
     if (!application?.gender?.trim()) missingFields.push("Gender");
     if (!application?.about?.trim()) missingFields.push("Bio");
-    if (!application?.years_of_experience?.trim())
+    if (!asString(application?.years_of_experience)?.trim())
       missingFields.push("Experience");
-    if (!application?.specialties) missingFields.push("Services");
-    if (!application?.documents) missingFields.push("Documents");
+    if (asArray(application?.specialties).length === 0)
+      missingFields.push("Services");
+    if (asArray(application?.documents).length === 0)
+      missingFields.push("Documents");
 
     if (missingFields.length > 0) {
       const message =
@@ -190,9 +235,7 @@ export default function AgentFormScreen() {
     {
       label: "Birthday",
       field: "date_of_birth",
-      value: user?.date_of_birth
-        ? format(new Date(user.date_of_birth), "MMM dd, yyyy")
-        : "N/A",
+      value: user?.date_of_birth ? formatBirthdate(user.date_of_birth) : "N/A",
     },
     {
       label: "Address",
@@ -211,22 +254,24 @@ export default function AgentFormScreen() {
     {
       label: "Services",
       field: "specialties",
-      value: user?.specialties
-        ? `${user.specialties.length} services added`
+      value: asArray(user?.specialties).length
+        ? `${asArray(user?.specialties).length} services added`
         : "Add services you offer",
     },
     {
       label: "Documents",
       field: "documents",
-      value: user?.documents
-        ? `${user.documents.length} ${user.documents.length > 1 ? "documents" : "document"} added`
+      value: asArray(user?.documents).length
+        ? `${asArray(user?.documents).length} ${
+            asArray(user?.documents).length > 1 ? "documents" : "document"
+          } added`
         : "Add documents for verification",
     },
     {
       label: "Languages",
       field: "languages",
-      value: user?.languages
-        ? `${user.languages.length} languages added`
+      value: asArray(user?.languages).length
+        ? `${asArray(user?.languages).length} languages added`
         : "Add languages to your profile",
     },
     {
