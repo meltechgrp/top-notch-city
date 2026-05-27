@@ -4,7 +4,12 @@ import {
   formatDateDistance,
   formatNumberCompact,
 } from "@/lib/utils";
-import { StyleProp, View, ViewStyle } from "react-native";
+import {
+  GestureResponderEvent,
+  StyleProp,
+  View,
+  ViewStyle,
+} from "react-native";
 import { Icon, Text, Pressable, Image } from "../ui";
 import {
   Bath,
@@ -45,6 +50,7 @@ type Props = {
   imageWrapperClassName?: string;
   imageStyle?: StyleProp<ViewStyle>;
   style?: StyleProp<ViewStyle>;
+  likeQueryKey?: unknown[];
   onPress: (data: Props["property"]) => void;
 };
 function PropertyListItem(props: Props) {
@@ -59,11 +65,12 @@ function PropertyListItem(props: Props) {
     showLike,
     imageWrapperClassName,
     imageStyle,
+    likeQueryKey,
     showTitle = true,
     subClassName,
   } = props;
   const { me } = useMe();
-  const { toggleLike } = useLike({ queryKey: ["properties"] });
+  const { toggleLike } = useLike({ queryKey: likeQueryKey });
   const { bannerHeight } = Layout;
   const { price, status, server_user_id } = data;
   const isMine = useMemo(() => me?.id === server_user_id, [me, server_user_id]);
@@ -87,7 +94,9 @@ function PropertyListItem(props: Props) {
       );
     }
   };
-  async function handleLike() {
+  async function handleLike(event?: GestureResponderEvent) {
+    event?.stopPropagation?.();
+
     if (!me) {
       return openAccessModal({ visible: true });
     } else {
@@ -152,6 +161,7 @@ function PropertyListItem(props: Props) {
               <Pressable
                 onPress={handleLike}
                 both
+                hitSlop={10}
                 className={"p-2 rounded-full bg-black/50"}
               >
                 <AnimatedLikeButton

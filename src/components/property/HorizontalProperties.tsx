@@ -28,6 +28,7 @@ interface Props {
   refetch?: () => Promise<any>;
   fetchNextPage?: () => Promise<any>;
   onPress?: (data: UiProperty) => void;
+  likeQueryKey?: unknown[];
 }
 
 function HorizontalProperties({
@@ -47,6 +48,7 @@ function HorizontalProperties({
   showTitle,
   subClassName,
   snapToInterval,
+  likeQueryKey,
 }: Props) {
   const router = useRouter();
 
@@ -58,7 +60,7 @@ function HorizontalProperties({
 
       router.push({
         pathname: "/property/[propertyId]",
-        params: { propertyId: property.slug },
+        params: { propertyId: property.slug || property.property_server_id },
       });
     },
     [router, onPress],
@@ -91,6 +93,7 @@ function HorizontalProperties({
               imageWrapperClassName={imageWrapperClassName}
               isHorizontal
               property={property}
+              likeQueryKey={likeQueryKey}
               subClassName={subClassName}
               showTitle={showTitle}
               style={style}

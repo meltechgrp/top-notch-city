@@ -33,6 +33,11 @@ const Pressable = React.forwardRef<
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const delay = 250;
   const handlePress = (e: GestureResponderEvent) => {
+    if (!onDoublePress) {
+      onPress?.(e);
+      return;
+    }
+
     const now = Date.now();
 
     const isDouble = now - lastPress.current < delay;

@@ -53,6 +53,7 @@ const NearbyProperties = ({
         data={properties}
         isLoading={isLoading}
         isRefetching={isRefetching}
+        likeQueryKey={["search", filter]}
       />
     </SectionHeaderWithRef>
   );

@@ -69,12 +69,13 @@ export function getPropertyTitle(
 export function toUiProperty(property: ServerProperty): UiProperty {
   const media = property.media || [];
   const address = property.address || ({} as Address);
+  const propertyId = String(property.id);
 
   return {
-    id: property.id,
-    property_server_id: property.id,
+    id: propertyId,
+    property_server_id: propertyId,
     title: getPropertyTitle(property),
-    slug: property.slug,
+    slug: property.slug || propertyId,
     description: property.description,
     price: property.price,
     currency: property.currency?.code || "NGN",

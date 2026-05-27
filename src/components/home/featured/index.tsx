@@ -37,6 +37,7 @@ function FeaturedProperties() {
         data={properties}
         isLoading={isLoading}
         isRefetching={isRefetching}
+        likeQueryKey={["featured"]}
         isFeatured
       />
     </SectionHeaderWithRef>

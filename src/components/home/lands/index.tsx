@@ -37,6 +37,7 @@ const Lands = () => {
         data={properties}
         isLoading={isLoading}
         isRefetching={isRefetching}
+        likeQueryKey={["trending-lands"]}
       />
     </SectionHeaderWithRef>
   );

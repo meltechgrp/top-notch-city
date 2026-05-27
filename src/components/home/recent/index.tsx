@@ -41,6 +41,7 @@ function ApartmentsProperties() {
         data={properties}
         isLoading={isLoading}
         isRefetching={isRefetching}
+        likeQueryKey={["latest"]}
       />
     </SectionHeaderWithRef>
   );

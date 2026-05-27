@@ -37,6 +37,7 @@ function ShortletProperties() {
         data={properties}
         isLoading={isLoading}
         isRefetching={isRefetching}
+        likeQueryKey={["shortlet"]}
       />
     </SectionHeaderWithRef>
   );
