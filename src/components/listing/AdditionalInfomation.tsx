@@ -13,8 +13,7 @@ import { formatNumber, unformatNumber } from "@/lib/utils";
 import { listingStore } from "@/store/listing";
 
 export default function AdditionalInfomation() {
-  const listing = listingStore((state) => state.listing);
-  const updateListing = listingStore((state) => state.updateListing);
+  const { listing, updateListing } = listingStore();
   const { data } = useQuery({
     queryKey: ["companies"],
     queryFn: fetchAllAgentCompanies,

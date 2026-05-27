@@ -31,8 +31,7 @@ export default function ListingAmenities() {
   const ref = React.useRef<ICarouselInstance>(null);
   const [showAvailabilityPickerSheet, setShowAvailabilityPickerSheet] =
     useState(false);
-  const listing = listingStore((state) => state.listing);
-  const updateListing = listingStore((state) => state.updateListing);
+  const { listing, updateListing } = listingStore();
   const { data } = useQuery({
     queryKey: ["amenities"],
     queryFn: fetchAllAmenities,

@@ -9,7 +9,6 @@ type Options = {
 };
 const TTL = 60 * 60 * 1000;
 const useGetLocation = (options?: Options) => {
-  const locationLastSyncAt = useMainStore((state) => state.locationLastSyncAt);
   const setLocationLastSyncAt = useMainStore(
     (state) => state.setLocationLastSyncAt,
   );
@@ -56,7 +55,7 @@ const useGetLocation = (options?: Options) => {
       console.log("Failed to get current location", error);
       setGranted(false);
     }
-  }, [highAccuracy, withAddress, locationLastSyncAt, setLocationLastSyncAt]);
+  }, [highAccuracy, withAddress, setLocationLastSyncAt]);
 
   useEffect(() => {
     tryGetLocation().catch((error) => {

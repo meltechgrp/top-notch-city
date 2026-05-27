@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { Fetch, getApiErrorMessage } from "../utills";
+import { ApiError, Fetch, getApiErrorMessage } from "../utills";
 import { getActiveToken } from "@/lib/secureStore";
 import config from "@/config";
 
@@ -136,9 +136,12 @@ export async function getAgentApplications({
 export async function getMyApplications() {
   try {
     const res = await Fetch("/agent/me");
-    return res as AgentReview[];
+    return Array.isArray(res) ? (res as AgentReview[]) : [];
   } catch (error) {
-    return undefined;
+    if (error instanceof ApiError && [404, 422].includes(error.status ?? 0)) {
+      return [];
+    }
+    throw error;
   }
 }
 export async function acceptApplication({

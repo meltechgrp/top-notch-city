@@ -4,18 +4,19 @@ import { useMemo } from "react";
 
 export function useCategoryQueries() {
   const {
-    data: allSubcategories = [],
+    data,
     refetch,
     isLoading,
   } = useQuery({
     queryKey: ["allSubcategories"],
     queryFn: fetchAllSubcategories,
   });
+  const allSubcategories = Array.isArray(data) ? data : [];
 
   const categories = useMemo(() => {
     const seen = new Map<string, Category>();
     for (const sub of allSubcategories) {
-      if (!seen.has(sub.category?.id)) {
+      if (sub.category?.id && !seen.has(sub.category.id)) {
         seen.set(sub.category.id, sub.category);
       }
     }
@@ -26,7 +27,8 @@ export function useCategoryQueries() {
     const grouped: { [key: string]: SubCategory[] } = {};
 
     for (const sub of allSubcategories) {
-      const catId = sub.category.id;
+      const catId = sub.category?.id;
+      if (!catId) continue;
       if (!grouped[catId]) grouped[catId] = [];
       grouped[catId].push(sub);
     }

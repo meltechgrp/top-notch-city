@@ -65,8 +65,7 @@ function normalizeProfileImage(value: unknown): Media | undefined {
 }
 
 export default function AgentFormScreen() {
-  const updateApplication = tempStore((state) => state.updateApplication);
-  const application = tempStore((state) => state.application);
+  const { updateApplication, application } = tempStore();
   const { me } = useMe();
   const queryClient = useQueryClient();
   const router = useRouter();

@@ -13,14 +13,13 @@ import { Box } from "@/components/ui";
 import { listingStore } from "@/store/listing";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLayout } from "@react-native-community/hooks";
-import { useRouter } from "expo-router";
-import { useMemo } from "react";
-import Animated, { FadeInRight, FadeOutLeft } from "react-native-reanimated";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 interface ListingWrapperProps {
   type: "edit" | "add";
-  userId: string;
+  userId?: string;
   propertyId?: string;
 }
 
@@ -31,16 +30,20 @@ export function ListingWrapper({
 }: ListingWrapperProps) {
   const queryClient = useQueryClient();
   const router = useRouter();
+  const params = useLocalSearchParams<{ userId?: string }>();
+  const ownerId = userId ?? params?.userId;
   const { onLayout, height } = useLayout();
   const {
     uploadProperty,
     uploading: loading,
     error,
   } = useUploadProperty(type, propertyId);
-  const listing = listingStore((state) => state.listing);
-  const updateListing = listingStore((state) => state.updateListing);
-  const updateListingStep = listingStore((state) => state.updateListingStep);
-  const resetListing = listingStore((state) => state.resetListing);
+  const { listing, updateListing, updateListingStep, resetListing } =
+    listingStore();
+
+  React.useEffect(() => {
+    if (type === "add") resetListing();
+  }, [resetListing, type]);
 
   async function uploaHandler() {
     await uploadProperty(listing, {
@@ -50,7 +53,7 @@ export function ListingWrapper({
         router.dismissTo({
           pathname: "/(protected)/agents/[userId]/properties/success",
           params: {
-            userId,
+            userId: ownerId ?? "",
           },
         });
         resetListing();
@@ -64,26 +67,11 @@ export function ListingWrapper({
       },
     });
   }
-  const Steps = useMemo(() => {
-    switch (listing.step) {
-      case 1:
-        return <PropertyListingBasic />;
-      case 2:
-        return <ListingCategory />;
-      case 3:
-        return <ListingAmenities />;
-      case 4:
-        return <ListingMediaFiles />;
-      case 5:
-        return <AdditionalInfomation />;
-      case 6:
-        return <ListingResult />;
-      default:
-        return null;
-    }
-  }, [listing.step]);
   const warn = (msg: string) =>
     showErrorAlert({ title: msg, alertType: "warn" });
+
+  const StepComponent = getListingStepComponent(listing.step);
+
   function handleNext(step: number, back?: boolean) {
     if (back) {
       return updateListing({ step });
@@ -134,16 +122,11 @@ export function ListingWrapper({
       <Box onLayout={onLayout} className="flex-1">
         <FullHeightLoaderWrapper className="flex-1" loading={loading}>
           <SafeAreaView edges={["bottom"]} className="flex-1">
-            <Animated.View
-              entering={FadeInRight.duration(200)}
-              exiting={FadeOutLeft.duration(200)}
-              key={listing.step}
-              style={{ height, flex: 1 }}
-            >
+            <Box style={{ height, flex: 1 }}>
               <BodyScrollView withBackground contentContainerClassName="pb-12">
-                {Steps}
+                <StepComponent />
               </BodyScrollView>
-            </Animated.View>
+            </Box>
             <ListingBottomNavigation
               step={listing.step}
               uploaHandler={uploaHandler}
@@ -155,4 +138,23 @@ export function ListingWrapper({
       </Box>
     </>
   );
+}
+
+function getListingStepComponent(step: number) {
+  switch (step) {
+    case 1:
+      return PropertyListingBasic;
+    case 2:
+      return ListingCategory;
+    case 3:
+      return ListingAmenities;
+    case 4:
+      return ListingMediaFiles;
+    case 5:
+      return AdditionalInfomation;
+    case 6:
+      return ListingResult;
+    default:
+      return PropertyListingBasic;
+  }
 }

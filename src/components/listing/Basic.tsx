@@ -30,8 +30,7 @@ const tabs = [
 ];
 
 export default function PropertyListingBasic() {
-  const listing = listingStore((state) => state.listing);
-  const updateListing = listingStore((state) => state.updateListing);
+  const { listing, updateListing } = listingStore();
   const { retryGetLocation } = useGetLocation();
   const [loading, setLoading] = useState(false);
   const [currencyModal, setCurrencyModal] = useState(false);

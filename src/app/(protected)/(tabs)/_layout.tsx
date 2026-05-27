@@ -22,17 +22,44 @@ import { useMainStore } from "@/store";
 export const unstable_settings = {
   initialRouteName: "/home",
 };
+
+function MessagesTabIcon({ color, total }: { color: string; total: number }) {
+  const hasPending = total > 0;
+  const label = total > 99 ? "99+" : String(total);
+
+  return (
+    <View className="relative h-7 w-7 items-center justify-center">
+      <MessageSquareMore size={22} color={color} />
+      {hasPending && (
+        <View className="absolute -right-1 -top-1 min-w-4 h-4 px-1 rounded-full bg-primary items-center justify-center border border-background">
+          <Text className="text-[9px] leading-none font-bold text-white">
+            {label}
+          </Text>
+        </View>
+      )}
+    </View>
+  );
+}
+
 export default function TabLayout() {
   const theme = useResolvedTheme();
   const { isInternetReachable, isOffline } = useNetworkStatus();
+  const [total, setTotal] = React.useState(() => {
+    return Number(tempStore.getState().totalUnreadChat) || 0;
+  });
   const me = useMainStore((state) => {
     const userId = state.activeUserId;
-    return userId ? (state.accounts[userId]?.user ?? null) : null;
+    return userId ? (state.accounts?.[userId]?.user ?? null) : null;
   });
   const isAgent = me?.role == "agent" || me?.role == "staff_agent";
   const isAdmin = me?.role == "admin" || me?.is_superuser || false;
-  const liveTotalUnread = tempStore((state) => state.totalUnreadChat);
-  const total = liveTotalUnread;
+
+  useEffect(() => {
+    return tempStore.subscribe((state) => {
+      setTotal(Number(state.totalUnreadChat) || 0);
+    });
+  }, []);
+
   useEffect(() => {
     let mounted = true;
 
@@ -112,10 +139,8 @@ export default function TabLayout() {
             </View>
           ),
           tabBarIcon: ({ color }) => (
-            <MessageSquareMore size={22} color={color} />
+            <MessagesTabIcon color={color} total={total} />
           ),
-          tabBarBadge: (total > 99 ? "99+" : total) || undefined,
-          tabBarBadgeStyle: { fontSize: 10 },
         })}
       />
       <Tabs.Screen

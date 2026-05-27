@@ -20,8 +20,7 @@ import { listingStore } from "@/store/listing";
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 export default function ListingResult() {
-  const property = listingStore((state) => state.listing);
-  const updateListing = listingStore((state) => state.updateListing);
+  const { listing: property, updateListing } = listingStore();
   const { onLayout } = useLayout();
   const availability = property.availabilityPeriod ?? [];
   const facilities = property.facilities ?? [];

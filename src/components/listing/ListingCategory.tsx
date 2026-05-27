@@ -15,16 +15,15 @@ import { listingStore } from "@/store/listing";
 
 export default function ListingCategory() {
   const theme = useResolvedTheme();
-  const listing = listingStore((state) => state.listing);
-  const updateListing = listingStore((state) => state.updateListing);
+  const { listing, updateListing } = listingStore();
   const { subcategories, loading, refetch, categories } = useCategoryQueries();
 
   const subs = useMemo(() => {
     if (listing.category) {
-      return subcategories?.filter((s) => s.category.name == listing?.category);
+      return subcategories.filter((s) => s.category?.name == listing.category);
     } else {
       let category = categories[0]?.name;
-      return subcategories?.filter((s) => s.category.name == category);
+      return subcategories.filter((s) => s.category?.name == category);
     }
   }, [subcategories, listing?.category, categories]);
 

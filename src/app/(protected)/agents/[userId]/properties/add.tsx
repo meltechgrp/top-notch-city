@@ -1,16 +1,8 @@
 import { ListingWrapper } from "@/components/listing/ListingWrapper";
 import headerLeft from "@/components/shared/headerLeft";
-import { listingStore } from "@/store/listing";
-import { Stack, useLocalSearchParams } from "expo-router";
-import { useEffect } from "react";
+import { Stack } from "expo-router";
 
 export default function SellAddScreen() {
-  const { userId } = useLocalSearchParams() as { userId: string };
-  const resetListing = listingStore((state) => state.resetListing);
-
-  useEffect(() => {
-    resetListing();
-  }, [resetListing]);
   return (
     <>
       <Stack.Screen
@@ -19,7 +11,7 @@ export default function SellAddScreen() {
           headerTitleAlign: "center",
         }}
       />
-      <ListingWrapper userId={userId} type="add" />
+      <ListingWrapper type="add" />
     </>
   );
 }

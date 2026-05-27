@@ -42,17 +42,24 @@ type ListingState = {
   updateListingStep: () => void;
 };
 
-const initialListing: Listing = {
+const createInitialListing = (): Listing => ({
   purpose: "rent",
   step: 1,
   currency: "NGN",
-};
+  companies: [],
+  facilities: [],
+  photos: [],
+  videos: [],
+  modelImages: [],
+  ownership_documents: [],
+  availabilityPeriod: [],
+});
 
 export const useListingStore = create<ListingState>((set) => ({
-  listing: initialListing,
+  listing: createInitialListing(),
 
   resetListing() {
-    set({ listing: initialListing });
+    set({ listing: createInitialListing() });
   },
 
   updateListing(data) {

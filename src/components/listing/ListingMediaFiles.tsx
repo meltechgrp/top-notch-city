@@ -8,8 +8,7 @@ import ListingVideosBottomSheet from "./ListingVideosBottomSheet";
 import { listingStore } from "@/store/listing";
 
 export default function ListingMediaFiles() {
-  const listing = listingStore((state) => state.listing);
-  const updateListing = listingStore((state) => state.updateListing);
+  const { listing, updateListing } = listingStore();
   const [photosBottomSheet, setPhotosBottomSheet] = useState(false);
   const [videosBottomSheet, setVideosBottomSheet] = useState(false);
 
