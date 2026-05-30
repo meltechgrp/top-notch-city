@@ -8,49 +8,44 @@ import { CustomInput } from "@/components/custom/CustomInput";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import { router } from "expo-router";
 import { tempStore } from "@/store/tempStore";
+import { getApiErrorMessage } from "@/actions/utills";
 
 export default function NewPassword() {
-  const savedEmail = tempStore((state) => state.email);
-  const resetEmail = tempStore((state) => state.resetEmail);
+  const { sendPasswordResetMutation, resetPasswordMutation } =
+    useAuthMutations();
   const { mutateAsync: resendCode, isPending: isSending } =
-    useAuthMutations().resendVerificationMutation;
+    sendPasswordResetMutation;
   const { mutateAsync: passwordReset, isPending: resetting } =
-    useAuthMutations().resetPasswordMutation;
+    resetPasswordMutation;
   const [form, setForm] = React.useState({
-    email: "",
+    email: tempStore.getState().email ?? "",
     password2: "",
     password: "",
   });
   const [codeSheetVisible, setCodeSheetVisible] = useState(true);
   const [code, setCode] = useState("");
   const [timer, setTimer] = useState(300);
-  const intervalRef = useRef<number | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const handleResend = async () => {
     try {
-      await resendCode(
-        { email: form.email },
-        {
-          onSuccess: () => {
-            showErrorAlert({
-              title: "Password reset code sent to your email.",
-              alertType: "success",
-            });
-            setTimer(300);
-          },
-          onError: () => {
-            showErrorAlert({
-              title: "Please try again!",
-              alertType: "warn",
-            });
-          },
-        },
-      );
+      await resendCode({ email: form.email });
+      showErrorAlert({
+        title: "Password reset code sent to your email.",
+        alertType: "success",
+      });
+      setTimer(300);
     } catch (error) {
-      showErrorAlert({ title: "Failed to resend code.", alertType: "warn" });
+      showErrorAlert({
+        title: getApiErrorMessage(error, "Failed to resend code."),
+        alertType: "warn",
+      });
     }
   };
+
   const handleReset = async () => {
+    const email = form.email.trim().toLowerCase();
+
     if (form.password.length <= 7) {
       return showErrorAlert({
         title: "Password must be least 8 characters",
@@ -62,36 +57,32 @@ export default function NewPassword() {
         alertType: "warn",
       });
     }
-    if (!form.email) {
+    if (!email) {
       return showErrorAlert({
         title: "Invalid email",
         alertType: "warn",
       });
     }
-    await passwordReset(
-      {
-        email: form.email,
+
+    try {
+      await passwordReset({
+        email,
         code: code,
         confirm_password: form.password2,
         new_password: form.password,
-      },
-      {
-        onSuccess: () => {
-          showErrorAlert({
-            title: "Password changed successfully.",
-            alertType: "success",
-          });
-          resetEmail();
-          router.dismissTo("/signin");
-        },
-        onError: (e) => {
-          showErrorAlert({
-            title: "Please try again!",
-            alertType: "warn",
-          });
-        },
-      },
-    );
+      });
+      showErrorAlert({
+        title: "Password changed successfully.",
+        alertType: "success",
+      });
+      tempStore.getState().resetEmail();
+      router.dismissTo("/signin");
+    } catch (error) {
+      showErrorAlert({
+        title: getApiErrorMessage(error, "Please try again!"),
+        alertType: "warn",
+      });
+    }
   };
 
   useEffect(() => {
@@ -109,11 +100,7 @@ export default function NewPassword() {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [codeSheetVisible]);
-  useEffect(() => {
-    if (savedEmail) {
-      setForm((prev) => ({ ...prev, email: savedEmail }));
-    }
-  }, [savedEmail]);
+
   return (
     <OnboardingScreenContainer allowBack={false}>
       <Box className="w-[98%] bg-background/90 max-w-[26rem] gap-6 mt-4 mx-auto rounded-xl p-6">
@@ -136,7 +123,9 @@ export default function NewPassword() {
             secureTextEntry
             placeholder="********"
             value={form.password}
-            onUpdate={(text) => setForm({ ...form, password: text })}
+            onUpdate={(text) =>
+              setForm((current) => ({ ...current, password: text }))
+            }
           />
         </View>
         <View>
@@ -146,7 +135,9 @@ export default function NewPassword() {
             secureTextEntry
             placeholder="********"
             value={form.password2}
-            onUpdate={(text) => setForm({ ...form, password2: text })}
+            onUpdate={(text) =>
+              setForm((current) => ({ ...current, password2: text }))
+            }
           />
         </View>
         <Button

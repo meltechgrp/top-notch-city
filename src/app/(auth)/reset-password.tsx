@@ -7,52 +7,46 @@ import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { useAuthMutations } from "@/tanstack/mutations/useAuthMutations";
 import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 import { tempStore } from "@/store/tempStore";
+import { getApiErrorMessage } from "@/actions/utills";
 
 export default function ResetPassword() {
   const { mutateAsync, isPending } =
     useAuthMutations().sendPasswordResetMutation;
-  const saveEmail = tempStore((state) => state.saveEmail);
   const [form, setForm] = React.useState({
     email: "",
   });
+
   const handleSubmit = async () => {
-    if (form.email.length < 5) {
+    const email = form.email.trim().toLowerCase();
+
+    if (email.length < 5 || !email.includes("@")) {
       showErrorAlert({
         title: "Enter a valid email",
         alertType: "warn",
       });
       return;
     }
+
     try {
-      await mutateAsync(
-        { email: form.email },
-        {
-          onSuccess: (d) => {
-            if (d?.formError) {
-              return showErrorAlert({
-                title: "Email not found",
-                alertType: "warn",
-              });
-            }
-            showErrorAlert({
-              title: "Password reset code sent to your email.",
-              alertType: "success",
-            });
-            saveEmail(form.email);
-            router.replace("/(auth)/new-password");
-          },
-          onError: (e) => {
-            console.log(e);
-            showErrorAlert({
-              title: "Please try again!",
-              alertType: "error",
-            });
-          },
-        },
-      );
+      const response = await mutateAsync({ email });
+
+      if (response?.formError) {
+        showErrorAlert({
+          title: response.formError,
+          alertType: "warn",
+        });
+        return;
+      }
+
+      showErrorAlert({
+        title: "Password reset code sent to your email.",
+        alertType: "success",
+      });
+      tempStore.getState().saveEmail(email);
+      router.replace("/(auth)/new-password");
     } catch (error) {
       showErrorAlert({
-        title: "Error occurred! Please try again.",
+        title: getApiErrorMessage(error, "Error occurred! Please try again."),
         alertType: "error",
       });
     }
@@ -83,7 +77,13 @@ export default function ResetPassword() {
             placeholder="Email"
             inputClassName="bg-background-muted"
             value={form.email}
-            onUpdate={(text) => setForm({ ...form, email: text })}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoCorrect={false}
+            textContentType="emailAddress"
+            onUpdate={(text) =>
+              setForm((current) => ({ ...current, email: text }))
+            }
           />
         </View>
         <Button

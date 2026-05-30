@@ -11,6 +11,7 @@ import ListingResult from "@/components/listing/ListingResult";
 import FullHeightLoaderWrapper from "@/components/loaders/FullHeightLoaderWrapper";
 import { Box } from "@/components/ui";
 import { listingStore } from "@/store/listing";
+import { getApiErrorMessage } from "@/actions/utills";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLayout } from "@react-native-community/hooks";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -46,26 +47,29 @@ export function ListingWrapper({
   }, [resetListing, type]);
 
   async function uploaHandler() {
-    await uploadProperty(listing, {
-      onSuccess: (e) => {
-        queryClient.invalidateQueries({ queryKey: ["properties"] });
-        queryClient.invalidateQueries({ queryKey: ["agent-properties"] });
-        router.dismissTo({
-          pathname: "/(protected)/agents/[userId]/properties/success",
-          params: {
-            userId: ownerId ?? "",
-          },
-        });
-        resetListing();
-      },
-      onError: (e) => {
-        console.log(e, "here");
-        showErrorAlert({
-          title: e?.message || "Something went wrong",
-          alertType: "error",
-        });
-      },
-    });
+    try {
+      await uploadProperty(listing);
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["properties"] }),
+        queryClient.invalidateQueries({ queryKey: ["agent-properties"] }),
+        queryClient.invalidateQueries({ queryKey: ["pending-properties"] }),
+        queryClient.invalidateQueries({ queryKey: ["home-properties"] }),
+        queryClient.invalidateQueries({ queryKey: ["latest"] }),
+      ]);
+
+      router.dismissTo({
+        pathname: "/agents/[userId]/properties/success",
+        params: {
+          userId: ownerId ?? "",
+        },
+      });
+    } catch (e) {
+      console.log(e, "property upload failed");
+      showErrorAlert({
+        title: getApiErrorMessage(e, "Something went wrong"),
+        alertType: "error",
+      });
+    }
   }
   const warn = (msg: string) =>
     showErrorAlert({ title: msg, alertType: "warn" });

@@ -87,6 +87,8 @@ function CustomInputComponent({
   containerClassName,
   showModal = false,
   setShowModal,
+  autoCapitalize,
+  autoCorrect,
   ...props
 }: Props) {
   const theme = useResolvedTheme();
@@ -103,7 +105,12 @@ function CustomInputComponent({
   );
 
   const textColor = useMemo(() => ({ color: Colors[theme].text }), [theme]);
-  function RenderInput() {
+  const effectiveAutoCapitalize =
+    autoCapitalize ?? (keyboardType === "email-address" ? "none" : "sentences");
+  const effectiveAutoCorrect =
+    autoCorrect ?? keyboardType !== "email-address";
+
+  function renderInput() {
     switch (inputType) {
       case "gender":
         return <GenderInput value={value} onUpdate={onUpdate} />;
@@ -153,7 +160,7 @@ function CustomInputComponent({
         return <WorkingHoursInput value={value} onUpdate={onUpdate} />;
 
       default:
-        return <></>;
+        return null;
     }
   }
   return (
@@ -178,7 +185,7 @@ function CustomInputComponent({
           )}
         </View>
       )}
-      <RenderInput />
+      {renderInput()}
       <View
         className={cn(
           "bg-background-muted ios:flex-1 flex-row justify-between items-center border border-outline-100 px-4 rounded-xl",
@@ -190,10 +197,12 @@ function CustomInputComponent({
         <TextInput
           {...props}
           placeholder={placeholder}
-          autoCapitalize="sentences"
+          autoCapitalize={effectiveAutoCapitalize}
+          autoCorrect={effectiveAutoCorrect}
           className={cn(
             "text-typography placeholder:text-typography/80 focus:outline-none flex-1 h-full rounded-xl",
             multiline && "px-0 pt-1",
+            inputClassName,
           )}
           value={value}
           secureTextEntry={secure}

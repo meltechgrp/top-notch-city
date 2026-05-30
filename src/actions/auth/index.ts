@@ -178,29 +178,26 @@ export async function authLogin(
   }
 }
 export async function sendPasswordReset({ email }: { email: string }) {
-  try {
-    const data = await fetch(`${config.origin}/api/password-reset/request`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email }),
-    });
-    const res = await data.json();
+  const normalizedEmail = email.trim().toLowerCase();
+  const parsed = validateEmail.safeParse(normalizedEmail);
 
-    if (res.detail) {
-      return {
-        formError: "Email not found",
-      };
-    } else {
-      return {
-        success: true,
-      };
-    }
-  } catch (error) {
-    throw Error("error");
+  if (!parsed.success) {
+    return {
+      formError: parsed.error.flatten().formErrors[0] ?? "Enter a valid email",
+    };
   }
+
+  const data = await Fetch("/password-reset/request", {
+    method: "POST",
+    data: { email: normalizedEmail },
+  });
+
+  return {
+    success: true,
+    message: data?.message,
+  };
 }
+
 export async function resetPassword({
   email,
   code,
@@ -212,26 +209,20 @@ export async function resetPassword({
   new_password: string;
   confirm_password: string;
 }) {
-  try {
-    const data = await fetch(`${config.origin}/api/password-reset/request`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: email.toLowerCase(),
-        code,
-        new_password,
-        confirm_password,
-      }),
-    });
-    const res = await data.json();
-    console.log(res);
-    if (res?.detail) {
-      throw new Error("Error occurried");
-    }
-    return res;
-  } catch (error) {
-    throw Error("error");
+  const normalizedEmail = email.trim().toLowerCase();
+  const parsed = validateEmail.safeParse(normalizedEmail);
+
+  if (!parsed.success) {
+    throw new Error("Enter a valid email");
   }
+
+  return Fetch("/password-reset/request", {
+    method: "POST",
+    data: {
+      email: normalizedEmail,
+      code: code.trim(),
+      new_password,
+      confirm_password,
+    },
+  });
 }

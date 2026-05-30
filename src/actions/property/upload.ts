@@ -1,9 +1,8 @@
 import { getActiveToken } from "@/lib/secureStore";
 import config from "@/config";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Fetch } from "@/actions/utills";
+import { getApiErrorMessage } from "@/actions/utills";
 import { Listing } from "@/store/listing";
-import axios from "axios";
 
 export const parseApiError = (data: any, status: number) => {
   if (data?.detail) {
@@ -115,7 +114,24 @@ const uploadPropertyRequest = async (
       },
     });
 
-    return await response.json();
+    const responseText = await response.text();
+    let data: any = null;
+
+    if (responseText) {
+      try {
+        data = JSON.parse(responseText);
+      } catch {
+        data = responseText;
+      }
+    }
+
+    if (!response.ok) {
+      throw new Error(
+        getApiErrorMessage(data, parseApiError(data, response.status)),
+      );
+    }
+
+    return data ?? { success: true };
   } catch (error: any) {
     console.log(error);
     if (error.response) {
@@ -123,7 +139,7 @@ const uploadPropertyRequest = async (
         parseApiError(error.response.data, error.response.status),
       );
     }
-    throw new Error(error);
+    throw new Error(getApiErrorMessage(error, "Failed to upload property"));
   }
 };
 export function useUploadProperty(type: "edit" | "add", propertyId?: string) {
