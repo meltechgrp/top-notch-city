@@ -9,6 +9,38 @@ import {
 } from "@tanstack/react-query";
 import { useMemo } from "react";
 
+type BookingInfiniteData = {
+  pages: BookingResult[];
+  pageParams: unknown[];
+};
+
+function patchBookingStatus(
+  data: BookingInfiniteData | undefined,
+  bookingId: string,
+  status: BookingStatus,
+  note?: string,
+  updatedAt?: string,
+) {
+  if (!data?.pages) return data;
+
+  return {
+    ...data,
+    pages: data.pages.map((page) => ({
+      ...page,
+      results: page.results.map((booking) =>
+        booking.id === bookingId
+          ? {
+              ...booking,
+              status,
+              notes: note ?? booking.notes,
+              updated_at: updatedAt ?? booking.updated_at,
+            }
+          : booking,
+      ),
+    })),
+  };
+}
+
 export function useBooking() {
   const queryClient = useQueryClient();
   const { me, isAgent } = useMe();
@@ -52,34 +84,70 @@ export function useBooking() {
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: updateBookingStatus,
-    onSuccess: () => {
+    onMutate: async ({ booking_id, status, note }) => {
+      const queryKey = ["bookings", isAgent];
+
+      await queryClient.cancelQueries({ queryKey });
+      const previousData =
+        queryClient.getQueryData<BookingInfiniteData>(queryKey);
+
+      queryClient.setQueryData<BookingInfiniteData>(queryKey, (current) =>
+        patchBookingStatus(current, booking_id, status, note),
+      );
+
+      return {
+        previousData,
+        queryKey,
+      };
+    },
+    onSuccess: (response, variables) => {
+      queryClient.setQueryData<BookingInfiniteData>(
+        ["bookings", isAgent],
+        (current) =>
+          patchBookingStatus(
+            current,
+            variables.booking_id,
+            response.status,
+            response.notes ?? variables.note,
+            response.updated_at,
+          ),
+      );
       handleInvalidate();
       showErrorAlert({
         title: "Booking updated successfully",
         alertType: "success",
       });
     },
-    onError: (e) => {
+    onError: (e, variables, context) => {
       console.log(e);
+      if (context?.previousData) {
+        queryClient.setQueryData(context.queryKey, context.previousData);
+      }
+
       showErrorAlert({
         title: getApiErrorMessage(
           e,
-          "Could not update this booking. Please try again.",
+          "The server could not update this booking. Please try again.",
         ),
         alertType: "error",
       });
     },
   });
-  const updateStatus = (
+  const updateStatus = async (
     bookingId: string,
     status: BookingStatus,
     note?: string,
-  ): Promise<any> =>
-    mutateAsync({
-      booking_id: bookingId,
-      status,
-      note,
-    });
+  ): Promise<any> => {
+    try {
+      return await mutateAsync({
+        booking_id: bookingId,
+        status,
+        note,
+      });
+    } catch {
+      return undefined;
+    }
+  };
 
   return {
     counts: {

@@ -10,7 +10,7 @@ import { RectButton } from "react-native-gesture-handler";
 import eventBus from "@/lib/eventBus";
 
 export type SwipeAction = {
-  onPress: () => void;
+  onPress: () => void | Promise<void>;
   component?: ReactNode;
   width?: number;
   type?: "success" | "danger" | "neutral";
@@ -57,9 +57,9 @@ export default function SwipeableWrapper({
                   borderRadius: withBorder ? 10 : 0,
                 },
               ]}
-              onPress={() => {
+              onPress={async () => {
                 triggerHaptics(action.type);
-                action.onPress();
+                await action.onPress();
                 reanimatedRef.current?.close();
               }}
             >

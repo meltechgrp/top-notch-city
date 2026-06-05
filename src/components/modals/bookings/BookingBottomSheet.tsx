@@ -51,7 +51,9 @@ export const BookingBottomSheet: React.FC<BookingBottomSheetProps> = ({
       return (
         <Button
           disabled={isPending}
-          onPress={() => handleUpdate("confirmed", undefined)}
+          onPress={async () => {
+            await handleUpdate("confirmed", undefined);
+          }}
           className="items-center h-12 flex-1 bg-info-100 rounded-xl"
         >
           {isPending && <SpinningLoader />}
@@ -69,7 +71,9 @@ export const BookingBottomSheet: React.FC<BookingBottomSheetProps> = ({
       return (
         <Button
           disabled={isPending}
-          onPress={() => handleUpdate("completed", undefined)}
+          onPress={async () => {
+            await handleUpdate("completed", undefined);
+          }}
           className="items-center h-12 flex-1 bg-success-100 rounded-xl"
         >
           {isPending && <SpinningLoader />}

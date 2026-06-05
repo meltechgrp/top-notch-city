@@ -24,9 +24,13 @@ export default function AdminCards() {
   const router = useRouter();
 
   useEffect(() => {
-    eventBus.addEventListener("REFRESH_DASHBOARD", refetch);
+    const handleRefresh = () => {
+      void refetch();
+    };
+
+    eventBus.addEventListener("REFRESH_DASHBOARD", handleRefresh);
     return () => {
-      eventBus.removeEventListener("REFRESH_DASHBOARD", refetch);
+      eventBus.removeEventListener("REFRESH_DASHBOARD", handleRefresh);
     };
   }, [refetch]);
 

@@ -62,6 +62,8 @@ export function ConfirmationModal({
       }
       onDismiss();
     } catch {
+      setLoading(false);
+      return;
     } finally {
       setLoading(false);
     }

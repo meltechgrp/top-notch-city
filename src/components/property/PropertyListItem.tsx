@@ -21,7 +21,7 @@ import {
   MapPin,
   VectorSquare,
 } from "lucide-react-native";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Layout from "@/constants/Layout";
 import { PropertyStatus } from "./PropertyStatus";
 import { PropertyBadge } from "./PropertyBadge";
@@ -32,6 +32,7 @@ import { useMe } from "@/hooks/useMe";
 import { Durations } from "@/constants/Amenities";
 import { UiProperty } from "@/lib/propertyAdapter";
 import { generateMediaUrlSingle } from "@/lib/api";
+import { showErrorAlert } from "@/components/custom/CustomNotification";
 
 type Props = {
   property: UiProperty;
@@ -65,16 +66,28 @@ function PropertyListItem(props: Props) {
     showLike,
     imageWrapperClassName,
     imageStyle,
-    likeQueryKey,
     showTitle = true,
     subClassName,
   } = props;
   const { me } = useMe();
-  const { toggleLike } = useLike({ queryKey: likeQueryKey });
+  const { toggleLike } = useLike();
   const { bannerHeight } = Layout;
   const { price, status, server_user_id } = data;
+  const [liked, setLiked] = useState(Boolean(data?.liked));
+  const [likes, setLikes] = useState(Number(data?.likes || 0));
+  const propertyId = useMemo(
+    () =>
+      String(data?.property_server_id || data?.id || data?.slug || "").trim(),
+    [data?.property_server_id, data?.id, data?.slug],
+  );
   const isMine = useMemo(() => me?.id === server_user_id, [me, server_user_id]);
   const isAdmin = useMemo(() => me?.role == "admin", [me]);
+
+  useEffect(() => {
+    setLiked(Boolean(data?.liked));
+    setLikes(Number(data?.likes || 0));
+  }, [data?.id, data?.liked, data?.likes]);
+
   const Actions = () => {
     if (isFeatured) {
       return <PropertyStatus status="featured" />;
@@ -99,8 +112,32 @@ function PropertyListItem(props: Props) {
 
     if (!me) {
       return openAccessModal({ visible: true });
-    } else {
-      toggleLike({ id: data.property_server_id });
+    }
+
+    if (!propertyId) {
+      showErrorAlert({
+        title: "Unable to like this property right now.",
+        alertType: "warn",
+      });
+      return;
+    }
+
+    const previousLiked = liked;
+    const previousLikes = likes;
+    const nextLiked = !previousLiked;
+
+    setLiked(nextLiked);
+    setLikes(Math.max(0, previousLikes + (nextLiked ? 1 : -1)));
+
+    try {
+      await toggleLike({ id: propertyId });
+    } catch {
+      setLiked(previousLiked);
+      setLikes(previousLikes);
+      showErrorAlert({
+        title: "Failed to like this property. Please try again.",
+        alertType: "error",
+      });
     }
   }
   return (
@@ -153,7 +190,7 @@ function PropertyListItem(props: Props) {
               <View className="flex-row h-8 gap-2 bg-black/70 rounded-2xl py-0 px-3 items-center">
                 <Icon as={Heart} size="sm" className="text-white" />
                 <Text className="text-white font-medium text-sm ">
-                  {formatNumberCompact(data.likes)}
+                  {formatNumberCompact(likes)}
                 </Text>
               </View>
             </View>
@@ -165,7 +202,7 @@ function PropertyListItem(props: Props) {
                 className={"p-2 rounded-full bg-black/50"}
               >
                 <AnimatedLikeButton
-                  liked={data?.liked || false}
+                  liked={liked}
                   className="w-7 h-7 text-white"
                 />
               </Pressable>

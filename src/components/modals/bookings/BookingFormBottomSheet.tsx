@@ -16,12 +16,13 @@ import {
 } from "date-fns";
 import DatePicker from "@/components/custom/DatePicker";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
-import { Mail, Plus, Save, User } from "lucide-react-native";
+import { CircleAlert, Mail, Plus, Save, User } from "lucide-react-native";
 import DropdownSelect from "@/components/custom/DropdownSelect";
 import { ExternalLink } from "@/components/ExternalLink";
 import ModalScreen from "@/components/shared/ModalScreen";
 import { useMe } from "@/hooks/useMe";
-import { cn, showSnackbar } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { getApiErrorMessage } from "@/actions/utills";
 
 export type BookingFormProps = {
   visible: boolean;
@@ -46,23 +47,33 @@ export const BookingFormBottomSheet = ({
 }: BookingFormProps) => {
   const { me } = useMe();
   const [availableDates, setAvailableDates] = useState<Availabilities[]>([]);
+  const [formError, setFormError] = useState("");
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: sendBooking,
-    onSuccess: () =>
+    onSuccess: () => {
+      setFormError("");
       showErrorAlert({
-        title: "Message sent successfully",
+        title: "Booking request sent successfully",
         alertType: "success",
-      }),
+      });
+    },
     onError: (e) => {
       console.log(e);
-      showSnackbar({
-        message: e?.message || "Something went wrong, try again!",
-        type: "error",
+      const message = getApiErrorMessage(
+        e,
+        "Unable to create booking. Please try again.",
+      );
+      setFormError(message);
+      showErrorAlert({
+        title: message,
+        alertType: "error",
       });
     },
   });
   const [error, setError] = useState(false);
+  const isReservation = booking_type == "reservation";
+  const isReservationBookable = !isReservation || availableDates.length > 0;
   const [formData, setFormData] = useState<BookingForm>({
     booking_type,
     property_id,
@@ -77,16 +88,23 @@ export const BookingFormBottomSheet = ({
         ? `I am interested in your property at ${address}`
         : "",
   });
-  const isReservation = booking_type == "reservation";
   const updateField = (key: keyof BookingForm, value: any) =>
     setFormData((p) => ({ ...p, [key]: value }));
 
+  const showInlineError = (message: string) => {
+    setFormError(message);
+    showErrorAlert({ title: message, alertType: "warn" });
+  };
+
   const handleSubmit = async () => {
+    if (!isReservationBookable) {
+      return showInlineError(
+        "This property is not available for reservation right now.",
+      );
+    }
+
     if (!formData.scheduled_date) {
-      return showSnackbar({
-        message: "Select date and time",
-        type: "warning",
-      });
+      return showInlineError("Select date and time");
     }
 
     if (isReservation) {
@@ -94,29 +112,32 @@ export const BookingFormBottomSheet = ({
         !Number(formData.duration_days) ||
         Number(formData.duration_days) <= 0
       ) {
-        return showSnackbar({
-          message: "Enter valid duration",
-          type: "warning",
-        });
+        return showInlineError("Enter valid duration");
       }
 
       if (!Number(formData.guest) || Number(formData.guest) <= 0) {
-        return showSnackbar({
-          message: "Enter number of guests",
-          type: "warning",
-        });
+        return showInlineError("Enter number of guests");
       }
     }
 
-    await mutateAsync({
-      form: {
-        ...formData,
-        duration_days: formData.duration_days,
-        guest: formData.guest,
-      },
-    });
+    try {
+      setFormError("");
+      await mutateAsync({
+        form: {
+          ...formData,
+          duration_days: formData.duration_days,
+          guest: formData.guest,
+        },
+      });
 
-    onDismiss?.();
+      onDismiss?.();
+    } catch (error) {
+      const message = getApiErrorMessage(
+        error,
+        "Unable to create booking. Please try again.",
+      );
+      setFormError(message);
+    }
   };
 
   const isReservationDateAllowed = (date: Date) => {
@@ -198,6 +219,7 @@ export const BookingFormBottomSheet = ({
           <Button
             size="md"
             className="rounded-full px-6"
+            disabled={!isReservationBookable || isPending}
             onPress={handleSubmit}
           >
             <ButtonText>Book</ButtonText>
@@ -207,6 +229,14 @@ export const BookingFormBottomSheet = ({
       >
         <View className="flex-1 bg-background p-4">
           <View className="flex-1">
+            {!!formError && (
+              <View className="mb-4 flex-row gap-3 rounded-xl border border-primary/40 bg-primary/10 p-4">
+                <Icon as={CircleAlert} className="text-primary" />
+                <Text className="flex-1 text-sm text-typography">
+                  {formError}
+                </Text>
+              </View>
+            )}
             <View className="w-full h-48 rounded-2xl mb-3">
               <Image source={{ uri: generateMediaUrlSingle(image) }} rounded />
             </View>
@@ -463,13 +493,25 @@ type Props = {
 };
 
 export function ReservationDatesInfo({ availableDates }: Props) {
-  if (!availableDates || availableDates.length === 0) return null;
+  if (!availableDates || availableDates.length === 0) {
+    return (
+      <View className="mb-4 p-4 rounded-xl bg-primary/10 border border-primary/40 gap-2">
+        <View className="flex-row items-center gap-2">
+          <Icon as={CircleAlert} className="text-primary" />
+          <Text className="text-sm font-medium">
+            Not available for reservation
+          </Text>
+        </View>
+        <Text className="text-xs text-typography/70">
+          This property does not currently have an available reservation period.
+        </Text>
+      </View>
+    );
+  }
 
   return (
-    <View className="mb-4 p-3 rounded-xl bg-background-muted border border-outline-100">
-      <Text className="text-sm font-medium mb-2">
-        Available Reservation Dates
-      </Text>
+    <View className="mb-4 p-4 rounded-xl bg-background-muted border border-outline-100 gap-2">
+      <Text className="text-sm font-medium">Available reservation period</Text>
 
       {availableDates.map((range, index) => {
         const start = format(new Date(range.start), "MMM dd, yyyy");
@@ -478,17 +520,19 @@ export function ReservationDatesInfo({ availableDates }: Props) {
         return (
           <View
             key={index}
-            className="flex-row justify-between items-center py-1"
+            className="flex-row justify-between items-center rounded-lg bg-background px-3 py-2"
           >
-            <Text className="text-xs text-typography/80">{start}</Text>
-            <Text className="text-xs text-typography/60">→</Text>
-            <Text className="text-xs text-typography/80">{end}</Text>
+            <Text className="text-xs text-typography/80 flex-1">{start}</Text>
+            <Text className="text-xs text-typography/60 px-2">to</Text>
+            <Text className="text-xs text-typography/80 flex-1 text-right">
+              {end}
+            </Text>
           </View>
         );
       })}
 
       <Text className="text-[11px] text-typography/60 mt-2">
-        You can only book within these date ranges
+        Reservations can only be made inside the periods above.
       </Text>
     </View>
   );

@@ -39,51 +39,46 @@ export async function updateBookingStatus({
   status: BookingStatus;
   note?: string;
 }) {
+  console.log({ booking_id, status, note });
+  if (!booking_id || !status) {
+    throw Error(
+      "We could not update this booking. Please refresh and try again.",
+    );
+  }
+
   const data = {
     status,
     note: note || undefined,
   };
 
-  let res;
-
   try {
-    res = await Fetch(`/bookings/${booking_id}/status`, {
+    const res = await Fetch(`/bookings/${booking_id}/status`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
       data,
     });
-  } catch (error) {
-    const shouldRetry =
-      error instanceof ApiError &&
-      [404, 405, 415, 422].includes(error.status || 0);
 
-    if (!shouldRetry) {
+    if (res?.detail) {
       throw Error(
         getApiErrorMessage(
-          error,
+          res,
           "We could not update this booking. Please try again.",
         ),
       );
     }
+    return res as BookingStatusUpdate;
+  } catch (error) {
+    if (error instanceof ApiError && (error.status ?? 0) >= 500) {
+      throw error;
+    }
 
-    res = await Fetch(`/bookings/${booking_id}/status`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      data,
-    });
-  }
-
-  if (res?.detail) {
     throw Error(
       getApiErrorMessage(
-        res,
+        error,
         "We could not update this booking. Please try again.",
       ),
     );
   }
-  return res as Booking[];
 }

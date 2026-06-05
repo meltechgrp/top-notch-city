@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   Avatar,
   AvatarFallbackText,
@@ -46,7 +46,13 @@ export function BookingCard({ booking }: Props) {
   const { handleInvalidate, mutation } = useBooking();
   const isOwner = useMemo(() => me?.id == booking.agent.id, [booking, me]);
 
-  function handleRebook() {
+  const handleStatusUpdate = useCallback(
+    (status: BookingStatus, note?: string) =>
+      mutation.updateStatus(booking.id, status, note),
+    [booking.id, mutation],
+  );
+
+  const handleRebook = useCallback(() => {
     openBookingModal({
       visible: true,
       property_id: booking.property.id,
@@ -56,7 +62,8 @@ export function BookingCard({ booking }: Props) {
       address: composeFullAddress(booking.property.address),
       onDismiss: handleInvalidate,
     });
-  }
+  }, [booking, handleInvalidate]);
+
   const LeftActions = useMemo(
     () =>
       [
@@ -73,10 +80,7 @@ export function BookingCard({ booking }: Props) {
                   </View>
                 ),
                 onPress: () =>
-                  mutation.updateStatus(
-                    booking.id,
-                    isOwner ? "confirmed" : "completed"
-                  ),
+                  handleStatusUpdate(isOwner ? "confirmed" : "completed"),
               }
             : null,
         ],
@@ -93,10 +97,7 @@ export function BookingCard({ booking }: Props) {
                   </View>
                 ),
                 onPress: () =>
-                  mutation.updateStatus(
-                    booking.id,
-                    isOwner ? "confirmed" : "completed"
-                  ),
+                  handleStatusUpdate(isOwner ? "confirmed" : "completed"),
               }
             : null,
         ],
@@ -115,7 +116,7 @@ export function BookingCard({ booking }: Props) {
             : null,
         ],
       ].filter((a) => a != null) as SwipeAction[],
-    [isOwner, booking]
+    [booking.status, handleRebook, handleStatusUpdate, isOwner],
   );
   return (
     <>
@@ -238,13 +239,13 @@ export function BookingCard({ booking }: Props) {
         isOwner={isOwner}
         isPending={mutation.isPending}
         handleRebook={handleRebook}
-        handleUpdate={mutation.updateStatus}
+        handleUpdate={handleStatusUpdate}
       />
 
       <CancelationReasonBottomSheet
         visible={openActions}
         onCancel={async (reason) =>
-          await mutation.updateStatus(booking.id, "cancelled", reason)
+          await handleStatusUpdate("cancelled", reason)
         }
         onDismiss={() => setOpenActions(false)}
       />

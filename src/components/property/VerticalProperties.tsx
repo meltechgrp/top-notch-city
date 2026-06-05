@@ -43,6 +43,7 @@ interface Props {
   headerHeight?: number;
   ListEmptyComponent?: ReactNode;
   onPress?: (data: UiProperty) => void;
+  likeQueryKey?: unknown[];
   role?: "user" | "agent" | "admin" | "staff" | "staff_agent";
 }
 
@@ -65,6 +66,7 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
     ListEmptyComponent,
     isRefetching: propRefetching,
     showLike = true,
+    likeQueryKey,
     tab,
     search,
     agentId,
@@ -76,6 +78,17 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
   const router = useRouter();
   const queryType =
     role === "admin" ? "admin" : agentId ? "agent-property" : "latest";
+  const defaultLikeQueryKey = useMemo(() => {
+    if (likeQueryKey) return likeQueryKey;
+    if (propProperties) return undefined;
+    if (queryType === "admin") {
+      return ["admin-properties", tab, search, agentId];
+    }
+    if (queryType === "agent-property") {
+      return ["agent-properties", agentId, tab, search];
+    }
+    return ["latest"];
+  }, [agentId, likeQueryKey, propProperties, queryType, search, tab]);
   const {
     data,
     isLoading,
@@ -120,10 +133,18 @@ const VerticalProperties = forwardRef<any, Props>(function VerticalProperties(
         showStatus={showStatus}
         isHorizontal={isHorizontal}
         property={item}
+        likeQueryKey={defaultLikeQueryKey}
         rounded={true}
       />
     ),
-    [onPress, router, showStatus, isHorizontal, showLike],
+    [
+      defaultLikeQueryKey,
+      onPress,
+      router,
+      showStatus,
+      isHorizontal,
+      showLike,
+    ],
   );
 
   return (

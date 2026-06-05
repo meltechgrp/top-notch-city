@@ -19,6 +19,13 @@ type BookingResult = {
   results: Booking[];
 };
 
+type BookingStatusUpdate = {
+  id: string;
+  status: BookingStatus;
+  notes?: string | null;
+  updated_at?: string;
+};
+
 type Bookingtype = "inspection" | "reservation";
 
 type Booking = {

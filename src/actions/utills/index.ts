@@ -41,7 +41,25 @@ export function getApiErrorMessage(
     try {
       return getApiErrorMessage(JSON.parse(value), fallback);
     } catch {
-      return value.replace(/^Error:\s*/i, "").trim() || fallback;
+      const message = value.replace(/^Error:\s*/i, "").trim();
+      const normalized = message.toLowerCase();
+
+      if (normalized.includes("uuid_parsing")) {
+        return "We could not find the item to update. Please refresh and try again.";
+      }
+
+      if (
+        normalized.includes("internal server error") ||
+        normalized.includes("server error")
+      ) {
+        return "The server could not complete this request. Please try again.";
+      }
+
+      if (normalized === "missing" || normalized.includes("\nmissing")) {
+        return "Some required information is missing. Please refresh and try again.";
+      }
+
+      return message || fallback;
     }
   }
 
@@ -56,7 +74,9 @@ export function getApiErrorMessage(
     const record = value as Record<string, any>;
     const detail = record.detail ?? record.message ?? record.error;
 
-    if (typeof detail === "string") return detail;
+    if (typeof detail === "string") {
+      return getApiErrorMessage(detail, fallback);
+    }
     if (Array.isArray(detail)) return getApiErrorMessage(detail, fallback);
     if (detail && typeof detail === "object") {
       return Object.entries(detail)

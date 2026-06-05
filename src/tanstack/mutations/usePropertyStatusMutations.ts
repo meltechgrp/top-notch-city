@@ -44,7 +44,7 @@ export function usePropertyStatusMutations() {
     }
   };
 
-  const refreshPropertyAfterMutation = async ({
+  const refreshPropertyAfterMutation = ({
     propertyId,
     status,
     is_featured,
@@ -53,7 +53,7 @@ export function usePropertyStatusMutations() {
     status?: string;
     is_featured?: boolean;
   }) => {
-    await invalidateProperties(propertyId);
+    void invalidateProperties(propertyId);
   };
 
   const useStatusMutation = (action: string) =>
@@ -65,8 +65,8 @@ export function usePropertyStatusMutations() {
         propertyId: string;
         reason?: string;
       }) => updatePropertyStatus(propertyId, action, reason),
-      onSuccess: async (_, { propertyId }) => {
-        await refreshPropertyAfterMutation({
+      onSuccess: (_, { propertyId }) => {
+        refreshPropertyAfterMutation({
           propertyId,
           status: getStatusFromAction(action),
         });
@@ -88,8 +88,8 @@ export function usePropertyStatusMutations() {
   const deleteMutation = useMutation({
     mutationFn: ({ propertyId }: { propertyId: string }) =>
       deleteProperty(propertyId),
-    onSuccess: async (_, { propertyId }) => {
-      await invalidateProperties(propertyId);
+    onSuccess: (_, { propertyId }) => {
+      void invalidateProperties(propertyId);
       showErrorAlert({
         title: "Property deleted",
         alertType: "success",
@@ -108,8 +108,8 @@ export function usePropertyStatusMutations() {
   const softDeleteMutation = useMutation({
     mutationFn: ({ propertyId }: { propertyId: string }) =>
       softDeleteProperty(propertyId),
-    onSuccess: async (_, { propertyId }) => {
-      await invalidateProperties(propertyId);
+    onSuccess: (_, { propertyId }) => {
+      void invalidateProperties(propertyId);
       showErrorAlert({
         title: "Property deleted successfully",
         alertType: "success",
@@ -133,8 +133,8 @@ export function usePropertyStatusMutations() {
       propertyId: string;
       is_featured: boolean;
     }) => featuedProperty(propertyId, is_featured),
-    onSuccess: async (_, { propertyId, is_featured }) => {
-      await refreshPropertyAfterMutation({
+    onSuccess: (_, { propertyId, is_featured }) => {
+      refreshPropertyAfterMutation({
         propertyId,
         is_featured,
       });

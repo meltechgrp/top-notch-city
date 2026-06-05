@@ -4,7 +4,6 @@ import { useRouter } from "expo-router";
 import { ScrollView, StyleProp, ViewStyle } from "react-native";
 import { useMemo, useCallback, memo } from "react";
 import { cn } from "@/lib/utils";
-import { shuffle } from "lodash";
 import { UiProperty } from "@/lib/propertyAdapter";
 
 interface Props {
@@ -34,8 +33,6 @@ interface Props {
 function HorizontalProperties({
   data = [],
   isLoading = false,
-  isRefetching = false,
-  fetchNextPage,
   className,
   onPress,
   isFeatured,
@@ -66,8 +63,7 @@ function HorizontalProperties({
     [router, onPress],
   );
 
-  const shuffled = useMemo(() => shuffle(data), [data]);
-  const isBusy = isLoading || isRefetching;
+  const isBusy = isLoading && data.length === 0;
   return (
     <ScrollView
       horizontal
@@ -82,7 +78,7 @@ function HorizontalProperties({
         ? skeletonItems.map((_, i) => (
             <PropertySkeletonCard isHorizontal key={i} />
           ))
-        : shuffled.map((property) => (
+        : data.map((property) => (
             <PropertyListItem
               key={property.id}
               showLike={showLike}

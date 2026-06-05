@@ -3,11 +3,12 @@ import { Button, ButtonText, Text, View } from "@/components/ui";
 import { useState } from "react";
 import { showErrorAlert } from "@/components/custom/CustomNotification";
 import { CustomInput } from "@/components/custom/CustomInput";
+import { SpinningLoader } from "@/components/loaders/SpinningLoader";
 
 export type CancelationReasonBottomSheetProps = {
   visible: boolean;
   onDismiss: () => void;
-  onCancel: (reason: string) => Promise<void>;
+  onCancel: (reason: string) => Promise<unknown>;
   title?: string;
 };
 
@@ -15,18 +16,27 @@ export const CancelationReasonBottomSheet: React.FC<
   CancelationReasonBottomSheetProps
 > = ({ visible, onDismiss, onCancel, title }) => {
   const [reason, setReason] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleConfirm = async (e: any) => {
+  const handleConfirm = async () => {
     if (reason.trim().length < 3) {
       showErrorAlert({
         title: "Please provide a valid reason (min 3 characters).",
         alertType: "warn",
       });
       return;
-    } else {
-      onCancel(reason);
+    }
+
+    setLoading(true);
+    try {
+      const result = await onCancel(reason);
+
+      if (!result) return;
+
       setReason("");
       onDismiss();
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -59,12 +69,18 @@ export const CancelationReasonBottomSheet: React.FC<
             <Button
               className="flex-1"
               variant="outline"
+              disabled={loading}
               onPress={() => onDismiss()}
             >
               <ButtonText>Close</ButtonText>
             </Button>
-            <Button className="flex-1" onPress={handleConfirm}>
+            <Button
+              className="flex-1"
+              disabled={loading}
+              onPress={handleConfirm}
+            >
               <ButtonText>Continue</ButtonText>
+              {loading && <SpinningLoader />}
             </Button>
           </View>
         </View>

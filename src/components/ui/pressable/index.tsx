@@ -51,6 +51,7 @@ const Pressable = React.forwardRef<
 
       onDoublePress?.(e);
     } else {
+      e.persist?.();
       timeoutRef.current = setTimeout(() => {
         onPress?.(e);
         timeoutRef.current = null;
@@ -62,17 +63,17 @@ const Pressable = React.forwardRef<
     <RNPressable
       {...props}
       ref={ref}
-      onPress={async (e) => {
-        if (!disableHaptic) {
-          await hapticFeed(both);
-        }
+      onPress={(e) => {
         handlePress(e);
-      }}
-      onLongPress={async (e) => {
         if (!disableHaptic) {
-          await hapticFeed(both);
+          void hapticFeed(both);
         }
+      }}
+      onLongPress={(e) => {
         onLongPress?.(e);
+        if (!disableHaptic) {
+          void hapticFeed(both);
+        }
       }}
       className={cn(" disabled:opacity-40", className)}
     />
