@@ -17,7 +17,7 @@ export function PropertyBadge({
         return (
           <Badge className=" self-start px-3 rounded-2xl bg-green-600">
             <Text>Available</Text>
-            <View className="w-2 h-2 -mt-3 ml-1 rounded-full bg-white animate-pulse" />
+            <View className="w-2 h-2 mt-0 ml-1 rounded-full bg-white animate-pulse" />
           </Badge>
         );
       }

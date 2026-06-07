@@ -48,10 +48,10 @@ function VisitationList() {
               icon={FolderOpen}
               iconClassName="w-12 h-12 text-info-100"
               description="Ready to buy/rent your next home/land?. Browse our properties now"
-              buttonLabel="Explore"
+              // buttonLabel="Explore"
               subIcon={Search}
               className="gap-1"
-              onPress={() => router.push("/explore")}
+              // onPress={() => router.push("/explore")}
             />
           }
         />

@@ -7,17 +7,61 @@ import AdminCards from "@/components/admin/dashboard/AdminCards";
 import AgentCards from "@/components/agent/dashboard/AgentCards";
 import { MenuListItem } from "@/components/menu/MenuListItem";
 import CampaignCard from "@/components/profile/CampaignCard";
-import SearchWrapper from "@/components/search/SearchWrapper";
+import SearchFilterBottomSheet from "@/components/modals/search/SearchFilterBottomSheet";
+import SearchListView from "@/components/search/SearchListView";
+import SearchHeader from "@/components/search/Searchheader";
 import { useMe } from "@/hooks/useMe";
+import { useSearch } from "@/hooks/useSearch";
 import { RefreshControl } from "react-native";
 import eventBus from "@/lib/eventBus";
+import React from "react";
+
+function UserExploreList() {
+  const [showFilter, setShowFilter] = React.useState(false);
+  const { search, results, query, properties } = useSearch();
+
+  return (
+    <View className="flex-1 bg-background">
+      <SearchHeader
+        filter={search.filter}
+        onUpdate={search.setFilters}
+        setLocationBottomSheet={() => {}}
+        setShowFilter={() => setShowFilter(true)}
+        refetch={query.refetchAndApply}
+        disableBack
+      />
+
+      <SearchListView
+        setShowFilter={() => setShowFilter(true)}
+        headerOnlyHeight={104}
+        isLoading={query.loading}
+        refetch={query.refetchAndApply}
+        hasNextPage={query.hasNextPage}
+        fetchNextPage={query.fetchNextPage}
+        properties={properties}
+      />
+
+      <SearchFilterBottomSheet
+        show={showFilter}
+        onDismiss={() => setShowFilter(false)}
+        onApply={query.applyCachedResults as any}
+        onReset={search.resetSome as any}
+        onUpdate={search.setFilters}
+        loading={query.loading}
+        filter={search.filter}
+        total={results.total}
+        showPurpose
+      />
+    </View>
+  );
+}
 
 export default function Menu() {
   const { me, isAdmin, isAgent } = useMe();
   const router = useRouter();
   const quickMenuItems = getQuickMenuItems({ me, isAdmin, isAgent });
-  if (me?.role == "user") {
-    return <SearchWrapper disableBack isTab />;
+  if (me?.role === "user") {
+    return <UserExploreList />;
   }
   return (
     <>
@@ -54,7 +98,7 @@ export default function Menu() {
                   title={item.label}
                   icon={item.icon}
                   description={item.description}
-                  withBorder={i != quickMenuItems.length - 1}
+                  withBorder={i !== quickMenuItems.length - 1}
                   onPress={() => item.link && router.push(item.link as any)}
                 />
               ))}

@@ -47,7 +47,7 @@ export function MiniEmptyState({
           <View
             className={cn(
               "flex-1 px-4 py-6 justify-center items-center gap-3",
-              className
+              className,
             )}
           >
             <Icon as={icon || House} className={cn("w-7 h-7", iconClassName)} />

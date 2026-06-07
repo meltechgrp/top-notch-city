@@ -212,8 +212,8 @@ function PropertyListItem(props: Props) {
       </View>
       <View className={cn("flex-1 p-4 pt-3 px-2", subClassName)}>
         <View className=" gap-1 w-full">
-          <View className="flex-row items-center">
-            <Text className="text-white text-xl font-bold">
+          <View className="flex-row items-center ">
+            <Text className="text-white text-lg font-bold">
               {formatMoney(price, data?.currency || "NGN", 0)}
             </Text>
             <Text className="text-base text-white">

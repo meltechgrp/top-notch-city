@@ -57,9 +57,9 @@ function ChatList({ chats }: ChatListProps) {
                   className="mt-8"
                   title="No chat Found"
                   description="chats will be displayed here when available!"
-                  onPress={() => router.push("/start")}
+                  // onPress={() => router.push("/start")}
                   subIcon={Plus}
-                  buttonLabel="Start a Chat"
+                  // buttonLabel="Start a Chat"
                 />
               )}
             />
